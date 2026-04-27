@@ -99,13 +99,25 @@
                 </div>
                 @break
             @case('revenue_chart')
+                @php
+                    // md = 30-day window, lg = 90-day window (matches RevenueChartWidget::windowDays).
+                    $bars = ($widget['size'] ?? 'md') === 'lg'
+                        ? [30, 45, 20, 35, 60, 50, 80, 55, 40, 70, 45, 65, 90, 75, 50, 85, 60, 95, 70, 55, 80, 65, 75, 50, 85, 70, 95, 80, 65, 90]
+                        : [30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75];
+                    $label = ($widget['size'] ?? 'md') === 'lg' ? 'Last 90 Days · $4,820 ↑ 18%' : 'Last 30 Days · $1,540 ↑ 8%';
+                @endphp
+                <div style="font-size: 0.6rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">{{ $label }}</div>
                 <div class="pw-line">
-                    @foreach ([30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75] as $h)
+                    @foreach ($bars as $h)
                         <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                     @endforeach
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
-                    <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span>
+                    @if (($widget['size'] ?? 'md') === 'lg')
+                        <span>Jan</span><span>Feb</span><span>Mar</span>
+                    @else
+                        <span>Wk 1</span><span>Wk 2</span><span>Wk 3</span><span>Wk 4</span>
+                    @endif
                 </div>
                 @break
             @case('recent_orders')
@@ -131,7 +143,12 @@
                 @endif
                 @break
             @case('top_products')
-                @foreach (['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40] as $name => $pct)
+                @php
+                    $products = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40, 'Sourdough' => 30, 'Croissants' => 22]
+                        : ['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40];
+                @endphp
+                @foreach ($products as $name => $pct)
                     <div style="margin-bottom: 6px;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
                             <span>{{ $name }}</span><span>{{ $pct }}%</span>
@@ -145,9 +162,28 @@
                 <div class="pw-stat" style="margin-top: 8px;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
                 @break
             @case('weekly_revenue')
+                @php
+                    // lg adds last-week comparison overlay (matches WeeklyRevenueChart).
+                    $thisWeek = [50, 70, 45, 80, 65, 90, 55];
+                    $lastWeek = [40, 55, 60, 65, 50, 75, 60];
+                    $isLarge = ($widget['size'] ?? 'md') === 'lg';
+                @endphp
+                @if ($isLarge)
+                    <div style="display: flex; gap: 10px; font-size: 0.6rem; color: #a08060; margin-bottom: 4px;">
+                        <span><span class="pw-dot" style="background: var(--accent);"></span>This week</span>
+                        <span><span class="pw-dot" style="background: var(--border-medium);"></span>Last week</span>
+                    </div>
+                @endif
                 <div class="pw-line">
-                    @foreach ([50, 70, 45, 80, 65, 90, 55] as $h)
-                        <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
+                    @foreach ($thisWeek as $i => $h)
+                        @if ($isLarge)
+                            <div style="flex: 1; display: flex; gap: 1px; align-items: end;">
+                                <div class="pw-line-bar" style="height: {{ $h }}%; background: var(--accent);"></div>
+                                <div class="pw-line-bar" style="height: {{ $lastWeek[$i] }}%;"></div>
+                            </div>
+                        @else
+                            <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
+                        @endif
                     @endforeach
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
@@ -204,22 +240,40 @@
                 <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">Latest: "Can I add to my order?"</div>
                 @break
             @case('margin_alert')
-                <div class="pw-row"><span>🔴 Cookies</span><span>12%</span></div>
-                <div class="pw-row"><span>🟡 Brownies</span><span>28%</span></div>
+                @php
+                    $items = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['🔴 Cookies' => '12%', '🔴 Sugar Cookies' => '15%', '🟡 Brownies' => '28%', '🟡 Banana Bread' => '31%']
+                        : ['🔴 Cookies' => '12%', '🟡 Brownies' => '28%'];
+                @endphp
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div class="pw-stat" style="margin-bottom: 6px;"><span class="pw-stat-label">At-risk products</span><span class="pw-stat-value">4</span></div>
+                @endif
+                @foreach ($items as $name => $pct)
+                    <div class="pw-row"><span>{{ $name }}</span><span>{{ $pct }}</span></div>
+                @endforeach
                 @break
             @case('goal_tracker')
-                <div style="margin-bottom: 6px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
-                        <span>Monthly Goal</span><span>$2,450 / $5,000 · 49%</span>
+                @php
+                    $goals = ($widget['size'] ?? 'md') === 'lg'
+                        ? [
+                            ['label' => 'Daily Goal', 'detail' => '$140 / $200 · 70%', 'pct' => 70],
+                            ['label' => 'Weekly Goal', 'detail' => '$820 / $1,200 · 68%', 'pct' => 68],
+                            ['label' => 'Monthly Goal', 'detail' => '$2,450 / $5,000 · 49%', 'pct' => 49],
+                            ['label' => 'Yearly Goal', 'detail' => '$32,000 / $50,000 · 64%', 'pct' => 64],
+                        ]
+                        : [
+                            ['label' => 'Monthly Goal', 'detail' => '$2,450 / $5,000 · 49%', 'pct' => 49],
+                            ['label' => 'Yearly Goal', 'detail' => '$32,000 / $50,000 · 64%', 'pct' => 64],
+                        ];
+                @endphp
+                @foreach ($goals as $goal)
+                    <div style="margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                            <span>{{ $goal['label'] }}</span><span>{{ $goal['detail'] }}</span>
+                        </div>
+                        <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $goal['pct'] }}%;"></div></div>
                     </div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 49%;"></div></div>
-                </div>
-                <div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
-                        <span>Yearly Goal</span><span>$32,000 / $50,000 · 64%</span>
-                    </div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 64%;"></div></div>
-                </div>
+                @endforeach
                 @break
             @case('upcoming_holiday')
                 <div style="text-align: center;">
@@ -247,14 +301,17 @@
                 @endforeach
                 @break
             @case('capacity_today')
-                <div style="margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>Today</span><span>72%</span></div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 72%;"></div></div>
-                </div>
-                <div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>Tomorrow</span><span>35%</span></div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 35%;"></div></div>
-                </div>
+                @php
+                    $days = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Mon' => 72, 'Tue' => 35, 'Wed' => 60, 'Thu' => 80, 'Fri' => 95, 'Sat' => 88, 'Sun' => 25]
+                        : ['Today' => 72, 'Tomorrow' => 35];
+                @endphp
+                @foreach ($days as $label => $pct)
+                    <div style="margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>{{ $label }}</span><span>{{ $pct }}%</span></div>
+                        <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $pct }}%;"></div></div>
+                    </div>
+                @endforeach
                 @break
             @case('catering_pipeline')
                 <div class="pw-stat"><span class="pw-stat-label">Open</span><span class="pw-stat-value">3</span></div>
