@@ -1,6 +1,10 @@
 @props(['widget'])
 
-<div class="preview-widget" style="grid-column: span {{ $widget['span'] ?? 1 }};">
+@php
+    $columns = (\App\Enums\Filament\WidgetSize::tryFrom($widget['size'] ?? '') ?? \App\Enums\Filament\WidgetSize::Small)->columns();
+@endphp
+
+<div class="preview-widget" style="grid-column: span {{ $columns }};">
     <div class="preview-widget-header">
         <span class="pw-icon">{{ $widget['icon'] }}</span>
         <span>{{ $widget['name'] }}</span>
