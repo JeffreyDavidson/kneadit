@@ -2,7 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Queries\Financial\RevenueQuery;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -14,12 +16,11 @@ use Illuminate\Support\Number;
 class RevenueChartWidget extends ChartWidget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 3;
 
     protected ?string $heading = 'Revenue — Last 30 Days';
-
-    protected int|string|array $columnSpan = ['md' => 2, 'xl' => 2];
 
     protected ?string $maxHeight = '280px';
 
@@ -30,7 +31,8 @@ class RevenueChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $cached = $this->cached('main', [300, 600], fn (): array => $this->computeData());
+        $days = $this->windowDays();
+        $cached = $this->cached("main_{$days}", [300, 600], fn (): array => $this->computeData($days));
 
         $this->heading = $cached['heading'];
 
@@ -42,13 +44,24 @@ class RevenueChartWidget extends ChartWidget
         return 'revenue_chart';
     }
 
+    private function windowDays(): int
+    {
+        // revenue_chart is constrained to md/lg in WidgetMeta. md preserves
+        // the original 30-day window; lg widens to 90 days for fuller
+        // historical context. (sm is unreachable but defaults to 30 anyway.)
+        return match ($this->size()) {
+            WidgetSize::Large => 90,
+            default => 30,
+        };
+    }
+
     /** @return array{heading: string, chart: array<string, mixed>} */
-    private function computeData(): array
+    private function computeData(int $windowDays): array
     {
         $end = Date::today();
-        $start = $end->copy()->subDays(29);
+        $start = $end->copy()->subDays($windowDays - 1);
         $prevEnd = $start->copy()->subDay();
-        $prevStart = $prevEnd->copy()->subDays(29);
+        $prevStart = $prevEnd->copy()->subDays($windowDays - 1);
 
         $current = $this->getDailyRevenue($start, $end);
         $previous = $this->getDailyRevenue($prevStart, $prevEnd);
@@ -68,7 +81,7 @@ class RevenueChartWidget extends ChartWidget
         $arrow = $change >= 0 ? '↑' : '↓';
 
         return [
-            'heading' => "Revenue — Last 30 Days · \${$this->fmt($currentTotal)} ({$arrow} {$change}%)",
+            'heading' => "Revenue — Last {$windowDays} Days · \${$this->fmt($currentTotal)} ({$arrow} {$change}%)",
             'chart' => [
                 'datasets' => [
                     [
