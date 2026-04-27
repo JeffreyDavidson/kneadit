@@ -8,6 +8,11 @@
                     ['label' => 'Repeat Rate', 'value' => $this->getRepeatCustomerRate().'%', 'icon' => 'heroicon-s-arrow-path-rounded-square', 'gradient' => 'from-brand-100 to-brand-200', 'iconBg' => 'bg-brand-300', 'labelColor' => 'text-amber-800', 'extra' => null],
                     ['label' => 'Avg Order Value', 'value' => null, 'icon' => 'heroicon-s-currency-dollar', 'gradient' => 'from-brand-150 to-brand-100', 'iconBg' => 'bg-brand-600', 'labelColor' => 'text-brand-600', 'extra' => 'aov'],
                 ];
+
+                // sm: drop AOV (least time-sensitive); md: all three.
+                if ($this->isSize('sm')) {
+                    $rows = array_slice($rows, 0, 2);
+                }
             @endphp
             @foreach ($rows as $row)
                 <div class="flex justify-between items-center px-4 py-3.5 rounded-xl bg-gradient-to-br {{ $row['gradient'] }}">
