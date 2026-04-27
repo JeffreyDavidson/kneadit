@@ -36,9 +36,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends BaseDashboard
 {
-    protected static ?string $navigationLabel = 'Bakery Dashboard';
+    protected static ?string $navigationLabel = 'Dashboard';
 
-    protected static ?string $title = 'Bakery Dashboard';
+    protected static ?string $title = 'Dashboard';
 
     public function getColumns(): int|array
     {
@@ -50,7 +50,7 @@ class Dashboard extends BaseDashboard
 
     public function getHeading(): string|Htmlable
     {
-        return 'Bakery Dashboard';
+        return 'Dashboard';
     }
 
     /** @return array<string, mixed> */
