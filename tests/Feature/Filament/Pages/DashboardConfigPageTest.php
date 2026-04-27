@@ -44,14 +44,29 @@ test('toggleWidget flips visibility', function () {
     expect($page->get('widgets')[0]['visible'])->toBe(! $beforeVisible);
 });
 
-test('setSpan clamps to 1..3', function () {
+test('setSize accepts t-shirt size strings and falls back to small for unknown values', function () {
     $page = Livewire::test(DashboardConfig::class);
 
-    $page->call('setSpan', 0, 5);
-    expect($page->get('widgets')[0]['span'])->toBe(3);
+    $page->call('setSize', 0, 'lg');
+    expect($page->get('widgets')[0]['size'])->toBe('lg');
 
-    $page->call('setSpan', 0, -1);
-    expect($page->get('widgets')[0]['span'])->toBe(1);
+    $page->call('setSize', 0, 'bogus');
+    expect($page->get('widgets')[0]['size'])->toBe('sm');
+});
+
+test('legacy integer span values are migrated to t-shirt sizes on load', function () {
+    resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
+        'recent_orders' => ['visible' => true, 'order' => 1, 'span' => 1],
+        'welcome_banner' => ['visible' => true, 'order' => 2, 'span' => 2],
+        'stats_overview' => ['visible' => true, 'order' => 3, 'span' => 3],
+    ]));
+
+    $page = Livewire::test(DashboardConfig::class);
+    $widgets = collect($page->get('widgets'))->keyBy('key');
+
+    expect($widgets['recent_orders']['size'])->toBe('sm')
+        ->and($widgets['welcome_banner']['size'])->toBe('md')
+        ->and($widgets['stats_overview']['size'])->toBe('lg');
 });
 
 test('Dashboard::getWidgets returns the full registry when no saved layout exists', function () {
