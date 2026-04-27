@@ -4,110 +4,111 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
 use App\Queries\Financial\RevenueQuery;
-use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
-class StatsOverview extends BaseWidget
+class StatsOverview extends Widget
 {
     use CachesWidgetData;
-
-    protected ?string $pollingInterval = null;
+    use HasDashboardSize;
 
     protected static ?int $sort = 1;
 
-    /** @return array<int, Stat> */
-    protected function getStats(): array
+    protected string $view = 'filament.widgets.stats-overview';
+
+    /** @return array<int, array<string, mixed>> */
+    public function getCards(): array
     {
-        $data = $this->cached('main', [300, 600], function (): array {
-            $today = Date::today();
-            $weekStart = Date::now()->startOfWeek();
-            $weekEnd = Date::now()->endOfWeek();
-            $lastWeekStart = $weekStart->copy()->subWeek();
-            $lastWeekEnd = $weekEnd->copy()->subWeek();
+        $data = $this->cached('main', [300, 600], fn (): array => $this->loadData());
 
-            // 7-day chart series (oldest → newest, today is last index).
-            $ordersChart = [];
-            $revenueChart = [];
-            $viewsChart = [];
-            $pendingCreatedChart = [];
-
-            for ($i = 6; $i >= 0; $i--) {
-                $d = $today->copy()->subDays($i);
-                $startOfDay = $d->copy()->startOfDay();
-                $endOfDay = $d->copy()->endOfDay();
-
-                $ordersChart[] = Order::query()->whereDate('delivery_date', $d)->count();
-                $revenueChart[] = (int) RevenueQuery::total([$d->toDateString(), $d->toDateString()]);
-                $viewsChart[] = PageView::query()->whereNull('product_id')
-                    ->whereBetween('created_at', [$startOfDay, $endOfDay])
-                    ->count();
-                $pendingCreatedChart[] = Order::query()
-                    ->where('status', OrderStatus::Pending)
-                    ->whereBetween('created_at', [$startOfDay, $endOfDay])
-                    ->count();
-            }
-
-            return [
-                'todaysOrders' => $ordersChart[6] ?? 0,
-                'ordersChart' => $ordersChart,
-                'weekAvgOrders' => array_sum($ordersChart) / 7,
-                'pendingOrders' => Order::query()->where('status', OrderStatus::Pending)->count(),
-                'pendingChart' => $pendingCreatedChart,
-                'thisWeekRevenue' => RevenueQuery::total([$weekStart->toDateString(), $weekEnd->toDateString()]),
-                'lastWeekRevenue' => RevenueQuery::total([$lastWeekStart->toDateString(), $lastWeekEnd->toDateString()]),
-                'revenueChart' => $revenueChart,
-                'viewsToday' => $viewsChart[6] ?? 0,
-                'viewsChart' => $viewsChart,
-            ];
-        });
-
-        $ordersDelta = $this->percentChange($data['todaysOrders'], $data['weekAvgOrders']);
-        $revenueDelta = $this->percentChange($data['thisWeekRevenue'], $data['lastWeekRevenue']);
-        $viewsDelta = $this->percentChange($data['viewsToday'], array_sum($data['viewsChart']) / 7);
+        $ordersDelta = $this->percentChange((float) $data['todaysOrders'], (float) $data['weekAvgOrders']);
+        $revenueDelta = $this->percentChange((float) $data['thisWeekRevenue'], (float) $data['lastWeekRevenue']);
+        $viewsDelta = $this->percentChange((float) $data['viewsToday'], array_sum($data['viewsChart']) / 7);
 
         return [
-            Stat::make("Today's Orders", $data['todaysOrders'])
-                ->description($this->describeDelta($ordersDelta, 'vs 7-day avg'))
-                ->descriptionIcon($this->trendIcon($ordersDelta))
-                ->color($this->trendColor($ordersDelta))
-                ->icon(Heroicon::OutlinedShoppingBag)
-                ->chart($data['ordersChart'])
-                ->chartColor($this->trendColor($ordersDelta)),
-
-            Stat::make('Pending Orders', $data['pendingOrders'])
-                ->description($data['pendingOrders'] > 0 ? 'Awaiting confirmation' : 'All clear')
-                ->color($this->backlogColor($data['pendingOrders']))
-                ->icon(Heroicon::OutlinedClock)
-                ->chart($data['pendingChart'])
-                ->chartColor($this->backlogColor($data['pendingOrders'])),
-
-            Stat::make("This Week's Revenue", Number::currency($data['thisWeekRevenue']))
-                ->description($this->describeDelta($revenueDelta, 'vs last week'))
-                ->descriptionIcon($this->trendIcon($revenueDelta))
-                ->color($this->trendColor($revenueDelta))
-                ->icon(Heroicon::OutlinedCurrencyDollar)
-                ->chart($data['revenueChart'])
-                ->chartColor($this->trendColor($revenueDelta)),
-
-            Stat::make('Storefront Views Today', Number::format($data['viewsToday']))
-                ->description($this->describeDelta($viewsDelta, 'vs 7-day avg'))
-                ->descriptionIcon($this->trendIcon($viewsDelta))
-                ->color($this->trendColor($viewsDelta))
-                ->icon(Heroicon::OutlinedEye)
-                ->chart($data['viewsChart'])
-                ->chartColor($this->trendColor($viewsDelta)),
+            [
+                'label' => "Today's Orders",
+                'value' => (string) $data['todaysOrders'],
+                'delta' => $this->describeDelta($ordersDelta, 'vs 7-day avg'),
+                'tone' => $this->trendTone($ordersDelta),
+                'chart' => $this->normaliseChart($data['ordersChart']),
+            ],
+            [
+                'label' => 'Pending Orders',
+                'value' => (string) $data['pendingOrders'],
+                'delta' => $data['pendingOrders'] > 0 ? 'Awaiting confirmation' : 'All clear',
+                'tone' => $this->backlogTone($data['pendingOrders']),
+                'chart' => $this->normaliseChart($data['pendingChart']),
+            ],
+            [
+                'label' => "This Week's Revenue",
+                'value' => (string) Number::currency($data['thisWeekRevenue']),
+                'delta' => $this->describeDelta($revenueDelta, 'vs last week'),
+                'tone' => $this->trendTone($revenueDelta),
+                'chart' => $this->normaliseChart($data['revenueChart']),
+            ],
+            [
+                'label' => 'Storefront Views Today',
+                'value' => (string) Number::format($data['viewsToday']),
+                'delta' => $this->describeDelta($viewsDelta, 'vs 7-day avg'),
+                'tone' => $this->trendTone($viewsDelta),
+                'chart' => $this->normaliseChart($data['viewsChart']),
+            ],
         ];
     }
 
     protected function cachePrefix(): string
     {
         return 'stats_overview';
+    }
+
+    /** @return array<string, mixed> */
+    private function loadData(): array
+    {
+        $today = Date::today();
+        $weekStart = Date::now()->startOfWeek();
+        $weekEnd = Date::now()->endOfWeek();
+        $lastWeekStart = $weekStart->copy()->subWeek();
+        $lastWeekEnd = $weekEnd->copy()->subWeek();
+
+        $ordersChart = [];
+        $revenueChart = [];
+        $viewsChart = [];
+        $pendingCreatedChart = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $d = $today->copy()->subDays($i);
+            $startOfDay = $d->copy()->startOfDay();
+            $endOfDay = $d->copy()->endOfDay();
+
+            $ordersChart[] = Order::query()->whereDate('delivery_date', $d)->count();
+            $revenueChart[] = (int) RevenueQuery::total([$d->toDateString(), $d->toDateString()]);
+            $viewsChart[] = PageView::query()->whereNull('product_id')
+                ->whereBetween('created_at', [$startOfDay, $endOfDay])
+                ->count();
+            $pendingCreatedChart[] = Order::query()
+                ->where('status', OrderStatus::Pending)
+                ->whereBetween('created_at', [$startOfDay, $endOfDay])
+                ->count();
+        }
+
+        return [
+            'todaysOrders' => $ordersChart[6] ?? 0,
+            'ordersChart' => $ordersChart,
+            'weekAvgOrders' => array_sum($ordersChart) / 7,
+            'pendingOrders' => Order::query()->where('status', OrderStatus::Pending)->count(),
+            'pendingChart' => $pendingCreatedChart,
+            'thisWeekRevenue' => RevenueQuery::total([$weekStart->toDateString(), $weekEnd->toDateString()]),
+            'lastWeekRevenue' => RevenueQuery::total([$lastWeekStart->toDateString(), $lastWeekEnd->toDateString()]),
+            'revenueChart' => $revenueChart,
+            'viewsToday' => $viewsChart[6] ?? 0,
+            'viewsChart' => $viewsChart,
+        ];
     }
 
     private function percentChange(float $current, float $baseline): int
@@ -121,27 +122,33 @@ class StatsOverview extends BaseWidget
 
     private function describeDelta(int $delta, string $suffix): string
     {
-        $direction = $delta >= 0 ? 'above' : 'below';
+        $arrow = $delta >= 0 ? '↑' : '↓';
 
-        return abs($delta) . "% {$direction} {$suffix}";
+        return "{$arrow} " . abs($delta) . "% {$suffix}";
     }
 
-    private function trendIcon(int $delta): Heroicon
+    private function trendTone(int $delta): string
     {
-        return $delta >= 0 ? Heroicon::ArrowTrendingUp : Heroicon::ArrowTrendingDown;
+        return $delta >= 0 ? '#6b9e3a' : '#e8b04a';
     }
 
-    private function trendColor(int $delta): string
-    {
-        return $delta >= 0 ? 'success' : 'warning';
-    }
-
-    private function backlogColor(int $count): string
+    private function backlogTone(int $count): string
     {
         return match (true) {
-            $count > 10 => 'danger',
-            $count > 5 => 'warning',
-            default => 'success',
+            $count > 10 => '#d4574a',
+            $count > 5 => '#e8b04a',
+            default => '#6b9e3a',
         };
+    }
+
+    /**
+     * @param array<int, int> $values
+     * @return array<int, int>
+     */
+    private function normaliseChart(array $values): array
+    {
+        $max = max($values) ?: 1;
+
+        return array_map(fn (int $v): int => (int) round($v / $max * 100), $values);
     }
 }
