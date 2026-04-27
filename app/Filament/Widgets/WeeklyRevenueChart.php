@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Financial\Expense;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
@@ -12,12 +13,11 @@ use Filament\Widgets\ChartWidget;
 class WeeklyRevenueChart extends ChartWidget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 5;
 
     protected ?string $heading = 'Weekly Financial Overview';
-
-    protected int|string|array $columnSpan = 'full';
 
     protected function getType(): string
     {
@@ -26,17 +26,14 @@ class WeeklyRevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        return $this->cached('main', [300, 600], function (): array {
+        $cacheKey = $this->isSize('lg') ? 'main_compare' : 'main';
+
+        return $this->cached($cacheKey, [300, 600], function (): array {
             $range = DateRange::thisWeek();
             $period = CarbonPeriod::create($range->start, $range->end);
 
             $revenueByDay = collect(RevenueQuery::dailyBreakdown($range));
-
-            $expensesByDay = Expense::query()
-                ->whereBetween('date', $range->toArray())
-                ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
-                ->groupBy('day')
-                ->pluck('total', 'day');
+            $expensesByDay = $this->expensesByDay($range);
 
             $labels = [];
             $revenue = [];
@@ -49,22 +46,43 @@ class WeeklyRevenueChart extends ChartWidget
                 $expenses[] = round((float) ($expensesByDay[$key] ?? 0), 2);
             }
 
-            return [
-                'datasets' => [
-                    [
-                        'label' => 'Revenue ($)',
-                        'data' => $revenue,
-                        'backgroundColor' => '#8b5e3c',
-                    ],
-                    [
-                        'label' => 'Expenses ($)',
-                        'data' => $expenses,
-                        'backgroundColor' => '#dc2626',
-                    ],
-                ],
-                'labels' => $labels,
+            $datasets = [
+                ['label' => 'Revenue ($)', 'data' => $revenue, 'backgroundColor' => '#8b5e3c'],
+                ['label' => 'Expenses ($)', 'data' => $expenses, 'backgroundColor' => '#dc2626'],
             ];
+
+            // lg widens the lens with last week's comparison overlay so the
+            // baker can see week-over-week trend at a glance.
+            if ($this->isSize('lg')) {
+                $lastRange = new DateRange(
+                    $range->start->copy()->subWeek(),
+                    $range->end->copy()->subWeek(),
+                );
+                $lastRevenueByDay = collect(RevenueQuery::dailyBreakdown($lastRange));
+                $lastPeriod = CarbonPeriod::create($lastRange->start, $lastRange->end);
+                $lastRevenue = [];
+                foreach ($lastPeriod as $date) {
+                    $lastRevenue[] = round((float) ($lastRevenueByDay[$date->format('Y-m-d')] ?? 0), 2);
+                }
+                $datasets[] = [
+                    'label' => 'Last Week Revenue ($)',
+                    'data' => $lastRevenue,
+                    'backgroundColor' => '#d4a574',
+                ];
+            }
+
+            return ['datasets' => $datasets, 'labels' => $labels];
         });
+    }
+
+    /** @return \Illuminate\Support\Collection<string, float> */
+    private function expensesByDay(DateRange $range): \Illuminate\Support\Collection
+    {
+        return Expense::query()
+            ->whereBetween('date', $range->toArray())
+            ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
     }
 
     protected function cachePrefix(): string
