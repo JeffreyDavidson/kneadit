@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\OrderItem;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -14,11 +15,11 @@ use Illuminate\Support\Facades\Date;
 
 class BakingSheetWidget extends BaseWidget
 {
+    use HasDashboardSize;
+
     protected static ?int $sort = 3;
 
     protected static ?string $heading = 'Daily Baking Sheet';
-
-    protected int|string|array $columnSpan = 'full';
 
     public function getTableRecordKey(Model|array $record): string
     {
