@@ -1,16 +1,23 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Order Pipeline" icon="heroicon-o-funnel">
-        <div class="flex flex-col gap-2">
-            @foreach ($this->getVisibleStages() as $stage)
-                <a href="{{ route('filament.admin.resources.orders.index', ['tableFilters[status][value]' => $stage['key']]) }}"
-                   class="no-underline flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] border-l-4 transition-transform transition-shadow duration-150 hover:translate-x-1 hover:shadow-md {{ $stage['bgClass'] }} {{ $stage['borderClass'] }}">
-                    <span class="font-bold text-xl min-w-9 text-center {{ $stage['textClass'] }}">
-                        {{ $stage['count'] }}
-                    </span>
-                    <span class="font-medium text-brand-900 text-[0.9rem]">{{ $stage['label'] }}</span>
-                    <span class="ml-auto opacity-50 {{ $stage['textClass'] }}">→</span>
-                </a>
-            @endforeach
-        </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+@php
+    $stages = $this->getVisibleStages();
+    $hasOrderRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.index');
+@endphp
+
+<x-admin.dashboard.preview-card heading="Order Pipeline" icon="🔽">
+    @if ($this->isSize('md'))
+        <x-admin.dashboard.stat-row label="Active orders" :value="array_sum(array_column($stages, 'count'))" class="mb-2" />
+    @endif
+
+    @foreach ($stages as $stage)
+        @php
+            $href = $hasOrderRoute ? route('filament.admin.resources.orders.index', ['tableFilters[status][value]' => $stage['key']]) : null;
+        @endphp
+        <x-admin.dashboard.list-row :value="$stage['count']" :dot-color="$stage['dotColor'] ?? null">
+            @if ($href)
+                <a href="{{ $href }}" style="color: var(--pw-card-text); text-decoration: none;">{{ $stage['label'] }}</a>
+            @else
+                {{ $stage['label'] }}
+            @endif
+        </x-admin.dashboard.list-row>
+    @endforeach
+</x-admin.dashboard.preview-card>
