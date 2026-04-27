@@ -158,8 +158,17 @@
                 @endforeach
                 @break
             @case('customer_insights')
-                <div class="pw-stat"><span class="pw-stat-label">New this week</span><span class="pw-stat-value">4</span></div>
-                <div class="pw-stat" style="margin-top: 8px;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                        <div class="pw-stat" style="flex-direction: column; align-items: flex-start;"><span class="pw-stat-label">New this week</span><span class="pw-stat-value">4</span></div>
+                        <div class="pw-stat" style="flex-direction: column; align-items: flex-start;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
+                        <div class="pw-stat" style="flex-direction: column; align-items: flex-start;"><span class="pw-stat-label">Avg LTV</span><span class="pw-stat-value">$184</span></div>
+                        <div class="pw-stat" style="flex-direction: column; align-items: flex-start;"><span class="pw-stat-label">Total active</span><span class="pw-stat-value">128</span></div>
+                    </div>
+                @else
+                    <div class="pw-stat"><span class="pw-stat-label">New this week</span><span class="pw-stat-value">4</span></div>
+                    <div class="pw-stat" style="margin-top: 8px;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
+                @endif
                 @break
             @case('weekly_revenue')
                 @php
@@ -228,16 +237,31 @@
                 </div>
                 @break
             @case('baking_sheet')
-                @foreach (['Chocolate Cake ×2', 'Banana Bread ×4', 'Sugar Cookies ×24'] as $item)
+                @php
+                    $items = ($widget['size'] ?? 'md') === 'lg'
+                        ? ['Chocolate Cake ×2' => true, 'Banana Bread ×4' => true, 'Sugar Cookies ×24' => false, 'Croissants ×12' => false, 'Sourdough ×6' => false, 'Muffins ×8' => false]
+                        : ['Chocolate Cake ×2' => true, 'Banana Bread ×4' => true, 'Sugar Cookies ×24' => false];
+                    $done = count(array_filter($items));
+                @endphp
+                @if (($widget['size'] ?? 'md') === 'lg')
+                    <div class="pw-stat" style="margin-bottom: 6px;"><span class="pw-stat-label">Progress</span><span class="pw-stat-value">{{ $done }}/{{ count($items) }}</span></div>
+                @endif
+                @foreach ($items as $item => $isDone)
                     <div class="pw-row">
-                        <span>{{ $item }}</span>
-                        <span style="color: #d4a574;">○</span>
+                        <span @if ($isDone) style="color: #a08060; text-decoration: line-through;" @endif>{{ $item }}</span>
+                        <span style="color: {{ $isDone ? '#6b9e3a' : '#d4a574' }};">{{ $isDone ? '●' : '○' }}</span>
                     </div>
                 @endforeach
                 @break
             @case('inbox')
                 <div class="pw-stat"><span class="pw-stat-label">Unread</span><span class="pw-stat-value">3</span></div>
-                <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">Latest: "Can I add to my order?"</div>
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    @foreach (['Sarah M.' => 'Can I add to my order?', 'Mike R.' => 'Question about delivery time', 'Lisa K.' => 'Cake feedback - thanks!'] as $name => $msg)
+                        <div class="pw-row"><span style="color: #6b4c3b; font-weight: 600;">{{ $name }}</span><span style="color: #a08060; font-style: italic;">{{ \Illuminate\Support\Str::limit($msg, 24) }}</span></div>
+                    @endforeach
+                @else
+                    <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">Latest: "Can I add to my order?"</div>
+                @endif
                 @break
             @case('margin_alert')
                 @php
@@ -287,17 +311,28 @@
                 <div style="font-size: 0.6rem; color: #6b9e3a; margin-top: 2px;">↑ 12% vs yesterday</div>
                 @break
             @case('coupon_usage')
+                @php
+                    $coupons = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['WELCOME10' => 23, 'SPRING20' => 8, 'BDAY15' => 12, 'LOYAL5' => 6]
+                        : ['WELCOME10' => 23, 'SPRING20' => 8];
+                @endphp
                 <div class="pw-stat"><span class="pw-stat-label">Active</span><span class="pw-stat-value">4</span></div>
-                <div class="pw-row" style="margin-top: 6px;"><span>WELCOME10</span><span>23 uses</span></div>
-                <div class="pw-row"><span>SPRING20</span><span>8 uses</span></div>
+                @foreach ($coupons as $code => $uses)
+                    <div class="pw-row" @if ($loop->first) style="margin-top: 6px;" @endif><span>{{ $code }}</span><span>{{ $uses }} uses</span></div>
+                @endforeach
                 @break
             @case('gift_card_balance')
                 <div class="pw-stat"><span class="pw-stat-label">Outstanding</span><span class="pw-stat-value">$340</span></div>
                 <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">12 active cards</div>
                 @break
             @case('loyalty_leaders')
-                @foreach (['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts'] as $name => $pts)
-                    <div class="pw-row"><span>{{ $name }}</span><span>{{ $pts }}</span></div>
+                @php
+                    $leaders = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts', 'Emma T.' => '240 pts', 'James P.' => '195 pts']
+                        : ['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts'];
+                @endphp
+                @foreach ($leaders as $name => $pts)
+                    <div class="pw-row"><span>{{ $loop->iteration }}. {{ $name }}</span><span>{{ $pts }}</span></div>
                 @endforeach
                 @break
             @case('capacity_today')
@@ -316,11 +351,24 @@
             @case('catering_pipeline')
                 <div class="pw-stat"><span class="pw-stat-label">Open</span><span class="pw-stat-value">3</span></div>
                 <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Pipeline: $1,250</div>
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div style="margin-top: 8px; padding: 6px 8px; background: #fdf8f2; border-radius: 6px;">
+                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Latest Inquiry</div>
+                        <div style="font-size: 0.7rem; font-weight: 600; color: #3d2314;">Henderson Wedding</div>
+                        <div style="font-size: 0.6rem; color: #6b4c3b;">Wedding — Jun 12 — 80 guests</div>
+                    </div>
+                @endif
                 @break
             @case('seasonal_items')
                 <div class="pw-row"><span style="color: #6b9e3a;">● Coming Soon</span><span>2</span></div>
                 <div class="pw-row"><span style="color: #d4574a;">● Ending Soon</span><span>1</span></div>
                 <div class="pw-row"><span style="color: #d4a574;">● In Season</span><span>5</span></div>
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); font-size: 0.6rem; color: #6b4c3b; line-height: 1.4;">
+                        <div><span style="color: #d4574a;">↓</span> Easter Eggs ends in 3 days</div>
+                        <div><span style="color: #6b9e3a;">↑</span> Pumpkin Bread starts Sep 1</div>
+                    </div>
+                @endif
                 @break
             @case('review_summary')
                 <div style="display: flex; align-items: baseline; gap: 6px;">
@@ -328,28 +376,58 @@
                     <span style="font-size: 0.75rem; color: #e8b04a;">★★★★★</span>
                 </div>
                 <div style="font-size: 0.6rem; color: #a08060; margin-top: 2px;">28 reviews</div>
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div style="margin-top: 8px; padding: 6px 8px; background: #fdf8f2; border-radius: 6px;">
+                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Latest Review</div>
+                        <div style="font-size: 0.65rem; color: #6b4c3b; font-style: italic; line-height: 1.4;">"Best chocolate cake I've ever had! Will be back."</div>
+                        <div style="font-size: 0.55rem; color: #a08060; margin-top: 2px;">— Sarah M., 2 days ago</div>
+                    </div>
+                @endif
                 @break
             @case('reorder_reminders')
                 <div class="pw-stat"><span class="pw-stat-label">Lapsed</span><span class="pw-stat-value">6</span></div>
                 <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Haven't ordered in 30+ days</div>
                 @break
             @case('low_stock')
-                @foreach (['Flour' => '2 lbs', 'Butter' => '0 lbs', 'Vanilla' => '1 oz'] as $item => $remaining)
+                @php
+                    $items = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Flour' => '2 lbs', 'Butter' => '0 lbs', 'Vanilla' => '1 oz', 'Sugar' => '3 lbs', 'Cocoa' => '8 oz']
+                        : ['Flour' => '2 lbs', 'Butter' => '0 lbs', 'Vanilla' => '1 oz'];
+                @endphp
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div class="pw-stat" style="margin-bottom: 6px;"><span class="pw-stat-label">Items at risk</span><span class="pw-stat-value">5</span></div>
+                @endif
+                @foreach ($items as $item => $remaining)
                     <div class="pw-row"><span>{{ $item }}</span><span style="color: #d4574a;">{{ $remaining }}</span></div>
                 @endforeach
                 @break
             @case('at_risk_customers')
-                @foreach (['Sarah M.' => '45d ago', 'Mike R.' => '38d ago', 'Lisa K.' => '32d ago'] as $name => $when)
+                @php
+                    $atRisk = ($widget['size'] ?? 'md') === 'lg'
+                        ? ['Sarah M.' => '45d ago', 'Mike R.' => '38d ago', 'Lisa K.' => '32d ago', 'Emma T.' => '28d ago', 'James P.' => '24d ago']
+                        : ['Sarah M.' => '45d ago', 'Mike R.' => '38d ago', 'Lisa K.' => '32d ago'];
+                @endphp
+                @foreach ($atRisk as $name => $when)
                     <div class="pw-row"><span>{{ $name }}</span><span>{{ $when }}</span></div>
                 @endforeach
                 @break
             @case('birthday')
-                @foreach (['Emma T.' => 'Tomorrow', 'James P.' => 'In 3 days', 'Olivia C.' => 'In 5 days'] as $name => $when)
+                @php
+                    $birthdays = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Emma T.' => 'Tomorrow', 'James P.' => 'In 3 days', 'Olivia C.' => 'In 5 days', 'Liam B.' => 'In 8 days', 'Ava S.' => 'In 12 days']
+                        : ['Emma T.' => 'Tomorrow', 'James P.' => 'In 3 days', 'Olivia C.' => 'In 5 days'];
+                @endphp
+                @foreach ($birthdays as $name => $when)
                     <div class="pw-row"><span>🎂 {{ $name }}</span><span>{{ $when }}</span></div>
                 @endforeach
                 @break
             @case('recent_activity')
-                @foreach (['2m ago' => 'New order #142', '15m ago' => 'Product updated', '1h ago' => 'Customer signed up'] as $when => $what)
+                @php
+                    $events = ($widget['size'] ?? 'md') === 'lg'
+                        ? ['2m ago' => 'New order #142', '15m ago' => 'Product updated', '1h ago' => 'Customer signed up', '2h ago' => 'Coupon WELCOME10 redeemed', '3h ago' => 'Review left — 5 stars', '4h ago' => 'Inventory adjusted']
+                        : ['2m ago' => 'New order #142', '15m ago' => 'Product updated', '1h ago' => 'Customer signed up'];
+                @endphp
+                @foreach ($events as $when => $what)
                     <div class="pw-row"><span>{{ $what }}</span><span>{{ $when }}</span></div>
                 @endforeach
                 @break
