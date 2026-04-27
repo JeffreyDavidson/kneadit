@@ -178,15 +178,15 @@
             @case('goal_tracker')
                 <div style="margin-bottom: 6px;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
-                        <span>Monthly Revenue</span><span>$850 / $1,200</span>
+                        <span>Monthly Goal</span><span>$2,450 / $5,000 · 49%</span>
                     </div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 71%;"></div></div>
+                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 49%;"></div></div>
                 </div>
                 <div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
-                        <span>New Customers</span><span>8 / 15</span>
+                        <span>Yearly Goal</span><span>$32,000 / $50,000 · 64%</span>
                     </div>
-                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 53%;"></div></div>
+                    <div class="pw-bar"><div class="pw-bar-fill" style="width: 64%;"></div></div>
                 </div>
                 @break
             @case('upcoming_holiday')
