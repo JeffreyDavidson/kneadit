@@ -1,7 +1,7 @@
 <x-filament-widgets::widget>
     <x-filament::section heading="Order Pipeline" icon="heroicon-o-funnel">
         <div class="flex flex-col gap-2">
-            @foreach ($this->getStages() as $stage)
+            @foreach ($this->getVisibleStages() as $stage)
                 <a href="{{ route('filament.admin.resources.orders.index', ['tableFilters[status][value]' => $stage['key']]) }}"
                    class="no-underline flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] border-l-4 transition-transform transition-shadow duration-150 hover:translate-x-1 hover:shadow-md {{ $stage['bgClass'] }} {{ $stage['borderClass'] }}">
                     <span class="font-bold text-xl min-w-9 text-center {{ $stage['textClass'] }}">

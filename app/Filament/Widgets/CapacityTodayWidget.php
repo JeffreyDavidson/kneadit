@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Operations\BlockedDate;
 use App\Models\Orders\Order;
 use App\Services\Inventory\CapacityCalculator;
@@ -13,10 +14,9 @@ use Illuminate\Support\Facades\Date;
 class CapacityTodayWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 17;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.capacity-today-widget';
 

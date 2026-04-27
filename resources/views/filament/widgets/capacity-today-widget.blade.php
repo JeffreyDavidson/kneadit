@@ -1,12 +1,16 @@
 <x-filament-widgets::widget>
     <x-filament::section heading="Order Capacity" icon="heroicon-o-chart-bar">
         @php
-            $today = $this->getTodayCapacity();
-            $tomorrow = $this->getTomorrowCapacity();
-            $blocked = $this->getBlockedDaysWarning();
+            // sm: today only — drop tomorrow + blocked days warning to keep
+            // the tile glanceable. md: full picture.
+            $days = $this->isSize('sm')
+                ? [['label' => 'Today', 'data' => $this->getTodayCapacity()]]
+                : [['label' => 'Today', 'data' => $this->getTodayCapacity()], ['label' => 'Tomorrow', 'data' => $this->getTomorrowCapacity()]];
+
+            $blocked = $this->isSize('sm') ? [] : $this->getBlockedDaysWarning();
         @endphp
 
-        @foreach ([['label' => 'Today', 'data' => $today], ['label' => 'Tomorrow', 'data' => $tomorrow]] as $day)
+        @foreach ($days as $day)
             @php
                 $pct = $day['data']['percentage'];
                 $barBg = $pct >= 90 ? '#dc2626' : ($pct >= 70 ? '#e8b04a' : '#d4a574');
