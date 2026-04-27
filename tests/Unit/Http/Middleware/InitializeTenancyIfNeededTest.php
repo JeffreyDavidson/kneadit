@@ -41,3 +41,19 @@ test('passes through for central domains', function () {
 
     expect($response->getContent())->toBe('OK');
 });
+
+test('returns 503 when central row exists but tenant SQLite file is missing', function () {
+    config(['tenancy.central_domains' => ['getkneadit.app']]);
+
+    $stancl = Mockery::mock(Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class);
+    $stancl->shouldReceive('handle')
+        ->andThrow(new Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException('tenantfoo'));
+    app()->instance(Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class, $stancl);
+
+    $middleware = new InitializeTenancyIfNeeded;
+    $request = Request::create('https://foo.getkneadit.app/admin');
+    $request->headers->set('HOST', 'foo.getkneadit.app');
+
+    expect(fn () => $middleware->handle($request, fn () => new Response('OK')))
+        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class, 'Bakery temporarily unavailable. Run `php artisan tenants:doctor --fix` to repair.');
+});
