@@ -1,8 +1,11 @@
 @props(['widget', 'configMode' => false, 'index' => null])
 
 @php
-    $columns = (\App\Enums\Filament\WidgetSize::tryFrom($widget['size'] ?? '') ?? \App\Enums\Filament\WidgetSize::Small)->columns();
+    $sizeEnum = \App\Enums\Filament\WidgetSize::tryFrom($widget['size'] ?? '') ?? \App\Enums\Filament\WidgetSize::Small;
+    $columns = $sizeEnum->columns();
+    $rows = $sizeEnum->rows();
     $isHidden = $configMode && ! ($widget['visible'] ?? true);
+    $isXl = $sizeEnum === \App\Enums\Filament\WidgetSize::ExtraLarge;
 @endphp
 
 <div
@@ -10,8 +13,9 @@
         'preview-widget',
         'config-tile' => $configMode,
         'is-hidden' => $isHidden,
+        'preview-widget-xl' => $isXl,
     ])
-    style="grid-column: span {{ $columns }};"
+    style="grid-column: span {{ $columns }}; grid-row: span {{ $rows }};"
     @if ($configMode) data-index="{{ $index }}" @endif
 >
     @if ($configMode)
@@ -76,49 +80,86 @@
                         </div>
                     </div>
                 </div>
+                @if (($widget['size'] ?? 'lg') === 'xl')
+                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; margin-bottom: 6px;">Recent activity</div>
+                        @foreach (['2m ago' => 'Order #142 · Sarah M.', '15m ago' => 'New review — 5 stars', '1h ago' => 'Customer signed up'] as $when => $what)
+                            <div class="pw-row"><span>{{ $what }}</span><span>{{ $when }}</span></div>
+                        @endforeach
+                    </div>
+                @endif
                 @break
             @case('stats_overview')
+                @php
+                    $isStatsXl = ($widget['size'] ?? 'lg') === 'xl';
+                    $sparklineHeight = $isStatsXl ? 36 : 16;
+                @endphp
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
                     @foreach ([
-                        ['label' => "Today's Orders", 'value' => '5', 'delta' => '+12%'],
-                        ['label' => 'Pending', 'value' => '2', 'delta' => 'Manageable'],
-                        ['label' => "Week's Revenue", 'value' => '$142', 'delta' => '+8%'],
-                        ['label' => 'Views Today', 'value' => '47', 'delta' => '+3%'],
+                        ['label' => "Today's Orders", 'value' => '5', 'delta' => '+12%', 'spark' => [20, 35, 25, 50, 40, 60, 55]],
+                        ['label' => 'Pending', 'value' => '2', 'delta' => 'Manageable', 'spark' => [40, 30, 20, 25, 35, 30, 25]],
+                        ['label' => "Week's Revenue", 'value' => '$142', 'delta' => '+8%', 'spark' => [30, 40, 50, 45, 60, 65, 70]],
+                        ['label' => 'Views Today', 'value' => '47', 'delta' => '+3%', 'spark' => [50, 60, 55, 65, 70, 65, 75]],
                     ] as $stat)
                         <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
                             <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; letter-spacing: 0.05em;">{{ $stat['label'] }}</div>
                             <div style="font-size: 0.95rem; font-weight: 700; color: #3d2314; line-height: 1.1;">{{ $stat['value'] }}</div>
                             <div style="font-size: 0.55rem; color: #6b9e3a; margin-top: 2px;">{{ $stat['delta'] }}</div>
-                            <div class="pw-line" style="height: 16px; margin-top: 4px;">
-                                @foreach ([20, 35, 25, 50, 40, 60, 55] as $h)
+                            <div class="pw-line" style="height: {{ $sparklineHeight }}px; margin-top: 4px;">
+                                @foreach ($stat['spark'] as $h)
                                     <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                                 @endforeach
                             </div>
                         </div>
                     @endforeach
                 </div>
+                @if ($isStatsXl)
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Avg vs 7-day</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">↑ 12%</div></div>
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Hours saved</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">2.4h</div></div>
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Conversion</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">11%</div></div>
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">New / Returning</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">3 / 2</div></div>
+                    </div>
+                @endif
                 @break
             @case('revenue_chart')
                 @php
-                    // md = 30-day window, lg = 90-day window (matches RevenueChartWidget::windowDays).
-                    $bars = ($widget['size'] ?? 'md') === 'lg'
-                        ? [30, 45, 20, 35, 60, 50, 80, 55, 40, 70, 45, 65, 90, 75, 50, 85, 60, 95, 70, 55, 80, 65, 75, 50, 85, 70, 95, 80, 65, 90]
-                        : [30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75];
-                    $label = ($widget['size'] ?? 'md') === 'lg' ? 'Last 90 Days · $4,820 ↑ 18%' : 'Last 30 Days · $1,540 ↑ 8%';
+                    // md = 30 days, lg = 90 days, xl = 90 days + breakdown table (matches RevenueChartWidget::windowDays).
+                    $size = $widget['size'] ?? 'md';
+                    $bars = match ($size) {
+                        'xl' => [30, 45, 20, 35, 60, 50, 80, 55, 40, 70, 45, 65, 90, 75, 50, 85, 60, 95, 70, 55, 80, 65, 75, 50, 85, 70, 95, 80, 65, 90, 55, 75, 60, 80, 65, 90, 70, 55, 80, 95],
+                        'lg' => [30, 45, 20, 35, 60, 50, 80, 55, 40, 70, 45, 65, 90, 75, 50, 85, 60, 95, 70, 55, 80, 65, 75, 50, 85, 70, 95, 80, 65, 90],
+                        default => [30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75],
+                    };
+                    $label = match ($size) {
+                        'xl' => 'Last 90 Days · $4,820 ↑ 18%',
+                        'lg' => 'Last 90 Days · $4,820 ↑ 18%',
+                        default => 'Last 30 Days · $1,540 ↑ 8%',
+                    };
+                    $axisLabels = match ($size) {
+                        'xl' => ['Jan', 'Jan 15', 'Feb', 'Feb 15', 'Mar', 'Mar 15', 'Apr'],
+                        'lg' => ['Jan', 'Jan 15', 'Feb', 'Feb 15', 'Mar', 'Mar 15'],
+                        default => ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
+                    };
                 @endphp
                 <div style="font-size: 0.6rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">{{ $label }}</div>
-                <div class="pw-line">
+                <div class="pw-line" @if ($size === 'xl') style="height: 80px;" @endif>
                     @foreach ($bars as $h)
                         <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                     @endforeach
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
-                    @if (($widget['size'] ?? 'md') === 'lg')
-                        <span>Jan</span><span>Feb</span><span>Mar</span>
-                    @else
-                        <span>Wk 1</span><span>Wk 2</span><span>Wk 3</span><span>Wk 4</span>
-                    @endif
+                    @foreach ($axisLabels as $label)
+                        <span>{{ $label }}</span>
+                    @endforeach
                 </div>
+                @if ($size === 'xl')
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Top Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">$480</div><div style="font-size: 0.55rem; color: #a08060;">Mar 12</div></div>
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Avg / Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">$54</div><div style="font-size: 0.55rem; color: #6b9e3a;">↑ vs prev 90d</div></div>
+                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Best Weekday</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">Saturday</div><div style="font-size: 0.55rem; color: #a08060;">$98 avg</div></div>
+                    </div>
+                @endif
                 @break
             @case('recent_orders')
             @case('upcoming_orders')
@@ -172,20 +213,22 @@
                 @break
             @case('weekly_revenue')
                 @php
-                    // lg adds last-week comparison overlay (matches WeeklyRevenueChart).
+                    // md = this week only, lg = + last week overlay, xl = + 4-week trend below.
+                    $size = $widget['size'] ?? 'md';
                     $thisWeek = [50, 70, 45, 80, 65, 90, 55];
                     $lastWeek = [40, 55, 60, 65, 50, 75, 60];
-                    $isLarge = ($widget['size'] ?? 'md') === 'lg';
+                    $isComparison = in_array($size, ['lg', 'xl'], true);
+                    $weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                 @endphp
-                @if ($isLarge)
+                @if ($isComparison)
                     <div style="display: flex; gap: 10px; font-size: 0.6rem; color: #a08060; margin-bottom: 4px;">
-                        <span><span class="pw-dot" style="background: var(--accent);"></span>This week</span>
-                        <span><span class="pw-dot" style="background: var(--border-medium);"></span>Last week</span>
+                        <span><span class="pw-dot" style="background: var(--accent);"></span>This week · $455</span>
+                        <span><span class="pw-dot" style="background: var(--border-medium);"></span>Last week · $405</span>
                     </div>
                 @endif
-                <div class="pw-line">
+                <div class="pw-line" @if ($size === 'xl') style="height: 60px;" @endif>
                     @foreach ($thisWeek as $i => $h)
-                        @if ($isLarge)
+                        @if ($isComparison)
                             <div style="flex: 1; display: flex; gap: 1px; align-items: end;">
                                 <div class="pw-line-bar" style="height: {{ $h }}%; background: var(--accent);"></div>
                                 <div class="pw-line-bar" style="height: {{ $lastWeek[$i] }}%;"></div>
@@ -196,8 +239,23 @@
                     @endforeach
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
-                    <span>Mon</span><span>Thu</span><span>Sun</span>
+                    @foreach ($weekdayLabels as $label)
+                        <span>{{ $label }}</span>
+                    @endforeach
                 </div>
+                @if ($size === 'xl')
+                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; margin-bottom: 6px;">4-week trend</div>
+                        <div class="pw-line" style="height: 32px;">
+                            @foreach ([60, 75, 80, 95] as $i => $h)
+                                <div style="flex: 1; padding: 0 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                    <div class="pw-line-bar" style="height: {{ $h }}%; background: var(--accent); width: 100%;"></div>
+                                    <div style="font-size: 0.55rem; color: #a08060;">Wk {{ $i + 1 }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
                 @break
             @case('order_funnel')
                 @php
