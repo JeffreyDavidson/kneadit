@@ -1,32 +1,65 @@
 <x-filament-widgets::widget>
-    @php $monthly = $this->monthlyData; $yearly = $this->yearlyData; @endphp
+    @php
+        $monthly = $this->monthlyData;
+        $yearly = $this->yearlyData;
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @foreach ([['key' => 'monthly', 'title' => 'Monthly Goal', 'data' => $monthly], ['key' => 'yearly', 'title' => 'Yearly Goal', 'data' => $yearly]] as $goal)
-            @php $d = $goal['data']; @endphp
-            <x-admin.card>
-                <x-slot:title>
-                    <div class="flex items-center justify-between gap-3">
-                        <span data-header-title>{{ $goal['title'] }}</span>
-                        <button wire:click="openEditModal('{{ $goal['key'] }}')" type="button" class="bg-white/20 border-0 text-white rounded-md px-3 py-1 cursor-pointer text-xs font-semibold">Edit</button>
+        $tone = function (float $percentage): array {
+            return match (true) {
+                $percentage >= 100 => ['accent' => 'emerald', 'label' => 'Goal exceeded'],
+                $percentage >= 75 => ['accent' => 'emerald', 'label' => 'On track'],
+                $percentage >= 30 => ['accent' => 'amber', 'label' => 'Building momentum'],
+                default => ['accent' => 'rose', 'label' => 'Falling behind'],
+            };
+        };
+    @endphp
+
+    <div class="flex flex-col gap-3">
+        @foreach ([
+            ['key' => 'monthly', 'eyebrow' => 'Monthly Revenue Goal', 'data' => $monthly],
+            ['key' => 'yearly', 'eyebrow' => 'Yearly Revenue Goal', 'data' => $yearly],
+        ] as $goal)
+            @php
+                $d = $goal['data'];
+                $t = $tone((float) $d['percentage']);
+                $remaining = max(0, $d['goal'] - $d['revenue']);
+            @endphp
+
+            <div class="rounded-xl border border-brand-100 bg-white px-5 py-4 flex items-center gap-5 flex-wrap">
+                <div class="w-11 h-11 rounded-xl bg-{{ $t['accent'] }}-50 border border-{{ $t['accent'] }}-200 flex items-center justify-center shrink-0">
+                    <x-heroicon-o-flag class="w-5 h-5 text-{{ $t['accent'] }}-600" />
+                </div>
+
+                <div class="shrink-0 min-w-55">
+                    <div class="text-[0.7rem] uppercase tracking-wider font-semibold text-brand-600">{{ $goal['eyebrow'] }}</div>
+                    <div class="text-brand-900 font-bold text-[1.05rem] leading-tight">
+                        @money($d['revenue'])
+                        <span class="text-brand-500 font-normal">of</span>
+                        ${{ number_format($d['goal'], 0) }}
                     </div>
-                </x-slot:title>
-
-                <div class="text-[0.8rem] text-brand-600 font-semibold mb-2">{{ $d['label'] }}</div>
-                <div class="bg-brand-100 rounded-full h-6 overflow-hidden mb-3">
-                    <div class="h-full rounded-full flex items-center justify-end pr-2 transition-all duration-500 bg-gradient-to-r from-brand-700 to-brand-900"
-                         style="width: {{ $d['percentage'] }}%; min-width: {{ $d['percentage'] > 5 ? 0 : 40 }}px;">
-                        @if ($d['percentage'] > 10)<span class="text-white text-[0.7rem] font-bold">{{ $d['percentage'] }}%</span>@endif
+                    <div class="text-[0.8rem] text-brand-500 mt-1">
+                        {{ $d['label'] }} ·
+                        @if ($d['percentage'] >= 100)
+                            Beat goal by <strong class="text-{{ $t['accent'] }}-700">@money($d['revenue'] - $d['goal'])</strong>
+                        @else
+                            <strong class="text-{{ $t['accent'] }}-700">@money($remaining)</strong> to go
+                        @endif
                     </div>
                 </div>
-                <div class="flex justify-between items-baseline">
-                    <div>
-                        <span class="font-display text-[1.4rem] font-bold text-brand-900">@money($d['revenue'])</span>
-                        <span class="text-[0.8rem] text-brand-600"> / ${{ number_format($d['goal'], 0) }}</span>
+
+                <div class="flex items-center gap-3 flex-1 min-w-65">
+                    <div class="bg-brand-100 rounded-full h-2 overflow-hidden flex-1">
+                        <div class="h-full rounded-full bg-linear-to-r from-{{ $t['accent'] }}-400 to-{{ $t['accent'] }}-600 transition-all"
+                             style="width: {{ $d['percentage'] }}%;"></div>
                     </div>
-                    <span class="text-[1.1rem] font-bold {{ $d['percentage'] >= 100 ? 'text-emerald-600' : 'text-brand-900' }}">{{ $d['percentage'] }}%</span>
+                    <span class="text-{{ $t['accent'] }}-700 text-[0.95rem] font-bold tabular-nums shrink-0">{{ $d['percentage'] }}%</span>
                 </div>
-            </x-admin.card>
+
+                <button wire:click="openEditModal('{{ $goal['key'] }}')" type="button"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-brand-50 text-brand-700 border border-brand-100 hover:bg-brand-100 transition-colors shrink-0">
+                    <x-heroicon-o-pencil-square class="w-3.5 h-3.5" />
+                    Edit
+                </button>
+            </div>
         @endforeach
     </div>
 
