@@ -1,10 +1,51 @@
-@props(['widget'])
+@props(['widget', 'configMode' => false, 'index' => null])
 
 @php
     $columns = (\App\Enums\Filament\WidgetSize::tryFrom($widget['size'] ?? '') ?? \App\Enums\Filament\WidgetSize::Small)->columns();
+    $isHidden = $configMode && ! ($widget['visible'] ?? true);
 @endphp
 
-<div class="preview-widget" style="grid-column: span {{ $columns }};">
+<div
+    @class([
+        'preview-widget',
+        'config-tile' => $configMode,
+        'is-hidden' => $isHidden,
+    ])
+    style="grid-column: span {{ $columns }};"
+    @if ($configMode) data-index="{{ $index }}" @endif
+>
+    @if ($configMode)
+        <div class="config-controls">
+            <button type="button" class="config-ctrl config-drag" title="Drag to reorder">
+                <x-heroicon-s-bars-3 class="w-4 h-4" />
+            </button>
+
+            <div class="config-size-group">
+                @foreach (\App\Enums\Filament\WidgetSize::cases() as $size)
+                    <button
+                        type="button"
+                        class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
+                        wire:click="setSize({{ $index }}, '{{ $size->value }}')"
+                        title="{{ $size->label() }} ({{ $size->columns() }}/3 width)"
+                    >{{ strtoupper($size->value) }}</button>
+                @endforeach
+            </div>
+
+            <button
+                type="button"
+                class="config-ctrl config-toggle {{ ($widget['visible'] ?? true) ? 'is-on' : 'is-off' }}"
+                wire:click="toggleWidget({{ $index }})"
+                title="{{ ($widget['visible'] ?? true) ? 'Hide widget' : 'Show widget' }}"
+            >
+                @if ($widget['visible'] ?? true)
+                    <x-heroicon-s-eye class="w-4 h-4" />
+                @else
+                    <x-heroicon-s-eye-slash class="w-4 h-4" />
+                @endif
+            </button>
+        </div>
+    @endif
+
     <div class="preview-widget-header">
         <span class="pw-icon">{{ $widget['icon'] }}</span>
         <span>{{ $widget['name'] }}</span>
