@@ -1,37 +1,29 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Upcoming Orders" icon="heroicon-o-calendar-days">
-        @php $groups = $this->getUpcomingOrders(); @endphp
+@php
+    $groups = $this->getUpcomingOrders();
+    $hasOrderRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.view');
+@endphp
 
-        @forelse ($groups as $date => $group)
-            <div class="mb-4">
-                <div class="font-semibold text-[0.8rem] uppercase tracking-wider text-brand-600 mb-2 pb-1 border-b-2 border-brand-200">
-                    {{ $group['label'] }} ({{ count($group['orders']) }})
-                </div>
-                @php
-                    $hasOrderRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.view');
-                @endphp
-                @foreach ($group['orders'] as $order)
-                    @php
-                        $tag = $hasOrderRoute ? 'a' : 'div';
-                        $href = $hasOrderRoute ? route('filament.admin.resources.orders.view', $order['id']) : null;
-                    @endphp
-                    <{{ $tag }} @if ($href) href="{{ $href }}" @endif
-                       class="flex justify-between items-center px-2.5 py-2 rounded-lg no-underline text-inherit mb-1 transition-colors hover:bg-brand-100">
-                        <div>
-                            <span class="font-semibold text-[0.85rem] text-brand-900">{{ $order['customer'] }}</span>
-                            <span class="text-xs text-brand-500 ml-1.5">{{ $order['items'] }} items</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[0.8rem] text-brand-500">{{ $order['time'] }}</span>
-                            <span class="text-[0.8rem] font-semibold text-brand-600 ml-2">${{ $order['total'] }}</span>
-                        </div>
-                    </{{ $tag }}>
-                @endforeach
+<x-admin.dashboard.preview-card heading="Upcoming Orders" icon="📅">
+    @forelse ($groups as $date => $group)
+        <div @class(['mt-3' => ! $loop->first])>
+            <div class="pw-stat" style="margin-bottom: 4px;">
+                <span class="pw-stat-label">{{ $group['label'] }}</span>
+                <span style="font-size: 0.65rem; color: var(--pw-card-text-muted);">{{ count($group['orders']) }} order{{ count($group['orders']) === 1 ? '' : 's' }}</span>
             </div>
-        @empty
-            <div class="text-center p-6 text-brand-500">
-                <p class="m-0">No upcoming orders in the next 3 days</p>
-            </div>
-        @endforelse
-    </x-filament::section>
-</x-filament-widgets::widget>
+            @foreach ($group['orders'] as $order)
+                <x-admin.dashboard.list-row :value="$order['time']">
+                    @if ($hasOrderRoute)
+                        <a href="{{ route('filament.admin.resources.orders.view', $order['id']) }}" style="color: var(--pw-card-accent); text-decoration: none;">{{ $order['customer'] }}</a>
+                    @else
+                        <span style="color: var(--pw-card-text);">{{ $order['customer'] }}</span>
+                    @endif
+                    <span style="color: var(--pw-card-text-muted); margin-left: 6px;">{{ $order['items'] }} item{{ $order['items'] === 1 ? '' : 's' }} · ${{ $order['total'] }}</span>
+                </x-admin.dashboard.list-row>
+            @endforeach
+        </div>
+    @empty
+        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
+            No upcoming orders in the next few days
+        </div>
+    @endforelse
+</x-admin.dashboard.preview-card>

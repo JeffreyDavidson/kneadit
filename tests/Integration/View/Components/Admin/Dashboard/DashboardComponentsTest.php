@@ -45,6 +45,18 @@ test('list-row renders label, optional value, and optional dot', function () {
         ->not->toContain('class="pw-dot"');
 });
 
+test('list-row falls back to slot content when label is omitted', function () {
+    $html = Blade::render(
+        '<x-admin.dashboard.list-row value="$28"><a href="/foo">Order #100</a> — Sarah M.</x-admin.dashboard.list-row>',
+    );
+
+    expect($html)
+        ->toContain('class="pw-row')
+        ->toContain('<a href="/foo">Order #100</a>')
+        ->toContain('Sarah M.')
+        ->toContain('$28');
+});
+
 test('bar-row renders label with computed pct fallback or explicit value text', function () {
     $defaultValue = Blade::render(
         '<x-admin.dashboard.bar-row label="Chocolate Cake" pct="85" />',
