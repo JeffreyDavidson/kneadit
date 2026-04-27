@@ -39,7 +39,9 @@ class GiftCardBalanceWidget extends Widget
             ->get()
             ->map(fn (GiftCardTransaction $t) => [
                 'code' => $t->giftCard->code ?? 'N/A',
-                'amount' => $t->amount ?? 0,
+                // Store cents not Money so abs()/format math works on the cached array
+                // (Money::__toString returns "$X.XX" which parses as 0 in numeric context).
+                'amount_cents' => $t->amount?->cents() ?? 0,
                 'date' => $t->created_at?->diffForHumans(),
             ])
             ->all());

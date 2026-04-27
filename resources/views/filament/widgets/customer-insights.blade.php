@@ -1,39 +1,22 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Customer Insights" icon="heroicon-o-user-group">
-        @php $avg = $this->getAvgOrderValue(); @endphp
-        <div class="flex flex-col gap-4">
-            @php
-                $rows = [
-                    ['label' => 'New This Week', 'value' => $this->getNewCustomersThisWeek(), 'icon' => 'heroicon-s-user-plus', 'gradient' => 'from-brand-50 to-brand-100', 'iconBg' => 'bg-brand-700', 'labelColor' => 'text-brand-700', 'extra' => null],
-                    ['label' => 'Repeat Rate', 'value' => $this->getRepeatCustomerRate().'%', 'icon' => 'heroicon-s-arrow-path-rounded-square', 'gradient' => 'from-brand-100 to-brand-200', 'iconBg' => 'bg-brand-300', 'labelColor' => 'text-amber-800', 'extra' => null],
-                    ['label' => 'Avg Order Value', 'value' => null, 'icon' => 'heroicon-s-currency-dollar', 'gradient' => 'from-brand-150 to-brand-100', 'iconBg' => 'bg-brand-600', 'labelColor' => 'text-brand-600', 'extra' => 'aov'],
-                ];
+@php
+    $avg = $this->getAvgOrderValue();
+    $newThisWeek = $this->getNewCustomersThisWeek();
+    $repeatRate = $this->getRepeatCustomerRate();
+@endphp
 
-                // sm: drop AOV (least time-sensitive); md: all three.
-                if ($this->isSize('sm')) {
-                    $rows = array_slice($rows, 0, 2);
-                }
-            @endphp
-            @foreach ($rows as $row)
-                <div class="flex justify-between items-center px-4 py-3.5 rounded-xl bg-gradient-to-br {{ $row['gradient'] }}">
-                    <div>
-                        <div class="text-[0.78rem] uppercase font-semibold tracking-wider {{ $row['labelColor'] }}">{{ $row['label'] }}</div>
-                        <div class="text-2xl font-bold text-brand-900">
-                            @if ($row['extra'] === 'aov')
-                                @money($avg['value'])
-                                <span class="text-[0.85rem] {{ $avg['trend'] === 'up' ? 'text-emerald-600' : 'text-red-600' }}">
-                                    {{ $avg['trend'] === 'up' ? '↑' : '↓' }}
-                                </span>
-                            @else
-                                {{ $row['value'] }}
-                            @endif
-                        </div>
-                    </div>
-                    <div class="text-white w-10 h-10 rounded-xl flex items-center justify-center {{ $row['iconBg'] }}">
-                        <x-dynamic-component :component="$row['icon']" class="w-5 h-5" />
-                    </div>
-                </div>
-            @endforeach
+<x-admin.dashboard.preview-card heading="Customer Insights" icon="👥">
+    <x-admin.dashboard.stat-row label="New This Week" :value="$newThisWeek" />
+    <x-admin.dashboard.stat-row label="Repeat Rate" :value="$repeatRate.'%'" class="mt-2" />
+
+    @unless ($this->isSize('sm'))
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--pw-card-border-subtle);">
+            <span class="pw-stat-label">Avg Order Value</span>
+            <span style="font-size: 1.4rem; font-weight: 700; color: var(--pw-card-text);">
+                @money($avg['value'])
+                <span style="font-size: 0.85rem; color: {{ $avg['trend'] === 'up' ? '#6b9e3a' : '#d4574a' }}; margin-left: 4px;">
+                    {{ $avg['trend'] === 'up' ? '↑' : '↓' }}
+                </span>
+            </span>
         </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+    @endunless
+</x-admin.dashboard.preview-card>
