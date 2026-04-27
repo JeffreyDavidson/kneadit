@@ -4,28 +4,23 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Engagement\PageView;
-use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Number;
+use Filament\Widgets\Widget;
 
-class StorefrontViewsWidget extends BaseWidget
+class StorefrontViewsWidget extends Widget
 {
     use CachesWidgetData;
 
-    protected ?string $pollingInterval = null;
-
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 1;
+    protected string $view = 'filament.widgets.storefront-views';
 
-    protected function getStats(): array
+    /** @return array<string, mixed> */
+    public function getCardData(): array
     {
-        $data = $this->cached('main', [60, 120], function (): array {
+        return $this->cached('main', [60, 120], function (): array {
             $today = today();
             $chart = [];
 
-            // 7-day series ending today (oldest → newest).
             for ($i = 6; $i >= 0; $i--) {
                 $day = $today->copy()->subDays($i);
                 $chart[] = PageView::query()->whereNull('product_id')
@@ -40,23 +35,20 @@ class StorefrontViewsWidget extends BaseWidget
                 ? (int) round((($todayCount - $yesterdayCount) / $yesterdayCount) * 100)
                 : ($todayCount > 0 ? 100 : 0);
 
-            return ['today' => $todayCount, 'trend' => $trend, 'chart' => $chart];
+            $max = max($chart) ?: 1;
+            $normalised = array_map(fn (int $v): int => (int) round($v / $max * 100), $chart);
+
+            return [
+                'today' => $todayCount,
+                'trend' => $trend,
+                'chart' => $normalised,
+            ];
         });
+    }
 
-        $trend = $data['trend'];
-        $description = $trend >= 0 ? "{$trend}% above yesterday" : abs($trend) . '% below yesterday';
-        $icon = $trend >= 0 ? Heroicon::ArrowTrendingUp : Heroicon::ArrowTrendingDown;
-        $color = $trend >= 0 ? 'success' : 'warning';
-
-        return [
-            Stat::make('Storefront Views Today', Number::format($data['today']))
-                ->description($description)
-                ->descriptionIcon($icon)
-                ->color($color)
-                ->chart($data['chart'])
-                ->chartColor($color)
-                ->url('/admin/storefront-analytics'),
-        ];
+    public function getViewAllUrl(): string
+    {
+        return '/admin/storefront-analytics';
     }
 
     protected function cachePrefix(): string
