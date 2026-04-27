@@ -1,40 +1,36 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Order Capacity" icon="heroicon-o-chart-bar">
+@php
+    // sm: today only — drop tomorrow + blocked days warning to keep
+    // the tile glanceable. md: full picture.
+    $days = $this->isSize('sm')
+        ? [['label' => 'Today', 'data' => $this->getTodayCapacity()]]
+        : [['label' => 'Today', 'data' => $this->getTodayCapacity()], ['label' => 'Tomorrow', 'data' => $this->getTomorrowCapacity()]];
+
+    $blocked = $this->isSize('sm') ? [] : $this->getBlockedDaysWarning();
+@endphp
+
+<x-admin.dashboard.preview-card heading="Order Capacity" icon="⏰">
+    @foreach ($days as $day)
         @php
-            // sm: today only — drop tomorrow + blocked days warning to keep
-            // the tile glanceable. md: full picture.
-            $days = $this->isSize('sm')
-                ? [['label' => 'Today', 'data' => $this->getTodayCapacity()]]
-                : [['label' => 'Today', 'data' => $this->getTodayCapacity()], ['label' => 'Tomorrow', 'data' => $this->getTomorrowCapacity()]];
-
-            $blocked = $this->isSize('sm') ? [] : $this->getBlockedDaysWarning();
+            $pct = $day['data']['percentage'];
+            $barColor = $pct >= 90 ? '#dc2626' : ($pct >= 70 ? '#e8b04a' : 'var(--pw-card-accent)');
         @endphp
-
-        @foreach ($days as $day)
-            @php
-                $pct = $day['data']['percentage'];
-                $barBg = $pct >= 90 ? '#dc2626' : ($pct >= 70 ? '#e8b04a' : '#d4a574');
-            @endphp
-            <div class="mb-4">
-                <div class="flex justify-between mb-1.5 text-[0.8rem]">
-                    <span class="font-semibold text-brand-900">{{ $day['label'] }}</span>
-                    <span class="text-brand-700">{{ $day['data']['current'] }} / {{ $day['data']['max'] }} orders ({{ $pct }}%)</span>
-                </div>
-                <div class="bg-brand-50 rounded-full h-3 overflow-hidden">
-                    <div class="h-full rounded-full transition-all duration-300" style="width: {{ $pct }}%; background: {{ $barBg }};"></div>
-                </div>
+        <div style="margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px;">
+                <span style="font-weight: 600; color: var(--pw-card-text);">{{ $day['label'] }}</span>
+                <span style="color: var(--pw-card-text-muted);">{{ $day['data']['current'] }} / {{ $day['data']['max'] }} ({{ $pct }}%)</span>
             </div>
-        @endforeach
+            <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $pct }}%; background: {{ $barColor }};"></div></div>
+        </div>
+    @endforeach
 
-        @if (count($blocked) > 0)
-            <div class="px-3 py-2.5 bg-red-600/10 border border-red-600/30 rounded-lg mt-1">
-                <div class="text-xs font-semibold text-red-600 mb-1.5">Blocked Days This Week</div>
-                @foreach ($blocked as $b)
-                    <div class="text-[0.8rem] text-brand-700">
-                        <span class="font-semibold">{{ $b['date'] }}</span> — {{ $b['reason'] }}
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </x-filament::section>
-</x-filament-widgets::widget>
+    @if (count($blocked) > 0)
+        <div style="margin-top: 10px; padding: 6px 10px; background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px;">
+            <div style="font-size: 0.55rem; color: #d4574a; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Blocked Days This Week</div>
+            @foreach ($blocked as $b)
+                <div style="font-size: 0.7rem; color: var(--pw-card-text);">
+                    <span style="font-weight: 600;">{{ $b['date'] }}</span> — {{ $b['reason'] }}
+                </div>
+            @endforeach
+        </div>
+    @endif
+</x-admin.dashboard.preview-card>
