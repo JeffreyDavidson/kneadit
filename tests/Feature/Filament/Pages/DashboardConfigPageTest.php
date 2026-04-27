@@ -75,10 +75,28 @@ test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and al
         ->toBe(App\Enums\Filament\WidgetSize::cases());
 });
 
+test('saved sizes that violate allowedSizes are clamped to the widget default on load', function () {
+    // welcome_banner is locked to lg; a config saved before that constraint
+    // landed could still have it set to sm. Loading should clamp to lg.
+    resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
+        'welcome_banner' => ['visible' => true, 'order' => 1, 'size' => 'sm'],
+        'storefront_views' => ['visible' => true, 'order' => 2, 'size' => 'lg'],
+    ]));
+
+    $page = Livewire::test(DashboardConfig::class);
+    $widgets = collect($page->get('widgets'))->keyBy('key');
+
+    expect($widgets['welcome_banner']['size'])->toBe('lg')
+        ->and($widgets['storefront_views']['size'])->toBe('sm');
+});
+
 test('legacy integer span values are migrated to t-shirt sizes on load', function () {
+    // Use widgets whose allowedSizes accept the migrated value so the
+    // legacy → modern mapping is observable. (See the clamping test
+    // above for what happens when the migrated value is disallowed.)
     resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
         'recent_orders' => ['visible' => true, 'order' => 1, 'span' => 1],
-        'welcome_banner' => ['visible' => true, 'order' => 2, 'span' => 2],
+        'todays_orders' => ['visible' => true, 'order' => 2, 'span' => 2],
         'stats_overview' => ['visible' => true, 'order' => 3, 'span' => 3],
     ]));
 
@@ -86,7 +104,7 @@ test('legacy integer span values are migrated to t-shirt sizes on load', functio
     $widgets = collect($page->get('widgets'))->keyBy('key');
 
     expect($widgets['recent_orders']['size'])->toBe('sm')
-        ->and($widgets['welcome_banner']['size'])->toBe('md')
+        ->and($widgets['todays_orders']['size'])->toBe('md')
         ->and($widgets['stats_overview']['size'])->toBe('lg');
 });
 

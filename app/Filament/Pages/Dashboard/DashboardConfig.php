@@ -58,7 +58,7 @@ class DashboardConfig extends Page
             $this->widgets[] = [
                 'key' => $key,
                 'visible' => $settings['visible'] ?? true,
-                'size' => $this->resolveSize($settings, $widgetMeta[$key]),
+                'size' => $this->resolveSize($key, $settings, $widgetMeta[$key]),
                 'name' => $widgetMeta[$key]['name'],
                 'description' => $widgetMeta[$key]['description'],
                 'icon' => $widgetMeta[$key]['icon'],
@@ -83,22 +83,30 @@ class DashboardConfig extends Page
     /**
      * Resolve the size for a widget from its saved settings, with a
      * fall-back chain that handles legacy integer span values from
-     * older saved configs.
+     * older saved configs AND clamps disallowed sizes to the widget's
+     * default (a saved 'sm' for welcome_banner, e.g., gets clamped
+     * to 'lg' since allowedSizes won't include sm anymore).
      *
      * @param array<string, mixed> $settings
      * @param array<string, mixed> $meta
      */
-    private function resolveSize(array $settings, array $meta): string
+    private function resolveSize(string $key, array $settings, array $meta): string
     {
-        if (isset($settings['size']) && WidgetSize::tryFrom((string) $settings['size'])) {
-            return (string) $settings['size'];
+        $resolved = match (true) {
+            isset($settings['size']) && WidgetSize::tryFrom((string) $settings['size']) !== null => WidgetSize::tryFrom((string) $settings['size']),
+
+            isset($settings['span']) => WidgetSize::fromLegacySpan((int) $settings['span']),
+
+            default => $meta['defaultSize'] ?? WidgetSize::Small,
+        };
+
+        $allowed = WidgetMeta::allowedSizesFor($key);
+
+        if (! in_array($resolved, $allowed, true)) {
+            $resolved = $meta['defaultSize'] ?? $allowed[0] ?? WidgetSize::Small;
         }
 
-        if (isset($settings['span'])) {
-            return WidgetSize::fromLegacySpan((int) $settings['span'])->value;
-        }
-
-        return ($meta['defaultSize'] ?? WidgetSize::Small)->value;
+        return $resolved->value;
     }
 
     public function reorder(int $oldIndex, int $newIndex): void
