@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
@@ -13,10 +14,9 @@ use Illuminate\Support\Facades\Date;
 class CustomerInsightsWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 8;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.customer-insights';
 
