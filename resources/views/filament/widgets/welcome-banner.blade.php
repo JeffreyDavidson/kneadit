@@ -4,23 +4,23 @@
         <div class="absolute top-[-20px] right-[-20px] w-[120px] h-[120px] bg-white/10 rounded-full"></div>
         <div class="absolute bottom-[-30px] right-[60px] w-20 h-20 bg-white/5 rounded-full"></div>
 
-        <div class="flex flex-wrap justify-between items-start gap-5 relative z-10">
+        <div class="flex flex-wrap items-center gap-5 relative z-10">
             {{-- Left: Greeting --}}
-            <div>
+            <div class="shrink-0">
                 <h2 class="text-[1.65rem] font-bold m-0 mb-1 [text-shadow:0_1px_2px_rgba(0,0,0,0.15)]">
                     {{ $this->getGreeting() }}
                 </h2>
                 <p class="m-0 opacity-85 text-[0.95rem]">{{ $this->getTodayDate() }}</p>
             </div>
 
-            {{-- Right: Quick stats --}}
-            <div class="flex gap-4 flex-wrap">
+            {{-- Right: Quick stats — flex-1 absorbs leftover row width; each card grows to share it. --}}
+            <div class="flex gap-4 flex-wrap flex-1 justify-end">
                 @foreach ([
                     ['label' => 'Orders Today', 'value' => $this->getOrdersToday()],
                     ['label' => 'Revenue Today', 'value' => '$'.$this->getRevenueToday()],
                     ['label' => 'Pending', 'value' => $this->getPendingOrders(), 'highlight' => $this->getPendingOrders() > 0],
                 ] as $stat)
-                    <div class="bg-white/20 backdrop-blur rounded-xl px-5 py-3 text-center min-w-[100px]">
+                    <div class="bg-white/20 backdrop-blur rounded-xl px-5 py-3 text-center flex-1 min-w-30 max-w-50">
                         <div @class(['text-2xl font-bold', 'text-yellow-300' => $stat['highlight'] ?? false])>{{ $stat['value'] }}</div>
                         <div class="text-xs opacity-85 uppercase tracking-wider">{{ $stat['label'] }}</div>
                     </div>
