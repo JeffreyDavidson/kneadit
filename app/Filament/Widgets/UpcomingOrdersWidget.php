@@ -2,7 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
@@ -10,19 +12,20 @@ use Illuminate\Support\Facades\Date;
 class UpcomingOrdersWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 6;
-
-    protected int|string|array $columnSpan = ['md' => 1, 'xl' => 1];
 
     protected string $view = 'filament.widgets.upcoming-orders';
 
     /** @return array<string, mixed> */
     public function getUpcomingOrders(): array
     {
-        return $this->cached('upcoming_' . Date::today()->toDateString(), [600, 1200], function (): array {
+        $daysAhead = $this->daysAhead();
+
+        return $this->cached("upcoming_{$daysAhead}_" . Date::today()->toDateString(), [600, 1200], function () use ($daysAhead): array {
             $today = Date::today();
-            $endDate = $today->copy()->addDays(3);
+            $endDate = $today->copy()->addDays($daysAhead);
 
             $orders = Order::with('customer')->withCount('orderItems')
                 ->active()
@@ -59,5 +62,14 @@ class UpcomingOrdersWidget extends Widget
     protected function cachePrefix(): string
     {
         return 'upcoming_orders_widget';
+    }
+
+    private function daysAhead(): int
+    {
+        return match ($this->size()) {
+            WidgetSize::Small => 3,   // next 3 days (matches WidgetMeta description, preserves original behavior)
+            WidgetSize::Medium => 5,
+            WidgetSize::Large => 7,   // full week
+        };
     }
 }
