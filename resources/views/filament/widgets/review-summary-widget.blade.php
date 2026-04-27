@@ -1,52 +1,47 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Customer Reviews" icon="heroicon-o-star">
-        @php
-            $avg = $this->getAverageRating();
-            $total = $this->getTotalReviews();
-            $recent = $this->getRecentReview();
-            $dist = $this->getRatingDistribution();
-        @endphp
+@php
+    $avg = $this->getAverageRating();
+    $total = $this->getTotalReviews();
+    $recent = $this->getRecentReview();
+    $dist = $this->getRatingDistribution();
+@endphp
 
-        <div class="flex items-center gap-4 mb-4">
-            <div class="text-center">
-                <div class="text-3xl font-bold text-brand-900">{{ $avg ?: '—' }}</div>
-                <div class="text-golden text-[1.1rem] tracking-[2px]">
-                    @for ($i = 1; $i <= 5; $i++)
-                        {{ $i <= round($avg) ? '★' : '☆' }}
-                    @endfor
-                </div>
-                <div class="text-xs text-brand-700">{{ $total }} review{{ $total !== 1 ? 's' : '' }}</div>
+<x-admin.dashboard.preview-card heading="Customer Reviews" icon="⭐">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="text-align: center;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--pw-card-text);">{{ $avg ?: '—' }}</div>
+            <div style="color: var(--pw-card-accent-light); font-size: 0.85rem; letter-spacing: 2px;">
+                @for ($i = 1; $i <= 5; $i++)
+                    {{ $i <= round($avg) ? '★' : '☆' }}
+                @endfor
             </div>
-            {{-- sm: rating only. md: + per-rating distribution bars. --}}
-            @unless ($this->isSize('sm'))
-                <div class="flex-1">
-                    @foreach ($dist as $stars => $data)
-                        <div class="flex items-center gap-1.5 mb-1">
-                            <span class="text-[0.7rem] text-brand-700 w-3 text-right">{{ $stars }}</span>
-                            <div class="flex-1 bg-brand-50 rounded-full h-2 overflow-hidden">
-                                <div class="h-full bg-golden rounded-full" style="width: {{ $data['percentage'] }}%;"></div>
-                            </div>
-                            <span class="text-[0.65rem] text-brand-600 w-6">{{ $data['count'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            @endunless
+            <div style="font-size: 0.65rem; color: var(--pw-card-text-muted);">{{ $total }} review{{ $total !== 1 ? 's' : '' }}</div>
         </div>
 
-        {{-- Recent review only at md to keep sm scannable. --}}
         @unless ($this->isSize('sm'))
-            @if ($recent)
-                <div class="p-3 bg-brand-50 rounded-lg border-l-[3px] border-brand-300">
-                    <div class="text-xs text-brand-700 mb-1">
-                        {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}
+            <div style="flex: 1;">
+                @foreach ($dist as $stars => $data)
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+                        <span style="font-size: 0.65rem; color: var(--pw-card-text-muted); width: 10px; text-align: right;">{{ $stars }}</span>
+                        <div style="flex: 1;" class="pw-bar"><div class="pw-bar-fill" style="width: {{ $data['percentage'] }}%;"></div></div>
+                        <span style="font-size: 0.6rem; color: var(--pw-card-text-muted); width: 22px;">{{ $data['count'] }}</span>
                     </div>
-                    <div class="text-[0.8rem] text-brand-900 italic">
-                        "{{ \Illuminate\Support\Str::limit($recent->comment, 120) }}"
-                    </div>
-                </div>
-            @else
-                <div class="text-brand-600 italic text-[0.8rem]">No reviews yet</div>
-            @endif
+                @endforeach
+            </div>
         @endunless
-    </x-filament::section>
-</x-filament-widgets::widget>
+    </div>
+
+    @unless ($this->isSize('sm'))
+        @if ($recent)
+            <div style="margin-top: 12px; padding: 8px 10px; background: var(--pw-card-grad-start); border-left: 3px solid var(--pw-card-accent); border-radius: 6px;">
+                <div style="font-size: 0.6rem; color: var(--pw-card-text-muted); margin-bottom: 2px;">
+                    {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}
+                </div>
+                <div style="font-size: 0.7rem; color: var(--pw-card-text); font-style: italic; line-height: 1.4;">
+                    "{{ \Illuminate\Support\Str::limit($recent->comment, 120) }}"
+                </div>
+            </div>
+        @else
+            <div style="margin-top: 8px; font-size: 0.7rem; color: var(--pw-card-text-muted); font-style: italic;">No reviews yet</div>
+        @endif
+    @endunless
+</x-admin.dashboard.preview-card>
