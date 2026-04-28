@@ -22,6 +22,14 @@ class QuickOrder extends Page
 
     protected string $view = 'filament-panels::pages.page';
 
+    /**
+     * Hidden from the sidebar — Quick Order is now reached only via the
+     * Quick Actions widget on the dashboard ("New Order" button) and the
+     * colourful QuickActionsWidget icon grid. The route stays registered
+     * so those buttons keep working.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
