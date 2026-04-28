@@ -2,10 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Central\CentralThemes;
 use App\Filament\Central\Pages\Appearance;
 use App\Filament\Central\Pages\Dashboard;
 use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;
+use App\Filament\Shared\PanelThemes;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -61,7 +61,7 @@ class CentralPanelProvider extends PanelProvider
             ->renderHook('panels::head.end', fn () => new HtmlString(
                 // Inject the theme palette BEFORE the stylesheet so the CSS variables
                 // are defined when central-admin.css references them.
-                '<style>' . CentralThemes::rootCss() . '</style>'
+                '<style>' . PanelThemes::rootCss() . '</style>'
                 . '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . filemtime(public_path('css/central-admin.css')) . '">',
             ))
             ->renderHook('panels::body.end', fn () => new HtmlString('

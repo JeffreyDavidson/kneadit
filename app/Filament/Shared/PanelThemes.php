@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Central;
+namespace App\Filament\Shared;
 
 use Filament\Support\Colors\Color;
 
-class CentralThemes
+class PanelThemes
 {
     public const array AVAILABLE = [
         'honey' => 'Honey — warm browns + gold',
