@@ -37,7 +37,7 @@ class WidgetMeta
     /** @var array<string, array<string, mixed>> */
     public const array WIDGETS = [
         // Core — full-width heroes, single allowed size each.
-        'welcome_banner' => ['class' => WelcomeBannerWidget::class, 'name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large, WidgetSize::ExtraLarge]],
+        'welcome_banner' => ['class' => WelcomeBannerWidget::class, 'name' => 'Quick Actions', 'description' => 'Quick action buttons (new order, view orders, messages)', 'icon' => '⚡', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
         'stats_overview' => ['class' => StatsOverview::class, 'name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large, WidgetSize::ExtraLarge]],
 
         // Revenue & Finance — charts need horizontal room (XL adds vertical breakdown).
