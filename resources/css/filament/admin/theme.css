@@ -1,6 +1,5 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../shared/widget-cards.css';
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap");
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
