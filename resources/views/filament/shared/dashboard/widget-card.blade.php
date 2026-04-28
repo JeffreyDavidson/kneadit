@@ -64,30 +64,11 @@
     <div class="preview-widget-body">
         @switch($widget['key'])
             @case('welcome_banner')
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-size: 0.85rem; font-weight: 600; color: #3d2314;">Good evening!</div>
-                        <div style="font-size: 0.65rem; color: #a08060;">Saturday, March 14</div>
-                    </div>
-                    <div style="display: flex; gap: 6px;">
-                        <div style="background: #fdf8f2; border-radius: 6px; padding: 4px 8px; text-align: center;">
-                            <div style="font-size: 0.9rem; font-weight: 700; color: #3d2314;">3</div>
-                            <div style="font-size: 0.55rem; color: #a08060;">ORDERS</div>
-                        </div>
-                        <div style="background: #fdf8f2; border-radius: 6px; padding: 4px 8px; text-align: center;">
-                            <div style="font-size: 0.9rem; font-weight: 700; color: #3d2314;">$85</div>
-                            <div style="font-size: 0.55rem; color: #a08060;">REVENUE</div>
-                        </div>
-                    </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    @foreach (['+ New Order', '📄 View Orders', '✉ Messages'] as $label)
+                        <span style="font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--brand-800); color: var(--brand-100); border: 1px solid var(--border-subtle);">{{ $label }}</span>
+                    @endforeach
                 </div>
-                @if (($widget['size'] ?? 'lg') === 'xl')
-                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
-                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; margin-bottom: 6px;">Recent activity</div>
-                        @foreach (['2m ago' => 'Order #142 · Sarah M.', '15m ago' => 'New review — 5 stars', '1h ago' => 'Customer signed up'] as $when => $what)
-                            <div class="pw-row"><span>{{ $what }}</span><span>{{ $when }}</span></div>
-                        @endforeach
-                    </div>
-                @endif
                 @break
             @case('stats_overview')
                 @php
