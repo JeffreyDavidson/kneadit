@@ -58,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
             ])
             ->brandLogo(view('filament.brand-logo'))
-            ->brandLogoHeight('80px')
+            ->brandLogoHeight('36px')
             ->darkMode(false)
             ->navigationGroups([
                 NavigationGroup::make('Shop'),

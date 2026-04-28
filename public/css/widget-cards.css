@@ -117,3 +117,36 @@
     border-radius: 2px 2px 0 0;
     min-height: 4px;
 }
+
+/* ===================================================================
+   Compact ToggleColumn — shrinks Filament's default 24px-tall switch
+   so rows with toggles line up with rows that only have text columns.
+   Scoped to .fi-ta-toggle (the table cell wrapper) so form-context
+   toggles in slide-overs keep their default size.
+   =================================================================== */
+.fi-ta-toggle .fi-toggle {
+    height: calc(var(--spacing) * 4);
+    width: calc(var(--spacing) * 7);
+}
+.fi-ta-toggle .fi-toggle > :first-child {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+}
+.fi-ta-toggle .fi-toggle.fi-toggle-on > :first-child {
+    --tw-translate-x: calc(var(--spacing) * 3);
+}
+
+/* ===================================================================
+   Compact TextColumn descriptions — Filament's default ->description()
+   text uses text-sm + 4px row-gap, which makes any row with a
+   description ~30% taller than text-only rows. Tighten the gap and
+   shrink the secondary text so multi-line cells don't dominate.
+   =================================================================== */
+.fi-ta-text.fi-ta-text-has-descriptions:not(.fi-ta-text-has-badges) {
+    row-gap: 0;
+}
+.fi-ta-text > .fi-ta-text-description {
+    font-size: 0.7rem;
+    line-height: 1.1;
+    margin-top: 1px;
+}
