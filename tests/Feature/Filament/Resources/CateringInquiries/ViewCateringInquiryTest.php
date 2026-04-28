@@ -197,6 +197,22 @@ test('edit notes action persists changes', function () {
     expect($inquiry->fresh()->notes)->toBe('Talked to chef about gluten-free options.');
 });
 
+test('a cancelled inquiry hides the quote, booking, and deposit action buttons', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'status' => CateringInquiryStatus::Cancelled,
+        'quoted_amount' => 11800,
+        'deposit_paid_at' => null,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertDontSee('Manage items')
+        ->assertDontSee('Send quote')
+        ->assertDontSee('Resend')
+        ->assertDontSee('Confirm booking')
+        ->assertDontSee('Mark deposit received');
+});
+
 test('edit customer action updates contact fields', function () {
     $inquiry = CateringInquiry::factory()->create(['customer_name' => 'Old Name']);
 

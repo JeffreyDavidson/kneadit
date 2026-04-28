@@ -138,9 +138,15 @@
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Quote</div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    {{ $this->manageQuoteItemsAction }}
-                    {{ $this->sendQuoteAction }}
-                    {{ $this->resendQuoteAction }}
+                    @if ($this->manageQuoteItemsAction->isVisible())
+                        {{ $this->manageQuoteItemsAction }}
+                    @endif
+                    @if ($this->sendQuoteAction->isVisible())
+                        {{ $this->sendQuoteAction }}
+                    @endif
+                    @if ($this->resendQuoteAction->isVisible())
+                        {{ $this->resendQuoteAction }}
+                    @endif
                 </div>
             </div>
 
@@ -198,9 +204,15 @@
                         @endif
                     </div>
                 </div>
-                <div class="text-brand-400 text-[0.8rem] mt-2">Single-amount quote (added before items existed). Use <span class="text-brand-200 font-semibold">Manage items</span> to break it into line items.</div>
+                @if ($this->manageQuoteItemsAction->isVisible())
+                    <div class="text-brand-400 text-[0.8rem] mt-2">Single-amount quote (added before items existed). Use <span class="text-brand-200 font-semibold">Manage items</span> to break it into line items.</div>
+                @endif
             @else
-                <div class="text-brand-400 text-[0.9rem]">No items yet. Use <span class="text-brand-200 font-semibold">Manage items</span> to build the quote.</div>
+                @if ($this->manageQuoteItemsAction->isVisible())
+                    <div class="text-brand-400 text-[0.9rem]">No items yet. Use <span class="text-brand-200 font-semibold">Manage items</span> to build the quote.</div>
+                @else
+                    <div class="text-brand-400 text-[0.9rem]">No items.</div>
+                @endif
             @endif
         </div>
 
@@ -208,9 +220,9 @@
         <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Booking</div>
-                @unless ($order)
+                @if ($this->confirmBookingAction->isVisible())
                     {{ $this->confirmBookingAction }}
-                @endunless
+                @endif
             </div>
 
             @if ($order)
@@ -242,7 +254,9 @@
         <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Deposit</div>
-                {{ $this->markDepositReceivedAction }}
+                @if ($this->markDepositReceivedAction->isVisible())
+                    {{ $this->markDepositReceivedAction }}
+                @endif
             </div>
 
             @if ($depositPaid)
