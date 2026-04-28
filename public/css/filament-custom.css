@@ -446,16 +446,18 @@ input[type='checkbox'].fi-checkbox-input {
     --tw-ring-color: var(--brand-300) !important;
 }
 
-/* Bulk actions button — warm brand styling */
+/* Bulk actions button — translucent on the dark header to match the
+   search field's tone instead of standing out as a stark white button. */
 .fi-ta-header-toolbar .fi-dropdown .fi-btn {
-    background: rgba(255,255,255,0.95) !important;
-    color: var(--brand-800) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
+    background: rgba(255,255,255,0.12) !important;
+    color: rgba(255,255,255,0.95) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
     font-weight: 600 !important;
     font-size: 0.8rem !important;
 }
 .fi-ta-header-toolbar .fi-dropdown .fi-btn:hover {
-    background: #FFFFFF !important;
+    background: rgba(255,255,255,0.2) !important;
+    color: #FFFFFF !important;
 }
 
 /* Reorder trigger icon — white on dark header */
@@ -682,14 +684,24 @@ input[type='checkbox'].fi-checkbox-input {
     box-shadow: 0 4px 12px rgba(61,35,20,0.2) !important;
 }
 
-/* Dropdown panels (bulk actions, column toggle, etc.) */
-.fi-dropdown-panel {
+/* Dropdown panels (bulk actions, column toggle, etc.) — explicit white
+   surface so the menu floats clearly above the dark table header
+   instead of inheriting the brown gradient from its anchor. */
+body .fi-dropdown-panel,
+body div.fi-dropdown-panel {
+    background-color: #FFFFFF !important;
+    background-image: none !important;
     border: 1px solid rgba(0,0,0,0.08) !important;
     border-radius: 8px !important;
     box-shadow: 0 8px 30px rgba(61,35,20,0.12) !important;
 }
-.fi-dropdown-list-item-button:hover {
-    background: var(--brand-50) !important;
+body .fi-dropdown-list,
+body .fi-dropdown-list-item {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+body .fi-dropdown-list-item-button:hover {
+    background-color: var(--brand-50) !important;
 }
 .fi-dropdown-list-item-label {
     color: var(--brand-900) !important;
