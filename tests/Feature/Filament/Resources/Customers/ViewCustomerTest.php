@@ -14,7 +14,7 @@ beforeEach(function () {
     test()->actingAs(User::factory()->owner()->create());
 });
 
-test('renders the customer 360 page with header stats and recent orders', function () {
+test('renders the customer 360 page with header stats and order history', function () {
     $customer = Customer::factory()->create([
         'name' => 'Maya Patel',
         'email' => 'maya@example.com',
@@ -26,7 +26,7 @@ test('renders the customer 360 page with header stats and recent orders', functi
         ->assertOk()
         ->assertSee('Maya Patel')
         ->assertSee('maya@example.com')
-        ->assertSee('Recent orders');
+        ->assertSee('Order History');
 });
 
 test('shows the empty-state copy when the customer has no orders or notes', function () {
@@ -34,6 +34,6 @@ test('shows the empty-state copy when the customer has no orders or notes', func
 
     Livewire::test(ViewCustomer::class, ['record' => $customer->getRouteKey()])
         ->assertOk()
-        ->assertSee('No orders yet.')
-        ->assertSee('No notes yet.');
+        ->assertSee('No orders yet')
+        ->assertSee('No notes yet');
 });
