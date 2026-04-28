@@ -25,6 +25,11 @@ class OnboardingTracker extends Page
 
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
+    public function getSubheading(): ?string
+    {
+        return 'Monitor which bakers have completed their setup.';
+    }
+
     public string $filterStatus = 'all';
 
     public string $filterPlan = 'all';
