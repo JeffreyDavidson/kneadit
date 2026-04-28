@@ -6,12 +6,14 @@ use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Filament\Resources\Customers\CustomerResource;
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerNote;
 use App\Presenters\CustomerPresenter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\Rule;
 
 /**
  * Customer 360 — single-page aggregation of everything we know about
@@ -102,5 +104,42 @@ class ViewCustomer extends ViewRecord
         return [
             'detail' => CustomerPresenter::for($this->record)->toDetailArray(),
         ];
+    }
+
+    /** Inline note-add form state — mirrors the ViewTenant pattern. */
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
+
+    public function addNote(): void
+    {
+        $this->validate(['noteBody' => ['required', 'min:3']]);
+
+        $this->record->customerNotes()->create([
+            'note' => $this->noteBody,
+            'created_by' => auth()->id(),
+        ]);
+
+        $this->noteBody = '';
+        $this->record->load('customerNotes');
+
+        Notification::make()
+            ->title('Note added')
+            ->success()
+            ->send();
+    }
+
+    public function deleteNote(int $noteId): void
+    {
+        CustomerNote::query()
+            ->where('customer_id', $this->record->id)
+            ->where('id', $noteId)
+            ->delete();
+
+        $this->record->load('customerNotes');
+
+        Notification::make()
+            ->title('Note deleted')
+            ->success()
+            ->send();
     }
 }

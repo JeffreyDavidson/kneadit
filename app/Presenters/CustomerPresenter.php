@@ -139,6 +139,12 @@ final class CustomerPresenter
                 ? $totalSpent / $orderCount
                 : 0,
             'last_order' => $orders->first()?->created_at?->format('M j, Y'),
+            'last_order_at' => $orders->first()?->created_at,
+            'days_since_last_order' => $this->daysSinceLastOrder(),
+            'is_at_risk' => $this->isAtRisk(),
+            'total_points' => $this->totalPoints(),
+            'lifetime_points' => $this->lifetimePointsEarned(),
+            'created_at' => $this->customer->created_at,
         ];
     }
 }
