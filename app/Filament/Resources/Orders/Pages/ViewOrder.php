@@ -6,10 +6,13 @@ use App\Actions\Orders\AddOrderNote;
 use App\Actions\Orders\SendOrderMessage;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Enums\Orders\SenderType;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Orders\Order;
+use App\Services\PayPal\InvoiceService;
+use App\Services\PayPal\TokenManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -72,10 +75,34 @@ class ViewOrder extends ViewRecord
                 ->label('Send PayPal Invoice')
                 ->icon(Heroicon::OutlinedPaperAirplane)
                 ->color('info')
-                ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
+                ->requiresConfirmation()
+                ->modalHeading('Send PayPal Invoice')
+                ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
+                ->visible(
+                    fn (): bool => ! $this->record->paypal_invoice_id &&
+                    $this->record->payment_status === PaymentStatus::Unpaid &&
+                    in_array($this->record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready], true) &&
+                    resolve(TokenManager::class)->isConfigured(),
+                )
                 ->action(function (): void {
-                    // Stub — real send flow is on the OrdersTable row action.
-                    Notification::make()->title('PayPal invoice functionality coming soon.')->info()->send();
+                    $invoiceId = resolve(InvoiceService::class)->createAndSend($this->record);
+
+                    if ($invoiceId) {
+                        $this->record->refresh();
+
+                        Notification::make()
+                            ->title('PayPal invoice sent successfully')
+                            ->success()
+                            ->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title('Failed to send PayPal invoice')
+                        ->body('Check Settings → PayPal that the credentials are correct, then try again.')
+                        ->danger()
+                        ->send();
                 }),
 
             Action::make('printInvoice')
