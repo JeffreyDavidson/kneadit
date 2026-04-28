@@ -1,8 +1,10 @@
 @use(App\Presenters\OrderItemPresenter)
 @use(App\Enums\Orders\DeliveryType)
+@use(App\Enums\Orders\PaymentStatus)
 @php
     $brand = $settings->branding->brandColorPrimary ?? '#d4920c';
     $isDelivery = $order->delivery_type === DeliveryType::Delivery;
+    $isPaid = $order->payment_status === PaymentStatus::Paid;
     $logoUrl = $settings->store->logoUrl();
     $tagline = $settings->store->tagline ?: $settings->branding->businessTagline;
     $allergyDisclaimer = $settings->branding->allergyDisclaimer;
@@ -30,7 +32,10 @@
         </button>
     </div>
 
-    <main class="invoice">
+    <main class="invoice {{ $isPaid ? 'invoice--paid' : '' }}">
+        @if ($isPaid)
+            <div class="invoice__paid-stamp" aria-hidden="true">PAID</div>
+        @endif
         {{-- ============== HEADER ============== --}}
         <header class="invoice__header">
             <div class="invoice__brand">

@@ -2,6 +2,8 @@
 
 namespace App\DataTransferObjects\Settings;
 
+use Illuminate\Support\Facades\Storage;
+
 final readonly class StoreInfo
 {
     public function __construct(
@@ -29,11 +31,24 @@ final readonly class StoreInfo
         );
     }
 
+    /**
+     * Resolved URL to the store logo, or null if no logo is set OR the
+     * stored path no longer points to a real file. The file-exists check
+     * prevents broken `<img>` fallbacks (alt text rendering) when a tenant
+     * has a logo column populated but the underlying file has been deleted
+     * or never uploaded.
+     */
     public function logoUrl(): ?string
     {
-        return $this->logo
-            ? asset("storage/{$this->logo}")
-            : null;
+        if (! $this->logo) {
+            return null;
+        }
+
+        if (! Storage::disk('public')->exists($this->logo)) {
+            return null;
+        }
+
+        return asset("storage/{$this->logo}");
     }
 
     public function defaultTagline(): string
