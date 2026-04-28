@@ -67,7 +67,6 @@ class ViewCustomer extends ViewRecord
             Action::make('redeemPoints')
                 ->label('Manual Redemption')
                 ->icon(Heroicon::OutlinedGift)
-                ->color('warning')
                 ->modalHeading('Manual point redemption')
                 ->modalDescription('Record a redemption that happened outside the normal reward flow (e.g., honored a coupon at the counter).')
                 ->schema([
