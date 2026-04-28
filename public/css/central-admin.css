@@ -120,6 +120,12 @@
 .fi-sidebar-item-badge-ctn .fi-badge {
     background: var(--platform-200) !important;
     border-color: var(--platform-200) !important;
+    /* Neutralize Filament's native ring (compiled from `ring-*` Tailwind
+       utilities into box-shadow) so danger/warning/etc. badges don't
+       leak their semantic color as an outline. */
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    box-shadow: none !important;
 }
 .fi-sidebar-item-badge-ctn .fi-badge span {
     color: var(--platform-900) !important;
