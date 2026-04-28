@@ -17,6 +17,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read Order $record
@@ -28,15 +29,16 @@ class ViewOrder extends ViewRecord
     protected string $view = 'filament.resources.orders.view-order';
 
     /**
-     * Eager-load the relations the view template walks (orderItems →
-     * product, customer, messages) so strict-mode preventLazyLoading
-     * doesn't 500 the page on first render.
+     * The view template walks orderItems → product, customer, and
+     * messages — strict-mode preventLazyLoading 500s if any of those
+     * aren't loaded. Override getRecord() so the relations are
+     * idempotently loaded on every render (initial mount AND every
+     * Livewire follow-up request, where the model is re-hydrated from
+     * the request payload without its prior relations).
      */
-    public function mount(int|string $record): void
+    public function getRecord(): Model
     {
-        parent::mount($record);
-
-        $this->record->loadMissing(['orderItems.product', 'customer', 'messages']);
+        return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages']);
     }
 
     protected function getHeaderActions(): array
