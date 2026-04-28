@@ -35,9 +35,11 @@
     background: var(--brand-950) !important;
     padding: 1.5rem !important;
 }
-/* Section headers inside slide-overs */
+/* Section headers inside slide-overs — flat to match the no-gradient
+   table header pattern. brand-800 is one tier lighter than the section
+   content body (brand-900) so the header reads as a distinct strip. */
 .fi-modal-slide-over .fi-section-header {
-    background: linear-gradient(135deg, var(--brand-800), var(--brand-600)) !important;
+    background: var(--brand-800) !important;
     border-radius: 8px 8px 0 0 !important;
     padding: 0.75rem 1rem !important;
 }
