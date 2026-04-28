@@ -2,63 +2,25 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Widgets\Concerns\CachesWidgetData;
-use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Number;
 
+/**
+ * Compact "Quick Actions" card on the tenant dashboard. Mirrors the
+ * central panel's QuickActions widget pattern — single column,
+ * eyebrow + button row.
+ *
+ * The class name and registered widget key (`welcome_banner`) are kept
+ * for data compatibility with saved tenant dashboard configurations
+ * that reference the legacy key. The widget previously rendered a
+ * full-width banner with greeting, date, and stat tiles; that data is
+ * now covered by `Today's Snapshot` (TodaysOrdersWidget) and other
+ * dashboard widgets.
+ */
 class WelcomeBannerWidget extends Widget
 {
-    use CachesWidgetData;
-
     protected static ?int $sort = 0;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.welcome-banner';
-
-    public function getGreeting(): string
-    {
-        $hour = now()->hour;
-        $name = Auth::user()->name ?? 'Baker';
-        $firstName = explode(' ', $name)[0];
-
-        return match (true) {
-            $hour < 12 => "Good morning, {$firstName}!",
-            $hour < 17 => "Good afternoon, {$firstName}!",
-            default => "Good evening, {$firstName}!",
-        };
-    }
-
-    public function getTodayDate(): string
-    {
-        return now()->format('l, F j, Y');
-    }
-
-    public function getOrdersToday(): int
-    {
-        return $this->cached('orders_today_' . Date::today()->toDateString(), [300, 600], fn (): int => Order::query()->whereDate('delivery_date', Date::today())->count());
-    }
-
-    public function getRevenueToday(): string
-    {
-        return $this->cached('revenue_today_' . Date::today()->toDateString(), [300, 600], fn (): string => (string) Number::currency(
-            // orders.total is bigint cents (migration 2026_04_22_201500).
-            (int) Order::query()->active()
-                ->whereDate('delivery_date', Date::today())
-                ->sum('total') / 100,
-        ));
-    }
-
-    public function getPendingOrders(): int
-    {
-        return $this->cached('pending_orders', [300, 600], fn (): int => Order::query()->pending()->count());
-    }
-
-    protected function cachePrefix(): string
-    {
-        return 'welcome_banner';
-    }
 }
