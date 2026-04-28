@@ -118,6 +118,12 @@
 }
 .fi-sidebar-group-label {
     color: var(--accent-gold) !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 1rem 0.5rem !important;
+    opacity: 0.85;
 }
 
 /* Topbar */
