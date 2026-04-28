@@ -54,7 +54,7 @@ class ViewCustomer extends ViewRecord
                 ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
                 ->color('gray')
                 ->modalHeading('Adjust loyalty points')
-                ->modalDescription('Manually credit or debit loyalty points. Use a positive number to add, negative to remove.')
+                ->modalDescription('Use this for goodwill credits, corrections, or birthday gifts — anywhere you\'re adjusting at admin discretion. If the customer cashed in a reward, use Manual Redemption instead.')
                 ->schema([
                     TextInput::make('points')
                         ->label('Points')
@@ -87,13 +87,14 @@ class ViewCustomer extends ViewRecord
                 ->label('Manual Redemption')
                 ->icon(Heroicon::OutlinedGift)
                 ->modalHeading('Manual point redemption')
-                ->modalDescription('Record a redemption that happened outside the normal reward flow (e.g., honored a coupon at the counter).')
+                ->modalDescription('Use this when the customer redeemed a reward outside the normal flow — e.g., you honored a coupon at the counter. For admin-discretion comps or corrections, use Adjust Points instead.')
                 ->schema([
                     TextInput::make('points')
                         ->label('Points to redeem')
                         ->numeric()
                         ->required()
-                        ->minValue(1),
+                        ->minValue(1)
+                        ->helperText('Points the customer cashed in for the reward.'),
                     TextInput::make('description')
                         ->label('What did the customer get?')
                         ->required()
