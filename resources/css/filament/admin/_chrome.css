@@ -37,14 +37,14 @@
    =================================================================== */
 
 .fi-btn.fi-color-primary {
-    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    background: var(--brand-800) !important;
     color: #FFFFFF !important;
     border: none !important;
     --tw-ring-shadow: 0 0 0 0 transparent !important;
     box-shadow: none !important;
 }
 .fi-btn.fi-color-primary:hover {
-    background: linear-gradient(135deg, var(--brand-800), var(--brand-700)) !important;
+    background: var(--brand-700) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 .fi-btn.fi-color-gray {
