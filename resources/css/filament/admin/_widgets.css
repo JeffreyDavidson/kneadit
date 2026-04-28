@@ -47,7 +47,6 @@ section:has(.fi-wi-stats-overview-stat),
 }
 .fi-wi-stats-overview-stat-value {
     color: #FFFFFF !important;
-    font-family: "Playfair Display", serif !important;
     font-size: 1.75rem !important;
     font-weight: 700 !important;
 }
