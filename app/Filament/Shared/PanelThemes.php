@@ -183,7 +183,10 @@ class PanelThemes
     private static function tenantHoney(): string
     {
         // Matches the existing default --brand-* values so the theme switch
-        // is lossless for tenants who haven't picked anything.
+        // is lossless for tenants who haven't picked anything. Helper rgba
+        // tokens use the warm-tan accent (212,165,116 = #d4a574); these
+        // values match the hardcoded rgba literals already living in the
+        // tenant section CSS, so the section-CSS sweep in PR 3 is lossless.
         return ':root{'
             . '--brand-900:#3d2314;'
             . '--brand-800:#4a3225;'
@@ -198,6 +201,13 @@ class PanelThemes
             . '--brand-50:#fdf8f2;'
             . '--accent-gold:#d4a574;'
             . '--accent-gold-light:#f5e6d0;'
+            . '--border-subtle:rgba(212,165,116,0.12);'
+            . '--border-medium:rgba(212,165,116,0.2);'
+            . '--hover-bg:rgba(212,165,116,0.06);'
+            . '--active-bg:rgba(212,165,116,0.12);'
+            . '--scrollbar-thumb:rgba(212,165,116,0.2);'
+            . '--focus-ring:rgba(212,165,116,0.15);'
+            . '--thead-bg:rgba(212,165,116,0.06);'
             . '}';
     }
 
@@ -206,7 +216,9 @@ class PanelThemes
         // Cool slate surfaces (Tailwind slate-* range) with the gold accent
         // retained so the KneadIt brand reads through. brand-300 stays gold
         // because all the tenant chrome (links, hover, focus, active states)
-        // pulls from it.
+        // pulls from it. Helper rgba tokens use slate gray (148,163,184) for
+        // chrome borders/hover/scrollbar — but active-bg/focus-ring stay
+        // gold (212,146,12) so primary actions still read as branded.
         return ':root{'
             . '--brand-900:#1e293b;'
             . '--brand-800:#334155;'
@@ -221,6 +233,13 @@ class PanelThemes
             . '--brand-50:#f8fafc;'
             . '--accent-gold:#d4920c;'
             . '--accent-gold-light:#e8b04a;'
+            . '--border-subtle:rgba(148,163,184,0.12);'
+            . '--border-medium:rgba(148,163,184,0.2);'
+            . '--hover-bg:rgba(148,163,184,0.06);'
+            . '--active-bg:rgba(212,146,12,0.12);'
+            . '--scrollbar-thumb:rgba(148,163,184,0.25);'
+            . '--focus-ring:rgba(212,146,12,0.15);'
+            . '--thead-bg:rgba(148,163,184,0.06);'
             . '}';
     }
 
@@ -228,7 +247,9 @@ class PanelThemes
     {
         // Polar Night surfaces with Frost cyan as the accent. Drops the gold
         // entirely — for nord, accent-gold becomes Frost cyan so the
-        // existing var(--accent-gold) references shift coherently.
+        // existing var(--accent-gold) references shift coherently. Helper
+        // rgba tokens all use Frost cyan (136,192,208 = #88c0d0) so chrome,
+        // hover, focus, and active surfaces all read as one cohesive theme.
         return ':root{'
             . '--brand-900:#2e3440;'
             . '--brand-800:#3b4252;'
@@ -243,6 +264,13 @@ class PanelThemes
             . '--brand-50:#f0f3f7;'
             . '--accent-gold:#88c0d0;'
             . '--accent-gold-light:#a3d4e0;'
+            . '--border-subtle:rgba(136,192,208,0.12);'
+            . '--border-medium:rgba(136,192,208,0.2);'
+            . '--hover-bg:rgba(136,192,208,0.06);'
+            . '--active-bg:rgba(136,192,208,0.15);'
+            . '--scrollbar-thumb:rgba(136,192,208,0.25);'
+            . '--focus-ring:rgba(136,192,208,0.2);'
+            . '--thead-bg:rgba(136,192,208,0.06);'
             . '}';
     }
 }
