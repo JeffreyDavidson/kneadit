@@ -88,46 +88,24 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->favicon(asset('images/logo-icon.png'))
             ->renderHook('panels::head.end', function () {
-                $manager = resolve(SettingsManager::class);
+                // Resolve the active preset; default to 'honey' which produces
+                // the same hex values as the previous hardcoded fallback so
+                // tenants without a saved theme are visually identical.
+                $theme = (string) rescue(
+                    fn () => resolve(SettingsManager::class)->get('admin_theme', 'honey'),
+                    'honey',
+                    false,
+                );
 
-                // If a tenant has picked a preset (admin_theme), the preset
-                // wins — its --brand-* palette overrides any per-color
-                // customization. Otherwise fall back to the legacy per-color
-                // brand_color_* settings (still honored for tenants who
-                // customized hex codes before themes existed).
-                $theme = (string) rescue(fn () => $manager->get('admin_theme'), '', false);
-                $usePreset = $theme !== '' && array_key_exists($theme, PanelThemes::AVAILABLE);
-
-                if ($usePreset) {
-                    $paletteCss = PanelThemes::tenantCss($theme);
-                } else {
-                    $color = fn (string $key, string $default): string => (string) rescue(
-                        fn () => $manager->get($key, $default),
-                        $default,
-                        false,
-                    );
-
-                    $paletteCss = ':root{'
-                        . '--brand-900:' . $color('brand_color_900', '#3d2314') . ';'
-                        . '--brand-800:' . $color('brand_color_800', '#4a3225') . ';'
-                        . '--brand-700:' . $color('brand_color_700', '#6b4c3b') . ';'
-                        . '--brand-600:' . $color('brand_color_600', '#8b5e3c') . ';'
-                        . '--brand-500:' . $color('brand_color_500', '#a08060') . ';'
-                        . '--brand-400:' . $color('brand_color_400', '#c4a882') . ';'
-                        . '--brand-300:' . $color('brand_color_300', '#d4a574') . ';'
-                        . '--brand-200:' . $color('brand_color_200', '#e8d0b0') . ';'
-                        . '--brand-150:' . $color('brand_color_150', '#f3ebe0') . ';'
-                        . '--brand-100:' . $color('brand_color_100', '#f5e6d0') . ';'
-                        . '--brand-50:' . $color('brand_color_50', '#fdf8f2') . ';'
-                        . '--accent-gold:' . $color('brand_color_300', '#d4a574') . ';'
-                        . '}';
+                if (! array_key_exists($theme, PanelThemes::AVAILABLE)) {
+                    $theme = 'honey';
                 }
 
                 return new HtmlString(
                     '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
                     . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
                     . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
-                    . '<style>' . $paletteCss . '</style>',
+                    . '<style>' . PanelThemes::tenantCss($theme) . '</style>',
                 );
             })
             ->renderHook('panels::global-search.after', fn () => new HtmlString(
