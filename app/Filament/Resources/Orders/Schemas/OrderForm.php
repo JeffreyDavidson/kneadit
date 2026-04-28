@@ -91,6 +91,7 @@ class OrderForm
                 Grid::make(2)->components([
                     MoneyInput::make('subtotal')
                         ->required()
+                        ->default(0)
                         ->live(debounce: 300)
                         ->afterStateUpdated($recalculateTotal),
                     MoneyInput::make('delivery_fee')
@@ -119,6 +120,7 @@ class OrderForm
                 MoneyInput::make('total')
                     ->label('Total')
                     ->required()
+                    ->default(0)
                     ->disabled()
                     ->dehydrated()
                     ->columnSpanFull(),
