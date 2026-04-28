@@ -30,7 +30,8 @@ class ProductsTable
                 ]))
             ->columns([
                 ImageColumn::make('image')
-                    ->circular(),
+                    ->circular()
+                    ->defaultImageUrl(asset('images/product-placeholder.svg')),
 
                 TextColumn::make('name')
                     ->sortable()
