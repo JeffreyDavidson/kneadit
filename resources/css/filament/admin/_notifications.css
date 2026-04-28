@@ -1,0 +1,128 @@
+/* ===================================================================
+   NOTIFICATION BELL & PANEL
+   =================================================================== */
+
+.fi-topbar-database-notifications-btn {
+    position: relative !important;
+}
+.fi-topbar-database-notifications-btn .fi-icon {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    color: var(--brand-300) !important;
+}
+.fi-topbar-database-notifications-btn:hover .fi-icon {
+    color: white !important;
+}
+.fi-topbar-database-notifications-btn .fi-badge {
+    position: absolute !important;
+    top: 0px !important;
+    right: -4px !important;
+    min-width: 1.1rem !important;
+    height: 1.1rem !important;
+    padding: 0 0.3rem !important;
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1rem !important;
+    text-align: center !important;
+    border-radius: 9999px !important;
+    background: var(--accent-gold) !important;
+    color: var(--brand-900) !important;
+    border: 1.5px solid var(--brand-900) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    --tw-ring-shadow: none !important;
+}
+
+/* Panel background */
+.fi-no-database-notifications-modal .fi-modal-window,
+.fi-modal[id*="database-notifications"] .fi-modal-window {
+    background: var(--brand-900) !important;
+}
+/* Panel header */
+.fi-no-database-notifications-modal .fi-modal-header,
+.fi-modal[id*="database-notifications"] .fi-modal-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 1rem 1.25rem !important;
+}
+.fi-no-database-notifications-modal .fi-modal-heading,
+.fi-modal[id*="database-notifications"] .fi-modal-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+.fi-no-database-notifications-modal .fi-modal-close-btn,
+.fi-modal[id*="database-notifications"] .fi-modal-close-btn {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-no-database-notifications-modal .fi-modal-close-btn:hover,
+.fi-modal[id*="database-notifications"] .fi-modal-close-btn:hover {
+    color: #FFFFFF !important;
+}
+/* Mark all as read / Clear links */
+.fi-no-database-notifications-modal .fi-link,
+.fi-modal[id*="database-notifications"] .fi-link {
+    color: var(--accent-gold) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+.fi-no-database-notifications-modal .fi-link:hover,
+.fi-modal[id*="database-notifications"] .fi-link:hover {
+    color: white !important;
+}
+/* Notification list dividers */
+.fi-no-database .fi-modal-content {
+    --tw-divide-color: var(--border-subtle) !important;
+    border-color: var(--border-subtle) !important;
+}
+/* Notification rows — uniform dark surface, slightly lighter than panel */
+.fi-no-database .fi-modal-content > *,
+.fi-no-notification-unread-ctn,
+.fi-no-notification-read-ctn,
+.fi-no-database .fi-modal-content > div {
+    background: var(--brand-900) !important;
+}
+.fi-no-database .fi-modal-content > * {
+    padding: 0.875rem 1.5rem !important;
+}
+.fi-no-notification.fi-color {
+    background: var(--brand-900) !important;
+    background-color: var(--brand-900) !important;
+    --tw-ring-color: var(--border-subtle) !important;
+}
+/* Unread indicator */
+.fi-no-notification-unread-ctn::before {
+    background: var(--accent-gold) !important;
+    width: 3px !important;
+}
+/* Notification icon/text */
+.fi-no-database .fi-no-notification-icon {
+    color: var(--brand-300) !important;
+}
+.fi-no-database .fi-no-notification-title {
+    color: var(--brand-100) !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+}
+.fi-no-database .fi-no-notification-body {
+    color: var(--brand-300) !important;
+    font-size: 0.8125rem !important;
+}
+.fi-no-database .fi-no-notification-date {
+    color: var(--brand-400) !important;
+    font-size: 0.75rem !important;
+}
+.fi-no-database .fi-icon-btn {
+    color: var(--brand-400) !important;
+}
+.fi-no-database .fi-icon-btn:hover {
+    color: white !important;
+}
+/* Badge in notification header */
+.fi-no-database-notifications-modal .fi-badge,
+.fi-modal[id*="database-notifications"] .fi-modal-header .fi-badge {
+    background: var(--accent-gold) !important;
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+    --tw-ring-shadow: none !important;
+}
+
+

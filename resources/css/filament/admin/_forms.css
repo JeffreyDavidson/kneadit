@@ -1,0 +1,333 @@
+/* ===================================================================
+   FORMS
+   =================================================================== */
+
+.fi-fo-field-wrp label {
+    color: var(--brand-100) !important;
+    font-weight: 600 !important;
+}
+.fi-fo-field-wrp .fi-fo-field-wrp-helper-text {
+    color: var(--brand-400) !important;
+}
+
+/* Input wrapper — explicit dark surface + visible border (mirrors central) */
+.fi-input-wrp {
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+    --tw-shadow: 0 0 #0000 !important;
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    outline: none !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+.fi-input-wrp:focus-within {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+}
+
+/* Inner input fields — transparent so the wrapper surface shows through */
+.fi-input-wrp input,
+.fi-input-wrp select,
+.fi-input-wrp textarea,
+.fi-input-wrp .fi-input,
+.fi-input-wrp .fi-select-input {
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: white !important;
+}
+.fi-input-wrp-icon,
+.fi-input-wrp-prefix,
+.fi-input-wrp-suffix {
+    color: var(--brand-400) !important;
+}
+
+/* Prefix/suffix dividers — subtle, not brand-colored */
+.fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
+    border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
+    border-right: 1px solid rgba(0,0,0,0.1) !important;
+    padding-inline-end: 0.75rem !important;
+}
+/* Search fields (shared) — no divider, consistent icon-to-text spacing */
+.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content,
+.fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
+    border-inline-end: none !important;
+    border-right: none !important;
+    padding-inline-end: 2px !important;
+}
+.fi-ta-search-field input,
+.fi-global-search-field input {
+    padding-inline-start: 6px !important;
+}
+.fi-input-wrp .fi-input-wrp-suffix {
+    border-inline-start: 1px solid rgba(0,0,0,0.1) !important;
+    border-left: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+/* Input field inside wrapper */
+.fi-input-wrp .fi-input {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    outline: none !important;
+}
+
+/* Standalone input (not inside wrp) */
+.fi-input {
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+.fi-input:focus-within {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+
+/* Placeholder text */
+.fi-input input::placeholder,
+.fi-input textarea::placeholder {
+    color: var(--brand-400) !important;
+}
+
+/* Select */
+.fi-select-input {
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+
+/* Textarea */
+textarea.fi-textarea-input {
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+textarea.fi-textarea-input:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+
+/* Toggle */
+.fi-toggle-input:checked {
+    background-color: var(--brand-600) !important;
+    border-color: var(--brand-600) !important;
+}
+.fi-toggle-input:checked:hover {
+    background-color: var(--brand-700) !important;
+}
+.fi-toggle-input:focus {
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+.fi-toggle-input {
+    border-color: var(--brand-200) !important;
+}
+
+/* Date picker */
+.fi-date-time-picker-btn {
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+.fi-date-time-picker-btn:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+
+/* File upload */
+.fi-fo-file-upload .filepond--panel-root {
+    background: var(--brand-800) !important;
+    border: 2px dashed var(--border-medium) !important;
+    border-radius: 12px !important;
+}
+.fi-fo-file-upload .filepond--drop-label label {
+    color: var(--brand-200) !important;
+    font-weight: 500 !important;
+}
+.fi-fo-file-upload .filepond--label-action {
+    color: var(--accent-gold) !important;
+    font-weight: 600 !important;
+    text-decoration-color: var(--accent-gold) !important;
+}
+
+/* Form actions footer */
+.fi-form-actions {
+    background: var(--brand-900) !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 0 0 12px 12px !important;
+}
+
+/* Hide select clear/X button */
+.fi-select-input-value-remove-btn {
+    display: none !important;
+}
+
+
+/* ===================================================================
+   SECTIONS (Form Panels)
+   =================================================================== */
+
+.fi-section {
+    background: var(--brand-900) !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    --tw-shadow: none !important;
+}
+.fi-section-content {
+    border-top: none !important;
+}
+.fi-section-content-ctn {
+    border-top: none !important;
+    border-color: transparent !important;
+}
+
+/* Section header — dark brown gradient */
+.fi-section-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 0.875rem 1.25rem !important;
+}
+.fi-section-header-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+}
+.fi-section-header-description {
+    color: rgba(255,255,255,0.6) !important;
+}
+.fi-section-header .fi-icon {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-section-header:hover {
+    background: linear-gradient(135deg, var(--brand-800), var(--brand-700)) !important;
+}
+.fi-section-header button {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-section-header button:hover {
+    color: #FFFFFF !important;
+}
+
+
+/* ===================================================================
+   REPEATER
+   =================================================================== */
+
+.fi-fo-repeater {
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+.fi-fo-repeater-items {
+    gap: 0 !important;
+}
+.fi-fo-repeater-item,
+.fi-fo-repeater .fi-fo-repeater-item,
+li.fi-fo-repeater-item {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-offset-shadow: 0 0 0 0 transparent !important;
+    --tw-shadow: 0 0 0 0 transparent !important;
+    --tw-inset-shadow: 0 0 0 0 transparent !important;
+    --tw-inset-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+}
+.fi-fo-repeater-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Match native date/select placeholder color */
+input[type="date"]:not(:valid),
+input[type="date"][value=""] {
+    color: #9ca3af;
+}
+.fi-fo-repeater select option[value=""] {
+    color: #9ca3af;
+}
+.fi-fo-repeater select:has(option[value=""]:checked) {
+    color: #9ca3af;
+}
+.fi-fo-repeater select:not(:has(option[value=""]:checked)) {
+    color: white;
+}
+
+/* Hide default repeater item header */
+.fi-fo-repeater-item-header {
+    display: none !important;
+}
+.fi-fo-repeater-item-has-header > .fi-fo-repeater-item-content {
+    border-top: none !important;
+}
+
+/* Repeater item actions */
+.fi-fo-repeater-item-header .fi-icon-btn {
+    color: var(--brand-400) !important;
+}
+.fi-fo-repeater-item-header .fi-icon-btn:hover {
+    color: #fff !important;
+    background: #c0392b !important;
+    border-radius: 6px !important;
+}
+
+/* Repeater add button */
+.fi-fo-repeater-add {
+    padding: 0.75rem 1rem !important;
+    background: var(--brand-900) !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    justify-content: flex-start !important;
+}
+.fi-fo-repeater-add .fi-btn {
+    color: #FFFFFF !important;
+    background: var(--brand-700) !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-shadow: 0 0 0 0 transparent !important;
+    border: none !important;
+}
+.fi-fo-repeater-add .fi-btn:hover {
+    background: var(--brand-800) !important;
+}
+
+/* Custom repeater grid: trash column */
+.fi-fo-repeater-item-content > .fi-sc {
+    grid-template-columns: 3fr 1fr 1fr 1fr 3rem !important;
+    align-items: start !important;
+}
+
+
+/* ===================================================================
+   TABS
+   =================================================================== */
+
+.fi-tabs-tab {
+    color: var(--brand-400) !important;
+    font-weight: 600 !important;
+}
+.fi-tabs-tab[aria-selected="true"],
+.fi-tabs-tab.fi-active {
+    color: white !important;
+    border-color: var(--accent-gold) !important;
+}
+
+

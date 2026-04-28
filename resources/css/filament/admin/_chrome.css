@@ -1,0 +1,68 @@
+/* ===================================================================
+   PAGE HEADINGS & BREADCRUMBS
+   =================================================================== */
+
+.fi-header-heading {
+    color: white !important;
+}
+.fi-breadcrumbs-item span,
+.fi-breadcrumbs-item a {
+    color: var(--brand-300) !important;
+}
+
+
+/* ===================================================================
+   SHARED: Dark gradient header bar
+   Used by: Filament tables, x-admin.card, goal-tracker, etc.
+   =================================================================== */
+
+[data-admin-gradient-header] {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+[data-admin-gradient-header] > [data-header-title] {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+
+/* ===================================================================
+   GLOBAL ACTION BUTTONS
+   =================================================================== */
+
+.fi-btn.fi-color-primary {
+    background: var(--brand-800) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    box-shadow: none !important;
+}
+.fi-btn.fi-color-primary:hover {
+    background: var(--brand-700) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+.fi-btn.fi-color-gray {
+    border: 1px solid var(--border-medium) !important;
+    color: var(--brand-100) !important;
+    background: var(--brand-800) !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    box-shadow: none !important;
+}
+.fi-btn.fi-color-gray:hover {
+    background: var(--brand-700) !important;
+    box-shadow: none !important;
+}
+.fi-btn-primary {
+    background: var(--brand-600) !important;
+}
+.fi-btn-primary:hover {
+    background: var(--brand-700) !important;
+}
+
+

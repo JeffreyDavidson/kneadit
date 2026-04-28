@@ -1,175 +1,196 @@
 @use(App\Presenters\OrderItemPresenter)
+@use(App\Enums\Orders\DeliveryType)
+@use(App\Enums\Orders\PaymentStatus)
+@php
+    $brand = $settings->branding->brandColorPrimary ?? '#d4920c';
+    $isDelivery = $order->delivery_type === DeliveryType::Delivery;
+    $isPaid = $order->payment_status === PaymentStatus::Paid;
+    $logoUrl = $settings->store->logoUrl();
+    $tagline = $settings->store->tagline ?: $settings->branding->businessTagline;
+    $allergyDisclaimer = $settings->branding->allergyDisclaimer;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice - {{ $order->order_number }}</title>
-<link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
+    <title>Invoice — {{ $order->order_number }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
+    <style @cspnonce>:root { --brand: {{ $brand }}; }</style>
 </head>
 <body>
-    <!-- Print Button (only visible on screen) -->
-    <div class="print-actions no-print">
-        <button class="print-button" onclick="window.print()">
-            🖨️ Print Invoice
+    {{-- Print toolbar (hidden on print) --}}
+    <div class="toolbar no-print">
+        <button type="button" class="btn-print" onclick="window.print()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0v3H7V4h6zm0 8v4H7v-4h6z" />
+            </svg>
+            Print
         </button>
     </div>
 
-    <div class="invoice-container">
-        <!-- Header -->
-        <div class="invoice-header">
-            <div class="store-info">
-                <h1>{{ $settings->store->name }}</h1>
-                <p>{{ $settings->store->address ?? 'Address not configured' }}</p>
-                <p>{{ $settings->store->phone ?? 'Phone not configured' }}</p>
-                <p>{{ $settings->store->email ?? 'Email not configured' }}</p>
-                <p>{{ $settings->store->website ?? url('/') }}</p>
+    <main class="invoice {{ $isPaid ? 'invoice--paid' : '' }}">
+        @if ($isPaid)
+            <div class="invoice__paid-stamp" aria-hidden="true">PAID</div>
+        @endif
+        {{-- ============== HEADER ============== --}}
+        <header class="invoice__header">
+            <div class="invoice__brand">
+                @if ($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $settings->store->name }}" class="invoice__logo">
+                @endif
+                <h1 class="invoice__store">{{ $settings->store->name }}</h1>
+                @if ($tagline)
+                    <p class="invoice__tagline">{{ $tagline }}</p>
+                @endif
+                <p class="invoice__line">{{ $settings->store->address ?? '' }}</p>
+                @if ($settings->store->phone)
+                    <p class="invoice__line">{{ $settings->store->phone }}</p>
+                @endif
+                @if ($settings->store->email)
+                    <p class="invoice__line">{{ $settings->store->email }}</p>
+                @endif
+                @if ($settings->store->website)
+                    <p class="invoice__line">{{ $settings->store->website }}</p>
+                @endif
             </div>
-            <div class="invoice-title">
-                <h2>INVOICE</h2>
-                <p><strong>{{ $order->order_number }}</strong></p>
-                <p>{{ $order->created_at->format('F j, Y') }}</p>
+            <div class="invoice__meta">
+                <div class="invoice__label">Invoice</div>
+                <div class="invoice__number">{{ $order->order_number }}</div>
+                <div class="invoice__date">{{ $order->created_at->format('F j, Y') }}</div>
             </div>
-        </div>
+        </header>
 
-        <!-- Customer and Order Info -->
-        <div class="invoice-meta">
-            <div class="customer-info">
-                <div class="section-title">Bill To</div>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">{{ $order->customer->name ?? 'N/A' }}</span>
-                </div>
-                @if ($order->customer && $order->customer->email)
-                    <div class="info-item">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">{{ $order->customer->email }}</span>
-                    </div>
+        {{-- ============== PARTIES ============== --}}
+        <section class="invoice__parties">
+            <div class="party">
+                <div class="party__heading">Bill To</div>
+                <div class="party__name">{{ $order->customer->name ?? '—' }}</div>
+                @if ($order->customer?->email)
+                    <div class="party__line">{{ $order->customer->email }}</div>
+                @endif
+                @if ($order->customer?->phone)
+                    <div class="party__line">{{ $order->customer->phone }}</div>
                 @endif
                 @if ($order->delivery_address)
-                    <div class="info-item">
-                        <span class="info-label">Delivery:</span>
-                        <span class="info-value">{{ $order->delivery_address }}</span>
-                    </div>
+                    <div class="party__address">{{ $order->delivery_address }}</div>
                 @endif
             </div>
 
-            <div class="order-info">
-                <div class="section-title">Order Details</div>
-                <div class="info-item">
-                    <span class="info-label">Status:</span>
-                    <span class="status-badge status-{{ $order->status->value }}">{{ $order->status->getLabel() }}</span>
+            <dl class="details">
+                <div class="details__heading">Order Details</div>
+                <div class="details__row">
+                    <dt>Status</dt>
+                    <dd><span class="status status--{{ $order->status->value }}">{{ $order->status->getLabel() }}</span></dd>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Order Date:</span>
-                    <span class="info-value">{{ $order->created_at->format('M j, Y g:i A') }}</span>
+                <div class="details__row">
+                    <dt>Order date</dt>
+                    <dd>{{ $order->created_at->format('M j, Y · g:i A') }}</dd>
                 </div>
                 @if ($order->delivery_date)
-                    <div class="info-item">
-                        <span class="info-label">Requested:</span>
-                        <span class="info-value">
+                    <div class="details__row">
+                        <dt>{{ $isDelivery ? 'Delivery' : 'Pickup' }}</dt>
+                        <dd>
                             {{ \Carbon\Carbon::parse($order->delivery_date)->format('M j, Y') }}
                             @if ($order->delivery_time)
-                                at {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
+                                · {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
                             @endif
-                        </span>
+                        </dd>
                     </div>
                 @endif
-                <div class="info-item">
-                    <span class="info-label">Payment:</span>
-                    <span class="info-value">{{ $order->payment_method?->getLabel() ?? 'N/A' }}</span>
+                <div class="details__row">
+                    <dt>Payment</dt>
+                    <dd>{{ $order->payment_method?->getLabel() ?? '—' }}</dd>
                 </div>
-            </div>
-        </div>
+            </dl>
+        </section>
 
-        <!-- Order Items -->
-        <div class="order-items">
-            <div class="section-title">Order Items</div>
-            <table class="items-table">
+        {{-- ============== ITEMS ============== --}}
+        <section class="invoice__items">
+            <table class="items">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th class="text-right">Qty</th>
-                        <th class="text-right">Unit Price</th>
-                        <th class="text-right">Total</th>
+                        <th class="items__product">Product</th>
+                        <th class="items__qty">Qty</th>
+                        <th class="items__price">Unit price</th>
+                        <th class="items__total">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($order->orderItems as $item)
                         <tr>
-                            <td>
-                                <div class="font-semibold">{{ $item->product ? $item->product->name : 'Product Not Found' }}</div>
-                                @if ($item->product && $item->product->description)
-                                    <div style="color: #6B7280; font-size: 0.875rem;">
-                                        {{ Str::limit($item->product->description, 60) }}
-                                    </div>
+                            <td class="items__product">
+                                <div class="items__name">{{ $item->product?->name ?? '— removed —' }}</div>
+                                @if ($item->product?->description)
+                                    <div class="items__desc">{{ Str::limit($item->product->description, 80) }}</div>
+                                @endif
+                                @if ($item->special_instructions)
+                                    <div class="items__instr">"{{ $item->special_instructions }}"</div>
                                 @endif
                             </td>
-                            <td class="text-right">{{ $item->quantity }}</td>
-                            <td class="text-right">@money($item->unit_price)</td>
-                            <td class="text-right font-semibold">@money(OrderItemPresenter::for($item)->totalPrice())</td>
+                            <td class="items__qty">{{ $item->quantity }}</td>
+                            <td class="items__price">@money($item->unit_price)</td>
+                            <td class="items__total">@money(OrderItemPresenter::for($item)->totalPrice())</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </section>
 
-        <!-- Totals -->
-        <div class="totals-section">
-            <table class="totals-table">
-                <tr>
-                    <td><strong>Subtotal:</strong></td>
-                    <td class="text-right">@money($order->subtotal)</td>
-                </tr>
+        {{-- ============== TOTALS ============== --}}
+        <section class="invoice__totals">
+            <dl class="totals">
+                <div class="totals__row">
+                    <dt>Subtotal</dt>
+                    <dd>@money($order->subtotal)</dd>
+                </div>
                 @if ($order->delivery_fee->isPositive())
-                    <tr>
-                        <td><strong>Delivery Fee:</strong></td>
-                        <td class="text-right">@money($order->delivery_fee)</td>
-                    </tr>
+                    <div class="totals__row">
+                        <dt>Delivery fee</dt>
+                        <dd>@money($order->delivery_fee)</dd>
+                    </div>
                 @endif
                 @if ($order->discount_amount->isPositive())
-                    <tr style="color: #059669;">
-                        <td><strong>Discount:</strong></td>
-                        <td class="text-right">-@money($order->discount_amount)</td>
-                    </tr>
+                    <div class="totals__row totals__row--credit">
+                        <dt>Discount</dt>
+                        <dd>−@money($order->discount_amount)</dd>
+                    </div>
                 @endif
                 @if ($order->gift_card_amount->isPositive())
-                    <tr style="color: #059669;">
-                        <td><strong>Gift Card:</strong></td>
-                        <td class="text-right">-@money($order->gift_card_amount)</td>
-                    </tr>
+                    <div class="totals__row totals__row--credit">
+                        <dt>Gift card</dt>
+                        <dd>−@money($order->gift_card_amount)</dd>
+                    </div>
                 @endif
-                <tr>
-                    <td><strong>TOTAL:</strong></td>
-                    <td class="text-right"><strong>@money($order->total)</strong></td>
-                </tr>
-            </table>
-        </div>
+                @if ($order->tip_amount->isPositive())
+                    <div class="totals__row">
+                        <dt>Tip</dt>
+                        <dd>@money($order->tip_amount)</dd>
+                    </div>
+                @endif
+                <div class="totals__row totals__row--total">
+                    <dt>Total</dt>
+                    <dd>@money($order->total)</dd>
+                </div>
+            </dl>
+        </section>
 
-        @if ($order->notes)
-            <div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3B82F6;">
-                <div class="section-title">Notes</div>
-                <p style="color: #374151; white-space: pre-line;">{{ $order->notes }}</p>
-            </div>
-        @endif
-
-        <!-- Footer -->
-        <div class="invoice-footer">
-            <p><strong>Thank you for your business!</strong></p>
-            <p>This invoice was generated on {{ now()->format('F j, Y \a\t g:i A') }}</p>
-            <p style="margin-top: 1rem; font-size: 0.75rem; color: #9CA3AF;">
-                For questions about this invoice, please contact {{ $settings->store->email ?? 'Email not configured' }} or {{ $settings->store->phone ?? 'Phone not configured' }}
-            </p>
-        </div>
-    </div>
-
-    <script @cspnonce>
-        // Auto-focus print dialog when page loads (optional)
-        // window.addEventListener('load', function() {
-        //     setTimeout(() => {
-        //         window.print();
-        //     }, 500);
-        // });
-    </script>
+        {{-- ============== FOOTER ============== --}}
+        <footer class="invoice__footer">
+            @if ($allergyDisclaimer)
+                <p class="footer__disclaimer">{{ $allergyDisclaimer }}</p>
+            @endif
+            <p class="footer__thanks">Thank you for your business!</p>
+            <p class="footer__line">Generated {{ now()->format('F j, Y \a\t g:i A') }}</p>
+            @if ($settings->store->email || $settings->store->phone)
+                <p class="footer__line">
+                    Questions? {{ $settings->store->email }}@if ($settings->store->email && $settings->store->phone) · @endif{{ $settings->store->phone }}
+                </p>
+            @endif
+        </footer>
+    </main>
 </body>
 </html>

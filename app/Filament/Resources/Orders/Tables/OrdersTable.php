@@ -11,6 +11,7 @@ use App\Filament\Filters\DateRangeFilter;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\PayPal\InvoiceService;
+use App\Services\PayPal\TokenManager;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -87,26 +88,32 @@ class OrdersTable
                     ->modalHeading('Send PayPal Invoice')
                     ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
                     ->action(function (Order $record) {
-                        $invoiceService = resolve(InvoiceService::class);
-                        $invoiceId = $invoiceService->createAndSend($record);
+                        $invoiceId = resolve(InvoiceService::class)->createAndSend($record);
 
                         if ($invoiceId) {
                             Notification::make()
                                 ->title('PayPal invoice sent successfully')
                                 ->success()
                                 ->send();
-                        } else {
-                            Notification::make()
-                                ->title('Failed to send PayPal invoice')
-                                ->body('Please check the logs for more details.')
-                                ->danger()
-                                ->send();
+
+                            return;
                         }
+
+                        Notification::make()
+                            ->title('Failed to send PayPal invoice')
+                            ->body('Check Settings → PayPal that the credentials are correct, then try again.')
+                            ->danger()
+                            ->send();
                     })
                     ->visible(
                         fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
                         ! $record->paypal_invoice_id &&
-                        in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]),
+                        in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]) &&
+                        // Hide entirely when PayPal isn't configured for the tenant
+                        // (no client_id/client_secret in settings or env). Avoids
+                        // showing a button that will silently fail with a generic
+                        // auth error on click.
+                        resolve(TokenManager::class)->isConfigured(),
                     ),
 
                 SlideOverEditAction::make(),

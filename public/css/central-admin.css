@@ -113,6 +113,24 @@
 .fi-sidebar-item-active .fi-sidebar-item-icon {
     color: var(--accent) !important;
 }
+/* Sidebar item count badges (Waitlist 2, Support Inbox 5, etc.) — uniform
+   neutral pill across themes, mirrors the tenant convention. Filament's
+   native colored badges (red for danger, amber for warning) clash on
+   Nord and over-signal urgency on counts that are just "FYI"s. */
+.fi-sidebar-item-badge-ctn .fi-badge {
+    background: var(--platform-200) !important;
+    border-color: var(--platform-200) !important;
+    /* Neutralize Filament's native ring (compiled from `ring-*` Tailwind
+       utilities into box-shadow) so danger/warning/etc. badges don't
+       leak their semantic color as an outline. */
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    box-shadow: none !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge span {
+    color: var(--platform-900) !important;
+    font-weight: 700 !important;
+}
 .fi-sidebar-item:not(.fi-sidebar-item-active):hover a {
     background: var(--hover-bg) !important;
 }

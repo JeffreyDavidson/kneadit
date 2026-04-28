@@ -59,4 +59,15 @@ class TokenManager
     {
         return $this->baseUrl;
     }
+
+    /**
+     * Whether this tenant has PayPal credentials configured (either via
+     * tenant settings or env-level config). UI surfaces should hide
+     * PayPal-dependent actions when this returns false so users don't
+     * click and get a generic auth-failure error.
+     */
+    public function isConfigured(): bool
+    {
+        return ! empty($this->clientId) && ! empty($this->clientSecret);
+    }
 }

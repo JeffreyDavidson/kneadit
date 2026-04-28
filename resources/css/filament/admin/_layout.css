@@ -1,0 +1,140 @@
+/* ===================================================================
+   LAYOUT – Sidebar, Topbar, Main
+   =================================================================== */
+
+/* Login page */
+.fi-simple-layout {
+    background: var(--brand-950) !important;
+}
+.fi-simple-main {
+    border: 1px solid var(--border-medium) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 16px !important;
+}
+
+/* Main content area */
+.fi-main {
+    background: var(--brand-950) !important;
+}
+
+/* Sidebar */
+.fi-sidebar {
+    background: var(--brand-900) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+}
+.fi-sidebar-header {
+    border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 1.25rem 1.25rem !important;
+}
+/* Sidebar nav — padding + scrollable area + thin scrollbar (mirrors central) */
+.fi-sidebar-nav {
+    padding: 1rem 1rem !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 80px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--scrollbar-thumb) transparent !important;
+}
+.fi-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.fi-sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+/* Kill Filament's default gap-y-7 (28px) between groups so spacing is explicit */
+.fi-sidebar-nav-groups {
+    gap: 0 !important;
+}
+.fi-sidebar-group {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+}
+.fi-sidebar-group + .fi-sidebar-group {
+    margin-top: 1rem !important;
+}
+/* Tighten the group header button (label + collapse chevron) so it doesn't introduce huge gaps */
+.fi-sidebar-group-btn {
+    padding: 0.35rem 0 !important;
+    min-height: auto !important;
+    align-items: center !important;
+}
+/* Hide the collapse-group chevron (we don't use collapsing groups in this panel) */
+.fi-sidebar-group-collapse-btn {
+    display: none !important;
+}
+.fi-sidebar-group-items {
+    padding: 0 !important;
+    gap: 2px !important;
+    margin: 0 !important;
+}
+.fi-sidebar-item {
+    margin: 0 !important;
+}
+.fi-sidebar-item a,
+.fi-sidebar-item-btn {
+    padding: 0.55rem 1rem !important;
+    border-radius: 8px !important;
+}
+.fi-sidebar-item-label {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+.fi-sidebar-item-btn > .fi-icon,
+.fi-sidebar-item-icon {
+    color: var(--brand-200) !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    color: #FFFFFF !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background: var(--active-bg) !important;
+}
+.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover {
+    background: var(--hover-bg) !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge {
+    background: var(--brand-200) !important;
+    border-color: var(--brand-200) !important;
+    /* Neutralize Filament's native ring (compiled from `ring-*` Tailwind
+       utilities into box-shadow) so danger/warning/etc. badges don't
+       leak their semantic color as an outline. */
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    box-shadow: none !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge span {
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+}
+.fi-sidebar-group-label {
+    color: var(--accent-gold) !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 1rem 0.5rem !important;
+    opacity: 0.85;
+}
+
+/* Topbar */
+.fi-topbar, .fi-topbar nav {
+    background: var(--brand-900) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+/* User avatar */
+.fi-topbar .fi-avatar {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.85rem !important;
+}

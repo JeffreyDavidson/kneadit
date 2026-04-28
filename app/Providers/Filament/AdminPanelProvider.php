@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard\Dashboard;
+use App\Filament\Shared\PanelThemes;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
 use App\Services\Settings\SettingsManager;
@@ -58,8 +59,12 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
             ])
             ->brandLogo(view('filament.brand-logo'))
-            ->brandLogoHeight('80px')
-            ->darkMode(false)
+            ->brandLogoHeight('36px')
+            // Force dark mode so the tenant chrome (sidebar, topbar, main bg)
+            // reads as one cohesive dark surface like the central panel.
+            // Filament's compiled dark variants take over for native
+            // components; section CSS overrides any chrome we want themed.
+            ->darkMode(true, isForced: true)
             ->navigationGroups([
                 NavigationGroup::make('Shop'),
                 NavigationGroup::make('Settings'),
@@ -87,33 +92,24 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->favicon(asset('images/logo-icon.png'))
             ->renderHook('panels::head.end', function () {
-                $manager = resolve(SettingsManager::class);
-                $color = fn (string $key, string $default): string => (string) rescue(
-                    fn () => $manager->get($key, $default),
-                    $default,
+                // Resolve the active preset; default to 'honey' which produces
+                // the same hex values as the previous hardcoded fallback so
+                // tenants without a saved theme are visually identical.
+                $theme = (string) rescue(
+                    fn () => resolve(SettingsManager::class)->get('admin_theme', 'honey'),
+                    'honey',
                     false,
                 );
+
+                if (! array_key_exists($theme, PanelThemes::AVAILABLE)) {
+                    $theme = 'honey';
+                }
 
                 return new HtmlString(
                     '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
                     . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
                     . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
-                    . '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
-                    . '<link rel="stylesheet" href="' . asset('css/widget-cards.css') . '?v=' . filemtime(public_path('css/widget-cards.css')) . '">'
-                    . '<style>:root{'
-                    . '--brand-900:' . $color('brand_color_900', '#3d2314') . ';'
-                    . '--brand-800:' . $color('brand_color_800', '#4a3225') . ';'
-                    . '--brand-700:' . $color('brand_color_700', '#6b4c3b') . ';'
-                    . '--brand-600:' . $color('brand_color_600', '#8b5e3c') . ';'
-                    . '--brand-500:' . $color('brand_color_500', '#a08060') . ';'
-                    . '--brand-400:' . $color('brand_color_400', '#c4a882') . ';'
-                    . '--brand-300:' . $color('brand_color_300', '#d4a574') . ';'
-                    . '--brand-200:' . $color('brand_color_200', '#e8d0b0') . ';'
-                    . '--brand-150:' . $color('brand_color_150', '#f3ebe0') . ';'
-                    . '--brand-100:' . $color('brand_color_100', '#f5e6d0') . ';'
-                    . '--brand-50:' . $color('brand_color_50', '#fdf8f2') . ';'
-                    . '--accent-gold:' . $color('brand_color_300', '#d4a574') . ';'
-                    . '}</style>',
+                    . '<style>' . PanelThemes::tenantCss($theme) . '</style>',
                 );
             })
             ->renderHook('panels::global-search.after', fn () => new HtmlString(

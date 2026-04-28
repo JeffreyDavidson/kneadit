@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Filament\Central\CentralThemes;
+use App\Filament\Shared\PanelThemes;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -25,12 +25,12 @@ class Appearance extends Page
 
     public function mount(): void
     {
-        $this->current = CentralThemes::current();
+        $this->current = PanelThemes::current();
     }
 
     public function selectTheme(string $theme): void
     {
-        if (! array_key_exists($theme, CentralThemes::AVAILABLE)) {
+        if (! array_key_exists($theme, PanelThemes::AVAILABLE)) {
             return;
         }
 

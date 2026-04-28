@@ -1,4 +1,5 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../shared/widget-cards.css';
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
@@ -34,3 +35,43 @@
     --color-butter: #f5d88e;
     --color-parchment: #faf0d6;
 }
+
+/*
+ * Brand color defaults — overridden per-tenant via the
+ * AdminPanelProvider renderHook <style>:root{}</style> block. Provides
+ * sensible defaults when a tenant hasn't customised their palette.
+ */
+:root {
+    --brand-900: #3d2314;
+    --brand-800: #4a3225;
+    --brand-700: #6b4c3b;
+    --brand-600: #8b5e3c;
+    --brand-500: #a08060;
+    --brand-400: #c4a882;
+    --brand-300: #d4a574;
+    --brand-200: #e8d0b0;
+    --brand-150: #f3ebe0;
+    --brand-100: #f5e6d0;
+    --brand-50: #fdf8f2;
+    --brand-white: #FFFFFF;
+    --accent-gold: #d4a574;
+    --accent-gold-light: #f5e6d0;
+    --status-success: #16a34a;
+    --status-danger: #dc2626;
+    --status-warning: #d97706;
+    --status-warning-dark: #92400e;
+    --status-danger-dark: #991b1b;
+}
+
+/*
+ * Component-targeted overrides — split into per-section files for
+ * legibility. Migration target: drop !important and lean on cascade
+ * (theme.css loads after Filament's own styles via Vite).
+ */
+@import './_layout.css';
+@import './_chrome.css';
+@import './_notifications.css';
+@import './_tables.css';
+@import './_forms.css';
+@import './_widgets.css';
+@import './_modals.css';

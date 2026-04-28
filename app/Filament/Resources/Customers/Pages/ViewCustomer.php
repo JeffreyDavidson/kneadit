@@ -6,12 +6,15 @@ use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Filament\Resources\Customers\CustomerResource;
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerNote;
 use App\Presenters\CustomerPresenter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Rule;
 
 /**
  * Customer 360 — single-page aggregation of everything we know about
@@ -27,6 +30,22 @@ class ViewCustomer extends ViewRecord
 
     protected string $view = 'filament.resources.customers.pages.view-customer';
 
+    /**
+     * The view template walks orders, customerNotes, and loyaltyPoints —
+     * strict-mode preventLazyLoading 500s if any aren't loaded. Override
+     * getRecord() so the relations are idempotently loaded on every
+     * render, including post-Livewire-action re-renders where the model
+     * is hydrated fresh without its prior relations.
+     */
+    public function getRecord(): Model
+    {
+        return parent::getRecord()->loadMissing([
+            'orders',
+            'customerNotes.createdBy',
+            'loyaltyPoints',
+        ]);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -35,7 +54,7 @@ class ViewCustomer extends ViewRecord
                 ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
                 ->color('gray')
                 ->modalHeading('Adjust loyalty points')
-                ->modalDescription('Manually credit or debit loyalty points. Use a positive number to add, negative to remove.')
+                ->modalDescription('Use this for goodwill credits, corrections, or birthday gifts — anywhere you\'re adjusting at admin discretion. If the customer cashed in a reward, use Manual Redemption instead.')
                 ->schema([
                     TextInput::make('points')
                         ->label('Points')
@@ -55,6 +74,8 @@ class ViewCustomer extends ViewRecord
                         $data['description'],
                     );
 
+                    $this->record->load('loyaltyPoints');
+
                     Notification::make()
                         ->title('Loyalty points adjusted')
                         ->body(($data['points'] >= 0 ? '+' : '') . $data['points'] . ' points · ' . $data['description'])
@@ -65,15 +86,15 @@ class ViewCustomer extends ViewRecord
             Action::make('redeemPoints')
                 ->label('Manual Redemption')
                 ->icon(Heroicon::OutlinedGift)
-                ->color('warning')
                 ->modalHeading('Manual point redemption')
-                ->modalDescription('Record a redemption that happened outside the normal reward flow (e.g., honored a coupon at the counter).')
+                ->modalDescription('Use this when the customer redeemed a reward outside the normal flow — e.g., you honored a coupon at the counter. For admin-discretion comps or corrections, use Adjust Points instead.')
                 ->schema([
                     TextInput::make('points')
                         ->label('Points to redeem')
                         ->numeric()
                         ->required()
-                        ->minValue(1),
+                        ->minValue(1)
+                        ->helperText('Points the customer cashed in for the reward.'),
                     TextInput::make('description')
                         ->label('What did the customer get?')
                         ->required()
@@ -86,6 +107,8 @@ class ViewCustomer extends ViewRecord
                         (int) $data['points'],
                         $data['description'],
                     );
+
+                    $this->record->load('loyaltyPoints');
 
                     Notification::make()
                         ->title('Redemption recorded')
@@ -102,5 +125,42 @@ class ViewCustomer extends ViewRecord
         return [
             'detail' => CustomerPresenter::for($this->record)->toDetailArray(),
         ];
+    }
+
+    /** Inline note-add form state — mirrors the ViewTenant pattern. */
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
+
+    public function addNote(): void
+    {
+        $this->validate(['noteBody' => ['required', 'min:3']]);
+
+        $this->record->customerNotes()->create([
+            'note' => $this->noteBody,
+            'created_by' => auth()->id(),
+        ]);
+
+        $this->noteBody = '';
+        $this->record->load('customerNotes');
+
+        Notification::make()
+            ->title('Note added')
+            ->success()
+            ->send();
+    }
+
+    public function deleteNote(int $noteId): void
+    {
+        CustomerNote::query()
+            ->where('customer_id', $this->record->id)
+            ->where('id', $noteId)
+            ->delete();
+
+        $this->record->load('customerNotes');
+
+        Notification::make()
+            ->title('Note deleted')
+            ->success()
+            ->send();
     }
 }

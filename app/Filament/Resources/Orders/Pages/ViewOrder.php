@@ -6,23 +6,21 @@ use App\Actions\Orders\AddOrderNote;
 use App\Actions\Orders\SendOrderMessage;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Enums\Orders\SenderType;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Orders\Order;
+use App\Services\PayPal\InvoiceService;
+use App\Services\PayPal\TokenManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ViewEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read Order $record
@@ -31,113 +29,19 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
-    public function infolist(Schema $schema): Schema
+    protected string $view = 'filament.resources.orders.view-order';
+
+    /**
+     * The view template walks orderItems → product, customer, and
+     * messages — strict-mode preventLazyLoading 500s if any of those
+     * aren't loaded. Override getRecord() so the relations are
+     * idempotently loaded on every render (initial mount AND every
+     * Livewire follow-up request, where the model is re-hydrated from
+     * the request payload without its prior relations).
+     */
+    public function getRecord(): Model
     {
-        return $schema
-            ->schema([
-                Section::make('Order Information')
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('order_number')
-                                    ->label('Order Number')
-                                    ->badge(),
-                                TextEntry::make('status')
-                                    ->badge(),
-                                TextEntry::make('payment_status')
-                                    ->badge(),
-                            ]),
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('delivery_date')
-                                    ->date(),
-                                TextEntry::make('delivery_time')
-                                    ->time('H:i'),
-                            ]),
-                    ]),
-
-                Section::make('Customer Information')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('customer.name')
-                                    ->label('Customer Name'),
-                                TextEntry::make('customer.email')
-                                    ->label('Email'),
-                            ]),
-                        TextEntry::make('delivery_address')
-                            ->label('Delivery Address')
-                            ->placeholder('No delivery address')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Order Items')
-                    ->schema([
-                        ViewEntry::make('order_items')
-                            ->view('filament.resources.orders.view-order-items')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Financial Summary')
-                    ->schema([
-                        Grid::make(6)
-                            ->schema([
-                                TextEntry::make('subtotal')
-                                    ->money('USD'),
-                                TextEntry::make('delivery_fee')
-                                    ->money('USD'),
-                                TextEntry::make('discount_amount')
-                                    ->money('USD'),
-                                TextEntry::make('gift_card_amount')
-                                    ->money('USD'),
-                                TextEntry::make('tip_amount')
-                                    ->label('Tip')
-                                    ->money('USD'),
-                                TextEntry::make('total')
-                                    ->money('USD')
-                                    ->weight(FontWeight::Bold),
-                            ]),
-                    ]),
-
-                Section::make('Additional Information')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('payment_method')
-                                    ->badge(),
-                                TextEntry::make('paypal_invoice_id')
-                                    ->label('PayPal Invoice ID')
-                                    ->placeholder('No PayPal invoice'),
-                            ]),
-                        TextEntry::make('notes')
-                            ->placeholder('No notes')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Pickup Contact')
-                    ->visible(fn (Order $record): bool => filled($record->pickup_contact_name))
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('pickup_contact_name')
-                                    ->label('Name'),
-                                TextEntry::make('pickup_contact_phone')
-                                    ->label('Phone')
-                                    ->placeholder('—'),
-                                TextEntry::make('pickup_contact_email')
-                                    ->label('Email')
-                                    ->placeholder('—'),
-                            ]),
-                    ]),
-
-                Section::make('Messages')
-                    ->icon(Heroicon::OutlinedChatBubbleLeftRight)
-                    ->schema([
-                        ViewEntry::make('messages_view')
-                            ->view('filament.resources.orders.view-order-messages')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+        return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages', 'cateringInquiry']);
     }
 
     protected function getHeaderActions(): array
@@ -171,10 +75,34 @@ class ViewOrder extends ViewRecord
                 ->label('Send PayPal Invoice')
                 ->icon(Heroicon::OutlinedPaperAirplane)
                 ->color('info')
-                ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
+                ->requiresConfirmation()
+                ->modalHeading('Send PayPal Invoice')
+                ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
+                ->visible(
+                    fn (): bool => ! $this->record->paypal_invoice_id &&
+                    $this->record->payment_status === PaymentStatus::Unpaid &&
+                    in_array($this->record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready], true) &&
+                    resolve(TokenManager::class)->isConfigured(),
+                )
                 ->action(function (): void {
-                    // This would integrate with PayPal service
-                    Notification::make()->title('PayPal invoice functionality coming soon.')->info()->send();
+                    $invoiceId = resolve(InvoiceService::class)->createAndSend($this->record);
+
+                    if ($invoiceId) {
+                        $this->record->refresh();
+
+                        Notification::make()
+                            ->title('PayPal invoice sent successfully')
+                            ->success()
+                            ->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title('Failed to send PayPal invoice')
+                        ->body('Check Settings → PayPal that the credentials are correct, then try again.')
+                        ->danger()
+                        ->send();
                 }),
 
             Action::make('printInvoice')
@@ -203,6 +131,8 @@ class ViewOrder extends ViewRecord
                         senderType: SenderType::Baker,
                     );
 
+                    $this->record->load('messages');
+
                     Notification::make()->title('Message sent to customer.')->success()->send();
                 }),
 
@@ -217,6 +147,8 @@ class ViewOrder extends ViewRecord
                 ])
                 ->action(function (array $data): void {
                     resolve(AddOrderNote::class)($this->record, $data['note']);
+
+                    $this->record->refresh();
 
                     Notification::make()->title('Note added successfully.')->success()->send();
                 }),

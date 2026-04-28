@@ -1,0 +1,292 @@
+/* ===================================================================
+   SLIDE-OVER MODALS
+   =================================================================== */
+
+.fi-modal-slide-over .fi-modal-window {
+    border-left: none !important;
+    background: var(--brand-950) !important;
+}
+.fi-modal-slide-over .fi-modal-window .fi-modal-header,
+.fi-modal-slide-over.fi-modal-has-sticky-header .fi-modal-window > .fi-modal-header,
+.fi-modal.fi-modal-slide-over .fi-modal-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 1.25rem 1.5rem !important;
+    border-color: transparent !important;
+}
+.fi-modal-slide-over .fi-modal-heading,
+.fi-modal.fi-modal-slide-over .fi-modal-heading {
+    color: #FFFFFF !important;
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+}
+.fi-modal-slide-over .fi-modal-header .fi-modal-close-btn,
+.fi-modal-slide-over .fi-modal-header .fi-icon-btn,
+.fi-modal.fi-modal-slide-over .fi-modal-close-btn {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-modal-slide-over .fi-modal-header .fi-modal-close-btn:hover,
+.fi-modal-slide-over .fi-modal-header .fi-icon-btn:hover,
+.fi-modal.fi-modal-slide-over .fi-modal-close-btn:hover {
+    color: #FFFFFF !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+.fi-modal-slide-over .fi-modal-content {
+    background: var(--brand-950) !important;
+    padding: 1.5rem !important;
+}
+/* Section headers inside slide-overs — flat to match the no-gradient
+   table header pattern. brand-800 is one tier lighter than the section
+   content body (brand-900) so the header reads as a distinct strip. */
+.fi-modal-slide-over .fi-section-header {
+    background: var(--brand-800) !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 0.75rem 1rem !important;
+}
+.fi-modal-slide-over .fi-section-header-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+.fi-modal-slide-over .fi-section-content-ctn {
+    border: 1px solid var(--border-subtle) !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    background: var(--brand-900) !important;
+    padding: 1.25rem !important;
+}
+/* Form labels */
+.fi-modal-slide-over .fi-fo-field-wrp label {
+    color: var(--brand-100) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+/* Footer */
+.fi-modal-slide-over .fi-modal-footer {
+    padding: 0.75rem 1.25rem !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    border-bottom: none !important;
+    background: var(--brand-900) !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: flex-start !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn,
+.fi-modal-slide-over .fi-modal-footer .fi-btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 0.375rem 1rem !important;
+    font-size: 0.8125rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    line-height: 1.25rem !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn:first-child {
+    background: var(--brand-800) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn:first-child:hover {
+    background: var(--brand-700) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn + .fi-btn,
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn.fi-color-gray {
+    border: 1px solid var(--border-medium) !important;
+    color: var(--brand-100) !important;
+    background: var(--brand-800) !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+    box-shadow: none !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn + .fi-btn:hover,
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn.fi-color-gray:hover {
+    background: var(--brand-700) !important;
+    box-shadow: none !important;
+}
+
+/* Form inputs inside slide-overs */
+.fi-modal-slide-over .fi-input-wrp {
+    border-color: var(--border-medium) !important;
+    border-radius: 8px !important;
+    background: var(--brand-800) !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+}
+.fi-modal-slide-over .fi-input-wrp:focus-within {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+    --tw-ring-shadow: none !important;
+}
+.fi-modal-slide-over .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-color: transparent !important;
+}
+.fi-modal-slide-over textarea {
+    border-color: var(--border-medium) !important;
+    border-radius: 8px !important;
+    background: var(--brand-800) !important;
+    color: white !important;
+}
+.fi-modal-slide-over textarea:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+.fi-modal-slide-over .fi-select-wrp .fi-input-wrp {
+    border-color: var(--border-medium) !important;
+}
+.fi-modal-slide-over .fi-input-wrp .fi-input-wrp-prefix {
+    color: var(--brand-400) !important;
+}
+.fi-modal-slide-over .fi-fo-field-wrp-helper-text {
+    color: var(--brand-400) !important;
+}
+.fi-modal-slide-over .fi-fo-field-wrp-label label {
+    color: var(--brand-100) !important;
+    font-weight: 600 !important;
+}
+.fi-modal-slide-over .fi-section {
+    background: var(--brand-900) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+.fi-modal-slide-over .fi-fo-file-upload {
+    background: var(--brand-800) !important;
+    border-color: var(--border-medium) !important;
+    border-style: dashed !important;
+    border-radius: 8px !important;
+}
+.fi-modal-slide-over .fi-fo-file-upload:hover {
+    border-color: var(--accent-gold) !important;
+    background: var(--brand-700) !important;
+}
+
+
+/* ===================================================================
+   MODALS (standard)
+   =================================================================== */
+
+.fi-modal-window {
+    background: var(--brand-900) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4) !important;
+}
+.fi-modal-heading {
+    color: var(--brand-100) !important;
+    font-weight: 700 !important;
+}
+.fi-modal-description {
+    color: var(--brand-300) !important;
+}
+.fi-modal .fi-btn.fi-color-gray {
+    border: 1px solid var(--border-medium) !important;
+    color: var(--brand-100) !important;
+    background: var(--brand-800) !important;
+    border-radius: 8px !important;
+}
+.fi-modal .fi-btn.fi-color-gray:hover {
+    background: var(--brand-700) !important;
+}
+.fi-modal .fi-btn {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+.fi-modal-close-overlay {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(2px) !important;
+}
+
+/* Global search bar */
+.fi-global-search-field {
+    background: transparent !important;
+}
+.fi-global-search-field .fi-input-wrp {
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+.fi-global-search-field input {
+    background: transparent !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+.fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-inline-end: none !important;
+}
+.fi-global-search-field input::placeholder {
+    color: var(--brand-400) !important;
+}
+.fi-global-search-field input:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+.fi-global-search-field .fi-input-wrp:focus-within {
+    border-color: var(--brand-300, #d4a574) !important;
+    box-shadow: 0 0 0 2px var(--focus-ring) !important;
+}
+.fi-global-search-field .fi-icon,
+.fi-global-search-field svg {
+    color: var(--brand-400) !important;
+}
+
+/* Widget table header — heading left, actions right */
+.fi-wi-table .fi-ta-header-toolbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+.fi-wi-table .fi-ta-header-heading,
+.fi-wi-table .fi-section-header-heading {
+    flex: 1 !important;
+}
+.fi-wi-table .fi-ac-action.fi-ac-link-action,
+.fi-wi-table .fi-ta-header-toolbar .fi-link {
+    color: #FFFFFF !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    opacity: 0.85 !important;
+    white-space: nowrap !important;
+}
+.fi-wi-table .fi-ac-action.fi-ac-link-action:hover,
+.fi-wi-table .fi-ta-header-toolbar .fi-link:hover {
+    opacity: 1 !important;
+}
+
+/* Widget table search — dark surface, light text */
+.fi-wi .fi-ta-search-field input {
+    border: 1px solid var(--border-medium) !important;
+    background: var(--brand-800) !important;
+    color: white !important;
+}
+.fi-wi .fi-ta-search-field input:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 2px var(--focus-ring) !important;
+}
+.fi-wi .fi-ta-search-field input::placeholder {
+    color: var(--brand-400) !important;
+}
+
+/* Fix search prefix divider in widget tables */
+.fi-wi .fi-ta-search-field .fi-input-wrp-prefix,
+.fi-wi .fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-inline-end: none !important;
+}
+
+/* Remove empty section dividers on dashboard */
+.fi-section.fi-section-not-contained {
+    border: none !important;
+    box-shadow: none !important;
+}
