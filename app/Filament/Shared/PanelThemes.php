@@ -150,4 +150,95 @@ class PanelThemes
             . '--thead-bg:rgba(148,163,184,0.06);'
             . '}';
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tenant panel emitters
+    |--------------------------------------------------------------------------
+    |
+    | The tenant admin's CSS references --brand-* tokens (the palette every
+    | tenant card / sidebar / chrome rule pulls from). Same theme keys
+    | (honey/slate/nord) but mapped to the tenant token set with values
+    | tuned for the tenant visual scale (lighter than central by design —
+    | tenant chrome isn't as dark as the central admin's --platform-900).
+    */
+
+    public static function tenantCss(string $theme = 'honey'): string
+    {
+        $palette = match ($theme) {
+            'slate' => self::tenantSlate(),
+            'nord' => self::tenantNord(),
+            default => self::tenantHoney(),
+        };
+
+        // accent-gold is referenced in older tenant CSS rules — keep it
+        // mapped to whatever the active theme uses for its accent.
+        return $palette;
+    }
+
+    private static function tenantHoney(): string
+    {
+        // Matches the existing default --brand-* values so the theme switch
+        // is lossless for tenants who haven't picked anything.
+        return ':root{'
+            . '--brand-900:#3d2314;'
+            . '--brand-800:#4a3225;'
+            . '--brand-700:#6b4c3b;'
+            . '--brand-600:#8b5e3c;'
+            . '--brand-500:#a08060;'
+            . '--brand-400:#c4a882;'
+            . '--brand-300:#d4a574;'
+            . '--brand-200:#e8d0b0;'
+            . '--brand-150:#f3ebe0;'
+            . '--brand-100:#f5e6d0;'
+            . '--brand-50:#fdf8f2;'
+            . '--accent-gold:#d4a574;'
+            . '--accent-gold-light:#f5e6d0;'
+            . '}';
+    }
+
+    private static function tenantSlate(): string
+    {
+        // Cool slate surfaces (Tailwind slate-* range) with the gold accent
+        // retained so the KneadIt brand reads through. brand-300 stays gold
+        // because all the tenant chrome (links, hover, focus, active states)
+        // pulls from it.
+        return ':root{'
+            . '--brand-900:#1e293b;'
+            . '--brand-800:#334155;'
+            . '--brand-700:#475569;'
+            . '--brand-600:#64748b;'
+            . '--brand-500:#94a3b8;'
+            . '--brand-400:#cbd5e1;'
+            . '--brand-300:#d4920c;'
+            . '--brand-200:#e2e8f0;'
+            . '--brand-150:#eef2f6;'
+            . '--brand-100:#f1f5f9;'
+            . '--brand-50:#f8fafc;'
+            . '--accent-gold:#d4920c;'
+            . '--accent-gold-light:#e8b04a;'
+            . '}';
+    }
+
+    private static function tenantNord(): string
+    {
+        // Polar Night surfaces with Frost cyan as the accent. Drops the gold
+        // entirely — for nord, accent-gold becomes Frost cyan so the
+        // existing var(--accent-gold) references shift coherently.
+        return ':root{'
+            . '--brand-900:#2e3440;'
+            . '--brand-800:#3b4252;'
+            . '--brand-700:#434c5e;'
+            . '--brand-600:#4c566a;'
+            . '--brand-500:#5b6478;'
+            . '--brand-400:#88c0d0;'
+            . '--brand-300:#88c0d0;'
+            . '--brand-200:#d8dee9;'
+            . '--brand-150:#e5e9f0;'
+            . '--brand-100:#eceff4;'
+            . '--brand-50:#f0f3f7;'
+            . '--accent-gold:#88c0d0;'
+            . '--accent-gold-light:#a3d4e0;'
+            . '}';
+    }
 }
