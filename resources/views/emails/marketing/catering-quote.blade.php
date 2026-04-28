@@ -43,6 +43,37 @@
     </div>
     @endif
 
+    @if ($inquiry->items->isNotEmpty())
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e3d8;">
+            <span style="color: #888; font-size: 13px;">What's included</span>
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 8px; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th align="left" style="padding: 6px 4px; border-bottom: 1px solid #e8e3d8; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Item</th>
+                        <th align="right" style="padding: 6px 4px; border-bottom: 1px solid #e8e3d8; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Qty</th>
+                        <th align="right" style="padding: 6px 4px; border-bottom: 1px solid #e8e3d8; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Unit</th>
+                        <th align="right" style="padding: 6px 4px; border-bottom: 1px solid #e8e3d8; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($inquiry->items as $item)
+                        <tr>
+                            <td align="left" style="padding: 8px 4px; border-bottom: 1px solid #f1ede4; color: {{ $secondaryColor }}; font-weight: 600; font-size: 14px;">
+                                {{ $item->name }}
+                                @if ($item->special_instructions)
+                                    <div style="color: #888; font-size: 12px; font-style: italic; font-weight: 400; margin-top: 2px;">{{ $item->special_instructions }}</div>
+                                @endif
+                            </td>
+                            <td align="right" style="padding: 8px 4px; border-bottom: 1px solid #f1ede4; color: {{ $secondaryColor }}; font-size: 14px;">{{ $item->quantity }}</td>
+                            <td align="right" style="padding: 8px 4px; border-bottom: 1px solid #f1ede4; color: #555; font-size: 14px;">@money($item->unit_price)</td>
+                            <td align="right" style="padding: 8px 4px; border-bottom: 1px solid #f1ede4; color: {{ $secondaryColor }}; font-weight: 600; font-size: 14px;">@money($item->line_total)</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
     <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid {{ $primaryColor }}; text-align: center;">
         <span style="color: #888; font-size: 13px;">Your Quote</span><br>
         <span style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">@money($inquiry->quoted_amount)</span>

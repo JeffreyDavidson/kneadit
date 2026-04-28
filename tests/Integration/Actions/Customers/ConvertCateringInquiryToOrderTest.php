@@ -7,6 +7,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Events\Orders\OrderCreated;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\CateringInquiryItem;
 use App\Models\Customers\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -104,4 +105,47 @@ test('copies the event date onto the order delivery_date', function () {
     $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry);
 
     expect($order->delivery_date->toDateString())->toBe($eventDate->toDateString());
+});
+
+test('copies inquiry items to OrderItems when items exist (no collapsed line)', function () {
+    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Quoted]);
+
+    CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
+        'name' => 'Wedding cake',
+        'quantity' => 1,
+        'unit_price' => 400,
+        'special_instructions' => 'Three tiers, ivory frosting',
+        'sort_order' => 0,
+    ]);
+    CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
+        'name' => 'Macarons',
+        'quantity' => 100,
+        'unit_price' => 3,
+        'sort_order' => 1,
+    ]);
+
+    $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry->fresh());
+
+    expect($order->orderItems)->toHaveCount(2)
+        ->and($order->orderItems->pluck('name')->all())->toContain('Wedding cake', 'Macarons')
+        ->and($order->total->dollars())->toBe(700.00);
+
+    $cake = $order->orderItems->firstWhere('name', 'Wedding cake');
+    expect($cake->special_instructions)->toBe('Three tiers, ivory frosting')
+        ->and($cake->unit_price->dollars())->toBe(400.00);
+});
+
+test('falls back to single collapsed line when the inquiry has no items', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'status' => CateringInquiryStatus::Quoted,
+        'quoted_amount' => 1500,
+        'event_type' => 'Wedding',
+        'guest_count' => 80,
+    ]);
+
+    $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry);
+
+    expect($order->orderItems)->toHaveCount(1)
+        ->and($order->orderItems->first()->name)->toBe('Catering — Wedding, 80 guests')
+        ->and($order->orderItems->first()->unit_price->dollars())->toBe(1500.00);
 });
