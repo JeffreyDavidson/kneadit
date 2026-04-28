@@ -31,6 +31,19 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
+    /**
+     * Eager-load orderItems.product so the view-order-items partial
+     * (which iterates $order->orderItems and accesses $item->product)
+     * doesn't trip Laravel strict-mode preventLazyLoading and 500 the
+     * page. Same for customer (referenced in the infolist).
+     */
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        $this->record->loadMissing(['orderItems.product', 'customer']);
+    }
+
     public function infolist(Schema $schema): Schema
     {
         return $schema
