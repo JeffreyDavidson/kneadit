@@ -2,6 +2,7 @@
 
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
@@ -40,6 +41,30 @@ test('can render the view order page', function () {
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk();
+});
+
+test('view order page renders the Catering section when the order is linked to an inquiry', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'event_type' => 'Wedding',
+        'guest_count' => 120,
+        'venue_address' => '123 Beachfront Way',
+    ]);
+    $order = Order::factory()->recycle(test()->customer)->for($inquiry, 'cateringInquiry')->create();
+
+    Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Catering')
+        ->assertSee('Wedding')
+        ->assertSee('120')
+        ->assertSee('123 Beachfront Way');
+});
+
+test('view order page omits the Catering section for non-catering orders', function () {
+    $order = Order::factory()->recycle(test()->customer)->create();
+
+    Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->assertOk()
+        ->assertDontSee('View inquiry');
 });
 
 test('can search orders by order number', function () {

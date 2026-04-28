@@ -2,7 +2,9 @@
 
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -77,4 +79,32 @@ test('suggestedAmount returns 0 when no quote', function () {
     $inquiry = CateringInquiry::factory()->create(['quoted_amount' => null]);
 
     expect(resolve(RecordCateringDeposit::class)->suggestedAmount($inquiry, 25))->toBe(0.0);
+});
+
+test('marks a linked Unpaid order as Partial when deposit is recorded', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'status' => CateringInquiryStatus::Confirmed,
+        'quoted_amount' => 1000,
+    ]);
+    $order = Order::factory()->for($inquiry, 'cateringInquiry')->create([
+        'payment_status' => PaymentStatus::Unpaid,
+    ]);
+
+    resolve(RecordCateringDeposit::class)($inquiry, 250.00);
+
+    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Partial);
+});
+
+test('does not downgrade a linked order whose payment_status is already Paid', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'status' => CateringInquiryStatus::Confirmed,
+        'quoted_amount' => 1000,
+    ]);
+    $order = Order::factory()->for($inquiry, 'cateringInquiry')->create([
+        'payment_status' => PaymentStatus::Paid,
+    ]);
+
+    resolve(RecordCateringDeposit::class)($inquiry, 250.00);
+
+    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Paid);
 });

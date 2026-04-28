@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\CateringInquiries\Pages;
 
 use App\Actions\Customers\CancelCateringInquiry;
+use App\Actions\Customers\ConvertCateringInquiryToOrder;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
-use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
@@ -194,15 +195,26 @@ class ViewCateringInquiry extends ViewRecord
             ->icon(Heroicon::OutlinedCheckCircle)
             ->color('success')
             ->authorize('update')
-            ->visible(fn (): bool => $this->record->status === CateringInquiryStatus::Quoted)
+            ->visible(fn (): bool => $this->record->status === CateringInquiryStatus::Quoted && $this->record->order()->doesntExist())
             ->requiresConfirmation()
             ->modalHeading('Confirm this booking?')
+            ->modalDescription('Creates an order so the rest of fulfillment (payment, messages, status) is tracked there.')
             ->action(function (): void {
-                resolve(TransitionCateringInquiryStatus::class)($this->record, CateringInquiryStatus::Confirmed);
+                try {
+                    $order = resolve(ConvertCateringInquiryToOrder::class)($this->record);
+                } catch (InquiryNotConvertibleException $e) {
+                    Notification::make()->title($e->getMessage())->danger()->send();
+
+                    return;
+                }
 
                 $this->record->refresh();
 
-                Notification::make()->title('Booking confirmed.')->success()->send();
+                Notification::make()
+                    ->title('Booking confirmed.')
+                    ->body("Order {$order->order_number} created.")
+                    ->success()
+                    ->send();
             });
     }
 

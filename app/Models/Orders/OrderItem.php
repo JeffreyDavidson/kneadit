@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-#[Fillable('order_id', 'product_id', 'quantity', 'unit_price', 'special_instructions')]
+#[Fillable('order_id', 'product_id', 'name', 'quantity', 'unit_price', 'special_instructions')]
 #[UseFactory(OrderItemFactory::class)]
 class OrderItem extends Model
 {

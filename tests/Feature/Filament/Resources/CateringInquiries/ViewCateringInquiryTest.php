@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Filament\Resources\CateringInquiries\Pages\ViewCateringInquiry;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -96,14 +98,25 @@ test('revise quote updates the amount without firing email or changing status', 
     Event::assertNotDispatched(CateringQuoteRequested::class);
 });
 
-test('confirm booking is visible only when status is Quoted', function () {
+test('confirm booking creates an order, transitions inquiry to Confirmed', function () {
     $quoted = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Quoted, 'quoted_amount' => 500]);
 
     Livewire::test(ViewCateringInquiry::class, ['record' => $quoted->getRouteKey()])
         ->assertActionVisible('confirmBooking')
         ->callAction('confirmBooking');
 
-    expect($quoted->fresh()->status)->toBe(CateringInquiryStatus::Confirmed);
+    $quoted->refresh();
+    expect($quoted->status)->toBe(CateringInquiryStatus::Confirmed)
+        ->and($quoted->order)->not->toBeNull()
+        ->and($quoted->order->status)->toBe(OrderStatus::Confirmed);
+});
+
+test('confirm booking is hidden once an order exists', function () {
+    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Confirmed, 'quoted_amount' => 500]);
+    Order::factory()->for($inquiry, 'cateringInquiry')->create();
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertActionHidden('confirmBooking');
 });
 
 test('confirm booking is hidden when not Quoted', function () {
