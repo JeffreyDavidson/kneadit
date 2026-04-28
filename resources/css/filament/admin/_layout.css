@@ -4,7 +4,7 @@
 
 /* Login page */
 .fi-simple-layout {
-    background: var(--brand-50) !important;
+    background: var(--brand-950) !important;
 }
 .fi-simple-main {
     border: 1px solid var(--border-medium) !important;
@@ -14,7 +14,7 @@
 
 /* Main content area */
 .fi-main {
-    background: var(--brand-50) !important;
+    background: var(--brand-950) !important;
 }
 
 /* Sidebar */
@@ -67,7 +67,7 @@
 
 /* Topbar */
 .fi-topbar, .fi-topbar nav {
-    background: var(--brand-50) !important;
+    background: var(--brand-900) !important;
     border-bottom: 1px solid var(--border-subtle) !important;
 }
 
