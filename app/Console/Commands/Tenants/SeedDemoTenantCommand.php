@@ -41,10 +41,16 @@ class SeedDemoTenantCommand extends Command
                 'store_name' => 'Demo Bakery',
             ]);
 
-        // Register the subdomain so requests to demo.<central-domain>
-        // resolve to this tenant via stancl/tenancy's domain identification.
+        // Register both the full hostname AND the bare subdomain so the tenant
+        // resolves regardless of how stancl/tenancy's identification middleware
+        // is currently configured. Stancl's InitializeTenancyByDomainOrSubdomain
+        // checks if the hostname ends with a central_domain — when true (which
+        // it is for *.kneadit.test) it falls through to subdomain identification
+        // and looks up `domain = '<bare-subdomain>'`, NOT the full hostname.
+        // Matches the pattern in CreateOneTenantCommand used by kneadit:seed-local.
         $centralDomain = (string) collect(config('tenancy.central_domains'))->first();
         $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain]);
+        $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID]);
 
         $this->info('✅ Demo tenant ready at https://' . self::DEMO_ID . '.' . $centralDomain);
 
