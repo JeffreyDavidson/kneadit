@@ -4,10 +4,12 @@
          Tailwind v4 utility merging is finicky with x-admin.card and
          x-admin.eyebrow defaults (light-mode), so the surface and
          eyebrow are inlined here with dark-aware brand tokens. --}}
-    {{-- max-w-sm constrains the visible card so it sits compactly on the
-         left, mirroring central's QuickActions which is columnSpan=1 in a
-         2-col grid with empty space to its right. --}}
-    <div class="bg-brand-900 border border-brand-800/60 rounded-xl px-5 py-4 max-w-sm">
+    {{-- Central QuickActions is columnSpan=1 in a 2-col grid = exactly
+         50% of dashboard width. Tenant claims the full row (next widget
+         doesn't auto-span full like central's StatsOverviewWidget does)
+         and constrains the card to w-1/2 so it occupies the same 50%
+         proportion at every breakpoint, with empty space to the right. --}}
+    <div class="bg-brand-900 border border-brand-800/60 rounded-xl px-5 py-4 w-1/2">
         <div class="text-brand-300 text-[0.7rem] uppercase tracking-[0.05em] font-semibold mb-4">Quick Actions</div>
         <div class="flex flex-wrap gap-2">
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.pages.quick-order'))
