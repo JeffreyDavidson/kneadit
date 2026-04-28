@@ -1,0 +1,79 @@
+/* ===================================================================
+   LAYOUT – Sidebar, Topbar, Main
+   =================================================================== */
+
+/* Login page */
+.fi-simple-layout {
+    background: var(--brand-50) !important;
+}
+.fi-simple-main {
+    border: 1px solid rgba(212,165,116,0.2) !important;
+    box-shadow: 0 20px 60px rgba(61,35,20,0.08) !important;
+    border-radius: 16px !important;
+}
+
+/* Main content area */
+.fi-main {
+    background: var(--brand-50) !important;
+}
+
+/* Sidebar */
+.fi-sidebar {
+    background: var(--brand-900) !important;
+    border-right: 1px solid rgba(212,165,116,0.1) !important;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+}
+.fi-sidebar-nav {
+    position: sticky !important;
+    top: 0 !important;
+}
+.fi-sidebar-header {
+    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
+}
+.fi-sidebar-item-label {
+    color: #FFFFFF !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+.fi-sidebar-item-btn > .fi-icon,
+.fi-sidebar-item-icon {
+    color: #F5D5A8 !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    color: #FFFFFF !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background: rgba(245,213,168,0.2) !important;
+}
+.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover {
+    background: rgba(245,213,168,0.12) !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge {
+    background: #F5D5A8 !important;
+    border-color: #F5D5A8 !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge span {
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+}
+.fi-sidebar-group-label {
+    color: var(--accent-gold) !important;
+}
+
+/* Topbar */
+.fi-topbar, .fi-topbar nav {
+    background: var(--brand-50) !important;
+    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
+}
+
+/* User avatar */
+.fi-topbar .fi-avatar {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.85rem !important;
+}

@@ -19,7 +19,11 @@
     --pw-card-text: var(--platform-100, var(--brand-50, #fdf8f2));
     --pw-card-text-soft: var(--platform-200, var(--brand-100, #f5e6d0));
     --pw-card-text-row: var(--platform-300, var(--brand-200, #e8d0b0));
-    --pw-card-text-muted: var(--platform-400, var(--brand-500, #a08060));
+    /* On the dark brown tenant card, --brand-500 (#a08060) is mid-brown
+       and renders as low-contrast mush. Bump the muted fallback to
+       --brand-300 (honey) so muted-text-on-dark stays legible. Central
+       still uses --platform-400 which is correctly tuned for that theme. */
+    --pw-card-text-muted: var(--platform-400, var(--brand-300, #d4a574));
 }
 
 /* ===== Card shell ===== */
