@@ -35,8 +35,10 @@ class MarginAlertWidget extends Widget
             ->map(fn (Product $product): array => [
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => '$' . number_format((float) ($product->price ?? 0), 2),
-                'cost' => '$' . number_format((float) ($product->recipe->cost_per_serving ?? 0), 2),
+                // Money's __toString is "$X.XX" which parses as 0 in numeric context;
+                // formatted() / dollars() are the safe accessors.
+                'price' => $product->price?->formatted() ?? '—',
+                'cost' => $product->cost?->formatted() ?? '—',
                 'margin' => (float) (RecipePresenter::for($product->recipe)->profitMargin() ?? 0),
                 'margin_formatted' => Number::format((float) (RecipePresenter::for($product->recipe)->profitMargin() ?? 0), 1) . '%',
             ])
