@@ -90,7 +90,8 @@
                 $tabs = [
                     'overview' => ['label' => 'Overview', 'icon' => 'chart-bar-square'],
                     'orders' => ['label' => 'Orders', 'icon' => 'receipt-percent', 'count' => count($orders)],
-                    'notes' => ['label' => 'Notes', 'icon' => 'pencil-square', 'count' => $customer->customerNotes()->count()],
+                    'loyalty' => ['label' => 'Loyalty', 'icon' => 'sparkles', 'count' => $customer->loyaltyPoints->count()],
+                    'notes' => ['label' => 'Notes', 'icon' => 'pencil-square', 'count' => $customer->customerNotes->count()],
                 ];
             @endphp
             @foreach ($tabs as $key => $t)
@@ -102,6 +103,7 @@
                     @switch($t['icon'])
                         @case('chart-bar-square') <x-heroicon-o-chart-bar-square class="w-4 h-4" /> @break
                         @case('receipt-percent') <x-heroicon-o-receipt-percent class="w-4 h-4" /> @break
+                        @case('sparkles') <x-heroicon-o-sparkles class="w-4 h-4" /> @break
                         @case('pencil-square') <x-heroicon-o-pencil-square class="w-4 h-4" /> @break
                     @endswitch
                     {{ $t['label'] }}
@@ -209,6 +211,80 @@
                                         <td class="py-2.5 pr-4 text-white">{{ $order['status'] }}</td>
                                         <td class="py-2.5 pr-4 text-brand-400">{{ $order['payment_status'] }}</td>
                                         <td class="py-2.5 pr-4 text-right text-white font-semibold">{{ $order['total'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ============== TAB: LOYALTY ============== --}}
+        <div x-show="tab === 'loyalty'" x-cloak class="space-y-6">
+            {{-- Balance summary --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
+                    <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold mb-1">Current Balance</div>
+                    <div class="text-white font-bold text-[1.75rem] leading-none">{{ number_format($stats['total_points'] ?? 0) }}</div>
+                    <div class="text-brand-400 text-[0.75rem] mt-1">Points available to redeem</div>
+                </div>
+                <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
+                    <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold mb-1">Lifetime Earned</div>
+                    <div class="text-white font-bold text-[1.75rem] leading-none">{{ number_format($stats['lifetime_points'] ?? 0) }}</div>
+                    <div class="text-brand-400 text-[0.75rem] mt-1">Total points credited over time</div>
+                </div>
+            </div>
+
+            {{-- Ledger --}}
+            <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Ledger</div>
+                    <span class="text-brand-400 text-[0.75rem]">{{ $customer->loyaltyPoints->count() }} {{ Str::plural('entry', $customer->loyaltyPoints->count()) }}</span>
+                </div>
+
+                @php $entries = $customer->loyaltyPoints->sortByDesc('created_at'); @endphp
+
+                @if ($entries->isEmpty())
+                    <div class="text-center py-10">
+                        <x-heroicon-o-sparkles class="w-10 h-10 text-brand-400/40 mx-auto mb-3" />
+                        <div class="text-brand-200 text-[0.9rem] font-semibold">No loyalty activity yet</div>
+                        <div class="text-brand-400 text-[0.8rem] mt-1">Use Adjust Points or Manual Redemption above to record the first entry.</div>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left text-[0.85rem]">
+                            <thead class="border-b border-brand-700/40 text-[0.7rem] uppercase tracking-[0.05em] text-brand-400">
+                                <tr>
+                                    <th class="py-2 pr-4 font-semibold">Date</th>
+                                    <th class="py-2 pr-4 font-semibold">Type</th>
+                                    <th class="py-2 pr-4 font-semibold">Reason</th>
+                                    <th class="py-2 font-semibold text-right">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-700/40">
+                                @foreach ($entries as $entry)
+                                    @php
+                                        $isRedeemed = $entry->type === \App\Enums\Engagement\LoyaltyPointType::Redeemed;
+                                        $signed = $isRedeemed ? -abs($entry->points) : (int) $entry->points;
+                                        $typePill = match ($entry->type->value) {
+                                            'earned' => 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400',
+                                            'redeemed' => 'bg-amber-500/15 border-amber-500/25 text-amber-400',
+                                            'adjusted' => 'bg-sky-500/15 border-sky-500/25 text-sky-400',
+                                            default => 'bg-brand-800 border-brand-700 text-brand-200',
+                                        };
+                                    @endphp
+                                    <tr>
+                                        <td class="py-3 pr-4 text-brand-400 whitespace-nowrap">{{ $entry->created_at?->format('M j, Y') ?? '—' }}</td>
+                                        <td class="py-3 pr-4">
+                                            <span class="inline-flex items-center px-2 py-0.5 border rounded-full text-[0.65rem] font-bold uppercase tracking-[0.06em] {{ $typePill }}">
+                                                {{ $entry->type->getLabel() }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 pr-4 text-brand-200">{{ $entry->description ?: '—' }}</td>
+                                        <td class="py-3 text-right font-semibold tabular-nums whitespace-nowrap {{ $signed >= 0 ? 'text-emerald-400' : 'text-amber-400' }}">
+                                            {{ $signed >= 0 ? '+' : '' }}{{ number_format($signed) }}
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

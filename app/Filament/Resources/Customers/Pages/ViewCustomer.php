@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Rule;
 
 /**
@@ -28,6 +29,22 @@ class ViewCustomer extends ViewRecord
     protected static string $resource = CustomerResource::class;
 
     protected string $view = 'filament.resources.customers.pages.view-customer';
+
+    /**
+     * The view template walks orders, customerNotes, and loyaltyPoints —
+     * strict-mode preventLazyLoading 500s if any aren't loaded. Override
+     * getRecord() so the relations are idempotently loaded on every
+     * render, including post-Livewire-action re-renders where the model
+     * is hydrated fresh without its prior relations.
+     */
+    public function getRecord(): Model
+    {
+        return parent::getRecord()->loadMissing([
+            'orders',
+            'customerNotes.createdBy',
+            'loyaltyPoints',
+        ]);
+    }
 
     protected function getHeaderActions(): array
     {
@@ -56,6 +73,8 @@ class ViewCustomer extends ViewRecord
                         (int) $data['points'],
                         $data['description'],
                     );
+
+                    $this->record->load('loyaltyPoints');
 
                     Notification::make()
                         ->title('Loyalty points adjusted')
@@ -87,6 +106,8 @@ class ViewCustomer extends ViewRecord
                         (int) $data['points'],
                         $data['description'],
                     );
+
+                    $this->record->load('loyaltyPoints');
 
                     Notification::make()
                         ->title('Redemption recorded')
