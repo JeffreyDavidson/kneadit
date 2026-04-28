@@ -60,7 +60,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo(view('filament.brand-logo'))
             ->brandLogoHeight('36px')
-            ->darkMode(false)
+            // Force dark mode so the tenant chrome (sidebar, topbar, main bg)
+            // reads as one cohesive dark surface like the central panel.
+            // Filament's compiled dark variants take over for native
+            // components; section CSS overrides any chrome we want themed.
+            ->darkMode(true, isForced: true)
             ->navigationGroups([
                 NavigationGroup::make('Shop'),
                 NavigationGroup::make('Settings'),

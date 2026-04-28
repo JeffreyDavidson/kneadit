@@ -187,7 +187,10 @@ class PanelThemes
         // tokens use the warm-tan accent (212,165,116 = #d4a574); these
         // values match the hardcoded rgba literals already living in the
         // tenant section CSS, so the section-CSS sweep in PR 3 is lossless.
+        // --brand-950 is the deepest warm-black surface (mirrors central
+        // platform-950); used by .fi-main page bg under forced dark mode.
         return ':root{'
+            . '--brand-950:#1c1410;'
             . '--brand-900:#3d2314;'
             . '--brand-800:#4a3225;'
             . '--brand-700:#6b4c3b;'
@@ -219,7 +222,10 @@ class PanelThemes
         // pulls from it. Helper rgba tokens use slate gray (148,163,184) for
         // chrome borders/hover/scrollbar — but active-bg/focus-ring stay
         // gold (212,146,12) so primary actions still read as branded.
+        // --brand-950 is slate-950 (Tailwind canonical) — deepest cool
+        // surface for .fi-main page bg under forced dark mode.
         return ':root{'
+            . '--brand-950:#0f172a;'
             . '--brand-900:#1e293b;'
             . '--brand-800:#334155;'
             . '--brand-700:#475569;'
@@ -250,7 +256,10 @@ class PanelThemes
         // existing var(--accent-gold) references shift coherently. Helper
         // rgba tokens all use Frost cyan (136,192,208 = #88c0d0) so chrome,
         // hover, focus, and active surfaces all read as one cohesive theme.
+        // --brand-950 is one tier deeper than canonical Polar Night so the
+        // .fi-main page bg can read distinct from --brand-900 topbar.
         return ':root{'
+            . '--brand-950:#232831;'
             . '--brand-900:#2e3440;'
             . '--brand-800:#3b4252;'
             . '--brand-700:#434c5e;'
