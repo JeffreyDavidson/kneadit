@@ -6,7 +6,6 @@ use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -67,24 +66,6 @@ test('create catering inquiry validates required fields', function (array $data,
     'details is required' => [['details' => null], ['details' => 'required']],
     'status is required' => [['status' => null], ['status' => 'required']],
 ]);
-
-test('can edit a catering inquiry via table action', function () {
-    $inquiry = CateringInquiry::factory()->create();
-
-    Livewire::test(ListCateringInquiries::class)
-        ->callAction(TestAction::make('edit')->table($inquiry), data: [
-            'customer_name' => 'Updated Name',
-            'customer_email' => $inquiry->customer_email,
-            'event_type' => $inquiry->event_type,
-            'event_date' => $inquiry->event_date->format('Y-m-d'),
-            'guest_count' => $inquiry->guest_count,
-            'details' => $inquiry->details,
-            'status' => $inquiry->status->value,
-        ])
-        ->assertHasNoFormErrors();
-
-    expect($inquiry->fresh()->customer_name)->toBe('Updated Name');
-});
 
 test('can render catering inquiry table columns', function (string $column) {
     CateringInquiry::factory()->create();

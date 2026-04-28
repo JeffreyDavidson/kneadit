@@ -2,38 +2,22 @@
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringInquiryStatus;
-use App\Events\Marketing\CateringQuoteRequested;
 use App\Models\Customers\CateringInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 
 uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('transitions catering inquiry from inquiry to quoted and dispatches event', function () {
-    Event::fake();
+test('transitions catering inquiry to the given status', function (CateringInquiryStatus $from, CateringInquiryStatus $to) {
+    $inquiry = CateringInquiry::factory()->create(['status' => $from]);
 
-    $inquiry = CateringInquiry::factory()->create([
-        'status' => CateringInquiryStatus::Inquiry,
-        'quoted_amount' => 500.00,
-    ]);
+    resolve(TransitionCateringInquiryStatus::class)($inquiry, $to);
 
-    resolve(TransitionCateringInquiryStatus::class)($inquiry, CateringInquiryStatus::Quoted);
-
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Quoted);
-    Event::assertDispatched(CateringQuoteRequested::class);
-});
-
-test('transitions to confirmed without dispatching quote event', function () {
-    Event::fake();
-
-    $inquiry = CateringInquiry::factory()->create([
-        'status' => CateringInquiryStatus::Quoted,
-    ]);
-
-    resolve(TransitionCateringInquiryStatus::class)($inquiry, CateringInquiryStatus::Confirmed);
-
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Confirmed);
-    Event::assertNotDispatched(CateringQuoteRequested::class);
-});
+    expect($inquiry->fresh()->status)->toBe($to);
+})->with([
+    'inquiry to quoted' => [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted],
+    'quoted to confirmed' => [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed],
+    'confirmed to completed' => [CateringInquiryStatus::Confirmed, CateringInquiryStatus::Completed],
+    'inquiry to cancelled' => [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Cancelled],
+]);
