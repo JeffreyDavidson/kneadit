@@ -93,8 +93,8 @@
     border: none !important;
 }
 .fi-modal-slide-over .fi-modal-footer-actions .fi-btn:first-child:hover {
-    background: linear-gradient(135deg, #4a2a1a, #7a5a49) !important;
-    box-shadow: 0 4px 12px rgba(61,35,20,0.2) !important;
+    background: linear-gradient(135deg, var(--brand-800), var(--brand-700)) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 .fi-modal-slide-over .fi-modal-footer-actions .fi-btn + .fi-btn,
 .fi-modal-slide-over .fi-modal-footer-actions .fi-btn.fi-color-gray {
@@ -121,7 +121,7 @@
 }
 .fi-modal-slide-over .fi-input-wrp:focus-within {
     border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
     --tw-ring-shadow: none !important;
 }
 .fi-modal-slide-over .fi-input-wrp-prefix {
@@ -135,7 +135,7 @@
 }
 .fi-modal-slide-over textarea:focus {
     border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
 }
 .fi-modal-slide-over .fi-select-wrp .fi-input-wrp {
     border-color: var(--brand-200) !important;
@@ -174,17 +174,17 @@
 
 .fi-modal-window {
     border-radius: 12px !important;
-    box-shadow: 0 25px 60px rgba(61,35,20,0.15) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15) !important;
 }
 .fi-modal-heading {
     color: var(--brand-900) !important;
     font-weight: 700 !important;
 }
 .fi-modal-description {
-    color: #6B4A2E !important;
+    color: var(--brand-700) !important;
 }
 .fi-modal .fi-btn.fi-color-gray {
-    border: 1px solid rgba(212,165,116,0.3) !important;
+    border: 1px solid var(--border-medium) !important;
     color: var(--brand-900) !important;
     border-radius: 8px !important;
 }
@@ -196,7 +196,7 @@
     font-weight: 600 !important;
 }
 .fi-modal-close-overlay {
-    background: rgba(61,35,20,0.4) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
     backdrop-filter: blur(2px) !important;
 }
 
@@ -206,7 +206,7 @@
 }
 .fi-global-search-field .fi-input-wrp {
     background: var(--brand-50, #fdf8f2) !important;
-    border: 1px solid rgba(212,165,116,0.25) !important;
+    border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
     box-shadow: none !important;
 }
@@ -229,7 +229,7 @@
 }
 .fi-global-search-field .fi-input-wrp:focus-within {
     border-color: var(--brand-300, #d4a574) !important;
-    box-shadow: 0 0 0 2px rgba(212,165,116,0.15) !important;
+    box-shadow: 0 0 0 2px var(--focus-ring) !important;
 }
 .fi-global-search-field .fi-icon,
 .fi-global-search-field svg {
@@ -262,13 +262,13 @@
 
 /* Widget table search — warm palette */
 .fi-wi .fi-ta-search-field input {
-    border: 1px solid rgba(212,165,116,0.3) !important;
+    border: 1px solid var(--border-medium) !important;
     background: var(--brand-50, #fdf8f2) !important;
     color: var(--brand-900, #3d2314) !important;
 }
 .fi-wi .fi-ta-search-field input:focus {
     border-color: var(--brand-300, #d4a574) !important;
-    box-shadow: 0 0 0 2px rgba(212,165,116,0.15) !important;
+    box-shadow: 0 0 0 2px var(--focus-ring) !important;
 }
 .fi-wi .fi-ta-search-field input::placeholder {
     color: var(--brand-500, #a08060) !important;

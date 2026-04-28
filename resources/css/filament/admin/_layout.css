@@ -7,8 +7,8 @@
     background: var(--brand-50) !important;
 }
 .fi-simple-main {
-    border: 1px solid rgba(212,165,116,0.2) !important;
-    box-shadow: 0 20px 60px rgba(61,35,20,0.08) !important;
+    border: 1px solid var(--border-medium) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
     border-radius: 16px !important;
 }
 
@@ -20,7 +20,7 @@
 /* Sidebar */
 .fi-sidebar {
     background: var(--brand-900) !important;
-    border-right: 1px solid rgba(212,165,116,0.1) !important;
+    border-right: 1px solid var(--border-subtle) !important;
     position: sticky !important;
     top: 0 !important;
     height: 100vh !important;
@@ -31,7 +31,7 @@
     top: 0 !important;
 }
 .fi-sidebar-header {
-    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
 }
 .fi-sidebar-item-label {
     color: #FFFFFF !important;
@@ -42,20 +42,20 @@
 }
 .fi-sidebar-item-btn > .fi-icon,
 .fi-sidebar-item-icon {
-    color: #F5D5A8 !important;
+    color: var(--brand-200) !important;
 }
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
     color: #FFFFFF !important;
 }
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: rgba(245,213,168,0.2) !important;
+    background: var(--active-bg) !important;
 }
 .fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover {
-    background: rgba(245,213,168,0.12) !important;
+    background: var(--hover-bg) !important;
 }
 .fi-sidebar-item-badge-ctn .fi-badge {
-    background: #F5D5A8 !important;
-    border-color: #F5D5A8 !important;
+    background: var(--brand-200) !important;
+    border-color: var(--brand-200) !important;
 }
 .fi-sidebar-item-badge-ctn .fi-badge span {
     color: var(--brand-900) !important;
@@ -68,7 +68,7 @@
 /* Topbar */
 .fi-topbar, .fi-topbar nav {
     background: var(--brand-50) !important;
-    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
 }
 
 /* User avatar */
