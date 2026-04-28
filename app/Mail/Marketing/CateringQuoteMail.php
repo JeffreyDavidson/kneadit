@@ -15,7 +15,9 @@ class CateringQuoteMail extends BaseMailable
 
     public function __construct(
         public CateringInquiry $inquiry,
-    ) {}
+    ) {
+        $this->inquiry->loadMissing('items');
+    }
 
     public function envelope(): Envelope
     {
