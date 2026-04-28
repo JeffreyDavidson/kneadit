@@ -81,12 +81,27 @@ html, body {
     border-bottom: 2px solid var(--brand, #d4920c);
 }
 
+.invoice__logo {
+    max-height: 56px;
+    max-width: 200px;
+    object-fit: contain;
+    margin-bottom: 0.85rem;
+    display: block;
+}
+
 .invoice__store {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--ink);
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.25rem;
     letter-spacing: -0.01em;
+}
+
+.invoice__tagline {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem 0;
 }
 
 .invoice__line {
@@ -314,28 +329,21 @@ td.items__total {
     font-weight: 700;
 }
 
-/* =================== NOTES =================== */
-
-.invoice__notes {
-    padding: 1.25rem 1.5rem;
-    background: var(--rule-soft);
-    border-radius: 6px;
-    margin-bottom: 2.5rem;
-}
-
-.notes__body {
-    font-size: 0.85rem;
-    color: var(--ink-soft);
-    white-space: pre-line;
-    line-height: 1.6;
-}
-
 /* =================== FOOTER =================== */
 
 .invoice__footer {
     padding-top: 1.75rem;
     border-top: 1px solid var(--rule);
     text-align: center;
+}
+
+.footer__disclaimer {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 540px;
+    margin: 0 auto 1.25rem;
+    font-style: italic;
 }
 
 .footer__thanks {
@@ -374,7 +382,6 @@ td.items__total {
         border-radius: 0;
     }
     .invoice__items,
-    .invoice__totals,
-    .invoice__notes { page-break-inside: avoid; }
+    .invoice__totals { page-break-inside: avoid; }
     .items thead { display: table-header-group; }
 }

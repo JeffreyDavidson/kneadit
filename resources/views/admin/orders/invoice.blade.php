@@ -3,6 +3,9 @@
 @php
     $brand = $settings->branding->brandColorPrimary ?? '#d4920c';
     $isDelivery = $order->delivery_type === DeliveryType::Delivery;
+    $logoUrl = $settings->store->logoUrl();
+    $tagline = $settings->store->tagline ?: $settings->branding->businessTagline;
+    $allergyDisclaimer = $settings->branding->allergyDisclaimer;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +34,13 @@
         {{-- ============== HEADER ============== --}}
         <header class="invoice__header">
             <div class="invoice__brand">
+                @if ($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $settings->store->name }}" class="invoice__logo">
+                @endif
                 <h1 class="invoice__store">{{ $settings->store->name }}</h1>
+                @if ($tagline)
+                    <p class="invoice__tagline">{{ $tagline }}</p>
+                @endif
                 <p class="invoice__line">{{ $settings->store->address ?? '' }}</p>
                 @if ($settings->store->phone)
                     <p class="invoice__line">{{ $settings->store->phone }}</p>
@@ -164,16 +173,11 @@
             </dl>
         </section>
 
-        {{-- ============== NOTES ============== --}}
-        @if ($order->notes)
-            <section class="invoice__notes">
-                <div class="notes__heading">Notes</div>
-                <p class="notes__body">{{ $order->notes }}</p>
-            </section>
-        @endif
-
         {{-- ============== FOOTER ============== --}}
         <footer class="invoice__footer">
+            @if ($allergyDisclaimer)
+                <p class="footer__disclaimer">{{ $allergyDisclaimer }}</p>
+            @endif
             <p class="footer__thanks">Thank you for your business!</p>
             <p class="footer__line">Generated {{ now()->format('F j, Y \a\t g:i A') }}</p>
             @if ($settings->store->email || $settings->store->phone)
