@@ -173,7 +173,11 @@ class PanelThemes
 
         // accent-gold is referenced in older tenant CSS rules — keep it
         // mapped to whatever the active theme uses for its accent.
-        return $palette;
+        // primaryCss() rebinds Filament's --primary-* palette so buttons,
+        // focus rings, links, toggles, and other native chrome shift with
+        // the theme instead of staying locked to AdminPanelProvider's
+        // hardcoded brown panel-config palette.
+        return $palette . self::primaryCss($theme);
     }
 
     private static function tenantHoney(): string
