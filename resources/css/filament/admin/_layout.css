@@ -26,15 +26,64 @@
     height: 100vh !important;
     overflow-y: auto !important;
 }
-.fi-sidebar-nav {
-    position: sticky !important;
-    top: 0 !important;
-}
 .fi-sidebar-header {
     border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 1.25rem 1.25rem !important;
+}
+/* Sidebar nav — padding + scrollable area + thin scrollbar (mirrors central) */
+.fi-sidebar-nav {
+    padding: 1rem 1rem !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 80px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--scrollbar-thumb) transparent !important;
+}
+.fi-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.fi-sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+/* Kill Filament's default gap-y-7 (28px) between groups so spacing is explicit */
+.fi-sidebar-nav-groups {
+    gap: 0 !important;
+}
+.fi-sidebar-group {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+}
+.fi-sidebar-group + .fi-sidebar-group {
+    margin-top: 1rem !important;
+}
+/* Tighten the group header button (label + collapse chevron) so it doesn't introduce huge gaps */
+.fi-sidebar-group-btn {
+    padding: 0.35rem 0 !important;
+    min-height: auto !important;
+    align-items: center !important;
+}
+/* Hide the collapse-group chevron (we don't use collapsing groups in this panel) */
+.fi-sidebar-group-collapse-btn {
+    display: none !important;
+}
+.fi-sidebar-group-items {
+    padding: 0 !important;
+    gap: 2px !important;
+    margin: 0 !important;
+}
+.fi-sidebar-item {
+    margin: 0 !important;
+}
+.fi-sidebar-item a,
+.fi-sidebar-item-btn {
+    padding: 0.55rem 1rem !important;
+    border-radius: 8px !important;
 }
 .fi-sidebar-item-label {
     color: #FFFFFF !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
 }
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
     color: #FFFFFF !important;
