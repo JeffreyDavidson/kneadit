@@ -14,14 +14,8 @@ use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ViewEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 
 /**
@@ -31,126 +25,18 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
+    protected string $view = 'filament.resources.orders.view-order';
+
     /**
-     * Eager-load orderItems.product so the view-order-items partial
-     * (which iterates $order->orderItems and accesses $item->product)
-     * doesn't trip Laravel strict-mode preventLazyLoading and 500 the
-     * page. Same for customer (referenced in the infolist).
+     * Eager-load the relations the view template walks (orderItems →
+     * product, customer, messages) so strict-mode preventLazyLoading
+     * doesn't 500 the page on first render.
      */
     public function mount(int|string $record): void
     {
         parent::mount($record);
 
-        $this->record->loadMissing(['orderItems.product', 'customer']);
-    }
-
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make('Order Information')
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('order_number')
-                                    ->label('Order Number')
-                                    ->badge(),
-                                TextEntry::make('status')
-                                    ->badge(),
-                                TextEntry::make('payment_status')
-                                    ->badge(),
-                            ]),
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('delivery_date')
-                                    ->date(),
-                                TextEntry::make('delivery_time')
-                                    ->time('H:i'),
-                            ]),
-                    ]),
-
-                Section::make('Customer Information')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('customer.name')
-                                    ->label('Customer Name'),
-                                TextEntry::make('customer.email')
-                                    ->label('Email'),
-                            ]),
-                        TextEntry::make('delivery_address')
-                            ->label('Delivery Address')
-                            ->placeholder('No delivery address')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Order Items')
-                    ->schema([
-                        ViewEntry::make('order_items')
-                            ->view('filament.resources.orders.view-order-items')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Financial Summary')
-                    ->schema([
-                        Grid::make(6)
-                            ->schema([
-                                TextEntry::make('subtotal')
-                                    ->money('USD'),
-                                TextEntry::make('delivery_fee')
-                                    ->money('USD'),
-                                TextEntry::make('discount_amount')
-                                    ->money('USD'),
-                                TextEntry::make('gift_card_amount')
-                                    ->money('USD'),
-                                TextEntry::make('tip_amount')
-                                    ->label('Tip')
-                                    ->money('USD'),
-                                TextEntry::make('total')
-                                    ->money('USD')
-                                    ->weight(FontWeight::Bold),
-                            ]),
-                    ]),
-
-                Section::make('Additional Information')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextEntry::make('payment_method')
-                                    ->badge(),
-                                TextEntry::make('paypal_invoice_id')
-                                    ->label('PayPal Invoice ID')
-                                    ->placeholder('No PayPal invoice'),
-                            ]),
-                        TextEntry::make('notes')
-                            ->placeholder('No notes')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Pickup Contact')
-                    ->visible(fn (Order $record): bool => filled($record->pickup_contact_name))
-                    ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextEntry::make('pickup_contact_name')
-                                    ->label('Name'),
-                                TextEntry::make('pickup_contact_phone')
-                                    ->label('Phone')
-                                    ->placeholder('—'),
-                                TextEntry::make('pickup_contact_email')
-                                    ->label('Email')
-                                    ->placeholder('—'),
-                            ]),
-                    ]),
-
-                Section::make('Messages')
-                    ->icon(Heroicon::OutlinedChatBubbleLeftRight)
-                    ->schema([
-                        ViewEntry::make('messages_view')
-                            ->view('filament.resources.orders.view-order-messages')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+        $this->record->loadMissing(['orderItems.product', 'customer', 'messages']);
     }
 
     protected function getHeaderActions(): array
@@ -186,7 +72,7 @@ class ViewOrder extends ViewRecord
                 ->color('info')
                 ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
                 ->action(function (): void {
-                    // This would integrate with PayPal service
+                    // Stub — real send flow is on the OrdersTable row action.
                     Notification::make()->title('PayPal invoice functionality coming soon.')->info()->send();
                 }),
 
@@ -216,6 +102,8 @@ class ViewOrder extends ViewRecord
                         senderType: SenderType::Baker,
                     );
 
+                    $this->record->load('messages');
+
                     Notification::make()->title('Message sent to customer.')->success()->send();
                 }),
 
@@ -230,6 +118,8 @@ class ViewOrder extends ViewRecord
                 ])
                 ->action(function (array $data): void {
                     resolve(AddOrderNote::class)($this->record, $data['note']);
+
+                    $this->record->refresh();
 
                     Notification::make()->title('Note added successfully.')->success()->send();
                 }),
