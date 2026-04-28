@@ -3,27 +3,46 @@
    =================================================================== */
 
 .fi-fo-field-wrp label {
-    color: var(--brand-900) !important;
+    color: var(--brand-100) !important;
     font-weight: 600 !important;
 }
 .fi-fo-field-wrp .fi-fo-field-wrp-helper-text {
-    color: var(--brand-500) !important;
+    color: var(--brand-400) !important;
 }
 
-/* Input wrapper — single ring via box-shadow */
+/* Input wrapper — explicit dark surface + visible border (mirrors central) */
 .fi-input-wrp {
     --tw-ring-shadow: 0 0 0 0 transparent !important;
     --tw-ring-color: transparent !important;
     --tw-shadow: 0 0 #0000 !important;
-    box-shadow: 0 0 0 1px var(--brand-200) !important;
-    border: none !important;
+    background: var(--brand-800) !important;
+    border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
     outline: none !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
 }
 .fi-input-wrp:focus-within {
-    box-shadow: 0 0 0 1px var(--accent-gold), 0 0 0 4px var(--focus-ring) !important;
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
     --tw-ring-shadow: 0 0 0 0 transparent !important;
     --tw-ring-color: transparent !important;
+}
+
+/* Inner input fields — transparent so the wrapper surface shows through */
+.fi-input-wrp input,
+.fi-input-wrp select,
+.fi-input-wrp textarea,
+.fi-input-wrp .fi-input,
+.fi-input-wrp .fi-select-input {
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: white !important;
+}
+.fi-input-wrp-icon,
+.fi-input-wrp-prefix,
+.fi-input-wrp-suffix {
+    color: var(--brand-400) !important;
 }
 
 /* Prefix/suffix dividers — subtle, not brand-colored */
@@ -59,8 +78,10 @@
 
 /* Standalone input (not inside wrp) */
 .fi-input {
+    background: var(--brand-800) !important;
     border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
+    color: white !important;
 }
 .fi-input:focus-within {
     border-color: var(--accent-gold) !important;
@@ -75,14 +96,18 @@
 
 /* Select */
 .fi-select-input {
+    background: var(--brand-800) !important;
     border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
+    color: white !important;
 }
 
 /* Textarea */
 textarea.fi-textarea-input {
+    background: var(--brand-800) !important;
     border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
+    color: white !important;
 }
 textarea.fi-textarea-input:focus {
     border-color: var(--accent-gold) !important;
@@ -106,8 +131,10 @@ textarea.fi-textarea-input:focus {
 
 /* Date picker */
 .fi-date-time-picker-btn {
+    background: var(--brand-800) !important;
     border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
+    color: white !important;
 }
 .fi-date-time-picker-btn:focus {
     border-color: var(--accent-gold) !important;
@@ -116,24 +143,24 @@ textarea.fi-textarea-input:focus {
 
 /* File upload */
 .fi-fo-file-upload .filepond--panel-root {
-    background: var(--brand-50) !important;
-    border: 2px dashed var(--brand-200) !important;
+    background: var(--brand-800) !important;
+    border: 2px dashed var(--border-medium) !important;
     border-radius: 12px !important;
 }
 .fi-fo-file-upload .filepond--drop-label label {
-    color: var(--brand-600) !important;
+    color: var(--brand-200) !important;
     font-weight: 500 !important;
 }
 .fi-fo-file-upload .filepond--label-action {
-    color: var(--brand-700) !important;
+    color: var(--accent-gold) !important;
     font-weight: 600 !important;
     text-decoration-color: var(--accent-gold) !important;
 }
 
 /* Form actions footer */
 .fi-form-actions {
-    background: var(--brand-50) !important;
-    border-top: 1px solid var(--brand-200) !important;
+    background: var(--brand-900) !important;
+    border-top: 1px solid var(--border-subtle) !important;
     padding: 1rem 1.5rem !important;
     border-radius: 0 0 12px 12px !important;
 }
@@ -149,14 +176,13 @@ textarea.fi-textarea-input:focus {
    =================================================================== */
 
 .fi-section {
-    background: #FFFFFF !important;
+    background: var(--brand-900) !important;
     overflow: hidden !important;
     border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
-    border-color: var(--brand-200) !important;
-    --tw-ring-color: var(--brand-200) !important;
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
     --tw-shadow: none !important;
 }
 .fi-section-content {
@@ -200,7 +226,7 @@ textarea.fi-textarea-input:focus {
    =================================================================== */
 
 .fi-fo-repeater {
-    border: 1px solid var(--brand-200) !important;
+    border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     overflow: hidden !important;
 }
@@ -215,7 +241,7 @@ li.fi-fo-repeater-item {
     box-shadow: none !important;
     outline: none !important;
     border: none !important;
-    border-bottom: 1px solid var(--brand-150) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
     --tw-ring-shadow: 0 0 0 0 transparent !important;
     --tw-ring-offset-shadow: 0 0 0 0 transparent !important;
     --tw-shadow: 0 0 0 0 transparent !important;
@@ -239,7 +265,7 @@ input[type="date"][value=""] {
     color: #9ca3af;
 }
 .fi-fo-repeater select:not(:has(option[value=""]:checked)) {
-    color: var(--brand-900);
+    color: white;
 }
 
 /* Hide default repeater item header */
@@ -263,8 +289,8 @@ input[type="date"][value=""] {
 /* Repeater add button */
 .fi-fo-repeater-add {
     padding: 0.75rem 1rem !important;
-    background: var(--brand-50) !important;
-    border-top: 1px solid var(--brand-150) !important;
+    background: var(--brand-900) !important;
+    border-top: 1px solid var(--border-subtle) !important;
     justify-content: flex-start !important;
 }
 .fi-fo-repeater-add .fi-btn {
@@ -295,13 +321,13 @@ input[type="date"][value=""] {
    =================================================================== */
 
 .fi-tabs-tab {
-    color: var(--brand-500) !important;
+    color: var(--brand-400) !important;
     font-weight: 600 !important;
 }
 .fi-tabs-tab[aria-selected="true"],
 .fi-tabs-tab.fi-active {
-    color: var(--brand-900) !important;
-    border-color: var(--brand-600) !important;
+    color: white !important;
+    border-color: var(--accent-gold) !important;
 }
 
 
