@@ -8,6 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 enum PaymentStatus: string implements HasColor, HasLabel
 {
     case Unpaid = 'unpaid';
+    case Partial = 'partial';
     case Paid = 'paid';
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
@@ -21,6 +22,7 @@ enum PaymentStatus: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Unpaid => 'danger',
+            self::Partial => 'warning',
             self::Paid => 'success',
             self::Cancelled => 'gray',
             self::Refunded => 'warning',

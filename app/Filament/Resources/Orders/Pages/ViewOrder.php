@@ -41,7 +41,7 @@ class ViewOrder extends ViewRecord
      */
     public function getRecord(): Model
     {
-        return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages']);
+        return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages', 'cateringInquiry']);
     }
 
     protected function getHeaderActions(): array

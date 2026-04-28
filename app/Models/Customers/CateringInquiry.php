@@ -7,6 +7,7 @@ use App\Casts\MoneyCentsCast;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Customers\CateringInquiryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property CateringInquiryStatus $status
@@ -58,5 +60,13 @@ class CateringInquiry extends Model
             'dietary_requirements' => StripTagsCast::class,
             'venue_address' => StripTagsCast::class,
         ];
+    }
+
+    /**
+     * @return HasOne<Order, $this>
+     */
+    public function order(): HasOne
+    {
+        return $this->hasOne(Order::class);
     }
 }

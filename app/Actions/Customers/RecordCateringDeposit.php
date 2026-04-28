@@ -3,12 +3,14 @@
 namespace App\Actions\Customers;
 
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\CateringInquiry;
 use App\ValueObjects\Money;
 
 /**
  * Stamps a deposit on a catering inquiry. If the inquiry was Quoted,
  * promotes it to Confirmed (the deposit is the booking commitment).
+ * If a linked order exists and is still Unpaid, mark it Partial.
  */
 class RecordCateringDeposit
 {
@@ -25,6 +27,10 @@ class RecordCateringDeposit
         }
 
         $inquiry->save();
+
+        if (($order = $inquiry->order()->first()) && $order->payment_status === PaymentStatus::Unpaid) {
+            $order->update(['payment_status' => PaymentStatus::Partial]);
+        }
 
         return $inquiry;
     }
