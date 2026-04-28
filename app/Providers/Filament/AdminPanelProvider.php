@@ -98,7 +98,6 @@ class AdminPanelProvider extends PanelProvider
                     '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
                     . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
                     . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
-                    . '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
                     . '<style>:root{'
                     . '--brand-900:' . $color('brand_color_900', '#3d2314') . ';'
                     . '--brand-800:' . $color('brand_color_800', '#4a3225') . ';'
