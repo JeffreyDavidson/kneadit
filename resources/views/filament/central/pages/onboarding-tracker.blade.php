@@ -14,10 +14,9 @@
 @endphp
 
 <x-filament-panels::page>
-    {{-- Subtitle --}}
-    <div class="mb-6">
-        <p class="text-cinnamon text-sm m-0">Monitor which bakers have completed their setup.</p>
-    </div>
+    {{-- Page subheading is rendered by Filament from $subheading on the page class.
+         Convention for these pages: mb-6 between top-level sections (stats, filters,
+         main grid), gap-4 within grids of cards, gap-3 within filter rows. --}}
 
     {{-- Summary Stats --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
