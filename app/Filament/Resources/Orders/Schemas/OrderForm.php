@@ -72,7 +72,9 @@ class OrderForm
         return Section::make('Pricing')
             ->columnSpanFull()
             ->components([
-                Grid::make(6)->components([
+                // 3 cols × 2 rows so labels don't wrap and inputs stay legible
+                // in the slide-over edit context. 6-col was too cramped.
+                Grid::make(3)->components([
                     MoneyInput::make('subtotal')->required(),
                     MoneyInput::make('delivery_fee')->default(0),
                     MoneyInput::make('discount_amount')->default(0),
