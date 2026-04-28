@@ -13,8 +13,12 @@ class ListOrders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            // Match the modal width that SlideOverEditAction sets ('md') so
+            // Add Order and Edit Order render at the same size — the default
+            // Filament slide-over is wider, which created an asymmetric pair.
             CreateAction::make()
-                ->slideOver(),
+                ->slideOver()
+                ->modalWidth('md'),
         ];
     }
 }
