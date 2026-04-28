@@ -8,10 +8,10 @@
 .fi-topbar-database-notifications-btn .fi-icon {
     width: 1.75rem !important;
     height: 1.75rem !important;
-    color: var(--brand-700) !important;
+    color: var(--brand-300) !important;
 }
 .fi-topbar-database-notifications-btn:hover .fi-icon {
-    color: var(--brand-900) !important;
+    color: white !important;
 }
 .fi-topbar-database-notifications-btn .fi-badge {
     position: absolute !important;
@@ -25,17 +25,17 @@
     line-height: 1.1rem !important;
     text-align: center !important;
     border-radius: 9999px !important;
-    background: var(--brand-900) !important;
-    color: #FFFFFF !important;
-    border: 1.5px solid var(--brand-50) !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+    background: var(--accent-gold) !important;
+    color: var(--brand-900) !important;
+    border: 1.5px solid var(--brand-900) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
     --tw-ring-shadow: none !important;
 }
 
 /* Panel background */
 .fi-no-database-notifications-modal .fi-modal-window,
 .fi-modal[id*="database-notifications"] .fi-modal-window {
-    background: var(--brand-50) !important;
+    background: var(--brand-900) !important;
 }
 /* Panel header */
 .fi-no-database-notifications-modal .fi-modal-header,
@@ -66,55 +66,55 @@
 }
 .fi-no-database-notifications-modal .fi-link:hover,
 .fi-modal[id*="database-notifications"] .fi-link:hover {
-    color: var(--brand-200) !important;
+    color: white !important;
 }
 /* Notification list dividers */
 .fi-no-database .fi-modal-content {
-    --tw-divide-color: var(--brand-200) !important;
-    border-color: var(--brand-200) !important;
+    --tw-divide-color: var(--border-subtle) !important;
+    border-color: var(--border-subtle) !important;
 }
-/* Notification rows — uniform white */
+/* Notification rows — uniform dark surface, slightly lighter than panel */
 .fi-no-database .fi-modal-content > *,
 .fi-no-notification-unread-ctn,
 .fi-no-notification-read-ctn,
 .fi-no-database .fi-modal-content > div {
-    background: #FFFFFF !important;
+    background: var(--brand-900) !important;
 }
 .fi-no-database .fi-modal-content > * {
     padding: 0.875rem 1.5rem !important;
 }
 .fi-no-notification.fi-color {
-    background: #FFFFFF !important;
-    background-color: #FFFFFF !important;
-    --tw-ring-color: var(--brand-200) !important;
+    background: var(--brand-900) !important;
+    background-color: var(--brand-900) !important;
+    --tw-ring-color: var(--border-subtle) !important;
 }
 /* Unread indicator */
 .fi-no-notification-unread-ctn::before {
-    background: var(--brand-600) !important;
+    background: var(--accent-gold) !important;
     width: 3px !important;
 }
 /* Notification icon/text */
 .fi-no-database .fi-no-notification-icon {
-    color: var(--brand-600) !important;
+    color: var(--brand-300) !important;
 }
 .fi-no-database .fi-no-notification-title {
-    color: var(--brand-900) !important;
+    color: var(--brand-100) !important;
     font-weight: 600 !important;
     font-size: 0.875rem !important;
 }
 .fi-no-database .fi-no-notification-body {
-    color: var(--brand-700) !important;
+    color: var(--brand-300) !important;
     font-size: 0.8125rem !important;
 }
 .fi-no-database .fi-no-notification-date {
-    color: var(--brand-500) !important;
+    color: var(--brand-400) !important;
     font-size: 0.75rem !important;
 }
 .fi-no-database .fi-icon-btn {
     color: var(--brand-400) !important;
 }
 .fi-no-database .fi-icon-btn:hover {
-    color: var(--brand-900) !important;
+    color: white !important;
 }
 /* Badge in notification header */
 .fi-no-database-notifications-modal .fi-badge,

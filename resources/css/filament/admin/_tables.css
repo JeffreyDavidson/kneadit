@@ -4,11 +4,11 @@
 
 /* Table container */
 .fi-ta-ctn {
-    border: 1px solid rgba(0,0,0,0.08) !important;
+    background: var(--brand-900) !important;
+    border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     overflow: visible !important;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06) !important;
-    background: #FFFFFF !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2) !important;
 }
 /* Column toggle dropdown needs visible overflow */
 .fi-ta-ctn .fi-ta-header-toolbar {
@@ -60,18 +60,16 @@
     background: rgba(255,255,255,0.1) !important;
 }
 
-/* Column headers — subtle, matches central panel's thead style.
-   Soft brand-50 background on the row, transparent cells, soft brown
-   text, 600 weight, no gold accent. */
+/* Column headers — subtle dark, matches central panel's thead style. */
 .fi-ta-table thead {
-    background: var(--brand-50) !important;
+    background: var(--thead-bg) !important;
 }
 .fi-ta-table thead .fi-ta-cell,
 .fi-ta-table thead .fi-ta-header-cell {
     background: transparent !important;
 }
 .fi-ta-header-cell {
-    color: var(--brand-500) !important;
+    color: var(--brand-300) !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     font-size: 0.7rem !important;
@@ -79,7 +77,7 @@
     border-bottom: none !important;
 }
 table thead tr {
-    border-bottom: 1px solid var(--brand-200) !important;
+    border-bottom: 1px solid var(--border-medium) !important;
 }
 
 /* Table rows */
@@ -93,7 +91,7 @@ table thead tr {
 
 /* Table cell text */
 .fi-ta-text {
-    color: var(--brand-900) !important;
+    color: white !important;
 }
 
 /* Status badges */
@@ -150,12 +148,12 @@ input[type='checkbox'].fi-checkbox-input {
 
 /* Edit action link in table rows */
 .fi-ta-row .fi-ta-actions .fi-link {
-    color: var(--brand-700) !important;
+    color: var(--accent-gold) !important;
     font-weight: 600 !important;
     transition: color 0.15s !important;
 }
 .fi-ta-row .fi-ta-actions .fi-link:hover {
-    color: var(--accent-gold) !important;
+    color: white !important;
 }
 
 /* Toolbar (search + filters) — dark background to match header */
@@ -368,11 +366,11 @@ input[type='checkbox'].fi-checkbox-input {
    instead of inheriting the brown gradient from its anchor. */
 body .fi-dropdown-panel,
 body div.fi-dropdown-panel {
-    background-color: #FFFFFF !important;
+    background-color: var(--brand-900) !important;
     background-image: none !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
+    border: 1px solid var(--border-medium) !important;
     border-radius: 8px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
 }
 body .fi-dropdown-list,
 body .fi-dropdown-list-item {
@@ -380,29 +378,29 @@ body .fi-dropdown-list-item {
     background-image: none !important;
 }
 body .fi-dropdown-list-item-button:hover {
-    background-color: var(--brand-50) !important;
+    background-color: var(--brand-800) !important;
 }
 .fi-dropdown-list-item-label {
-    color: var(--brand-900) !important;
+    color: var(--brand-100) !important;
     font-weight: 500 !important;
 }
 .fi-dropdown-header-label {
-    color: var(--brand-700) !important;
+    color: var(--brand-300) !important;
     font-weight: 700 !important;
 }
 
 /* Confirmation modals (delete selected, etc.) */
 .fi-modal-window {
     border-radius: 12px !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid var(--border-subtle) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
 }
 .fi-modal-heading {
-    color: var(--brand-900) !important;
+    color: var(--brand-100) !important;
     font-weight: 700 !important;
 }
 .fi-modal-description {
-    color: var(--brand-600) !important;
+    color: var(--brand-300) !important;
 }
 /* Modal confirm/submit button */
 .fi-modal-footer .fi-btn:not(.fi-color-gray) {
@@ -427,20 +425,20 @@ body .fi-dropdown-list-item-button:hover {
 /* Modal cancel button */
 .fi-modal-footer .fi-btn.fi-color-gray,
 .fi-modal-footer .fi-color-gray .fi-btn {
-    background: var(--brand-100) !important;
-    color: var(--brand-800) !important;
-    border: 1px solid rgba(0,0,0,0.1) !important;
+    background: var(--brand-800) !important;
+    color: var(--brand-100) !important;
+    border: 1px solid var(--border-medium) !important;
 }
 .fi-modal-footer .fi-btn.fi-color-gray:hover,
 .fi-modal-footer .fi-color-gray .fi-btn:hover {
-    background: var(--brand-200) !important;
+    background: var(--brand-700) !important;
 }
 /* Modal close (X) button */
 .fi-modal-close-btn {
-    color: var(--brand-500) !important;
+    color: var(--brand-400) !important;
 }
 .fi-modal-close-btn:hover {
-    color: var(--brand-800) !important;
+    color: white !important;
 }
 
 .fi-ta-footer {
@@ -469,20 +467,20 @@ body .fi-dropdown-list-item-button:hover {
 }
 /* Per-page select — refined compact style */
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp {
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.12) !important;
+    border: 1px solid var(--border-medium) !important;
     border-radius: 6px !important;
     height: 32px !important;
     min-height: 0 !important;
 }
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp .fi-input-wrp-prefix {
-    border-inline-end: 1px solid rgba(0,0,0,0.08) !important;
-    border-right: 1px solid rgba(0,0,0,0.08) !important;
+    border-inline-end: 1px solid var(--border-subtle) !important;
+    border-right: 1px solid var(--border-subtle) !important;
     font-size: 0.8rem !important;
-    color: var(--brand-500) !important;
+    color: var(--brand-400) !important;
 }
 .fi-pagination-records-per-page-select-ctn select {
     font-size: 0.8rem !important;
-    color: var(--brand-800) !important;
+    color: white !important;
     padding-block: 0 !important;
     height: 30px !important;
 }
@@ -516,10 +514,10 @@ body .fi-dropdown-list-item-button:hover {
 
 /* Empty state */
 .fi-ta-empty-state-heading {
-    color: var(--brand-900) !important;
+    color: var(--brand-100) !important;
 }
 .fi-ta-empty-state-description {
-    color: var(--brand-600) !important;
+    color: var(--brand-300) !important;
 }
 
 
