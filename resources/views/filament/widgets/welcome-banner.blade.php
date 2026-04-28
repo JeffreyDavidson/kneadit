@@ -10,20 +10,20 @@
         <div class="flex flex-wrap gap-2">
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.pages.quick-order'))
                 <a href="{{ route('filament.admin.pages.quick-order') }}"
-                   class="inline-flex items-center justify-center gap-1.5 rounded-lg font-bold no-underline bg-accent-gold text-brand-900 hover:opacity-90 px-6 py-2.5 text-sm">
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg font-bold no-underline bg-brand-300 text-brand-900 hover:opacity-90 px-6 py-2.5 text-sm">
                     <x-heroicon-s-plus-circle class="w-3.5 h-3.5" stroke-width="2.5" />
                     New Order
                 </a>
             @endif
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.index'))
                 <a href="{{ route('filament.admin.resources.orders.index') }}"
-                   class="inline-flex items-center justify-center rounded-lg font-bold no-underline bg-brand-800 text-accent-gold border border-brand-700 hover:border-accent-gold px-4 py-2 text-sm">
+                   class="inline-flex items-center justify-center rounded-lg font-bold no-underline bg-brand-800 text-brand-300 border border-brand-700 hover:border-brand-300 px-4 py-2 text-sm">
                     View Orders
                 </a>
             @endif
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.resources.contact-messages.index'))
                 <a href="{{ route('filament.admin.resources.contact-messages.index') }}"
-                   class="inline-flex items-center justify-center rounded-lg font-bold no-underline bg-brand-800 text-accent-gold border border-brand-700 hover:border-accent-gold px-4 py-2 text-sm">
+                   class="inline-flex items-center justify-center rounded-lg font-bold no-underline bg-brand-800 text-brand-300 border border-brand-700 hover:border-brand-300 px-4 py-2 text-sm">
                     Messages
                 </a>
             @endif
