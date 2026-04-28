@@ -1,5 +1,5 @@
 <x-filament-widgets::widget>
-    <x-admin.dashboard.preview-card heading="Quick Actions" icon="⚡">
+    <x-admin.dashboard.preview-card heading="Quick Actions">
         <div class="flex flex-wrap gap-2 mt-1">
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.pages.quick-order'))
                 <x-admin.btn variant="ghost" :href="route('filament.admin.pages.quick-order')" icon="">
