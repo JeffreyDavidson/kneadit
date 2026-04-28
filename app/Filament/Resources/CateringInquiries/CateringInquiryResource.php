@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CateringInquiries;
 
 use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
+use App\Filament\Resources\CateringInquiries\Pages\ViewCateringInquiry;
 use App\Filament\Resources\CateringInquiries\Schemas\CateringInquiryForm;
 use App\Filament\Resources\CateringInquiries\Tables\CateringInquiriesTable;
 use App\Models\Customers\CateringInquiry;
@@ -65,6 +66,7 @@ class CateringInquiryResource extends Resource
     {
         return [
             'index' => ListCateringInquiries::route('/'),
+            'view' => ViewCateringInquiry::route('/{record}'),
         ];
     }
 }
