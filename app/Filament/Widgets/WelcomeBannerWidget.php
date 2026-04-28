@@ -20,7 +20,14 @@ class WelcomeBannerWidget extends Widget
 {
     protected static ?int $sort = 0;
 
-    protected int|string|array $columnSpan = 1;
+    /**
+     * Quick Actions sits alone on its row — central does this by having the
+     * next widget after QuickActions (columnSpan=1) be full-width, which
+     * pushes everything else to the next row. Tenant achieves the same
+     * visual by claiming a full-width slot here and constraining the card
+     * width inside the view, leaving empty space to the right.
+     */
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'filament.widgets.welcome-banner';
 }
