@@ -97,6 +97,56 @@
 
         {{-- ============== TAB: OVERVIEW ============== --}}
         <div x-show="tab === 'overview'" x-cloak class="space-y-6">
+            @if ($order->cateringInquiry)
+                @php $inq = $order->cateringInquiry; @endphp
+                <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Catering</div>
+                        <a href="{{ \App\Filament\Resources\CateringInquiries\CateringInquiryResource::getUrl('view', ['record' => $inq]) }}"
+                            class="inline-flex items-center gap-1.5 text-brand-400 text-[0.8rem] hover:text-brand-200 transition-colors">
+                            View inquiry
+                            <x-heroicon-o-arrow-top-right-on-square class="w-3.5 h-3.5" />
+                        </a>
+                    </div>
+                    <dl class="divide-y divide-brand-700/40">
+                        <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
+                            <dt class="text-brand-400 text-[0.8rem] shrink-0 pt-0.5">Event</dt>
+                            <dd class="text-white text-[0.85rem] font-semibold text-right">
+                                {{ $inq->event_type }}
+                                @if ($inq->event_date)
+                                    · {{ $inq->event_date->format('M j, Y') }}
+                                @endif
+                            </dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
+                            <dt class="text-brand-400 text-[0.8rem] shrink-0 pt-0.5">Guests</dt>
+                            <dd class="text-white text-[0.85rem] font-semibold text-right tabular-nums">{{ number_format($inq->guest_count) }}</dd>
+                        </div>
+                        @if ($inq->venue_address)
+                            <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
+                                <dt class="text-brand-400 text-[0.8rem] shrink-0 pt-0.5">Venue</dt>
+                                <dd class="text-white text-[0.85rem] font-semibold text-right whitespace-pre-wrap max-w-md">{{ $inq->venue_address }}</dd>
+                            </div>
+                        @endif
+                        @if ($inq->dietary_requirements)
+                            <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
+                                <dt class="text-brand-400 text-[0.8rem] shrink-0 pt-0.5">Dietary</dt>
+                                <dd class="text-white text-[0.85rem] font-semibold text-right whitespace-pre-wrap max-w-md">{{ $inq->dietary_requirements }}</dd>
+                            </div>
+                        @endif
+                        @if ($inq->deposit_paid_at)
+                            <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
+                                <dt class="text-brand-400 text-[0.8rem] shrink-0 pt-0.5">Deposit</dt>
+                                <dd class="text-white text-[0.85rem] font-semibold text-right tabular-nums">
+                                    {{ $inq->deposit_amount?->formatted() ?? '—' }}
+                                    <div class="text-brand-400 font-normal text-[0.75rem]">received {{ $inq->deposit_paid_at->format('M j, Y') }}</div>
+                                </dd>
+                            </div>
+                        @endif
+                    </dl>
+                </div>
+            @endif
+
             {{-- Customer + Delivery --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {{-- Customer --}}
@@ -243,7 +293,7 @@
                                                     </div>
                                                 @endif
                                                 <div class="min-w-0">
-                                                    <div class="text-white font-semibold truncate">{{ $item->product?->name ?? '— removed —' }}</div>
+                                                    <div class="text-white font-semibold truncate">{{ $item->name ?? $item->product?->name ?? '— removed —' }}</div>
                                                     @if ($item->special_instructions)
                                                         <div class="text-brand-400 text-[0.75rem] mt-0.5 italic truncate">"{{ $item->special_instructions }}"</div>
                                                     @endif

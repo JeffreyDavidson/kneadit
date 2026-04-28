@@ -2,8 +2,10 @@
 
 use App\Actions\Customers\CancelCateringInquiry;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 
@@ -45,4 +47,24 @@ test('ignores blank reasons', function () {
     resolve(CancelCateringInquiry::class)($inquiry, '   ');
 
     expect($inquiry->fresh()->notes)->toBe('Existing.');
+});
+
+test('cascades cancellation to a linked order in a cancellable state', function () {
+    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Confirmed]);
+    $order = Order::factory()->for($inquiry, 'cateringInquiry')->create(['status' => OrderStatus::Confirmed]);
+
+    resolve(CancelCateringInquiry::class)($inquiry);
+
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Cancelled);
+});
+
+test('leaves the order alone when it is in a non-cancellable terminal state', function () {
+    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Confirmed]);
+    $order = Order::factory()->for($inquiry, 'cateringInquiry')->create(['status' => OrderStatus::Delivered]);
+
+    resolve(CancelCateringInquiry::class)($inquiry);
+
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Delivered);
 });

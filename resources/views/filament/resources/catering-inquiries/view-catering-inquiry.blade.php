@@ -3,6 +3,7 @@
 
     $inquiry = $record;
     $status = $inquiry->status;
+    $order = $inquiry->order;
 
     $eventDate = $inquiry->event_date;
     $eventCountdown = $eventDate?->isFuture() ? $eventDate->diffForHumans(['parts' => 1, 'short' => false]) : null;
@@ -163,20 +164,34 @@
         <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Booking</div>
-                {{ $this->confirmBookingAction }}
+                @unless ($order)
+                    {{ $this->confirmBookingAction }}
+                @endunless
             </div>
 
-            <div class="text-brand-200 text-[0.9rem]">
-                @if (in_array($status, [CateringInquiryStatus::Confirmed, CateringInquiryStatus::Completed], true))
-                    <span class="text-emerald-400 font-semibold">Confirmed.</span>
-                @elseif ($status === CateringInquiryStatus::Quoted)
-                    Awaiting confirmation. Confirm once the customer agrees to the quote.
-                @elseif ($status === CateringInquiryStatus::Cancelled)
-                    <span class="text-red-400 font-semibold">Cancelled.</span>
-                @else
-                    Send a quote first; confirmation becomes available once the customer has been quoted.
-                @endif
-            </div>
+            @if ($order)
+                <a href="{{ \App\Filament\Resources\Orders\OrderResource::getUrl('view', ['record' => $order]) }}"
+                   class="flex items-center justify-between gap-4 px-4 py-3 -mx-2 rounded-lg bg-brand-800 border border-brand-700/60 hover:border-brand-300/40 transition-colors group">
+                    <div class="min-w-0">
+                        <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold mb-0.5">Linked order</div>
+                        <div class="text-white text-[0.95rem] font-bold font-mono">{{ $order->order_number }}</div>
+                        <div class="text-brand-400 text-[0.8rem] mt-0.5">
+                            {{ $order->status->getLabel() }} · {{ $order->payment_status->getLabel() }} · {{ $order->total->formatted() }}
+                        </div>
+                    </div>
+                    <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4 text-brand-400 group-hover:text-brand-200 transition-colors shrink-0" />
+                </a>
+            @else
+                <div class="text-brand-200 text-[0.9rem]">
+                    @if ($status === CateringInquiryStatus::Quoted)
+                        Awaiting confirmation. Confirming creates an order so the rest of fulfillment (payment, messages, status) is tracked there.
+                    @elseif ($status === CateringInquiryStatus::Cancelled)
+                        <span class="text-red-400 font-semibold">Cancelled.</span>
+                    @else
+                        Send a quote first; confirmation becomes available once the customer has been quoted.
+                    @endif
+                </div>
+            @endif
         </div>
 
         {{-- ============== DEPOSIT ============== --}}
@@ -203,6 +218,11 @@
                         </div>
                     @endif
                 </dl>
+                @if ($order)
+                    <div class="text-brand-400 text-[0.8rem] mt-3 pt-3 border-t border-brand-700/40">
+                        Balance is tracked on the linked order.
+                    </div>
+                @endif
             @else
                 <div class="text-brand-200 text-[0.9rem]">
                     Not received.
