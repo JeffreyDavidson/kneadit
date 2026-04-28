@@ -13,9 +13,12 @@ use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\CateringInquiryItem;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -126,27 +129,83 @@ class ViewCateringInquiry extends ViewRecord
             });
     }
 
-    public function reviseQuoteAction(): Action
+    public function manageQuoteItemsAction(): Action
     {
-        return Action::make('reviseQuote')
-            ->label('Revise amount')
-            ->icon(Heroicon::OutlinedPencilSquare)
+        return Action::make('manageQuoteItems')
+            ->label('Manage items')
+            ->icon(Heroicon::OutlinedSquares2x2)
             ->color('gray')
             ->size('xs')
             ->slideOver()
             ->authorize('update')
             ->visible(fn (): bool => in_array($this->record->status, [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted], true))
+            ->modalDescription('Add, edit, or reorder items that make up this quote. The total auto-recomputes; the customer is not emailed.')
             ->fillForm(fn (): array => [
-                'quoted_amount' => $this->record->quoted_amount?->dollars(),
+                'items' => $this->record->items->map(fn (CateringInquiryItem $item): array => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price->dollars(),
+                    'special_instructions' => $item->special_instructions,
+                    'sort_order' => $item->sort_order,
+                ])->all(),
             ])
             ->schema([
-                MoneyInput::make('quoted_amount')->required(),
+                Repeater::make('items')
+                    ->label('Quote items')
+                    ->reorderable()
+                    ->reorderableWithDragAndDrop()
+                    ->defaultItems(0)
+                    ->addActionLabel('Add item')
+                    ->columns(4)
+                    ->schema([
+                        TextInput::make('name')->required()->columnSpan(2),
+                        TextInput::make('quantity')->numeric()->required()->minValue(1)->default(1),
+                        MoneyInput::make('unit_price')->required(),
+                        Textarea::make('special_instructions')->rows(2)->columnSpanFull(),
+                    ]),
             ])
-            ->modalDescription('Updates the quoted amount. The customer is not emailed — use Send or Resend to email.')
             ->action(function (array $data): void {
-                $this->record->update(['quoted_amount' => $data['quoted_amount']]);
+                $rows = $data['items'] ?? [];
 
-                Notification::make()->title('Quote amount updated.')->success()->send();
+                $existing = $this->record->items()->get()->keyBy('id');
+                $submittedIds = collect($rows)->pluck('id')->filter()->map(fn ($id): int => (int) $id)->all();
+
+                foreach ($existing as $id => $item) {
+                    if (! in_array($id, $submittedIds, true)) {
+                        $item->delete();
+                    }
+                }
+
+                foreach (array_values($rows) as $sortOrder => $row) {
+                    $payload = [
+                        'name' => $row['name'],
+                        'quantity' => (int) $row['quantity'],
+                        'unit_price' => $row['unit_price'],
+                        'special_instructions' => $row['special_instructions'] ?: null,
+                        'sort_order' => $sortOrder,
+                    ];
+
+                    if (! empty($row['id']) && $existing->has((int) $row['id'])) {
+                        $existing[(int) $row['id']]->update($payload);
+
+                        continue;
+                    }
+
+                    $this->record->items()->create($payload);
+                }
+
+                // Defensive recompute: the observer covers per-item CRUD, but
+                // the Filament Repeater path bulk-mutates and we want the
+                // parent total guaranteed in sync before the page rerenders.
+                $sumCents = $this->record->items()->get()
+                    ->sum(fn (CateringInquiryItem $i): int => $i->unit_price->cents() * $i->quantity);
+
+                $this->record->update(['quoted_amount' => Money::fromCents((int) $sumCents)]);
+
+                $this->record->refresh();
+
+                Notification::make()->title('Quote items updated.')->success()->send();
             });
     }
 

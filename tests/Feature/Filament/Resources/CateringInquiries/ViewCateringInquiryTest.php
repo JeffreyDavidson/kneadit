@@ -61,7 +61,7 @@ test('send quote is hidden when no amount has been set', function () {
 
     Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('sendQuote')
-        ->assertActionVisible('reviseQuote');
+        ->assertActionVisible('manageQuoteItems');
 });
 
 test('resend quote is visible when status is Quoted and dispatches the event', function () {
@@ -81,7 +81,7 @@ test('resend quote is visible when status is Quoted and dispatches the event', f
     Event::assertDispatched(CateringQuoteRequested::class);
 });
 
-test('revise quote updates the amount without firing email or changing status', function () {
+test('manage quote items adds items, recomputes total, and does not email', function () {
     Event::fake();
 
     $inquiry = CateringInquiry::factory()->create([
@@ -90,11 +90,17 @@ test('revise quote updates the amount without firing email or changing status', 
     ]);
 
     Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
-        ->callAction('reviseQuote', data: ['quoted_amount' => 1500]);
+        ->callAction('manageQuoteItems', data: [
+            'items' => [
+                ['name' => 'Cake', 'quantity' => 1, 'unit_price' => 400, 'special_instructions' => null],
+                ['name' => 'Macarons', 'quantity' => 100, 'unit_price' => 3, 'special_instructions' => null],
+            ],
+        ]);
 
     $inquiry->refresh();
-    expect($inquiry->status)->toBe(CateringInquiryStatus::Inquiry)
-        ->and($inquiry->quoted_amount?->dollars())->toBe(1500.00);
+    expect($inquiry->items)->toHaveCount(2)
+        ->and($inquiry->status)->toBe(CateringInquiryStatus::Inquiry)
+        ->and($inquiry->quoted_amount?->dollars())->toBe(700.00);
     Event::assertNotDispatched(CateringQuoteRequested::class);
 });
 
