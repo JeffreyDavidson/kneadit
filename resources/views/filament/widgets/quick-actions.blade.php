@@ -1,5 +1,5 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Quick Actions" icon="heroicon-o-bolt">
+<div>
+    <x-admin.dashboard.preview-card heading="Quick Actions" icon="⚡">
         <div class="grid grid-cols-2 gap-2.5">
             @foreach ($this->getQuickActions() as $action)
                 <a href="{{ $action['url'] }}"
@@ -11,5 +11,5 @@
                 </a>
             @endforeach
         </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+    </x-admin.dashboard.preview-card>
+</div>
