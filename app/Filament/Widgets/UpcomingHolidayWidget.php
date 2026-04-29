@@ -18,6 +18,20 @@ class UpcomingHolidayWidget extends Widget
 
     protected string $view = 'filament.widgets.upcoming-holiday';
 
+    /**
+     * Hide entirely when there's no upcoming active holiday — same
+     * empty-div pattern as InboxWidget. Without this, the widget
+     * renders an empty grid cell between visible siblings.
+     */
+    public static function canView(): bool
+    {
+        try {
+            return Holiday::query()->active()->upcoming()->exists();
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
     /** @return array<string, mixed>|null */
     public function getHolidayData(): ?array
     {

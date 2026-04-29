@@ -16,6 +16,18 @@ class CateringPipelineWidget extends Widget
 
     protected string $view = 'filament.widgets.catering-pipeline-widget';
 
+    /**
+     * Hide entirely when there's no active catering pipeline (no open
+     * inquiries AND no quoted ones). The 0/0/$0 empty state was just
+     * dead space for bakeries that don't do catering yet. Reappears
+     * the moment any inquiry lands or moves to quoted.
+     */
+    public static function canView(): bool
+    {
+        return CateringInquiry::query()->openFunnel()->exists()
+            || CateringInquiry::query()->quoted()->exists();
+    }
+
     public function getOpenInquiriesCount(): int
     {
         return $this->cached('open', [1800, 3600], fn (): int => CateringInquiry::query()->openFunnel()->count());
