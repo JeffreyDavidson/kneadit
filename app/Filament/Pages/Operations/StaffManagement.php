@@ -11,12 +11,14 @@ use App\Exceptions\Staff\StaffInvitationException;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use UnitEnum;
 
 class StaffManagement extends Page
@@ -41,10 +43,6 @@ class StaffManagement extends Page
     protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.pages.operations.staff-management';
-
-    public string $inviteEmail = '';
-
-    public string $inviteRole = UserRole::Staff->value;
 
     public function getTitle(): string
     {
@@ -72,81 +70,174 @@ class StaffManagement extends Page
             ->get();
     }
 
-    public function sendInvitation(): void
+    protected function getHeaderActions(): array
     {
-        $this->validate([
-            'inviteEmail' => ['required', 'email'],
-            'inviteRole' => ['required', Rule::in([UserRole::Manager->value, UserRole::Staff->value])],
-        ]);
-
-        try {
-            resolve(SendStaffInvitation::class)(
-                email: $this->inviteEmail,
-                role: UserRole::from($this->inviteRole),
-                invitedBy: (int) Auth::id(),
-            );
-
-            $this->inviteEmail = '';
-            $this->inviteRole = UserRole::Staff->value;
-
-            Notification::make()
-                ->title('Invitation sent!')
-                ->success()
-                ->send();
-        } catch (StaffInvitationException $e) {
-            Notification::make()
-                ->title($e->getMessage())
-                ->warning()
-                ->send();
-        }
+        return [
+            $this->inviteAction(),
+        ];
     }
 
-    public function revokeInvitation(int $id): void
+    public function inviteAction(): Action
     {
-        resolve(RevokeStaffInvitation::class)($id);
+        return Action::make('invite')
+            ->label('Invite Team Member')
+            ->icon(Heroicon::OutlinedPaperAirplane)
+            ->color('primary')
+            ->slideOver()
+            ->modalHeading('Invite Team Member')
+            ->modalDescription('Send an email invitation to add staff or a manager to your team.')
+            ->modalSubmitActionLabel('Send Invite')
+            ->fillForm(fn (): array => [
+                'email' => '',
+                'role' => UserRole::Staff->value,
+            ])
+            ->schema([
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required()
+                    ->placeholder('staff@example.com')
+                    ->maxLength(255),
+                Select::make('role')
+                    ->label('Role')
+                    ->options([
+                        UserRole::Staff->value => 'Staff',
+                        UserRole::Manager->value => 'Manager',
+                    ])
+                    ->required()
+                    ->native(false),
+            ])
+            ->action(function (array $data): void {
+                try {
+                    resolve(SendStaffInvitation::class)(
+                        email: $data['email'],
+                        role: UserRole::from($data['role']),
+                        invitedBy: (int) Auth::id(),
+                    );
 
-        Notification::make()
-            ->title('Invitation revoked')
-            ->success()
-            ->send();
+                    Notification::make()
+                        ->title('Invitation sent!')
+                        ->success()
+                        ->send();
+                } catch (StaffInvitationException $e) {
+                    Notification::make()
+                        ->title($e->getMessage())
+                        ->warning()
+                        ->send();
+                }
+            });
     }
 
-    public function changeRole(int $userId, string $newRole): void
+    public function changeRoleAction(): Action
     {
-        $role = UserRole::tryFrom($newRole);
-        if (! $role) {
-            return;
-        }
+        return Action::make('changeRole')
+            ->label('Change role')
+            ->icon(Heroicon::OutlinedUserCircle)
+            ->color('gray')
+            ->size('sm')
+            ->slideOver()
+            ->modalHeading(function (array $arguments): string {
+                $user = User::query()->findOrFail($arguments['user']);
 
-        try {
-            resolve(ChangeStaffRole::class)($userId, $role, (int) Auth::id());
+                return "Change role for {$user->name}";
+            })
+            ->modalDescription('Promoting to Owner gives full billing and team access. Demotions take effect immediately.')
+            ->modalSubmitActionLabel('Update role')
+            ->fillForm(function (array $arguments): array {
+                $user = User::query()->findOrFail($arguments['user']);
 
-            Notification::make()
-                ->title("Role updated to {$newRole}")
-                ->success()
-                ->send();
-        } catch (\RuntimeException $e) {
-            Notification::make()
-                ->title($e->getMessage())
-                ->warning()
-                ->send();
-        }
+                return ['role' => $user->role->value];
+            })
+            ->schema(fn (): array => [
+                Select::make('role')
+                    ->label('Role')
+                    ->options([
+                        UserRole::Owner->value => 'Owner',
+                        UserRole::Manager->value => 'Manager',
+                        UserRole::Staff->value => 'Staff',
+                    ])
+                    ->required()
+                    ->native(false),
+            ])
+            ->action(function (array $data, array $arguments): void {
+                $role = UserRole::tryFrom($data['role']);
+
+                if (! $role) {
+                    return;
+                }
+
+                try {
+                    resolve(ChangeStaffRole::class)(
+                        userId: (int) $arguments['user'],
+                        newRole: $role,
+                        currentUserId: (int) Auth::id(),
+                    );
+
+                    Notification::make()
+                        ->title("Role updated to {$role->getLabel()}")
+                        ->success()
+                        ->send();
+                } catch (\RuntimeException $e) {
+                    Notification::make()
+                        ->title($e->getMessage())
+                        ->warning()
+                        ->send();
+                }
+            });
     }
 
-    public function removeMember(int $userId): void
+    public function removeMemberAction(): Action
     {
-        try {
-            resolve(RemoveStaffMember::class)($userId, (int) Auth::id());
+        return Action::make('removeMember')
+            ->label('Remove')
+            ->icon(Heroicon::OutlinedTrash)
+            ->color('danger')
+            ->size('sm')
+            ->requiresConfirmation()
+            ->modalHeading(function (array $arguments): string {
+                $user = User::query()->findOrFail($arguments['user']);
 
-            Notification::make()
-                ->title('Team member removed')
-                ->success()
-                ->send();
-        } catch (\RuntimeException $e) {
-            Notification::make()
-                ->title($e->getMessage())
-                ->danger()
-                ->send();
-        }
+                return "Remove {$user->name}?";
+            })
+            ->modalDescription('This removes the team member immediately. They will lose access to the admin panel and any in-progress work assigned to them stays with the data, not the user.')
+            ->modalSubmitActionLabel('Remove')
+            ->action(function (array $arguments): void {
+                try {
+                    resolve(RemoveStaffMember::class)(
+                        userId: (int) $arguments['user'],
+                        currentUserId: (int) Auth::id(),
+                    );
+
+                    Notification::make()
+                        ->title('Team member removed')
+                        ->success()
+                        ->send();
+                } catch (\RuntimeException $e) {
+                    Notification::make()
+                        ->title($e->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
+    }
+
+    public function revokeInvitationAction(): Action
+    {
+        return Action::make('revokeInvitation')
+            ->label('Revoke')
+            ->color('gray')
+            ->size('sm')
+            ->requiresConfirmation()
+            ->modalHeading('Revoke this invitation?')
+            ->modalDescription('The invite link will stop working. You can always send a fresh invitation.')
+            ->modalSubmitActionLabel('Revoke')
+            ->action(function (array $arguments): void {
+                resolve(RevokeStaffInvitation::class)((int) $arguments['invitation']);
+
+                Notification::make()
+                    ->title('Invitation revoked')
+                    ->success()
+                    ->send();
+            });
     }
 }
