@@ -51,6 +51,12 @@ class CapacityTodayWidget extends Widget
         return $this->getCapacityData(Date::tomorrow());
     }
 
+    /** @return array<string, mixed> */
+    public function getDayAfterCapacity(): array
+    {
+        return $this->getCapacityData(Date::today()->copy()->addDays(2));
+    }
+
     /** @return array<int, array<string, string>> */
     public function getBlockedDaysWarning(): array
     {
