@@ -4,8 +4,11 @@
     $items = $this->getItems();
 @endphp
 
-@if (count($items) > 0)
-    <div class="col-span-full bg-brand-800 border border-brand-700/60 rounded-xl p-6">
+<div @class([
+    'col-span-full bg-brand-800 border border-brand-700/60 rounded-xl p-6',
+    'hidden' => count($items) === 0,
+])>
+    @if (count($items) > 0)
         <div class="flex items-center justify-between mb-4">
             <span class="text-brand-300 text-[0.7rem] uppercase tracking-[0.08em] font-semibold">Needs Your Attention</span>
             <span class="text-brand-400 text-[0.7rem]">{{ count($items) }} {{ Str::plural('item', count($items)) }}</span>
@@ -36,7 +39,5 @@
                 </a>
             @endforeach
         </div>
-    </div>
-@else
-    <div></div>
-@endif
+    @endif
+</div>

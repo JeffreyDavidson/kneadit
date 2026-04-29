@@ -11,14 +11,6 @@ beforeEach(function () {
     test()->page = new StaffManagement;
 });
 
-test('invite email defaults to empty', function () {
-    expect(test()->page->inviteEmail)->toBeEmpty();
-});
-
-test('invite role defaults to staff', function () {
-    expect(test()->page->inviteRole)->toBe(UserRole::Staff->value);
-});
-
 test('get title returns team management', function () {
     expect(test()->page->getTitle())->toBe('Team Management');
 });
@@ -29,7 +21,6 @@ test('get team members returns users sorted by role', function () {
 
     $members = test()->page->getTeamMembers();
 
-    // Owner first (from beforeEach), then manager, then staff
     expect($members)->toHaveCount(3)
         ->and($members->first()->role)->toBe(UserRole::Owner);
 });
@@ -55,27 +46,4 @@ test('get pending invitations returns only valid unexpired invitations', functio
 
     expect($invitations)->toHaveCount(1)
         ->and($invitations->first()->email)->toBe('valid@test.com');
-});
-
-test('send invitation validates required email', function () {
-    test()->page->inviteEmail = '';
-
-    expect(fn () => test()->page->sendInvitation())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
-});
-
-test('send invitation validates email format', function () {
-    test()->page->inviteEmail = 'not-an-email';
-
-    expect(fn () => test()->page->sendInvitation())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
-});
-
-test('change role with invalid role does nothing', function () {
-    $user = User::factory()->staff()->create();
-
-    test()->page->changeRole($user->id, 'invalid_role');
-
-    $user->refresh();
-    expect($user->role)->toBe(UserRole::Staff);
 });

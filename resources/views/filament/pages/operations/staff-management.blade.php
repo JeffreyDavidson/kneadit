@@ -1,80 +1,96 @@
-<x-filament-panels::page>
-    {{-- Invite Form --}}
-    <x-filament::section>
-        <x-slot name="heading">Invite Team Member</x-slot>
-        <form wire:submit="sendInvitation" class="flex flex-col sm:flex-row gap-4 items-end">
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                <input type="email" wire:model="inviteEmail" required placeholder="staff@example.com"
-                    class="fi-input block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
-            </div>
-            <div class="w-full sm:w-48">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                <select wire:model="inviteRole"
-                    class="fi-input block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
-                    <option value="staff">Staff</option>
-                    <option value="manager">Manager</option>
-                </select>
-            </div>
-            <x-filament::button type="submit" icon="heroicon-o-paper-airplane">
-                Send Invite
-            </x-filament::button>
-        </form>
-    </x-filament::section>
+@php
+    use App\Enums\Staff\UserRole;
 
+    $currentUserId = auth()->id();
+    $invitations = $this->getPendingInvitations();
+    $members = $this->getTeamMembers();
+
+    $initials = function (string $name): string {
+        $parts = preg_split('/\s+/', trim($name)) ?: [];
+        $first = $parts[0] ?? '';
+        $last = count($parts) > 1 ? end($parts) : '';
+
+        return strtoupper(mb_substr($first, 0, 1) . mb_substr($last, 0, 1));
+    };
+
+    $roleColor = fn (UserRole $role): string => match ($role) {
+        UserRole::Owner => 'warning',
+        UserRole::Manager => 'info',
+        UserRole::Staff => 'gray',
+        default => 'gray',
+    };
+@endphp
+
+<x-filament-panels::page>
     {{-- Pending Invitations --}}
-    @php $invitations = $this->getPendingInvitations(); @endphp
     @if ($invitations->count() > 0)
         <x-filament::section>
             <x-slot name="heading">Pending Invitations</x-slot>
-            <div class="divide-y dark:divide-gray-700">
+            <x-slot name="description">{{ $invitations->count() }} {{ Str::plural('invitation', $invitations->count()) }} awaiting acceptance.</x-slot>
+
+            <ul role="list" class="divide-y divide-brand-700/40">
                 @foreach ($invitations as $invitation)
-                    <div class="flex items-center justify-between py-3">
-                        <div>
-                            <p class="font-medium text-gray-900 dark:text-white">{{ $invitation->email }}</p>
-                            <p class="text-sm text-gray-500">
-                                {{ ucfirst($invitation->role instanceof \BackedEnum ? $invitation->role->value : $invitation->role) }} · Expires {{ $invitation->expires_at->diffForHumans() }}
-                            </p>
+                    @php
+                        $invitationRole = $invitation->role instanceof UserRole
+                            ? $invitation->role
+                            : (UserRole::tryFrom($invitation->role) ?? UserRole::Staff);
+                    @endphp
+                    <li class="flex items-center justify-between gap-4 py-3">
+                        <div class="flex min-w-0 items-center gap-4">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-400">
+                                <x-heroicon-o-clock class="h-5 w-5" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="truncate font-medium text-white">{{ $invitation->email }}</p>
+                                <p class="mt-1 truncate text-sm text-brand-400">
+                                    Expires {{ $invitation->expires_at->diffForHumans() }}
+                                </p>
+                            </div>
                         </div>
-                        <x-filament::button color="danger" size="sm" wire:click="revokeInvitation({{ $invitation->id }})">
-                            Revoke
-                        </x-filament::button>
-                    </div>
+                        <div class="flex shrink-0 items-center gap-3">
+                            <x-filament::badge :color="$roleColor($invitationRole)">
+                                {{ $invitationRole->getLabel() }}
+                            </x-filament::badge>
+                            {{ ($this->revokeInvitationAction)(['invitation' => $invitation->id]) }}
+                        </div>
+                    </li>
                 @endforeach
-            </div>
+            </ul>
         </x-filament::section>
     @endif
 
     {{-- Team Members --}}
     <x-filament::section>
         <x-slot name="heading">Team Members</x-slot>
-        <div class="divide-y dark:divide-gray-700">
-            @foreach ($this->getTeamMembers() as $member)
-                <div class="flex items-center justify-between py-3">
-                    <div>
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $member->name }}</p>
-                        <p class="text-sm text-gray-500">{{ $member->email }} · Joined {{ $member->created_at->format('M j, Y') }}</p>
+        <x-slot name="description">{{ $members->count() }} active {{ Str::plural('member', $members->count()) }}.</x-slot>
+
+        <ul role="list" class="divide-y divide-brand-700/40">
+            @foreach ($members as $member)
+                <li class="flex items-center justify-between gap-4 py-3">
+                    <div class="flex min-w-0 items-center gap-4">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-brand-200">
+                            {{ $initials($member->name) }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="truncate font-medium text-white">{{ $member->name }}</p>
+                            <p class="mt-1 truncate text-sm text-brand-400">
+                                {{ $member->email }} · Joined {{ $member->created_at->format('M j, Y') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        @if ($member->id !== auth()->id())
-                            <select wire:change="changeRole({{ $member->id }}, $event.target.value)"
-                                class="rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                                <option value="owner" @selected($member->role === 'owner')>Owner</option>
-                                <option value="manager" @selected($member->role === 'manager')>Manager</option>
-                                <option value="staff" @selected($member->role === 'staff')>Staff</option>
-                            </select>
-                            <x-filament::button color="danger" size="sm" wire:click="removeMember({{ $member->id }})"
-                                wire:confirm="Are you sure you want to remove this team member?">
-                                Remove
-                            </x-filament::button>
-                        @else
-                            <span class="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-400/10 dark:text-primary-400">
-                                {{ ucfirst($member->role instanceof \BackedEnum ? $member->role->value : $member->role) }} (You)
-                            </span>
+
+                    <div class="flex shrink-0 items-center gap-3">
+                        <x-filament::badge :color="$roleColor($member->role)">
+                            {{ $member->role->getLabel() }}@if ($member->id === $currentUserId) · You @endif
+                        </x-filament::badge>
+
+                        @if ($member->id !== $currentUserId)
+                            {{ ($this->changeRoleAction)(['user' => $member->id]) }}
+                            {{ ($this->removeMemberAction)(['user' => $member->id]) }}
                         @endif
                     </div>
-                </div>
+                </li>
             @endforeach
-        </div>
+        </ul>
     </x-filament::section>
 </x-filament-panels::page>

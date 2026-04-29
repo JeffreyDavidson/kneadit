@@ -36,9 +36,6 @@ class BlogPostsTable
                 TextColumn::make('tags')
                     ->badge()
                     ->separator(','),
-
-                TextColumn::make('author_name')
-                    ->label('Author'),
             ])
             ->defaultSort('created_at', 'desc')
             ->recordActions([
