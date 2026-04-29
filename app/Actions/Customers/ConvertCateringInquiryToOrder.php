@@ -50,11 +50,26 @@ class ConvertCateringInquiryToOrder
                 'user_id' => auth()->id(),
             ]);
 
-            $order->orderItems()->create([
-                'name' => "Catering — {$inquiry->event_type}, " . number_format($inquiry->guest_count) . ' guests',
-                'unit_price' => $inquiry->quoted_amount,
-                'quantity' => 1,
-            ]);
+            $items = $inquiry->items()->get();
+
+            if ($items->isNotEmpty()) {
+                foreach ($items as $item) {
+                    $order->orderItems()->create([
+                        'name' => $item->name,
+                        'unit_price' => $item->unit_price,
+                        'quantity' => $item->quantity,
+                        'special_instructions' => $item->special_instructions,
+                    ]);
+                }
+            } else {
+                // Graceful fallback for inquiries quoted before the line-items
+                // editor existed: collapse the whole quote into one summary line.
+                $order->orderItems()->create([
+                    'name' => "Catering — {$inquiry->event_type}, " . number_format($inquiry->guest_count) . ' guests',
+                    'unit_price' => $inquiry->quoted_amount,
+                    'quantity' => 1,
+                ]);
+            }
 
             ($this->transitionInquiry)($inquiry, CateringInquiryStatus::Confirmed);
 

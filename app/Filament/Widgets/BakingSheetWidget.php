@@ -17,6 +17,28 @@ class BakingSheetWidget extends Widget
 
     protected string $view = 'filament.widgets.baking-sheet';
 
+    /**
+     * Hide when there's nothing to bake — empty "Nothing to bake!"
+     * tile on a busy ops dashboard is just dead space. Reappears
+     * the moment any pending/confirmed/baking order item exists for
+     * today (or a confirmed order item ahead of today).
+     */
+    public static function canView(): bool
+    {
+        return OrderItem::query()
+            ->whereHas('order', function (Builder $query): void {
+                $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
+                    ->where(function (Builder $q): void {
+                        $q->whereDate('delivery_date', Date::today())
+                            ->orWhere(function (Builder $q2): void {
+                                $q2->whereDate('delivery_date', '>', Date::today())
+                                    ->where('status', OrderStatus::Confirmed);
+                            });
+                    });
+            })
+            ->exists();
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {

@@ -138,13 +138,62 @@
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Quote</div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    {{ $this->reviseQuoteAction }}
-                    {{ $this->sendQuoteAction }}
-                    {{ $this->resendQuoteAction }}
+                    @if ($this->manageQuoteItemsAction->isVisible())
+                        {{ $this->manageQuoteItemsAction }}
+                    @endif
+                    @if ($this->sendQuoteAction->isVisible())
+                        {{ $this->sendQuoteAction }}
+                    @endif
+                    @if ($this->resendQuoteAction->isVisible())
+                        {{ $this->resendQuoteAction }}
+                    @endif
                 </div>
             </div>
 
-            @if ($inquiry->quoted_amount)
+            @if ($inquiry->items->isNotEmpty())
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-[0.85rem]">
+                        <thead class="border-b border-brand-700/40 text-[0.7rem] uppercase tracking-[0.05em] text-brand-400">
+                            <tr>
+                                <th class="py-2 pr-4 font-semibold">Item</th>
+                                <th class="py-2 pr-4 font-semibold text-right">Qty</th>
+                                <th class="py-2 pr-4 font-semibold text-right">Unit</th>
+                                <th class="py-2 font-semibold text-right">Line total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-700/40">
+                            @foreach ($inquiry->items as $item)
+                                <tr>
+                                    <td class="py-3 pr-4">
+                                        <div class="text-white font-semibold">{{ $item->name }}</div>
+                                        @if ($item->special_instructions)
+                                            <div class="text-brand-400 text-[0.75rem] mt-0.5 italic">"{{ $item->special_instructions }}"</div>
+                                        @endif
+                                    </td>
+                                    <td class="py-3 pr-4 text-right text-white tabular-nums">{{ $item->quantity }}</td>
+                                    <td class="py-3 pr-4 text-right text-brand-200 tabular-nums">{{ $item->unit_price->formatted() }}</td>
+                                    <td class="py-3 text-right text-white font-semibold tabular-nums">{{ $item->line_total->formatted() }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t border-brand-700/40">
+                                <td colspan="3" class="pt-3 text-brand-200 text-[0.95rem] font-bold uppercase tracking-[0.05em] text-right">Total</td>
+                                <td class="pt-3 text-right text-white text-[1.25rem] font-bold tabular-nums">{{ $inquiry->quoted_amount?->formatted() ?? '—' }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="pt-1 text-right text-brand-400 text-[0.75rem]">
+                                    @if ($status === CateringInquiryStatus::Inquiry)
+                                        Not yet sent
+                                    @else
+                                        Sent · status: {{ $status->getLabel() }}
+                                    @endif
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            @elseif ($inquiry->quoted_amount)
                 <div class="flex items-baseline gap-3">
                     <div class="text-white text-[1.75rem] font-bold tabular-nums">{{ $inquiry->quoted_amount->formatted() }}</div>
                     <div class="text-brand-400 text-[0.85rem]">
@@ -155,8 +204,15 @@
                         @endif
                     </div>
                 </div>
+                @if ($this->manageQuoteItemsAction->isVisible())
+                    <div class="text-brand-400 text-[0.8rem] mt-2">Single-amount quote (added before items existed). Use <span class="text-brand-200 font-semibold">Manage items</span> to break it into line items.</div>
+                @endif
             @else
-                <div class="text-brand-400 text-[0.9rem]">No amount set yet. Use <span class="text-brand-200 font-semibold">Revise amount</span> to enter a quote.</div>
+                @if ($this->manageQuoteItemsAction->isVisible())
+                    <div class="text-brand-400 text-[0.9rem]">No items yet. Use <span class="text-brand-200 font-semibold">Manage items</span> to build the quote.</div>
+                @else
+                    <div class="text-brand-400 text-[0.9rem]">No items.</div>
+                @endif
             @endif
         </div>
 
@@ -164,9 +220,9 @@
         <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Booking</div>
-                @unless ($order)
+                @if ($this->confirmBookingAction->isVisible())
                     {{ $this->confirmBookingAction }}
-                @endunless
+                @endif
             </div>
 
             @if ($order)
@@ -198,7 +254,9 @@
         <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold">Deposit</div>
-                {{ $this->markDepositReceivedAction }}
+                @if ($this->markDepositReceivedAction->isVisible())
+                    {{ $this->markDepositReceivedAction }}
+                @endif
             </div>
 
             @if ($depositPaid)

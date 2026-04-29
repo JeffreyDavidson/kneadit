@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -68,5 +69,13 @@ class CateringInquiry extends Model
     public function order(): HasOne
     {
         return $this->hasOne(Order::class);
+    }
+
+    /**
+     * @return HasMany<CateringInquiryItem, $this>
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(CateringInquiryItem::class)->orderBy('sort_order')->orderBy('id');
     }
 }

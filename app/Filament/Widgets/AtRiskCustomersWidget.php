@@ -15,6 +15,16 @@ class AtRiskCustomersWidget extends Widget
 
     protected string $view = 'filament.widgets.at-risk-customers';
 
+    /**
+     * Hide entirely when no customers are at risk — "everyone's
+     * recently active" empty state was just dead space. Reappears
+     * the moment any customer crosses the inactivity threshold.
+     */
+    public static function canView(): bool
+    {
+        return AtRiskCustomersQuery::count((int) config('analytics.at_risk_threshold_days', 30)) > 0;
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {
