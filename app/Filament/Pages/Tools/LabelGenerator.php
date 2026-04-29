@@ -6,7 +6,15 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Inventory\Product;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 
@@ -24,7 +32,7 @@ class LabelGenerator extends Page
 
     protected string $view = 'filament.pages.tools.label-generator';
 
-    /** @var array<string, mixed> */
+    /** @var array<int, int> */
     public array $selectedProducts = [];
 
     public string $labelSize = 'medium';
@@ -47,6 +55,61 @@ class LabelGenerator extends Page
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Label Settings')
+                ->icon(Heroicon::OutlinedCog6Tooth)
+                ->schema([
+                    Select::make('selectedProducts')
+                        ->label('Products')
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options($this->getProductOptions())
+                        ->live()
+                        ->columnSpanFull(),
+
+                    Grid::make(3)->schema([
+                        Select::make('labelSize')
+                            ->label('Label Size')
+                            ->options([
+                                'small' => 'Small (2" × 1")',
+                                'medium' => 'Medium (3" × 2")',
+                                'large' => 'Large (4" × 3")',
+                            ])
+                            ->required()
+                            ->live(),
+
+                        TextInput::make('quantity')
+                            ->label('Qty per Product')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(100)
+                            ->required()
+                            ->live(),
+
+                        DatePicker::make('bestByDate')
+                            ->label('Best By Date')
+                            ->required()
+                            ->live(),
+                    ]),
+
+                    Grid::make(3)->schema([
+                        Checkbox::make('includeQrCode')
+                            ->label('Include QR Code')
+                            ->live(),
+                        Checkbox::make('includeAllergyDisclaimer')
+                            ->label('Include Allergy Disclaimer')
+                            ->live(),
+                        Checkbox::make('includeBarcode')
+                            ->label('Include Barcode')
+                            ->live(),
+                    ]),
+                ]),
+        ]);
+    }
+
     public function generateLabels(): void
     {
         if (empty($this->selectedProducts)) {
@@ -58,16 +121,19 @@ class LabelGenerator extends Page
         $this->showPreview = true;
     }
 
-    /** @return Collection<int, mixed> */
-    public function getProducts(): Collection
+    /** @return array<int, string> */
+    public function getProductOptions(): array
     {
         return Product::query()->active()
             ->orderBy('name')
             ->get()
-            ->map(fn (Product $p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
+            ->mapWithKeys(fn (Product $p): array => [
+                $p->id => $p->name . ' — ' . ($p->price instanceof Money ? $p->price->formatted() : '$' . number_format((float) $p->price, 2)),
+            ])
+            ->all();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, Product> */
     public function getSelectedProductModels(): Collection
     {
         return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe')->get();
