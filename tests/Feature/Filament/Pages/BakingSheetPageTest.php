@@ -15,6 +15,6 @@ beforeEach(function () {
 test('baking sheet loads for selected date', function () {
     Livewire::test(BakingSheet::class)
         ->assertOk()
-        ->call('loadBakingSheet')
+        ->set('selectedDate', now()->format('Y-m-d'))
         ->assertOk();
 });
