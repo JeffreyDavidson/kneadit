@@ -1,27 +1,32 @@
 @php
     $rows = $this->getRows();
-    $isLarge = $this->isSize('lg');
+    $hasViewRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.activity-logs.index');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Recent Activity" icon="🕐">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-        <span class="pw-stat-label">Latest events</span>
-        <a href="{{ $this->getViewAllUrl() }}" style="font-size: 0.65rem; color: var(--pw-card-accent); text-decoration: none;">View all →</a>
+<div class="col-span-full bg-brand-800 border border-brand-700/60 rounded-xl p-6">
+    <div class="flex justify-between items-center mb-4">
+        <div class="text-white font-bold text-base">Recent Audit Log</div>
+        @if ($hasViewRoute)
+            <a href="{{ $this->getViewAllUrl() }}" class="text-brand-300 text-xs no-underline">View all →</a>
+        @endif
     </div>
 
     @forelse ($rows as $row)
-        <x-admin.dashboard.list-row :value="$row['when']">
-            <span style="color: var(--pw-card-text);">{{ $row['action'] }}</span>
-            @if ($row['user_name'])
-                <span style="color: var(--pw-card-text-muted); margin-left: 6px;">{{ $row['user_name'] }}</span>
-            @endif
-            @if ($isLarge && $row['description'])
-                <span style="color: var(--pw-card-text-muted); margin-left: 6px;">· {{ \Illuminate\Support\Str::limit($row['description'], 60) }}</span>
-            @endif
-        </x-admin.dashboard.list-row>
+        <div @class([
+            'flex items-center gap-3 px-3 py-2 rounded-lg mb-1.5',
+            'bg-brand-300/5' => $loop->even,
+        ])>
+            <span class="text-brand-400 text-[0.7rem] whitespace-nowrap min-w-20">{{ $row['when'] }}</span>
+            <span class="inline-block px-2 py-0.5 rounded-full text-[0.65rem] font-semibold text-white whitespace-nowrap {{ $row['action_pill_class'] }}">
+                {{ $row['action_label'] }}
+            </span>
+            <span class="text-brand-100 text-[0.8rem] flex-1 truncate">{{ $row['description'] }}</span>
+            <span class="text-brand-400 text-[0.7rem] font-mono">{{ $row['ip_address'] ?? '' }}</span>
+        </div>
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            No activity yet
+        <div class="p-8 text-center">
+            <x-heroicon-o-clipboard-document-list class="w-8 h-8 text-brand-400 mx-auto mb-2 block" />
+            <div class="text-brand-400 text-[0.8rem]">No activity yet.</div>
         </div>
     @endforelse
-</x-admin.dashboard.preview-card>
+</div>
