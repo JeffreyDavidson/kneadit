@@ -1,73 +1,22 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        {{-- Controls --}}
-        <x-filament::section heading="Label Settings" icon="heroicon-o-cog-6-tooth">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {{-- Product Select --}}
-                <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Products</label>
-                    <select wire:model.live="selectedProducts" multiple class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm" size="6">
-                        @foreach ($this->getProducts() as $product)
-                            <option value="{{ $product['id'] }}">{{ $product['name'] }} — @money($product['price'])</option>
-                        @endforeach
-                    </select>
-                    <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
-                </div>
+        {{-- Filament-rendered form (Section + Selects + Grid + Checkboxes) --}}
+        {{ $this->content }}
 
-                <div class="space-y-4">
-                    {{-- Label Size --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Label Size</label>
-                        <select wire:model.live="labelSize" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
-                            <option value="small">Small (2" × 1")</option>
-                            <option value="medium">Medium (3" × 2")</option>
-                            <option value="large">Large (4" × 3")</option>
-                        </select>
-                    </div>
-
-                    {{-- Quantity --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Qty per Product</label>
-                        <input type="number" wire:model.live="quantity" min="1" max="100" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
-                    </div>
-
-                    {{-- Best By Date --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Best By Date</label>
-                        <input type="date" wire:model.live="bestByDate" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-wrap gap-6 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="includeQrCode" class="rounded border-gray-300 text-primary-600">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">Include QR Code</span>
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="includeAllergyDisclaimer" class="rounded border-gray-300 text-primary-600">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">Include Allergy Disclaimer</span>
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="includeBarcode" class="rounded border-gray-300 text-primary-600">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">Include Barcode</span>
-                </label>
-            </div>
-
-            <div class="flex gap-3 mt-4">
-                <x-filament::button wire:click="generateLabels" icon="heroicon-o-eye">
-                    Generate Preview
+        {{-- Action row --}}
+        <div class="flex gap-3">
+            <x-filament::button wire:click="generateLabels" icon="heroicon-o-eye">
+                Generate Preview
+            </x-filament::button>
+            @if ($showPreview)
+                <x-filament::button color="success" icon="heroicon-o-printer" onclick="window.print()">
+                    Print Labels
                 </x-filament::button>
-                @if ($showPreview)
-                    <x-filament::button color="success" icon="heroicon-o-printer" onclick="window.print()">
-                        Print Labels
-                    </x-filament::button>
-                @endif
-            </div>
-        </x-filament::section>
+            @endif
+        </div>
 
         {{-- Label Preview --}}
-        @if ($showPreview && !empty($selectedProducts))
+        @if ($showPreview && ! empty($selectedProducts))
             @php
                 $products = $this->getSelectedProductModels();
                 $dims = $this->getLabelDimensions();
@@ -130,7 +79,7 @@
                                 {{-- QR Code --}}
                                 @if ($includeQrCode)
                                     <div style="text-align: center; margin: 2px 0;">
-                                        {!! QrCode::size($labelSize === 'small' ? 30 : 50)->generate(url('/menu#product-' . $product->id)) !!}
+                                        {!! QrCode::size($labelSize === 'small' ? 30 : 50)->generate(url('/menu#product-'.$product->id)) !!}
                                     </div>
                                 @endif
 
@@ -147,38 +96,64 @@
     </div>
 
     @pushOnce('styles')
-    <style @cspnonce>
-        @media print {
-            /* Hide everything except labels */
-            body * { visibility: hidden !important; }
-            .print-area, .print-area * { visibility: visible !important; }
-            .print-area {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-            }
-            /* Remove shadows, backgrounds */
-            .label-card {
-                box-shadow: none !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            /* Page setup for Avery 5160 */
-            @page {
-                margin: 0.5in 0.19in;
-                size: letter;
-            }
-        }
+        <style @cspnonce>
+            @media print {
+                /* Why labels were spilling to a 2nd page: `visibility: hidden`
+                   keeps elements in layout, so the dashboard's sidebar +
+                   topbar + page heading + form all still reserved their
+                   vertical space. Body height = full dashboard layout,
+                   pushing labels past the first printed page even though
+                   they were the only visible content.
 
-        /* Screen preview styling */
-        .label-card {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: box-shadow 0.2s;
-        }
-        .label-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-    </style>
+                   Fix: hide everything OUTSIDE the .print-area's ancestor
+                   chain via `:not(:has(...))` so those branches collapse
+                   (display:none), and let the .print-area chain stay in
+                   normal flow with its real heights intact. */
+                html, body {
+                    height: auto !important;
+                    min-height: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: white !important;
+                }
+
+                /* Hide every body subtree that doesn't contain .print-area. */
+                body > *:not(:has(.print-area)) {
+                    display: none !important;
+                }
+
+                /* Within the chain that DOES contain .print-area, hide
+                   sibling subtrees that aren't an ancestor of it. */
+                body :has(.print-area) > *:not(:has(.print-area)):not(.print-area) {
+                    display: none !important;
+                }
+
+                .print-area {
+                    position: static !important;
+                    width: 100% !important;
+                }
+
+                .label-card {
+                    box-shadow: none !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+                /* Page setup for Avery 5160 */
+                @page {
+                    margin: 0.5in 0.19in;
+                    size: letter;
+                }
+            }
+
+            /* Screen preview styling */
+            .label-card {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                transition: box-shadow 0.2s;
+            }
+            .label-card:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+        </style>
     @endPushOnce
 </x-filament-panels::page>

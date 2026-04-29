@@ -19,6 +19,26 @@ class ReorderRemindersWidget extends Widget
 
     protected string $view = 'filament.widgets.reorder-reminders-widget';
 
+    /**
+     * Hide entirely when no regulars need a nudge — the "great job"
+     * empty state was dead space on a busy dashboard. Reappears the
+     * moment a 2+-time customer goes 30+ days without ordering.
+     */
+    public static function canView(): bool
+    {
+        $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+
+        return DB::table(
+            Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
+                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
+                ->groupBy('customers.id')
+                ->havingRaw('COUNT(orders.id) >= 2')
+                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
+                ->select('customers.id')->toBase(),
+            'lapsed',
+        )->exists();
+    }
+
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {

@@ -42,9 +42,14 @@ class RevenueOverview extends StatsOverviewWidget
                 ? round(($inactive / $totalEver) * 100, 1)
                 : 0;
 
+            $activePayingCount = $activeTenants->count();
+            $arpu = $activePayingCount > 0 ? $mrr / $activePayingCount : 0;
+
             return [
                 'mrr' => $mrr,
                 'arr' => $mrr * 12,
+                'arpu' => $arpu,
+                'activePayingCount' => $activePayingCount,
                 'totalTrialed' => $totalTrialed,
                 'convertedFromTrial' => $convertedFromTrial,
                 'trialConversion' => $trialConversion,
@@ -55,10 +60,10 @@ class RevenueOverview extends StatsOverviewWidget
         });
 
         return [
-            Stat::make('Monthly Recurring Revenue', Number::currency($data['mrr']))
-                ->description('Active subscriptions')
+            Stat::make('ARPU', Number::currency($data['arpu']))
+                ->description('Avg revenue per bakery · ' . $data['activePayingCount'] . ' paying')
                 ->color('success')
-                ->icon(Heroicon::OutlinedCurrencyDollar),
+                ->icon(Heroicon::OutlinedUserCircle),
 
             Stat::make('Annual Recurring Revenue', Number::currency($data['arr']))
                 ->description('MRR × 12')

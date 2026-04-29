@@ -17,6 +17,16 @@ class TodaysOrdersWidget extends Widget
 
     protected string $view = 'filament.widgets.todays-orders';
 
+    /**
+     * Hide entirely when no orders are due today — the
+     * "Enjoy the quiet" empty state was just dead space.
+     * Reappears the moment something with delivery_date = today exists.
+     */
+    public static function canView(): bool
+    {
+        return Order::query()->whereDate('delivery_date', Date::today())->exists();
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function getSlots(): array
     {
