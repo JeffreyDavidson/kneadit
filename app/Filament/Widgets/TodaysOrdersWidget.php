@@ -28,7 +28,7 @@ class TodaysOrdersWidget extends Widget
     }
 
     /** @return array<int, array<string, mixed>> */
-    public function getSlots(): array
+    public function getOrderRows(): array
     {
         return $this->cached('main_' . Date::today()->toDateString(), [60, 120], fn (): array => Order::query()
             ->whereDate('delivery_date', Date::today())
@@ -49,7 +49,7 @@ class TodaysOrdersWidget extends Widget
 
     public function getRevenueToday(): string
     {
-        $cents = (int) array_sum(array_column($this->getSlots(), 'total_cents'));
+        $cents = (int) array_sum(array_column($this->getOrderRows(), 'total_cents'));
 
         return '$' . number_format($cents / 100, 2);
     }

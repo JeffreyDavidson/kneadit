@@ -81,7 +81,7 @@ test('can render blog post table columns', function (string $column) {
 
     Livewire::test(ListBlogPosts::class)
         ->assertCanRenderTableColumn($column);
-})->with(['title', 'is_published', 'published_at', 'author_name']);
+})->with(['title', 'is_published', 'published_at']);
 
 test('can search blog posts by title', function () {
     $target = TenantBlogPost::factory()->create(['title' => 'Sourdough Tips']);

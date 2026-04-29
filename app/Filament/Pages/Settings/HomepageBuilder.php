@@ -6,6 +6,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -151,6 +152,19 @@ class HomepageBuilder extends Page
                 ->danger()
                 ->send();
         }
+    }
+
+    public function resetToDefaultsAction(): Action
+    {
+        return Action::make('resetToDefaults')
+            ->label('Reset to Defaults')
+            ->icon(Heroicon::OutlinedArrowPath)
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalHeading('Reset homepage to defaults?')
+            ->modalDescription('This restores every section to its default visibility, order, and copy. Any customizations you have saved will be overwritten immediately.')
+            ->modalSubmitActionLabel('Reset')
+            ->action(fn () => $this->resetToDefaults());
     }
 
     public function resetToDefaults(): void
