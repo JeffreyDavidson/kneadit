@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Surveys\Pages;
 use App\Filament\Resources\Surveys\SurveyResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\Width;
 
 class ListSurveys extends ListRecords
 {
@@ -14,7 +15,8 @@ class ListSurveys extends ListRecords
     {
         return [
             CreateAction::make()
-                ->slideOver(),
+                ->slideOver()
+                ->modalWidth(Width::Medium),
         ];
     }
 }
