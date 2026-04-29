@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources\ContactMessages\Tables;
 
-use App\Filament\Actions\SlideOverEditAction;
+use App\Models\Customers\ContactMessage;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -51,7 +55,19 @@ class ContactMessagesTable
                 TernaryFilter::make('is_read'),
             ])
             ->recordActions([
-                SlideOverEditAction::make(),
+                ViewAction::make(),
+                Action::make('toggleRead')
+                    ->label(fn (ContactMessage $record): string => $record->is_read ? 'Mark Unread' : 'Mark Read')
+                    ->icon(fn (ContactMessage $record): Heroicon => $record->is_read ? Heroicon::OutlinedEnvelope : Heroicon::OutlinedEnvelopeOpen)
+                    ->color(fn (ContactMessage $record): string => $record->is_read ? 'gray' : 'success')
+                    ->action(function (ContactMessage $record): void {
+                        $record->update(['is_read' => ! $record->is_read]);
+
+                        Notification::make()
+                            ->title($record->is_read ? 'Marked as read' : 'Marked as unread')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

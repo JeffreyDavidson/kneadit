@@ -193,9 +193,9 @@ textarea.fi-textarea-input:focus {
     border-color: transparent !important;
 }
 
-/* Section header — dark brown gradient */
+/* Section header — solid brand-800 surface (matches table header bar). */
 .fi-section-header {
-    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    background: var(--brand-800) !important;
     border-bottom: none !important;
     padding: 0.875rem 1.25rem !important;
 }
@@ -209,9 +209,6 @@ textarea.fi-textarea-input:focus {
 }
 .fi-section-header .fi-icon {
     color: rgba(255,255,255,0.7) !important;
-}
-.fi-section-header:hover {
-    background: linear-gradient(135deg, var(--brand-800), var(--brand-700)) !important;
 }
 .fi-section-header button {
     color: rgba(255,255,255,0.7) !important;

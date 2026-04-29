@@ -84,22 +84,27 @@ test('get activities property filters by date range', function () {
     expect($result->total())->toBe(2);
 });
 
-test('get action types property returns array', function () {
+test('get action options returns value→label pairs for the filter Select', function () {
     ActivityLog::factory()->create(['action' => 'created']);
     ActivityLog::factory()->create(['action' => 'updated']);
 
-    $types = test()->page->getActionTypesProperty();
+    $options = test()->page->getActionOptions();
 
-    expect($types)->toBeArray()->toContain(ActivityAction::Created)->toContain(ActivityAction::Updated);
+    expect($options)
+        ->toBeArray()
+        ->toHaveKey(ActivityAction::Created->value)
+        ->toHaveKey(ActivityAction::Updated->value);
 });
 
-test('get model types property returns array of arrays', function () {
+test('get model type options returns value→class-basename pairs for the filter Select', function () {
     ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
 
-    $types = test()->page->getModelTypesProperty();
+    $options = test()->page->getModelTypeOptions();
 
-    expect($types)->toBeArray()
-        ->and($types[0])->toHaveKeys(['value', 'label']);
+    expect($options)
+        ->toBeArray()
+        ->toHaveKey(App\Models\Orders\Order::class)
+        ->and($options[App\Models\Orders\Order::class])->toBe('Order');
 });
 
 test('toggle expanded sets id', function () {

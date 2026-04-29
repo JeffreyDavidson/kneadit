@@ -2,9 +2,16 @@
 
 namespace App\Filament\Pages\Platform;
 
+use App\Enums\Operations\ActivityAction;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Operations\ActivityLog;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -66,19 +73,63 @@ class ActivityLogPage extends Page
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
     }
 
-    /** @return array<string, mixed> */
-    public function getActionTypesProperty(): array
+    public function content(Schema $schema): Schema
     {
-        return ActivityLog::query()->distinct()->pluck('action')->filter()->sort()->values()->toArray();
+        return $schema->components([
+            Section::make('Filters')
+                ->schema([
+                    Grid::make(5)->schema([
+                        Select::make('filterAction')
+                            ->label('Action')
+                            ->options($this->getActionOptions())
+                            ->placeholder('All Actions')
+                            ->live(),
+
+                        Select::make('filterModelType')
+                            ->label('Model Type')
+                            ->options($this->getModelTypeOptions())
+                            ->placeholder('All Types')
+                            ->live(),
+
+                        TextInput::make('filterUser')
+                            ->label('User')
+                            ->placeholder('Search by user…')
+                            ->live(debounce: 300),
+
+                        DatePicker::make('filterDateFrom')
+                            ->label('From')
+                            ->live(),
+
+                        DatePicker::make('filterDateTo')
+                            ->label('To')
+                            ->live(),
+                    ]),
+                ]),
+        ]);
     }
 
-    /** @return array<int, array<string, string>> */
-    public function getModelTypesProperty(): array
+    /** @return array<string, string> */
+    public function getActionOptions(): array
     {
-        return ActivityLog::query()->distinct()->pluck('model_type')->filter()->map(fn (string $t) => [
-            'value' => $t,
-            'label' => class_basename($t),
-        ])->sortBy('label')->values()->all();
+        return ActivityLog::query()
+            ->distinct()
+            ->pluck('action')
+            ->filter()
+            ->mapWithKeys(fn (ActivityAction $a): array => [$a->value => $a->getLabel()])
+            ->sort()
+            ->all();
+    }
+
+    /** @return array<string, string> */
+    public function getModelTypeOptions(): array
+    {
+        return ActivityLog::query()
+            ->distinct()
+            ->pluck('model_type')
+            ->filter()
+            ->mapWithKeys(fn (string $t): array => [$t => class_basename($t)])
+            ->sort()
+            ->all();
     }
 
     public function toggleExpanded(int $id): void

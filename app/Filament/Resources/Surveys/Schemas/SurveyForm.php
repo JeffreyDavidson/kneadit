@@ -14,41 +14,45 @@ class SurveyForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255),
+        return $schema
+            ->columns(1)
+            ->components([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
 
-            Textarea::make('description')
-                ->rows(3),
+                Textarea::make('description')
+                    ->rows(3),
 
-            Toggle::make('is_active')
-                ->label('Active')
-                ->default(true),
+                Toggle::make('is_active')
+                    ->label('Active')
+                    ->default(true),
 
-            Repeater::make('questions')
-                ->schema([
-                    Select::make('type')
-                        ->options([
-                            'rating' => 'Rating (1-5)',
-                            'text' => 'Text Response',
-                            'multiple_choice' => 'Multiple Choice',
-                        ])
-                        ->required()
-                        ->live(),
+                Repeater::make('questions')
+                    ->schema([
+                        Select::make('type')
+                            ->options([
+                                'rating' => 'Rating (1-5)',
+                                'text' => 'Text Response',
+                                'multiple_choice' => 'Multiple Choice',
+                            ])
+                            ->required()
+                            ->columnSpanFull()
+                            ->live(),
 
-                    TextInput::make('question')
-                        ->required()
-                        ->maxLength(500),
+                        TextInput::make('question')
+                            ->required()
+                            ->maxLength(500)
+                            ->columnSpanFull(),
 
-                    TagsInput::make('options')
-                        ->placeholder('Add option')
-                        ->visible(fn (callable $get) => $get('type') === 'multiple_choice'),
-                ])
-                ->columns(1)
-                ->defaultItems(1)
-                ->addActionLabel('Add Question')
-                ->required(),
-        ]);
+                        TagsInput::make('options')
+                            ->placeholder('Add option')
+                            ->columnSpanFull()
+                            ->visible(fn (callable $get): bool => $get('type') === 'multiple_choice'),
+                    ])
+                    ->defaultItems(1)
+                    ->addActionLabel('Add Question')
+                    ->required(),
+            ]);
     }
 }

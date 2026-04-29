@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ContactMessages\Schemas;
 
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -39,9 +38,6 @@ class ContactMessageForm
                             ->required()
                             ->rows(6)
                             ->columnSpanFull(),
-
-                        Toggle::make('is_read')
-                            ->default(false),
                     ]),
             ]);
     }

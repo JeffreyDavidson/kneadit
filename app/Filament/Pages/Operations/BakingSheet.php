@@ -5,9 +5,13 @@ namespace App\Filament\Pages\Operations;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Queries\Orders\BakingSheetQuery;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
 
 class BakingSheet extends Page
 {
@@ -25,23 +29,37 @@ class BakingSheet extends Page
 
     public string $selectedDate = '';
 
-    /** @var Collection<int, mixed> */
-    public Collection $bakingItems;
-
     public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
-        $this->loadBakingSheet();
     }
 
-    public function loadBakingSheet(): void
+    public function content(Schema $schema): Schema
     {
-        $this->bakingItems = BakingSheetQuery::forDate($this->selectedDate);
+        return $schema->components([
+            Section::make('Baking Sheet')
+                ->schema([
+                    DatePicker::make('selectedDate')
+                        ->label('Date')
+                        ->required()
+                        ->live(),
+                ]),
+        ]);
     }
 
-    public function updatedSelectedDate(): void
+    /**
+     * Recompute on every render rather than storing as Livewire state.
+     * The query returns a Collection of stdClass rows (raw DB selectRaw)
+     * which Livewire's state serialization mangles on round-trip — the
+     * Print action's dispatch caused the re-rendered HTML to show the
+     * empty state because the Collection deserialised broken.
+     *
+     * @return Collection<int, object>
+     */
+    #[Computed]
+    public function bakingItems(): Collection
     {
-        $this->loadBakingSheet();
+        return BakingSheetQuery::forDate($this->selectedDate);
     }
 
     protected function getHeaderActions(): array
