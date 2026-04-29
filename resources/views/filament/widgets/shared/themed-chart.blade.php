@@ -14,7 +14,7 @@
     $maxHeight = $this->getMaxHeight();
 @endphp
 
-<div>
+<div class="col-span-full">
     <x-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? '📈'">
         <div
             @if ($pollingInterval = $this->getPollingInterval())

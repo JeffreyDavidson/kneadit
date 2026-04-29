@@ -5,7 +5,7 @@
          card at 50% of dashboard width (central runs a 2-col grid where
          QuickActions is columnSpan=1; tenant runs a 3-col grid so we
          claim the full row and constrain inner width). --}}
-    <div class="bg-brand-900 border border-brand-800/60 rounded-xl p-6 h-full flex flex-col justify-center w-1/2">
+    <div class="bg-brand-800 border border-brand-700/60 rounded-xl p-6 h-full flex flex-col justify-center w-1/2">
         <div class="text-brand-300 text-[0.65rem] uppercase tracking-[0.1em] font-semibold mb-4">Quick Actions</div>
         <div class="flex flex-wrap gap-2">
             @if (\Illuminate\Support\Facades\Route::has('filament.admin.pages.quick-order'))

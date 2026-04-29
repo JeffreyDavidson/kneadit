@@ -240,17 +240,12 @@
     color: var(--brand-400) !important;
 }
 
-/* Widget table header — heading left, actions right */
-.fi-wi-table .fi-ta-header-toolbar {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    width: 100% !important;
-}
-.fi-wi-table .fi-ta-header-heading,
-.fi-wi-table .fi-section-header-heading {
-    flex: 1 !important;
-}
+/* Widget table action link — color/font tweaks only.
+   Layout (display, justify, width) is left to Filament so empty
+   toolbars stay collapsed via Alpine x-show — overriding to flex
+   here forced an empty toolbar to render full-height under the
+   header, padding the bar by ~25px. Central panel doesn't override
+   any of this and lays out correctly. */
 .fi-wi-table .fi-ac-action.fi-ac-link-action,
 .fi-wi-table .fi-ta-header-toolbar .fi-link {
     color: #FFFFFF !important;

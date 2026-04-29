@@ -12,22 +12,26 @@
     border-radius: 16px !important;
 }
 
-/* Main content area */
+/* Main content area — same color as the sidebar so the surfaces
+   feel continuous (matches central's panel pattern). Cards on top
+   pop via their own --pw-card-bg, not via a darker main bg. */
 .fi-main {
-    background: var(--brand-950) !important;
+    background: var(--brand-900) !important;
 }
 
-/* Sidebar */
+/* Sidebar — page-bg shade with a subtle right edge separating it
+   from the main content (matches central's `dark:ring-white/10`
+   pattern: white at 10% opacity, just enough to delimit). */
 .fi-sidebar {
     background: var(--brand-900) !important;
-    border-right: 1px solid var(--border-subtle) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
     position: sticky !important;
     top: 0 !important;
     height: 100vh !important;
     overflow-y: auto !important;
 }
 .fi-sidebar-header {
-    border-bottom: 1px solid var(--border-subtle) !important;
+    border-bottom: none !important;
     padding: 1.25rem 1.25rem !important;
 }
 /* Sidebar nav — padding + scrollable area + thin scrollbar (mirrors central) */
@@ -126,10 +130,11 @@
     opacity: 0.85;
 }
 
-/* Topbar */
+/* Topbar — same bg as cards (`--pw-card-bg`), one shade lighter than
+   the sidebar/main page bg so it reads as an "elevated" surface. */
 .fi-topbar, .fi-topbar nav {
-    background: var(--brand-900) !important;
-    border-bottom: 1px solid var(--border-subtle) !important;
+    background: var(--brand-800) !important;
+    border-bottom: none !important;
 }
 
 /* User avatar */
