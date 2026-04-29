@@ -2,9 +2,10 @@
    TABLES
    =================================================================== */
 
-/* Table container */
+/* Table container — same elevated bg as cards/topbar (brand-800),
+   one shade lighter than the page bg (brand-900). */
 .fi-ta-ctn {
-    background: var(--brand-900) !important;
+    background: var(--brand-800) !important;
     border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     overflow: visible !important;
@@ -15,30 +16,24 @@
     overflow: visible !important;
 }
 
-/* Solid header bar (no gradient — matches central's flat-table pattern).
-   min-height locks the bar at 63px regardless of inner toolbar padding. */
+/* Header chrome — central panel ships zero overrides on .fi-ta-header*
+   and lets Filament's defaults handle layout (heading left, actions
+   right via the adaptive-actions-position class). Tenant only retunes
+   colors here; layout properties (flex-direction, padding, width,
+   min-height, gap) are left to Filament so the action's auto-push
+   to the right works the same way it does on central. */
 .fi-ta-header-ctn {
-    background: var(--brand-900) !important;
+    background: var(--brand-800) !important;
     border-radius: 11px 11px 0 0 !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    padding: 0 1rem !important;
-    min-height: 63px !important;
-    gap: 1rem !important;
     border-bottom: none !important;
+    /* Filament defaults `margin-top: -1px` to merge the header into the
+       container's top border; on tenant we want the container's top
+       border (1px gold-at-15%) visible, so neutralise the offset. */
+    margin-top: 0 !important;
 }
 .fi-ta-header {
     background: transparent !important;
     border-bottom: none !important;
-    padding: 0 !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
-    gap: 0.5rem !important;
-}
-.fi-ta-header .fi-ta-actions {
-    margin-left: auto !important;
 }
 .fi-ta-header-heading {
     color: #FFFFFF !important;
@@ -155,19 +150,16 @@ input[type='checkbox'].fi-checkbox-input {
     color: white !important;
 }
 
-/* Toolbar (search + filters) — dark background to match header */
+/* Toolbar (search + filters) — dark background to match header.
+   Layout properties (display/width/align/justify) intentionally left
+   to Filament: when the toolbar has no content, Filament uses Alpine
+   `x-show="false"` which sets `display: none` inline. Forcing
+   `display: flex !important` here defeats that and renders an empty
+   25px-tall strip below every widget table header. */
 .fi-ta-header-toolbar {
-    background: var(--brand-900) !important;
+    background: var(--brand-800) !important;
     border-bottom: none !important;
-    padding: 8px 0 !important;
-    padding-inline: 0 !important;
-    margin: 0 !important;
     border-radius: 11px 11px 0 0;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 8px !important;
-    width: 100% !important;
 }
 /* When toolbar follows header-ctn, remove top radius */
 .fi-ta-header-ctn + .fi-ta-header-toolbar {

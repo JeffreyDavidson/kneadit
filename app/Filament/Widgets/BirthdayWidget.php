@@ -19,6 +19,20 @@ class BirthdayWidget extends Widget
 
     protected string $view = 'filament.widgets.birthday-widget';
 
+    /**
+     * Hide on bakeries that have no birthday data at all — the
+     * "next 30 days" empty state was just dead space for stores
+     * that never collect birthdays. Coarse check (any customer with
+     * a birthday set, regardless of date) — accepts that the
+     * widget may still occasionally show "no upcoming" between
+     * birthday clusters; that's fine because the widget exists for
+     * stores that DO use the birthday program.
+     */
+    public static function canView(): bool
+    {
+        return Customer::query()->whereNotNull('birthday')->exists();
+    }
+
     /** @return Collection<int, stdClass> */
     public function getUpcomingBirthdays(): Collection
     {

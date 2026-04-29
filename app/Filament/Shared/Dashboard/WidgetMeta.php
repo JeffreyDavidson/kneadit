@@ -42,46 +42,46 @@ class WidgetMeta
 
         // Revenue & Finance — charts need horizontal room (XL adds vertical breakdown).
         'revenue_chart' => ['class' => RevenueChartWidget::class, 'name' => 'Revenue Chart', 'description' => 'Monthly revenue trends', 'icon' => '📈', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge]],
-        'weekly_revenue' => ['class' => WeeklyRevenueChart::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => '💰', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge]],
+        'weekly_revenue' => ['class' => WeeklyRevenueChart::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => '💰', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge], 'defaultHidden' => true],
         'margin_alert' => ['class' => MarginAlertWidget::class, 'name' => 'Margin Alerts', 'description' => 'Products with low profit margins', 'icon' => '💸', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
 
         // Orders — recent_orders + upcoming_orders are flexible tables; today's needs a wider row.
-        'order_funnel' => ['class' => OrderFunnelWidget::class, 'name' => 'Order Funnel', 'description' => 'Order status breakdown', 'icon' => '🔽', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'order_funnel' => ['class' => OrderFunnelWidget::class, 'name' => 'Order Funnel', 'description' => 'Order status breakdown', 'icon' => '🔽', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
         'recent_orders' => ['class' => RecentOrdersWidget::class, 'name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'defaultSize' => WidgetSize::Small],
         'todays_orders' => ['class' => TodaysOrdersWidget::class, 'name' => 'Today\'s Orders', 'description' => 'All orders for today', 'icon' => '📋', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
         'upcoming_orders' => ['class' => UpcomingOrdersWidget::class, 'name' => 'Upcoming Orders', 'description' => 'Orders due in next 3 days', 'icon' => '📅', 'defaultSize' => WidgetSize::Small],
 
         // Products & Prep
-        'top_products' => ['class' => TopProductsWidget::class, 'name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'top_products' => ['class' => TopProductsWidget::class, 'name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
         'baking_sheet' => ['class' => BakingSheetWidget::class, 'name' => 'Baking Sheet', 'description' => 'Today\'s baking prep list', 'icon' => '🧁', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
         'low_stock' => ['class' => LowStockWidget::class, 'name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
 
         // Customers
-        'customer_insights' => ['class' => CustomerInsightsWidget::class, 'name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'customer_insights' => ['class' => CustomerInsightsWidget::class, 'name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
         'at_risk_customers' => ['class' => AtRiskCustomersWidget::class, 'name' => 'At-Risk Customers', 'description' => 'Inactive customers needing attention', 'icon' => '⚠️', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
         'birthday' => ['class' => BirthdayWidget::class, 'name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
 
         // Communication & Activity
         'inbox' => ['class' => InboxWidget::class, 'name' => 'Inbox', 'description' => 'Unread customer messages', 'icon' => '📬', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
-        'recent_activity' => ['class' => RecentActivityWidget::class, 'name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
+        'recent_activity' => ['class' => RecentActivityWidget::class, 'name' => 'Recent Audit Log', 'description' => 'Latest actions and events', 'icon' => '🕐', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
 
         // Planning
-        'goal_tracker' => ['class' => GoalTrackerWidget::class, 'name' => 'Goal Tracker', 'description' => 'Business goal progress', 'icon' => '🎯', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
+        'goal_tracker' => ['class' => GoalTrackerWidget::class, 'name' => 'Goal Tracker', 'description' => 'Business goal progress', 'icon' => '🎯', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large], 'defaultHidden' => true],
         'upcoming_holiday' => ['class' => UpcomingHolidayWidget::class, 'name' => 'Upcoming Holiday', 'description' => 'Next holiday prep reminder', 'icon' => '🎄', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small]],
-        'storefront_views' => ['class' => StorefrontViewsWidget::class, 'name' => 'Storefront Views', 'description' => 'Online store traffic today', 'icon' => '🏪', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small]],
+        'storefront_views' => ['class' => StorefrontViewsWidget::class, 'name' => 'Storefront Views', 'description' => 'Online store traffic today', 'icon' => '🏪', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small], 'defaultHidden' => true],
 
         // Promotions & Loyalty
-        'coupon_usage' => ['class' => CouponUsageWidget::class, 'name' => 'Coupon Usage', 'description' => 'Active coupons and redemption stats', 'icon' => '🎫', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
-        'gift_card_balance' => ['class' => GiftCardBalanceWidget::class, 'name' => 'Gift Card Balance', 'description' => 'Outstanding gift card liability', 'icon' => '🎁', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small]],
-        'loyalty_leaders' => ['class' => LoyaltyLeadersWidget::class, 'name' => 'Loyalty Leaders', 'description' => 'Top customers by loyalty points', 'icon' => '🏅', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'coupon_usage' => ['class' => CouponUsageWidget::class, 'name' => 'Coupon Usage', 'description' => 'Active coupons and redemption stats', 'icon' => '🎫', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
+        'gift_card_balance' => ['class' => GiftCardBalanceWidget::class, 'name' => 'Gift Card Balance', 'description' => 'Outstanding gift card liability', 'icon' => '🎁', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small], 'defaultHidden' => true],
+        'loyalty_leaders' => ['class' => LoyaltyLeadersWidget::class, 'name' => 'Loyalty Leaders', 'description' => 'Top customers by loyalty points', 'icon' => '🏅', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
 
         // Operations
         'capacity_today' => ['class' => CapacityTodayWidget::class, 'name' => 'Capacity Today', 'description' => 'Today and tomorrow order capacity', 'icon' => '⏰', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
         'catering_pipeline' => ['class' => CateringPipelineWidget::class, 'name' => 'Catering Pipeline', 'description' => 'Open catering inquiries and quotes', 'icon' => '📝', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
-        'seasonal_items' => ['class' => SeasonalItemsWidget::class, 'name' => 'Seasonal Items', 'description' => 'Products going in/out of season', 'icon' => '🌸', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'seasonal_items' => ['class' => SeasonalItemsWidget::class, 'name' => 'Seasonal Items', 'description' => 'Products going in/out of season', 'icon' => '🌸', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
 
         // Feedback
-        'review_summary' => ['class' => ReviewSummaryWidget::class, 'name' => 'Review Summary', 'description' => 'Average rating and recent reviews', 'icon' => '⭐', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
+        'review_summary' => ['class' => ReviewSummaryWidget::class, 'name' => 'Review Summary', 'description' => 'Average rating and recent reviews', 'icon' => '⭐', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium], 'defaultHidden' => true],
         'reorder_reminders' => ['class' => ReorderRemindersWidget::class, 'name' => 'Reorder Reminders', 'description' => 'Lapsed repeat customers', 'icon' => '🔄', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small]],
     ];
 
@@ -110,6 +110,17 @@ class WidgetMeta
     public static function classFor(string $key): ?string
     {
         return self::WIDGETS[$key]['class'] ?? null;
+    }
+
+    /**
+     * Whether the widget is hidden by default on a fresh dashboard.
+     * Reporting-flavoured widgets (top sellers, customer trends)
+     * default to hidden so the ops dashboard ships clean; bakers can
+     * opt in via Dashboard Configuration.
+     */
+    public static function isDefaultHidden(string $key): bool
+    {
+        return (bool) (self::WIDGETS[$key]['defaultHidden'] ?? false);
     }
 
     /**

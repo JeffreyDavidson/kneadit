@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Widgets\OrderFunnelWidget;
-use App\Filament\Widgets\RecentOrdersWidget;
 use App\Filament\Widgets\UpcomingOrdersWidget;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
@@ -20,7 +19,6 @@ beforeEach(function () {
 });
 
 dataset('sizeDensityWidgets', [
-    'recent orders (3 → 10 rows)' => [RecentOrdersWidget::class],
     'upcoming orders (3 → 7 days)' => [UpcomingOrdersWidget::class],
     'order funnel (3 → all stages)' => [OrderFunnelWidget::class],
 ]);

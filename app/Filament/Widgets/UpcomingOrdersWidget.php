@@ -18,6 +18,20 @@ class UpcomingOrdersWidget extends Widget
 
     protected string $view = 'filament.widgets.upcoming-orders';
 
+    /**
+     * Hide entirely when there's nothing in the next week — empty
+     * "No upcoming orders" tile is dead space on a busy dashboard.
+     * Once an order with a delivery date in the next 7 days exists,
+     * the widget reappears at its configured size.
+     */
+    public static function canView(): bool
+    {
+        return Order::query()
+            ->active()
+            ->whereBetween('delivery_date', [Date::today(), Date::today()->copy()->addDays(7)])
+            ->exists();
+    }
+
     /** @return array<string, mixed> */
     public function getUpcomingOrders(): array
     {

@@ -9,10 +9,18 @@
    =================================================================== */
 
 :root {
-    --pw-card-bg: var(--platform-900, var(--brand-900, #3d2314));
+    /* Card surface — one shade lighter than the page bg so cards
+       read as elevated. Matches the topbar bg in tenant; central
+       cascades through --platform-* tokens. */
+    --pw-card-bg: var(--platform-900, var(--brand-800, #4a3225));
     --pw-card-grad-start: var(--platform-800, var(--brand-800, #2a1f18));
     --pw-card-grad-end: var(--platform-700, var(--brand-700, #4a3225));
-    --pw-card-border: var(--border-medium, var(--brand-700, #6b4c3b));
+    /* Subtle gold-on-dark outline matches central's <x-central.card>
+       (`border border-honey/12`) — keeps the card the same background
+       as the page, but distinguished from it by a 12%-alpha accent
+       outline. Cards "lift" off the page via this border, not a
+       background difference. */
+    --pw-card-border: rgba(212, 165, 116, 0.12);
     --pw-card-border-subtle: var(--border-subtle, rgba(212, 165, 116, 0.15));
     --pw-card-accent: var(--accent, var(--brand-300, #d4a574));
     --pw-card-accent-light: var(--accent-light, #e8b04a);
@@ -35,9 +43,9 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Header sits on the card's own bg (matches central's `<x-central.card>`
+   pattern — no gradient strip, no divider below). */
 .preview-widget-header {
-    background: linear-gradient(135deg, var(--pw-card-grad-start), var(--pw-card-grad-end));
-    border-bottom: 1px solid var(--pw-card-border-subtle);
     padding: 8px 12px;
     display: flex;
     align-items: center;
@@ -106,6 +114,50 @@
     height: 100%;
     border-radius: 3px;
     background: linear-gradient(90deg, var(--pw-card-accent), var(--pw-card-accent-light));
+}
+
+/* ===== Stat card (Filament-style stat tile: header-less card with
+     label/value/description + edge-to-edge sparkline at the bottom).
+     Mirrors central panel's PlatformStats card visual rather than the
+     header-stripped preview-card shell. ===== */
+.stat-card {
+    background: var(--pw-card-bg);
+    border: 1px solid var(--pw-card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.stat-card-content {
+    padding: 20px 20px 16px;
+    flex: 1;
+}
+.stat-card-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--pw-card-text-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.stat-card-icon {
+    font-size: 0.85rem;
+}
+.stat-card-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--pw-card-text);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+.stat-card-description {
+    font-size: 0.75rem;
+    color: var(--pw-card-text-muted);
+}
+.stat-card-chart {
+    margin: 0;
 }
 
 /* ===== Spark-bars (mini bar-row chart used by sparkline-style widgets) ===== */

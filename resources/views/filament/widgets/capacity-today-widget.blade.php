@@ -1,9 +1,11 @@
 @php
-    // sm: today only — drop tomorrow + blocked days warning to keep
-    // the tile glanceable. md: full picture.
-    $days = $this->isSize('sm')
-        ? [['label' => 'Today', 'data' => $this->getTodayCapacity()]]
-        : [['label' => 'Today', 'data' => $this->getTodayCapacity()], ['label' => 'Tomorrow', 'data' => $this->getTomorrowCapacity()]];
+    use Illuminate\Support\Facades\Date;
+
+    $days = [
+        ['label' => 'Today', 'data' => $this->getTodayCapacity()],
+        ['label' => 'Tomorrow', 'data' => $this->getTomorrowCapacity()],
+        ['label' => Date::today()->copy()->addDays(2)->format('l'), 'data' => $this->getDayAfterCapacity()],
+    ];
 
     $blocked = $this->isSize('sm') ? [] : $this->getBlockedDaysWarning();
 @endphp

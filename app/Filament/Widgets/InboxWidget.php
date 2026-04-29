@@ -17,6 +17,24 @@ class InboxWidget extends Widget
 
     protected string $view = 'filament.widgets.inbox-widget';
 
+    /**
+     * Hide entirely when there are no unread admin messages — was
+     * previously rendering an empty <div></div> that still took a
+     * dashboard grid cell, leaving a visible gap between siblings.
+     */
+    public static function canView(): bool
+    {
+        $tenant = Filament::getTenant();
+
+        return $tenant instanceof Tenant
+            && PlatformMessage::query()
+                ->where('tenant_id', $tenant->id)
+                ->fromAdmin()
+                ->topLevel()
+                ->unread()
+                ->exists();
+    }
+
     public function getUnreadCount(): int
     {
         /** @var Tenant|null $tenant */

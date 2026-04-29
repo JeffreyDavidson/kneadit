@@ -2,59 +2,51 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Filament\WidgetSize;
-use App\Filament\Widgets\Concerns\CachesWidgetData;
-use App\Filament\Widgets\Concerns\HasDashboardSize;
+use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Orders\Order;
-use Filament\Widgets\Widget;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
 
-class RecentOrdersWidget extends Widget
+class RecentOrdersWidget extends TableWidget
 {
-    use CachesWidgetData;
-    use HasDashboardSize;
-
     protected static ?int $sort = 4;
 
-    protected string $view = 'filament.widgets.recent-orders';
+    protected int|string|array $columnSpan = 'full';
 
-    /** @return array<int, array<string, mixed>> */
-    public function getRows(): array
+    protected static ?string $heading = 'Recent Orders';
+
+    public function table(Table $table): Table
     {
-        $limit = $this->rowLimit();
+        return $table
+            ->query(Order::query()->with('customer')->latest()->limit(10))
+            ->recordUrl(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record->id]))
+            ->columns([
+                TextColumn::make('order_number')
+                    ->label('Order')
+                    ->weight('bold'),
 
-        return $this->cached("main_{$limit}", [120, 300], fn (): array => Order::query()
-            ->with('customer')
-            ->latest()
-            ->limit($limit)
-            ->get()
-            ->map(fn (Order $order): array => [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'customer' => $order->customer?->name ?? 'Walk-in',
-                'total' => $order->total->formatted(),
-                'status' => $order->status,
-                'dot_color' => $order->status->funnelDotColor(),
-                'when' => $order->created_at?->diffForHumans(),
+                TextColumn::make('customer.name')
+                    ->label('Customer')
+                    ->placeholder('Walk-in'),
+
+                TextColumn::make('status')
+                    ->badge(),
+
+                TextColumn::make('total')
+                    ->money('USD'),
+
+                TextColumn::make('created_at')
+                    ->label('Placed')
+                    ->since(),
             ])
-            ->all());
-    }
-
-    public function getViewAllUrl(): string
-    {
-        return route('filament.admin.resources.orders.index');
-    }
-
-    private function rowLimit(): int
-    {
-        return match ($this->size()) {
-            WidgetSize::Small => 3,
-            WidgetSize::Medium => 5,
-            default => 10,
-        };
-    }
-
-    protected function cachePrefix(): string
-    {
-        return 'recent_orders';
+            ->paginated(false)
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(OrderResource::getUrl('index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }
