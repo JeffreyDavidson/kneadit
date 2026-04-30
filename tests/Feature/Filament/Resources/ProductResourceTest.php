@@ -88,7 +88,7 @@ test('can filter products by active status', function () {
     $inactive = Product::factory()->inactive()->create();
 
     Livewire::test(ListProducts::class)
-        ->filterTable('is_active', 1)
+        ->filterTable('is_active', true)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
