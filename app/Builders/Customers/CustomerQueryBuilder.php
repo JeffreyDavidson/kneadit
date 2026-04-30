@@ -49,4 +49,18 @@ class CustomerQueryBuilder extends Builder
 
         return $this;
     }
+
+    public function forEmail(string $email): static
+    {
+        $this->where('email', $email);
+
+        return $this;
+    }
+
+    public function forReferralCode(string $code): static
+    {
+        $this->where('referral_code', $code);
+
+        return $this;
+    }
 }

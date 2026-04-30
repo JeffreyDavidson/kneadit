@@ -12,8 +12,8 @@ class RecoverCartController extends Controller
     public function __invoke(string $cart_token): RedirectResponse
     {
         $cart = Cart::query()
-            ->where('cart_token', $cart_token)
-            ->whereNull('converted_at')
+            ->forToken($cart_token)
+            ->notConverted()
             ->first();
 
         if (! $cart) {
