@@ -60,7 +60,7 @@ class CreateQuickOrder
     private function findOrCreateCustomer(CreateQuickOrderData $data): Customer
     {
         if ($data->customerEmail) {
-            $customer = Customer::query()->where('email', $data->customerEmail)->first();
+            $customer = Customer::query()->forEmail($data->customerEmail)->first();
             if ($customer) {
                 return $customer;
             }
