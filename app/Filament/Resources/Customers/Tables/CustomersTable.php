@@ -5,12 +5,12 @@ namespace App\Filament\Resources\Customers\Tables;
 use App\Actions\Marketing\SendBulkCustomerMessage;
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Enums\Customers\CustomerStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -165,7 +165,7 @@ class CustomersTable
                                 ->send();
                         })
                         ->deselectRecordsAfterCompletion(),
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('name')

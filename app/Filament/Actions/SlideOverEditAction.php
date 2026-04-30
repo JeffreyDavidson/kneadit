@@ -10,6 +10,11 @@ use Filament\Actions\EditAction;
  * Used across tenant resource tables in place of repeating
  * `EditAction::make()->slideOver()->modalWidth('md')`. Override the
  * width at the call site with `->modalWidth('lg')` etc. when needed.
+ *
+ * Filament v5 actions have NO automatic policy authorization
+ * (see vendor CanBeAuthorized trait header), so the `update` ability
+ * is wired explicitly here. The Gate is checked against the row record
+ * via the policy registered for the table model.
  */
 class SlideOverEditAction extends EditAction
 {
@@ -19,5 +24,6 @@ class SlideOverEditAction extends EditAction
 
         $this->slideOver();
         $this->modalWidth('md');
+        $this->authorize('update');
     }
 }

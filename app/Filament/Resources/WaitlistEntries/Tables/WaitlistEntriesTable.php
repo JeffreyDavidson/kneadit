@@ -4,12 +4,12 @@ namespace App\Filament\Resources\WaitlistEntries\Tables;
 
 use App\Actions\Customers\UpdateWaitlistEntryStatus;
 use App\Enums\Customers\WaitlistStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\WaitlistEntry;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -108,7 +108,7 @@ class WaitlistEntriesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
