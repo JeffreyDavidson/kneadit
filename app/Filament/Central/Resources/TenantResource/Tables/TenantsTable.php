@@ -3,12 +3,12 @@
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -206,7 +206,7 @@ class TenantsTable
                             });
                         })
                         ->deselectRecordsAfterCompletion(),
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ])
                     ->label('Bulk actions')
                     ->icon(Heroicon::OutlinedBolt)

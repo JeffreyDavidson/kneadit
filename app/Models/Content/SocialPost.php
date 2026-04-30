@@ -5,9 +5,11 @@ namespace App\Models\Content;
 use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
 use App\Models\Inventory\Product;
+use App\Policies\Engagement\SocialPostPolicy;
 use Database\Factories\Content\SocialPostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +30,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable('platform', 'caption', 'product_id', 'image_path', 'scheduled_for', 'status', 'notes')]
 #[UseFactory(SocialPostFactory::class)]
+#[UsePolicy(SocialPostPolicy::class)]
 class SocialPost extends Model
 {
     /** @use HasFactory<SocialPostFactory> */

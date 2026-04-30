@@ -5,10 +5,12 @@ namespace App\Models\Customers;
 use App\Builders\Customers\CustomerPhotoQueryBuilder;
 use App\Casts\StripTagsCast;
 use App\Models\Inventory\Product;
+use App\Policies\Content\CustomerPhotoPolicy;
 use Database\Factories\Customers\CustomerPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable('customer_name', 'customer_email', 'caption', 'photo_path', 'product_id', 'is_approved', 'is_featured')]
 #[UseEloquentBuilder(CustomerPhotoQueryBuilder::class)]
 #[UseFactory(CustomerPhotoFactory::class)]
+#[UsePolicy(CustomerPhotoPolicy::class)]
 class CustomerPhoto extends Model
 {
     /** @use HasFactory<CustomerPhotoFactory> */

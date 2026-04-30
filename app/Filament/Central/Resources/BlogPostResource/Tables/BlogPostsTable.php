@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Resources\BlogPostResource\Tables;
 
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -43,7 +43,7 @@ class BlogPostsTable
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
+                AuthorizedDeleteBulkAction::make(),
             ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources\EmailCampaignResource\Tables;
 use App\Actions\Platform\ScheduleEmailCampaign;
 use App\Actions\Platform\SendEmailCampaign;
 use App\Enums\Marketing\EmailCampaignStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Engagement\EmailCampaign;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
@@ -79,7 +80,7 @@ class EmailCampaignsTable
                     ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft),
             ])
             ->toolbarActions([
-                Actions\DeleteBulkAction::make(),
+                AuthorizedDeleteBulkAction::make(),
             ]);
     }
 }

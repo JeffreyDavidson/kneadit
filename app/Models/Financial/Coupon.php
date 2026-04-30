@@ -8,11 +8,13 @@ use App\Casts\PercentageCast;
 use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
+use App\Policies\Engagement\CouponPolicy;
 use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +46,7 @@ use Illuminate\Support\Str;
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
 #[UseFactory(CouponFactory::class)]
+#[UsePolicy(CouponPolicy::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */

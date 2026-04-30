@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\AnnouncementResource\Tables;
 
-use Filament\Actions\DeleteBulkAction;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -47,7 +47,7 @@ class AnnouncementsTable
                     ->slideOver(),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
+                AuthorizedDeleteBulkAction::make(),
             ]);
     }
 }

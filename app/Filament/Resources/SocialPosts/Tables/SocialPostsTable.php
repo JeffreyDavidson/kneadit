@@ -5,11 +5,11 @@ namespace App\Filament\Resources\SocialPosts\Tables;
 use App\Actions\Content\TransitionSocialPostStatus;
 use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Content\SocialPost;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -111,7 +111,7 @@ class SocialPostsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('scheduled_for', 'desc')

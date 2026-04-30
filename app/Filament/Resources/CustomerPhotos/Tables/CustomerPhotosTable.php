@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\CustomerPhotos\Tables;
 
 use App\Actions\Content\ApproveCustomerPhoto;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\CustomerPhoto;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -84,7 +84,7 @@ class CustomerPhotosTable
                         ->action(fn (Collection $records) => $records->each(fn (CustomerPhoto $record) => resolve(ApproveCustomerPhoto::class)($record)))
                         ->deselectRecordsAfterCompletion()
                         ->requiresConfirmation(),
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateHeading('No customer photos yet')
