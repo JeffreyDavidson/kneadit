@@ -4,11 +4,11 @@ namespace App\Filament\Resources\EmailCampaigns\Tables;
 
 use App\Actions\Platform\SendEmailCampaign;
 use App\Enums\Marketing\EmailCampaignStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Engagement\EmailCampaign;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -63,7 +63,7 @@ class EmailCampaignsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateHeading('No email campaigns yet')

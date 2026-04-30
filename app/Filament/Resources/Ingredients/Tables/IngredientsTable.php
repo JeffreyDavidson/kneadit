@@ -5,13 +5,13 @@ namespace App\Filament\Resources\Ingredients\Tables;
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Inventory\StockStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
@@ -114,7 +114,7 @@ class IngredientsTable
                             }
                         })
                         ->deselectRecordsAfterCompletion(),
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('name')

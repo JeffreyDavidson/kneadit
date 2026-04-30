@@ -7,11 +7,13 @@ use App\Casts\StripTagsCast;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
+use App\Policies\Customers\ReviewPolicy;
 use Database\Factories\Engagement\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(ReviewQueryBuilder::class)]
 #[UseFactory(ReviewFactory::class)]
+#[UsePolicy(ReviewPolicy::class)]
 class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
