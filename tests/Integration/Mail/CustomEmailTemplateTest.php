@@ -238,3 +238,21 @@ test('OrderModifiedMail falls back to default when no template exists', function
     expect($mail->envelope()->subject)->toBe("Your order #{$order->order_number} was updated")
         ->and($mail->content()->view)->toBe('emails.orders.order-modified');
 });
+
+test('custom template body strips dangerous HTML when rendered', function () {
+    $order = Order::factory()->create();
+
+    EmailTemplate::factory()->create([
+        'email_type' => EmailTemplateType::OrderPlaced,
+        'subject' => 'Order received',
+        'body' => '<p>Thanks!</p><script>alert("xss")</script><img src=x onerror="alert(1)">',
+    ]);
+
+    $rendered = (new OrderPlacedMail($order))->render();
+
+    expect($rendered)
+        ->not->toContain('<script>')
+        ->not->toContain('alert("xss")')
+        ->not->toContain('onerror=')
+        ->toContain('Thanks!');
+});

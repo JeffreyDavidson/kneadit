@@ -112,3 +112,14 @@ test('can sort expenses by amount', function () {
         ->sortTable('amount', 'desc')
         ->assertCanSeeTableRecords(collect([$large, $small]), inOrder: true);
 });
+
+test('amount range filter treats input as dollars (not cents)', function () {
+    $belowRange = Expense::factory()->create(['amount' => 50]);
+    $inRange = Expense::factory()->create(['amount' => 150]);
+    $aboveRange = Expense::factory()->create(['amount' => 250]);
+
+    Livewire::test(ListExpenses::class)
+        ->filterTable('amount', ['min_amount' => 100, 'max_amount' => 200])
+        ->assertCanSeeTableRecords(collect([$inRange]))
+        ->assertCanNotSeeTableRecords(collect([$belowRange, $aboveRange]));
+});

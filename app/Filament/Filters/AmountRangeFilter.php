@@ -2,6 +2,7 @@
 
 namespace App\Filament\Filters;
 
+use App\ValueObjects\Money;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,11 +24,11 @@ class AmountRangeFilter extends Filter
             return $query
                 ->when(
                     $data['min_amount'],
-                    fn (Builder $query, string $amount) => $query->where($column, '>=', $amount),
+                    fn (Builder $query, string $amount) => $query->where($column, '>=', Money::fromDollars((float) $amount)->cents()),
                 )
                 ->when(
                     $data['max_amount'],
-                    fn (Builder $query, string $amount) => $query->where($column, '<=', $amount),
+                    fn (Builder $query, string $amount) => $query->where($column, '<=', Money::fromDollars((float) $amount)->cents()),
                 );
         });
 

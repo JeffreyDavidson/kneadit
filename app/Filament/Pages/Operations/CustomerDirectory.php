@@ -114,7 +114,9 @@ class CustomerDirectory extends Page
                 'email' => $customer->email,
                 'phone' => $customer->phone ?? 'N/A',
                 'total_orders' => $customer->orders_count,
-                'total_spent' => Number::currency($customer->orders_sum_total ?? 0),
+                // orders.total is bigint cents (migration 2026_04_22_201500); withSum bypasses
+                // MoneyCentsCast and returns the raw cents, so divide back to dollars here.
+                'total_spent' => Number::currency(((int) ($customer->orders_sum_total ?? 0)) / 100),
                 'last_order_date' => $customer->orders->first()?->created_at?->format('M j, Y') ?? 'Never',
             ];
         });
