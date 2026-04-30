@@ -27,7 +27,7 @@ class RegisterCustomerRequest extends FormRequest
                 // (no password yet) — registration in that case claims the record.
                 // Block emails that already have a password.
                 function (string $attribute, mixed $value, Closure $fail): void {
-                    $existing = Customer::query()->where('email', $value)->first();
+                    $existing = Customer::query()->forEmail($value)->first();
 
                     if ($existing && $existing->password !== null) {
                         $fail('An account with this email already exists. Try signing in instead.');
