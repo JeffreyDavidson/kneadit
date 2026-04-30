@@ -19,7 +19,9 @@ class CategoryQueryBuilder extends Builder
     public function withActiveProducts(): static
     {
         $this->with(['products' => function (HasMany $q): void {
-            $q->where('is_active', true)->orderBy('name');
+            $q->where('is_active', true)
+                ->with(['primaryImage', 'seasonalItems'])
+                ->orderBy('name');
         }]);
 
         return $this;
@@ -28,7 +30,9 @@ class CategoryQueryBuilder extends Builder
     public function withFeaturedProducts(): static
     {
         $this->with(['products' => function (HasMany $q): void {
-            $q->where('is_active', true)->where('is_featured', true);
+            $q->where('is_active', true)
+                ->where('is_featured', true)
+                ->with(['primaryImage', 'seasonalItems']);
         }]);
 
         return $this;
