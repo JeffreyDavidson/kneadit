@@ -22,8 +22,8 @@ class MarkCartConverted
         }
 
         Cart::query()
-            ->where('cart_token', $token)
-            ->whereNull('converted_at')
+            ->forToken($token)
+            ->notConverted()
             ->update(['converted_at' => now()]);
 
         return $next($payload);

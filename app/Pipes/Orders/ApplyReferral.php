@@ -32,7 +32,7 @@ class ApplyReferral
             return $next($payload);
         }
 
-        $referrer = Customer::query()->where('referral_code', $code)->first();
+        $referrer = Customer::query()->forReferralCode($code)->first();
         if (! $referrer) {
             return $next($payload);
         }
@@ -41,7 +41,7 @@ class ApplyReferral
             return $next($payload);
         }
 
-        $existingCustomer = Customer::query()->where('email', $payload->data->customerEmail)->first();
+        $existingCustomer = Customer::query()->forEmail($payload->data->customerEmail)->first();
         if ($existingCustomer && CustomerReferral::query()->where('referred_customer_id', $existingCustomer->id)->exists()) {
             return $next($payload);
         }

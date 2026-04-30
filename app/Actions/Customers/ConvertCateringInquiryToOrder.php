@@ -84,7 +84,7 @@ class ConvertCateringInquiryToOrder
     private function findOrCreateCustomer(CateringInquiry $inquiry): Customer
     {
         if ($inquiry->customer_email) {
-            $existing = Customer::query()->where('email', $inquiry->customer_email)->first();
+            $existing = Customer::query()->forEmail($inquiry->customer_email)->first();
 
             if ($existing) {
                 return $existing;

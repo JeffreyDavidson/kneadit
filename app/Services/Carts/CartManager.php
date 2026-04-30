@@ -31,8 +31,8 @@ class CartManager
         }
 
         return Cart::query()
-            ->where('cart_token', $token)
-            ->whereNull('converted_at')
+            ->forToken($token)
+            ->notConverted()
             ->first();
     }
 
