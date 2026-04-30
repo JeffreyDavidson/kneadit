@@ -106,7 +106,8 @@
             Chart.defaults.borderColor = 'rgba(212,146,12,0.08)';
             Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, sans-serif';
 
-            Chart.helpers.each(Chart.instances, (instance) => instance.destroy());
+            // Chart.js v4 dropped Chart.helpers.each; iterate the instances map directly.
+            Object.values(Chart.instances).forEach((instance) => instance.destroy());
 
             const signupsEl = document.getElementById('signupsChart');
             const planEl = document.getElementById('planChart');
@@ -252,10 +253,17 @@
                 // stale width and overflows the viewport. Watch each chart's
                 // parent and resize whenever the actual width changes.
                 if (typeof ResizeObserver !== 'undefined') {
-                    Chart.helpers.each(Chart.instances, (instance) => {
+                    Object.values(Chart.instances).forEach((instance) => {
                         const parent = instance.canvas.parentElement;
                         if (!parent) return;
-                        new ResizeObserver(() => instance.resize()).observe(parent);
+                        // Guard the callback: Livewire SPA navigation can detach
+                        // the canvas before the observer fires, and Chart.js
+                        // resize() then dereferences a null parentElement.
+                        new ResizeObserver(() => {
+                            if (instance.canvas?.parentElement) {
+                                instance.resize();
+                            }
+                        }).observe(parent);
                     });
                 }
             }).catch((err) => console.error(err));

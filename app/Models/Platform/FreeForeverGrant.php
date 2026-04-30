@@ -3,7 +3,9 @@
 namespace App\Models\Platform;
 
 use App\Models\Staff\User;
+use Database\Factories\Platform\FreeForeverGrantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,6 +29,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable('tenant_id', 'granted_by_user_id', 'granted_at', 'revoked_at')]
 class FreeForeverGrant extends Model
 {
+    /** @use HasFactory<FreeForeverGrantFactory> */
+    use HasFactory;
+
     protected function casts(): array
     {
         return [

@@ -43,7 +43,9 @@ test('get upcoming birthdays excludes customers beyond 30 days', function () {
     expect($birthdays)->toBeEmpty();
 });
 
-test('get upcoming birthdays limited to 5 results', function () {
+test('get upcoming birthdays limited to 5 results at medium size', function () {
+    test()->widget->dashboardSize = 'md';
+
     for ($i = 1; $i <= 8; $i++) {
         Customer::factory()->create([
             'birthday' => now()->addDays($i)->subYears(25),

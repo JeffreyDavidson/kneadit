@@ -2,13 +2,15 @@
 
 namespace App\Enums\Filament;
 
+use Filament\Support\Contracts\HasLabel;
+
 /**
  * T-shirt sizing for dashboard widgets. Replaces the previous numeric
  * span (1/2/3). SM/MD/LG span 1/2/3 columns at one row tall;
  * XL spans 3 columns × 2 rows for hero widgets that benefit from
  * vertical space (charts with breakdown tables, the welcome banner).
  */
-enum WidgetSize: string
+enum WidgetSize: string implements HasLabel
 {
     case Small = 'sm';
     case Medium = 'md';
@@ -29,7 +31,7 @@ enum WidgetSize: string
         return $this === self::ExtraLarge ? 2 : 1;
     }
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Small => 'Small',

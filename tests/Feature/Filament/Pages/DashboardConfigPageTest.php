@@ -3,6 +3,7 @@
 use App\Filament\Pages\Dashboard\Dashboard;
 use App\Filament\Pages\Dashboard\DashboardConfig;
 use App\Filament\Widgets\RecentOrdersWidget;
+use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
@@ -65,7 +66,7 @@ test('setSize accepts t-shirt size strings, ignores unknown values, and rejects 
 
 test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and standard sizes for unconstrained widgets', function () {
     expect(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('welcome_banner'))
-        ->toBe([App\Enums\Filament\WidgetSize::Large, App\Enums\Filament\WidgetSize::ExtraLarge])
+        ->toBe([App\Enums\Filament\WidgetSize::Small, App\Enums\Filament\WidgetSize::Medium])
         ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('storefront_views'))
         ->toBe([App\Enums\Filament\WidgetSize::Small])
         ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('revenue_chart'))
@@ -76,17 +77,18 @@ test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and st
 });
 
 test('saved sizes that violate allowedSizes are clamped to the widget default on load', function () {
-    // welcome_banner is locked to lg; a config saved before that constraint
-    // landed could still have it set to sm. Loading should clamp to lg.
+    // welcome_banner allows [sm, md] with default sm; a config persisted with
+    // an out-of-range size like 'xl' should clamp back to the sm default.
+    // storefront_views only allows sm — a stored 'lg' should clamp to sm.
     resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
-        'welcome_banner' => ['visible' => true, 'order' => 1, 'size' => 'sm'],
+        'welcome_banner' => ['visible' => true, 'order' => 1, 'size' => 'xl'],
         'storefront_views' => ['visible' => true, 'order' => 2, 'size' => 'lg'],
     ]));
 
     $page = Livewire::test(DashboardConfig::class);
     $widgets = collect($page->get('widgets'))->keyBy('key');
 
-    expect($widgets['welcome_banner']['size'])->toBe('lg')
+    expect($widgets['welcome_banner']['size'])->toBe('sm')
         ->and($widgets['storefront_views']['size'])->toBe('sm');
 });
 
@@ -130,17 +132,24 @@ test('Dashboard::getWidgets honors saved order and visibility', function () {
         fn ($w) => is_string($w) ? $w : $w->widget,
     )->all();
 
-    expect($classes)->toBe([RecentOrdersWidget::class])
+    // recent_orders is the only saved-visible widget, so it leads the list.
+    // The remaining slots are non-default-hidden registry widgets surfaced
+    // automatically so newly-shipped widgets appear for tenants with an
+    // older saved layout — see Dashboard::getWidgets().
+    expect($classes[0])->toBe(RecentOrdersWidget::class)
         ->and($classes)->not->toContain(WelcomeBannerWidget::class);
 });
 
 test('Dashboard::getWidgets pipes the saved size into widgets that use HasDashboardSize', function () {
+    // todays_orders allows [md, lg] and uses HasDashboardSize, so a saved
+    // size flows through wrapWithSize into a WidgetConfiguration.
     resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
-        'recent_orders' => ['visible' => true, 'order' => 1, 'size' => 'lg'],
+        'todays_orders' => ['visible' => true, 'order' => 1, 'size' => 'lg'],
     ]));
 
     $widgets = (new Dashboard)->getWidgets();
 
     expect($widgets[0])->toBeInstanceOf(Filament\Widgets\WidgetConfiguration::class)
+        ->and($widgets[0]->widget)->toBe(TodaysOrdersWidget::class)
         ->and($widgets[0]->getProperties())->toBe(['dashboardSize' => 'lg']);
 });
