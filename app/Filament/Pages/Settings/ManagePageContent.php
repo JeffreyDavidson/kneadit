@@ -21,8 +21,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -48,42 +46,68 @@ class ManagePageContent extends Page
 
     public function mount(): void
     {
+        $this->loadFromSettings();
+    }
+
+    protected function loadFromSettings(): void
+    {
         $this->pageContent = json_decode(resolve(SettingsManager::class)->get('page_content', '{}'), true) ?: [];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('preview')
+                ->label('Preview Storefront')
+                ->icon(Heroicon::OutlinedEye)
+                ->color('gray')
+                ->url(route('home'), shouldOpenInNewTab: true),
+
+            Action::make('resetToSaved')
+                ->label('Reset to saved')
+                ->icon(Heroicon::OutlinedArrowPath)
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalHeading('Discard unsaved changes?')
+                ->modalDescription('Reverts every field on this page to the last saved version. Anything you typed since the last save will be lost.')
+                ->modalSubmitActionLabel('Discard')
+                ->action(function (): void {
+                    $this->loadFromSettings();
+
+                    Notification::make()
+                        ->title('Reverted to last saved version')
+                        ->success()
+                        ->send();
+                }),
+
+            Action::make('save')
+                ->label('Save')
+                ->icon(Heroicon::OutlinedCheck)
+                ->color('primary')
+                ->action('save'),
+        ];
     }
 
     public function content(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Storefront Page Content')
-                    ->description('Customize all text that appears on your storefront pages. Use {{store_name}} for your bakery name and {{lead_time}} for order lead time hours.')
+                Tabs::make('pages')
                     ->schema([
-                        Tabs::make('pages')
-                            ->schema([
-                                MenuTabSchema::make(),
-                                OrderTabSchema::make(),
-                                AboutTabSchema::make(),
-                                ContactTabSchema::make(),
-                                ReviewsTabSchema::make(),
-                                GalleryTabSchema::make(),
-                                CateringTabSchema::make(),
-                                GiftCardsTabSchema::make(),
-                                LoyaltyTabSchema::make(),
-                                OrderTrackingTabSchema::make(),
-                                OrderConfirmationTabSchema::make(),
-                                SubmitReviewTabSchema::make(),
-                                SurveyTabSchema::make(),
-                            ])
-                            ->columnSpanFull(),
-                    ]),
-
-                Actions::make([
-                    Action::make('save')
-                        ->label('Save Page Content')
-                        ->color('primary')
-                        ->action('save'),
-                ])
-                    ->alignEnd()
+                        MenuTabSchema::make(),
+                        OrderTabSchema::make(),
+                        AboutTabSchema::make(),
+                        ContactTabSchema::make(),
+                        ReviewsTabSchema::make(),
+                        GalleryTabSchema::make(),
+                        CateringTabSchema::make(),
+                        GiftCardsTabSchema::make(),
+                        LoyaltyTabSchema::make(),
+                        OrderTrackingTabSchema::make(),
+                        OrderConfirmationTabSchema::make(),
+                        SubmitReviewTabSchema::make(),
+                        SurveyTabSchema::make(),
+                    ])
                     ->columnSpanFull(),
             ]);
     }
@@ -97,7 +121,7 @@ class ManagePageContent extends Page
                 ->title('Page content saved successfully!')
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             Notification::make()
                 ->title('Error saving page content')
                 ->body('There was an error saving. Please try again.')
