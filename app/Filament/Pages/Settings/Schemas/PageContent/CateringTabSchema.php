@@ -15,16 +15,18 @@ class CateringTabSchema
     {
         return Tab::make('Catering')
             ->schema([
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.catering.hero_eyebrow')
-                        ->label('Hero Eyebrow'),
-                    TextInput::make('pageContent.catering.hero_title')
-                        ->label('Hero Title'),
-                ]),
-                TextInput::make('pageContent.catering.hero_subtitle')
-                    ->label('Hero Subtitle'),
-                TextInput::make('pageContent.catering.hero_button')
-                    ->label('Hero Button Text'),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.catering.hero_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.catering.hero_title')
+                            ->label('Title'),
+                    ]),
+                    TextInput::make('pageContent.catering.hero_subtitle')
+                        ->label('Subtitle'),
+                    TextInput::make('pageContent.catering.hero_button')
+                        ->label('Button Text'),
+                ])->compact(),
                 Section::make('Occasions')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.catering.occasions_eyebrow')
@@ -66,12 +68,14 @@ class CateringTabSchema
                     TextInput::make('pageContent.catering.testimonial_attribution')
                         ->label('Attribution'),
                 ])->compact(),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.catering.form_eyebrow')
-                        ->label('Form Eyebrow'),
-                    TextInput::make('pageContent.catering.form_heading')
-                        ->label('Form Heading'),
-                ]),
+                Section::make('Inquiry Form')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.catering.form_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.catering.form_heading')
+                            ->label('Heading'),
+                    ]),
+                ])->compact(),
                 Section::make('Buttons & Messages')->schema([
                     TextInput::make('pageContent.catering.submit_button')
                         ->label('"Submit Inquiry" Button')

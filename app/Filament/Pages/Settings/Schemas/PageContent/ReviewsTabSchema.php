@@ -13,35 +13,41 @@ class ReviewsTabSchema
     {
         return Tab::make('Reviews')
             ->schema([
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.reviews.hero_eyebrow')
-                        ->label('Hero Eyebrow'),
-                    TextInput::make('pageContent.reviews.hero_title')
-                        ->label('Hero Title'),
-                ]),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.reviews.rating_eyebrow')
-                        ->label('Rating Breakdown Eyebrow'),
-                    TextInput::make('pageContent.reviews.all_reviews_label')
-                        ->label('All Reviews Label'),
-                ]),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.reviews.empty_heading')
-                        ->label('Empty State Heading'),
-                    TextInput::make('pageContent.reviews.empty_description')
-                        ->label('Empty State Description'),
-                ]),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.reviews.hero_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.reviews.hero_title')
+                            ->label('Title'),
+                    ]),
+                ])->compact(),
+                Section::make('Reviews List')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.reviews.rating_eyebrow')
+                            ->label('Rating Breakdown Eyebrow'),
+                        TextInput::make('pageContent.reviews.all_reviews_label')
+                            ->label('All Reviews Label'),
+                    ]),
+                ])->compact(),
+                Section::make('Empty State')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.reviews.empty_heading')
+                            ->label('Heading'),
+                        TextInput::make('pageContent.reviews.empty_description')
+                            ->label('Description'),
+                    ]),
+                ])->compact(),
                 Section::make('Call to Action')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.reviews.cta_script')
-                            ->label('CTA Script Text'),
+                            ->label('Script Text'),
                         TextInput::make('pageContent.reviews.cta_button')
-                            ->label('CTA Button Text'),
+                            ->label('Button Text'),
                     ]),
                     TextInput::make('pageContent.reviews.cta_heading')
-                        ->label('CTA Heading'),
+                        ->label('Heading'),
                     TextInput::make('pageContent.reviews.cta_description')
-                        ->label('CTA Description'),
+                        ->label('Description'),
                 ])->compact(),
             ]);
     }
