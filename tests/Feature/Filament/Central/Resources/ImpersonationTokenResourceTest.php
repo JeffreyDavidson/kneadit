@@ -29,7 +29,7 @@ test('resource is read-only', function () {
 });
 
 test('list shows pending, consumed, and expired tokens', function () {
-    $tenant = Tenant::query()->create([
+    $tenant = Tenant::factory()->create([
         'id' => 'audit-bakery',
         'name' => 'Audit Owner',
         'email' => 'audit@example.com',
