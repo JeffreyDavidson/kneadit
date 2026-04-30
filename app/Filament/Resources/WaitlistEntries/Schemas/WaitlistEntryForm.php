@@ -48,7 +48,7 @@ class WaitlistEntryForm
                         Select::make('status')
                             ->options(WaitlistStatus::class)
                             ->required()
-                            ->default(WaitlistStatus::Waiting->value),
+                            ->default(WaitlistStatus::Waiting),
 
                         Textarea::make('notes')
                             ->rows(3),

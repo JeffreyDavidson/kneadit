@@ -174,7 +174,7 @@ class QuickOrderForm
                             ->required()
                             ->options(DeliveryType::class)
                             ->live()
-                            ->default(DeliveryType::Pickup->value),
+                            ->default(DeliveryType::Pickup),
 
                         TextInput::make('delivery_address')
                             ->label('Delivery Address')
@@ -191,7 +191,7 @@ class QuickOrderForm
                             ->label('Payment Method')
                             ->required()
                             ->options(PaymentMethod::class)
-                            ->default(PaymentMethod::Cash->value),
+                            ->default(PaymentMethod::Cash),
 
                         Textarea::make('notes')
                             ->label('Order Notes')
