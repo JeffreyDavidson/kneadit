@@ -6,10 +6,7 @@
                 <x-filament::button wire:click="save" color="primary" icon="heroicon-o-check">
                     Save Changes
                 </x-filament::button>
-                <x-filament::button wire:click="resetToDefaults" color="gray" icon="heroicon-o-arrow-path"
-                    wire:confirm="Are you sure you want to reset all homepage sections to their defaults?">
-                    Reset to Defaults
-                </x-filament::button>
+                {{ $this->resetToDefaultsAction }}
             </div>
             <a href="{{ route('home') }}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400">
                 <x-heroicon-o-eye class="w-4 h-4" />
@@ -104,7 +101,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Product Count</label>
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
-                                            class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                            class="fi-input block w-full rounded-lg border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6, 9] as $opt)
                                             <option value="{{ $opt }}" @selected(($config['count'] ?? 6) == $opt)>{{ $opt }}</option>
                                         @endforeach
@@ -143,7 +140,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Review Count</label>
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
-                                            class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                            class="fi-input block w-full rounded-lg border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6] as $opt)
                                             <option value="{{ $opt }}" @selected(($config['count'] ?? 3) == $opt)>{{ $opt }}</option>
                                         @endforeach
@@ -167,7 +164,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Photo Count</label>
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
-                                            class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                            class="fi-input block w-full rounded-lg border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([4, 8] as $opt)
                                             <option value="{{ $opt }}" @selected(($config['count'] ?? 4) == $opt)>{{ $opt }}</option>
                                         @endforeach
@@ -191,7 +188,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Post Count</label>
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
-                                            class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                            class="fi-input block w-full rounded-lg border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6] as $opt)
                                             <option value="{{ $opt }}" @selected(($config['count'] ?? 3) == $opt)>{{ $opt }}</option>
                                         @endforeach
@@ -222,7 +219,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Button Link</label>
                                     <select wire:change="updateSectionField('{{ $key }}', 'button_link', $event.target.value)"
-                                            class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                            class="fi-input block w-full rounded-lg border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach (['order' => 'Order Page', 'menu' => 'Menu Page', 'contact' => 'Contact Page'] as $val => $label)
                                             <option value="{{ $val }}" @selected(($config['button_link'] ?? 'order') === $val)>{{ $label }}</option>
                                         @endforeach

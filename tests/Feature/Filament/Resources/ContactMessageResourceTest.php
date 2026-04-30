@@ -1,18 +1,22 @@
 <?php
 
 use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
+use App\Filament\Resources\ContactMessages\Pages\ViewContactMessage;
+use App\Mail\Customers\ContactMessageReplyMail;
 use App\Models\Customers\ContactMessage;
+use App\Models\Customers\ContactMessageReply;
 use App\Models\Staff\User;
-use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    test()->actingAs(User::factory()->owner()->create());
+    test()->user = User::factory()->owner()->create();
+    test()->actingAs(test()->user);
 });
 
 test('can list contact messages in the table', function () {
@@ -22,53 +26,92 @@ test('can list contact messages in the table', function () {
         ->assertCanSeeTableRecords($messages);
 });
 
-test('can create a contact message via slide-over', function () {
-    Livewire::test(ListContactMessages::class)
-        ->callAction(CreateAction::class, data: [
-            'name' => 'Jane Customer',
-            'email' => 'jane@example.com',
-            'subject' => 'Custom cake inquiry',
-            'message' => 'I would like to order a custom cake.',
-        ])
-        ->assertHasNoFormErrors();
+test('mark-read action toggles is_read on the row', function () {
+    $message = ContactMessage::factory()->unread()->create();
 
-    test()->assertDatabaseHas(ContactMessage::class, [
-        'name' => 'Jane Customer',
-        'subject' => 'Custom cake inquiry',
-    ]);
+    Livewire::test(ListContactMessages::class)
+        ->callAction(TestAction::make('toggleRead')->table($message));
+
+    expect($message->fresh()->is_read)->toBeTrue();
+
+    Livewire::test(ListContactMessages::class)
+        ->callAction(TestAction::make('toggleRead')->table($message));
+
+    expect($message->fresh()->is_read)->toBeFalse();
 });
 
-test('can edit a contact message via table action', function () {
+test('view page renders for a contact message', function () {
     $message = ContactMessage::factory()->create();
 
-    Livewire::test(ListContactMessages::class)
-        ->callAction(TestAction::make('edit')->table($message), data: [
-            'name' => $message->name,
-            'email' => $message->email,
-            'subject' => 'Updated subject',
-            'message' => $message->message,
-        ])
-        ->assertHasNoFormErrors();
-
-    expect($message->fresh()->subject)->toBe('Updated subject');
+    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->assertOk();
 });
 
-test('create contact message validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListContactMessages::class)
-        ->callAction(CreateAction::class, data: [
-            'name' => 'Test',
-            'email' => 'test@example.com',
-            'subject' => 'Test',
-            'message' => 'Test message',
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'name is required' => [['name' => null], ['name' => 'required']],
-    'email is required' => [['email' => null], ['email' => 'required']],
-    'subject is required' => [['subject' => null], ['subject' => 'required']],
-    'message is required' => [['message' => null], ['message' => 'required']],
-]);
+test('mark-read action on the view page toggles is_read', function () {
+    $message = ContactMessage::factory()->unread()->create();
+
+    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->callAction('toggleRead');
+
+    expect($message->fresh()->is_read)->toBeTrue();
+});
+
+test('reply action exists on the view page', function () {
+    $message = ContactMessage::factory()->create([
+        'email' => 'jane@example.com',
+        'subject' => 'Custom cake',
+    ]);
+
+    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->assertActionExists('reply')
+        ->assertActionVisible('reply');
+});
+
+test('reply action sends the email, persists the reply, and marks the message as read', function () {
+    Mail::fake();
+
+    $message = ContactMessage::factory()->unread()->create([
+        'name' => 'Jane Customer',
+        'email' => 'jane@example.com',
+        'subject' => 'Custom cake',
+    ]);
+
+    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->callAction('reply', data: [
+            'subject' => 'Re: Custom cake',
+            'body' => 'Thanks for reaching out — happy to help with that.',
+        ]);
+
+    Mail::assertQueued(ContactMessageReplyMail::class, function (ContactMessageReplyMail $mail) use ($message): bool {
+        return $mail->hasTo($message->email)
+            && $mail->replySubject === 'Re: Custom cake'
+            && str_contains($mail->replyBody, 'Thanks for reaching out');
+    });
+
+    expect($message->fresh()->is_read)->toBeTrue();
+
+    $reply = $message->replies()->sole();
+
+    expect($reply)
+        ->subject->toBe('Re: Custom cake')
+        ->body->toContain('Thanks for reaching out')
+        ->user_id->toBe(test()->user->id)
+        ->and($reply->sent_at)->not->toBeNull();
+});
+
+test('view page renders prior replies as a thread', function () {
+    $message = ContactMessage::factory()->create();
+
+    ContactMessageReply::factory()->for($message, 'contactMessage')->recycle(test()->user)->create([
+        'subject' => 'Re: First touch',
+        'body' => 'Original staff response body that should appear in the thread.',
+    ]);
+
+    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Re: First touch')
+        ->assertSee('Original staff response body that should appear in the thread.');
+});
 
 test('can render contact message table columns', function (string $column) {
     ContactMessage::factory()->create();

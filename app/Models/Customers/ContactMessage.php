@@ -10,8 +10,11 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ContactMessageReply> $replies
+ *
  * @method static ContactMessageQueryBuilder|ContactMessage newModelQuery()
  * @method static ContactMessageQueryBuilder|ContactMessage newQuery()
  * @method static ContactMessageQueryBuilder|ContactMessage query()
@@ -34,5 +37,13 @@ class ContactMessage extends Model
             'subject' => StripTagsCast::class,
             'message' => StripTagsCast::class,
         ];
+    }
+
+    /**
+     * @return HasMany<ContactMessageReply, $this>
+     */
+    public function replies(): HasMany
+    {
+        return $this->hasMany(ContactMessageReply::class);
     }
 }

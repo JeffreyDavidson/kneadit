@@ -30,6 +30,10 @@ class BlogPostResource extends Resource
 
     protected static ?string $navigationLabel = 'Blog Posts';
 
+    protected static ?string $modelLabel = 'Blog Post';
+
+    protected static ?string $pluralModelLabel = 'Blog Posts';
+
     public static function form(Schema $schema): Schema
     {
         return BlogPostForm::configure($schema);

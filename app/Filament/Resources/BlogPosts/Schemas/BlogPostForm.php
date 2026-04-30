@@ -10,7 +10,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -19,50 +20,83 @@ class BlogPostForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(fn (?string $state, Set $set) => $set('slug', Str::slug($state ?? ''))),
+        return $schema
+            ->columns(3)
+            ->components([
+                Group::make()
+                    ->columnSpan(2)
+                    ->components([
+                        self::contentSection(),
+                    ]),
 
-            TextInput::make('slug')
-                ->required()
-                ->maxLength(255)
-                ->unique(),
+                Group::make()
+                    ->columnSpan(1)
+                    ->components([
+                        self::publishingSection(),
+                        self::featuredImageSection(),
+                        self::tagsSection(),
+                    ]),
+            ]);
+    }
 
-            Textarea::make('excerpt')
-                ->rows(3)
-                ->maxLength(500),
+    private static function contentSection(): Section
+    {
+        return Section::make('Post')
+            ->components([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (?string $state, Set $set) => $set('slug', Str::slug($state ?? ''))),
 
-            RichEditor::make('body')
-                ->required()
-                ->columnSpanFull(),
+                TextInput::make('slug')
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(),
 
-            FileUpload::make('featured_image')
-                ->image()
-                ->acceptedFileTypes(AllowedFileTypes::IMAGES)
-                ->maxSize(5120)
-                ->directory('blog-images')
-                ->disk('public')
-                ->preventFilePathTampering(),
+                Textarea::make('excerpt')
+                    ->rows(3)
+                    ->maxLength(500),
 
-            TagsInput::make('tags'),
+                RichEditor::make('body')
+                    ->required()
+                    ->extraInputAttributes(['style' => 'min-height: 30rem']),
+            ]);
+    }
 
-            TextInput::make('author_name')
-                ->maxLength(255),
+    private static function publishingSection(): Section
+    {
+        return Section::make('Publishing')
+            ->components([
+                Toggle::make('is_published')
+                    ->label('Published'),
 
-            Toggle::make('is_published')
-                ->label('Published')
-                ->live()
-                ->afterStateUpdated(function (bool $state, Set $set, Get $get) {
-                    if ($state && ! $get('published_at')) {
-                        $set('published_at', now()->format('Y-m-d H:i:s'));
-                    }
-                }),
+                DateTimePicker::make('published_at')
+                    ->label('Publish Date'),
+            ]);
+    }
 
-            DateTimePicker::make('published_at')
-                ->label('Publish Date'),
-        ]);
+    private static function featuredImageSection(): Section
+    {
+        return Section::make('Featured Image')
+            ->components([
+                FileUpload::make('featured_image')
+                    ->hiddenLabel()
+                    ->image()
+                    ->acceptedFileTypes(AllowedFileTypes::IMAGES)
+                    ->maxSize(5120)
+                    ->directory('blog-images')
+                    ->disk('public')
+                    ->preventFilePathTampering(),
+            ]);
+    }
+
+    private static function tagsSection(): Section
+    {
+        return Section::make('Tags')
+            ->components([
+                TagsInput::make('tags')
+                    ->hiddenLabel(),
+            ]);
     }
 }
