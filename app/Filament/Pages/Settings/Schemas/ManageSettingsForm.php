@@ -71,12 +71,39 @@ class ManageSettingsForm
                                     ->helperText('Minimum hours before pickup/delivery'),
                             ]),
 
-                        Textarea::make('delivery_fee_tiers')
-                            ->label('Delivery Fee Tiers (JSON)')
-                            ->placeholder('{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}')
-                            ->helperText('JSON format: distance ranges and fees')
-                            ->rows(3)
-                            ->columnSpanFull(),
+                        Repeater::make('delivery_fee_tiers')
+                            ->label('Delivery Fee Tiers')
+                            ->helperText('Set how delivery fees scale with distance. Tiers should not overlap.')
+                            ->columnSpanFull()
+                            ->reorderable()
+                            ->reorderableWithDragAndDrop()
+                            ->addActionLabel('Add tier')
+                            ->defaultItems(0)
+                            ->columns(4)
+                            ->schema([
+                                TextInput::make('min_distance')
+                                    ->label('From')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->required()
+                                    ->suffix('mi'),
+                                TextInput::make('max_distance')
+                                    ->label('To')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->required()
+                                    ->suffix('mi'),
+                                MoneyInput::make('fee')
+                                    ->label('Fee')
+                                    ->required(),
+                                TextInput::make('description')
+                                    ->label('Customer-facing label')
+                                    ->placeholder('Local delivery (0-5 miles)')
+                                    ->helperText('Shown to customers at checkout. Optional.'),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => isset($state['min_distance'], $state['max_distance'], $state['fee'])
+                                ? "{$state['min_distance']}–{$state['max_distance']} mi · \${$state['fee']}"
+                                : null),
 
                         Grid::make(2)
                             ->schema([

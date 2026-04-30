@@ -44,7 +44,8 @@ class ManageSettings extends Page
 
     public ?int $minimum_order_lead_hours = 48;
 
-    public ?string $delivery_fee_tiers = '';
+    /** @var array<int, array<string, mixed>> */
+    public array $delivery_fee_tiers = [];
 
     public ?string $minimum_pickup_order_amount = '0';
 
@@ -124,7 +125,9 @@ class ManageSettings extends Page
         $this->store_address = settings('store_address', $defaults['store_address']);
         $this->default_daily_capacity = settings('default_daily_capacity', $defaults['default_daily_capacity']);
         $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', $defaults['minimum_order_lead_hours']);
-        $this->delivery_fee_tiers = settings('delivery_fee_tiers', $defaults['delivery_fee_tiers']);
+        $storedTiers = settings('delivery_fee_tiers', $defaults['delivery_fee_tiers']);
+        $decodedTiers = is_string($storedTiers) ? json_decode($storedTiers, true) : $storedTiers;
+        $this->delivery_fee_tiers = is_array($decodedTiers) ? array_values($decodedTiers) : [];
         $this->minimum_pickup_order_amount = settings('minimum_pickup_order_amount', $defaults['minimum_pickup_order_amount']);
         $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', $defaults['minimum_delivery_order_amount']);
         $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', $defaults['repeat_reminders_enabled']);
@@ -205,7 +208,9 @@ class ManageSettings extends Page
         $this->store_address = $defaults['store_address'];
         $this->default_daily_capacity = $defaults['default_daily_capacity'];
         $this->minimum_order_lead_hours = $defaults['minimum_order_lead_hours'];
-        $this->delivery_fee_tiers = $defaults['delivery_fee_tiers'];
+        $defaultTiers = $defaults['delivery_fee_tiers'];
+        $decodedDefaultTiers = is_string($defaultTiers) ? json_decode($defaultTiers, true) : $defaultTiers;
+        $this->delivery_fee_tiers = is_array($decodedDefaultTiers) ? array_values($decodedDefaultTiers) : [];
         $this->minimum_pickup_order_amount = $defaults['minimum_pickup_order_amount'];
         $this->minimum_delivery_order_amount = $defaults['minimum_delivery_order_amount'];
         $this->repeat_reminders_enabled = $defaults['repeat_reminders_enabled'];

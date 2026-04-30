@@ -47,7 +47,7 @@ final class TenantSettingsDefaults
             'loyalty_tier_gold_free_delivery' => true,
             'loyalty_tier_platinum_multiplier' => '2.0',
             'loyalty_tier_platinum_free_delivery' => true,
-            'delivery_fee_tiers' => '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}',
+            'delivery_fee_tiers' => '[]',
             'minimum_pickup_order_amount' => '0',
             'minimum_delivery_order_amount' => '0',
             'repeat_reminders_enabled' => false,
