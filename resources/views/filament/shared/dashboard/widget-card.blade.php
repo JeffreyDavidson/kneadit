@@ -35,12 +35,12 @@
                             type="button"
                             class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
                             wire:click="setSize({{ $index }}, '{{ $size->value }}')"
-                            title="{{ $size->label() }} ({{ $size->columns() }}/3 width)"
+                            title="{{ $size->getLabel() }} ({{ $size->columns() }}/3 width)"
                         >{{ strtoupper($size->value) }}</button>
                     @endforeach
                 </div>
             @else
-                <span class="config-size-locked" title="This widget is fixed at {{ $allowedSizes[0]->label() }}">{{ strtoupper($allowedSizes[0]->value) }}</span>
+                <span class="config-size-locked" title="This widget is fixed at {{ $allowedSizes[0]->getLabel() }}">{{ strtoupper($allowedSizes[0]->value) }}</span>
             @endif
 
             <button

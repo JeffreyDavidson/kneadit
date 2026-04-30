@@ -403,6 +403,7 @@ test('StoreInfo stores all properties', function () {
 });
 
 test('StoreInfo logoUrl returns asset path when logo exists', function () {
+    Storage::fake('public')->put('logos/test.png', 'fake-image');
     $dto = new StoreInfo(
         name: 'Test',
         email: null,

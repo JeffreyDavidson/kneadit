@@ -3,27 +3,27 @@
 use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Models\Operations\Holiday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
+    Cache::flush();
     test()->widget = new UpcomingHolidayWidget;
 });
 
-test('get stats returns empty when no holidays', function () {
-    $method = new ReflectionMethod(UpcomingHolidayWidget::class, 'getStats');
-    expect($method->invoke(test()->widget))->toBeEmpty();
+test('getHolidayData returns null when no holidays', function () {
+    expect(test()->widget->getHolidayData())->toBeNull();
 });
 
-test('get stats returns empty when no upcoming holidays', function () {
+test('getHolidayData returns null when no upcoming holidays', function () {
     Holiday::factory()->create(['date' => now()->subDays(5), 'is_active' => true]);
 
-    $method = new ReflectionMethod(UpcomingHolidayWidget::class, 'getStats');
-    expect($method->invoke(test()->widget))->toBeEmpty();
+    expect(test()->widget->getHolidayData())->toBeNull();
 });
 
-test('get stats returns stat for upcoming holiday', function () {
+test('getHolidayData returns data array for the next upcoming holiday', function () {
     Holiday::factory()->create([
         'name' => "Valentine's Day",
         'date' => now()->addDays(10),
@@ -31,13 +31,12 @@ test('get stats returns stat for upcoming holiday', function () {
         'is_active' => true,
     ]);
 
-    $method = new ReflectionMethod(UpcomingHolidayWidget::class, 'getStats');
-    $stats = $method->invoke(test()->widget);
-
-    expect($stats)->toHaveCount(1);
+    expect(test()->widget->getHolidayData())
+        ->toBeArray()
+        ->toHaveKeys(['name', 'date', 'orders', 'days_until_deadline', 'deadline_passed', 'is_urgent']);
 });
 
-test('get stats includes holiday name in stat', function () {
+test('getHolidayData includes the holiday name', function () {
     Holiday::factory()->create([
         'name' => 'Easter',
         'date' => now()->addDays(20),
@@ -45,8 +44,5 @@ test('get stats includes holiday name in stat', function () {
         'is_active' => true,
     ]);
 
-    $method = new ReflectionMethod(UpcomingHolidayWidget::class, 'getStats');
-    $stats = $method->invoke(test()->widget);
-
-    expect($stats[0]->getLabel())->toContain('Easter');
+    expect(test()->widget->getHolidayData()['name'])->toBe('Easter');
 });
