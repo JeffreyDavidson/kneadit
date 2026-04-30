@@ -13,14 +13,18 @@ class SurveyTabSchema
     {
         return Tab::make('Survey')
             ->schema([
-                TextInput::make('pageContent.survey.hero_eyebrow')
-                    ->label('Hero Eyebrow'),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.survey.submit_button')
-                        ->label('Submit Button Text'),
-                    TextInput::make('pageContent.survey.submit_footer')
-                        ->label('Submit Footer Text'),
-                ]),
+                Section::make('Hero')->schema([
+                    TextInput::make('pageContent.survey.hero_eyebrow')
+                        ->label('Eyebrow'),
+                ])->compact(),
+                Section::make('Form')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.survey.submit_button')
+                            ->label('Submit Button Text'),
+                        TextInput::make('pageContent.survey.submit_footer')
+                            ->label('Footer Text'),
+                    ]),
+                ])->compact(),
                 Section::make('Success State')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.survey.success_title')
