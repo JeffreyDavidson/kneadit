@@ -15,7 +15,7 @@ class LoyaltyController extends Controller
 {
     public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings, CustomerLoyalty $customerLoyalty): View
     {
-        $customer = Customer::query()->where('email', $request->email)->first();
+        $customer = Customer::query()->forEmail($request->email)->first();
         $rewards = LoyaltyReward::query()->forStorefront()->get();
 
         $vm = $customer

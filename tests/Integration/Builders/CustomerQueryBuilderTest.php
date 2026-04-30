@@ -31,3 +31,23 @@ test('atRisk returns customers with orders but none recent', function () {
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($atRisk->id);
 });
+
+test('forEmail filters customers by email', function () {
+    $target = Customer::factory()->create(['email' => 'alice@example.com']);
+    Customer::factory()->create(['email' => 'bob@example.com']);
+
+    $results = Customer::query()->forEmail('alice@example.com')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->id)->toBe($target->id);
+});
+
+test('forReferralCode filters customers by referral code', function () {
+    $target = Customer::factory()->create(['referral_code' => 'ALICE-7']);
+    Customer::factory()->create(['referral_code' => 'BOB-3']);
+
+    $results = Customer::query()->forReferralCode('ALICE-7')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->id)->toBe($target->id);
+});
