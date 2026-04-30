@@ -14,20 +14,28 @@ class LoyaltyTabSchema
     {
         return Tab::make('Loyalty')
             ->schema([
-                TextInput::make('pageContent.loyalty.hero_eyebrow')
-                    ->label('Hero Eyebrow'),
-                TextInput::make('pageContent.loyalty.hero_subtitle')
-                    ->label('Hero Subtitle'),
-                TextInput::make('pageContent.loyalty.paused_message')
-                    ->label('Program Paused Message'),
-                TextInput::make('pageContent.loyalty.check_heading')
-                    ->label('Check Points Heading'),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.loyalty.rewards_eyebrow')
-                        ->label('Rewards Eyebrow'),
-                    TextInput::make('pageContent.loyalty.rewards_heading')
-                        ->label('Rewards Heading'),
-                ]),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.loyalty.hero_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.loyalty.hero_subtitle')
+                            ->label('Subtitle'),
+                    ]),
+                    TextInput::make('pageContent.loyalty.paused_message')
+                        ->label('Program Paused Message'),
+                ])->compact(),
+                Section::make('Check Points')->schema([
+                    TextInput::make('pageContent.loyalty.check_heading')
+                        ->label('Heading'),
+                ])->compact(),
+                Section::make('Rewards')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.loyalty.rewards_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.loyalty.rewards_heading')
+                            ->label('Heading'),
+                    ]),
+                ])->compact(),
                 Section::make('How It Works')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.loyalty.how_it_works_eyebrow')

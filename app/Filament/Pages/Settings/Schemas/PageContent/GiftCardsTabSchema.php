@@ -14,38 +14,46 @@ class GiftCardsTabSchema
     {
         return Tab::make('Gift Cards')
             ->schema([
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.gift_cards.hero_eyebrow')
-                        ->label('Hero Eyebrow'),
-                    TextInput::make('pageContent.gift_cards.hero_subtitle')
-                        ->label('Hero Subtitle'),
-                ]),
-                Textarea::make('pageContent.gift_cards.hero_title')
-                    ->label('Hero Title')
-                    ->helperText('Use line breaks for multi-line')
-                    ->rows(2),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.gift_cards.preview_label')
-                        ->label('Preview Label'),
-                    TextInput::make('pageContent.gift_cards.amount_label')
-                        ->label('Amount Label'),
-                ]),
-                TextInput::make('pageContent.gift_cards.balance_heading')
-                    ->label('Balance Check Heading'),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.gift_cards.details_eyebrow')
-                        ->label('Details Eyebrow'),
-                    TextInput::make('pageContent.gift_cards.details_heading')
-                        ->label('Details Heading'),
-                ]),
-                TextInput::make('pageContent.gift_cards.recipient_label')
-                    ->label('Recipient Section Label'),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.gift_cards.success_heading')
-                        ->label('Success Heading'),
-                    TextInput::make('pageContent.gift_cards.success_description')
-                        ->label('Success Description'),
-                ]),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.gift_cards.hero_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.gift_cards.hero_subtitle')
+                            ->label('Subtitle'),
+                    ]),
+                    Textarea::make('pageContent.gift_cards.hero_title')
+                        ->label('Title')
+                        ->helperText('Use line breaks for multi-line')
+                        ->rows(2),
+                ])->compact(),
+                Section::make('Card Preview')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.gift_cards.preview_label')
+                            ->label('Preview Label'),
+                        TextInput::make('pageContent.gift_cards.amount_label')
+                            ->label('Amount Label'),
+                    ]),
+                    TextInput::make('pageContent.gift_cards.balance_heading')
+                        ->label('Balance Check Heading'),
+                ])->compact(),
+                Section::make('Details')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.gift_cards.details_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.gift_cards.details_heading')
+                            ->label('Heading'),
+                    ]),
+                    TextInput::make('pageContent.gift_cards.recipient_label')
+                        ->label('Recipient Label'),
+                ])->compact(),
+                Section::make('Success State')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.gift_cards.success_heading')
+                            ->label('Heading'),
+                        TextInput::make('pageContent.gift_cards.success_description')
+                            ->label('Description'),
+                    ]),
+                ])->compact(),
                 Section::make('Buttons & Messages')->schema([
                     TextInput::make('pageContent.gift_cards.check_balance_button')
                         ->label('"Check Balance" Button')
