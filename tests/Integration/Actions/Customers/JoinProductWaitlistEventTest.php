@@ -2,9 +2,11 @@
 
 use App\Actions\Customers\JoinProductWaitlist;
 use App\Events\Customers\ProductWaitlistJoined;
+use App\Mail\Customers\NewWaitlistJoinNotificationMail;
 use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
 
@@ -43,4 +45,21 @@ test('fires for a different customer joining the same product', function () {
     resolve(JoinProductWaitlist::class)(productId: $product->id, customerEmail: 'bob@example.com');
 
     Event::assertDispatched(ProductWaitlistJoined::class);
+});
+
+test('end-to-end: joining the waitlist queues the baker notification email', function () {
+    settings(['store_email' => 'baker@example.com']);
+    Mail::fake();
+    $product = Product::factory()->create();
+
+    resolve(JoinProductWaitlist::class)(
+        productId: $product->id,
+        customerEmail: 'alice@example.com',
+        customerName: 'Alice',
+    );
+
+    Mail::assertQueued(
+        NewWaitlistJoinNotificationMail::class,
+        fn (NewWaitlistJoinNotificationMail $mail): bool => $mail->hasTo('baker@example.com'),
+    );
 });
