@@ -78,6 +78,25 @@ test('a verification URL with a mismatched id is rejected', function () {
     $response->assertForbidden();
 });
 
+test('a verification URL whose hash does not match the customer email is rejected', function () {
+    $customer = Customer::factory()->withPassword()->unverified()->create([
+        'email' => 'real@example.com',
+    ]);
+
+    $url = URL::temporarySignedRoute(
+        'account.email.verify',
+        now()->addMinutes(60),
+        ['id' => $customer->id, 'hash' => sha1('different@example.com')],
+    );
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
+        ->get($url);
+
+    $response->assertForbidden();
+    expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
+});
+
 test('the resend route sends another verification email', function () {
     Notification::fake();
     $customer = Customer::factory()->withPassword()->unverified()->create();
