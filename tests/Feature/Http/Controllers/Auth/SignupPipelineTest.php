@@ -1,11 +1,15 @@
 <?php
 
+use App\Enums\Customers\ReferralStatus;
 use App\Enums\Platform\SubscriptionTier;
+use App\Events\Platform\TenantOnboarded;
+use App\Models\Customers\Referral;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
 
@@ -331,6 +335,75 @@ test('tenant gets trial ends at set to 30 days from now', function () {
     expect(
         $trialEnds->isBetween(now()->addDays(29), now()->addDays(31)),
     )->toBeTrue("Trial ends at {$trialEnds} is not approximately 30 days from now");
+});
+
+// -------------------------------------------------------
+// CompleteOnboardingController — security boundary
+// -------------------------------------------------------
+
+test('successful onboarding logs the user out so they re-authenticate on the tenant subdomain', function () {
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+    submitOnboarding($user, ['subdomain' => $sub]);
+
+    expect(auth()->check())->toBeFalse();
+});
+
+test('successful onboarding invalidates the central session and rotates the CSRF token', function () {
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+
+    $tokenBefore = csrf_token();
+    submitOnboarding($user, ['subdomain' => $sub]);
+
+    expect(csrf_token())->not->toBe($tokenBefore);
+});
+
+test('successful onboarding dispatches TenantOnboarded with the user, tenant, and admin url', function () {
+    Event::fake([TenantOnboarded::class]);
+
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+    submitOnboarding($user, ['subdomain' => $sub]);
+
+    Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
+        return $event->user->is($user)
+            && $event->tenant->id === $sub
+            && str_contains($event->adminUrl, "{$sub}.")
+            && str_ends_with($event->adminUrl, '/admin');
+    });
+});
+
+test('referral code from session is forwarded to CompleteReferral', function () {
+    $referrer = Tenant::query()->create([
+        'id' => 'referring-bakery',
+        'name' => 'Referrer',
+        'email' => 'ref@example.com',
+        'plan' => SubscriptionTier::Starter,
+        'is_active' => true,
+        'storefront_enabled' => true,
+        'brand_color_primary' => '#d4920c',
+        'brand_color_secondary' => '#1c1410',
+    ]);
+    $referral = Referral::factory()->create([
+        'referral_code' => 'SESSREF1',
+        'referrer_tenant_id' => $referrer->id,
+    ]);
+
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+    actingAs($user)
+        ->withSession(['referral_code' => 'SESSREF1'])
+        ->post(route('onboarding.store'), [
+            'store_name' => 'Sess Ref Bakery',
+            'subdomain' => $sub,
+            'storefront_choice' => 'kneadit',
+        ]);
+
+    expect($referral->fresh())
+        ->status->toBe(ReferralStatus::Completed)
+        ->referred_tenant_id->toBe($sub)
+        ->referred_email->toBe($user->email);
 });
 
 // -------------------------------------------------------
