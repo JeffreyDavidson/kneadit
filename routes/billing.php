@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('billing')->name('billing.')->group(function () {
     Route::get('plans', ShowPlansController::class)->name('plans');
-    Route::post('checkout/{plan}', CheckoutController::class)->name('checkout')->middleware('throttle:5,1');
+    Route::post('checkout/{plan}', CheckoutController::class)->name('checkout')->middleware('throttle:sensitive-write');
     Route::get('success', CheckoutSuccessController::class)->name('success');
     Route::get('portal', BillingPortalController::class)->name('portal');
     Route::post('swap/{plan}', SwapPlanController::class)->name('swap');

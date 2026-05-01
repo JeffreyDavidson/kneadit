@@ -64,7 +64,7 @@ Route::middleware([
 
     // Staff invitation routes (outside auth & storefront middleware)
     Route::get('invite/{token}', ShowInvitationController::class)->name('invitation.show')->middleware(ResolveInvitation::class);
-    Route::post('invite/{token}', AcceptInvitationController::class)->name('invitation.accept')->middleware([ResolveInvitation::class, 'throttle:5,1']);
+    Route::post('invite/{token}', AcceptInvitationController::class)->name('invitation.accept')->middleware([ResolveInvitation::class, 'throttle:sensitive-write']);
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
