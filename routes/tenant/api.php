@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->group(function () {
     // Read endpoints — generous limit
-    Route::middleware('throttle:60,1')->group(function () {
+    Route::middleware('throttle:frequent-poll')->group(function () {
         Route::get('store', StoreInfoController::class)->name('store');
         Route::get('categories', ApiCategoryController::class)->name('categories.index');
         Route::get('products', ApiProductController::class)->name('products.index');
@@ -30,7 +30,7 @@ Route::name('api.')->group(function () {
     });
 
     // Write endpoints — tighter limit
-    Route::middleware('throttle:10,1')->group(function () {
+    Route::middleware('throttle:form-write')->group(function () {
         Route::post('orders', ApiOrderController::class)->name('orders.store');
         Route::post('coupon/validate', CouponValidationController::class)->name('coupon.validate');
         Route::post('reviews', [ApiReviewController::class, 'store'])->name('reviews.store');

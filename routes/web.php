@@ -30,20 +30,20 @@ require __DIR__ . '/admin.php';
 // Auth routes (central only)
 Route::middleware('web')->group(function () {
     Route::get('register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
-    Route::post('register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:5,1']);
+    Route::post('register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:sensitive-write']);
     Route::redirect('login', '/')->name('login')->middleware('guest');
     Route::post('logout', LogoutController::class)->name('logout')->middleware('auth');
 
     // Email verification
     Route::view('email/verify', 'auth.verify-email')->middleware('auth')->name('verification.notice');
     Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)->middleware(['auth', 'signed'])->name('verification.verify');
-    Route::post('email/verification-notification', SendVerificationNotificationController::class)->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+    Route::post('email/verification-notification', SendVerificationNotificationController::class)->middleware(['auth', 'throttle:verification-resend'])->name('verification.send');
 
     // Password reset
     Route::get('forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request')->middleware('guest');
-    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware(['guest', 'throttle:5,1']);
+    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware(['guest', 'throttle:sensitive-write']);
     Route::get('reset-password/{token}', [ResetPasswordController::class, 'show'])->name('password.reset')->middleware('guest');
-    Route::post('reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware(['guest', 'throttle:5,1']);
+    Route::post('reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware(['guest', 'throttle:sensitive-write']);
 });
 
 // Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues
@@ -104,7 +104,7 @@ Route::get('/', RootController::class)->name('home');
 
 // Central marketing contact form
 Route::post('contact-us', ContactController::class)
-    ->middleware(['web', 'throttle:5,1'])
+    ->middleware(['web', 'throttle:sensitive-write'])
     ->name('marketing.contact');
 
 // Public bakery directory
@@ -114,7 +114,7 @@ Route::get('directory', DirectoryController::class)->name('directory');
 // CSP fires; payloads are logged for review. CSRF is excluded — browsers
 // don't include the token on policy-violation reports.
 Route::post('csp-report', CspReportController::class)
-    ->middleware(['web', 'throttle:60,1'])
+    ->middleware(['web', 'throttle:frequent-poll'])
     ->withoutMiddleware(Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)
     ->name('csp.report');
 
