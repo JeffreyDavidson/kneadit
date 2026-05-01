@@ -38,3 +38,4 @@ tests/Browser/Screenshots
 tests/Browser/.admin-session.json
 tests/Browser/.admin-fixture-ids.json
 tests/Browser/.central-admin-session.json
+solo.yml

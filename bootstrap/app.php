@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\BrowserTestAwareThrottle;
 use App\Http\Middleware\EnsureOrderAccess;
 use App\Http\Middleware\EnsureSubscribed;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
@@ -50,9 +49,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'subscribed' => EnsureSubscribed::class,
             'order.access' => EnsureOrderAccess::class,
-            // Bypass rate limits for the local browser-test tenant so Pest browser
-            // form tests don't 429 mid-flow; production traffic still throttles.
-            'throttle' => BrowserTestAwareThrottle::class,
         ]);
 
         $middleware->redirectTo(guests: '/login', users: '/billing/plans');
