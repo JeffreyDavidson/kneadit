@@ -127,3 +127,15 @@ test('resource returns global search result details', function () {
         ->toHaveKey('Email', 'alice@example.com')
         ->toHaveKey('Phone');
 });
+
+test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkAction', function () {
+    $kept = Customer::factory()->create();
+    $doomed = Customer::factory()->count(2)->create();
+
+    Livewire::test(ListCustomers::class)
+        ->callTableBulkAction('delete', $doomed);
+
+    expect(Customer::query()->count())->toBe(1)
+        ->and(Customer::query()->find($kept->id))->not->toBeNull()
+        ->and(Customer::query()->find($doomed->first()->id))->toBeNull();
+});
