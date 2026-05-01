@@ -96,3 +96,15 @@ test('can filter suppliers by active status', function () {
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
+
+test('owner can bulk-delete selected suppliers via the AuthorizedDeleteBulkAction', function () {
+    $kept = Supplier::factory()->create();
+    $doomed = Supplier::factory()->count(2)->create();
+
+    Livewire::test(ListSuppliers::class)
+        ->callTableBulkAction('delete', $doomed);
+
+    expect(Supplier::query()->count())->toBe(1)
+        ->and(Supplier::query()->find($kept->id))->not->toBeNull()
+        ->and(Supplier::query()->find($doomed->first()->id))->toBeNull();
+});

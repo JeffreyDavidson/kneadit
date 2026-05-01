@@ -145,3 +145,15 @@ test('global search eloquent query eager loads category', function () {
 
     expect($query->getEagerLoads())->toHaveKey('category');
 });
+
+test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction', function () {
+    $kept = Product::factory()->recycle(test()->category)->create();
+    $doomed = Product::factory()->recycle(test()->category)->count(2)->create();
+
+    Livewire::test(ListProducts::class)
+        ->callTableBulkAction('delete', $doomed);
+
+    expect(Product::query()->count())->toBe(1)
+        ->and(Product::query()->find($kept->id))->not->toBeNull()
+        ->and(Product::query()->find($doomed->first()->id))->toBeNull();
+});
