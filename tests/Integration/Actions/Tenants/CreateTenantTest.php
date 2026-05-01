@@ -68,7 +68,7 @@ it('persists external website and disables storefront when storefront choice is 
     });
 });
 
-it('does NOT roll back the central tenant + domain when tenant-DB seeding fails (current behavior — orphan rows are detected by tenants:doctor)', function () {
+it('rolls back the central tenant + domain row when tenant-DB seeding fails', function () {
     // Force the tenant-DB seed step to throw by replacing the SettingsManager
     // binding with one that explodes on setMany().
     app()->bind(SettingsManager::class, function () {
@@ -87,9 +87,9 @@ it('does NOT roll back the central tenant + domain when tenant-DB seeding fails 
         useKneadItStorefront: true,
     ))->toThrow(RuntimeException::class, 'Simulated tenant DB seed failure');
 
-    // Pin current behavior: the central tenant row + domain row REMAIN even
-    // though the tenant-DB seed step exploded. The cross-DB transaction
-    // boundary is intentionally not atomic — `tenants:doctor` is the recovery
-    // tool. If a future PR changes this to be atomic, this test will catch it.
-    expect(Tenant::query()->whereKey('failbakery')->exists())->toBeTrue();
+    // The action wraps the tenant-DB seed in try/catch and cascade-deletes
+    // the central tenant on failure. The caller sees an all-or-nothing
+    // outcome: no orphan central row, no leftover SQLite file.
+    expect(Tenant::query()->whereKey('failbakery')->exists())->toBeFalse()
+        ->and(file_exists(database_path('tenantfailbakery')))->toBeFalse();
 });
