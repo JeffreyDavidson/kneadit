@@ -20,3 +20,18 @@ test('API creates a waitlist entry and returns JSON:API envelope', function () {
             'data' => ['id', 'type', 'attributes' => ['customer_name', 'customer_email', 'requested_date', 'status']],
         ]);
 });
+
+test('API rejects a waitlist submission missing required fields with 422', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/waitlist', []);
+
+    $response->assertStatus(422);
+
+    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
+    expect($pointers)->toContain(
+        '/data/attributes/customer_name',
+        '/data/attributes/customer_email',
+        '/data/attributes/customer_phone',
+        '/data/attributes/requested_date',
+    );
+});
