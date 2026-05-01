@@ -48,6 +48,7 @@ test('giftCardsHeroImageUrl returns default fallback when null', function () {
 });
 
 test('storeLogoUrl returns asset url when logo is set', function () {
+    Illuminate\Support\Facades\Storage::fake('public')->put('logos/test.png', 'fake-image');
     $settings = makeTenantSettings(store: makeStoreInfo(['logo' => 'logos/test.png']));
 
     expect($settings->storeLogoUrl())->toContain('storage/logos/test.png');

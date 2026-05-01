@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Recipes\Tables;
 
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -62,7 +62,7 @@ class RecipesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('name')

@@ -35,12 +35,12 @@
                             type="button"
                             class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
                             wire:click="setSize({{ $index }}, '{{ $size->value }}')"
-                            title="{{ $size->label() }} ({{ $size->columns() }}/3 width)"
+                            title="{{ $size->getLabel() }} ({{ $size->columns() }}/3 width)"
                         >{{ strtoupper($size->value) }}</button>
                     @endforeach
                 </div>
             @else
-                <span class="config-size-locked" title="This widget is fixed at {{ $allowedSizes[0]->label() }}">{{ strtoupper($allowedSizes[0]->value) }}</span>
+                <span class="config-size-locked" title="This widget is fixed at {{ $allowedSizes[0]->getLabel() }}">{{ strtoupper($allowedSizes[0]->value) }}</span>
             @endif
 
             <button
@@ -82,9 +82,9 @@
                         ['label' => "Week's Revenue", 'value' => '$142', 'delta' => '+8%', 'spark' => [30, 40, 50, 45, 60, 65, 70]],
                         ['label' => 'Views Today', 'value' => '47', 'delta' => '+3%', 'spark' => [50, 60, 55, 65, 70, 65, 75]],
                     ] as $stat)
-                        <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
-                            <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; letter-spacing: 0.05em;">{{ $stat['label'] }}</div>
-                            <div style="font-size: 0.95rem; font-weight: 700; color: #3d2314; line-height: 1.1;">{{ $stat['value'] }}</div>
+                        <div style="background: var(--brand-900); border-radius: 6px; padding: 6px 8px;">
+                            <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase; letter-spacing: 0.05em;">{{ $stat['label'] }}</div>
+                            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.1;">{{ $stat['value'] }}</div>
                             <div style="font-size: 0.55rem; color: #6b9e3a; margin-top: 2px;">{{ $stat['delta'] }}</div>
                             <div class="pw-line" style="height: {{ $sparklineHeight }}px; margin-top: 4px;">
                                 @foreach ($stat['spark'] as $h)
@@ -96,10 +96,10 @@
                 </div>
                 @if ($isStatsXl)
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Avg vs 7-day</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">↑ 12%</div></div>
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Hours saved</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">2.4h</div></div>
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Conversion</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">11%</div></div>
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">New / Returning</div><div style="font-size: 0.7rem; color: #3d2314; font-weight: 600;">3 / 2</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Avg vs 7-day</div><div style="font-size: 0.7rem; color: #fff; font-weight: 600;">↑ 12%</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Hours saved</div><div style="font-size: 0.7rem; color: #fff; font-weight: 600;">2.4h</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Conversion</div><div style="font-size: 0.7rem; color: #fff; font-weight: 600;">11%</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">New / Returning</div><div style="font-size: 0.7rem; color: #fff; font-weight: 600;">3 / 2</div></div>
                     </div>
                 @endif
                 @break
@@ -129,16 +129,16 @@
                         <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                     @endforeach
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--brand-400); margin-top: 4px;">
                     @foreach ($axisLabels as $label)
                         <span>{{ $label }}</span>
                     @endforeach
                 </div>
                 @if ($size === 'xl')
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Top Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">$480</div><div style="font-size: 0.55rem; color: #a08060;">Mar 12</div></div>
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Avg / Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">$54</div><div style="font-size: 0.55rem; color: #6b9e3a;">↑ vs prev 90d</div></div>
-                        <div><div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Best Weekday</div><div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">Saturday</div><div style="font-size: 0.55rem; color: #a08060;">$98 avg</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Top Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #fff;">$480</div><div style="font-size: 0.55rem; color: var(--brand-400);">Mar 12</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Avg / Day</div><div style="font-size: 0.85rem; font-weight: 700; color: #fff;">$54</div><div style="font-size: 0.55rem; color: #6b9e3a;">↑ vs prev 90d</div></div>
+                        <div><div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Best Weekday</div><div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Saturday</div><div style="font-size: 0.55rem; color: var(--brand-400);">$98 avg</div></div>
                     </div>
                 @endif
                 @break
@@ -159,7 +159,7 @@
                     </div>
                 @endfor
                 @if (($widget['size'] ?? 'sm') === 'lg')
-                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.65rem; color: #a08060;">
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--brand-400);">
                         <span>Total</span><span style="color: var(--accent); font-weight: 600;">${{ array_sum($amounts) }}</span>
                     </div>
                 @endif
@@ -172,7 +172,7 @@
                 @endphp
                 @foreach ($products as $name => $pct)
                     <div style="margin-bottom: 6px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--brand-100);">
                             <span>{{ $name }}</span><span>{{ $pct }}%</span>
                         </div>
                         <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $pct }}%;"></div></div>
@@ -202,7 +202,7 @@
                     $weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                 @endphp
                 @if ($isComparison)
-                    <div style="display: flex; gap: 10px; font-size: 0.6rem; color: #a08060; margin-bottom: 4px;">
+                    <div style="display: flex; gap: 10px; font-size: 0.6rem; color: var(--brand-400); margin-bottom: 4px;">
                         <span><span class="pw-dot" style="background: var(--accent);"></span>This week · $455</span>
                         <span><span class="pw-dot" style="background: var(--border-medium);"></span>Last week · $405</span>
                     </div>
@@ -219,19 +219,19 @@
                         @endif
                     @endforeach
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--brand-400); margin-top: 4px;">
                     @foreach ($weekdayLabels as $label)
                         <span>{{ $label }}</span>
                     @endforeach
                 </div>
                 @if ($size === 'xl')
                     <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
-                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; margin-bottom: 6px;">4-week trend</div>
+                        <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase; margin-bottom: 6px;">4-week trend</div>
                         <div class="pw-line" style="height: 32px;">
                             @foreach ([60, 75, 80, 95] as $i => $h)
                                 <div style="flex: 1; padding: 0 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
                                     <div class="pw-line-bar" style="height: {{ $h }}%; background: var(--accent); width: 100%;"></div>
-                                    <div style="font-size: 0.55rem; color: #a08060;">Wk {{ $i + 1 }}</div>
+                                    <div style="font-size: 0.55rem; color: var(--brand-400);">Wk {{ $i + 1 }}</div>
                                 </div>
                             @endforeach
                         </div>
@@ -262,15 +262,15 @@
                 @endphp
                 @if (($widget['size'] ?? 'md') === 'lg')
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-subtle);">
-                        <span style="font-size: 0.6rem; color: #a08060; text-transform: uppercase;">Revenue Today</span>
+                        <span style="font-size: 0.6rem; color: var(--brand-400); text-transform: uppercase;">Revenue Today</span>
                         <span style="font-size: 1rem; font-weight: 700; color: var(--accent);">$142</span>
                     </div>
                 @endif
                 <div style="display: grid; grid-template-columns: repeat({{ count($slots) }}, 1fr); gap: 6px;">
                     @foreach ($slots as $time => $amt)
-                        <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
-                            <div style="font-size: 0.6rem; color: #a08060;">{{ $time }}</div>
-                            <div style="font-size: 0.8rem; font-weight: 700; color: #3d2314;">{{ $amt }}</div>
+                        <div style="background: var(--brand-900); border-radius: 6px; padding: 6px 8px;">
+                            <div style="font-size: 0.6rem; color: var(--brand-400);">{{ $time }}</div>
+                            <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">{{ $amt }}</div>
                         </div>
                     @endforeach
                 </div>
@@ -287,7 +287,7 @@
                 @endif
                 @foreach ($items as $item => $isDone)
                     <div class="pw-row">
-                        <span @if ($isDone) style="color: #a08060; text-decoration: line-through;" @endif>{{ $item }}</span>
+                        <span @if ($isDone) style="color: var(--brand-400); text-decoration: line-through;" @endif>{{ $item }}</span>
                         <span style="color: {{ $isDone ? '#6b9e3a' : '#d4a574' }};">{{ $isDone ? '●' : '○' }}</span>
                     </div>
                 @endforeach
@@ -296,10 +296,10 @@
                 <div class="pw-stat"><span class="pw-stat-label">Unread</span><span class="pw-stat-value">3</span></div>
                 @if (($widget['size'] ?? 'sm') === 'md')
                     @foreach (['Sarah M.' => 'Can I add to my order?', 'Mike R.' => 'Question about delivery time', 'Lisa K.' => 'Cake feedback - thanks!'] as $name => $msg)
-                        <div class="pw-row"><span style="color: #6b4c3b; font-weight: 600;">{{ $name }}</span><span style="color: #a08060; font-style: italic;">{{ \Illuminate\Support\Str::limit($msg, 24) }}</span></div>
+                        <div class="pw-row"><span style="color: var(--brand-100); font-weight: 600;">{{ $name }}</span><span style="color: var(--brand-400); font-style: italic;">{{ \Illuminate\Support\Str::limit($msg, 24) }}</span></div>
                     @endforeach
                 @else
-                    <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">Latest: "Can I add to my order?"</div>
+                    <div style="font-size: 0.65rem; color: var(--brand-400); margin-top: 4px;">Latest: "Can I add to my order?"</div>
                 @endif
                 @break
             @case('margin_alert')
@@ -331,7 +331,7 @@
                 @endphp
                 @foreach ($goals as $goal)
                     <div style="margin-bottom: 6px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--brand-100);">
                             <span>{{ $goal['label'] }}</span><span>{{ $goal['detail'] }}</span>
                         </div>
                         <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $goal['pct'] }}%;"></div></div>
@@ -341,8 +341,8 @@
             @case('upcoming_holiday')
                 <div style="text-align: center;">
                     <div style="font-size: 1.2rem;">🐣</div>
-                    <div style="font-size: 0.75rem; font-weight: 600; color: #3d2314;">Easter</div>
-                    <div style="font-size: 0.6rem; color: #a08060;">in 12 days</div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #fff;">Easter</div>
+                    <div style="font-size: 0.6rem; color: var(--brand-400);">in 12 days</div>
                 </div>
                 @break
             @case('storefront_views')
@@ -362,7 +362,7 @@
                 @break
             @case('gift_card_balance')
                 <div class="pw-stat"><span class="pw-stat-label">Outstanding</span><span class="pw-stat-value">$340</span></div>
-                <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">12 active cards</div>
+                <div style="font-size: 0.65rem; color: var(--brand-400); margin-top: 4px;">12 active cards</div>
                 @break
             @case('loyalty_leaders')
                 @php
@@ -382,19 +382,19 @@
                 @endphp
                 @foreach ($days as $label => $pct)
                     <div style="margin-bottom: 6px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>{{ $label }}</span><span>{{ $pct }}%</span></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--brand-100);"><span>{{ $label }}</span><span>{{ $pct }}%</span></div>
                         <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $pct }}%;"></div></div>
                     </div>
                 @endforeach
                 @break
             @case('catering_pipeline')
                 <div class="pw-stat"><span class="pw-stat-label">Open</span><span class="pw-stat-value">3</span></div>
-                <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Pipeline: $1,250</div>
+                <div style="font-size: 0.6rem; color: var(--brand-400); margin-top: 4px;">Pipeline: $1,250</div>
                 @if (($widget['size'] ?? 'sm') === 'md')
-                    <div style="margin-top: 8px; padding: 6px 8px; background: #fdf8f2; border-radius: 6px;">
-                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Latest Inquiry</div>
-                        <div style="font-size: 0.7rem; font-weight: 600; color: #3d2314;">Henderson Wedding</div>
-                        <div style="font-size: 0.6rem; color: #6b4c3b;">Wedding — Jun 12 — 80 guests</div>
+                    <div style="margin-top: 8px; padding: 6px 8px; background: var(--brand-900); border-radius: 6px;">
+                        <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Latest Inquiry</div>
+                        <div style="font-size: 0.7rem; font-weight: 600; color: #fff;">Henderson Wedding</div>
+                        <div style="font-size: 0.6rem; color: var(--brand-100);">Wedding — Jun 12 — 80 guests</div>
                     </div>
                 @endif
                 @break
@@ -403,7 +403,7 @@
                 <div class="pw-row"><span style="color: #d4574a;">● Ending Soon</span><span>1</span></div>
                 <div class="pw-row"><span style="color: #d4a574;">● In Season</span><span>5</span></div>
                 @if (($widget['size'] ?? 'sm') === 'md')
-                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); font-size: 0.6rem; color: #6b4c3b; line-height: 1.4;">
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); font-size: 0.6rem; color: var(--brand-100); line-height: 1.4;">
                         <div><span style="color: #d4574a;">↓</span> Easter Eggs ends in 3 days</div>
                         <div><span style="color: #6b9e3a;">↑</span> Pumpkin Bread starts Sep 1</div>
                     </div>
@@ -411,21 +411,21 @@
                 @break
             @case('review_summary')
                 <div style="display: flex; align-items: baseline; gap: 6px;">
-                    <span style="font-size: 1.2rem; font-weight: 700; color: #3d2314;">4.8</span>
+                    <span style="font-size: 1.2rem; font-weight: 700; color: #fff;">4.8</span>
                     <span style="font-size: 0.75rem; color: #e8b04a;">★★★★★</span>
                 </div>
-                <div style="font-size: 0.6rem; color: #a08060; margin-top: 2px;">28 reviews</div>
+                <div style="font-size: 0.6rem; color: var(--brand-400); margin-top: 2px;">28 reviews</div>
                 @if (($widget['size'] ?? 'sm') === 'md')
-                    <div style="margin-top: 8px; padding: 6px 8px; background: #fdf8f2; border-radius: 6px;">
-                        <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase;">Latest Review</div>
-                        <div style="font-size: 0.65rem; color: #6b4c3b; font-style: italic; line-height: 1.4;">"Best chocolate cake I've ever had! Will be back."</div>
-                        <div style="font-size: 0.55rem; color: #a08060; margin-top: 2px;">— Sarah M., 2 days ago</div>
+                    <div style="margin-top: 8px; padding: 6px 8px; background: var(--brand-900); border-radius: 6px;">
+                        <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase;">Latest Review</div>
+                        <div style="font-size: 0.65rem; color: var(--brand-100); font-style: italic; line-height: 1.4;">"Best chocolate cake I've ever had! Will be back."</div>
+                        <div style="font-size: 0.55rem; color: var(--brand-400); margin-top: 2px;">— Sarah M., 2 days ago</div>
                     </div>
                 @endif
                 @break
             @case('reorder_reminders')
                 <div class="pw-stat"><span class="pw-stat-label">Lapsed</span><span class="pw-stat-value">6</span></div>
-                <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Haven't ordered in 30+ days</div>
+                <div style="font-size: 0.6rem; color: var(--brand-400); margin-top: 4px;">Haven't ordered in 30+ days</div>
                 @break
             @case('low_stock')
                 @php

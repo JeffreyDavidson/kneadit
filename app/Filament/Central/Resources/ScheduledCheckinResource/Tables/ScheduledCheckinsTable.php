@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\ScheduledCheckinResource\Tables;
 
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use Filament\Actions;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -33,7 +34,7 @@ class ScheduledCheckinsTable
                     ->slideOver(),
             ])
             ->toolbarActions([
-                Actions\DeleteBulkAction::make(),
+                AuthorizedDeleteBulkAction::make(),
             ]);
     }
 }

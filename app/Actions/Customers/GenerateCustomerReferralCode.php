@@ -24,7 +24,7 @@ class GenerateCustomerReferralCode
 
         do {
             $code = strtoupper(Str::random(8));
-        } while (Customer::query()->where('referral_code', $code)->exists());
+        } while (Customer::query()->forReferralCode($code)->exists());
 
         $customer->referral_code = $code;
 

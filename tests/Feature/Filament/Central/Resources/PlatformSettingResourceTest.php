@@ -19,8 +19,8 @@ test('list page renders', function () {
 });
 
 test('list shows existing settings', function () {
-    PlatformSetting::query()->create(['key' => 'maintenance_mode', 'value' => '0']);
-    PlatformSetting::query()->create(['key' => 'maintenance_message', 'value' => 'Back soon']);
+    PlatformSetting::factory()->create(['key' => 'maintenance_mode', 'value' => '0']);
+    PlatformSetting::factory()->create(['key' => 'maintenance_message', 'value' => 'Back soon']);
 
     Livewire::test(ListPlatformSettings::class)
         ->assertCanSeeTableRecords(PlatformSetting::all());
@@ -38,7 +38,7 @@ test('create stores a new setting', function () {
 });
 
 test('create rejects duplicate key', function () {
-    PlatformSetting::query()->create(['key' => 'duplicate_key', 'value' => 'first']);
+    PlatformSetting::factory()->create(['key' => 'duplicate_key', 'value' => 'first']);
 
     Livewire::test(ListPlatformSettings::class)
         ->callAction('create', data: [

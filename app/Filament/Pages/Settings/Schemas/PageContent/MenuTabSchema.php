@@ -14,29 +14,31 @@ class MenuTabSchema
     {
         return Tab::make('Menu')
             ->schema([
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.menu.hero_eyebrow')
-                        ->label('Hero Eyebrow')
-                        ->helperText('Use {{store_name}} for bakery name'),
-                    TextInput::make('pageContent.menu.hero_title')
-                        ->label('Hero Title'),
-                ]),
-                Textarea::make('pageContent.menu.hero_subtitle')
-                    ->label('Hero Subtitle')
-                    ->rows(2),
-                TextInput::make('pageContent.menu.category_eyebrow')
-                    ->label('Category Section Eyebrow'),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.menu.hero_eyebrow')
+                            ->label('Eyebrow')
+                            ->helperText('Use {{store_name}} for bakery name'),
+                        TextInput::make('pageContent.menu.hero_title')
+                            ->label('Title'),
+                    ]),
+                    Textarea::make('pageContent.menu.hero_subtitle')
+                        ->label('Subtitle')
+                        ->rows(2),
+                    TextInput::make('pageContent.menu.category_eyebrow')
+                        ->label('Category Eyebrow'),
+                ])->compact(),
                 Section::make('Call to Action')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.menu.cta_script')
-                            ->label('CTA Script Text'),
+                            ->label('Script Text'),
                         TextInput::make('pageContent.menu.cta_button')
-                            ->label('CTA Button Text'),
+                            ->label('Button Text'),
                     ]),
                     TextInput::make('pageContent.menu.cta_heading')
-                        ->label('CTA Heading'),
+                        ->label('Heading'),
                     TextInput::make('pageContent.menu.cta_description')
-                        ->label('CTA Description')
+                        ->label('Description')
                         ->helperText('Use {{lead_time}} for order lead time hours'),
                 ])->compact(),
                 Section::make('Buttons & Messages')->schema([

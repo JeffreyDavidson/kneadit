@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\Incomes\Tables;
 
 use App\Enums\Financial\IncomeSource;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -51,7 +51,7 @@ class IncomesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('date', 'desc')

@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\GiftCards\Tables;
 
 use App\Enums\Financial\GiftCardStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -67,7 +67,7 @@ class GiftCardsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

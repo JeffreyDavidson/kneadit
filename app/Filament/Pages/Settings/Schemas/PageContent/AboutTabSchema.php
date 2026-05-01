@@ -15,16 +15,20 @@ class AboutTabSchema
     {
         return Tab::make('About')
             ->schema([
-                TextInput::make('pageContent.about.hero_eyebrow')
-                    ->label('Hero Eyebrow'),
-                TextInput::make('pageContent.about.story_eyebrow')
-                    ->label('Story Section Eyebrow'),
-                Section::make('Values Section')->schema([
+                Section::make('Hero & Story')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.about.hero_eyebrow')
+                            ->label('Hero Eyebrow'),
+                        TextInput::make('pageContent.about.story_eyebrow')
+                            ->label('Story Eyebrow'),
+                    ]),
+                ])->compact(),
+                Section::make('Values')->schema([
                     Grid::make(2)->schema([
                         TextInput::make('pageContent.about.values_eyebrow')
-                            ->label('Values Eyebrow'),
+                            ->label('Eyebrow'),
                         TextInput::make('pageContent.about.values_heading')
-                            ->label('Values Heading'),
+                            ->label('Heading'),
                     ]),
                     Repeater::make('pageContent.about.values')
                         ->label('Value Cards')
@@ -35,20 +39,22 @@ class AboutTabSchema
                         ->defaultItems(3)
                         ->maxItems(6),
                 ])->compact(),
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.about.location_eyebrow')
-                        ->label('Location Eyebrow'),
-                    TextInput::make('pageContent.about.social_eyebrow')
-                        ->label('Social Eyebrow'),
-                ]),
+                Section::make('Location & Social')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.about.location_eyebrow')
+                            ->label('Location Eyebrow'),
+                        TextInput::make('pageContent.about.social_eyebrow')
+                            ->label('Social Eyebrow'),
+                    ]),
+                ])->compact(),
                 Section::make('Call to Action')->schema([
                     Grid::make(3)->schema([
                         TextInput::make('pageContent.about.cta_script')
-                            ->label('CTA Script Text'),
+                            ->label('Script Text'),
                         TextInput::make('pageContent.about.cta_heading')
-                            ->label('CTA Heading'),
+                            ->label('Heading'),
                         TextInput::make('pageContent.about.cta_button')
-                            ->label('CTA Button Text'),
+                            ->label('Button Text'),
                     ]),
                 ])->compact(),
             ]);

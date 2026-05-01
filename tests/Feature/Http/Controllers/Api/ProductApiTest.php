@@ -34,3 +34,16 @@ test('products endpoint filters by featured', function () {
     $response->assertOk()
         ->assertJsonCount(2, 'data');
 });
+
+test('products endpoint filters by category slug', function () {
+    $bread = App\Models\Inventory\Category::factory()->active()->create(['slug' => 'breads']);
+    $cake = App\Models\Inventory\Category::factory()->active()->create(['slug' => 'cakes']);
+
+    Product::factory()->active()->recycle($bread)->count(2)->create();
+    Product::factory()->active()->recycle($cake)->count(3)->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson('/api/products?category=cakes');
+
+    $response->assertOk()->assertJsonCount(3, 'data');
+});

@@ -2,6 +2,8 @@
 
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\ProductImage;
+use App\Models\Inventory\SeasonalItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -28,4 +30,28 @@ test('withFeaturedProducts scope eager loads only active featured products', fun
 
     expect($result->products)->toHaveCount(1)
         ->and($result->products->first()->name)->toBe('Featured');
+});
+
+test('withFeaturedProducts eager-loads seasonalItems and primaryImage to prevent N+1 in ProductPresenter', function () {
+    $category = Category::factory()->active()->create();
+    $product = Product::factory()->recycle($category)->active()->featured()->create();
+    SeasonalItem::factory()->recycle($product)->create();
+    ProductImage::factory()->recycle($product)->create(['is_primary' => true]);
+
+    $loaded = Category::query()->withFeaturedProducts()->first()->products->first();
+
+    expect($loaded->relationLoaded('seasonalItems'))->toBeTrue()
+        ->and($loaded->relationLoaded('primaryImage'))->toBeTrue();
+});
+
+test('withActiveProducts eager-loads seasonalItems and primaryImage to prevent N+1 in ProductPresenter', function () {
+    $category = Category::factory()->active()->create();
+    $product = Product::factory()->recycle($category)->active()->create();
+    SeasonalItem::factory()->recycle($product)->create();
+    ProductImage::factory()->recycle($product)->create(['is_primary' => true]);
+
+    $loaded = Category::query()->withActiveProducts()->first()->products->first();
+
+    expect($loaded->relationLoaded('seasonalItems'))->toBeTrue()
+        ->and($loaded->relationLoaded('primaryImage'))->toBeTrue();
 });

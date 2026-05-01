@@ -7,8 +7,6 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Customers\Referral;
 use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\View;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -27,13 +25,6 @@ class ReferralProgram extends Page
     protected string $view = 'filament.pages.engagement.referral-program';
 
     protected static ?string $title = 'Referral Program';
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->schema([
-            View::make('filament.pages.engagement.referral-program-content'),
-        ]);
-    }
 
     public function getReferralCode(): string
     {

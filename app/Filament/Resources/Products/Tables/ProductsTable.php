@@ -3,18 +3,19 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use App\Actions\Products\NotifyProductWaitlist;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -72,19 +73,11 @@ class ProductsTable
                     ->relationship('category', 'name')
                     ->label('Category'),
 
-                SelectFilter::make('is_active')
-                    ->label('Status')
-                    ->options([
-                        1 => 'Active',
-                        0 => 'Inactive',
-                    ]),
+                TernaryFilter::make('is_active')
+                    ->label('Status'),
 
-                SelectFilter::make('is_featured')
-                    ->label('Featured')
-                    ->options([
-                        1 => 'Yes',
-                        0 => 'No',
-                    ]),
+                TernaryFilter::make('is_featured')
+                    ->label('Featured'),
             ])
             ->recordActions([
                 Action::make('printLabel')
@@ -113,7 +106,7 @@ class ProductsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->deferColumnManager(false)

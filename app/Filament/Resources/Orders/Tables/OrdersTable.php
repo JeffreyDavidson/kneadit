@@ -6,6 +6,7 @@ use App\Actions\Orders\RefundStripePayment;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Orders\Order;
@@ -14,7 +15,6 @@ use App\Services\PayPal\InvoiceService;
 use App\Services\PayPal\TokenManager;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -120,7 +120,7 @@ class OrdersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

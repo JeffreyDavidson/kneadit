@@ -2,8 +2,10 @@
 
 namespace App\Models\Orders;
 
+use App\Builders\Orders\CartQueryBuilder;
 use Database\Factories\Orders\CartFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,13 +24,14 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $converted_at
  * @property-read Collection<int, CartItem> $items
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart query()
+ * @method static CartQueryBuilder|Cart newModelQuery()
+ * @method static CartQueryBuilder|Cart newQuery()
+ * @method static CartQueryBuilder|Cart query()
  *
  * @mixin \Eloquent
  */
 #[Fillable('cart_token', 'customer_email', 'customer_name', 'last_activity_at', 'expires_at', 'recovery_sent_at', 'converted_at')]
+#[UseEloquentBuilder(CartQueryBuilder::class)]
 #[UseFactory(CartFactory::class)]
 class Cart extends Model
 {

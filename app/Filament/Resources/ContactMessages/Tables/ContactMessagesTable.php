@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\ContactMessages\Tables;
 
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Customers\ContactMessage;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -71,7 +71,7 @@ class ContactMessagesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

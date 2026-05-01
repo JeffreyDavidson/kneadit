@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\Expenses\Tables;
 
 use App\Enums\Financial\ExpenseCategory;
+use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -66,7 +66,7 @@ class ExpensesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('date', 'desc')

@@ -28,7 +28,7 @@ test('resource cannot create or edit', function () {
 });
 
 test('list shows active and revoked grants', function () {
-    $tenant = Tenant::query()->create([
+    $tenant = Tenant::factory()->create([
         'id' => 'comped-bakery',
         'name' => 'Comped Owner',
         'email' => 'comp@example.com',
@@ -37,12 +37,12 @@ test('list shows active and revoked grants', function () {
     ]);
     $tenant->domains()->create(['domain' => 'comped-bakery']);
 
-    FreeForeverGrant::query()->create([
-        'tenant_id' => $tenant->id,
+    FreeForeverGrant::factory()->for($tenant)->create([
+        'granted_by_user_id' => null,
         'granted_at' => now()->subDays(3),
     ]);
-    FreeForeverGrant::query()->create([
-        'tenant_id' => $tenant->id,
+    FreeForeverGrant::factory()->for($tenant)->revoked()->create([
+        'granted_by_user_id' => null,
         'granted_at' => now()->subDays(10),
         'revoked_at' => now()->subDays(2),
     ]);

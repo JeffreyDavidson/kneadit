@@ -88,7 +88,7 @@ test('can filter products by active status', function () {
     $inactive = Product::factory()->inactive()->create();
 
     Livewire::test(ListProducts::class)
-        ->filterTable('is_active', 1)
+        ->filterTable('is_active', true)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
@@ -144,4 +144,16 @@ test('global search eloquent query eager loads category', function () {
     $query = App\Filament\Resources\Products\ProductResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('category');
+});
+
+test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction', function () {
+    $kept = Product::factory()->recycle(test()->category)->create();
+    $doomed = Product::factory()->recycle(test()->category)->count(2)->create();
+
+    Livewire::test(ListProducts::class)
+        ->callTableBulkAction('delete', $doomed);
+
+    expect(Product::query()->count())->toBe(1)
+        ->and(Product::query()->find($kept->id))->not->toBeNull()
+        ->and(Product::query()->find($doomed->first()->id))->toBeNull();
 });

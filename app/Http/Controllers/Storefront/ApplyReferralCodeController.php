@@ -16,7 +16,7 @@ class ApplyReferralCodeController extends Controller
             return to_route('order.create');
         }
 
-        $referrer = Customer::query()->where('referral_code', $code)->first();
+        $referrer = Customer::query()->forReferralCode($code)->first();
 
         if (! $referrer) {
             return to_route('order.create')

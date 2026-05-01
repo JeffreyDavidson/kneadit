@@ -14,15 +14,17 @@ class GalleryTabSchema
     {
         return Tab::make('Gallery')
             ->schema([
-                Grid::make(2)->schema([
-                    TextInput::make('pageContent.gallery.hero_eyebrow')
-                        ->label('Hero Eyebrow'),
-                    TextInput::make('pageContent.gallery.hero_title')
-                        ->label('Hero Title'),
-                ]),
-                Textarea::make('pageContent.gallery.hero_subtitle')
-                    ->label('Hero Subtitle')
-                    ->rows(2),
+                Section::make('Hero')->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('pageContent.gallery.hero_eyebrow')
+                            ->label('Eyebrow'),
+                        TextInput::make('pageContent.gallery.hero_title')
+                            ->label('Title'),
+                    ]),
+                    Textarea::make('pageContent.gallery.hero_subtitle')
+                        ->label('Subtitle')
+                        ->rows(2),
+                ])->compact(),
                 Section::make('Empty State')->schema([
                     TextInput::make('pageContent.gallery.empty_heading')
                         ->label('Heading'),
@@ -32,7 +34,7 @@ class GalleryTabSchema
                     TextInput::make('pageContent.gallery.empty_script')
                         ->label('Script Text'),
                 ])->compact(),
-                Section::make('Upload Section')->schema([
+                Section::make('Upload')->schema([
                     Grid::make(3)->schema([
                         TextInput::make('pageContent.gallery.upload_eyebrow')
                             ->label('Eyebrow'),
