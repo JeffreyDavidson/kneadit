@@ -11,7 +11,7 @@
         <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             Verify your email
         </h1>
-        <p class="hero-fade-2 text-lg max-w-lg mx-auto text-warm-400">
+        <p class="hero-fade-2 text-lg max-w-lg mx-auto text-warm-100">
             Enter the email address you used when placing this order to view its details.
         </p>
     </div>

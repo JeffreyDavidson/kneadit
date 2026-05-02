@@ -19,7 +19,7 @@
  <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-3 text-warm-100">
  {{ $content['hero_title'] ?? 'Thank You!' }}
  </h1>
- <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-4 text-warm-400">
+ <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-4 text-warm-100">
  {{ $content['hero_description'] ?? 'Your order has been received and we\'ll start preparing your items right away.' }}
  </p>
  <div class="inline-block px-6 py-3 rounded-full hero-fade-5 bg-warm-500/10 border border-warm-500/25">

@@ -83,7 +83,6 @@
 <section class="py-20 px-4 bg-white">
     <div class="max-w-3xl mx-auto">
         <div class="rounded-2xl p-12 text-center relative overflow-hidden bg-warm-900">
-            <x-storefront.grain-texture />
             <div class="relative z-10">
 
                 <p class="font-script text-2xl mb-6 text-warm-500">{{ $content['testimonial_script'] ?? 'What our clients say' }}</p>
