@@ -289,3 +289,75 @@ test('saves order journey steps as JSON', function () {
 
     expect(json_decode(settings('order_journey_steps'), true))->toEqual($steps);
 });
+
+test('persists per-status email toggles as 1/0 strings', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+        'email_order_placed_enabled' => true,
+        'email_order_confirmed_enabled' => false,
+        'email_order_baking_enabled' => true,
+        'email_order_ready_enabled' => false,
+        'email_order_delivered_enabled' => true,
+        'email_order_cancelled_enabled' => false,
+        'email_order_message_enabled' => true,
+        'email_product_available_enabled' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('email_order_placed_enabled'))->toBe('1')
+        ->and(settings('email_order_confirmed_enabled'))->toBe('0')
+        ->and(settings('email_order_baking_enabled'))->toBe('1')
+        ->and(settings('email_order_ready_enabled'))->toBe('0')
+        ->and(settings('email_order_delivered_enabled'))->toBe('1')
+        ->and(settings('email_order_cancelled_enabled'))->toBe('0')
+        ->and(settings('email_order_message_enabled'))->toBe('1')
+        ->and(settings('email_product_available_enabled'))->toBe('0');
+});
+
+test('persists gift card preset amounts and default amount', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+        'gift_card_preset_amounts' => '15,30,75,150',
+        'gift_card_default_amount' => 50,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('gift_card_preset_amounts'))->toBe('15,30,75,150')
+        ->and((int) settings('gift_card_default_amount'))->toBe(50);
+});

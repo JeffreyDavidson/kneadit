@@ -42,6 +42,19 @@ class SaveTenantSettings
                 $data['catering_event_types'] ?? [],
                 fn (mixed $value) => is_string($value) && trim($value) !== '',
             ))),
+            // Per-status order email toggles. Stored as '1'/'0' strings to
+            // match how EngagementSettings reads them (=== '1').
+            'email_order_placed_enabled' => ($data['email_order_placed_enabled'] ?? true) ? '1' : '0',
+            'email_order_confirmed_enabled' => ($data['email_order_confirmed_enabled'] ?? true) ? '1' : '0',
+            'email_order_baking_enabled' => ($data['email_order_baking_enabled'] ?? true) ? '1' : '0',
+            'email_order_ready_enabled' => ($data['email_order_ready_enabled'] ?? true) ? '1' : '0',
+            'email_order_delivered_enabled' => ($data['email_order_delivered_enabled'] ?? true) ? '1' : '0',
+            'email_order_cancelled_enabled' => ($data['email_order_cancelled_enabled'] ?? true) ? '1' : '0',
+            'email_order_message_enabled' => ($data['email_order_message_enabled'] ?? true) ? '1' : '0',
+            'email_product_available_enabled' => ($data['email_product_available_enabled'] ?? true) ? '1' : '0',
+            // Gift card preset amounts (comma-separated string) and default.
+            'gift_card_preset_amounts' => $data['gift_card_preset_amounts'] ?? '',
+            'gift_card_default_amount' => $data['gift_card_default_amount'] ?? 25,
         ];
 
         // PayPal credentials are always persisted — the form still sends them
