@@ -71,7 +71,11 @@ test('saves paypal settings when paypal is a payment method', function () {
         ->and(settings('webhook_secret'))->toBe('whsec-789');
 });
 
-test('does not save paypal settings when paypal is not a payment method', function () {
+test('persists empty paypal credentials when not provided in $data', function () {
+    // The action now always writes paypal_* (defaults to '' if not provided)
+    // so it mirrors the webhook fix and is safe for callers that omit the
+    // keys. The form path is unaffected — Filament always sends the property
+    // values even when the PayPal section is hidden.
     settings(['paypal_client_id' => 'old-value']);
 
     $data = [
@@ -97,8 +101,41 @@ test('does not save paypal settings when paypal is not a payment method', functi
 
     resolve(SaveTenantSettings::class)($data);
 
-    // Paypal settings were not updated, so old value remains
-    expect(settings('paypal_client_id'))->toBe('old-value');
+    expect(settings('paypal_client_id'))->toBe('')
+        ->and(settings('paypal_client_secret'))->toBe('')
+        ->and(settings('paypal_sandbox'))->toBe('0');
+});
+
+test('persists paypal credentials regardless of whether paypal is in payment_methods', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'paypal_client_id' => 'still-here',
+        'paypal_client_secret' => 'still-here-secret',
+        'paypal_sandbox' => true,
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('paypal_client_id'))->toBe('still-here')
+        ->and(settings('paypal_client_secret'))->toBe('still-here-secret')
+        ->and(settings('paypal_sandbox'))->toBe('1');
 });
 
 test('saves catering event types as a json array', function () {
