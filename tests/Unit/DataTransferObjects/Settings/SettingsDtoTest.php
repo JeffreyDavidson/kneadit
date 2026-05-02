@@ -375,6 +375,18 @@ test('WebhookSettings can be instantiated', function () {
     expect($dto)->toBeInstanceOf(WebhookSettings::class);
 });
 
+test('isConfigured returns true only when both url and secret are set', function (?string $url, string $secret, bool $expected) {
+    $dto = new WebhookSettings(url: $url, secret: $secret);
+
+    expect($dto->isConfigured())->toBe($expected);
+})->with([
+    'both set' => ['https://hooks.example.com', 'shh', true],
+    'url only' => ['https://hooks.example.com', '', false],
+    'secret only' => [null, 'shh', false],
+    'empty url string' => ['', 'shh', false],
+    'neither' => [null, '', false],
+]);
+
 // ---------------------------------------------------------------------------
 // StoreInfo
 // ---------------------------------------------------------------------------
