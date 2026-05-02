@@ -44,11 +44,13 @@ class SaveTenantSettings
             ))),
         ];
 
-        if (in_array(PaymentMethod::PayPal->value, $data['payment_methods'] ?? [])) {
-            $settings['paypal_client_id'] = $data['paypal_client_id'];
-            $settings['paypal_client_secret'] = $data['paypal_client_secret'];
-            $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
-        }
+        // PayPal credentials are always persisted — the form still sends them
+        // even when the section is hidden (Filament preserves property values
+        // across visibility toggles). Defaulting to '' here makes the action
+        // safe to call programmatically without paypal_* keys present.
+        $settings['paypal_client_id'] = $data['paypal_client_id'] ?? '';
+        $settings['paypal_client_secret'] = $data['paypal_client_secret'] ?? '';
+        $settings['paypal_sandbox'] = ($data['paypal_sandbox'] ?? false) ? '1' : '0';
 
         // Webhooks are independent of payment method. When a URL is set without
         // a secret (first save or after a manual clear), auto-generate one so
