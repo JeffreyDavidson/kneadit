@@ -12,7 +12,7 @@
         <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
             Let's start a conversation
         </p>
-        <p class="hero-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-400">
+        <p class="hero-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-100">
             {{ $content['hero_subtitle'] ?? 'Questions, special requests, or just want to say hello — we\'re all ears.' }}
         </p>
     </div>

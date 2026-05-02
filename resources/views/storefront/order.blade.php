@@ -85,7 +85,6 @@
 @endif
 {{-- Dark Hero Banner --}}
 <section class="relative overflow-hidden bg-warm-900 pt-8">
-    <x-storefront.grain-texture />
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]" aria-hidden="true"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
@@ -94,7 +93,7 @@
         <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 text-warm-100">
             Place Your Order
         </h1>
-        <p class="text-lg max-w-2xl text-warm-400">
+        <p class="text-lg max-w-2xl text-warm-100">
             Choose your items, tell us when you need them, and we'll have everything freshly prepared.
             Orders need {{ $settings->orders->leadTimeHours }} hours notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
         </p>
@@ -103,7 +102,6 @@
 
 {{-- Main Content --}}
 <section class="relative bg-warm-900">
-    <x-storefront.grain-texture />
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 pb-24"
          x-data="orderForm()"
@@ -143,7 +141,7 @@
                                 @if ($product->image)
                                     <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                 @else
-                                    <x-storefront.image-placeholder :name="$product->name" />
+                                    <x-storefront.image-placeholder :name="$product->name" :category="$product->category?->name" />
                                 @endif
                                 {{-- Price badge --}}
                                 <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm bg-warm-900/80 text-warm-400 border border-warm-500/20">
@@ -204,8 +202,8 @@
 
                     <div x-show="cartItems.length === 0" class="text-center py-8 mb-4">
                         <div class="text-4xl mb-3 opacity-30">🧺</div>
-                        <p class="text-sm text-warm-600">{{ $content['empty_cart_heading'] ?? 'Your cart is empty' }}</p>
-                        <p class="text-xs mt-1 text-warm-700">{{ $content['empty_cart_subtext'] ?? 'Add items to get started' }}</p>
+                        <p class="text-sm text-warm-300">{{ $content['empty_cart_heading'] ?? 'Your cart is empty' }}</p>
+                        <p class="text-xs mt-1 text-warm-500">{{ $content['empty_cart_subtext'] ?? 'Add items to get started' }}</p>
                     </div>
 
                     {{-- Coupon Section --}}
@@ -339,7 +337,7 @@
                                 <input type="tel" data-test="order-form-customer-phone" x-model="form.customer_phone" class="order-input">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Birthday <span class="text-warm-600">(for special treats 🎂)</span></label>
+                                <label class="block text-xs font-medium mb-1 text-warm-400">Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
                                 <input type="date" data-test="order-form-customer-birthday" x-model="form.customer_birthday" class="order-input" max="{{ date('Y-m-d') }}">
                             </div>
                         </div>
@@ -464,7 +462,7 @@
 
                     @if (!empty($settings->payment->methodsAccepted))
                     <div class="pt-4 mt-4 border-t border-warm-700/20">
-                        <p class="text-xs text-warm-600">
+                        <p class="text-xs text-warm-300">
                             <span class="font-medium text-warm-500">Payment:</span> {{ implode(', ', array_map('ucfirst', $settings->payment->methodsAccepted)) }}
                         </p>
                     </div>
@@ -472,7 +470,7 @@
 
                     @if ($settings->branding->allergyDisclaimer)
                     <div class="pt-4 mt-4 border-t border-warm-700/20">
-                        <p class="text-xs leading-relaxed text-warm-600">
+                        <p class="text-xs leading-relaxed text-warm-300">
                             <strong class="text-warm-500">⚠ Allergy Notice:</strong> {{ $settings->branding->allergyDisclaimer }}
                         </p>
                     </div>

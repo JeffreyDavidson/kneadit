@@ -77,7 +77,7 @@ Route::get('catering/stripe/cancel/{inquiry}', CateringStripeCancelController::c
 // Blog
 Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
 Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
-Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
+Route::get('blog/{post:slug}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
 // Review submission (from email link). Email link is a signed URL — that's the
 // proof of order ownership for the GET. The GET handler grants session access
