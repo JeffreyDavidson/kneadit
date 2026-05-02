@@ -39,11 +39,8 @@
              class="w-full h-full object-cover hero-image-zoom">
     </div>
 
-    {{-- Dark gradient overlay --}}
-    <div class="absolute inset-0 bg-gradient-to-b from-warm-900/30 via-warm-900/50 to-warm-900/90"></div>
-
-    {{-- Grain texture --}}
-    <x-storefront.grain-texture />
+    {{-- Dark gradient overlay (heavier now that the grain mask is gone) --}}
+    <div class="absolute inset-0 bg-gradient-to-b from-warm-900/45 via-warm-900/65 to-warm-900/95"></div>
 
     {{-- Content --}}
     <div class="relative z-10 text-center px-4 max-w-4xl mx-auto pt-[15vh]">
@@ -69,115 +66,195 @@
 
 @else
 {{-- ═══════════════════════════════════════════════════════ --}}
-{{-- STYLE: Split Layout (Default)                         --}}
+{{-- STYLE: Split Layout (Default) — cream-forward editorial --}}
 {{-- ═══════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden min-h-screen bg-warm-900">
-    {{-- Grain texture --}}
-    <x-storefront.grain-texture />
-
+<section class="relative overflow-hidden min-h-screen" style="background: var(--warm-100);">
     <div class="grid md:grid-cols-2 min-h-screen">
-        {{-- Left: Content --}}
-        <div class="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24 relative z-10">
-            {{-- Decorative vertical line on right edge --}}
-            <div class="absolute top-0 right-0 w-px h-full hidden md:block opacity-15 bg-gradient-to-b from-transparent via-warm-500 to-transparent"></div>
 
-            <div class="hero-fade-1 flex items-center gap-3 mb-8">
-                <span class="block w-12 h-px bg-warm-500"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">Est. {{ date('Y') }}</span>
+        {{-- ═══ LEFT: cream content column ═══ --}}
+        <div class="relative flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24" style="color: var(--warm-700);">
+
+            {{-- Vertical gold hairline at the cream/photo seam — the placeholder
+                 component's asterisk-divider rhythm scaled to the macro composition.
+                 Hidden on mobile where the layout stacks. --}}
+            <div
+                class="absolute top-0 bottom-0 hidden md:block pointer-events-none"
+                style="right: 0; width: 1px; background: var(--warm-500); opacity: 0.4;"
+                aria-hidden="true"
+            ></div>
+
+            {{-- Eyebrow: short rule + EST. year in deep tone (AAA on cream). --}}
+            <div class="hero-fade-1 flex items-center gap-3 mb-10">
+                <span aria-hidden="true" style="display: inline-block; width: 2.5rem; height: 1px; background: var(--warm-500);"></span>
+                <span
+                    class="font-body uppercase font-semibold"
+                    style="font-size: 0.6875rem; letter-spacing: 0.28em; color: var(--warm-700);"
+                >Est. {{ date('Y') }}</span>
             </div>
 
-            <h1 class="hero-fade-1 font-display font-bold mb-6 leading-none text-warm-100 text-[clamp(3rem,6vw,5.5rem)]">
+            {{-- Optional script tagline — small italic caption above the headline.
+                 Reserves the script accent for a single moment instead of using it
+                 as body copy (the Pophams "one accent moment" discipline). --}}
+            @if ($heroTagline)
+                <p
+                    class="hero-fade-1 font-script italic mb-3"
+                    style="color: var(--warm-600); font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.2;"
+                >
+                    {{ $heroTagline }}
+                </p>
+            @endif
+
+            {{-- Headline: store name, display font, well-set. --}}
+            <h1
+                class="hero-fade-1 font-display mb-6 tracking-tight"
+                style="color: var(--warm-700); font-size: clamp(2.75rem, 5.5vw, 5rem); font-weight: 500; line-height: 1.02;"
+            >
                 {{ $storeName }}
             </h1>
 
-            <p class="hero-fade-2 text-lg md:text-xl leading-relaxed mb-8 max-w-md text-warm-400">
-                {{ $aboutUs ?: ($tagline ?: 'Artisan baked goods crafted with locally sourced ingredients and a whole lot of love. Made fresh daily in our kitchen.') }}
+            {{-- Body copy: deep warm tone for AAA-on-cream legibility. Falls back
+                 to a plain, slightly-editorial line that avoids the precious
+                 "artisan / lovingly crafted" vocabulary the design context
+                 explicitly excludes. --}}
+            <p
+                class="hero-fade-2 mb-10"
+                style="color: var(--warm-700); font-size: clamp(1rem, 1.15vw, 1.125rem); line-height: 1.62; max-width: 32rem;"
+            >
+                {{ $aboutUs ?: ($tagline ?: 'Made by hand. Made for the table. Order what you need this week, picked up or delivered fresh.') }}
             </p>
 
-            <div class="hero-fade-3 flex flex-wrap gap-4">
-                <x-storefront.button :href="route('order.create')" size="md">
+            {{-- CTAs: solid dark pill + secondary text link.
+                 The default `cta` variant is gold-on-cream which doesn't pop
+                 against the cream surface — both are warm-yellow tones so the
+                 button vanishes. `dark` variant (warm-900 bg + warm-100 text)
+                 gives a strong ~14:1 contrast against the cream surface, which
+                 is the right primary-action treatment for this hero. Gold stays
+                 reserved for accents only (eyebrow rule, seam hairline). --}}
+            <div class="hero-fade-3 flex flex-wrap items-center gap-x-12 gap-y-4">
+                <x-storefront.button :href="route('order.create')" variant="dark" size="md">
                     {{ $primaryCtaText }}
                 </x-storefront.button>
-                <a href="{{ route('storefront.menu') }}" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-200 text-warm-400">
+                <a
+                    href="{{ route('storefront.menu') }}"
+                    class="inline-flex items-center gap-2 underline-offset-4 hover:underline transition"
+                    style="color: var(--warm-700); font-size: 0.9375rem; font-weight: 500;"
+                >
                     {{ $secondaryCtaText }}
                     <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
                 </a>
             </div>
 
-            {{-- Trust badges --}}
-            <div class="hero-fade-4 flex items-center gap-6 mt-12 pt-8 border-t border-warm-700/20">
-                @if ($customerCount > 0)
-                <div class="text-center">
-                    <span class="block font-display text-2xl font-bold text-warm-400">{{ $customerCount < 10 ? $customerCount : number_format($customerCount) . '+' }}</span>
-                    <span class="text-xs uppercase tracking-wider text-warm-600">Happy Customers</span>
-                </div>
-                <div class="w-px h-10 bg-warm-700/20"></div>
-                @endif
+            {{-- Credentials strip — only renders when there are 2+ real data
+                 points. A solo figure ("20+ customers" alone) was floating
+                 awkwardly under the CTAs, and the previous top hairline read
+                 as a stray underline rather than a section divider. With 2+
+                 items the strip earns its own line; below that threshold,
+                 whitespace beneath the CTAs carries the composition. --}}
+            @php
+                $credentialCount = (int) ($customerCount > 0) + (int) ($avgRating !== null);
+            @endphp
+            @if ($credentialCount >= 2)
+                <dl class="hero-fade-4 mt-14 flex flex-wrap items-baseline" style="color: var(--warm-700); column-gap: 2.75rem; row-gap: 0.75rem;">
+                    @if ($customerCount > 0)
+                        <div class="flex items-baseline" style="gap: 0.5rem;">
+                            <dt class="sr-only">Happy customers</dt>
+                            <dd class="font-display" style="font-size: 1.375rem; font-weight: 500; line-height: 1;">{{ $customerCount < 10 ? $customerCount : number_format($customerCount) . '+' }}</dd>
+                            <span class="font-body uppercase" style="font-size: 0.6875rem; letter-spacing: 0.18em; opacity: 0.7;">customers</span>
+                        </div>
+                    @endif
 
-                @if ($avgRating)
-                <div class="text-center">
-                    <span class="block font-display text-2xl font-bold text-warm-400">{{ number_format($avgRating, 1) }}</span>
-                    <span class="text-xs uppercase tracking-wider text-warm-600">★ Rating</span>
-                </div>
-                <div class="w-px h-10 bg-warm-700/20"></div>
-                @endif
-
-                <div class="text-center">
-                    <span class="block font-display text-2xl font-bold text-warm-400">Fresh</span>
-                    <span class="text-xs uppercase tracking-wider text-warm-600">Daily</span>
-                </div>
-            </div>
+                    @if ($avgRating)
+                        <div class="flex items-baseline" style="gap: 0.5rem;">
+                            <dt class="sr-only">Average rating</dt>
+                            <dd class="font-display" style="font-size: 1.375rem; font-weight: 500; line-height: 1;">{{ number_format($avgRating, 1) }}</dd>
+                            <span class="font-body uppercase" style="font-size: 0.6875rem; letter-spacing: 0.18em; opacity: 0.7;">★ rating</span>
+                        </div>
+                    @endif
+                </dl>
+            @endif
         </div>
 
-        {{-- Right: Image --}}
-        <div class="relative overflow-hidden hidden md:block">
-            <img src="{{ $heroImageUrl }}" alt="{{ $storeName }}"
-                 class="w-full h-full object-cover hero-image-zoom">
+        {{-- ═══ RIGHT: photo column ═══ --}}
+        <div class="relative overflow-hidden hidden md:block" style="background: var(--warm-900);">
+            <img
+                src="{{ $heroImageUrl }}"
+                alt="{{ $storeName }}"
+                class="w-full h-full object-cover hero-image-zoom"
+            >
 
-            {{-- Left edge gradient blend --}}
-            <div class="absolute inset-0 bg-gradient-to-r from-warm-900 from-0% to-transparent to-25%"></div>
-
-            {{-- Bottom gradient --}}
-            <div class="absolute inset-0 bg-gradient-to-t from-warm-900 from-0% to-transparent to-30%"></div>
-
-            {{-- Floating review card --}}
+            {{-- Floating review card — translucent dark on photo, photo carries
+                 the contrast. Reads as a notebook clipping over the image. --}}
             @if ($topReview)
-            <div class="absolute bottom-12 left-12 right-12 p-6 rounded-2xl backdrop-blur-md hero-fade-5 hero-review-float bg-warm-900/75 border border-warm-500/20">
-                <div class="flex gap-1 mb-2">
-                    @for ($i = 1; $i <= 5; $i++)
-                        <x-heroicon-s-star @class([
-                            'w-4 h-4',
-                            'text-warm-500' => $i <= $topReview->rating,
-                            'text-warm-700/30' => $i > $topReview->rating,
-                        ]) />
-                    @endfor
-                </div>
-                <p class="italic text-sm leading-relaxed text-warm-200">"{{ Str::limit($topReview->comment ?? '', 120) }}"</p>
-                <p class="text-xs mt-2 font-semibold text-warm-500">— {{ $topReview->customer_name }}</p>
-            </div>
+                <figure
+                    class="absolute hero-fade-5 hero-review-float"
+                    style="
+                        bottom: clamp(1.5rem, 3vw, 3rem);
+                        left: clamp(1.5rem, 3vw, 3rem);
+                        right: clamp(1.5rem, 3vw, 3rem);
+                        max-width: 28rem;
+                        padding: 1.25rem 1.5rem;
+                        background: color-mix(in oklab, var(--warm-900) 78%, transparent);
+                        backdrop-filter: blur(12px);
+                        -webkit-backdrop-filter: blur(12px);
+                        border: 1px solid color-mix(in oklab, var(--warm-100) 18%, transparent);
+                        border-radius: 4px;
+                    "
+                >
+                    <div class="flex gap-1 mb-2.5" style="color: var(--warm-500);">
+                        @for ($i = 1; $i <= 5; $i++)
+                            <x-heroicon-s-star @class([
+                                'w-4 h-4',
+                                'opacity-100' => $i <= $topReview->rating,
+                                'opacity-25' => $i > $topReview->rating,
+                            ]) />
+                        @endfor
+                    </div>
+                    <blockquote class="font-display italic" style="color: var(--warm-100); font-size: 0.9375rem; line-height: 1.45;">
+                        &ldquo;{{ Str::limit($topReview->comment ?? '', 110) }}&rdquo;
+                    </blockquote>
+                    <figcaption class="mt-2.5 font-body uppercase" style="color: var(--warm-300); font-size: 0.6875rem; letter-spacing: 0.2em;">
+                        — {{ $topReview->customer_name }}
+                    </figcaption>
+                </figure>
             @endif
         </div>
     </div>
 
-    {{-- Mobile hero image (shown below content on small screens) --}}
-    <div class="md:hidden relative overflow-hidden h-[300px] -mt-px">
+    {{-- ═══ Mobile photo — shown below the content stack ═══ --}}
+    <div class="md:hidden relative overflow-hidden" style="height: 320px; background: var(--warm-900);">
         <img src="{{ $heroImageUrl }}" alt="{{ $storeName }}" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-b from-warm-900 via-transparent to-warm-900"></div>
 
         @if ($topReview)
-        <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl backdrop-blur-md bg-warm-900/75 border border-warm-500/20">
-            <div class="flex gap-0.5 mb-1">
-                @for ($i = 1; $i <= 5; $i++)
-                    <x-heroicon-s-star @class([
-                        'w-3 h-3',
-                        'text-warm-500' => $i <= $topReview->rating,
-                        'text-warm-700/30' => $i > $topReview->rating,
-                    ]) />
-                @endfor
-            </div>
-            <p class="italic text-xs text-warm-200">"{{ Str::limit($topReview->comment ?? '', 80) }}"</p>
-            <p class="text-xs mt-1 font-semibold text-warm-500">— {{ $topReview->customer_name }}</p>
-        </div>
+            <figure
+                class="absolute"
+                style="
+                    bottom: 1rem;
+                    left: 1rem;
+                    right: 1rem;
+                    padding: 0.875rem 1.125rem;
+                    background: color-mix(in oklab, var(--warm-900) 78%, transparent);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border: 1px solid color-mix(in oklab, var(--warm-100) 18%, transparent);
+                    border-radius: 4px;
+                "
+            >
+                <div class="flex gap-0.5 mb-1.5" style="color: var(--warm-500);">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <x-heroicon-s-star @class([
+                            'w-3 h-3',
+                            'opacity-100' => $i <= $topReview->rating,
+                            'opacity-25' => $i > $topReview->rating,
+                        ]) />
+                    @endfor
+                </div>
+                <blockquote class="font-display italic" style="color: var(--warm-100); font-size: 0.8125rem; line-height: 1.4;">
+                    &ldquo;{{ Str::limit($topReview->comment ?? '', 80) }}&rdquo;
+                </blockquote>
+                <figcaption class="mt-1.5 font-body uppercase" style="color: var(--warm-300); font-size: 0.625rem; letter-spacing: 0.2em;">
+                    — {{ $topReview->customer_name }}
+                </figcaption>
+            </figure>
         @endif
     </div>
 </section>

@@ -11,7 +11,7 @@
  <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
  </div>
  <h1 class="font-display text-4xl font-bold mb-4 hero-fade-2 text-warm-100">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
- <p class="text-lg mb-8 hero-fade-3 text-warm-400">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
+ <p class="text-lg mb-8 hero-fade-3 text-warm-100">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
  <x-storefront.button :href="route('storefront.menu')" size="md" class="hero-fade-4">
  Back to Menu
  </x-storefront.button>
@@ -28,7 +28,7 @@
  <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-2 text-warm-100">
  {{ $content['hero_title'] ?? 'How Was Your Order?' }}
  </h1>
- <p class="text-lg hero-fade-3 text-warm-400">
+ <p class="text-lg hero-fade-3 text-warm-100">
  From {{ $settings->store->name }} · Order #{{ $order->order_number }}
  </p>
  </div>

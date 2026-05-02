@@ -27,9 +27,6 @@
     {{-- Gradient overlay --}}
     <div class="absolute inset-0 bg-gradient-to-r from-warm-900/95 via-warm-900/70 to-warm-900/95"></div>
 
-    {{-- Grain --}}
-    <x-storefront.grain-texture opacity="0.04" />
-
     {{-- Content --}}
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-28">
         {{-- Decorative element --}}

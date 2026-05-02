@@ -18,7 +18,7 @@ class MenuController extends Controller
         $categories = Category::query()->active()
             ->with([
                 'products' => function (HasMany $q): void {
-                    $q->where('is_active', true)->orderBy('name');
+                    $q->where('is_active', true)->chaperone('category')->orderBy('name');
                 },
                 'products.seasonalItems',
             ])

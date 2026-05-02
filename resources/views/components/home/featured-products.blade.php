@@ -62,7 +62,7 @@
                     @if ($star->image)
                         <img src="{{ Storage::url($star->image) }}" alt="{{ $star->name }}" class="w-full h-full object-cover">
                     @else
-                        <x-storefront.image-placeholder :name="$star->name" text-size="text-[8rem]" />
+                        <x-storefront.image-placeholder :name="$star->name" :category="$star->category?->name" text-size="text-[8rem]" />
                     @endif
                     {{-- Bestseller badge --}}
                     <div class="absolute top-6 left-6 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900">

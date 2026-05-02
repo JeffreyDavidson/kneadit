@@ -10,7 +10,7 @@
  <x-heroicon-o-check class="w-10 h-10 text-warm-500" stroke-width="2.5" />
  </x-storefront.icon-circle>
  <h1 class="font-display text-4xl font-bold mb-4 hero-fade-2 text-warm-100">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
- <p class="text-lg mb-10 hero-fade-3 text-warm-400">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
+ <p class="text-lg mb-10 hero-fade-3 text-warm-100">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
  <x-storefront.button :href="route('home')" size="lg" class="hero-fade-4">
  Back to {{ $settings->store->name }}
  </x-storefront.button>

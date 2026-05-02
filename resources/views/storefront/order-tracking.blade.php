@@ -18,7 +18,7 @@
         <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $content['hero_title'] ?? 'Track Your Order' }}
         </h1>
-        <p class="hero-fade-2 text-lg max-w-lg mx-auto text-warm-400">
+        <p class="hero-fade-2 text-lg max-w-lg mx-auto text-warm-100">
             {{ $content['hero_subtitle'] ?? 'Enter your email to see how your order is coming along.' }}
         </p>
     </div>
@@ -56,7 +56,7 @@
             <p class="text-lg mb-2 text-warm-400">
                 {{ $content['empty_description_prefix'] ?? 'We couldn\'t find any orders for' }} <strong class="text-warm-300">{{ $email }}</strong>.
             </p>
-            <p class="text-sm text-warm-600">{{ $content['empty_hint'] ?? 'Make sure you\'re using the same email you ordered with.' }}</p>
+            <p class="text-sm text-warm-300">{{ $content['empty_hint'] ?? 'Make sure you\'re using the same email you ordered with.' }}</p>
         </div>
     </x-storefront.dark-section>
     @else
@@ -107,7 +107,7 @@
                                                 <div @class([
                                                     'track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold',
                                                     'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
-                                                    'bg-warm-700/15 text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                    'bg-warm-700/15 text-warm-300' => ! $tracked->isStepCompleted($i),
                                                     'ring-4 ring-warm-500/20' => $tracked->isCurrentStep($i),
                                                 ])>
                                                     @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
@@ -119,7 +119,7 @@
                                                 <span @class([
                                                     'mt-2 text-xs font-medium text-center',
                                                     'text-warm-300' => $tracked->isStepCompleted($i),
-                                                    'text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                    'text-warm-300' => ! $tracked->isStepCompleted($i),
                                                 ])>
                                                     {{ $step->getLabel() }}
                                                 </span>
@@ -135,7 +135,7 @@
                                             <div @class([
                                                 'w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0',
                                                 'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
-                                                'bg-warm-700/15 text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                'bg-warm-700/15 text-warm-300' => ! $tracked->isStepCompleted($i),
                                             ])>
                                                 @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
                                                     <x-heroicon-o-check class="w-3.5 h-3.5" stroke-width="3" />
@@ -146,7 +146,7 @@
                                             <span @class([
                                                 'text-sm font-medium',
                                                 'text-warm-200' => $tracked->isStepCompleted($i),
-                                                'text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                'text-warm-300' => ! $tracked->isStepCompleted($i),
                                             ])>
                                                 {{ $step->getLabel() }}
                                             </span>
@@ -189,7 +189,7 @@
                                     <span class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500">{{ $content['messages_label'] ?? 'Messages' }}</span>
                                 </div>
                                 <div id="messages-{{ $tracked->order->order_number }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4 bg-warm-700/5">
-                                    <p class="text-sm italic text-warm-600">Loading messages...</p>
+                                    <p class="text-sm italic text-warm-300">Loading messages...</p>
                                 </div>
                                 <form onsubmit="sendOrderMessage(event, '{{ $tracked->order->order_number }}')" class="flex gap-2">
                                     <input type="text" id="msg-input-{{ $tracked->order->order_number }}" placeholder="Type a message..." class="track-msg-input flex-1" required>

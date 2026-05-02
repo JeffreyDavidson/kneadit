@@ -9,7 +9,7 @@
         @if ($product->image)
             <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
         @else
-            <x-storefront.image-placeholder :name="$product->name" text-size="text-6xl" />
+            <x-storefront.image-placeholder :name="$product->name" :category="$product->category?->name" text-size="text-6xl" />
         @endif
         <div class="absolute top-4 right-4 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm bg-warm-900/80 text-warm-400 border border-warm-500/20">
             @money($product->price)
