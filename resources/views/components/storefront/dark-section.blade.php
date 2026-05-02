@@ -8,10 +8,8 @@
 
 <section
     @if ($id) id="{{ $id }}" @endif
-    {{ $attributes->class(["relative overflow-hidden {$padding}"]) }}
-    class="bg-warm-900"
+    {{ $attributes->class(["relative overflow-hidden bg-warm-900 {$padding}"]) }}
 >
-    <x-storefront.grain-texture />
     @if ($showRadial)
         <div class="absolute inset-0" style="background: radial-gradient(ellipse at {{ $radialPosition }}, rgba(212,146,12,{{ $radialOpacity }}), transparent 60%);"></div>
     @endif

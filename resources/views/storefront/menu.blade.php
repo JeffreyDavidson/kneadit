@@ -8,10 +8,10 @@
         <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Our Menu' }}
         </h1>
-        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
+        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-300">
             Crafted with care, baked with love
         </p>
-        <p class="hero-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4 text-warm-400">
+        <p class="hero-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4 text-warm-100">
             {{ $content['hero_subtitle'] ?? 'Everything we make, crafted with care. Browse at your pace — when something catches your eye, we\'ll have it freshly prepared just for you.' }}
         </p>
     </div>

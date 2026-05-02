@@ -22,8 +22,16 @@ class BlogController extends Controller
 
     public function show(TenantBlogPost $post): View
     {
+        $relatedPosts = TenantBlogPost::query()
+            ->published()
+            ->whereKeyNot($post->getKey())
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
         return view('storefront.blog.show', [
             'post' => $post,
+            'relatedPosts' => $relatedPosts,
         ]);
     }
 }
