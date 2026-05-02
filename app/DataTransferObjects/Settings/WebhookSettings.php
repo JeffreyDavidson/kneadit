@@ -19,6 +19,6 @@ final readonly class WebhookSettings
 
     public function isConfigured(): bool
     {
-        return $this->url !== null && $this->url !== '';
+        return $this->url !== null && $this->url !== '' && $this->secret !== '';
     }
 }

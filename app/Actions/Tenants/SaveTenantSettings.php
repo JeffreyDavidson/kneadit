@@ -4,6 +4,7 @@ namespace App\Actions\Tenants;
 
 use App\Enums\Orders\PaymentMethod;
 use App\Services\Settings\SettingsManager;
+use Illuminate\Support\Str;
 
 class SaveTenantSettings
 {
@@ -47,9 +48,20 @@ class SaveTenantSettings
             $settings['paypal_client_id'] = $data['paypal_client_id'];
             $settings['paypal_client_secret'] = $data['paypal_client_secret'];
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
-            $settings['webhook_url'] = $data['webhook_url'];
-            $settings['webhook_secret'] = $data['webhook_secret'];
         }
+
+        // Webhooks are independent of payment method. When a URL is set without
+        // a secret (first save or after a manual clear), auto-generate one so
+        // we never sign with an empty key.
+        $webhookUrl = $data['webhook_url'] ?? '';
+        $webhookSecret = $data['webhook_secret'] ?? '';
+
+        if ($webhookUrl !== '' && $webhookSecret === '') {
+            $webhookSecret = Str::random(40);
+        }
+
+        $settings['webhook_url'] = $webhookUrl;
+        $settings['webhook_secret'] = $webhookSecret;
 
         $this->settings->setMany($settings);
     }

@@ -130,6 +130,95 @@ test('saves catering event types as a json array', function () {
         ->toBe(['Kids Party', 'School Function']);
 });
 
+test('saves webhook settings even when paypal is not a payment method', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'webhook_url' => 'https://hooks.example.com/test',
+        'webhook_secret' => 'manually-provided-secret',
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('webhook_url'))->toBe('https://hooks.example.com/test')
+        ->and(settings('webhook_secret'))->toBe('manually-provided-secret');
+});
+
+test('auto-generates webhook secret when url is set without one', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'webhook_url' => 'https://hooks.example.com/test',
+        'webhook_secret' => '',
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('webhook_url'))->toBe('https://hooks.example.com/test')
+        ->and(strlen((string) settings('webhook_secret')))->toBe(40);
+});
+
+test('preserves an explicitly provided secret instead of generating one', function () {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'webhook_url' => 'https://hooks.example.com/test',
+        'webhook_secret' => 'caller-supplied-secret',
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('webhook_secret'))->toBe('caller-supplied-secret');
+});
+
 test('saves order journey steps as JSON', function () {
     $steps = [
         ['title' => 'Confirmed', 'description' => 'Order received.'],
