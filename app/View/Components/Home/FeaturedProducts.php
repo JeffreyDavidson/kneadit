@@ -26,6 +26,7 @@ class FeaturedProducts extends Component
         $this->subtitle = $config['subtitle'] ?? 'Freshly made with love';
         $this->featuredProducts = Product::query()
             ->active()
+            ->with('category')
             ->take($this->count)
             ->get();
     }

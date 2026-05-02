@@ -21,6 +21,7 @@ class CategoryQueryBuilder extends Builder
         $this->with(['products' => function (HasMany $q): void {
             $q->where('is_active', true)
                 ->with(['primaryImage', 'seasonalItems'])
+                ->chaperone('category')
                 ->orderBy('name');
         }]);
 
@@ -32,7 +33,8 @@ class CategoryQueryBuilder extends Builder
         $this->with(['products' => function (HasMany $q): void {
             $q->where('is_active', true)
                 ->where('is_featured', true)
-                ->with(['primaryImage', 'seasonalItems']);
+                ->with(['primaryImage', 'seasonalItems'])
+                ->chaperone('category');
         }]);
 
         return $this;
