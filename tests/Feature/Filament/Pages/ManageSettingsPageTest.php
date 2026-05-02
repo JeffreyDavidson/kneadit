@@ -1,8 +1,10 @@
 <?php
 
 use App\Filament\Pages\Settings\ManageSettings;
+use App\Models\Operations\WebhookDelivery;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -57,4 +59,32 @@ test('delivery fee tiers round-trip as structured rows through save and reload',
     expect($stored)->toHaveCount(1)
         ->and($stored[0]['max_distance'])->toBe(8)
         ->and($stored[0]['fee'])->toBe(4);
+});
+
+test('regenerateWebhookSecret writes a fresh 40-char secret and updates the page property', function () {
+    settings(['webhook_secret' => 'old-secret-value']);
+
+    $component = Livewire::test(ManageSettings::class)
+        ->call('regenerateWebhookSecret');
+
+    expect(strlen($component->get('webhook_secret')))->toBe(40)
+        ->and($component->get('webhook_secret'))->not->toBe('old-secret-value')
+        ->and(settings('webhook_secret'))->toBe($component->get('webhook_secret'));
+});
+
+test('sendTestWebhook persists current settings then dispatches a synthetic order.created', function () {
+    Http::fake(['*' => Http::response('ok', 200)]);
+
+    Livewire::test(ManageSettings::class)
+        ->set('webhook_url', 'https://hooks.example.com/test')
+        ->set('webhook_secret', 'test-secret')
+        ->call('sendTestWebhook');
+
+    Http::assertSent(function ($request) {
+        $body = json_decode($request->body(), true);
+
+        return $body['event'] === 'order.created' && ($body['data']['test'] ?? false) === true;
+    });
+
+    expect(WebhookDelivery::sole()->event)->toBe('order.created');
 });

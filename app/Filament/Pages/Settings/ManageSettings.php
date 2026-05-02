@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Actions\Operations\RegenerateWebhookSecret;
+use App\Actions\Operations\SendTestWebhook;
 use App\Actions\Tenants\SaveTenantSettings;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -196,6 +198,32 @@ class ManageSettings extends Page
                 ->danger()
                 ->send();
         }
+    }
+
+    public function regenerateWebhookSecret(): void
+    {
+        $this->webhook_secret = resolve(RegenerateWebhookSecret::class)();
+
+        Notification::make()
+            ->title('Webhook secret regenerated')
+            ->body('Update any external integrations with the new value.')
+            ->success()
+            ->send();
+    }
+
+    public function sendTestWebhook(): void
+    {
+        // Persist any pending changes (URL/secret) before firing the test, so
+        // the dispatch reads the current form state — not the last-saved state.
+        resolve(SaveTenantSettings::class)($this->toSettingsArray());
+
+        resolve(SendTestWebhook::class)();
+
+        Notification::make()
+            ->title('Test webhook sent')
+            ->body('Check the Webhook Deliveries page to see the response.')
+            ->success()
+            ->send();
     }
 
     public function resetToDefaults(): void
