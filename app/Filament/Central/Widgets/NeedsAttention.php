@@ -54,7 +54,7 @@ class NeedsAttention extends Widget
 
         $stuckOnboarding = Tenant::query()
             ->where('created_at', '<=', now()->subDays(7))
-            ->where(function ($q): void {
+            ->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
                 $q->whereNull('store_name')
                     ->orWhere('storefront_enabled', false);
             })

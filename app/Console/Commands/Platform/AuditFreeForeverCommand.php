@@ -22,7 +22,7 @@ class AuditFreeForeverCommand extends Command
         // admin UI that writes the grant ledger.
         $unapproved = Tenant::query()
             ->where('free_forever', true)
-            ->whereDoesntHave('freeForeverGrants', fn ($q) => $q->whereNull('revoked_at'))
+            ->whereDoesntHave('freeForeverGrants', fn (\Illuminate\Database\Eloquent\Builder $q) => $q->whereNull('revoked_at'))
             ->get()
             ->map(fn (Tenant $tenant): array => [
                 'id' => $tenant->id,

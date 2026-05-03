@@ -34,7 +34,7 @@ class AtRiskCustomersWidget extends Widget
             ->orderBy('last_order_date')
             ->limit($this->rowLimit())
             ->get()
-            ->map(fn ($customer): array => [
+            ->map(fn (mixed $customer): array => [
                 'id' => $customer->id,
                 'name' => $customer->name,
                 'last_order' => $customer->last_order_date?->diffForHumans() ?? '—',
