@@ -77,7 +77,7 @@ class Activity extends Page
         }
 
         if ($this->filterEventSearch) {
-            $query->where(function ($q): void {
+            $query->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
                 $q->whereLike('description', '%' . $this->filterEventSearch . '%')
                     ->orWhereLike('tenant_id', '%' . $this->filterEventSearch . '%');
             });
