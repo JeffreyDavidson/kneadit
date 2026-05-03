@@ -203,7 +203,7 @@ class SeedDemoCommand extends Command
             ],
         ];
 
-        foreach (array_filter($samples, fn ($s) => $s['tenant_id'] !== null) as $sample) {
+        foreach (array_filter($samples, fn (array $s): bool => $s['tenant_id'] !== null) as $sample) {
             $ticket = SupportTicket::query()->create($sample + ['updated_at' => $sample['created_at']]);
 
             if ($sample['status'] === 'resolved') {

@@ -64,7 +64,7 @@ class CreateStripePromotionCode
             'metadata' => array_filter([
                 'tenant_id' => $tenantId,
             ]),
-        ], fn ($value): bool => $value !== null);
+        ], fn (mixed $value): bool => $value !== null);
 
         $coupon = $this->stripe->coupons->create($couponPayload);
 
@@ -73,7 +73,7 @@ class CreateStripePromotionCode
             'code' => $code,
             'max_redemptions' => $maxRedemptions,
             'expires_at' => $expiresInDays !== null ? (int) now()->addDays($expiresInDays)->timestamp : null,
-        ], fn ($value): bool => $value !== null);
+        ], fn (mixed $value): bool => $value !== null);
 
         $promo = $this->stripe->promotionCodes->create($promoPayload);
 

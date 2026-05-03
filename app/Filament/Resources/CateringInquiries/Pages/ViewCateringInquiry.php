@@ -169,7 +169,7 @@ class ViewCateringInquiry extends ViewRecord
                 $rows = $data['items'] ?? [];
 
                 $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = collect($rows)->pluck('id')->filter()->map(fn ($id): int => (int) $id)->all();
+                $submittedIds = collect($rows)->pluck('id')->filter()->map(fn (mixed $id): int => (int) $id)->all();
 
                 foreach ($existing as $id => $item) {
                     if (! in_array($id, $submittedIds, true)) {

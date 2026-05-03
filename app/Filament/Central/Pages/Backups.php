@@ -60,19 +60,19 @@ class Backups extends Page
         foreach ($folders as $folder) {
             $name = basename($folder);
             $files = File::files($folder);
-            $tenantFiles = collect($files)->filter(fn ($file) => $file->getFilename() !== 'central.sqlite');
+            $tenantFiles = collect($files)->filter(fn (\Symfony\Component\Finder\SplFileInfo $file): bool => $file->getFilename() !== 'central.sqlite');
 
             $backups[] = [
                 'name' => $name,
                 'created_at' => self::parseTimestamp($name),
-                'size' => collect($files)->sum(fn ($file) => $file->getSize()),
-                'central' => collect($files)->contains(fn ($file) => $file->getFilename() === 'central.sqlite'),
+                'size' => collect($files)->sum(fn (\Symfony\Component\Finder\SplFileInfo $file): int => $file->getSize()),
+                'central' => collect($files)->contains(fn (\Symfony\Component\Finder\SplFileInfo $file): bool => $file->getFilename() === 'central.sqlite'),
                 'tenant_count' => $tenantFiles->count(),
             ];
         }
 
         // Newest first.
-        usort($backups, fn ($a, $b) => strcmp($b['name'], $a['name']));
+        usort($backups, fn (array $a, array $b): int => strcmp($b['name'], $a['name']));
 
         return $backups;
     }
