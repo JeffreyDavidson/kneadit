@@ -16,7 +16,7 @@ class PlatformSettingForm
                     ->required()
                     ->maxLength(190)
                     ->unique(ignoreRecord: true)
-                    ->disabled(fn ($record) => $record !== null)
+                    ->disabled(fn (mixed $record): bool => $record !== null)
                     ->dehydrated()
                     ->helperText('Snake-case identifier. Cannot be changed after creation.')
                     ->placeholder('feature_x_enabled'),

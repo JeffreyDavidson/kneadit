@@ -88,3 +88,29 @@ test('sendTestWebhook persists current settings then dispatches a synthetic orde
 
     expect(WebhookDelivery::sole()->event)->toBe('order.created');
 });
+
+test('every key the form sends is persisted by SaveTenantSettings', function () {
+    // Regression guard for the silent-drop bug shape: ManageSettings::
+    // toSettingsArray() sends N keys to SaveTenantSettings; if the action
+    // forgets to write any of them, the form reports success but persists
+    // nothing. Has bitten us four times already (paypal, webhook,
+    // 8 email toggles, 2 gift card fields). This test catches the next one.
+
+    $page = Livewire::test(ManageSettings::class)->instance();
+
+    $reflection = new ReflectionMethod($page, 'toSettingsArray');
+    $reflection->setAccessible(true);
+    $sentKeys = array_keys($reflection->invoke($page));
+
+    Livewire::test(ManageSettings::class)->call('save');
+
+    // Check the settings table directly — settings() coalesces stored-null
+    // back to the supplied default, which would mask a field saved as null.
+    // We want "did a row land for this key" not "is the value non-null."
+    $persistedKeys = App\Models\Platform\Setting::query()->pluck('key')->all();
+
+    foreach ($sentKeys as $key) {
+        expect(in_array($key, $persistedKeys, true))
+            ->toBeTrue("settings('{$key}') was sent by ManageSettings::toSettingsArray() but never persisted by SaveTenantSettings — likely a silent-drop bug.");
+    }
+});

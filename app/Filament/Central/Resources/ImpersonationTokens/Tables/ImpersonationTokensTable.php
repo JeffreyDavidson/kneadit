@@ -62,13 +62,13 @@ class ImpersonationTokensTable
             ->filters([
                 Filter::make('consumed')
                     ->label('Consumed only')
-                    ->query(fn ($query) => $query->whereNotNull('consumed_at')),
+                    ->query(fn (Builder $query) => $query->whereNotNull('consumed_at')),
                 Filter::make('pending')
                     ->label('Pending only')
-                    ->query(fn ($query) => $query->whereNull('consumed_at')->where('expires_at', '>', now())),
+                    ->query(fn (Builder $query) => $query->whereNull('consumed_at')->where('expires_at', '>', now())),
                 Filter::make('expired')
                     ->label('Expired only')
-                    ->query(fn ($query) => $query->whereNull('consumed_at')->where('expires_at', '<=', now())),
+                    ->query(fn (Builder $query) => $query->whereNull('consumed_at')->where('expires_at', '<=', now())),
             ])
             ->recordActions([]);
     }

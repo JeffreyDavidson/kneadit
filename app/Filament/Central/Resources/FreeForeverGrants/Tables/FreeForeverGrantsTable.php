@@ -54,7 +54,7 @@ class FreeForeverGrantsTable
                         'active' => 'Active',
                         'revoked' => 'Revoked',
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         if (($data['value'] ?? null) === 'active') {
                             $query->whereNull('revoked_at');
                         } elseif (($data['value'] ?? null) === 'revoked') {
