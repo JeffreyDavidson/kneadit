@@ -1,5 +1,5 @@
 <div>
-    <x-admin.dashboard.preview-card heading="Quick Actions" icon="⚡">
+    <x-admin.dashboard.preview-card heading="Quick Actions" icon="heroicon-o-bolt">
         <div class="grid grid-cols-2 gap-2.5">
             @foreach ($this->getQuickActions() as $action)
                 <a href="{{ $action['url'] }}"

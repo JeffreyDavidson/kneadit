@@ -4,7 +4,7 @@
     $isLarge = $this->isSize('lg');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Today's Orders" icon="📋">
+<x-admin.dashboard.preview-card heading="Today's Orders" icon="heroicon-o-clipboard-document-list">
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
         @if (count($rows) > 0)
             <span class="pw-stat-label">{{ count($rows) }} order{{ count($rows) === 1 ? '' : 's' }} · {{ $this->getRevenueToday() }} today</span>

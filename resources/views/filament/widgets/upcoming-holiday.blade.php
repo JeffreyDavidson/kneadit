@@ -2,7 +2,7 @@
 
 <div>
     @if ($h)
-        <x-admin.dashboard.preview-card heading="Upcoming Holiday" icon="🎄">
+        <x-admin.dashboard.preview-card heading="Upcoming Holiday" icon="heroicon-o-calendar">
             <div class="pw-stat">
                 <span class="pw-stat-label">{{ $h['name'] }}</span>
                 <span class="pw-stat-value">{{ $h['date'] }}</span>

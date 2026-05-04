@@ -49,9 +49,9 @@ class AtRiskCustomersWidget extends Widget
         return route('filament.admin.resources.customers.index');
     }
 
-    public function getCustomerEditUrl(int $id): string
+    public function getCustomerViewUrl(int $id): string
     {
-        return route('filament.admin.resources.customers.edit', $id);
+        return route('filament.admin.resources.customers.view', $id);
     }
 
     private function rowLimit(): int

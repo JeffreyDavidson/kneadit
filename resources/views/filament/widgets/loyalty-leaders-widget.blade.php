@@ -7,7 +7,7 @@
     $showAwards = ! $this->isSize('sm');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Loyalty Leaders" icon="🏅">
+<x-admin.dashboard.preview-card heading="Loyalty Leaders" icon="heroicon-o-trophy">
     <x-admin.dashboard.stat-row label="Total Points Outstanding" :value="number_format($totalPoints)" class="mb-3" />
 
     @if (count($shownCustomers) > 0)
