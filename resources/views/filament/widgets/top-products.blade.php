@@ -1,6 +1,6 @@
 @php $products = $this->getProducts(); @endphp
 
-<x-admin.dashboard.preview-card heading="Top Products This Month" icon="⭐">
+<x-admin.dashboard.preview-card heading="Top Products This Month" icon="heroicon-o-star">
     @forelse ($products as $product)
         <x-admin.dashboard.bar-row
             :label="$product['name']"

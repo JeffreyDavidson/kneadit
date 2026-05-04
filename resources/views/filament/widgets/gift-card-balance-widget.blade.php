@@ -4,7 +4,7 @@
     $recent = $this->getRecentlyRedeemed();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Gift Cards" icon="🎁">
+<x-admin.dashboard.preview-card heading="Gift Cards" icon="heroicon-o-gift">
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
         <div class="pw-stat">
             <span class="pw-stat-label">Outstanding</span>

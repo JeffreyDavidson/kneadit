@@ -5,7 +5,7 @@
     $expiring = $this->getExpiringSoonCount();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Coupon Usage" icon="🎫">
+<x-admin.dashboard.preview-card heading="Coupon Usage" icon="heroicon-o-ticket">
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
         <x-admin.dashboard.stat-row label="Active" :value="$active" />
         <x-admin.dashboard.stat-row label="Redemptions" :value="$redemptions" />
