@@ -12,7 +12,13 @@
     <div class="stat-card-content">
         <div class="stat-card-label">
             @if ($icon)
-                <span class="stat-card-icon">{{ $icon }}</span>
+                <span class="stat-card-icon">
+                    @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
+                        <x-filament::icon :icon="$icon" class="w-4 h-4" />
+                    @else
+                        {{ $icon }}
+                    @endif
+                </span>
             @endif
             <span>{{ $label }}</span>
         </div>

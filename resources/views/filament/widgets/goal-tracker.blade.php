@@ -19,7 +19,7 @@
 @endphp
 
 <div>
-    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="🎯">
+    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="heroicon-o-flag">
         @foreach ([
             ['key' => 'monthly', 'eyebrow' => 'Monthly Revenue Goal', 'data' => $monthly],
             ['key' => 'yearly', 'eyebrow' => 'Yearly Revenue Goal', 'data' => $yearly],

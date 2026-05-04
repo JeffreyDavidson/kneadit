@@ -5,7 +5,7 @@
     $dist = $this->getRatingDistribution();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Customer Reviews" icon="⭐">
+<x-admin.dashboard.preview-card heading="Customer Reviews" icon="heroicon-o-star">
     <div style="display: flex; align-items: center; gap: 12px;">
         <div style="text-align: center;">
             <div style="font-size: 1.6rem; font-weight: 700; color: var(--pw-card-text);">{{ $avg ?: '—' }}</div>

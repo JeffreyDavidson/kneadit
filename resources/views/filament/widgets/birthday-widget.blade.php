@@ -1,6 +1,6 @@
 @php $birthdays = $this->getUpcomingBirthdays(); @endphp
 
-<x-admin.dashboard.preview-card heading="Upcoming Birthdays" icon="🎂">
+<x-admin.dashboard.preview-card heading="Upcoming Birthdays" icon="heroicon-o-cake">
     @if ($birthdays->isEmpty())
         <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
             No upcoming birthdays in the next 30 days

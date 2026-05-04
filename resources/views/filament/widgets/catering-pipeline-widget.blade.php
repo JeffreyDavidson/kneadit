@@ -5,7 +5,7 @@
     $latest = $this->getLatestInquiry();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Catering Pipeline" icon="📝">
+<x-admin.dashboard.preview-card heading="Catering Pipeline" icon="heroicon-o-document-text">
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
         <x-admin.dashboard.stat-row label="Open" :value="$open" />
         <x-admin.dashboard.stat-row label="Quoted" :value="$pending" />
