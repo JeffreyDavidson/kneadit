@@ -11,7 +11,7 @@
 
     @forelse ($rows as $row)
         <x-admin.dashboard.list-row :value="$row['days_inactive'].'d inactive'">
-            <a href="{{ $this->getCustomerEditUrl($row['id']) }}" style="color: var(--pw-card-accent); text-decoration: none;">{{ $row['name'] }}</a>
+            <a href="{{ $this->getCustomerViewUrl($row['id']) }}" style="color: var(--pw-card-accent); text-decoration: none;">{{ $row['name'] }}</a>
             <span style="color: var(--pw-card-text-muted); margin-left: 6px;">{{ $row['last_order'] }}</span>
             @if ($isLarge)
                 <span style="color: var(--pw-card-text-muted); margin-left: 6px;">· LTV {{ $row['lifetime_value'] }}</span>
