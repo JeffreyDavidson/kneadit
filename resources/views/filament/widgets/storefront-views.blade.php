@@ -6,7 +6,7 @@
 
 <x-admin.dashboard.stat-card
     label="Storefront Views Today"
-    icon="🏪"
+    icon="heroicon-o-building-storefront"
     :value="number_format($data['today'])"
     :description="$trendIcon . ' ' . abs($data['trend']) . '% vs yesterday'"
     :description-color="$trendColor"

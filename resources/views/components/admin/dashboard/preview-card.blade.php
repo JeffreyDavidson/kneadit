@@ -5,7 +5,7 @@
         @if ($icon)
             <span class="pw-icon">
                 @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
-                    <x-dynamic-component :component="$icon" class="w-4 h-4" />
+                    <x-filament::icon :icon="$icon" class="w-4 h-4" />
                 @else
                     {{ $icon }}
                 @endif

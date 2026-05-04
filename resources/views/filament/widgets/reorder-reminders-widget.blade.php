@@ -3,7 +3,7 @@
     $customers = $this->getLapsedCustomers();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Reorder Reminders" icon="🔄">
+<x-admin.dashboard.preview-card heading="Reorder Reminders" icon="heroicon-o-arrow-path">
     <x-admin.dashboard.stat-row label="Customers needing a nudge" :value="$count" class="mb-1" />
     <div style="font-size: 0.6rem; color: var(--pw-card-text-muted); margin-bottom: 8px;">Ordered 2+ times, inactive 30+ days</div>
 

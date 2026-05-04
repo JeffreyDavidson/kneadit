@@ -3,7 +3,7 @@
     $isMedium = $this->isSize('md');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Low Stock Ingredients" icon="📦">
+<x-admin.dashboard.preview-card heading="Low Stock Ingredients" icon="heroicon-o-cube">
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
         <span class="pw-stat-label">{{ count($rows) }} item{{ count($rows) === 1 ? '' : 's' }} at risk</span>
         <a href="{{ $this->getViewAllUrl() }}" style="font-size: 0.65rem; color: var(--pw-card-accent); text-decoration: none;">View all →</a>

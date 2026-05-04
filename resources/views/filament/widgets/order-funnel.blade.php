@@ -3,7 +3,7 @@
     $hasOrderRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.index');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Order Pipeline" icon="🔽" class="md:col-span-2 xl:col-span-2">
+<x-admin.dashboard.preview-card heading="Order Pipeline" icon="heroicon-o-funnel" class="md:col-span-2 xl:col-span-2">
     @if ($this->isSize('md'))
         <x-admin.dashboard.stat-row label="Active orders" :value="array_sum(array_column($stages, 'count'))" class="mb-2" />
     @endif

@@ -3,7 +3,7 @@
     $isMedium = $this->isSize('md');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Margin Alerts (below 30%)" icon="💸">
+<x-admin.dashboard.preview-card heading="Margin Alerts (below 30%)" icon="heroicon-o-banknotes">
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
         <span class="pw-stat-label">{{ count($rows) }} product{{ count($rows) === 1 ? '' : 's' }} at risk</span>
     </div>
