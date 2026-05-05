@@ -33,7 +33,10 @@
         <div class="grid grid-cols-2 gap-6 mb-8">
             {{-- Page Views Chart --}}
             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <h3 class="text-base font-bold text-gray-800 m-0 mb-4">📊 Views by Page</h3>
+                <h3 class="text-base font-bold text-gray-800 m-0 mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-chart-bar-square" class="h-5 w-5" />
+                    Views by Page
+                </h3>
                 @php $pageViews = $this->getPageViewsChart(); $maxPageViews = $pageViews->max('views') ?: 1; @endphp
                 @forelse ($pageViews as $pv)
                     <div class="flex items-center gap-3 mb-2">
@@ -51,7 +54,10 @@
 
             {{-- Conversion Funnel --}}
             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <h3 class="text-base font-bold text-gray-800 m-0 mb-4">🔄 Conversion Funnel</h3>
+                <h3 class="text-base font-bold text-gray-800 m-0 mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-funnel" class="h-5 w-5" />
+                    Conversion Funnel
+                </h3>
                 @php
                     $funnel = $this->getConversionFunnel();
                     $stepGradients = ['from-amber-500 to-amber-600', 'from-orange-500 to-orange-600', 'from-red-500 to-red-600', 'from-emerald-500 to-emerald-600'];
@@ -75,7 +81,10 @@
 
         {{-- Daily Trend --}}
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
-            <h3 class="text-base font-bold text-gray-800 m-0 mb-4">📈 Daily Views (Last 30 Days)</h3>
+            <h3 class="text-base font-bold text-gray-800 m-0 mb-4 flex items-center gap-2">
+                <x-filament::icon icon="heroicon-o-arrow-trending-up" class="h-5 w-5" />
+                Daily Views (Last 30 Days)
+            </h3>
             @php $daily = $this->getDailyTrend(); $maxDaily = $daily->max('views') ?: 1; @endphp
             <div class="flex items-end gap-[3px] h-40">
                 @forelse ($daily as $day)
@@ -98,7 +107,10 @@
         @php $topProducts = $this->getTopProducts(); @endphp
         @if ($topProducts->isNotEmpty())
             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <h3 class="text-base font-bold text-gray-800 m-0 mb-4">🧁 Top Products Viewed</h3>
+                <h3 class="text-base font-bold text-gray-800 m-0 mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-cake" class="h-5 w-5" />
+                    Top Products Viewed
+                </h3>
                 @php $maxProduct = $topProducts->max('views') ?: 1; @endphp
                 @foreach ($topProducts as $product)
                     <div class="flex items-center gap-3 mb-2">

@@ -60,14 +60,14 @@
                                             default => 'bg-gray-100 text-gray-600',
                                         };
                                         $icon = match($post['platform']) {
-                                            'instagram' => '📸',
-                                            'facebook' => '📘',
-                                            'tiktok' => '🎵',
-                                            default => '📝',
+                                            'instagram' => 'heroicon-o-camera',
+                                            'facebook' => 'heroicon-o-share',
+                                            'tiktok' => 'heroicon-o-musical-note',
+                                            default => 'heroicon-o-pencil-square',
                                         };
                                     @endphp
                                     <span class="inline-flex items-center rounded px-1 py-0.5 text-xs {{ $colors }}">
-                                        {{ $icon }}
+                                        <x-filament::icon :icon="$icon" class="h-3.5 w-3.5" />
                                     </span>
                                 @endforeach
                             </div>
@@ -104,8 +104,23 @@
                             <div class="border-l-4 rounded-r-lg p-4 {{ $platformColors }}">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-2">
-                                        <span class="font-medium text-gray-800 dark:text-gray-200">
-                                            {{ match($post['platform']) { 'instagram' => '📸 Instagram', 'facebook' => '📘 Facebook', 'tiktok' => '🎵 TikTok', default => $post['platform'] } }}
+                                        @php
+                                            $platformIcon = match($post['platform']) {
+                                                'instagram' => 'heroicon-o-camera',
+                                                'facebook' => 'heroicon-o-share',
+                                                'tiktok' => 'heroicon-o-musical-note',
+                                                default => 'heroicon-o-pencil-square',
+                                            };
+                                            $platformLabel = match($post['platform']) {
+                                                'instagram' => 'Instagram',
+                                                'facebook' => 'Facebook',
+                                                'tiktok' => 'TikTok',
+                                                default => $post['platform'],
+                                            };
+                                        @endphp
+                                        <span class="font-medium text-gray-800 dark:text-gray-200 inline-flex items-center gap-1.5">
+                                            <x-filament::icon :icon="$platformIcon" class="h-4 w-4" />
+                                            {{ $platformLabel }}
                                         </span>
                                         <span class="text-sm text-gray-500">{{ $post['time'] }}</span>
                                     </div>

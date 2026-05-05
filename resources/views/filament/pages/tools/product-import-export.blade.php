@@ -6,8 +6,9 @@
         {{-- Preview Section --}}
         @if ($previewErrors && count($previewErrors) > 0)
             <div class="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 border border-red-200 dark:border-red-800">
-                <h3 class="text-lg font-semibold text-red-800 dark:text-red-200 mb-3">
-                    ⚠️ Validation Errors
+                <h3 class="text-lg font-semibold text-red-800 dark:text-red-200 mb-3 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-exclamation-triangle" class="h-5 w-5" />
+                    Validation Errors
                 </h3>
                 <ul class="list-disc list-inside space-y-1 text-sm text-red-700 dark:text-red-300">
                     @foreach ($previewErrors as $error)
@@ -19,8 +20,9 @@
 
         @if ($previewData && count($previewData) > 0)
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                    📋 Preview ({{ count($previewData) }} rows)
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-clipboard-document-list" class="h-5 w-5" />
+                    Preview ({{ count($previewData) }} rows)
                 </h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
@@ -44,8 +46,18 @@
                                     <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ $row['category'] ?? '' }}</td>
                                     <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ $row['price'] ?? '' }}</td>
                                     <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ $row['cost'] ?? '' }}</td>
-                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ ($row['is_active'] ?? '1') ? '✅' : '❌' }}</td>
-                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ ($row['is_featured'] ?? '0') ? '⭐' : '' }}</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">
+                                        @if ($row['is_active'] ?? '1')
+                                            <x-filament::icon icon="heroicon-o-check-circle" class="h-5 w-5 text-green-600" />
+                                        @else
+                                            <x-filament::icon icon="heroicon-o-x-circle" class="h-5 w-5 text-red-600" />
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">
+                                        @if ($row['is_featured'] ?? '0')
+                                            <x-filament::icon icon="heroicon-o-star" class="h-5 w-5 text-amber-500" />
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-2">
                                         @if (!empty($row['_errors']))
                                             <span class="text-red-600 text-xs">{{ implode(', ', $row['_errors']) }}</span>
@@ -64,8 +76,9 @@
         {{-- Import Results --}}
         @if ($importResults)
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                    📊 Import Results
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-chart-bar-square" class="h-5 w-5" />
+                    Import Results
                 </h3>
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 text-center">

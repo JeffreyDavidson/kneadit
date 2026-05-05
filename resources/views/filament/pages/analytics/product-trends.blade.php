@@ -41,7 +41,7 @@
                 </x-admin.data-table>
             </x-admin.card>
         @empty
-            <x-admin.empty-state icon="📊" title="No order data found for this period" subtitle="Try navigating to a different month." />
+            <x-admin.empty-state icon="heroicon-o-chart-bar-square" title="No order data found for this period" subtitle="Try navigating to a different month." />
         @endforelse
     </div>
 </x-filament-panels::page>
