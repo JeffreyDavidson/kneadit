@@ -17,8 +17,9 @@
             @endif
         </x-admin.dashboard.list-row>
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            🎉 No low-margin products
+        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem; display: flex; justify-content: center; align-items: center; gap: 4px;">
+            <x-filament::icon icon="heroicon-o-check-circle" class="h-4 w-4" />
+            No low-margin products
         </div>
     @endforelse
 </x-admin.dashboard.preview-card>

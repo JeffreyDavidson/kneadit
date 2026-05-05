@@ -12,8 +12,10 @@
     @forelse ($rows as $row)
         <x-admin.dashboard.list-row :label="$row['name']" :value="$row['quantity'].' to bake'" />
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            🎉 Nothing to bake!
-        </div>
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-clipboard-document-check"
+            title="No bake list yet"
+            copy="Confirmed orders with prep quantities will collect here for today's production run."
+        />
     @endforelse
 </x-admin.dashboard.preview-card>

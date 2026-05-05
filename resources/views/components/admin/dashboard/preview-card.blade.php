@@ -2,16 +2,19 @@
 
 <div {{ $attributes->class('preview-widget') }}>
     <div class="preview-widget-header">
-        @if ($icon)
-            <span class="pw-icon">
+        <div class="preview-widget-title">
+            @if ($icon)
                 @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
-                    <x-filament::icon :icon="$icon" class="w-4 h-4" />
+                    <x-filament::icon :icon="$icon" class="pw-icon" />
                 @else
-                    {{ $icon }}
+                    <span class="pw-icon">{{ $icon }}</span>
                 @endif
-            </span>
-        @endif
-        <span>{{ $heading }}</span>
+            @endif
+            <span>{{ $heading }}</span>
+        </div>
+        @isset($actions)
+            <div>{{ $actions }}</div>
+        @endisset
     </div>
     <div class="preview-widget-body">
         {{ $slot }}
