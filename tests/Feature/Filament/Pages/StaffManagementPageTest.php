@@ -35,7 +35,7 @@ test('invite action requires a valid email', function () {
             'email' => 'not-an-email',
             'role' => UserRole::Staff->value,
         ])
-        ->assertHasActionErrors(['email']);
+        ->assertHasFormErrors(['email']);
 });
 
 test('change role action updates the member role', function () {

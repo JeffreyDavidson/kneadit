@@ -8,6 +8,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Support\Enums\FontWeight;
 
 class PlatformSettingsTable
 {
@@ -18,7 +19,7 @@ class PlatformSettingsTable
                 TextColumn::make('key')
                     ->label('Key')
                     ->fontFamily('mono')
-                    ->weight('bold')
+                    ->weight(FontWeight::Bold)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('value')
