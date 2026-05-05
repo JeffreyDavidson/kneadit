@@ -32,7 +32,7 @@ test('create stores a new setting', function () {
             'key' => 'feature_x_enabled',
             'value' => '1',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect(PlatformSetting::query()->where('key', 'feature_x_enabled')->value('value'))->toBe('1');
 });
@@ -45,7 +45,7 @@ test('create rejects duplicate key', function () {
             'key' => 'duplicate_key',
             'value' => 'second',
         ])
-        ->assertHasActionErrors();
+        ->assertHasFormErrors();
 
     // Original value untouched
     expect(PlatformSetting::query()->where('key', 'duplicate_key')->value('value'))->toBe('first');
