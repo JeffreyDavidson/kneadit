@@ -66,8 +66,9 @@ class CustomersTable
                     ->date('M j')
                     ->badge()
                     ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
+                    ->icon(fn (Customer $record): ?Heroicon => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? Heroicon::OutlinedCake : null)
                     ->formatStateUsing(fn (mixed $state, Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday)
-                        ? '🎂 Today!'
+                        ? 'Today!'
                         : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
