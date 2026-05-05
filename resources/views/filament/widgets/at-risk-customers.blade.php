@@ -4,9 +4,12 @@
 @endphp
 
 <x-admin.dashboard.preview-card heading="At Risk Customers" icon="heroicon-o-exclamation-triangle">
+    <x-slot:actions>
+        <a href="{{ $this->getViewAllUrl() }}" class="pw-card-action">View all</a>
+    </x-slot:actions>
+
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
         <span class="pw-stat-label">{{ count($rows) }} inactive</span>
-        <a href="{{ $this->getViewAllUrl() }}" style="font-size: 0.65rem; color: var(--pw-card-accent); text-decoration: none;">View all →</a>
     </div>
 
     @forelse ($rows as $row)
@@ -18,8 +21,10 @@
             @endif
         </x-admin.dashboard.list-row>
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            No at-risk customers — everyone's recently active
-        </div>
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-heart"
+            title="No one needs a nudge"
+            copy="Customers who go quiet after repeat orders will appear here for follow-up."
+        />
     @endforelse
 </x-admin.dashboard.preview-card>

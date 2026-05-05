@@ -59,14 +59,20 @@
     @endif
 
     <div class="preview-widget-header">
+        @if ($widget['icon'] ?? null)
+            <x-filament::icon :icon="$widget['icon']" class="pw-icon" />
+        @endif
         <span>{{ $widget['name'] }}</span>
     </div>
     <div class="preview-widget-body">
         @switch($widget['key'])
             @case('welcome_banner')
                 <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                    @foreach (['+ New Order', '📄 View Orders', '✉ Messages'] as $label)
-                        <span style="font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--brand-800); color: var(--brand-100); border: 1px solid var(--border-subtle);">{{ $label }}</span>
+                    @foreach ([['heroicon-o-plus', 'New Order'], ['heroicon-o-document-text', 'View Orders'], ['heroicon-o-envelope', 'Messages']] as [$icon, $label])
+                        <span style="font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--brand-800); color: var(--brand-100); border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; gap: 4px;">
+                            <x-filament::icon :icon="$icon" class="h-3.5 w-3.5" />
+                            {{ $label }}
+                        </span>
                     @endforeach
                 </div>
                 @break
@@ -305,14 +311,22 @@
             @case('margin_alert')
                 @php
                     $items = ($widget['size'] ?? 'sm') === 'md'
-                        ? ['🔴 Cookies' => '12%', '🔴 Sugar Cookies' => '15%', '🟡 Brownies' => '28%', '🟡 Banana Bread' => '31%']
-                        : ['🔴 Cookies' => '12%', '🟡 Brownies' => '28%'];
+                        ? [
+                            ['label' => 'Cookies', 'value' => '12%', 'color' => '#d4574a'],
+                            ['label' => 'Sugar Cookies', 'value' => '15%', 'color' => '#d4574a'],
+                            ['label' => 'Brownies', 'value' => '28%', 'color' => '#e8b04a'],
+                            ['label' => 'Banana Bread', 'value' => '31%', 'color' => '#e8b04a'],
+                        ]
+                        : [
+                            ['label' => 'Cookies', 'value' => '12%', 'color' => '#d4574a'],
+                            ['label' => 'Brownies', 'value' => '28%', 'color' => '#e8b04a'],
+                        ];
                 @endphp
                 @if (($widget['size'] ?? 'sm') === 'md')
                     <div class="pw-stat" style="margin-bottom: 6px;"><span class="pw-stat-label">At-risk products</span><span class="pw-stat-value">4</span></div>
                 @endif
-                @foreach ($items as $name => $pct)
-                    <div class="pw-row"><span>{{ $name }}</span><span>{{ $pct }}</span></div>
+                @foreach ($items as $item)
+                    <x-admin.dashboard.list-row :label="$item['label']" :value="$item['value']" :dot-color="$item['color']" />
                 @endforeach
                 @break
             @case('goal_tracker')
@@ -340,7 +354,7 @@
                 @break
             @case('upcoming_holiday')
                 <div style="text-align: center;">
-                    <div style="font-size: 1.2rem;">🐣</div>
+                    <x-filament::icon icon="heroicon-o-calendar" class="h-5 w-5 mx-auto" />
                     <div style="font-size: 0.75rem; font-weight: 600; color: #fff;">Easter</div>
                     <div style="font-size: 0.6rem; color: var(--brand-400);">in 12 days</div>
                 </div>
@@ -457,7 +471,13 @@
                         : ['Emma T.' => 'Tomorrow', 'James P.' => 'In 3 days', 'Olivia C.' => 'In 5 days'];
                 @endphp
                 @foreach ($birthdays as $name => $when)
-                    <div class="pw-row"><span>🎂 {{ $name }}</span><span>{{ $when }}</span></div>
+                    <div class="pw-row">
+                        <span style="display: inline-flex; align-items: center; gap: 4px;">
+                            <x-filament::icon icon="heroicon-o-cake" class="h-3.5 w-3.5" />
+                            {{ $name }}
+                        </span>
+                        <span>{{ $when }}</span>
+                    </div>
                 @endforeach
                 @break
             @case('recent_activity')

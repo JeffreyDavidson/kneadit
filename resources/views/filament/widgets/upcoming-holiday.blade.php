@@ -12,7 +12,10 @@
             </div>
             <div style="margin-top: 2px; font-size: 0.65rem; color: {{ $h['is_urgent'] ? '#e8b04a' : ($h['deadline_passed'] ? '#d4574a' : 'var(--pw-card-text-muted)') }};">
                 @if ($h['deadline_passed'])
-                    ⚠ Deadline passed
+                    <span style="display: inline-flex; align-items: center; gap: 3px;">
+                        <x-filament::icon icon="heroicon-o-exclamation-triangle" class="h-3.5 w-3.5" />
+                        Deadline passed
+                    </span>
                 @else
                     Deadline in {{ $h['days_until_deadline'] }}d
                 @endif

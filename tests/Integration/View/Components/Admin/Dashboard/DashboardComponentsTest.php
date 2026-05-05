@@ -4,13 +4,13 @@ use Illuminate\Support\Facades\Blade;
 
 test('preview-card renders heading and slot content', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.preview-card heading="Recent Orders" icon="🧾">Body content</x-admin.dashboard.preview-card>',
+        '<x-admin.dashboard.preview-card heading="Recent Orders" icon="heroicon-o-receipt-refund">Body content</x-admin.dashboard.preview-card>',
     );
 
     expect($html)
         ->toContain('class="preview-widget')
         ->toContain('Recent Orders')
-        ->toContain('🧾')
+        ->toContain('<svg')
         ->toContain('Body content');
 });
 
@@ -20,8 +20,8 @@ test('preview-card renders heroicon strings as svg icons', function () {
     );
 
     expect($html)
-        ->toContain('class="pw-icon')
         ->toContain('<svg')
+        ->toContain('pw-icon')
         ->not->toContain('>heroicon-o-arrow-trending-up<');
 });
 

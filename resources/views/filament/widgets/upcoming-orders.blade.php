@@ -22,8 +22,10 @@
             @endforeach
         </div>
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            No upcoming orders in the next few days
-        </div>
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-calendar"
+            title="No upcoming orders"
+            copy="Your near-term queue is clear. New confirmed orders will appear here by delivery date."
+        />
     @endforelse
 </x-admin.dashboard.preview-card>
