@@ -9,6 +9,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Filament\Support\Enums\FontWeight;
 
 class RecentTenants extends TableWidget
 {
@@ -27,7 +28,7 @@ class RecentTenants extends TableWidget
                 TextColumn::make('store_name')
                     ->label('Bakery')
                     ->placeholder('Not set')
-                    ->weight('bold'),
+                    ->weight(FontWeight::Bold),
 
                 TextColumn::make('name')
                     ->label('Owner'),

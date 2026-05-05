@@ -8,6 +8,7 @@ use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use Filament\Widgets\Widget;
+use Filament\Support\Icons\Heroicon;
 
 class NeedsAttention extends Widget
 {
@@ -28,7 +29,7 @@ class NeedsAttention extends Widget
         if ($openTickets > 0) {
             $items[] = [
                 'severity' => 'critical',
-                'icon' => 'heroicon-o-inbox',
+                'icon' => Heroicon::OutlinedInbox,
                 'title' => $openTickets . ' open ' . str('ticket')->plural($openTickets) . ' awaiting reply',
                 'subtitle' => 'Bakers are waiting on a response',
                 'cta' => 'Open Inbox',
@@ -44,7 +45,7 @@ class NeedsAttention extends Widget
         if ($expiringTrials > 0) {
             $items[] = [
                 'severity' => 'warning',
-                'icon' => 'heroicon-o-clock',
+                'icon' => Heroicon::OutlinedClock,
                 'title' => $expiringTrials . ' ' . str('trial')->plural($expiringTrials) . ' ending this week',
                 'subtitle' => 'Reach out before they convert or churn',
                 'cta' => 'View Bakeries',
@@ -62,7 +63,7 @@ class NeedsAttention extends Widget
         if ($stuckOnboarding > 0) {
             $items[] = [
                 'severity' => 'warning',
-                'icon' => 'heroicon-o-clipboard-document-check',
+                'icon' => Heroicon::OutlinedClipboardDocumentCheck,
                 'title' => $stuckOnboarding . ' ' . str('bakery')->plural($stuckOnboarding) . ' stuck in onboarding',
                 'subtitle' => 'Signed up 7+ days ago without finishing setup',
                 'cta' => 'Open Tracker',
@@ -74,7 +75,7 @@ class NeedsAttention extends Widget
         if ($deactivated > 0) {
             $items[] = [
                 'severity' => 'info',
-                'icon' => 'heroicon-o-no-symbol',
+                'icon' => Heroicon::OutlinedNoSymbol,
                 'title' => $deactivated . ' deactivated ' . str('bakery')->plural($deactivated),
                 'subtitle' => 'Currently blocked from accessing the platform',
                 'cta' => 'Review',
