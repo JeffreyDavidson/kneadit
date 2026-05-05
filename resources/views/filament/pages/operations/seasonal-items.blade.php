@@ -10,8 +10,9 @@
         {{-- Current Seasonal Items --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                    🟢 Currently Available
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="h-3 w-3 rounded-full bg-green-500"></span>
+                    Currently Available
                 </h3>
                 @forelse ($this->currentItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
@@ -35,8 +36,9 @@
         {{-- Upcoming --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                    🔵 Upcoming
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="h-3 w-3 rounded-full bg-blue-500"></span>
+                    Upcoming
                 </h3>
                 @forelse ($this->upcomingItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
@@ -60,8 +62,9 @@
         {{-- Expired --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                    ⚫ Expired
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="h-3 w-3 rounded-full bg-gray-400"></span>
+                    Expired
                 </h3>
                 @forelse ($this->expiredItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
@@ -82,7 +85,10 @@
         {{-- Timeline --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">📅 Timeline</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <x-filament::icon icon="heroicon-o-calendar-days" class="h-5 w-5" />
+                    Timeline
+                </h3>
                 @php
                     $allItems = \App\Models\Inventory\SeasonalItem::with('product')
                         ->orderBy('available_from')

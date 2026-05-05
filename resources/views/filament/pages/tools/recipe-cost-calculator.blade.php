@@ -191,12 +191,14 @@
                         @if (abs($priceDiff) > 0.50)
                             <div class="mt-3 p-3 {{ $priceDiff > 0 ? 'bg-red-100 border border-red-200 text-red-700' : 'bg-green-100 border border-green-200 text-green-700' }} rounded-md">
                                 @if ($priceDiff > 0)
-                                    <p class="text-sm">
-                                        💡 Consider increasing the price by @money($priceDiff) to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.
+                                    <p class="text-sm flex items-start gap-2">
+                                        <x-filament::icon icon="heroicon-o-light-bulb" class="h-4 w-4 shrink-0" />
+                                        <span>Consider increasing the price by @money($priceDiff) to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.</span>
                                     </p>
                                 @else
-                                    <p class="text-sm">
-                                        ✅ Your current price already exceeds the target margin. You could lower the price by @money(abs($priceDiff)) and still maintain your target margin.
+                                    <p class="text-sm flex items-start gap-2">
+                                        <x-filament::icon icon="heroicon-o-check-circle" class="h-4 w-4 shrink-0" />
+                                        <span>Your current price already exceeds the target margin. You could lower the price by @money(abs($priceDiff)) and still maintain your target margin.</span>
                                     </p>
                                 @endif
                             </div>
