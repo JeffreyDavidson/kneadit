@@ -23,8 +23,9 @@
         @endif
 
         @if ($expiring > 0)
-            <div style="margin-top: 8px; padding: 6px 10px; background: rgba(232, 176, 74, 0.15); border: 1px solid rgba(232, 176, 74, 0.3); border-radius: 6px; font-size: 0.7rem; color: var(--pw-card-text);">
-                ⚠ {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
+            <div style="margin-top: 8px; padding: 6px 10px; background: rgba(232, 176, 74, 0.15); border: 1px solid rgba(232, 176, 74, 0.3); border-radius: 6px; font-size: 0.7rem; color: var(--pw-card-text); display: flex; align-items: center; gap: 4px;">
+                <x-filament::icon icon="heroicon-o-exclamation-triangle" class="h-4 w-4" />
+                {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
             </div>
         @endif
     @endunless

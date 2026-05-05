@@ -15,6 +15,7 @@ use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 /**
  * Surfaces the few operational urgencies a baker should act on right
@@ -60,7 +61,7 @@ class NeedsAttentionWidget extends Widget
         if ($pending > 0) {
             $items[] = [
                 'severity' => $pending > 5 ? 'critical' : 'warning',
-                'icon' => 'heroicon-o-clipboard-document-check',
+                'icon' => Heroicon::OutlinedClipboardDocumentCheck,
                 'title' => $pending . ' pending ' . str('order')->plural($pending) . ' awaiting confirmation',
                 'subtitle' => 'Customers are waiting to hear back',
                 'url' => OrderResource::getUrl('index'),
@@ -72,7 +73,7 @@ class NeedsAttentionWidget extends Widget
         if ($unreadMessages > 0) {
             $items[] = [
                 'severity' => 'warning',
-                'icon' => 'heroicon-o-inbox',
+                'icon' => Heroicon::OutlinedInbox,
                 'title' => $unreadMessages . ' unread customer ' . str('message')->plural($unreadMessages),
                 'subtitle' => 'Customers have reached out and are awaiting a reply',
                 'url' => ContactMessageResource::getUrl('index'),
@@ -84,7 +85,7 @@ class NeedsAttentionWidget extends Widget
         if ($newInquiries > 0) {
             $items[] = [
                 'severity' => 'warning',
-                'icon' => 'heroicon-o-cake',
+                'icon' => Heroicon::OutlinedCake,
                 'title' => $newInquiries . ' new catering ' . str('inquiry')->plural($newInquiries) . ' awaiting a quote',
                 'subtitle' => 'Send a quote before the customer drops off',
                 'url' => CateringInquiryResource::getUrl('index'),
@@ -101,7 +102,7 @@ class NeedsAttentionWidget extends Widget
         if ($lowStock > 0) {
             $items[] = [
                 'severity' => 'info',
-                'icon' => 'heroicon-o-archive-box-x-mark',
+                'icon' => Heroicon::OutlinedArchiveBoxXMark,
                 'title' => $lowStock . ' ' . str('ingredient')->plural($lowStock) . ' running low',
                 'subtitle' => 'Restock before production stalls',
                 'url' => IngredientResource::getUrl('index'),

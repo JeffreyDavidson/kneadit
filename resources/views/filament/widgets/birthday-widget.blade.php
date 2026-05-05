@@ -9,7 +9,10 @@
         @foreach ($birthdays as $entry)
             <x-admin.dashboard.list-row :value="$entry->is_today ? 'Today!' : 'in '.$entry->days_until.' '.\Illuminate\Support\Str::plural('day', $entry->days_until)">
                 <span @if ($entry->is_today) style="font-weight: 700; color: var(--pw-card-accent);" @else style="color: var(--pw-card-text);" @endif>
-                    🎂 {{ $entry->customer_name }}
+                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                        <x-filament::icon icon="heroicon-o-cake" class="h-4 w-4" />
+                        {{ $entry->customer_name }}
+                    </span>
                 </span>
                 <span style="color: var(--pw-card-text-muted); margin-left: 6px;">{{ $entry->birthday_date }}</span>
             </x-admin.dashboard.list-row>

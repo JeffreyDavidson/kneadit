@@ -4,9 +4,12 @@
 @endphp
 
 <x-admin.dashboard.preview-card heading="Low Stock Ingredients" icon="heroicon-o-cube">
+    <x-slot:actions>
+        <a href="{{ $this->getViewAllUrl() }}" class="pw-card-action">View all</a>
+    </x-slot:actions>
+
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
         <span class="pw-stat-label">{{ count($rows) }} item{{ count($rows) === 1 ? '' : 's' }} at risk</span>
-        <a href="{{ $this->getViewAllUrl() }}" style="font-size: 0.65rem; color: var(--pw-card-accent); text-decoration: none;">View all →</a>
     </div>
 
     @forelse ($rows as $row)
@@ -21,8 +24,10 @@
             @endif
         </x-admin.dashboard.list-row>
     @empty
-        <div style="text-align: center; padding: 12px 0; color: var(--pw-card-text-muted); font-size: 0.75rem;">
-            All stocked up!
-        </div>
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-check-circle"
+            title="Pantry looks stocked"
+            copy="Ingredients below reorder levels will surface here before they become urgent."
+        />
     @endforelse
 </x-admin.dashboard.preview-card>

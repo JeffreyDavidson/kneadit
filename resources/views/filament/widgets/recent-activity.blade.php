@@ -7,7 +7,7 @@
     <div class="flex justify-between items-center mb-4">
         <div class="text-white font-bold text-base">Recent Audit Log</div>
         @if ($hasViewRoute)
-            <a href="{{ $this->getViewAllUrl() }}" class="text-brand-300 text-xs no-underline">View all →</a>
+            <a href="{{ $this->getViewAllUrl() }}" class="pw-card-action">View all</a>
         @endif
     </div>
 
@@ -24,9 +24,10 @@
             <span class="text-brand-400 text-[0.7rem] font-mono">{{ $row['ip_address'] ?? '' }}</span>
         </div>
     @empty
-        <div class="p-8 text-center">
-            <x-heroicon-o-clipboard-document-list class="w-8 h-8 text-brand-400 mx-auto mb-2 block" />
-            <div class="text-brand-400 text-[0.8rem]">No activity yet.</div>
-        </div>
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-clipboard-document-list"
+            title="No tracked activity yet"
+            copy="Customer, order, and settings changes will appear here once the bakery starts moving."
+        />
     @endforelse
 </div>
