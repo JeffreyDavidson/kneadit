@@ -17,7 +17,9 @@ class BlogPostQueryBuilder extends Builder
     {
         $this->where('is_published', true)
             ->whereNotNull('published_at')
-            ->where('published_at', '<=', now());
+            ->where('published_at', '<=', now())
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '');
 
         return $this;
     }
