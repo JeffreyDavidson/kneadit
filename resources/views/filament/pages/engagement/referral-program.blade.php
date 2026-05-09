@@ -29,7 +29,7 @@
             />
             <button
                 type="button"
-                onclick="navigator.clipboard.writeText(document.getElementById('referral-link').value); this.textContent = '✓ Copied!'; setTimeout(() => this.textContent = 'Copy', 2000);"
+                onclick="navigator.clipboard.writeText(document.getElementById('referral-link').value); this.textContent = 'Copied'; setTimeout(() => this.textContent = 'Copy', 2000);"
                 class="inline-flex items-center justify-center rounded-lg bg-brand-300 text-brand-900 px-4 py-2 text-sm font-bold hover:opacity-90 transition"
             >
                 Copy

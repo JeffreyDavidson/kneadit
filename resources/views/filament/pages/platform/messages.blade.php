@@ -24,7 +24,8 @@
                         'bg-honey' => $record->sender_type === 'admin',
                         'bg-golden' => $record->sender_type !== 'admin',
                     ])>
-                        {{ $record->sender_type === 'admin' ? '🛡️ KneadIt Team' : '🏪 You' }}
+                        <x-filament::icon :icon="$record->sender_type === 'admin' ? 'heroicon-o-shield-check' : 'heroicon-o-building-storefront'" class="h-3.5 w-3.5" />
+                        {{ $record->sender_type === 'admin' ? 'KneadIt Team' : 'You' }}
                     </span>
                     <span class="text-xs text-butter">{{ $record->created_at->diffForHumans() }}</span>
                 </div>
@@ -46,7 +47,8 @@
                             'bg-honey' => $reply->sender_type === 'admin',
                             'bg-golden' => $reply->sender_type !== 'admin',
                         ])>
-                            {{ $reply->sender_type === 'admin' ? '🛡️ KneadIt Team' : '🏪 You' }}
+                            <x-filament::icon :icon="$reply->sender_type === 'admin' ? 'heroicon-o-shield-check' : 'heroicon-o-building-storefront'" class="h-3.5 w-3.5" />
+                            {{ $reply->sender_type === 'admin' ? 'KneadIt Team' : 'You' }}
                         </span>
                         <span class="text-xs text-butter">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>

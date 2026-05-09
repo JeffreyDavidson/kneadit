@@ -10,9 +10,12 @@
         >
             <div class="flex-1">
                 <div class="font-semibold text-[0.9rem] mb-1 {{ $variant->textClass() }}">
-                    @if ($variant === AnnouncementType::Warning) ⚠️
-                    @elseif ($variant === AnnouncementType::Info) ℹ️
-                    @elseif ($variant === AnnouncementType::Success) ✅
+                    @if ($variant === AnnouncementType::Warning)
+                        <x-filament::icon icon="heroicon-o-exclamation-triangle" class="inline h-4 w-4 align-[-2px]" />
+                    @elseif ($variant === AnnouncementType::Info)
+                        <x-filament::icon icon="heroicon-o-information-circle" class="inline h-4 w-4 align-[-2px]" />
+                    @elseif ($variant === AnnouncementType::Success)
+                        <x-filament::icon icon="heroicon-o-check-circle" class="inline h-4 w-4 align-[-2px]" />
                     @endif
                     {{ $announcement['title'] }}
                 </div>

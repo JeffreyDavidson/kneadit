@@ -15,7 +15,7 @@ class PlatformSettingForm
                 TextInput::make('key')
                     ->required()
                     ->maxLength(190)
-                    ->unique(ignoreRecord: true)
+                    ->unique()
                     ->disabled(fn (mixed $record): bool => $record !== null)
                     ->dehydrated()
                     ->helperText('Snake-case identifier. Cannot be changed after creation.')

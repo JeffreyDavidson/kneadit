@@ -13,7 +13,7 @@
         <guid isPermaLink="true">{{ url("/resources/{$post->slug}") }}</guid>
         <description>{{ htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))) }}</description>
         <pubDate>{{ $post->published_at?->toRfc2822String() }}</pubDate>
-        <category>{{ htmlspecialchars($post->category) }}</category>
+        <category>{{ $post->category?->getLabel() ?? 'Uncategorized' }}</category>
     </item>
     @endforeach
 </channel>

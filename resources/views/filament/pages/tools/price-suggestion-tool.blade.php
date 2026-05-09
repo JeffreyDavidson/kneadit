@@ -138,19 +138,22 @@
                                 @if (abs($priceDiff['amount']) > 0.50)
                                     <div class="p-3 {{ $priceDiff['direction'] == 'increase' ? 'bg-red-100 border border-red-200 text-red-700' : 'bg-green-100 border border-green-200 text-green-700' }} rounded-md">
                                         @if ($priceDiff['direction'] == 'increase')
-                                            <p class="text-sm">
-                                                💡 Consider increasing the price to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.
+                                            <p class="text-sm flex items-start gap-2">
+                                                <x-filament::icon icon="heroicon-o-light-bulb" class="h-4 w-4 shrink-0" />
+                                                <span>Consider increasing the price to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.</span>
                                             </p>
                                         @else
-                                            <p class="text-sm">
-                                                ✅ Your current price already exceeds the target margin. You could lower the price and still maintain profitability.
+                                            <p class="text-sm flex items-start gap-2">
+                                                <x-filament::icon icon="heroicon-o-check-circle" class="h-4 w-4 shrink-0" />
+                                                <span>Your current price already exceeds the target margin. You could lower the price and still maintain profitability.</span>
                                             </p>
                                         @endif
                                     </div>
                                 @else
                                     <div class="p-3 bg-blue-100 border border-blue-200 text-blue-700 rounded-md">
-                                        <p class="text-sm">
-                                            ✓ Your current price is very close to the suggested price for your target margin.
+                                        <p class="text-sm flex items-start gap-2">
+                                            <x-filament::icon icon="heroicon-o-check-circle" class="h-4 w-4 shrink-0" />
+                                            <span>Your current price is very close to the suggested price for your target margin.</span>
                                         </p>
                                     </div>
                                 @endif

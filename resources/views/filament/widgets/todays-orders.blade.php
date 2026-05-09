@@ -4,14 +4,17 @@
     $isLarge = $this->isSize('lg');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Today's Orders" icon="📋">
+<x-admin.dashboard.preview-card heading="Today's Orders" icon="heroicon-o-clipboard-document-list">
+    <x-slot:actions>
+        <a href="{{ $this->getViewAllUrl() }}" class="pw-card-action">View all</a>
+    </x-slot:actions>
+
     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
         @if (count($rows) > 0)
             <span class="pw-stat-label">{{ count($rows) }} order{{ count($rows) === 1 ? '' : 's' }} · {{ $this->getRevenueToday() }} today</span>
         @else
-            <span class="pw-stat-label">No orders today — enjoy the quiet</span>
+            <span class="pw-stat-label">No orders due today</span>
         @endif
-        <a href="{{ $this->getViewAllUrl() }}" style="font-size: 0.65rem; color: var(--pw-card-accent); text-decoration: none;">View all →</a>
     </div>
 
     @if (count($rows) > 0)
@@ -44,5 +47,11 @@
                 @endforeach
             </div>
         @endif
+    @else
+        <x-admin.dashboard.empty-state
+            icon="heroicon-o-calendar-days"
+            title="No pickups or deliveries today"
+            copy="Use the quiet window to prep tomorrow's queue or add a walk-up order."
+        />
     @endif
 </x-admin.dashboard.preview-card>

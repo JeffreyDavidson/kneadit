@@ -4,7 +4,7 @@
     $endingSoon = $this->getEndingSoon();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Seasonal Items" icon="🌸">
+<x-admin.dashboard.preview-card heading="Seasonal Items" icon="heroicon-o-sparkles">
     <x-admin.dashboard.stat-row label="Currently In Season" :value="$inSeason" class="mb-3" />
 
     @unless ($this->isSize('sm'))
