@@ -133,7 +133,8 @@ test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkActio
     $doomed = Customer::factory()->count(2)->create();
 
     Livewire::test(ListCustomers::class)
-        ->callTableBulkAction('delete', $doomed);
+        ->selectTableRecords($doomed)
+        ->callAction(TestAction::make('delete')->table()->bulk());
 
     expect(Customer::query()->count())->toBe(1)
         ->and(Customer::query()->find($kept->id))->not->toBeNull()

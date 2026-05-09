@@ -30,7 +30,6 @@
         "laravel/pint": "^1.27",
         "laravel/sail": "^1.53",
         "laraveldaily/filacheck": "^1.1",
-        "laraveldaily/filacheck-pro": "^1.1",
         "mockery/mockery": "^1.6",
         "mrpunyapal/pest-annotator-plugin": "^0.0.4",
         "mrpunyapal/peststan": "^0.1.5",
@@ -137,11 +136,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [
-        {
-            "name": "filacheck",
-            "type": "composer",
-            "url": "https://satis.filamentexamples.com"
-        }
-    ]
+    "repositories": []
 }

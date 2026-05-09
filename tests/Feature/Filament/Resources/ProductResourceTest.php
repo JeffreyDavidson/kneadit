@@ -151,7 +151,8 @@ test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction
     $doomed = Product::factory()->recycle(test()->category)->count(2)->create();
 
     Livewire::test(ListProducts::class)
-        ->callTableBulkAction('delete', $doomed);
+        ->selectTableRecords($doomed)
+        ->callAction(TestAction::make('delete')->table()->bulk());
 
     expect(Product::query()->count())->toBe(1)
         ->and(Product::query()->find($kept->id))->not->toBeNull()
