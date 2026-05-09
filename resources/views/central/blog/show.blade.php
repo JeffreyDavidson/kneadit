@@ -39,7 +39,7 @@
 <div class="post-hero">
     <div class="container" style="max-width:720px">
         <a href="{{ route('blog.index') }}" class="back-link" style="color:var(--honey)">← Back to Blog</a>
-        <div class="post-meta">{{ $post->category }}</div>
+        <div class="post-meta">{{ $post->category?->getLabel() ?? 'Uncategorized' }}</div>
         <h1>{{ $post->title }}</h1>
         @if ($post->excerpt)
             <p class="excerpt">{{ $post->excerpt }}</p>
@@ -78,7 +78,7 @@
     <div class="related-grid">
         @foreach ($related as $relatedPost)
             <a href="{{ route('blog.show', $relatedPost->slug) }}" class="related-card">
-                <div class="related-card-cat">{{ $relatedPost->category }}</div>
+                <div class="related-card-cat">{{ $relatedPost->category?->getLabel() ?? 'Uncategorized' }}</div>
                 <div class="related-card-title">{{ $relatedPost->title }}</div>
                 <div class="related-card-excerpt">{{ Str::limit($relatedPost->excerpt ?? strip_tags($relatedPost->body), 100) }}</div>
             </a>
