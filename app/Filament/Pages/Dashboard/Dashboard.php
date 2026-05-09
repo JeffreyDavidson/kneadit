@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages\Dashboard;
 
+use App\Enums\Filament\WidgetSize;
+use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Filament\Widgets\AtRiskCustomersWidget;
 use App\Filament\Widgets\BakingSheetWidget;
 use App\Filament\Widgets\BirthdayWidget;
 use App\Filament\Widgets\CapacityTodayWidget;
 use App\Filament\Widgets\CateringPipelineWidget;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Filament\Widgets\CouponUsageWidget;
 use App\Filament\Widgets\CustomerInsightsWidget;
 use App\Filament\Widgets\GiftCardBalanceWidget;
@@ -33,6 +36,8 @@ use App\Filament\Widgets\WeeklyRevenueChart;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Services\Settings\SettingsManager;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends BaseDashboard
@@ -105,7 +110,7 @@ class Dashboard extends BaseDashboard
         // don't crowd a fresh ops dashboard.
         if (! $config) {
             return collect($registry)
-                ->reject(fn (string $class, string $key): bool => \App\Filament\Shared\Dashboard\WidgetMeta::isDefaultHidden($key))
+                ->reject(fn (string $class, string $key): bool => WidgetMeta::isDefaultHidden($key))
                 ->map(fn (string $class, string $key) => $this->wrapWithSize($class, $key, null))
                 ->values()
                 ->all();
@@ -136,7 +141,7 @@ class Dashboard extends BaseDashboard
             if (array_key_exists($key, $config)) {
                 continue;
             }
-            if (\App\Filament\Shared\Dashboard\WidgetMeta::isDefaultHidden($key)) {
+            if (WidgetMeta::isDefaultHidden($key)) {
                 continue;
             }
             $widgets[] = $this->wrapWithSize($class, $key, null);
@@ -151,20 +156,20 @@ class Dashboard extends BaseDashboard
      * Widgets that don't use the HasDashboardSize trait pass through
      * untouched.
      *
-     * @param class-string<\Filament\Widgets\Widget> $class
+     * @param class-string<Widget> $class
      */
-    private function wrapWithSize(string $class, string $key, ?string $savedSize): string|\Filament\Widgets\WidgetConfiguration
+    private function wrapWithSize(string $class, string $key, ?string $savedSize): string|WidgetConfiguration
     {
-        if (! in_array(\App\Filament\Widgets\Concerns\HasDashboardSize::class, class_uses_recursive($class), true)) {
+        if (! in_array(HasDashboardSize::class, class_uses_recursive($class), true)) {
             return $class;
         }
 
-        $allowed = \App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor($key);
-        $resolved = \App\Enums\Filament\WidgetSize::tryFrom((string) $savedSize);
+        $allowed = WidgetMeta::allowedSizesFor($key);
+        $resolved = WidgetSize::tryFrom((string) $savedSize);
 
         if ($resolved === null || ! in_array($resolved, $allowed, true)) {
-            $meta = \App\Filament\Shared\Dashboard\WidgetMeta::get($key);
-            $resolved = $meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small;
+            $meta = WidgetMeta::get($key);
+            $resolved = $meta['defaultSize'] ?? WidgetSize::Small;
         }
 
         return $class::make(['dashboardSize' => $resolved->value]);

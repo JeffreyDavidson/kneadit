@@ -15,6 +15,12 @@ use UnitEnum;
 
 class OnboardingTracker extends Page
 {
+    public string $filterStatus = 'all';
+
+    public string $filterPlan = 'all';
+
+    public string $sort = 'progress_asc';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
@@ -29,12 +35,6 @@ class OnboardingTracker extends Page
     {
         return 'Monitor which bakers have completed their setup.';
     }
-
-    public string $filterStatus = 'all';
-
-    public string $filterPlan = 'all';
-
-    public string $sort = 'progress_asc';
 
     /** @var array<string, mixed> */
     protected array $queryString = [

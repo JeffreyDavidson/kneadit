@@ -7,8 +7,9 @@ use App\Filament\Central\Resources\SupportTicketResource;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
-use Filament\Widgets\Widget;
 use Filament\Support\Icons\Heroicon;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 
 class NeedsAttention extends Widget
 {
@@ -55,7 +56,7 @@ class NeedsAttention extends Widget
 
         $stuckOnboarding = Tenant::query()
             ->where('created_at', '<=', now()->subDays(7))
-            ->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
+            ->where(function (Builder $q): void {
                 $q->whereNull('store_name')
                     ->orWhere('storefront_enabled', false);
             })
