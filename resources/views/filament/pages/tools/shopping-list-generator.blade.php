@@ -62,7 +62,10 @@
                                     @if (isset($ingredient['in_stock']) && $ingredient['in_stock'] !== null)
                                         @if (!$ingredient['needs_purchase'])
                                             <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                                ✓ In stock ({{ number_format($ingredient['in_stock'], 1) }} {{ $ingredient['stock_unit'] }})
+                                                <span class="inline-flex items-center gap-1">
+                                                    <x-filament::icon icon="heroicon-o-check-circle" class="h-4 w-4" />
+                                                    In stock ({{ number_format($ingredient['in_stock'], 1) }} {{ $ingredient['stock_unit'] }})
+                                                </span>
                                             </span>
                                         @else
                                             <span class="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">

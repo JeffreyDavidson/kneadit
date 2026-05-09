@@ -19,7 +19,7 @@
 @endphp
 
 <div>
-    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="🎯">
+    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="heroicon-o-flag">
         @foreach ([
             ['key' => 'monthly', 'eyebrow' => 'Monthly Revenue Goal', 'data' => $monthly],
             ['key' => 'yearly', 'eyebrow' => 'Yearly Revenue Goal', 'data' => $yearly],
@@ -43,8 +43,9 @@
                         </div>
                     </div>
                     <button wire:click="openEditModal('{{ $goal['key'] }}')" type="button"
-                            style="background: var(--pw-card-grad-start); border: 1px solid var(--pw-card-border-subtle); color: var(--pw-card-accent); padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">
-                        ✎ Edit
+                            style="background: var(--pw-card-grad-start); border: 1px solid var(--pw-card-border-subtle); color: var(--pw-card-accent); padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <x-filament::icon icon="heroicon-o-pencil-square" class="h-3.5 w-3.5" />
+                        Edit
                     </button>
                 </div>
 

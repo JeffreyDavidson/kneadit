@@ -15,7 +15,7 @@
 @endphp
 
 <div class="col-span-full">
-    <x-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? '📈'">
+    <x-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? 'heroicon-o-arrow-trending-up'">
         <div
             @if ($pollingInterval = $this->getPollingInterval())
                 wire:poll.{{ $pollingInterval }}="updateChartData"

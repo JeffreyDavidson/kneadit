@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Filament\Support\Enums\FontWeight;
 
 class RecentOrdersWidget extends TableWidget
 {
@@ -25,7 +26,7 @@ class RecentOrdersWidget extends TableWidget
             ->columns([
                 TextColumn::make('order_number')
                     ->label('Order')
-                    ->weight('bold'),
+                    ->weight(FontWeight::Bold),
 
                 TextColumn::make('customer.name')
                     ->label('Customer')

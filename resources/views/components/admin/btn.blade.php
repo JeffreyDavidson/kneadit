@@ -18,10 +18,22 @@
 
 @if ($href)
     <a href="{{ $href }}" {{ $attributes->class([$classes]) }}>
-        @if ($icon)<span>{{ $icon }}</span>@endif{{ $slot }}
+        @if ($icon)
+            @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
+                <x-filament::icon :icon="$icon" class="h-4 w-4" />
+            @else
+                <span>{{ $icon }}</span>
+            @endif
+        @endif{{ $slot }}
     </a>
 @else
     <button type="{{ $type }}" {{ $attributes->class([$classes]) }}>
-        @if ($icon)<span>{{ $icon }}</span>@endif{{ $slot }}
+        @if ($icon)
+            @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
+                <x-filament::icon :icon="$icon" class="h-4 w-4" />
+            @else
+                <span>{{ $icon }}</span>
+            @endif
+        @endif{{ $slot }}
     </button>
 @endif

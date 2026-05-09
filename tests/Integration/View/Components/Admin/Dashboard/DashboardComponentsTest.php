@@ -4,14 +4,25 @@ use Illuminate\Support\Facades\Blade;
 
 test('preview-card renders heading and slot content', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.preview-card heading="Recent Orders" icon="🧾">Body content</x-admin.dashboard.preview-card>',
+        '<x-admin.dashboard.preview-card heading="Recent Orders" icon="heroicon-o-receipt-refund">Body content</x-admin.dashboard.preview-card>',
     );
 
     expect($html)
         ->toContain('class="preview-widget')
         ->toContain('Recent Orders')
-        ->toContain('🧾')
+        ->toContain('<svg')
         ->toContain('Body content');
+});
+
+test('preview-card renders heroicon strings as svg icons', function () {
+    $html = Blade::render(
+        '<x-admin.dashboard.preview-card heading="Revenue" icon="heroicon-o-arrow-trending-up">Body content</x-admin.dashboard.preview-card>',
+    );
+
+    expect($html)
+        ->toContain('<svg')
+        ->toContain('pw-icon')
+        ->not->toContain('>heroicon-o-arrow-trending-up<');
 });
 
 test('stat-row renders label and value', function () {
@@ -23,6 +34,17 @@ test('stat-row renders label and value', function () {
         ->toContain('class="pw-stat')
         ->toContain('Pending')
         ->toContain('12');
+});
+
+test('stat-card renders heroicon strings as svg icons', function () {
+    $html = Blade::render(
+        '<x-admin.dashboard.stat-card label="Storefront Views Today" icon="heroicon-o-building-storefront" value="10" />',
+    );
+
+    expect($html)
+        ->toContain('class="stat-card-icon')
+        ->toContain('<svg')
+        ->not->toContain('>heroicon-o-building-storefront<');
 });
 
 test('list-row renders label, optional value, and optional dot', function () {

@@ -375,16 +375,7 @@ test('successful onboarding dispatches TenantOnboarded with the user, tenant, an
 });
 
 test('referral code from session is forwarded to CompleteReferral', function () {
-    $referrer = Tenant::query()->create([
-        'id' => 'referring-bakery',
-        'name' => 'Referrer',
-        'email' => 'ref@example.com',
-        'plan' => SubscriptionTier::Starter,
-        'is_active' => true,
-        'storefront_enabled' => true,
-        'brand_color_primary' => '#d4920c',
-        'brand_color_secondary' => '#1c1410',
-    ]);
+    $referrer = Tenant::factory()->create();
     $referral = Referral::factory()->create([
         'referral_code' => 'SESSREF1',
         'referrer_tenant_id' => $referrer->id,

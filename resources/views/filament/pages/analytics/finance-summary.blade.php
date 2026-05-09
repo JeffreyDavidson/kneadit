@@ -150,7 +150,10 @@
                             {{ number_format(($cogsAmount / $totalRevenue) * 100, 1) }}%
                         </div>
                         @if (($cogsAmount / $totalRevenue) * 100 > 30)
-                            <div class="text-xs text-blue-700 mt-1">⚠️ Industry standard COGS is typically 25-30%</div>
+                            <div class="text-xs text-blue-700 mt-1 flex items-center gap-1">
+                                <x-filament::icon icon="heroicon-o-exclamation-triangle" class="h-4 w-4" />
+                                Industry standard COGS is typically 25-30%
+                            </div>
                         @endif
                     </div>
                     @endif
