@@ -45,7 +45,7 @@
                                 <div class="space-y-1">
                                     @foreach ($distribution->reverse() as $star => $count)
                                         <div class="flex items-center gap-2 text-sm">
-                                            <span class="w-8 text-right">{{ $star }}★</span>
+                                            <span class="w-8 text-right">{{ $star }}/5</span>
                                             <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
                                                 <div class="bg-amber-500 h-full rounded-full transition-all" style="width: {{ ($count / $maxCount) * 100 }}%"></div>
                                             </div>
