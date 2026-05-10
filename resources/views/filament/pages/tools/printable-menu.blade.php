@@ -123,9 +123,9 @@
         <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid {{ $isElegant ? '#3E2723' : '#D97706' }}; display: flex; justify-content: space-between; align-items: center;">
             <div style="font-size: 13px; line-height: 1.6;">
                 <strong style="font-size: 16px;">{{ $store['name'] }}</strong><br>
-                @if ($store['phone'])<span>📞 {{ $store['phone'] }}</span><br>@endif
-                @if ($store['email'])<span>✉️ {{ $store['email'] }}</span><br>@endif
-                @if ($store['address'])<span>📍 {{ $store['address'] }}</span><br>@endif
+                @if ($store['phone'])<span>Phone: {{ $store['phone'] }}</span><br>@endif
+                @if ($store['email'])<span>Email: {{ $store['email'] }}</span><br>@endif
+                @if ($store['address'])<span>Address: {{ $store['address'] }}</span><br>@endif
                 <span style="color: #666;">{{ $url }}</span>
             </div>
             <div style="text-align: center;">

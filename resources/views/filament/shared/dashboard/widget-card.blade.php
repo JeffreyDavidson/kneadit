@@ -426,7 +426,7 @@
             @case('review_summary')
                 <div style="display: flex; align-items: baseline; gap: 6px;">
                     <span style="font-size: 1.2rem; font-weight: 700; color: #fff;">4.8</span>
-                    <span style="font-size: 0.75rem; color: #e8b04a;">★★★★★</span>
+                    <span style="font-size: 0.75rem; color: #e8b04a;">4.8/5</span>
                 </div>
                 <div style="font-size: 0.6rem; color: var(--brand-400); margin-top: 2px;">28 reviews</div>
                 @if (($widget['size'] ?? 'sm') === 'md')
