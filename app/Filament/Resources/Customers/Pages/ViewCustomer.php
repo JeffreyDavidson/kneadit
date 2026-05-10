@@ -26,10 +26,6 @@ use Livewire\Attributes\Rule;
  */
 class ViewCustomer extends ViewRecord
 {
-    /** Inline note-add form state — mirrors the ViewTenant pattern. */
-    #[Rule(['required', 'min:3'])]
-    public string $noteBody = '';
-
     protected static string $resource = CustomerResource::class;
 
     protected string $view = 'filament.resources.customers.pages.view-customer';
@@ -130,6 +126,10 @@ class ViewCustomer extends ViewRecord
             'detail' => CustomerPresenter::for($this->record)->toDetailArray(),
         ];
     }
+
+    /** Inline note-add form state — mirrors the ViewTenant pattern. */
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
 
     public function addNote(): void
     {

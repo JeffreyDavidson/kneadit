@@ -23,7 +23,7 @@
                     <div class="space-y-1">
                         @foreach ($distribution->reverse() as $star => $count)
                             <x-admin.distribution-bar
-                                :label="$star.'★'"
+                                :label="$star . '/5'"
                                 :percentage="($count / $maxCount) * 100"
                                 :count="$count"
                             />

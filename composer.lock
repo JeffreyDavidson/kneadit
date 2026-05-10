@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ad52e17ab2de3f856f875791015d4ad",
+    "content-hash": "6393548d4b7a0558cc6359690b03cc8d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11975,6 +11975,9 @@
                 "orchestra/testbench": "^9.0|^10.0",
                 "pestphp/pest": "^3.0|^4.0"
             },
+            "suggest": {
+                "laraveldaily/filacheck-pro": "Unlock performance rules, best practices checks, and more advanced static analysis"
+            },
             "bin": [
                 "bin/filacheck"
             ],
@@ -12016,6 +12019,67 @@
                 "source": "https://github.com/LaravelDaily/FilaCheck/tree/v1.2"
             },
             "time": "2026-04-13T16:52:09+00:00"
+        },
+        {
+            "name": "laraveldaily/filacheck-pro",
+            "version": "v1.2.2",
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.filamentexamples.com/dist/laraveldaily/filacheck-pro/laraveldaily-filacheck-pro-60dfb0655870ffab94a9d4e7e2b6c044f2ef8990-zip-7735a0.zip",
+                "reference": "60dfb0655870ffab94a9d4e7e2b6c044f2ef8990",
+                "shasum": "4605872f836f5d8c4ec9445040cdb218a55e2ed4"
+            },
+            "require": {
+                "laraveldaily/filacheck": "^1.0",
+                "php": "^8.2",
+                "shipfastlabs/agent-detector": "^1.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^3.0|^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "FilacheckPro\\FilacheckProServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FilacheckPro\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "FilacheckPro\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Povilas Korop",
+                    "email": "povilas@laraveldaily.com"
+                }
+            ],
+            "description": "Premium FilaCheck rules - performance optimization, best practices, and advanced static analysis",
+            "keywords": [
+                "code-quality",
+                "filament",
+                "laravel",
+                "lint",
+                "livewire",
+                "performance",
+                "static-analysis"
+            ],
+            "support": {
+                "source": "https://github.com/LaravelDaily/FilaCheck-Pro/tree/v1.2.2",
+                "issues": "https://github.com/LaravelDaily/FilaCheck-Pro/issues"
+            },
+            "time": "2026-04-17T06:55:39+00:00"
         },
         {
             "name": "mockery/mockery",

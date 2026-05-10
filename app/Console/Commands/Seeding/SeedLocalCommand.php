@@ -14,7 +14,6 @@ use Faker\Factory as Faker;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 
@@ -190,7 +189,7 @@ class SeedLocalCommand extends Command
 
         $trialDays = config('kneadit.trial_days', 30);
         $trialEndsAt = $faker->boolean(60)
-            ? Carbon::instance($createdAt)->addDays($trialDays)
+            ? \Illuminate\Support\Carbon::instance($createdAt)->addDays($trialDays)
             : null;
 
         $tenant->update([

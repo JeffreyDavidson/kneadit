@@ -20,9 +20,6 @@ use Livewire\Attributes\Rule;
  */
 class ViewTenant extends ViewRecord
 {
-    #[Rule(['required', 'min:3'])]
-    public string $noteBody = '';
-
     protected static string $resource = TenantResource::class;
 
     protected string $view = 'filament.central.pages.view-tenant';
@@ -107,6 +104,9 @@ class ViewTenant extends ViewRecord
     {
         return [];
     }
+
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
 
     public function addNote(): void
     {

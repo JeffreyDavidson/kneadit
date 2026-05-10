@@ -16,11 +16,11 @@ enum CateringEventType: string implements HasColor, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Wedding => '💒 Wedding',
-            self::Corporate => '🏢 Corporate',
-            self::Birthday => '🎂 Birthday',
-            self::Holiday => '🎄 Holiday',
-            self::Other => '🎉 Other',
+            self::Wedding => 'Wedding',
+            self::Corporate => 'Corporate',
+            self::Birthday => 'Birthday',
+            self::Holiday => 'Holiday',
+            self::Other => 'Other',
         };
     }
 

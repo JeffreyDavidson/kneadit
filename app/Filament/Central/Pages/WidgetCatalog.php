@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Enums\Filament\WidgetSize;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -57,13 +56,13 @@ class WidgetCatalog extends Page
                 'name' => $meta['name'],
                 'description' => $meta['description'],
                 'icon' => $meta['icon'],
-                'size' => ($meta['defaultSize'] ?? WidgetSize::Small)->value,
+                'size' => ($meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small)->value,
                 'visible' => true,
             ];
 
             if ($this->showAllSizes) {
                 $entry['allowedSizes'] = array_map(
-                    fn (WidgetSize $s): string => $s->value,
+                    fn (\App\Enums\Filament\WidgetSize $s): string => $s->value,
                     WidgetMeta::allowedSizesFor($key),
                 );
             }
