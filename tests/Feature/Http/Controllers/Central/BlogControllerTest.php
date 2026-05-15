@@ -19,6 +19,19 @@ test('index validates category against allowed values', function () {
         ->assertRedirect();
 });
 
+test('blog show renders a central post by slug', function () {
+    $post = BlogPost::factory()
+        ->published()
+        ->create([
+            'title' => 'Central Resource Article',
+            'slug' => 'central-resource-article',
+        ]);
+
+    get(route('blog.show', $post->slug))
+        ->assertOk()
+        ->assertSee('Central Resource Article');
+});
+
 test('blog show ignores related published posts without routable slugs', function () {
     $post = BlogPost::factory()
         ->published()
