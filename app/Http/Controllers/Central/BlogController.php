@@ -23,12 +23,12 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(BlogPost $post): View
+    public function show(BlogPost $centralPost): View
     {
-        $related = BlogPost::query()->published()->relatedTo($post)->get();
+        $related = BlogPost::query()->published()->relatedTo($centralPost)->get();
 
         return view('central.blog.show', [
-            'post' => $post,
+            'post' => $centralPost,
             'related' => $related,
         ]);
     }
