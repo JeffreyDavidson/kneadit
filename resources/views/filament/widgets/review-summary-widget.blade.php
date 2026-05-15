@@ -10,9 +10,7 @@
         <div style="text-align: center;">
             <div style="font-size: 1.6rem; font-weight: 700; color: var(--pw-card-text);">{{ $avg ?: '—' }}</div>
             <div style="color: var(--pw-card-accent-light); font-size: 0.85rem; letter-spacing: 2px;">
-                @for ($i = 1; $i <= 5; $i++)
-                    {{ $i <= round($avg) ? '★' : '☆' }}
-                @endfor
+                {{ $avg ? number_format((float) $avg, 1) . '/5' : 'No rating' }}
             </div>
             <div style="font-size: 0.65rem; color: var(--pw-card-text-muted);">{{ $total }} review{{ $total !== 1 ? 's' : '' }}</div>
         </div>
@@ -34,7 +32,7 @@
         @if ($recent)
             <div style="margin-top: 12px; padding: 8px 10px; background: var(--pw-card-grad-start); border-left: 3px solid var(--pw-card-accent); border-radius: 6px;">
                 <div style="font-size: 0.6rem; color: var(--pw-card-text-muted); margin-bottom: 2px;">
-                    {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}
+                    {{ $recent->customer_name }} — {{ $recent->rating }}/5
                 </div>
                 <div style="font-size: 0.7rem; color: var(--pw-card-text); font-style: italic; line-height: 1.4;">
                     "{{ \Illuminate\Support\Str::limit($recent->comment, 120) }}"

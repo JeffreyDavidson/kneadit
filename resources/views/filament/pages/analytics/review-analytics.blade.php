@@ -111,7 +111,7 @@
                             <div class="text-xs text-gray-600">{{ $month['month'] }}</div>
                             <div class="text-sm font-medium text-gray-900">{{ $month['count'] }}</div>
                             @if ($month['count'] > 0)
-                                <div class="text-xs text-yellow-600">★ {{ $month['avg_rating'] }}</div>
+                                <div class="text-xs text-yellow-600">{{ $month['avg_rating'] }}/5 avg</div>
                             @endif
                         </div>
                     @endforeach
@@ -139,8 +139,7 @@
                                     <p class="text-xs text-gray-600">{{ $product['reviews_count'] }} reviews</p>
                                 </div>
                                 <div class="flex items-center">
-                                    <span class="text-yellow-400 mr-1">★</span>
-                                    <span class="text-sm font-medium text-gray-900">{{ $product['average_rating'] }}</span>
+                                    <span class="text-sm font-medium text-gray-900">{{ $product['average_rating'] }}/5</span>
                                 </div>
                             </div>
                         @endforeach
@@ -165,11 +164,7 @@
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center space-x-2">
                                         <span class="text-sm font-medium text-gray-900">{{ $review['customer_name'] }}</span>
-                                        <div class="flex items-center">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                <span class="{{ $i <= $review['rating'] ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
-                                            @endfor
-                                        </div>
+                                        <div class="text-sm text-yellow-600">{{ $review['rating'] }}/5</div>
                                     </div>
                                     <span class="text-xs text-gray-500">{{ $review['created_at']->diffForHumans() }}</span>
                                 </div>

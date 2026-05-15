@@ -46,7 +46,7 @@ class ReviewsTable
                         $state === 3 => 'warning',
                         default => 'success',
                     })
-                    ->formatStateUsing(fn (int $state) => $state . ' ★'),
+                    ->formatStateUsing(fn (int $state) => $state . '/5'),
 
                 TextColumn::make('comment')
                     ->limit(50)

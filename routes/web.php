@@ -22,7 +22,7 @@ use App\Http\Controllers\CspReportController;
 use App\Routing\Resolvers\PublishedBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
-Route::bind('post', resolve(PublishedBlogPostResolver::class));
+Route::bind('centralPost', resolve(PublishedBlogPostResolver::class));
 
 require __DIR__ . '/billing.php';
 require __DIR__ . '/admin.php';
@@ -97,7 +97,7 @@ Route::get('changelog', ChangelogController::class)->name('changelog');
 // Resources / Blog (central only)
 Route::get('resources', [BlogController::class, 'index'])->name('blog.index');
 Route::get('resources/feed.xml', BlogFeedController::class)->name('blog.feed');
-Route::get('resources/{post}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('resources/{centralPost}', [BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', RootController::class)->name('home');
