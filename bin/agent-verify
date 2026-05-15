@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+# OpenClaw/non-login agent shells may not inherit Laravel Herd's PATH.
+HERD_BIN="$HOME/Library/Application Support/Herd/bin"
+if ! command -v php >/dev/null 2>&1 && [ -x "$HERD_BIN/php" ]; then
+    export PATH="$HERD_BIN:$PATH"
+fi
+if ! command -v composer >/dev/null 2>&1 && [ -x "$HERD_BIN/composer" ]; then
+    export PATH="$HERD_BIN:$PATH"
+fi
+
+if ! command -v php >/dev/null 2>&1; then
+    echo "error: php not found. Install PHP or Laravel Herd, or add Herd to PATH: $HERD_BIN" >&2
+    exit 127
+fi
+
+if [ ! -f vendor/autoload.php ]; then
+    if ! command -v composer >/dev/null 2>&1; then
+        echo "error: vendor/autoload.php is missing and composer is not available." >&2
+        echo "Install dependencies after adding Composer/PHP to PATH." >&2
+        exit 127
+    fi
+
+    composer install --no-interaction --prefer-dist
+fi
+
+php artisan test --compact --exclude-testsuite=Browser "$@"

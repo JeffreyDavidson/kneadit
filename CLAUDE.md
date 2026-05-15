@@ -304,7 +304,8 @@ This project has domain-specific skills available. You MUST activate the relevan
 ## Pest
 
 - This project uses Pest for testing. Create tests: `php artisan make:test --pest {name}`.
-- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
+- Canonical agent verification: `bin/agent-verify` (for targeted runs, pass Pest options after it, e.g. `bin/agent-verify --filter=testName`). This script adds Laravel Herd PHP/Composer to PATH when agent shells do not inherit it, installs Composer dependencies if `vendor/` is missing, and runs the non-browser suite.
+- Run tests directly when your shell already has PHP: `php artisan test --compact --exclude-testsuite=Browser` or filter: `php artisan test --compact --exclude-testsuite=Browser --filter=testName`.
 - Do NOT delete tests without approval.
 
 </laravel-boost-guidelines>
