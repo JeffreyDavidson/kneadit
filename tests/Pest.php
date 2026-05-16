@@ -443,6 +443,12 @@ function createCentralTables(): void
             });
         }
     }
+
+    if (Schema::hasTable('blog_posts') && ! Schema::hasColumn('blog_posts', 'category')) {
+        Schema::table('blog_posts', function ($table) {
+            $table->string('category')->default('guides');
+        });
+    }
 }
 
 function createTenant(array $attributes = []): object
