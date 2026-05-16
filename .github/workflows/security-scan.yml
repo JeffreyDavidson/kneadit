@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: '0 9 * * 1' # Weekly on Monday at 9am UTC
 
+concurrency:
+  group: security-scan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ward:
     name: Ward Security Scan
