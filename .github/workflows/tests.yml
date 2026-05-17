@@ -18,14 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
-          tools: composer:v2
-          coverage: none
-          ini-values: memory_limit=2G
+      - name: Verify local PHP
+        run: php -v && php -m
+
+      - name: Install Composer
+        run: |
+          mkdir -p "$RUNNER_TEMP/composer-bin"
+          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
+          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
+          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/composer-bin/composer" --version
 
       - name: Copy environment file
         run: cp .env.example .env
