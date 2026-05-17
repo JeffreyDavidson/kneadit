@@ -15,7 +15,7 @@ concurrency:
 jobs:
   ward:
     name: Ward Security Scan
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
     permissions:
       security-events: write
       contents: read

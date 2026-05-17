@@ -13,7 +13,7 @@ concurrency:
 jobs:
   tlint:
     name: Laravel/Blade Lint
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
 
     steps:
       - uses: actions/checkout@v4
