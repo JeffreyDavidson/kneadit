@@ -24,7 +24,7 @@ class RecentActivityWidget extends Widget
             ->get()
             ->map(fn (ActivityLog $log): array => [
                 'id' => $log->id,
-                'when' => $log->created_at?->diffForHumans(short: true) ?? '—',
+                'when' => $log->created_at->diffForHumans(short: true),
                 'user_name' => $log->user_name,
                 'action_label' => $log->action->getLabel(),
                 'action_pill_class' => $log->action->pillClass(),

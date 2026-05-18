@@ -33,7 +33,9 @@ jobs:
       - name: Install Ward
         run: go install github.com/eljakani/ward@latest
 
-      # Generate baseline from the base branch so only NEW findings fail the build
+      # Generate a base-branch baseline so PR output highlights new findings.
+      # Ward is advisory on PRs until its rules/baselines are stable enough to
+      # be a required merge gate.
       - name: Generate baseline from base branch
         if: github.event_name == 'pull_request'
         run: |
@@ -47,6 +49,7 @@ jobs:
 
       - name: Run security scan (PR)
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         run: ward scan . --fail-on high --baseline /tmp/ward-baseline.json
 
       - name: Run security scan (push/schedule)

@@ -3,9 +3,26 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
+use RectorLaravel\Rector\FuncCall\AppToResolveRector;
+use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
+use RectorLaravel\Rector\FuncCall\TypeHintTappableCallRector;
+use RectorLaravel\Rector\If_\ThrowIfRector;
+use RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector;
+use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
 use RectorLaravel\Rector\MethodCall\WhereToWhereLikeRector;
+use RectorLaravel\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector;
+use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
+use RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector;
 use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 use RectorLaravel\Set\LaravelSetList;
+use RectorPest\Rules\ChainExpectCallsRector;
+use RectorPest\Rules\SimplifyToLiteralBooleanRector;
+use RectorPest\Rules\UseEachModifierRector;
+use RectorPest\Rules\UseToBeInRector;
+use RectorPest\Rules\UseToContainRector;
+use RectorPest\Rules\UseToHaveLengthRector;
+use RectorPest\Rules\UseToThrowRector;
 use RectorPest\Set\PestSetList;
 
 return RectorConfig::configure()
@@ -20,6 +37,23 @@ return RectorConfig::configure()
         __DIR__ . '/vendor',
         __DIR__ . '/storage',
         __DIR__ . '/bootstrap/cache',
+        AppToResolveRector::class,
+        AssertStatusToAssertMethodRector::class,
+        AssertWithClassStringToTypeHintedClosureRector::class,
+        CarbonToDateFacadeRector::class,
+        ChainExpectCallsRector::class,
+        EloquentMagicMethodToQueryBuilderRector::class,
+        EloquentOrderByToLatestOrOldestRector::class,
+        ServerVariableToRequestFacadeRector::class,
+        SimplifyToLiteralBooleanRector::class,
+        ThrowIfAndThrowUnlessExceptionsToUseClassStringRector::class,
+        ThrowIfRector::class,
+        TypeHintTappableCallRector::class,
+        UseEachModifierRector::class,
+        UseToBeInRector::class,
+        UseToContainRector::class,
+        UseToHaveLengthRector::class,
+        UseToThrowRector::class,
     ])
     ->withSets([
         LaravelSetList::LARAVEL_130,

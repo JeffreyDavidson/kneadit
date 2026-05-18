@@ -58,10 +58,10 @@ class BakingSheetWidget extends Widget
             ->groupBy('order_items.product_id', 'products.name')
             ->orderByDesc('total_quantity')
             ->get()
-            ->map(fn (mixed $item): array => [
+            ->map(fn (OrderItem $item): array => [
                 'product_id' => $item->product_id,
-                'name' => $item->product_name,
-                'quantity' => (int) $item->total_quantity,
+                'name' => (string) $item->getAttribute('product_name'),
+                'quantity' => (int) $item->getAttribute('total_quantity'),
             ])
             ->all();
     }

@@ -30,6 +30,10 @@ class ViewCustomer extends ViewRecord
 
     protected string $view = 'filament.resources.customers.pages.view-customer';
 
+    /** Inline note-add form state — mirrors the ViewTenant pattern. */
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
+
     /**
      * The view template walks orders, customerNotes, and loyaltyPoints —
      * strict-mode preventLazyLoading 500s if any aren't loaded. Override
@@ -126,10 +130,6 @@ class ViewCustomer extends ViewRecord
             'detail' => CustomerPresenter::for($this->record)->toDetailArray(),
         ];
     }
-
-    /** Inline note-add form state — mirrors the ViewTenant pattern. */
-    #[Rule(['required', 'min:3'])]
-    public string $noteBody = '';
 
     public function addNote(): void
     {

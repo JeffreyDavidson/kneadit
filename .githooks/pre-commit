@@ -1,14 +1,16 @@
-#!/bin/bash
-# Pre-commit hook: lint, format, analyse, and test staged PHP files
-# Prevents deploying syntax errors, style violations, static analysis issues, or failing tests
+#!/usr/bin/env bash
+set -euo pipefail
 
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.php$')
+# Fast local guard only. Full static analysis, FilaCheck, Rector, and Pest
+# belong in CI or explicit verification commands such as bin/agent-verify.
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.php$' || true)
 
 if [ -z "$STAGED_FILES" ]; then
     exit 0
 fi
 
-echo "🔍 Running pre-commit checks..."
+echo "Running fast pre-commit checks..."
 
 # 1. PHP Lint
 ERRORS=0
@@ -25,58 +27,37 @@ done
 
 if [ $ERRORS -gt 0 ]; then
     echo ""
-    echo "⛔ Commit blocked: $ERRORS PHP file(s) have syntax errors."
+    echo "Commit blocked: $ERRORS PHP file(s) have syntax errors."
     exit 1
 fi
 
-echo "✅ PHP lint passed"
+echo "PHP lint passed"
 
 # 2. Pint (code style)
-vendor/bin/pint --dirty --format agent > /dev/null 2>&1
-PINT_CHANGED=$(git diff --name-only | grep '\.php$')
-if [ -n "$PINT_CHANGED" ]; then
-    echo "⚠️  Pint fixed formatting issues. Staging the changes..."
-    echo "$PINT_CHANGED" | xargs git add
+if ! vendor/bin/pint --dirty --test --format=txt; then
+    echo ""
+    echo "Commit blocked: Pint found formatting issues."
+    echo "Run 'vendor/bin/pint --dirty' to fix them."
+    exit 1
 fi
 
-echo "✅ Pint passed"
+echo "Pint passed"
 
 # 3. TLint (Laravel/Blade idioms)
-vendor/bin/tlint lint > /tmp/tlint-output 2>&1
-if grep -q "^!" /tmp/tlint-output; then
+TLINT_OUTPUT=$(mktemp)
+trap 'rm -f "$TLINT_OUTPUT"' EXIT
+
+vendor/bin/tlint lint > "$TLINT_OUTPUT" 2>&1
+if grep -q "^!" "$TLINT_OUTPUT"; then
     echo ""
-    echo "⛔ Commit blocked: TLint found violations."
+    echo "Commit blocked: TLint found violations."
+    cat "$TLINT_OUTPUT"
     echo "Run 'vendor/bin/tlint lint' to see details."
     exit 1
 fi
 
-echo "✅ TLint passed"
-
-# 4. PHPStan (static analysis)
-vendor/bin/phpstan analyse --no-progress --memory-limit=512M > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo ""
-    echo "⛔ Commit blocked: PHPStan found errors."
-    echo "Run 'vendor/bin/phpstan analyse' to see details."
-    exit 1
-fi
-
-echo "✅ PHPStan passed"
-
-# 5. Tests (only run if app/ or tests/ files are staged)
-APP_OR_TEST_FILES=$(echo "$STAGED_FILES" | grep -E '^(app/|tests/)')
-if [ -n "$APP_OR_TEST_FILES" ]; then
-    php -d memory_limit=512M vendor/bin/pest --compact 2>&1 | tail -3
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
-        echo ""
-        echo "⛔ Commit blocked: Tests failed."
-        exit 1
-    fi
-    echo "✅ Tests passed"
-else
-    echo "⏭️  No app/test files staged, skipping tests"
-fi
+echo "TLint passed"
 
 echo ""
-echo "🎉 All checks passed!"
+echo "Fast pre-commit checks passed."
 exit 0

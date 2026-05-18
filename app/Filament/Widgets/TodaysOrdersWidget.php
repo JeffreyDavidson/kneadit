@@ -38,7 +38,7 @@ class TodaysOrdersWidget extends Widget
                 'id' => $order->id,
                 'order_number' => $order->order_number,
                 'time' => $order->delivery_time?->format('g:i A') ?? '—',
-                'customer' => $order->customer_name,
+                'customer' => (string) $order->getAttribute('customer_name'),
                 'total' => $order->total->formatted(),
                 'total_cents' => $order->total->cents(),
                 'status' => $order->status,

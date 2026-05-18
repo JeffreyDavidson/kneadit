@@ -166,10 +166,13 @@ class ViewCateringInquiry extends ViewRecord
                     ]),
             ])
             ->action(function (array $data): void {
-                $rows = $data['items'] ?? [];
+                $rows = is_array($data['items'] ?? null) ? $data['items'] : [];
 
                 $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = collect($rows)->pluck('id')->filter()->map(fn (mixed $id): int => (int) $id)->all();
+                $submittedIds = array_values(array_filter(array_map(
+                    fn (mixed $row): ?int => is_array($row) && ! empty($row['id']) ? (int) $row['id'] : null,
+                    $rows,
+                )));
 
                 foreach ($existing as $id => $item) {
                     if (! in_array($id, $submittedIds, true)) {
@@ -186,10 +189,14 @@ class ViewCateringInquiry extends ViewRecord
                         'sort_order' => $sortOrder,
                     ];
 
-                    if (! empty($row['id']) && $existing->has((int) $row['id'])) {
-                        $existing[(int) $row['id']]->update($payload);
+                    if (! empty($row['id'])) {
+                        $existingItem = $existing->get((int) $row['id']);
 
-                        continue;
+                        if ($existingItem instanceof CateringInquiryItem) {
+                            $existingItem->update($payload);
+
+                            continue;
+                        }
                     }
 
                     $this->record->items()->create($payload);
