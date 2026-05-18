@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookDelivery query()
  *
  * @mixin \Eloquent
+ *
+ * @property array<string, mixed> $payload
+ * @property \Illuminate\Support\Carbon $dispatched_at
  */
 #[Fillable('event', 'url', 'payload', 'signature', 'status_code', 'response_body', 'attempt', 'succeeded', 'error', 'dispatched_at', 'responded_at')]
 #[UseEloquentBuilder(WebhookDeliveryQueryBuilder::class)]

@@ -24,6 +24,9 @@ class ViewTenant extends ViewRecord
 
     protected string $view = 'filament.central.pages.view-tenant';
 
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
+
     protected function getHeaderActions(): array
     {
         return [
@@ -104,9 +107,6 @@ class ViewTenant extends ViewRecord
     {
         return [];
     }
-
-    #[Rule(['required', 'min:3'])]
-    public string $noteBody = '';
 
     public function addNote(): void
     {

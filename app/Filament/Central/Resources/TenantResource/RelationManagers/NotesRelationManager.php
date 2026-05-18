@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class NotesRelationManager extends RelationManager
 {
@@ -21,7 +22,7 @@ class NotesRelationManager extends RelationManager
     /** No TenantNotePolicy exists; platform admins can freely manage notes. */
     public function canCreate(): bool
     {
-        return auth()->check() && auth()->user()?->can('platform-admin');
+        return auth()->check() && Gate::allows('platform-admin');
     }
 
     public function canEdit(Model $record): bool

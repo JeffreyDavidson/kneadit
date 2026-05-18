@@ -102,7 +102,8 @@ test('owner can bulk-delete selected suppliers via the AuthorizedDeleteBulkActio
     $doomed = Supplier::factory()->count(2)->create();
 
     Livewire::test(ListSuppliers::class)
-        ->callTableBulkAction('delete', $doomed);
+        ->selectTableRecords($doomed)
+        ->callAction(TestAction::make('delete')->table()->bulk());
 
     expect(Supplier::query()->count())->toBe(1)
         ->and(Supplier::query()->find($kept->id))->not->toBeNull()

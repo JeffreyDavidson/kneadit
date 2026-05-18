@@ -25,11 +25,6 @@ class OnboardingTracker extends Page
 
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
-    public function getSubheading(): ?string
-    {
-        return 'Monitor which bakers have completed their setup.';
-    }
-
     public string $filterStatus = 'all';
 
     public string $filterPlan = 'all';
@@ -42,6 +37,11 @@ class OnboardingTracker extends Page
         'filterPlan' => ['except' => 'all'],
         'sort' => ['except' => 'progress_asc'],
     ];
+
+    public function getSubheading(): ?string
+    {
+        return 'Monitor which bakers have completed their setup.';
+    }
 
     /** @return Collection<int, mixed> */
     public function getTenantOnboardingData(): Collection

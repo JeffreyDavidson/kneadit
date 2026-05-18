@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Pages\Operations\WebhooksDocs;
+use App\Filament\Pages\Settings\ManageSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -29,7 +30,7 @@ class IntegrationsSection
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('gray')
                     ->visible(fn (Get $get): bool => filled($get('webhook_url')))
-                    ->action(fn (\Livewire\Component $livewire) => $livewire->sendTestWebhook()),
+                    ->action(fn (ManageSettings $livewire) => $livewire->sendTestWebhook()),
             ])
             ->schema([
                 TextInput::make('webhook_url')
@@ -60,7 +61,7 @@ class IntegrationsSection
                             ->requiresConfirmation()
                             ->modalHeading('Regenerate signing secret?')
                             ->modalDescription('Any integration relying on the current secret to verify signatures will start rejecting requests until you update it with the new value.')
-                            ->action(fn (\Livewire\Component $livewire) => $livewire->regenerateWebhookSecret()),
+                            ->action(fn (ManageSettings $livewire) => $livewire->regenerateWebhookSecret()),
                     )
                     ->columnSpanFull(),
             ]);

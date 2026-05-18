@@ -147,6 +147,10 @@ class StatsOverview extends Widget
      */
     private function normaliseChart(array $values): array
     {
+        if ($values === []) {
+            return [];
+        }
+
         $max = max($values) ?: 1;
 
         return array_map(fn (int $v): int => (int) round($v / $max * 100), $values);

@@ -14,6 +14,7 @@
                     'gold' => ['bg' => 'bg-honey/5 border-honey/20', 'iconBg' => 'bg-honey/15 border-honey/25', 'iconColor' => 'text-honey'],
                     default => ['bg' => 'bg-honey/5 border-honey/20', 'iconBg' => 'bg-honey/15 border-honey/25', 'iconColor' => 'text-honey'],
                 };
+                $iconComponent = $cmd['icon'] instanceof \Filament\Support\Icons\Heroicon ? 'heroicon-' . $cmd['icon']->value : $cmd['icon'];
                 $lastRun = $this->getLastRun($cmd['key']);
                 $lastRunCarbon = $lastRun ? \Illuminate\Support\Carbon::parse($lastRun) : null;
             @endphp
@@ -21,7 +22,7 @@
             <x-central.card class="flex flex-col {{ $tone['bg'] }}">
                 <div class="flex items-start gap-3 mb-3">
                     <div class="shrink-0 w-11 h-11 rounded-xl border {{ $tone['iconBg'] }} flex items-center justify-center">
-                        <x-dynamic-component :component="$cmd['icon']" class="w-5 h-5 {{ $tone['iconColor'] }}" />
+                        <x-dynamic-component :component="$iconComponent" class="w-5 h-5 {{ $tone['iconColor'] }}" />
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="text-white font-bold text-[0.95rem]">{{ $cmd['label'] }}</div>

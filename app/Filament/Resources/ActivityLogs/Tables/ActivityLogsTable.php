@@ -23,7 +23,7 @@ class ActivityLogsTable
                     ->label('When')
                     ->dateTime()
                     ->since()
-                    ->tooltip(fn (ActivityLog $record): ?string => $record->created_at?->format('M j, Y g:i A'))
+                    ->tooltip(fn (ActivityLog $record): string => $record->created_at->format('M j, Y g:i A'))
                     ->sortable(),
 
                 TextColumn::make('action')

@@ -22,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog query()
  *
  * @mixin \Eloquent
+ *
+ * @property ActivityAction $action
+ * @property \Illuminate\Support\Carbon $created_at
  */
 #[WithoutTimestamps]
 #[Fillable('user_id', 'user_name', 'action', 'model_type', 'model_id', 'description', 'properties', 'ip_address', 'created_at')]

@@ -26,4 +26,8 @@ return [
     'missing-table-filters' => [
         'enabled' => false,
     ],
+
+    'flat-form-overload' => [
+        'max_fields' => 12,
+    ],
 ];

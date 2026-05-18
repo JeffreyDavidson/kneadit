@@ -79,7 +79,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
             foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
                 $class = $frame['class'] ?? null;
                 if ($class && str_contains($class, 'Tests\\')) {
-                    return $class . '::' . ($frame['function'] ?? '?');
+                    return $class . '::' . $frame['function'];
                 }
             }
         } catch (Throwable) {
@@ -98,19 +98,17 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 
         // Drop the top two frames (this method + deleteDatabase itself);
         // keep the rest as a flat list of "Class::method (file:line)".
-        return array_values(array_filter(array_map(
-            fn (array $f): ?string => isset($f['function'])
-                ? sprintf(
-                    '%s%s%s (%s:%d)',
-                    $f['class'] ?? '',
-                    isset($f['type']) ? $f['type'] : (isset($f['class']) ? '::' : ''),
-                    $f['function'],
-                    isset($f['file']) ? str_replace(base_path() . '/', '', $f['file']) : '?',
-                    $f['line'] ?? 0,
-                )
-                : null,
+        return array_map(
+            fn (array $f): string => sprintf(
+                '%s%s%s (%s:%d)',
+                $f['class'] ?? '',
+                $f['type'] ?? (isset($f['class']) ? '::' : ''),
+                $f['function'],
+                isset($f['file']) ? str_replace(base_path() . '/', '', $f['file']) : '?',
+                $f['line'] ?? 0,
+            ),
             array_slice($frames, 2),
-        )));
+        );
     }
 
     public function databaseExists(string $name): bool

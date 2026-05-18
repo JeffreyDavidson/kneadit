@@ -39,7 +39,7 @@ class BirthdayWidget extends Widget
         $limit = match ($this->size()) {
             WidgetSize::Small => 3,
             WidgetSize::Medium => 5,
-            WidgetSize::Large => 10,
+            WidgetSize::Large, WidgetSize::ExtraLarge => 10,
         };
 
         // Cache plain arrays of denormalized fields, not Customer models / stdClass

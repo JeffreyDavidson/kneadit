@@ -4,8 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
+use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Carbon;
 
 class AtRiskCustomersWidget extends Widget
 {
@@ -34,12 +36,12 @@ class AtRiskCustomersWidget extends Widget
             ->orderBy('last_order_date')
             ->limit($this->rowLimit())
             ->get()
-            ->map(fn (mixed $customer): array => [
+            ->map(fn (Customer $customer): array => [
                 'id' => $customer->id,
                 'name' => $customer->name,
-                'last_order' => $customer->last_order_date?->diffForHumans() ?? '—',
-                'days_inactive' => $customer->days_since_last_order,
-                'lifetime_value' => '$' . number_format((float) $customer->lifetime_value, 0),
+                'last_order' => Carbon::parse($customer->getAttribute('last_order_date'))->diffForHumans(),
+                'days_inactive' => (int) $customer->getAttribute('days_since_last_order'),
+                'lifetime_value' => '$' . number_format((float) $customer->getAttribute('lifetime_value'), 0),
             ])
             ->all();
     }

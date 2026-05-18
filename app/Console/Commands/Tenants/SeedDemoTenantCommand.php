@@ -48,7 +48,8 @@ class SeedDemoTenantCommand extends Command
         // it is for *.kneadit.test) it falls through to subdomain identification
         // and looks up `domain = '<bare-subdomain>'`, NOT the full hostname.
         // Matches the pattern in CreateOneTenantCommand used by kneadit:seed-local.
-        $centralDomain = (string) collect(config('tenancy.central_domains'))->first();
+        $centralDomains = config('tenancy.central_domains');
+        $centralDomain = is_array($centralDomains) ? (string) ($centralDomains[0] ?? '') : '';
         $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain]);
         $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID]);
 

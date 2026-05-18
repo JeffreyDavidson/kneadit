@@ -83,7 +83,7 @@ class UpcomingOrdersWidget extends Widget
         return match ($this->size()) {
             WidgetSize::Small => 3,   // next 3 days (matches WidgetMeta description, preserves original behavior)
             WidgetSize::Medium => 5,
-            WidgetSize::Large => 7,   // full week
+            WidgetSize::Large, WidgetSize::ExtraLarge => 7,   // full week
         };
     }
 }

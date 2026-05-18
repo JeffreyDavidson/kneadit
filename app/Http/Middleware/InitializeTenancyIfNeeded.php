@@ -64,7 +64,7 @@ class InitializeTenancyIfNeeded
             'message' => $exception->getMessage(),
         ]);
 
-        if (app()->isLocal() && $tenantId !== null) {
+        if (app()->isLocal()) {
             $tenant = Tenant::query()->find($tenantId);
 
             if ($tenant && $this->recreateMissingDatabase($tenant)) {
@@ -77,11 +77,11 @@ class InitializeTenancyIfNeeded
         abort(503, 'Bakery temporarily unavailable. Run `php artisan tenants:doctor --fix` to repair.');
     }
 
-    private function extractTenantId(Request $request): ?string
+    private function extractTenantId(Request $request): string
     {
         $parts = explode('.', $request->getHost());
 
-        return $parts[0] ?? null;
+        return $parts[0];
     }
 
     private function recreateMissingDatabase(Tenant $tenant): bool
