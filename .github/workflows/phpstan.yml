@@ -9,17 +9,13 @@ on:
 jobs:
   analyse:
     name: Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          tools: composer:v2
-          coverage: none
+      - name: Verify PHP toolchain
+        run: php --version && composer --version
 
       - name: Install Composer dependencies
         env:

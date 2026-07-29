@@ -9,19 +9,13 @@ on:
 jobs:
   tests:
     name: Pest
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
-          tools: composer:v2
-          coverage: none
-          ini-values: memory_limit=2G
+      - name: Verify PHP toolchain
+        run: php --version && composer --version
 
       - name: Copy environment file
         run: cp .env.example .env
