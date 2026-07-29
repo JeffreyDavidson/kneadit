@@ -26,6 +26,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: echo "GOPATH=$RUNNER_TEMP/go" >> "$GITHUB_ENV"
+
       - uses: actions/setup-go@v5
         with:
           go-version: 'stable'
