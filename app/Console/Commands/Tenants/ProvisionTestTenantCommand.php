@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\DB;
 #[Description('Provision the canonical browser-test tenant (tenant + domain + DB + migrations + BrowserTestFixtureSeeder)')]
 class ProvisionTestTenantCommand extends Command
 {
-    public const TENANT_ID = 'browser-test';
+    public const string TENANT_ID = 'browser-test';
 
-    public const STORE_NAME = 'Browser Test Bakery';
+    public const string STORE_NAME = 'Browser Test Bakery';
 
     public function handle(): int
     {

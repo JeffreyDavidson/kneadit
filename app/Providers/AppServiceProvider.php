@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * @var array<class-string, string>
      */
-    private const TENANT_SETTING_DTOS = [
+    private const array TENANT_SETTING_DTOS = [
         StoreInfo::class => 'store',
         BrandingSettings::class => 'branding',
         OrderSettings::class => 'orders',

@@ -64,6 +64,6 @@ class ExpenseResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::query()->count();
+        return (string) cache()->remember('navigation-badge:expenses:count', 60, fn (): int => static::getModel()::query()->count());
     }
 }

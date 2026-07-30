@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ChangelogService
 {
-    private const REPO = 'JeffreyDavidson/kneadit';
+    private const string REPO = 'JeffreyDavidson/kneadit';
 
     /**
      * Get changelog entries, cached with stale-while-revalidate.

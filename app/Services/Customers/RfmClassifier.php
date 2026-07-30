@@ -13,19 +13,19 @@ use App\Enums\Customers\RfmSegment;
  */
 class RfmClassifier
 {
-    public const RECENT_DAYS = 30;
+    public const int RECENT_DAYS = 30;
 
-    public const ENGAGED_DAYS = 60;
+    public const int ENGAGED_DAYS = 60;
 
-    public const AT_RISK_DAYS = 180;
+    public const int AT_RISK_DAYS = 180;
 
-    public const FREQUENT_ORDERS = 4;
+    public const int FREQUENT_ORDERS = 4;
 
-    public const LOYAL_ORDERS = 3;
+    public const int LOYAL_ORDERS = 3;
 
-    public const BIG_SPEND_DOLLARS = 500;
+    public const int BIG_SPEND_DOLLARS = 500;
 
-    public const LOYAL_SPEND_DOLLARS = 200;
+    public const int LOYAL_SPEND_DOLLARS = 200;
 
     public function classify(int $recencyDays, int $frequency, float $monetary): RfmSegment
     {

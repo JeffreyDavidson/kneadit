@@ -11,13 +11,15 @@ trait ShowsUpgradeBadge
 
     public static function getNavigationBadge(): ?string
     {
-        $current = tenant()?->plan;
+        return cache()->remember('navigation-badge:upgrade:' . static::class . ':' . (tenant()?->getTenantKey() ?? 'central') . ':' . static::requiredTier()->value, 60, function (): ?string {
+            $current = tenant()?->plan;
 
-        if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
-            return null;
-        }
+            if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
+                return null;
+            }
 
-        return Str::upper(static::requiredTier()->value);
+            return Str::upper(static::requiredTier()->value);
+        });
     }
 
     public static function getNavigationBadgeColor(): ?string
