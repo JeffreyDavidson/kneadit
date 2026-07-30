@@ -65,7 +65,7 @@ test('filters out draft releases', function () {
 
 test('falls back to config when GitHub API throws exception', function () {
     Http::fake([
-        'api.github.com/*' => Http::response(fn () => throw new RuntimeException('Connection refused')),
+        'api.github.com/*' => fn () => throw new RuntimeException('Connection refused'),
     ]);
 
     config(['changelog' => [

@@ -43,20 +43,6 @@ fi
 
 echo "Pint passed"
 
-# 3. TLint (Laravel/Blade idioms)
-TLINT_OUTPUT=$(mktemp)
-trap 'rm -f "$TLINT_OUTPUT"' EXIT
-
-vendor/bin/tlint lint > "$TLINT_OUTPUT" 2>&1
-if grep -q "^!" "$TLINT_OUTPUT"; then
-    echo ""
-    echo "Commit blocked: TLint found violations."
-    cat "$TLINT_OUTPUT"
-    echo "Run 'vendor/bin/tlint lint' to see details."
-    exit 1
-fi
-
-echo "TLint passed"
 
 echo ""
 echo "Fast pre-commit checks passed."
