@@ -17,7 +17,7 @@ use App\Models\Orders\Order;
  */
 final class OrderAccessGuard
 {
-    private const SESSION_KEY = 'verified_order_numbers';
+    private const string SESSION_KEY = 'verified_order_numbers';
 
     /**
      * Mark this order as accessible to the current session.

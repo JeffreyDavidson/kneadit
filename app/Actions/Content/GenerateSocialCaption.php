@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class GenerateSocialCaption
 {
-    private const TEMPLATES = [
+    private const array TEMPLATES = [
         'Fresh from the oven! Our {product} is made with love and the finest ingredients. Order yours today! 🍞✨ #{store_hashtag}',
         "Have you tried our {product}? It's one of our favorites! DM us to place your order 💛 #{store_hashtag}",
         'Weekend treat alert! 🎉 Our {product} ({price}) is calling your name. Link in bio to order! #{store_hashtag}',

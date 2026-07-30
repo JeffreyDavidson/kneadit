@@ -25,8 +25,15 @@ $persistentTenantDbs = [
 ];
 
 $cleanupTenantFiles = function () use ($persistentTenantDbs): void {
+    if (function_exists('tenancy') && tenancy()->initialized) {
+        tenancy()->end();
+    }
+
+    DB::purge('tenant');
+
+    gc_collect_cycles();
     foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (! is_file($file) || ! is_writable($file)) {
+        if (! is_file($file)) {
             continue;
         }
 
@@ -34,7 +41,10 @@ $cleanupTenantFiles = function () use ($persistentTenantDbs): void {
             continue;
         }
 
-        unlink($file);
+        @unlink($file);
+        @unlink($file . '-journal');
+        @unlink($file . '-wal');
+        @unlink($file . '-shm');
     }
 };
 
