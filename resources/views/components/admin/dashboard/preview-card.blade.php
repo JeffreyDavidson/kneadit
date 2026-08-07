@@ -16,7 +16,5 @@
             <div>{{ $actions }}</div>
         @endisset
     </div>
-    <div class="preview-widget-body">
-        {{ $slot }}
-    </div>
+    <div class="preview-widget-body">{{ $slot }}</div>
 </div>

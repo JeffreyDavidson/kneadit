@@ -1,3 +1,5 @@
-<button {{ $attributes->class(['w-full rounded-full bg-warm-800 text-white font-semibold py-3 hover:bg-warm-900 transition']) }}>
-    {{ $slot }}
-</button>
+@props(['name'])
+
+@error($name)
+    <p {{ $attributes->class(['mt-1 text-sm text-red-600']) }}>{{ $message }}</p>
+@enderror

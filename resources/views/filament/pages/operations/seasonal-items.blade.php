@@ -2,33 +2,36 @@
     <div class="space-y-6">
         {{-- Add Form --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="fi-section-content p-6">
-                {{ $this->content }}
-            </div>
+            <div class="fi-section-content p-6">{{ $this->content }}</div>
         </div>
 
         {{-- Current Seasonal Items --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h3 class="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-white">
                     <span class="h-3 w-3 rounded-full bg-green-500"></span>
                     Currently Available
                 </h3>
                 @forelse ($this->currentItems as $item)
-                    <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <div class="flex items-center justify-between border-b border-gray-100 py-3 last:border-0 dark:border-gray-800">
                         <div>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</span>
-                            <span class="text-sm text-gray-500 ml-2">
+                            <span class="ml-2 text-sm text-gray-500">
                                 {{ $item->available_from->format('M j') }} – {{ $item->available_until->format('M j, Y') }}
                             </span>
                             @if ($item->notes)
-                                <span class="text-sm text-gray-400 ml-2">· {{ $item->notes }}</span>
+                                <span class="ml-2 text-sm text-gray-400">· {{ $item->notes }}</span>
                             @endif
                         </div>
-                        <button wire:click="deleteSeasonalItem({{ $item->id }})" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+                        <button
+                            wire:click="deleteSeasonalItem({{ $item->id }})"
+                            class="text-sm text-red-500 hover:text-red-700"
+                        >
+                            Remove
+                        </button>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-sm">No seasonal items currently available.</p>
+                    <p class="text-sm text-gray-500">No seasonal items currently available.</p>
                 @endforelse
             </div>
         </div>
@@ -36,25 +39,30 @@
         {{-- Upcoming --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h3 class="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-white">
                     <span class="h-3 w-3 rounded-full bg-blue-500"></span>
                     Upcoming
                 </h3>
                 @forelse ($this->upcomingItems as $item)
-                    <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <div class="flex items-center justify-between border-b border-gray-100 py-3 last:border-0 dark:border-gray-800">
                         <div>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</span>
-                            <span class="text-sm text-gray-500 ml-2">
+                            <span class="ml-2 text-sm text-gray-500">
                                 Starts {{ $item->available_from->format('M j, Y') }} – {{ $item->available_until->format('M j, Y') }}
                             </span>
                             @if ($item->notes)
-                                <span class="text-sm text-gray-400 ml-2">· {{ $item->notes }}</span>
+                                <span class="ml-2 text-sm text-gray-400">· {{ $item->notes }}</span>
                             @endif
                         </div>
-                        <button wire:click="deleteSeasonalItem({{ $item->id }})" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+                        <button
+                            wire:click="deleteSeasonalItem({{ $item->id }})"
+                            class="text-sm text-red-500 hover:text-red-700"
+                        >
+                            Remove
+                        </button>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-sm">No upcoming seasonal items.</p>
+                    <p class="text-sm text-gray-500">No upcoming seasonal items.</p>
                 @endforelse
             </div>
         </div>
@@ -62,22 +70,27 @@
         {{-- Expired --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h3 class="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-white">
                     <span class="h-3 w-3 rounded-full bg-gray-400"></span>
                     Expired
                 </h3>
                 @forelse ($this->expiredItems as $item)
-                    <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <div class="flex items-center justify-between border-b border-gray-100 py-3 last:border-0 dark:border-gray-800">
                         <div>
                             <span class="font-medium text-gray-500">{{ $item->product->name }}</span>
-                            <span class="text-sm text-gray-400 ml-2">
+                            <span class="ml-2 text-sm text-gray-400">
                                 {{ $item->available_from->format('M j') }} – {{ $item->available_until->format('M j, Y') }}
                             </span>
                         </div>
-                        <button wire:click="deleteSeasonalItem({{ $item->id }})" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+                        <button
+                            wire:click="deleteSeasonalItem({{ $item->id }})"
+                            class="text-sm text-red-500 hover:text-red-700"
+                        >
+                            Remove
+                        </button>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-sm">No expired seasonal items.</p>
+                    <p class="text-sm text-gray-500">No expired seasonal items.</p>
                 @endforelse
             </div>
         </div>
@@ -85,7 +98,7 @@
         {{-- Timeline --}}
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-content p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h3 class="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-white">
                     <x-filament::icon icon="heroicon-o-calendar-days" class="h-5 w-5" />
                     Timeline
                 </h3>
@@ -110,7 +123,7 @@
                         </span>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-sm">No seasonal items to display.</p>
+                    <p class="text-sm text-gray-500">No seasonal items to display.</p>
                 @endforelse
             </div>
         </div>

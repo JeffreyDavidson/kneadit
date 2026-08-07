@@ -1,189 +1,372 @@
 <x-layouts.storefront>
-<link rel="stylesheet" href="{{ asset('css/gallery.css') }}">
+    <div x-data="giftCardPage()">
+        {{-- Photo-Forward Hero --}}
+        <x-storefront.hero-section
+            :image="$settings->giftCardsHeroImageUrl()"
+            image-alt="Fresh baked goods"
+            image-class="hero-img"
+        >
+            <div class="relative z-10 mx-auto flex min-h-[55vh] max-w-4xl flex-col justify-end px-4 pb-20 text-center">
+                <x-storefront.eyebrow line-opacity="0.4" class="hero-fade-1 mb-6">
+                    {{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</x-storefront.eyebrow>
+                <h1 class="hero-fade-2 font-display mb-6 text-4xl leading-tight font-bold text-white md:text-6xl">
+                    {!! nl2br(e($content['hero_title'] ?? "Give the Gift of\nFresh Baked Goods")) !!}
+                </h1>
+                <p class="hero-fade-3 font-script text-warm-400 text-2xl md:text-3xl">
+                    {{ $content['hero_subtitle'] ?? 'A treat they\'ll remember long after the last crumb' }}
+                </p>
+            </div>
+        </x-storefront.hero-section>
 
-
-{{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' gallery'" image-class="hero-img">
-    <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</x-storefront.eyebrow>
-        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
-            {{ $content['hero_title'] ?? 'Customer Gallery' }}
-        </h1>
-        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
-            Moments worth sharing
-        </p>
-        <p class="hero-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-100">
-            {{ $content['hero_subtitle'] ?? 'See what our customers are creating and enjoying!' }}
-        </p>
-    </div>
-</x-storefront.hero-section>
-
-{{-- Masonry Gallery with Lightbox --}}
-<section class="bg-warm-100" x-data="galleryLightbox">
-    <div class="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        @if ($photos->count() > 0)
-        <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 mb-12">
-            @foreach ($photos as $photo)
-            <div class="break-inside-avoid mb-6">
-                <div class="gallery-item bg-warm-200"
-                     @click="show(@js(asset('storage/customer-photos/' . basename($photo->photo_path))), @js($photo->caption ?? ''), @js($photo->customer_name))">
-                    @if ($photo->is_featured)
-                    <x-storefront.pill tone="solid" size="sm" class="absolute top-3 left-3 z-10 !font-bold uppercase tracking-wider gap-1">
-                        <x-heroicon-s-star class="w-3.5 h-3.5" />
-                        Featured
-                    </x-storefront.pill>
-                    @endif
-                    <img
-                        src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}"
-                        alt="Photo by {{ $photo->customer_name }}"
-                        class="w-full object-cover"
-                        loading="lazy"
-                    >
-                    {{-- Hover Caption Overlay --}}
-                    <div class="gallery-caption absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-warm-900/85 via-warm-900/40 to-transparent">
-                        @if ($photo->caption)
-                        <p class="italic text-sm mb-2 text-warm-200">"{{ $photo->caption }}"</p>
-                        @endif
-                        <div class="flex items-center gap-2">
-                            <x-storefront.avatar-initial :name="$photo->customer_name" size="sm" dark />
-                            <span class="text-sm font-semibold text-warm-300">{{ Str::of($photo->customer_name)->explode(' ')->first() }}</span>
+        {{-- Success State --}}
+        <div x-show="purchasedCard" x-cloak class="bg-warm-50 px-4 py-20">
+            <div class="mx-auto max-w-lg text-center">
+                {{-- Gift card mockup --}}
+                <div class="from-warm-900 to-warm-800 relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br p-8 shadow-2xl">
+                    <div class="bg-warm-500 absolute top-0 right-0 h-40 w-40 translate-x-[30%] -translate-y-[30%] rounded-full opacity-10"></div>
+                    <div class="bg-warm-500 absolute bottom-0 left-0 h-32 w-32 -translate-x-[30%] translate-y-[30%] rounded-full opacity-10"></div>
+                    <div class="relative z-10">
+                        <p class="font-script text-warm-500 mb-1 text-xl">Gift Card</p>
+                        <p
+                            class="font-display mb-4 text-4xl font-bold text-white"
+                            x-text="'$' + parseFloat(purchasedCard?.balance || 0).toFixed(2)"
+                        ></p>
+                        <div class="border-warm-400/20 mb-2 inline-block rounded-xl border bg-white/5 px-6 py-3">
+                            <span
+                                class="text-warm-400 font-mono text-lg font-bold tracking-[0.2em]"
+                                x-text="purchasedCard?.code"
+                            ></span>
                         </div>
-                        @if ($photo->product)
-                        <p class="text-xs mt-1 text-warm-500">{{ $photo->product->name }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-        <div class="flex justify-center mb-12">
-            {{ $photos->links() }}
-        </div>
-        @else
-        <div class="max-w-2xl mx-auto text-center py-16">
-            {{-- Decorative icon --}}
-            <x-storefront.icon-circle size="lg" variant="plain" class="mx-auto mb-8">
-                <x-heroicon-o-camera class="w-10 h-10 text-warm-500" />
-            </x-storefront.icon-circle>
-
-            <h2 class="font-display text-3xl font-bold mb-4 text-warm-900">{{ $content['empty_heading'] ?? 'Your Photos Will Shine Here' }}</h2>
-            <p class="text-lg leading-relaxed mb-6 text-warm-600">
-                {{ $content['empty_description'] ?? 'We\'d love to see what you\'re baking and enjoying! Share a photo of your order and it\'ll appear right here for the whole community to see.' }}
-            </p>
-            <p class="font-script text-xl mb-10 text-warm-500">{{ $content['empty_script'] ?? 'Be the first to share!' }}</p>
-
-            {{-- Faux gallery preview --}}
-            <div class="grid grid-cols-3 gap-3 opacity-20">
-                @for ($i = 0; $i < 6; $i++)
-                <div @class([
-                    'rounded-xl overflow-hidden bg-gradient-to-br from-warm-200 to-warm-300',
-                    'aspect-square' => $i % 2 === 0,
-                    'aspect-[4/5]' => $i === 1 || $i === 5,
-                    'aspect-[5/4]' => $i === 3,
-                ])></div>
-                @endfor
-            </div>
-
-            <x-storefront.button href="#share-photo" variant="dark" size="lg" class="mt-10">
-                Share Your Photo ↓
-            </x-storefront.button>
-        </div>
-        @endif
-    </div>
-
-    {{-- Lightbox Modal --}}
-    <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-warm-900/90 backdrop-blur"
-         @click.self="close()" @keydown.escape.window="close()"
-         role="dialog" aria-label="Photo lightbox">
-        <button @click="close()" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110 bg-white/10 text-warm-300" aria-label="Close lightbox">&times;</button>
-        <div class="max-w-4xl w-full" @click.stop>
-            <img x-bind:src="src" x-bind:alt="caption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
-            <div class="mt-4 text-center" x-show="caption || author">
-                <p x-show="caption" class="italic text-lg text-warm-300" x-text="'&quot;' + caption + '&quot;'"></p>
-                <p x-show="author" class="text-sm mt-2 font-semibold text-warm-500" x-text="'— ' + author"></p>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- Upload CTA + Form --}}
-<x-storefront.dark-section id="share-photo" padding="py-24" class="scroll-mt-20">
-    <div class="max-w-2xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <x-storefront.eyebrow line-opacity="0.5" class="mb-6">{{ $content['upload_eyebrow'] ?? 'Share Yours' }}</x-storefront.eyebrow>
-            <h2 class="font-display text-3xl md:text-5xl font-bold mb-4 text-warm-100">{{ $content['upload_heading'] ?? 'Share Your Photo' }}</h2>
-            <p class="text-lg text-warm-400">{{ $content['upload_description'] ?? 'Show off your order! Photos will appear after approval.' }}</p>
-        </div>
-
-        @session('success')
-        <x-storefront.alert :dismiss-after="5000">{{ $value }}</x-storefront.alert>
-        @endsession
-
-        @if ($errors->any())
-        <x-storefront.alert type="error">
-            <ul class="list-disc list-inside text-sm">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </x-storefront.alert>
-        @endif
-
-        <div class="p-8 md:p-10 rounded-2xl bg-warm-800 border border-warm-700/20">
-            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true" data-test="gallery-upload-form">
-                @csrf
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-warm-300">Your Name *</label>
-                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="storefront-input-dark" data-test="gallery-upload-form-customer-name">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-warm-300">Your Email *</label>
-                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="storefront-input-dark" data-test="gallery-upload-form-customer-email">
                     </div>
                 </div>
 
-                <div x-data="{ fileName: '' }">
-                    <label class="block text-sm font-medium mb-2 text-warm-300">Photo * <span class="font-normal text-warm-500">(JPG, PNG, or WebP — max 5MB)</span></label>
-                    <label class="block cursor-pointer rounded-xl p-8 text-center transition-all duration-300 border-2 border-dashed border-warm-500/25 bg-warm-500/5 hover:border-warm-500/50 hover:bg-warm-500/10">
-                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''" data-test="gallery-upload-form-photo">
-                        <div x-show="!fileName">
-                            <x-heroicon-o-arrow-up-tray class="w-10 h-10 mx-auto mb-3 text-warm-500/60" />
-                            <p class="font-medium mb-1 text-warm-300">Click to upload or drag & drop</p>
-                            <p class="text-sm text-warm-500">JPG, PNG, or WebP up to 5MB</p>
+                <h2 class="font-display text-warm-900 mb-2 text-2xl font-bold">
+                    {{ $content['success_heading'] ?? 'Gift Card Purchased!' }}
+                </h2>
+                <p class="text-warm-600 mb-6">
+                    {{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}
+                </p>
+
+                <div class="flex justify-center gap-4">
+                    <x-storefront.button variant="outline-light" size="md" class="gap-2" @click="copyCode()">
+                        <x-heroicon-o-document-duplicate class="h-4 w-4" stroke-width="2" />
+                        <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
+                    </x-storefront.button>
+                    <x-storefront.button size="md" @click="purchasedCard = null">
+                        Purchase Another
+                    </x-storefront.button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Main Content --}}
+        <div x-show="! purchasedCard">
+            <section class="bg-warm-50 px-4 py-20">
+                <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-5">
+                    {{-- Left: Gift Card Preview + Amount Selection (3 cols) --}}
+                    <div class="space-y-10 lg:col-span-3">
+                        {{-- Card Preview --}}
+                        <div>
+                            <p class="text-warm-500 mb-4 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['preview_label'] ?? 'Preview' }}
+                            </p>
+                            <div class="from-warm-900 to-warm-800 relative flex aspect-[16/9] flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-10 shadow-xl">
+                                <div class="bg-warm-500 absolute top-0 right-0 h-60 w-60 translate-x-[30%] -translate-y-[30%] rounded-full opacity-[0.06]"></div>
+                                <div class="bg-warm-500 absolute bottom-0 left-0 h-48 w-48 -translate-x-[30%] translate-y-[30%] rounded-full opacity-[0.06]"></div>
+                                <div class="relative z-10">
+                                    <p class="font-script text-warm-500 text-2xl">Gift Card</p>
+                                    <p class="font-display text-warm-400 mt-1 text-lg">{{ $settings->store->name }}</p>
+                                </div>
+                                <div class="relative z-10 text-right">
+                                    <p
+                                        class="font-display text-5xl font-bold text-white"
+                                        x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"
+                                    ></p>
+                                </div>
+                            </div>
                         </div>
-                        <div x-show="fileName" class="flex items-center justify-center gap-2">
-                            <x-heroicon-o-check class="w-5 h-5 text-green-400" stroke-width="2" />
-                            <span class="font-medium text-warm-300" x-text="fileName"></span>
+
+                        {{-- Amount Selection --}}
+                        <div>
+                            <p class="text-warm-500 mb-4 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['amount_label'] ?? 'Select Amount' }}
+                            </p>
+                            <div class="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                                <template x-for="preset in @json($settings->giftCards->presetAmounts)" :key="preset">
+                                    <button
+                                        type="button"
+                                        @click="
+                                            form.initial_balance = preset;
+                                            customAmount = '';
+                                        "
+                                        :class="form.initial_balance == preset && ! customAmount
+                                            ? 'bg-warm-500 text-warm-900 border-warm-500'
+                                            : 'bg-white text-warm-800 border-warm-200'"
+                                        class="font-display cursor-pointer rounded-2xl border-2 py-5 text-center text-2xl font-bold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    >
+                                        <span x-text="'$' + preset"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-warm-600 text-sm font-semibold whitespace-nowrap">Custom amount:</span>
+                                <div class="relative flex-1">
+                                    <span class="text-warm-500 absolute top-1/2 left-4 -translate-y-1/2 font-semibold">$</span>
+                                    <input
+                                        type="number"
+                                        x-model="customAmount"
+                                        @input="form.initial_balance = customAmount"
+                                        min="1"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        class="border-warm-200 text-warm-800 w-full rounded-xl border-2 bg-white py-3 pr-4 pl-8 font-semibold transition-colors focus:outline-none"
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    </label>
-                </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-warm-300">Caption</label>
-                    <textarea name="caption" rows="3" class="storefront-input-dark" data-test="gallery-upload-form-caption">{{ old('caption') }}</textarea>
-                </div>
+                        {{-- Check Balance --}}
+                        <div class="border-warm-200 rounded-2xl border bg-white p-8">
+                            <h3 class="font-display text-warm-900 mb-4 text-xl font-semibold">
+                                {{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}
+                            </h3>
+                            <form
+                                @submit.prevent="checkBalance()"
+                                class="flex flex-col gap-3 sm:flex-row"
+                                data-test="gift-card-balance-form"
+                            >
+                                <input
+                                    type="text"
+                                    x-model="balanceCode"
+                                    required
+                                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                                    class="input-field flex-1 font-mono tracking-wider uppercase"
+                                    data-test="gift-card-balance-form-code"
+                                />
+                                <x-storefront.button
+                                    type="submit"
+                                    variant="outline-light"
+                                    size="md"
+                                    x-bind:disabled="! balanceCode || isCheckingBalance"
+                                    class="whitespace-nowrap"
+                                    x-bind:class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
+                                    data-test="gift-card-balance-form-submit"
+                                >
+                                    <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
+                                </x-storefront.button>
+                            </form>
+                            <div
+                                x-show="balanceError"
+                                class="mt-2 text-sm text-red-600"
+                                x-text="balanceError"
+                                data-test="gift-card-balance-error"
+                            ></div>
+                            <div x-show="balanceResult" x-cloak class="bg-warm-50 mt-6 rounded-xl p-6 text-center">
+                                <p class="text-warm-500 mb-1 text-sm tracking-wider uppercase">Current Balance</p>
+                                <p
+                                    class="font-display text-warm-900 text-4xl font-bold"
+                                    x-text="'$' + parseFloat(balanceResult?.current_balance || 0).toFixed(2)"
+                                ></p>
+                                <p class="text-warm-500 mt-2 text-sm" x-show="balanceResult?.expires_at">
+                                    Expires: <span x-text="balanceResult?.expires_at"></span>
+                                </p>
+                                <p
+                                    class="mt-1 text-sm font-semibold text-red-600"
+                                    x-show="balanceResult && ! balanceResult.is_usable"
+                                >
+                                    This card is no longer active.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-warm-300">Which product? (optional)</label>
-                    <select name="product_id" class="storefront-input-dark" data-test="gallery-upload-form-product-id">
-                        <option value="">— Select a product —</option>
-                        @foreach ($products as $product)
-                        <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    {{-- Right: Purchase Form (2 cols) --}}
+                    <div class="lg:col-span-2">
+                        <div class="border-warm-200 sticky top-8 rounded-2xl border bg-white p-8 shadow-2xl">
+                            <p class="text-warm-500 mb-1 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['details_eyebrow'] ?? 'Details' }}
+                            </p>
+                            <h2 class="font-display text-warm-900 mb-6 text-2xl font-bold">
+                                {{ $content['details_heading'] ?? 'Send Your Gift' }}
+                            </h2>
 
-                <x-storefront.buttons.async-submit
-                    type="submit"
-                    idle-text="Submit Photo"
-                    loading-text="Uploading..."
-                    class="w-full font-semibold hover:scale-[1.02] justify-center"
-                    data-test="gallery-upload-form-submit" />
-            </form>
+                            <form @submit.prevent="purchase()" class="space-y-5" data-test="gift-card-purchase-form">
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Your Name *</label>
+                                    <input
+                                        type="text"
+                                        x-model="form.purchaser_name"
+                                        required
+                                        class="input-field"
+                                        data-test="gift-card-purchase-form-purchaser-name"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Your Email *</label>
+                                    <input
+                                        type="email"
+                                        x-model="form.purchaser_email"
+                                        required
+                                        class="input-field"
+                                        data-test="gift-card-purchase-form-purchaser-email"
+                                    />
+                                </div>
+
+                                <div class="border-warm-200 border-t pt-4">
+                                    <p class="font-script text-warm-500 mb-3 text-lg">
+                                        {{ $content['recipient_label'] ?? 'Recipient Info' }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Recipient Name</label>
+                                    <input
+                                        type="text"
+                                        x-model="form.recipient_name"
+                                        class="input-field"
+                                        placeholder="Optional"
+                                        data-test="gift-card-purchase-form-recipient-name"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Recipient Email</label>
+                                    <input
+                                        type="email"
+                                        x-model="form.recipient_email"
+                                        class="input-field"
+                                        placeholder="Optional"
+                                        data-test="gift-card-purchase-form-recipient-email"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Gift Message</label>
+                                    <textarea
+                                        x-model="form.message"
+                                        class="input-field"
+                                        rows="3"
+                                        placeholder="Add a personal touch..."
+                                        data-test="gift-card-purchase-form-message"
+                                    ></textarea>
+                                </div>
+
+                                <div
+                                    x-show="purchaseError"
+                                    class="text-sm text-red-600"
+                                    x-text="purchaseError"
+                                    data-test="gift-card-purchase-error"
+                                ></div>
+
+                                <button
+                                    type="submit"
+                                    :disabled="! form.purchaser_name ||
+                                    ! form.purchaser_email ||
+                                    ! form.initial_balance ||
+                                    isPurchasing"
+                                    class="w-full rounded-full py-4 text-lg font-bold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                                    :class="isPurchasing ? 'opacity-50 cursor-not-allowed' : ''"
+                                    class="bg-warm-500 text-warm-900"
+                                    data-test="gift-card-purchase-form-submit"
+                                >
+                                    <span
+                                        x-text="
+                                            isPurchasing
+                                                ? 'Processing...'
+                                                : 'Purchase — $' + parseFloat(form.initial_balance || 0).toFixed(2)
+                                        "
+                                    ></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
-</x-storefront.dark-section>
+    <script @cspnonce>
+        function giftCardPage() {
+            return {
+                form: {
+                    purchaser_name: '',
+                    purchaser_email: localStorage.getItem('customer_email') || '',
+                    recipient_name: '',
+                    recipient_email: '',
+                    message: '',
+                    initial_balance: __PINT_BLADE_0__,
+                },
+                customAmount: '',
+                isPurchasing: false,
+                purchaseError: '',
+                purchasedCard: null,
+                copied: false,
+                balanceCode: '',
+                isCheckingBalance: false,
+                balanceError: '',
+                balanceResult: null,
+
+                async purchase() {
+                    if (this.isPurchasing) return;
+                    this.isPurchasing = true;
+                    this.purchaseError = '';
+
+                    try {
+                        const response = await fetch(__PINT_BLADE_1__, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': __PINT_BLADE_2__,
+                            },
+                            body: JSON.stringify(this.form),
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            this.purchasedCard = data.gift_card;
+                        } else {
+                            this.purchaseError = data.error || 'Something went wrong.';
+                        }
+                    } catch (e) {
+                        this.purchaseError = 'Something went wrong. Please try again.';
+                    } finally {
+                        this.isPurchasing = false;
+                    }
+                },
+
+                async checkBalance() {
+                    if (this.isCheckingBalance) return;
+                    this.isCheckingBalance = true;
+                    this.balanceError = '';
+                    this.balanceResult = null;
+
+                    try {
+                        const response = await fetch(__PINT_BLADE_3__, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': __PINT_BLADE_4__,
+                            },
+                            body: JSON.stringify({ code: this.balanceCode }),
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            this.balanceResult = data;
+                        } else {
+                            this.balanceError = data.error || 'Gift card not found.';
+                        }
+                    } catch (e) {
+                        this.balanceError = 'Something went wrong.';
+                    } finally {
+                        this.isCheckingBalance = false;
+                    }
+                },
+
+                copyCode() {
+                    if (this.purchasedCard?.code) {
+                        navigator.clipboard.writeText(this.purchasedCard.code);
+                        this.copied = true;
+                        setTimeout(() => (this.copied = false), 2000);
+                    }
+                },
+            };
+        }
+    </script>
 </x-layouts.storefront>

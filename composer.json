@@ -27,7 +27,7 @@
         "larastan/larastan": "^3.9",
         "laravel/boost": "^2.3",
         "laravel/pail": "^1.2.5",
-        "laravel/pint": "^1.27",
+        "laravel/pint": "^1.30",
         "laravel/sail": "^1.53",
         "laraveldaily/filacheck": "^1.1",
         "laraveldaily/filacheck-pro": "^1.1",

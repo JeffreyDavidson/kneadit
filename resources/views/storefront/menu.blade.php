@@ -1,136 +1,192 @@
 <x-layouts.storefront>
-<link rel="stylesheet" href="{{ asset('css/menu.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/reviews.css') }}" />
 
-{{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' menu'" image-class="hero-img">
-    <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $heroEyebrow }}</x-storefront.eyebrow>
-        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
-            {{ $content['hero_title'] ?? 'Our Menu' }}
-        </h1>
-        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-300">
-            Crafted with care, baked with love
-        </p>
-        <p class="hero-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4 text-warm-100">
-            {{ $content['hero_subtitle'] ?? 'Everything we make, crafted with care. Browse at your pace — when something catches your eye, we\'ll have it freshly prepared just for you.' }}
-        </p>
-    </div>
-</x-storefront.hero-section>
+    {{-- Photo-Forward Hero with Dark Overlay --}}
+    <x-storefront.hero-section
+        :image="$vm->settings->heroImageUrl()"
+        :image-alt="$vm->settings->store->name . ' Reviews'"
+        image-class="hero-img"
+        min-height="60vh"
+        gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)"
+    >
+        <div class="relative z-10 flex min-h-[60vh] flex-col items-center justify-end px-4 pb-20 text-center">
+            <x-storefront.eyebrow class="hero-fade-1 mb-6">
+                {{ $vm->content['hero_eyebrow'] ?? 'What People Say' }}</x-storefront.eyebrow>
+            <h1 class="hero-fade-1 font-display text-warm-100 mb-6 text-3xl leading-none font-bold sm:text-5xl md:text-7xl lg:text-8xl">
+                {{ $vm->content['hero_title'] ?? 'Kind Words' }}
+            </h1>
+            @if ($vm->totalReviews > 0)
+                <p class="hero-fade-2 font-script text-warm-400 text-2xl md:text-3xl">
+                    {{ $vm->totalReviews }} {{ Str::plural('review', $vm->totalReviews) }} from happy customers
+                </p>
+            @endif
+        </div>
+    </x-storefront.hero-section>
 
-{{-- Category Filter Tabs --}}
-@if (count($categories) > 1)
-<div class="sticky top-14 md:top-16 z-30 bg-warm-900 border-b border-warm-700/15">
-    <div class="max-w-7xl mx-auto px-4">
-        <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide scrollbar-none" x-data="{ active: '' }" aria-label="Menu categories">
-            <a href="#all" @click="active = ''"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-3 rounded-full text-warm-400 bg-warm-700/15"
-               :class="active === '' ? 'active' : ''"
-               :aria-current="active === '' ? 'true' : 'false'">
-                All
-            </a>
-            @foreach ($categories as $cat)
-            <a href="#category-{{ $cat->id }}" @click="active = '{{ $cat->id }}'"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-3 rounded-full text-warm-400 bg-warm-700/15"
-               :class="active === '{{ $cat->id }}' ? 'active' : ''"
-               :aria-current="active === '{{ $cat->id }}' ? 'true' : 'false'">
-                {{ $cat->name }}
-            </a>
-            @endforeach
-        </nav>
-    </div>
-</div>
-@endif
-
-{{-- Product Grid by Category --}}
-<div class="bg-warm-900">
-    <div class="max-w-7xl mx-auto px-4">
-        @forelse ($categories as $category)
-        <section id="category-{{ $category->id }}" class="py-16 md:py-20">
-            {{-- Category Header --}}
-            <div class="mb-12">
-                <x-storefront.eyebrow align="left" class="mb-3">{{ $content['category_eyebrow'] ?? 'Collection' }}</x-storefront.eyebrow>
-                <div class="flex items-end gap-6">
-                    <h2 class="font-display text-3xl md:text-5xl font-bold text-warm-100">
-                        {{ $category->name }}
-                    </h2>
-                    <div class="flex-1 h-px mb-3 bg-warm-700/20"></div>
+    {{-- Stats Strip --}}
+    @if ($vm->totalReviews > 0)
+        <section class="bg-warm-800">
+            <div class="mx-auto max-w-5xl px-4 py-12">
+                <div
+                    class="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8"
+                    x-data="countUpStats([
+                { ref: 'avg', value: {{ $vm->avgRating }} },
+                { ref: 'total', value: {{ $vm->totalReviews }} },
+                { ref: 'pct', value: {{ $vm->fiveStarPct }}, suffix: '%' },
+             ])"
+                    x-intersect.once="$nextTick(() => runStats())"
+                >
+                    <x-storefront.stat-display
+                        wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                        x-ref="avg"
+                        label="Average Rating"
+                    >
+                        @number($vm->avgRating, 1)
+                    </x-storefront.stat-display>
+                    <x-storefront.stat-display
+                        wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                        x-ref="total"
+                        :value="$vm->totalReviews"
+                        label="Total Reviews"
+                    />
+                    <x-storefront.stat-display
+                        wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                        x-ref="pct"
+                        :value="$vm->fiveStarPct . '%'"
+                        label="5-Star Reviews"
+                    />
+                    <x-storefront.stat-display
+                        wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                        label="Overall"
+                    >
+                        <x-storefront.star-rating :rating="round($vm->avgRating)" size="lg" empty-color="--warm-300" />
+                    </x-storefront.stat-display>
                 </div>
-                @if ($category->description)
-                <p class="mt-3 text-lg text-warm-500">{{ $category->description }}</p>
-                @endif
-            </div>
-
-            {{-- Product Cards Grid --}}
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($category->products as $product)
-                @php($badge = \App\Presenters\ProductPresenter::for($product)->seasonalBadge())
-                <x-storefront.product-card :product="$product" card-class="menu-card bg-warm-800" description-class="mb-3">
-                    <x-slot:badge>
-                        @if ($badge)
-                        <x-storefront.pill tone="solid" size="sm" class="absolute top-4 left-4 !font-bold uppercase tracking-wider">
-                            {{ $badge }}
-                        </x-storefront.pill>
-                        @endif
-                    </x-slot:badge>
-                    <x-slot:overlay>
-                        <div class="menu-card-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
-                            @if ($product->is_active)
-                            <x-storefront.button :href="route('order.create')" size="sm" class="menu-card-cta">
-                                {{ $content['add_to_order_button'] ?? 'Add to Order' }}
-                            </x-storefront.button>
-                            @else
-                            <span class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-white/15 text-warm-300 backdrop-blur-sm">
-                                Currently Unavailable
-                            </span>
-                            @endif
-                        </div>
-                    </x-slot:overlay>
-                    <x-slot:footer>
-                        @if (!$product->is_active)
-                        <div x-data="waitlistSignup({
-                            url: @js(route('productWaitlist.join')),
-                            productId: {{ $product->id }},
-                            csrfToken: @js(csrf_token()),
-                        })">
-                            <button x-show="!showForm && !submitted" @click="open()"
-                                class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200 text-warm-400 bg-warm-700/20">
-                                🔔 Notify Me When Available
-                            </button>
-                            <span x-show="submitted" class="text-xs font-medium text-warm-400">✓ We'll notify you!</span>
-                            <form x-show="showForm" @submit.prevent="submit()" class="flex gap-1 mt-2">
-                                <input x-model="email" type="email" required placeholder="Email" class="text-sm rounded-lg border border-warm-600/30 px-2 py-1 w-full bg-warm-800 text-warm-200">
-                                <button type="submit" class="text-sm px-3 py-1 rounded-lg font-semibold flex-shrink-0 bg-warm-500 text-warm-900">Go</button>
-                            </form>
-                        </div>
-                        @endif
-                    </x-slot:footer>
-                </x-storefront.product-card>
-                @endforeach
             </div>
         </section>
-        @empty
-        <div class="py-24 text-center">
-            <p class="font-display text-2xl text-warm-400">{{ $content['empty_message'] ?? 'Our menu is being updated. Check back soon.' }}</p>
-        </div>
-        @endforelse
-    </div>
-</div>
+    @endif
 
-{{-- CTA Section --}}
-<section class="relative py-24 overflow-hidden bg-warm-800">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,color-mix(in_srgb,var(--warm-500)_6%,transparent),transparent_60%)]" aria-hidden="true"></div>
-    <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
-        <p class="font-script text-2xl mb-4 text-warm-500">{{ $content['cta_script'] ?? 'Ready to order?' }}</p>
-        <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 text-warm-100">
-            {{ $content['cta_heading'] ?? 'Let\'s get baking.' }}
-        </h2>
-        <p class="text-lg mb-10 text-warm-400">
+    @if ($vm->reviews->count() > 0)
+        {{-- Featured Review: Massive Pull-Quote --}}
+        <section class="bg-warm-100 relative overflow-hidden py-24 md:py-32">
+            <div class="mx-auto max-w-4xl px-4 text-center">
+                <x-storefront.pull-quote-mark size="lg" tone="warm-faint" class="mb-6" />
+                @if ($vm->featured()->comment)
+                    <blockquote class="font-display text-warm-800 mb-10 text-2xl leading-snug font-medium tracking-tight md:text-4xl lg:text-5xl">
+                        {{ $vm->featured()->comment }}
+                    </blockquote>
+                @endif
+                <x-storefront.star-rating
+                    :rating="$vm->featured()->rating"
+                    empty-color="--warm-300"
+                    class="mb-4 justify-center"
+                />
+                <p class="text-warm-700 text-lg font-semibold">{{ $vm->featured()->customer_name }}</p>
+                @if ($vm->featured()->product)
+                    <p class="text-warm-500 mt-1 text-sm">on {{ $vm->featured()->product->name }}</p>
+                @endif
+            </div>
+        </section>
 
-            {{ $ctaDesc }}
-        </p>
-        <x-storefront.button :href="route('order.create')" size="lg">
-            {{ $content['cta_button'] ?? 'Place an Order' }}
-        </x-storefront.button>
-    </div>
-</section>
+        {{-- Rating Distribution --}}
+        <x-storefront.dark-section radial-position="30% 50%">
+            <div class="mx-auto max-w-3xl px-4">
+                <div class="mb-12 text-center">
+                    <x-storefront.eyebrow line-opacity="0.5" class="mb-4">
+                        {{ $vm->content['rating_eyebrow'] ?? 'Rating Breakdown' }}</x-storefront.eyebrow>
+                </div>
+
+                <div class="space-y-4" x-data="ratingBars" x-intersect.once="animate()">
+                    @foreach ($vm->ratingBreakdown as $star => $data)
+                        <div class="flex items-center gap-4">
+                            <div class="flex w-20 flex-shrink-0 items-center gap-1">
+                                <span class="font-display text-warm-300 font-semibold">{{ $star }}</span>
+                                <x-heroicon-s-star class="text-warm-500 h-4 w-4" />
+                            </div>
+                            <div class="rating-bar-track bg-warm-800 flex-1">
+                                <div
+                                    class="rating-bar-fill bg-warm-500"
+                                    data-pct="{{ $data['pct'] }}"
+                                    style="width: {{ $data['pct'] }}%;"
+                                ></div>
+                            </div>
+                            <span class="text-warm-400 w-10 flex-shrink-0 text-right text-sm font-medium">{{ $data['count'] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </x-storefront.dark-section>
+
+        {{-- All Reviews Grid --}}
+        <section id="reviews" class="bg-warm-100 relative py-24 md:py-28">
+            <div class="mx-auto max-w-6xl px-4">
+                <x-storefront.section-divider tone="light" class="mb-16">
+                    {{ $vm->content['all_reviews_label'] ?? 'All Reviews' }}
+                </x-storefront.section-divider>
+
+                <div class="mb-16 grid gap-8 md:grid-cols-2">
+                    @foreach ($vm->reviews->skip(1) as $review)
+                        <div
+                            class="review-card border-warm-200 rounded-2xl border bg-white p-8 shadow-sm"
+                            x-data="reviewCardFadeIn({{ $loop->index }})"
+                            x-intersect.once="show()"
+                        >
+                            <div class="mb-5 flex items-start gap-4">
+                                <x-storefront.avatar-initial
+                                    :name="$review->customer_name"
+                                    size="lg"
+                                    class="flex-shrink-0"
+                                />
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-warm-900 text-lg font-semibold">{{ $review->customer_name }}</p>
+                                    <div class="mt-0.5 flex items-center gap-3">
+                                        <x-storefront.star-rating
+                                            :rating="$review->rating"
+                                            size="sm"
+                                            empty-color="--warm-300"
+                                        />
+                                        <span class="text-warm-400 text-xs">{{ $review->created_at->format('M j, Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @if ($review->comment)
+                                <p class="text-warm-700 mb-4 text-base leading-relaxed">
+                                    &ldquo;{{ $review->comment }}&rdquo;
+                                </p>
+                            @endif
+                            @if ($review->product)
+                                <p class="text-warm-500 text-sm font-medium">{{ $review->product->name }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Pagination --}}
+                <div class="flex justify-center">{{ $vm->reviews->fragment('reviews')->links() }}</div>
+            </div>
+        </section>
+
+    @else
+        {{-- Empty state --}}
+        <section class="bg-warm-100 relative py-24">
+            <div class="mx-auto max-w-md px-4 text-center">
+                <x-storefront.pull-quote-mark size="md" tone="warm-muted" class="mb-4" />
+                <p class="font-display text-warm-800 mb-4 text-3xl font-bold md:text-4xl">
+                    {{ $vm->content['empty_heading'] ?? 'No reviews yet' }}
+                </p>
+                <p class="text-warm-600 text-lg leading-relaxed">
+                    {{ $vm->content['empty_description'] ?? 'Be the first to share your experience.' }}
+                </p>
+            </div>
+        </section>
+    @endif
+
+    {{-- Leave a Review CTA --}}
+    <x-storefront.cta-section
+        :script-text="$vm->content['cta_script'] ?? 'Enjoyed something?'"
+        :heading="$vm->content['cta_heading'] ?? 'We\'d love to hear about it.'"
+        :description="$vm->content['cta_description'] ?? 'Your feedback helps us bake better and helps others discover their next favorite treat.'"
+        :button-text="$vm->content['cta_button'] ?? 'Leave a Review'"
+        :button-route="route('order.track')"
+    />
 </x-layouts.storefront>

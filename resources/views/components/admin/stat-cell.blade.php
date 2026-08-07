@@ -2,5 +2,5 @@
 
 <div {{ $attributes->class(['bg-brand-50 rounded-lg p-3 text-center']) }}>
     <div class="{{ $valueClass }}">{{ $slot }}</div>
-    <div class="text-[0.7rem] text-brand-700">{{ $label }}</div>
+    <div class="text-brand-700 text-[0.7rem]">{{ $label }}</div>
 </div>

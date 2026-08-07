@@ -12,7 +12,7 @@
 
 <section class="relative overflow-hidden" style="min-height: {{ $minHeight }};">
     <div class="absolute inset-0">
-        <img src="{{ $image }}" alt="{{ $imageAlt }}" class="w-full h-full object-cover {{ $imageClass }}">
+        <img src="{{ $image }}" alt="{{ $imageAlt }}" class="w-full h-full object-cover {{ $imageClass }}" />
     </div>
     <div class="absolute inset-0" style="background: {{ $gradient }};"></div>
 

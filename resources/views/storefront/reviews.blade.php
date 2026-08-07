@@ -1,160 +1,372 @@
 <x-layouts.storefront>
-
-<link rel="stylesheet" href="{{ asset('css/reviews.css') }}">
-
-{{-- Photo-Forward Hero with Dark Overlay --}}
-<x-storefront.hero-section :image="$vm->settings->heroImageUrl()" :image-alt="$vm->settings->store->name . ' Reviews'" image-class="hero-img" min-height="60vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
-    <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[60vh]">
-        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $vm->content['hero_eyebrow'] ?? 'What People Say' }}</x-storefront.eyebrow>
-        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
-            {{ $vm->content['hero_title'] ?? 'Kind Words' }}
-        </h1>
-        @if ($vm->totalReviews > 0)
-        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $vm->totalReviews }} {{ Str::plural('review', $vm->totalReviews) }} from happy customers</p>
-        @endif
-    </div>
-</x-storefront.hero-section>
-
-{{-- Stats Strip --}}
-@if ($vm->totalReviews > 0)
-<section class="bg-warm-800">
-    <div class="max-w-5xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-             x-data="countUpStats([
-                { ref: 'avg', value: {{ $vm->avgRating }} },
-                { ref: 'total', value: {{ $vm->totalReviews }} },
-                { ref: 'pct', value: {{ $vm->fiveStarPct }}, suffix: '%' },
-             ])"
-             x-intersect.once="$nextTick(() => runStats())">
-            <x-storefront.stat-display
-                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
-                x-ref="avg"
-                label="Average Rating"
-            >@number($vm->avgRating, 1)</x-storefront.stat-display>
-            <x-storefront.stat-display
-                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
-                x-ref="total"
-                :value="$vm->totalReviews"
-                label="Total Reviews"
-            />
-            <x-storefront.stat-display
-                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
-                x-ref="pct"
-                :value="$vm->fiveStarPct.'%'"
-                label="5-Star Reviews"
-            />
-            <x-storefront.stat-display
-                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
-                label="Overall"
-            >
-                <x-storefront.star-rating :rating="round($vm->avgRating)" size="lg" empty-color="--warm-300" />
-            </x-storefront.stat-display>
-        </div>
-    </div>
-</section>
-@endif
-
-@if ($vm->reviews->count() > 0)
-
-{{-- Featured Review: Massive Pull-Quote --}}
-<section class="relative py-24 md:py-32 overflow-hidden bg-warm-100">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-        <x-storefront.pull-quote-mark size="lg" tone="warm-faint" class="mb-6" />
-        @if ($vm->featured()->comment)
-        <blockquote class="font-display text-2xl md:text-4xl lg:text-5xl font-medium leading-snug mb-10 text-warm-800 tracking-tight">
-            {{ $vm->featured()->comment }}
-        </blockquote>
-        @endif
-        <x-storefront.star-rating :rating="$vm->featured()->rating" empty-color="--warm-300" class="justify-center mb-4" />
-        <p class="font-semibold text-lg text-warm-700">{{ $vm->featured()->customer_name }}</p>
-        @if ($vm->featured()->product)
-        <p class="text-sm mt-1 text-warm-500">on {{ $vm->featured()->product->name }}</p>
-        @endif
-    </div>
-</section>
-
-{{-- Rating Distribution --}}
-<x-storefront.dark-section radial-position="30% 50%">
-    <div class="max-w-3xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <x-storefront.eyebrow line-opacity="0.5" class="mb-4">{{ $vm->content['rating_eyebrow'] ?? 'Rating Breakdown' }}</x-storefront.eyebrow>
-        </div>
-
-        <div class="space-y-4"
-             x-data="ratingBars"
-             x-intersect.once="animate()">
-            @foreach ($vm->ratingBreakdown as $star => $data)
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1 flex-shrink-0 w-20">
-                    <span class="font-display font-semibold text-warm-300">{{ $star }}</span>
-                    <x-heroicon-s-star class="w-4 h-4 text-warm-500" />
-                </div>
-                <div class="flex-1 rating-bar-track bg-warm-800">
-                    <div class="rating-bar-fill bg-warm-500" data-pct="{{ $data['pct'] }}" style="width: {{ $data['pct'] }}%;"></div>
-                </div>
-                <span class="text-sm font-medium flex-shrink-0 text-right text-warm-400 w-10">{{ $data['count'] }}</span>
+    <div x-data="giftCardPage()">
+        {{-- Photo-Forward Hero --}}
+        <x-storefront.hero-section
+            :image="$settings->giftCardsHeroImageUrl()"
+            image-alt="Fresh baked goods"
+            image-class="hero-img"
+        >
+            <div class="relative z-10 mx-auto flex min-h-[55vh] max-w-4xl flex-col justify-end px-4 pb-20 text-center">
+                <x-storefront.eyebrow line-opacity="0.4" class="hero-fade-1 mb-6">
+                    {{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</x-storefront.eyebrow>
+                <h1 class="hero-fade-2 font-display mb-6 text-4xl leading-tight font-bold text-white md:text-6xl">
+                    {!! nl2br(e($content['hero_title'] ?? "Give the Gift of\nFresh Baked Goods")) !!}
+                </h1>
+                <p class="hero-fade-3 font-script text-warm-400 text-2xl md:text-3xl">
+                    {{ $content['hero_subtitle'] ?? 'A treat they\'ll remember long after the last crumb' }}
+                </p>
             </div>
-            @endforeach
-        </div>
-    </div>
-</x-storefront.dark-section>
+        </x-storefront.hero-section>
 
-{{-- All Reviews Grid --}}
-<section id="reviews" class="relative py-24 md:py-28 bg-warm-100">
-    <div class="max-w-6xl mx-auto px-4">
-        <x-storefront.section-divider tone="light" class="mb-16">
-            {{ $vm->content['all_reviews_label'] ?? 'All Reviews' }}
-        </x-storefront.section-divider>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-16">
-            @foreach ($vm->reviews->skip(1) as $review)
-            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm"
-                 x-data="reviewCardFadeIn({{ $loop->index }})"
-                 x-intersect.once="show()">
-                <div class="flex items-start gap-4 mb-5">
-                    <x-storefront.avatar-initial :name="$review->customer_name" size="lg" class="flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                        <p class="font-semibold text-lg text-warm-900">{{ $review->customer_name }}</p>
-                        <div class="flex items-center gap-3 mt-0.5">
-                            <x-storefront.star-rating :rating="$review->rating" size="sm" empty-color="--warm-300" />
-                            <span class="text-xs text-warm-400">{{ $review->created_at->format('M j, Y') }}</span>
+        {{-- Success State --}}
+        <div x-show="purchasedCard" x-cloak class="bg-warm-50 px-4 py-20">
+            <div class="mx-auto max-w-lg text-center">
+                {{-- Gift card mockup --}}
+                <div class="from-warm-900 to-warm-800 relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br p-8 shadow-2xl">
+                    <div class="bg-warm-500 absolute top-0 right-0 h-40 w-40 translate-x-[30%] -translate-y-[30%] rounded-full opacity-10"></div>
+                    <div class="bg-warm-500 absolute bottom-0 left-0 h-32 w-32 -translate-x-[30%] translate-y-[30%] rounded-full opacity-10"></div>
+                    <div class="relative z-10">
+                        <p class="font-script text-warm-500 mb-1 text-xl">Gift Card</p>
+                        <p
+                            class="font-display mb-4 text-4xl font-bold text-white"
+                            x-text="'$' + parseFloat(purchasedCard?.balance || 0).toFixed(2)"
+                        ></p>
+                        <div class="border-warm-400/20 mb-2 inline-block rounded-xl border bg-white/5 px-6 py-3">
+                            <span
+                                class="text-warm-400 font-mono text-lg font-bold tracking-[0.2em]"
+                                x-text="purchasedCard?.code"
+                            ></span>
                         </div>
                     </div>
                 </div>
-                @if ($review->comment)
-                <p class="text-base leading-relaxed mb-4 text-warm-700">&ldquo;{{ $review->comment }}&rdquo;</p>
-                @endif
-                @if ($review->product)
-                <p class="text-sm font-medium text-warm-500">{{ $review->product->name }}</p>
-                @endif
+
+                <h2 class="font-display text-warm-900 mb-2 text-2xl font-bold">
+                    {{ $content['success_heading'] ?? 'Gift Card Purchased!' }}
+                </h2>
+                <p class="text-warm-600 mb-6">
+                    {{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}
+                </p>
+
+                <div class="flex justify-center gap-4">
+                    <x-storefront.button variant="outline-light" size="md" class="gap-2" @click="copyCode()">
+                        <x-heroicon-o-document-duplicate class="h-4 w-4" stroke-width="2" />
+                        <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
+                    </x-storefront.button>
+                    <x-storefront.button size="md" @click="purchasedCard = null">
+                        Purchase Another
+                    </x-storefront.button>
+                </div>
             </div>
-            @endforeach
         </div>
 
-        {{-- Pagination --}}
-        <div class="flex justify-center">
-            {{ $vm->reviews->fragment('reviews')->links() }}
+        {{-- Main Content --}}
+        <div x-show="! purchasedCard">
+            <section class="bg-warm-50 px-4 py-20">
+                <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-5">
+                    {{-- Left: Gift Card Preview + Amount Selection (3 cols) --}}
+                    <div class="space-y-10 lg:col-span-3">
+                        {{-- Card Preview --}}
+                        <div>
+                            <p class="text-warm-500 mb-4 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['preview_label'] ?? 'Preview' }}
+                            </p>
+                            <div class="from-warm-900 to-warm-800 relative flex aspect-[16/9] flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-10 shadow-xl">
+                                <div class="bg-warm-500 absolute top-0 right-0 h-60 w-60 translate-x-[30%] -translate-y-[30%] rounded-full opacity-[0.06]"></div>
+                                <div class="bg-warm-500 absolute bottom-0 left-0 h-48 w-48 -translate-x-[30%] translate-y-[30%] rounded-full opacity-[0.06]"></div>
+                                <div class="relative z-10">
+                                    <p class="font-script text-warm-500 text-2xl">Gift Card</p>
+                                    <p class="font-display text-warm-400 mt-1 text-lg">{{ $settings->store->name }}</p>
+                                </div>
+                                <div class="relative z-10 text-right">
+                                    <p
+                                        class="font-display text-5xl font-bold text-white"
+                                        x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"
+                                    ></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Amount Selection --}}
+                        <div>
+                            <p class="text-warm-500 mb-4 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['amount_label'] ?? 'Select Amount' }}
+                            </p>
+                            <div class="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                                <template x-for="preset in @json($settings->giftCards->presetAmounts)" :key="preset">
+                                    <button
+                                        type="button"
+                                        @click="
+                                            form.initial_balance = preset;
+                                            customAmount = '';
+                                        "
+                                        :class="form.initial_balance == preset && ! customAmount
+                                            ? 'bg-warm-500 text-warm-900 border-warm-500'
+                                            : 'bg-white text-warm-800 border-warm-200'"
+                                        class="font-display cursor-pointer rounded-2xl border-2 py-5 text-center text-2xl font-bold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    >
+                                        <span x-text="'$' + preset"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-warm-600 text-sm font-semibold whitespace-nowrap">Custom amount:</span>
+                                <div class="relative flex-1">
+                                    <span class="text-warm-500 absolute top-1/2 left-4 -translate-y-1/2 font-semibold">$</span>
+                                    <input
+                                        type="number"
+                                        x-model="customAmount"
+                                        @input="form.initial_balance = customAmount"
+                                        min="1"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        class="border-warm-200 text-warm-800 w-full rounded-xl border-2 bg-white py-3 pr-4 pl-8 font-semibold transition-colors focus:outline-none"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Check Balance --}}
+                        <div class="border-warm-200 rounded-2xl border bg-white p-8">
+                            <h3 class="font-display text-warm-900 mb-4 text-xl font-semibold">
+                                {{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}
+                            </h3>
+                            <form
+                                @submit.prevent="checkBalance()"
+                                class="flex flex-col gap-3 sm:flex-row"
+                                data-test="gift-card-balance-form"
+                            >
+                                <input
+                                    type="text"
+                                    x-model="balanceCode"
+                                    required
+                                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                                    class="input-field flex-1 font-mono tracking-wider uppercase"
+                                    data-test="gift-card-balance-form-code"
+                                />
+                                <x-storefront.button
+                                    type="submit"
+                                    variant="outline-light"
+                                    size="md"
+                                    x-bind:disabled="! balanceCode || isCheckingBalance"
+                                    class="whitespace-nowrap"
+                                    x-bind:class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
+                                    data-test="gift-card-balance-form-submit"
+                                >
+                                    <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
+                                </x-storefront.button>
+                            </form>
+                            <div
+                                x-show="balanceError"
+                                class="mt-2 text-sm text-red-600"
+                                x-text="balanceError"
+                                data-test="gift-card-balance-error"
+                            ></div>
+                            <div x-show="balanceResult" x-cloak class="bg-warm-50 mt-6 rounded-xl p-6 text-center">
+                                <p class="text-warm-500 mb-1 text-sm tracking-wider uppercase">Current Balance</p>
+                                <p
+                                    class="font-display text-warm-900 text-4xl font-bold"
+                                    x-text="'$' + parseFloat(balanceResult?.current_balance || 0).toFixed(2)"
+                                ></p>
+                                <p class="text-warm-500 mt-2 text-sm" x-show="balanceResult?.expires_at">
+                                    Expires: <span x-text="balanceResult?.expires_at"></span>
+                                </p>
+                                <p
+                                    class="mt-1 text-sm font-semibold text-red-600"
+                                    x-show="balanceResult && ! balanceResult.is_usable"
+                                >
+                                    This card is no longer active.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Right: Purchase Form (2 cols) --}}
+                    <div class="lg:col-span-2">
+                        <div class="border-warm-200 sticky top-8 rounded-2xl border bg-white p-8 shadow-2xl">
+                            <p class="text-warm-500 mb-1 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $content['details_eyebrow'] ?? 'Details' }}
+                            </p>
+                            <h2 class="font-display text-warm-900 mb-6 text-2xl font-bold">
+                                {{ $content['details_heading'] ?? 'Send Your Gift' }}
+                            </h2>
+
+                            <form @submit.prevent="purchase()" class="space-y-5" data-test="gift-card-purchase-form">
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Your Name *</label>
+                                    <input
+                                        type="text"
+                                        x-model="form.purchaser_name"
+                                        required
+                                        class="input-field"
+                                        data-test="gift-card-purchase-form-purchaser-name"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Your Email *</label>
+                                    <input
+                                        type="email"
+                                        x-model="form.purchaser_email"
+                                        required
+                                        class="input-field"
+                                        data-test="gift-card-purchase-form-purchaser-email"
+                                    />
+                                </div>
+
+                                <div class="border-warm-200 border-t pt-4">
+                                    <p class="font-script text-warm-500 mb-3 text-lg">
+                                        {{ $content['recipient_label'] ?? 'Recipient Info' }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Recipient Name</label>
+                                    <input
+                                        type="text"
+                                        x-model="form.recipient_name"
+                                        class="input-field"
+                                        placeholder="Optional"
+                                        data-test="gift-card-purchase-form-recipient-name"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Recipient Email</label>
+                                    <input
+                                        type="email"
+                                        x-model="form.recipient_email"
+                                        class="input-field"
+                                        placeholder="Optional"
+                                        data-test="gift-card-purchase-form-recipient-email"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-700 mb-1 block text-sm font-semibold">Gift Message</label>
+                                    <textarea
+                                        x-model="form.message"
+                                        class="input-field"
+                                        rows="3"
+                                        placeholder="Add a personal touch..."
+                                        data-test="gift-card-purchase-form-message"
+                                    ></textarea>
+                                </div>
+
+                                <div
+                                    x-show="purchaseError"
+                                    class="text-sm text-red-600"
+                                    x-text="purchaseError"
+                                    data-test="gift-card-purchase-error"
+                                ></div>
+
+                                <button
+                                    type="submit"
+                                    :disabled="! form.purchaser_name ||
+                                    ! form.purchaser_email ||
+                                    ! form.initial_balance ||
+                                    isPurchasing"
+                                    class="w-full rounded-full py-4 text-lg font-bold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                                    :class="isPurchasing ? 'opacity-50 cursor-not-allowed' : ''"
+                                    class="bg-warm-500 text-warm-900"
+                                    data-test="gift-card-purchase-form-submit"
+                                >
+                                    <span
+                                        x-text="
+                                            isPurchasing
+                                                ? 'Processing...'
+                                                : 'Purchase — $' + parseFloat(form.initial_balance || 0).toFixed(2)
+                                        "
+                                    ></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
-</section>
+    <script @cspnonce>
+        function giftCardPage() {
+            return {
+                form: {
+                    purchaser_name: '',
+                    purchaser_email: localStorage.getItem('customer_email') || '',
+                    recipient_name: '',
+                    recipient_email: '',
+                    message: '',
+                    initial_balance: __PINT_BLADE_0__,
+                },
+                customAmount: '',
+                isPurchasing: false,
+                purchaseError: '',
+                purchasedCard: null,
+                copied: false,
+                balanceCode: '',
+                isCheckingBalance: false,
+                balanceError: '',
+                balanceResult: null,
 
-@else
-{{-- Empty state --}}
-<section class="relative py-24 bg-warm-100">
-    <div class="text-center max-w-md mx-auto px-4">
-        <x-storefront.pull-quote-mark size="md" tone="warm-muted" class="mb-4" />
-        <p class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-800">{{ $vm->content['empty_heading'] ?? 'No reviews yet' }}</p>
-        <p class="text-lg leading-relaxed text-warm-600">{{ $vm->content['empty_description'] ?? 'Be the first to share your experience.' }}</p>
-    </div>
-</section>
-@endif
+                async purchase() {
+                    if (this.isPurchasing) return;
+                    this.isPurchasing = true;
+                    this.purchaseError = '';
 
-{{-- Leave a Review CTA --}}
-<x-storefront.cta-section
-    :script-text="$vm->content['cta_script'] ?? 'Enjoyed something?'"
-    :heading="$vm->content['cta_heading'] ?? 'We\'d love to hear about it.'"
-    :description="$vm->content['cta_description'] ?? 'Your feedback helps us bake better and helps others discover their next favorite treat.'"
-    :button-text="$vm->content['cta_button'] ?? 'Leave a Review'"
-    :button-route="route('order.track')"
-/>
+                    try {
+                        const response = await fetch(__PINT_BLADE_1__, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': __PINT_BLADE_2__,
+                            },
+                            body: JSON.stringify(this.form),
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            this.purchasedCard = data.gift_card;
+                        } else {
+                            this.purchaseError = data.error || 'Something went wrong.';
+                        }
+                    } catch (e) {
+                        this.purchaseError = 'Something went wrong. Please try again.';
+                    } finally {
+                        this.isPurchasing = false;
+                    }
+                },
+
+                async checkBalance() {
+                    if (this.isCheckingBalance) return;
+                    this.isCheckingBalance = true;
+                    this.balanceError = '';
+                    this.balanceResult = null;
+
+                    try {
+                        const response = await fetch(__PINT_BLADE_3__, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': __PINT_BLADE_4__,
+                            },
+                            body: JSON.stringify({ code: this.balanceCode }),
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            this.balanceResult = data;
+                        } else {
+                            this.balanceError = data.error || 'Gift card not found.';
+                        }
+                    } catch (e) {
+                        this.balanceError = 'Something went wrong.';
+                    } finally {
+                        this.isCheckingBalance = false;
+                    }
+                },
+
+                copyCode() {
+                    if (this.purchasedCard?.code) {
+                        navigator.clipboard.writeText(this.purchasedCard.code);
+                        this.copied = true;
+                        setTimeout(() => (this.copied = false), 2000);
+                    }
+                },
+            };
+        }
+    </script>
 </x-layouts.storefront>

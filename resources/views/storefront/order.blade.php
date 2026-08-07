@@ -1,501 +1,277 @@
+@php
+    /** @var \App\ViewModels\Storefront\LoyaltyPageViewModel $vm */
+@endphp
+
 <x-layouts.storefront>
-<x-slot:styles>
-    <style @cspnonce>
-        .order-product-card {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            background: var(--warm-800);
-        }
-        .order-product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(28, 20, 16, 0.3);
-        }
-        .order-product-card:hover img {
-            transform: scale(1.08);
-        }
-        .order-product-card img {
-            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .order-sidebar-card {
-            background: var(--warm-800);
-            border-radius: 20px;
-            border: 1px solid rgba(212,146,12,0.15);
-        }
-        .order-qty-btn {
-            width: 2.75rem;
-            height: 2.75rem;
-            border-radius: 0.625rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1rem;
-            border: 1.5px solid color-mix(in srgb, var(--warm-500) 30%, transparent);
-            background: color-mix(in srgb, var(--warm-500) 10%, transparent);
-            color: var(--warm-400);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .order-qty-btn:hover:not(:disabled) {
-            background: var(--warm-500);
-            color: var(--warm-900);
-            border-color: var(--warm-500);
-        }
-        .order-qty-btn:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-        }
-        .order-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            border: 1.5px solid rgba(139,104,68,0.25);
-            background: rgba(255,255,255,0.05);
-            color: var(--warm-100);
-            font-size: 0.95rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
-        }
-        .order-input:focus {
-            border-color: var(--warm-500);
-            box-shadow: 0 0 0 3px rgba(212,146,12,0.12);
-        }
-        .order-input::placeholder {
-            color: var(--warm-600);
-        }
-        .order-input option {
-            background: var(--warm-800);
-            color: var(--warm-100);
-        }
-        .order-radio {
-            accent-color: var(--warm-500);
-        }
-        @keyframes cartPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-    </style>
-</x-slot:styles>
-@if ($settings->orders->sitewideSaleEnabled && $settings->orders->sitewideSalePercent > 0)
-<div class="bg-warm-500 text-warm-900 text-center py-3 px-4 font-semibold text-sm md:text-base">
-    🎉 {{ $settings->orders->sitewideSaleLabel }} — {{ $settings->orders->sitewideSalePercent }}% off everything, applied at checkout.
-</div>
-@endif
-{{-- Dark Hero Banner --}}
-<section class="relative overflow-hidden bg-warm-900 pt-8">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]" aria-hidden="true"></div>
+    {{-- Photo-Forward Hero --}}
+    <x-storefront.hero-section
+        :image="$vm->settings->loyaltyHeroImageUrl()"
+        image-alt="Fresh baked goods"
+        image-class="hero-img"
+    >
+        <div class="relative z-10 mx-auto flex min-h-[55vh] max-w-4xl flex-col justify-end px-4 pb-20 text-center">
+            <x-storefront.eyebrow line-opacity="0.4" class="hero-fade-1 mb-6">
+                {{ $vm->content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
+            <h1 class="hero-fade-2 font-display mb-6 text-4xl leading-tight font-bold text-white md:text-6xl">
+                {{ $vm->settings->store->name }} {{ $vm->settings->loyalty->programName }}
+            </h1>
+            <p class="hero-fade-3 font-script text-warm-400 text-2xl md:text-3xl">
+                {{ $vm->content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
+            </p>
+        </div>
+    </x-storefront.hero-section>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
-
-        <x-storefront.eyebrow align="left" class="mb-6">Fresh From Our Ovens</x-storefront.eyebrow>
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 text-warm-100">
-            Place Your Order
-        </h1>
-        <p class="text-lg max-w-2xl text-warm-100">
-            Choose your items, tell us when you need them, and we'll have everything freshly prepared.
-            Orders need {{ $settings->orders->leadTimeHours }} hours notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
-        </p>
-    </div>
-</section>
-
-{{-- Main Content --}}
-<section class="relative bg-warm-900">
-
-    <div class="relative z-10 max-w-7xl mx-auto px-4 pb-24"
-         x-data="orderForm()"
-         x-init="init()">
-
-        <form data-test="order-form" @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
-            {{-- Product Selection --}}
-            <div class="lg:col-span-2 space-y-10">
-                <div class="flex items-center gap-4">
-                    <h2 class="font-display text-2xl font-bold whitespace-nowrap text-warm-100">Select Your Items</h2>
-                    <div class="flex-1 h-px bg-warm-600/25"></div>
-                </div>
-
-                @foreach ($categories as $category)
-                <div>
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="block w-6 h-px bg-warm-500"></span>
-                        <h3 class="font-display text-xl font-semibold text-warm-300">{{ $category->name }}</h3>
-                    </div>
-
-                    <div class="grid sm:grid-cols-2 gap-5">
-                        @foreach ($category->products as $product)
-                        @if ($product->is_active)
-                        <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                            {{-- Favorite Heart --}}
-                            <button type="button"
-                                    @click="toggleFavorite({{ $product->id }})"
-                                    class="absolute top-3 right-3 z-10 w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-sm transition-all bg-warm-900/60"
-                                    :class="isFavorite({{ $product->id }}) ? '' : 'hover:scale-110'"
-                                    :aria-label="isFavorite({{ $product->id }}) ? 'Remove ' + @js($product->name) + ' from favorites' : 'Add ' + @js($product->name) + ' to favorites'">
-                                <x-heroicon-s-heart x-show="isFavorite({{ $product->id }})" class="w-5 h-5 text-red-500" />
-                                <x-heroicon-o-heart x-show="!isFavorite({{ $product->id }})" class="w-5 h-5 text-warm-300" />
-                            </button>
-
-                            {{-- Product Image --}}
-                            <div class="relative overflow-hidden aspect-[4/3]">
-                                @if ($product->image)
-                                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <x-storefront.image-placeholder :name="$product->name" :category="$product->category?->name" />
-                                @endif
-                                {{-- Price badge --}}
-                                <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm bg-warm-900/80 text-warm-400 border border-warm-500/20">
-                                    @money($product->price)
-                                </div>
-                            </div>
-
-                            <div class="p-5">
-                                <h4 class="font-display text-lg font-semibold mb-1 text-warm-100">{{ $product->name }}</h4>
-                                @if ($product->description)
-                                <p class="text-sm mb-3 line-clamp-2 text-warm-500">{{ $product->description }}</p>
-                                @endif
-                                <div class="flex items-center justify-between mt-2">
-                                    <div x-show="getQuantity({{ $product->id }}) > 0" class="text-sm font-medium text-warm-400">
-                                        <span x-text="getQuantity({{ $product->id }})"></span> in cart
-                                    </div>
-                                    <div x-show="getQuantity({{ $product->id }}) === 0"></div>
-                                    <div class="flex items-center gap-2">
-                                        <button type="button"
-                                                @click="decrementItem({{ $product->id }})"
-                                                :disabled="getQuantity({{ $product->id }}) <= 0"
-                                                class="order-qty-btn">−</button>
-                                        <span class="font-bold min-w-[1.5rem] text-center text-sm text-warm-100"
-                                              x-text="getQuantity({{ $product->id }})"></span>
-                                        <button type="button"
-                                                @click="incrementItem({{ $product->id }}, {{ $product->price?->dollars() ?? 0 }})"
-                                                class="order-qty-btn">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        @endforeach
-                    </div>
-                </div>
-                @endforeach
+    @if (! $vm->settings->loyalty->enabled)
+        <section class="bg-warm-50 px-4 py-20">
+            <div class="border-warm-200 mx-auto max-w-lg rounded-2xl border bg-white p-12 text-center">
+                <p class="font-display text-warm-700 text-xl">
+                    {{ $vm->content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}
+                </p>
             </div>
-
-            {{-- Order Summary Sidebar --}}
-            <div class="lg:col-span-1">
-                <div class="order-sidebar-card p-6 md:p-8 sticky top-24">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="block w-6 h-px bg-warm-500"></span>
-                        <h3 class="font-display text-xl font-semibold text-warm-100">Your Order</h3>
+        </section>
+    @else
+        {{-- Check Points / Customer Dashboard --}}
+        <section class="bg-warm-50 px-4 py-20">
+            <div class="mx-auto max-w-5xl">
+                {{-- Points Lookup --}}
+                <div class="mx-auto mb-16 max-w-xl">
+                    <div class="border-warm-200 rounded-2xl border bg-white p-8 shadow-2xl">
+                        <h2 class="font-display text-warm-900 mb-4 text-center text-2xl font-bold">
+                            {{ $vm->content['check_heading'] ?? 'Check Your Points' }}
+                        </h2>
+                        <form
+                            action="{{ route('rewards.check') }}"
+                            method="POST"
+                            class="flex flex-col gap-3 sm:flex-row"
+                            data-test="loyalty-lookup-form"
+                        >
+                            @csrf
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Enter your email address"
+                                value="{{ old('email', $vm->customer->email ?? '') }}"
+                                required
+                                class="input-field flex-1"
+                                data-test="loyalty-lookup-form-email"
+                            />
+                            <x-storefront.button
+                                type="submit"
+                                size="md"
+                                class="whitespace-nowrap"
+                                data-test="loyalty-lookup-form-submit"
+                            >
+                                Check Balance
+                            </x-storefront.button>
+                        </form>
                     </div>
+                </div>
 
-                    {{-- Cart Items --}}
-                    <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
-                        <template x-for="item in cartItems" :key="item.id">
-                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg bg-white/[0.03]">
-                                <span class="text-warm-400">
-                                    <span class="font-semibold text-warm-300" x-text="item.quantity"></span> × <span x-text="item.name"></span>
-                                </span>
-                                <span class="font-semibold text-warm-300" x-text="'$' + (item.quantity * item.price).toFixed(2)"></span>
+                {{-- Customer Results --}}
+                @if ($vm->hasCustomer)
+                    <div class="mb-16">
+                        <p class="font-script text-warm-500 mb-8 text-center text-2xl">
+                            Welcome back, {{ $vm->customer->name }}!
+                        </p>
+
+                        {{-- Points Display --}}
+                        <div class="mx-auto mb-10 grid max-w-2xl gap-6 sm:grid-cols-2">
+                            <div class="bg-warm-900 relative overflow-hidden rounded-2xl p-8 text-center">
+                                <div class="bg-warm-500 absolute top-0 right-0 h-32 w-32 translate-x-[30%] -translate-y-[30%] rounded-full opacity-[0.06]"></div>
+                                <p class="text-warm-500 mb-2 text-xs font-semibold tracking-[0.25em] uppercase">
+                                    Available Points
+                                </p>
+                                <p class="font-display text-warm-500 text-5xl font-bold">@number($vm->totalPoints)</p>
                             </div>
-                        </template>
-                    </div>
-
-                    <div x-show="cartItems.length === 0" class="text-center py-8 mb-4">
-                        <div class="text-4xl mb-3 opacity-30">🧺</div>
-                        <p class="text-sm text-warm-300">{{ $content['empty_cart_heading'] ?? 'Your cart is empty' }}</p>
-                        <p class="text-xs mt-1 text-warm-500">{{ $content['empty_cart_subtext'] ?? 'Add items to get started' }}</p>
-                    </div>
-
-                    {{-- Coupon Section --}}
-                    <div class="pt-4 mb-4 border-t border-warm-700/20">
-                        <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Coupon Code</label>
-                        <div class="flex gap-2">
-                            <input type="text"
-                                   data-test="order-form-coupon-code"
-                                   x-model="couponCode"
-                                   placeholder="Enter coupon"
-                                   class="order-input flex-1">
-                            <button type="button"
-                                    @click="applyCoupon()"
-                                    :disabled="!couponCode || isApplyingCoupon"
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
-                                    :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-                                <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
-                            </button>
-                        </div>
-                        <div x-show="couponError" class="text-red-400 text-sm mt-2" x-text="couponError"></div>
-                        <div x-show="appliedCoupon" class="text-green-400 text-sm mt-2">
-                            ✓ <span x-text="appliedCoupon?.label"></span> applied!
-                        </div>
-                    </div>
-
-                    {{-- Gift Card Section --}}
-                    <div class="pt-4 mb-4 border-t border-warm-700/20">
-                        <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Gift Card</label>
-                        <div class="flex gap-2">
-                            <input type="text"
-                                   data-test="order-form-gift-card-code"
-                                   x-model="giftCardCode"
-                                   placeholder="XXXX-XXXX-XXXX-XXXX"
-                                   class="order-input flex-1 font-mono uppercase tracking-wider text-sm">
-                            <button type="button"
-                                    @click="applyGiftCard()"
-                                    :disabled="!giftCardCode || isApplyingGiftCard"
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
-                                    :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'">
-                                <span x-text="isApplyingGiftCard ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
-                            </button>
-                        </div>
-                        <div x-show="giftCardError" class="text-red-400 text-sm mt-2" x-text="giftCardError"></div>
-                        <div x-show="appliedGiftCard" class="text-green-400 text-sm mt-2">
-                            ✓ Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
-                        </div>
-                    </div>
-
-                    {{-- Tip --}}
-                    <div x-show="cartItems.length > 0" class="pt-4 mt-4 border-t border-warm-700/20">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500">Add a Tip</span>
-                        </div>
-                        <div class="grid grid-cols-5 gap-2">
-                            <button type="button" @click="selectTipPreset(0)"
-                                :class="tipMode === 'preset' && tipPercent === 0 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
-                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">None</button>
-                            <button type="button" @click="selectTipPreset(15)"
-                                :class="tipMode === 'preset' && tipPercent === 15 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
-                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">15%</button>
-                            <button type="button" @click="selectTipPreset(18)"
-                                :class="tipMode === 'preset' && tipPercent === 18 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
-                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">18%</button>
-                            <button type="button" @click="selectTipPreset(20)"
-                                :class="tipMode === 'preset' && tipPercent === 20 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
-                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">20%</button>
-                            <button type="button" @click="selectCustomTip()"
-                                :class="tipMode === 'custom' ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
-                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">Custom</button>
-                        </div>
-                        <div x-show="tipMode === 'custom'" class="mt-3">
-                            <label for="custom-tip-input" class="sr-only">Custom tip amount in dollars</label>
-                            <div class="flex items-center gap-2">
-                                <span class="text-warm-500">$</span>
-                                <input id="custom-tip-input" type="number" min="0" step="0.01" inputmode="decimal"
-                                    x-model="customTip" @input="calculateTotals()"
-                                    class="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm" />
+                            <div class="border-warm-200 rounded-2xl border bg-white p-8 text-center">
+                                <p class="text-warm-500 mb-2 text-xs font-semibold tracking-[0.25em] uppercase">
+                                    Lifetime Earned
+                                </p>
+                                <p class="font-display text-warm-900 text-5xl font-bold">
+                                    @number($vm->lifetimeEarned)
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Totals --}}
-                    <div class="pt-4 space-y-2 text-sm border-t border-warm-700/20">
-                        <div class="flex justify-between">
-                            <span class="text-warm-500">Subtotal</span>
-                            <span class="text-warm-300" x-text="'$' + subtotal.toFixed(2)"></span>
-                        </div>
-                        <div x-show="deliveryFee > 0" class="flex justify-between">
-                            <span class="text-warm-500">Delivery</span>
-                            <span class="text-warm-300" x-text="'$' + deliveryFee.toFixed(2)"></span>
-                        </div>
-                        <div x-show="saleDiscount > 0" class="flex justify-between text-green-400">
-                            <span x-text="sitewideSaleLabel + ' (' + sitewideSalePercent + '% off)'"></span>
-                            <span x-text="'-$' + saleDiscount.toFixed(2)"></span>
-                        </div>
-                        <div x-show="appliedCoupon" class="flex justify-between text-green-400">
-                            <span>Coupon</span>
-                            <span x-text="'-$' + discountAmount.toFixed(2)"></span>
-                        </div>
-                        <div x-show="appliedGiftCard" class="flex justify-between text-green-400">
-                            <span>Gift Card</span>
-                            <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
-                        </div>
-                        <div x-show="tipAmount > 0" class="flex justify-between">
-                            <span class="text-warm-500">Tip</span>
-                            <span class="text-warm-300" x-text="'$' + tipAmount.toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-between pt-3 border-t border-warm-700/20">
-                            <span class="font-display text-lg font-bold text-warm-100">Total</span>
-                            <span class="font-display text-2xl font-bold text-warm-400" x-text="'$' + total.toFixed(2)"></span>
-                        </div>
-                    </div>
-
-                    {{-- Customer Information --}}
-                    <div class="pt-6 mt-6 border-t border-warm-700/20">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500">Your Details</span>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Name *</label>
-                                <input type="text" data-test="order-form-customer-name" x-model="form.customer_name" required class="order-input">
+                        @if ($vm->tier)
+                            <div class="border-warm-200 mx-auto mb-10 max-w-2xl rounded-2xl border bg-white p-6">
+                                <div class="mb-3 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-warm-500 mb-1 text-xs font-semibold tracking-[0.2em] uppercase">
+                                            Your Tier
+                                        </p>
+                                        <p class="font-display text-warm-900 text-2xl font-bold">
+                                            {{ $vm->tier->getLabel() }}
+                                        </p>
+                                    </div>
+                                    @if ($vm->nextTier)
+                                        <div class="text-right">
+                                            <p class="text-warm-500 text-xs">Next: {{ $vm->nextTier->getLabel() }}</p>
+                                            <p class="text-warm-700 text-sm font-bold">
+                                                @number($vm->pointsToNextTier)
+                                                pts to go
+                                            </p>
+                                        </div>
+                                    @else
+                                        <p class="text-warm-500 text-xs">Top tier — thanks for the love!</p>
+                                    @endif
+                                </div>
+                                @if ($vm->tierMultiplier > 1.0 || $vm->tierFreeDelivery)
+                                    <div class="border-warm-100 flex flex-wrap gap-3 border-t pt-3">
+                                        @if ($vm->tierMultiplier > 1.0)
+                                            <span class="bg-warm-50 text-warm-700 border-warm-200 inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold">
+                                                {{ rtrim(rtrim(number_format($vm->tierMultiplier, 1), '0'), '.') }}×
+                                                points
+                                            </span>
+                                        @endif
+                                        @if ($vm->tierFreeDelivery)
+                                            <span class="bg-warm-50 text-warm-700 border-warm-200 inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold">
+                                                Free delivery
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Email *</label>
-                                <input type="email" data-test="order-form-customer-email" x-model="form.customer_email" @input="saveEmail()" required class="order-input">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Phone</label>
-                                <input type="tel" data-test="order-form-customer-phone" x-model="form.customer_phone" class="order-input">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
-                                <input type="date" data-test="order-form-customer-birthday" x-model="form.customer_birthday" class="order-input" max="{{ date('Y-m-d') }}">
-                            </div>
-                        </div>
-                    </div>
+                        @endif
 
-                    {{-- Delivery Options --}}
-                    <div class="pt-6 mt-6 border-t border-warm-700/20">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500">Delivery</span>
-                        </div>
-
-                        <div class="space-y-3">
-                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
-                                   :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" data-test="order-form-delivery-type-pickup" x-model="form.delivery_type" value="pickup" @change="calculateTotals()" class="order-radio mr-3">
-                                <span class="text-warm-200">Pickup <span class="text-sm text-warm-500">(Free)</span></span>
-                            </label>
-
-                            @if ($settings->orders->deliveryEnabled)
-                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
-                                   :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" data-test="order-form-delivery-type-delivery" x-model="form.delivery_type" value="delivery" @change="calculateTotals()" class="order-radio mr-3">
-                                <span class="text-warm-200">Delivery</span>
-                            </label>
-                            @endif
-                        </div>
-
-                        @if ($settings->orders->deliveryEnabled)
-                        <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Delivery Address *</label>
-                                <textarea data-test="order-form-delivery-address" x-model="form.delivery_address" placeholder="Full address" class="order-input" rows="3"></textarea>
+                        {{-- Progress to next reward --}}
+                        @if ($vm->nextReward)
+                            <div class="border-warm-200 mx-auto mb-10 max-w-2xl rounded-2xl border bg-white p-6">
+                                <div class="mb-3 flex items-center justify-between">
+                                    <span class="text-warm-700 text-sm font-semibold">Next Reward: {{ $vm->nextReward->name }}</span>
+                                    <span class="text-warm-500 text-sm font-bold">
+                                        @number($vm->totalPoints)
+                                        /
+                                        @number($vm->nextReward->points_required)
+                                        pts</span>
+                                </div>
+                                <div class="bg-warm-200 h-3 w-full overflow-hidden rounded-full">
+                                    <div
+                                        class="from-warm-500 to-warm-400 h-full rounded-full bg-gradient-to-r transition-all duration-700"
+                                        style="width: {{ $vm->nextRewardProgressPercent() }}%;"
+                                    ></div>
+                                </div>
+                                <p class="text-warm-500 mt-2 text-right text-xs">
+                                    @number($vm->pointsToNextReward())
+                                    points to go!
+                                </p>
                             </div>
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Distance</label>
-                                <select data-test="order-form-delivery-tier" x-model="form.delivery_tier" @change="calculateTotals()" class="order-input">
-                                    <option value="">Select distance</option>
-                                    @foreach ($settings->orders->deliveryFeeTiers as $index => $tier)
-                                    <option value="{{ $index }}">{{ $tier['description'] }} (@money($tier['fee']))</option>
+                        @endif
+
+                        {{-- Transaction History --}}
+                        @if ($vm->history->count())
+                            <div class="border-warm-200 mx-auto max-w-2xl overflow-hidden rounded-2xl border bg-white">
+                                <div class="border-warm-200 border-b px-6 py-4">
+                                    <h3 class="font-display text-warm-900 text-lg font-bold">Points History</h3>
+                                </div>
+                                <div class="divide-warm-100 divide-y">
+                                    @foreach ($vm->history as $entry)
+                                        <div class="hover:bg-warm-50 flex items-center justify-between px-6 py-4 transition-colors">
+                                            <div>
+                                                <p class="text-warm-900 font-semibold">{{ $entry->description }}</p>
+                                                <p class="text-warm-500 text-sm">
+                                                    {{ $entry->created_at->format('M j, Y') }}
+                                                </p>
+                                            </div>
+                                            <span class="font-display text-lg font-bold {{ $vm->historyEntryColorClass($entry->type) }}">
+                                                {{ $vm->historyEntrySign($entry->type) }}
+                                                @number($entry->points)
+                                            </span>
+                                        </div>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
-                            @if ($settings->orders->freeDeliveryMinimum)
-                            <p class="text-sm text-warm-500">
-                                🚚 Free delivery on orders over @money((float)$settings->orders->freeDeliveryMinimum)!
-                            </p>
-                            @endif
-                        </div>
                         @endif
                     </div>
+                @endif
 
-                    {{-- Date & Time --}}
-                    <div class="pt-6 mt-6 border-t border-warm-700/20">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500">When</span>
-                        </div>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">
-                                    <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
-                                </label>
-                                <input type="date" data-test="order-form-delivery-date" x-model="form.delivery_date" :min="minDate" @change="onDateChange()" required class="order-input">
-                                <div x-show="capacityWarning" class="text-amber-400 text-sm mt-1" x-text="capacityWarning"></div>
-                                <div x-show="capacityError" class="text-red-400 text-sm mt-1" x-text="capacityError"></div>
-                            </div>
-                            <div>
-                                @if ($settings->orders->pickupSlotsEnabled)
-                                    <label for="order-pickup-slot" class="block text-xs font-medium mb-1 text-warm-400">
-                                        <span x-text="form.delivery_type === 'pickup' ? 'Pickup Time' : 'Preferred Time'"></span>
-                                    </label>
-                                    <template x-if="form.delivery_type === 'pickup'">
-                                        <select id="order-pickup-slot" data-test="order-form-delivery-time" x-model="form.delivery_time" class="order-input">
-                                            <option value="">{{ '— Select a time —' }}</option>
-                                            <template x-for="slot in availableSlots" :key="slot">
-                                                <option :value="slot" x-text="slot"></option>
-                                            </template>
-                                        </select>
-                                    </template>
-                                    <template x-if="form.delivery_type !== 'pickup'">
-                                        <input type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
-                                    </template>
-                                    <div x-show="form.delivery_type === 'pickup' && availableSlots.length === 0 && form.delivery_date"
-                                         class="text-amber-400 text-sm mt-1">No pickup slots available for this date.</div>
-                                @else
-                                    <label for="order-delivery-time" class="block text-xs font-medium mb-1 text-warm-400">Preferred Time</label>
-                                    <input id="order-delivery-time" type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Pickup contact (when someone else is picking up) --}}
-                    <div x-show="form.delivery_type === 'pickup'" class="pt-6 mt-6 border-t border-warm-700/20">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" x-model="hasPickupContact" class="w-4 h-4" />
-                            <span class="text-sm font-medium text-warm-300">Someone else is picking up this order</span>
-                        </label>
-                        <div x-show="hasPickupContact" class="mt-3 space-y-3">
-                            <div>
-                                <label for="pickup-contact-name" class="block text-xs font-medium mb-1 text-warm-400">Name *</label>
-                                <input id="pickup-contact-name" type="text" x-model="form.pickup_contact_name" :required="hasPickupContact" placeholder="Their name" class="order-input">
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label for="pickup-contact-phone" class="block text-xs font-medium mb-1 text-warm-400">Phone</label>
-                                    <input id="pickup-contact-phone" type="tel" x-model="form.pickup_contact_phone" placeholder="555-0123" class="order-input">
-                                </div>
-                                <div>
-                                    <label for="pickup-contact-email" class="block text-xs font-medium mb-1 text-warm-400">Email</label>
-                                    <input id="pickup-contact-email" type="email" x-model="form.pickup_contact_email" placeholder="them@example.com" class="order-input">
-                                </div>
-                            </div>
-                            <p class="text-xs text-warm-500">If you provide their email, we'll send them the pickup-ready notification too.</p>
-                        </div>
-                    </div>
-
-                    {{-- Notes --}}
-                    <div class="pt-6 mt-6 border-t border-warm-700/20">
-                        <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Special Instructions</label>
-                        <textarea data-test="order-form-notes" x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
-                    </div>
-
-                    @if (!empty($settings->payment->methodsAccepted))
-                    <div class="pt-4 mt-4 border-t border-warm-700/20">
-                        <p class="text-xs text-warm-300">
-                            <span class="font-medium text-warm-500">Payment:</span> {{ implode(', ', array_map('ucfirst', $settings->payment->methodsAccepted)) }}
+                @if ($vm->customerNotFound)
+                    <div class="border-warm-200 mx-auto mb-16 max-w-xl rounded-2xl border bg-white p-8 text-center">
+                        <p class="text-warm-700">
+                            We couldn't find an account with that email. Points are earned automatically when your
+                            orders are delivered!
                         </p>
                     </div>
-                    @endif
+                @endif
 
-                    @if ($settings->branding->allergyDisclaimer)
-                    <div class="pt-4 mt-4 border-t border-warm-700/20">
-                        <p class="text-xs leading-relaxed text-warm-300">
-                            <strong class="text-warm-500">⚠ Allergy Notice:</strong> {{ $settings->branding->allergyDisclaimer }}
-                        </p>
+                {{-- Available Rewards --}}
+                @if ($vm->rewards->count())
+                    <div class="mb-16">
+                        <div class="mb-10 text-center">
+                            <p class="text-warm-500 mb-2 text-xs font-semibold tracking-[0.25em] uppercase">
+                                {{ $vm->content['rewards_eyebrow'] ?? 'Unlock' }}
+                            </p>
+                            <h2 class="font-display text-warm-900 text-3xl font-bold">
+                                {{ $vm->content['rewards_heading'] ?? 'Available Rewards' }}
+                            </h2>
+                        </div>
+                        <div class="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($vm->rewards as $reward)
+                                <div @class([
+                                    'rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden bg-white border-2',
+                                    'border-warm-500' => $vm->canRedeem($reward),
+                                    'border-warm-200' => ! $vm->canRedeem($reward),
+                                ])>
+                                    @if ($vm->canRedeem($reward))
+                                        <x-storefront.pill
+                                            tone="solid"
+                                            size="xs"
+                                            class="absolute top-3 right-3 !font-bold"
+                                        >
+                                            Redeemable!</x-storefront.pill>
+                                    @endif
+                                    <div class="bg-warm-100 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+                                        <x-heroicon-o-chat-bubble-oval-left class="text-warm-500 h-7 w-7" />
+                                    </div>
+                                    <h3 class="font-display text-warm-900 mb-1 text-lg font-bold">
+                                        {{ $reward->name }}
+                                    </h3>
+                                    @if ($reward->description)
+                                        <p class="text-warm-600 mb-3 text-sm">{{ $reward->description }}</p>
+                                    @endif
+                                    <div class="bg-warm-100 inline-block rounded-full px-4 py-2">
+                                        <span class="font-display text-warm-800 font-bold">
+                                            @number($reward->points_required)
+                                        </span>
+                                        <span class="text-warm-500 text-sm">pts</span>
+                                    </div>
+                                    <p class="text-warm-500 mt-2 text-xs">
+                                        {{ \App\Presenters\LoyaltyRewardPresenter::for($reward)->rewardTypeLabel() }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                    @endif
+                @endif
+            </div>
+        </section>
 
-                    {{-- Minimum order notice --}}
-                    <div x-show="cartItems.length > 0 && !meetsMinimumOrder"
-                         class="mt-6 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-sm text-amber-300">
-                        <span x-text="`Minimum ${form.delivery_type === 'delivery' ? 'delivery' : 'pickup'} order is $${currentMinimumOrder.toFixed(2)}. Add $${amountBelowMinimum.toFixed(2)} more to continue.`"></span>
-                    </div>
-
-                    {{-- Submit --}}
-                    <x-storefront.button type="submit" size="lg" fullWidth fontDisplay
-                            data-test="order-form-submit"
-                            x-bind:disabled="!canSubmit || isSubmitting"
-                            class="mt-6"
-                            x-bind:class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : ''">
-                        <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
-                    </x-storefront.button>
-
-                    <div x-show="submitError" class="text-red-400 text-sm mt-3 text-center" x-text="submitError"></div>
+        {{-- How It Works --}}
+        <x-storefront.dark-section :show-radial="false" padding="py-20">
+            <div class="mx-auto max-w-4xl px-4">
+                <div class="mb-12 text-center">
+                    <p class="text-warm-500 mb-2 text-xs font-semibold tracking-[0.25em] uppercase">
+                        {{ $vm->content['how_it_works_eyebrow'] ?? 'Simple as' }}
+                    </p>
+                    <h2 class="font-display text-3xl font-bold text-white md:text-4xl">
+                        {{ $vm->content['how_it_works_heading'] ?? 'How It Works' }}
+                    </h2>
+                </div>
+                <div class="grid gap-10 text-center sm:grid-cols-3">
+                    @foreach ($vm->howSteps as $step)
+                        <div>
+                            <x-storefront.icon-circle size="lg" variant="subtle" class="mx-auto mb-5">
+                                <x-dynamic-component
+                                    :component="'heroicon-o-' . ($step['icon'] ?? 'star')"
+                                    class="text-warm-500 h-8 w-8"
+                                />
+                            </x-storefront.icon-circle>
+                            <h3 class="font-display text-warm-200 mb-2 text-xl font-bold">{{ $step['title'] }}</h3>
+                            <p class="text-warm-500">{{ $step['description'] }}</p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-        </form>
-    </div>
-</section>
-@include('partials.order-form-script')
+        </x-storefront.dark-section>
+    @endif
 </x-layouts.storefront>

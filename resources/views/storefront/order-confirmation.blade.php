@@ -1,277 +1,368 @@
-@use(App\Enums\Orders\DeliveryType)
 @use(App\Presenters\OrderItemPresenter)
+@php
+    /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\Order>|null $orders */
+    /** @var \Illuminate\Support\Collection<int, \App\Presenters\OrderTrackingPresenter>|null $trackedOrders */
+    /** @var string|null $email */
+    /** @var array<string, string> $trackableStatuses */
+    /** @var array<string, string> $content */
+@endphp
+
 <x-layouts.storefront>
-<x-slot:styles>
-<link rel="stylesheet" href="{{ asset('css/order-confirmation.css') }}">
-</x-slot:styles>
+    <link rel="stylesheet" href="{{ asset('css/order-tracking.css') }}" />
 
-{{-- Photo-Forward Hero with Success --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Order confirmed" image-class="hero-img" min-height="40vh">
+    {{-- Photo-Forward Hero --}}
+    <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Track Your Order" image-class="hero-img">
+        <div class="relative z-10 flex min-h-[55vh] flex-col items-center justify-end px-4 pb-20 text-center">
+            <x-storefront.eyebrow class="hero-fade-1 mb-6">
+                {{ $content['hero_eyebrow'] ?? 'Order Status' }}</x-storefront.eyebrow>
+            <h1 class="hero-fade-1 font-display text-warm-100 mb-6 text-3xl leading-none font-bold sm:text-5xl md:text-7xl lg:text-8xl">
+                {{ $content['hero_title'] ?? 'Track Your Order' }}
+            </h1>
+            <p class="hero-fade-2 text-warm-100 mx-auto max-w-lg text-lg">
+                {{ $content['hero_subtitle'] ?? 'Enter your email to see how your order is coming along.' }}
+            </p>
+        </div>
+    </x-storefront.hero-section>
 
- <div class="relative z-10 text-center px-4 py-24 md:py-32 md:pt-24">
- {{-- Animated success checkmark --}}
- <x-storefront.icon-circle size="xl" variant="bold" inline class="mb-8 hero-fade-1">
- <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
- </x-storefront.icon-circle>
+    {{-- Email Lookup Form --}}
+    <section class="bg-warm-100 relative py-16 md:py-20">
+        <div class="mx-auto max-w-xl px-4">
+            <form method="POST" action="{{ route('order.track.lookup') }}" class="hero-fade-3">
+                @csrf
+                <label
+                    for="email"
+                    class="text-warm-500 mb-3 block text-center text-xs font-medium tracking-[0.2em] uppercase"
+                >{{ $content['email_label'] ?? 'Email Address' }}</label>
+                <div class="flex gap-3">
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        class="track-input flex-1"
+                        placeholder="you@example.com"
+                        value="{{ old('email', $email ?? '') }}"
+                        required
+                    />
+                    <x-storefront.button type="submit" size="md" fontDisplay class="flex-shrink-0">
+                        {{ $content['lookup_button'] ?? 'Look Up' }}
+                    </x-storefront.button>
+                </div>
+                @error('email')
+                    <p class="mt-3 text-center text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </form>
+        </div>
+    </section>
 
- <x-storefront.eyebrow class="hero-fade-2 mb-4">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
+    @isset($orders)
+        @if ($orders->isEmpty())
+            {{-- Empty state --}}
+            <x-storefront.dark-section padding="py-24">
+                <div class="mx-auto max-w-md px-4 text-center">
+                    <div class="bg-warm-500/10 border-warm-500/20 mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border">
+                        <x-heroicon-o-magnifying-glass class="text-warm-500 h-8 w-8" />
+                    </div>
+                    <p class="font-display text-warm-100 mb-4 text-3xl font-bold md:text-4xl">
+                        {{ $content['empty_heading'] ?? 'No orders found' }}
+                    </p>
+                    <p class="text-warm-400 mb-2 text-lg">
+                        {{ $content['empty_description_prefix'] ?? 'We couldn\'t find any orders for' }}
+                        <strong class="text-warm-300">{{ $email }}</strong>.
+                    </p>
+                    <p class="text-warm-300 text-sm">
+                        {{ $content['empty_hint'] ?? 'Make sure you\'re using the same email you ordered with.' }}
+                    </p>
+                </div>
+            </x-storefront.dark-section>
+        @else
+            {{-- Orders List --}}
+            <x-storefront.dark-section padding="py-20 md:py-24" radial-position="30% 50%">
+                <div class="mx-auto max-w-4xl px-4">
+                    <x-storefront.section-divider tone="dark" class="mb-12">
+                        {{ $orders->count() }} {{ Str::plural('order', $orders->count()) }} for {{ $email }}
+                    </x-storefront.section-divider>
 
- <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-3 text-warm-100">
- {{ $content['hero_title'] ?? 'Thank You!' }}
- </h1>
- <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-4 text-warm-100">
- {{ $content['hero_description'] ?? 'Your order has been received and we\'ll start preparing your items right away.' }}
- </p>
- <div class="inline-block px-6 py-3 rounded-full hero-fade-5 bg-warm-500/10 border border-warm-500/25">
- <span class="text-sm font-medium text-warm-400">Order Number:</span>
- <span class="font-mono font-bold ml-2 text-warm-300">{{ $order->order_number }}</span>
- </div>
- </div>
-</x-storefront.hero-section>
+                    <div class="space-y-8">
+                        @foreach ($trackedOrders as $tracked)
+                            <div class="order-card bg-warm-800 border-warm-700/20 overflow-hidden rounded-2xl border">
+                                {{-- Order header --}}
+                                <div class="border-warm-700/15 flex flex-wrap items-start justify-between gap-4 border-b px-6 py-6 md:px-8">
+                                    <div>
+                                        <h3 class="font-display text-warm-100 text-xl font-bold">
+                                            Order {{ $tracked->order->order_number }}
+                                        </h3>
+                                        <p class="text-warm-500 mt-1 text-sm">Placed {{ $tracked->placedAt() }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-display text-warm-400 text-2xl font-bold">
+                                            @money($tracked->order->total)
+                                        </p>
+                                        @if ($tracked->isCancelled)
+                                            <span class="mt-1 inline-block rounded-full border border-red-500/30 bg-red-500/15 px-3 py-1 text-xs font-semibold tracking-wider text-red-400 uppercase">Cancelled</span>
+                                        @endif
+                                    </div>
+                                </div>
 
-{{-- Order Details --}}
-<section class="bg-warm-900">
- <div class="max-w-5xl mx-auto px-4 pb-24">
- <div class="grid md:grid-cols-2 gap-8">
- {{-- Items & Totals --}}
- <div class="rounded-2xl p-6 md:p-8 bg-warm-800 border border-warm-700/20">
- <div class="flex items-center gap-3 mb-6">
- <span class="block w-8 h-px bg-warm-500"></span>
- <h2 class="font-display text-xl font-semibold text-warm-100">{{ $content['details_heading'] ?? 'Order Details' }}</h2>
- </div>
+                                <div class="space-y-8 px-6 py-8 md:px-8">
+                                    {{-- Progress stepper --}}
+                                    @unless ($tracked->isCancelled)
+                                        <div>
+                                            {{-- Desktop stepper --}}
+                                            <div class="hidden sm:block">
+                                                <div class="relative flex items-center justify-between">
+                                                    <div class="bg-warm-700/15 absolute top-4 right-0 left-0 h-1 rounded-full"></div>
+                                                    @if ($tracked->currentStepIndex > 0)
+                                                        <div
+                                                            class="bg-warm-500 absolute top-4 left-0 h-1 rounded-full transition-all duration-700"
+                                                            style="width: {{ $tracked->progressPercentage() }}%;"
+                                                        ></div>
+                                                    @endif
 
- <div class="space-y-3 mb-6">
- @foreach ($order->orderItems as $item)
- <div class="flex justify-between items-center py-2 border-b border-warm-700/15">
- <div>
- <span class="font-medium text-warm-200">{{ $item->product->name ?? 'Product' }}</span>
- <span class="text-sm ml-2 text-warm-500">× {{ $item->quantity }}</span>
- </div>
- <span class="font-semibold text-warm-300">@money(OrderItemPresenter::for($item)->totalPrice())</span>
- </div>
- @endforeach
- </div>
+                                                    @foreach ($trackableStatuses as $i => $step)
+                                                        <div
+                                                            class="relative z-10 flex flex-col items-center"
+                                                            style="width: {{ 100 / count($trackableStatuses) }}%;"
+                                                        >
+                                                            <div @class([
+                                                                'track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold',
+                                                                'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
+                                                                'bg-warm-700/15 text-warm-300' => ! $tracked->isStepCompleted($i),
+                                                                'ring-4 ring-warm-500/20' => $tracked->isCurrentStep($i),
+                                                            ])>
+                                                                @if ($tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i))
+                                                                    <x-heroicon-o-check
+                                                                        class="h-4 w-4"
+                                                                        stroke-width="3"
+                                                                    />
+                                                                @else
+                                                                    {{ $i + 1 }}
+                                                                @endif
+                                                            </div>
+                                                            <span @class([
+                                                                'mt-2 text-xs font-medium text-center',
+                                                                'text-warm-300' => $tracked->isStepCompleted($i),
+                                                                'text-warm-300' => ! $tracked->isStepCompleted($i),
+                                                            ])>
+                                                                {{ $step->getLabel() }}
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
 
- <div class="space-y-2 pt-4 text-sm border-t border-warm-700/20">
- <div class="flex justify-between">
- <span class="text-warm-500">Subtotal</span>
- <span class="text-warm-300">@money($order->subtotal)</span>
- </div>
- @if ($order->delivery_fee->isPositive())
- <div class="flex justify-between">
- <span class="text-warm-500">Delivery Fee</span>
- <span class="text-warm-300">@money($order->delivery_fee)</span>
- </div>
- @endif
- @if ($order->discount_amount->isPositive())
- <div class="flex justify-between text-green-400">
- <span>Discount @if ($order->coupon)({{ $order->coupon->code }})@endif</span>
- <span>-@money($order->discount_amount)</span>
- </div>
- @endif
- @if ($order->gift_card_amount->isPositive())
- <div class="flex justify-between text-green-400">
- <span>Gift Card</span>
- <span>-@money($order->gift_card_amount)</span>
- </div>
- @endif
- @if ($order->tip_amount->isPositive())
- <div class="flex justify-between">
- <span class="text-warm-500">Tip</span>
- <span class="text-warm-300">@money($order->tip_amount)</span>
- </div>
- @endif
- <div class="flex justify-between pt-3 border-t border-warm-700/20">
- <span class="font-display text-lg font-bold text-warm-100">Total</span>
- <span class="font-display text-2xl font-bold text-warm-400">@money($order->total)</span>
- </div>
- </div>
+                                            {{-- Mobile stepper --}}
+                                            <div class="space-y-3 sm:hidden">
+                                                @foreach ($trackableStatuses as $i => $step)
+                                                    <div class="flex items-center gap-3">
+                                                        <div @class([
+                                                            'w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0',
+                                                            'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
+                                                            'bg-warm-700/15 text-warm-300' => ! $tracked->isStepCompleted($i),
+                                                        ])>
+                                                            @if ($tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i))
+                                                                <x-heroicon-o-check
+                                                                    class="h-3.5 w-3.5"
+                                                                    stroke-width="3"
+                                                                />
+                                                            @else
+                                                                {{ $i + 1 }}
+                                                            @endif
+                                                        </div>
+                                                        <span @class([
+                                                            'text-sm font-medium',
+                                                            'text-warm-200' => $tracked->isStepCompleted($i),
+                                                            'text-warm-300' => ! $tracked->isStepCompleted($i),
+                                                        ])>
+                                                            {{ $step->getLabel() }}
+                                                        </span>
+                                                    </div>
+                                                    @if ($i < count($trackableStatuses) - 1)
+                                                        <div
+                                                            @class([
+                                                                'ml-3 w-0.5 h-3',
+                                                                'bg-warm-500' => $tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i),
+                                                                'bg-warm-700/15' => ! ($tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i)),
+                                                            ])
+                                                        ></div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endunless
 
- @if ($canModify)
- <div class="mt-6 pt-6 border-t border-warm-700/20" x-data="{ open: false }">
- <div class="flex items-center justify-between">
- <div>
- <p class="text-sm font-semibold text-warm-300">Need to make changes?</p>
- <p class="text-xs text-warm-500">{{ $modifyMinutesRemaining }} minute{{ $modifyMinutesRemaining === 1 ? '' : 's' }} left to modify your order.</p>
- </div>
- <button type="button" @click="open = !open"
- class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
- <span x-text="open ? 'Cancel' : 'Modify Order'"></span>
- </button>
- </div>
+                                    {{-- Items Ordered --}}
+                                    <div class="border-warm-700/15 border-t pt-6">
+                                        <div class="mb-4 flex items-center gap-3">
+                                            <span class="bg-warm-500 block h-px w-6 opacity-50"></span>
+                                            <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">{{ $content['items_label'] ?? 'Items Ordered' }}</span>
+                                        </div>
+                                        <div class="space-y-3">
+                                            @foreach ($tracked->order->orderItems as $item)
+                                                <div class="bg-warm-700/5 flex items-center justify-between rounded-xl px-4 py-2">
+                                                    <span class="text-warm-200 text-sm">
+                                                        {{ $item->product->name ?? 'Product' }}
+                                                        <span class="text-warm-500 font-medium">× {{ $item->quantity }}</span>
+                                                    </span>
+                                                    <span class="text-warm-300 text-sm font-semibold">
+                                                        @money(OrderItemPresenter::for($item)->totalPrice())
+                                                    </span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
 
- <form x-show="open" x-cloak method="POST" action="{{ route('order.modify', $order) }}" class="mt-4 space-y-4">
- @csrf
- @error('items')
- <div class="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">{{ $message }}</div>
- @enderror
- <div class="space-y-2">
- @foreach ($order->orderItems as $index => $item)
- <div class="flex items-center justify-between gap-3 py-2 border-b border-warm-700/15">
- <span class="flex-1 text-sm text-warm-300">{{ $item->product->name ?? 'Product' }}</span>
- <input type="hidden" name="items[{{ $index }}][order_item_id]" value="{{ $item->id }}">
- <label for="modify-qty-{{ $item->id }}" class="sr-only">Quantity for {{ $item->product->name ?? 'Product' }}</label>
- <input id="modify-qty-{{ $item->id }}" type="number" name="items[{{ $index }}][quantity]"
- min="0" max="20" value="{{ $item->quantity }}"
- class="w-20 px-3 py-1 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm text-center" />
- </div>
- @endforeach
- </div>
- <div>
- <label for="modify-tip" class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Tip ($)</label>
- <input id="modify-tip" type="number" name="tip_amount" min="0" max="1000" step="0.01"
- value="{{ number_format($order->tip_amount->dollars(), 2, '.', '') }}"
- class="w-32 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm" />
- </div>
- <div class="flex justify-end">
- <button type="submit"
- class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
- Save changes
- </button>
- </div>
- </form>
- </div>
- @endif
- </div>
+                                    {{-- Messages --}}
+                                    <div class="border-warm-700/15 border-t pt-6">
+                                        <div class="mb-4 flex items-center gap-3">
+                                            <span class="bg-warm-500 block h-px w-6 opacity-50"></span>
+                                            <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">{{ $content['messages_label'] ?? 'Messages' }}</span>
+                                        </div>
+                                        <div
+                                            id="messages-{{ $tracked->order->order_number }}"
+                                            class="bg-warm-700/5 mb-4 max-h-64 space-y-3 overflow-y-auto rounded-xl p-4"
+                                        >
+                                            <p class="text-warm-300 text-sm italic">Loading messages...</p>
+                                        </div>
+                                        <form
+                                            onsubmit="sendOrderMessage(event, '{{ $tracked->order->order_number }}')"
+                                            class="flex gap-2"
+                                        >
+                                            <input
+                                                type="text"
+                                                id="msg-input-{{ $tracked->order->order_number }}"
+                                                placeholder="Type a message..."
+                                                class="track-msg-input flex-1"
+                                                required
+                                            />
+                                            <x-storefront.button type="submit" size="sm">Send</x-storefront.button>
+                                        </form>
+                                    </div>
 
- @if ($referralCode)
- <div class="md:col-span-2 rounded-2xl p-6 md:p-8 bg-warm-800 border border-warm-700/20">
- <div class="flex items-center gap-3 mb-4">
- <span class="block w-8 h-px bg-warm-500"></span>
- <h2 class="font-display text-xl font-semibold text-warm-100">Refer a friend, both save</h2>
- </div>
- <p class="text-sm text-warm-400 mb-4">Share this link. When they place their first order, they save ${{ $settings->engagement->customerReferralDiscountDollars }} — and we'll send you a coupon for the same amount.</p>
- <div class="flex flex-col sm:flex-row gap-3">
- <input id="referral-share-url" type="text" readonly value="{{ $referralShareUrl }}"
- class="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm font-mono" />
- <button type="button"
- onclick="navigator.clipboard.writeText(document.getElementById('referral-share-url').value); this.textContent='Copied!';"
- class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
- Copy link
- </button>
- </div>
- </div>
- @endif
+                                    {{-- Reorder --}}
+                                    <div class="border-warm-700/15 flex justify-center border-t pt-6">
+                                        <a
+                                            href="{{ route('order.create') }}?reorder={{ $tracked->order->order_number }}"
+                                            class="bg-warm-500/10 text-warm-400 border-warm-500/25 hover:bg-warm-500 hover:text-warm-900 hover:border-warm-500 inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105"
+                                        >
+                                            <x-heroicon-o-arrow-path class="h-4 w-4" stroke-width="2" />
+                                            {{ $content['reorder_button'] ?? 'Order Again' }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </x-storefront.dark-section>
+        @endif
+    @endisset
 
- {{-- Customer & Delivery Info --}}
- <div class="rounded-2xl p-6 md:p-8 bg-warm-800 border border-warm-700/20">
- <div class="flex items-center gap-3 mb-6">
- <span class="block w-8 h-px bg-warm-500"></span>
- <h2 class="font-display text-xl font-semibold text-warm-100">
- {{ $order->delivery_type === DeliveryType::Delivery ? 'Delivery' : 'Pickup' }} Details
- </h2>
- </div>
+    {{-- CTA --}}
+    @empty($orders)
+        <x-storefront.cta-section
+            :script-text="$content['cta_script'] ?? 'Ready to order?'"
+            :heading="$content['cta_heading'] ?? 'Start your first order today.'"
+            :button-text="$content['cta_button'] ?? 'Order Now'"
+            :button-route="route('order.create')"
+        />
+    @endempty
 
- <div class="space-y-5">
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Customer</span>
- <p class="text-warm-200">{{ $order->customer->name }}</p>
- <p class="text-sm text-warm-400">{{ $order->customer->email }}</p>
- @if ($order->customer->phone)
- <p class="text-sm text-warm-400">{{ $order->customer->phone }}</p>
- @endif
- </div>
+    @isset($orders)
+        @if ($orders->isNotEmpty())
+            <script @cspnonce>
+                const customerEmail = @json($email);
+                const customerName = @json($orders->first()->customer->name ?? $email);
 
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Date & Time</span>
- <p class="text-warm-200">{{ \Carbon\Carbon::parse($order->delivery_date)->format('l, F j, Y') }}</p>
- @if ($order->delivery_time)
- <p class="text-sm text-warm-400">{{ $order->delivery_time }}</p>
- @endif
- </div>
+                function renderMessages(orderId, messages) {
+                    const container = document.getElementById('messages-' + orderId);
+                    if (!messages.length) {
+                        container.textContent = '';
+                        const emptyP = document.createElement('p');
+                        emptyP.className = 'text-sm italic';
+                        emptyP.style.color = 'var(--warm-600)';
+                        emptyP.textContent = 'No messages yet. Say hello!';
+                        container.appendChild(emptyP);
+                        return;
+                    }
+                    container.textContent = '';
+                    messages.forEach((msg) => {
+                        const isBaker = msg.sender_type === 'baker';
+                        const cls = isBaker ? 'track-message-baker' : 'track-message-customer';
+                        const align = isBaker ? 'items-start' : 'items-end';
+                        const time = new Date(msg.created_at).toLocaleString([], {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        });
 
- @if ($order->delivery_type === DeliveryType::Delivery && $order->delivery_address)
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Delivery Address</span>
- <p class="text-warm-200">{{ $order->delivery_address }}</p>
- </div>
- @endif
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'flex flex-col ' + align;
 
- @if ($order->pickup_contact_name)
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Picking up for you</span>
- <p class="text-warm-200">{{ $order->pickup_contact_name }}</p>
- @if ($order->pickup_contact_phone)
- <p class="text-sm text-warm-400">{{ $order->pickup_contact_phone }}</p>
- @endif
- @if ($order->pickup_contact_email)
- <p class="text-sm text-warm-400">{{ $order->pickup_contact_email }}</p>
- @endif
- </div>
- @endif
+                        const bubble = document.createElement('div');
+                        bubble.className = cls + ' px-4 py-3 max-w-xs text-sm';
+                        bubble.style.color = 'var(--warm-200)';
 
- @if ($order->notes)
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Special Instructions</span>
- <p class="text-sm text-warm-300">{{ $order->notes }}</p>
- </div>
- @endif
+                        const nameP = document.createElement('p');
+                        nameP.className = 'font-medium text-xs mb-1';
+                        nameP.style.color = 'var(--warm-500)';
+                        nameP.textContent = msg.sender_name;
 
- <div>
- <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Status</span>
- <x-storefront.pill tone="outlined" size="md">
- {{ $order->status->getLabel() }}
- </x-storefront.pill>
- </div>
- </div>
- </div>
- </div>
+                        const msgP = document.createElement('p');
+                        msgP.className = 'whitespace-pre-wrap';
+                        msgP.textContent = msg.message;
 
- {{-- What Happens Next --}}
- <div class="rounded-2xl p-8 md:p-12 mt-8 bg-warm-800 border border-warm-700/20">
- <div class="text-center mb-10">
- <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">{{ $content['journey_eyebrow'] ?? 'What Happens Next' }}</span>
- <h2 class="font-display text-3xl font-bold mt-2 text-warm-100">{{ $content['journey_heading'] ?? 'Your Order Journey' }}</h2>
- </div>
+                        bubble.appendChild(nameP);
+                        bubble.appendChild(msgP);
 
- <div class="grid md:grid-cols-3 gap-8">
- @foreach ($journeySteps as $stepIndex => $step)
- <div class="text-center">
- <x-storefront.icon-circle size="md" variant="tinted" class="mx-auto mb-4">
- <span class="font-display text-xl font-bold text-warm-400">{{ $stepIndex + 1 }}</span>
- </x-storefront.icon-circle>
- <h3 class="font-display text-lg font-semibold mb-2 text-warm-200">
- @if (isset($step['description_delivery']) || isset($step['description_pickup']))
- {{ $order->delivery_type === DeliveryType::Delivery ? 'Delivery' : 'Pickup' }}
- @else
- {{ $step['title'] }}
- @endif
- </h3>
- <p class="text-sm text-warm-500">
- @if (isset($step['description_delivery']) || isset($step['description_pickup']))
- @if ($order->delivery_type === DeliveryType::Delivery)
- {{ $step['description_delivery'] ?? 'We\'ll deliver your fresh items right to your door.' }}
- @else
- {{ $step['description_pickup'] ?? 'Your items will be warm and ready for you to pick up.' }}
- @endif
- @else
- {{ $step['description'] }}
- @endif
- </p>
- </div>
- @endforeach
- </div>
+                        const timeSpan = document.createElement('span');
+                        timeSpan.className = 'text-xs mt-1';
+                        timeSpan.style.color = 'var(--warm-600)';
+                        timeSpan.textContent = time;
 
- <div class="text-center mt-10 pt-8 border-t border-warm-700/20">
- <p class="text-sm mb-6 text-warm-500">
- Questions? Reference order <strong class="text-warm-400">{{ $order->order_number }}</strong> when you
- <a href="{{ route('contact.show') }}" class="underline text-warm-400">contact us</a>.
- </p>
- <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
- <x-storefront.button :href="route('order.track')" size="md">
- Track Your Order
- </x-storefront.button>
- <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all text-warm-400">
- Back to {{ $settings->store->name }}
- <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
- </a>
- <button onclick="window.print()" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all text-warm-500">
- <x-heroicon-o-printer class="w-4 h-4" stroke-width="2" />
- Print
- </button>
- </div>
- </div>
- </div>
- </div>
-</section>
+                        wrapper.appendChild(bubble);
+                        wrapper.appendChild(timeSpan);
+                        container.appendChild(wrapper);
+                    });
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                function loadMessages(orderId) {
+                    fetch('/order/' + orderId + '/messages')
+                        .then((r) => r.json())
+                        .then((data) => renderMessages(orderId, data.messages))
+                        .catch(() => {
+                            const c = document.getElementById('messages-' + orderId);
+                            c.textContent = '';
+                            const p = document.createElement('p');
+                            p.className = 'text-sm italic';
+                            p.style.color = 'var(--warm-600)';
+                            p.textContent = 'Could not load messages.';
+                            c.appendChild(p);
+                        });
+                }
+
+                function sendOrderMessage(e, orderId) {
+                    e.preventDefault();
+                    const input = document.getElementById('msg-input-' + orderId);
+                    const msg = input.value.trim();
+                    if (!msg) return;
+
+                    fetch('/order/' + orderId + '/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': __PINT_BLADE_0__ },
+                        body: JSON.stringify({ message: msg, sender_name: customerName, sender_email: customerEmail }),
+                    })
+                        .then((r) => r.json())
+                        .then(() => {
+                            input.value = '';
+                            loadMessages(orderId);
+                        })
+                        .catch(() => alert('Failed to send message. Please try again.'));
+                }
+
+                __PINT_BLADE_1__;
+            </script>
+        @endif
+    @endisset
 </x-layouts.storefront>

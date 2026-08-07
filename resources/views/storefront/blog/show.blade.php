@@ -1,281 +1,771 @@
-@php
-    // Body comes in as plain text with \n\n paragraph breaks. Split, escape,
-    // then rehydrate the limited inline markdown we use (**bold**) so the
-    // article reads like a real article instead of a wall of text.
-    $rawParagraphs = preg_split("/\n\n+/", trim((string) $post->body));
-    $paragraphs = collect($rawParagraphs)
-        ->map(fn (string $p): string => preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', e(trim($p))));
-
-    $readingTime = max(1, (int) ceil(str_word_count((string) $post->body) / 200));
-    $publishedDate = $post->published_at?->format('F j, Y') ?? '';
-    $authorName = $post->author_name ?: ($settings->store->name ?? 'The Bakery');
-    $tagList = is_array($post->tags) ? $post->tags : [];
-@endphp
-
 <x-layouts.storefront>
-
-<x-slot:styles>
-    <style @cspnonce>
-        /* Drop cap on the first paragraph of the article body. The Pophams
-           letterpress move applied to long-form text — a single oversized
-           display-font initial that anchors the reader's eye and signals "this
-           is meant to be read." */
-        .article-body > p:first-of-type::first-letter {
-            float: left;
-            font-family: var(--font-display);
-            font-size: 4.75em;
-            line-height: 0.86;
-            margin: 0.05em 0.16em -0.04em 0;
-            color: var(--warm-700);
-            font-weight: 500;
-        }
-
-        .article-body p {
-            margin-bottom: 1.4em;
-        }
-
-        .article-body p:last-child {
-            margin-bottom: 0;
-        }
-
-        .article-body strong {
-            color: var(--warm-700);
-            font-weight: 600;
-        }
-
-        /* The empty-state placeholder for posts without a featured image.
-           Same brand language as the product placeholder (cream surface,
-           inset hairline frame, asterisk-divider flourish) but proportioned
-           for an article header. */
-        .article-figure-placeholder {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 7;
-            background: var(--warm-100);
-            border: 1px solid var(--warm-300);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-        }
-
-        .article-figure-placeholder::before,
-        .article-figure-placeholder::after {
-            content: '';
-            position: absolute;
-            left: 1.25rem;
-            right: 1.25rem;
-            height: 1px;
-            background: var(--warm-500);
-            opacity: 0.4;
-        }
-
-        .article-figure-placeholder::before { top: 1.25rem; }
-        .article-figure-placeholder::after  { bottom: 1.25rem; }
-
-        @media (max-width: 768px) {
-            .article-body > p:first-of-type::first-letter {
-                font-size: 3.6em;
+    <x-slot:styles>
+        <style @cspnonce>
+            .order-product-card {
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                background: var(--warm-800);
             }
-        }
-    </style>
-</x-slot:styles>
-
-<article style="background: var(--warm-100);">
-
-    {{-- ═══ Top utility row + article header ═══ --}}
-    <header class="max-w-3xl mx-auto px-5 md:px-8" style="padding-top: clamp(2.5rem, 6vw, 5rem);">
-
-        <a
-            href="{{ route('storefront.blog') }}"
-            class="inline-flex items-center gap-3 mb-12"
-            style="color: var(--warm-700); font-size: 0.8125rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;"
-        >
-            <span aria-hidden="true" style="display: inline-block; width: 1.5rem; height: 1px; background: var(--warm-500);"></span>
-            Back to Blog
-        </a>
-
-        @if (count($tagList) > 0)
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-8" style="color: var(--warm-700);">
-                <span aria-hidden="true" style="display: inline-block; width: 1.25rem; height: 1px; background: var(--warm-500);"></span>
-                @foreach ($tagList as $i => $tag)
-                    <span class="font-body uppercase font-semibold" style="font-size: 0.6875rem; letter-spacing: 0.22em;">{{ $tag }}</span>
-                    @if (! $loop->last)
-                        <span aria-hidden="true" style="opacity: 0.5;">·</span>
-                    @endif
-                @endforeach
-            </div>
-        @endif
-
-        <h1
-            class="font-display tracking-tight"
-            style="color: var(--warm-700); font-size: clamp(2.25rem, 4.4vw, 3.75rem); font-weight: 500; line-height: 1.04;"
-        >
-            {{ $post->title }}
-        </h1>
-
-        {{-- Byline strip: hairlines above + below, generous spacing.
-             Three groups separated by interpunct — author, date, reading
-             time — sized so each reads as discrete metadata, not a sentence. --}}
-        <div
-            class="mt-10 mb-2 flex flex-wrap items-baseline justify-between"
-            style="color: var(--warm-700); column-gap: 1.5rem; row-gap: 0.5rem; padding: 1.125rem 0; border-top: 1px solid color-mix(in oklab, var(--warm-700) 20%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--warm-700) 20%, transparent);"
-        >
-            <div class="flex flex-wrap items-baseline" style="column-gap: 1.25rem; row-gap: 0.5rem;">
-                <span class="font-body" style="font-size: 0.9375rem;">
-                    By <span style="font-weight: 600;">{{ $authorName }}</span>
-                </span>
-                <span aria-hidden="true" style="opacity: 0.35;">·</span>
-                <time datetime="{{ $post->published_at?->toIso8601String() }}" class="font-body" style="font-size: 0.9375rem;">
-                    {{ $publishedDate }}
-                </time>
-            </div>
-            <span class="font-body uppercase" style="font-size: 0.6875rem; letter-spacing: 0.22em; opacity: 0.65;">
-                {{ $readingTime }} min read
-            </span>
-        </div>
-    </header>
-
-    {{-- ═══ Featured image — only renders when one is uploaded.
-         When no image exists, we skip this section entirely. Editorial
-         discipline: if there's nothing to show, don't fill the slot with
-         a designed-empty-box that just reads as "image missing." Body
-         typography carries the page. --}}
-    @if ($post->featured_image)
-        <figure class="max-w-5xl mx-auto px-5 md:px-8" style="margin-top: clamp(2.5rem, 5vw, 4rem); margin-bottom: clamp(2.5rem, 5vw, 4rem);">
-            <img
-                src="{{ Storage::url($post->featured_image) }}"
-                alt="{{ $post->title }}"
-                class="w-full"
-                style="aspect-ratio: 16 / 9; object-fit: cover; background: var(--warm-200);"
-            >
-        </figure>
-    @else
-        {{-- No image — a single asterisk-divider band carries the transition
-             from byline into the body. Tiny, restrained, doesn't pretend to
-             be an image slot. --}}
-        <div class="max-w-3xl mx-auto px-5 md:px-8 flex items-center justify-center" style="margin-top: clamp(2.5rem, 5vw, 3.75rem); margin-bottom: clamp(2.5rem, 5vw, 3.75rem); gap: 1rem;">
-            <span aria-hidden="true" style="display: inline-block; width: 3rem; height: 1px; background: var(--warm-300);"></span>
-            <span class="font-display" style="color: var(--warm-500); font-size: 1.25rem; line-height: 1; font-weight: 500;">&#x2733;</span>
-            <span aria-hidden="true" style="display: inline-block; width: 3rem; height: 1px; background: var(--warm-300);"></span>
+            .order-product-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(28, 20, 16, 0.3);
+            }
+            .order-product-card:hover img {
+                transform: scale(1.08);
+            }
+            .order-product-card img {
+                transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+            .order-sidebar-card {
+                background: var(--warm-800);
+                border-radius: 20px;
+                border: 1px solid rgba(212, 146, 12, 0.15);
+            }
+            .order-qty-btn {
+                width: 2.75rem;
+                height: 2.75rem;
+                border-radius: 0.625rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1rem;
+                border: 1.5px solid color-mix(in srgb, var(--warm-500) 30%, transparent);
+                background: color-mix(in srgb, var(--warm-500) 10%, transparent);
+                color: var(--warm-400);
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .order-qty-btn:hover:not(:disabled) {
+                background: var(--warm-500);
+                color: var(--warm-900);
+                border-color: var(--warm-500);
+            }
+            .order-qty-btn:disabled {
+                opacity: 0.2;
+                cursor: not-allowed;
+            }
+            .order-input {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border-radius: 0.75rem;
+                border: 1.5px solid rgba(139, 104, 68, 0.25);
+                background: rgba(255, 255, 255, 0.05);
+                color: var(--warm-100);
+                font-size: 0.95rem;
+                transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+                outline: none;
+            }
+            .order-input:focus {
+                border-color: var(--warm-500);
+                box-shadow: 0 0 0 3px rgba(212, 146, 12, 0.12);
+            }
+            .order-input::placeholder {
+                color: var(--warm-600);
+            }
+            .order-input option {
+                background: var(--warm-800);
+                color: var(--warm-100);
+            }
+            .order-radio {
+                accent-color: var(--warm-500);
+            }
+            @keyframes cartPulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+        </style>
+    </x-slot:styles>
+    @if ($settings->orders->sitewideSaleEnabled && $settings->orders->sitewideSalePercent > 0)
+        <div class="bg-warm-500 text-warm-900 px-4 py-3 text-center text-sm font-semibold md:text-base">
+            🎉 {{ $settings->orders->sitewideSaleLabel }} — {{ $settings->orders->sitewideSalePercent }}% off
+            everything, applied at checkout.
         </div>
     @endif
-
-    {{-- ═══ Body column ═══ --}}
-    <div class="mx-auto px-5 md:px-8" style="max-width: 42rem; padding-bottom: clamp(2.5rem, 4vw, 3.5rem);">
-
-        {{-- Lede / standfirst: the excerpt set as a magazine-style opening
-             paragraph — italic, larger display, with a thin gold left rule
-             marking it as the deck. Functions as the "what this is about"
-             before the body proper begins. --}}
-        @if ($post->excerpt)
-            <p
-                class="font-display italic"
-                style="color: var(--warm-700); font-size: clamp(1.375rem, 2vw, 1.75rem); line-height: 1.36; font-weight: 400; margin-bottom: 2.5rem; padding-left: 1.25rem; border-left: 2px solid var(--warm-500);"
-            >
-                {{ $post->excerpt }}
-            </p>
-        @endif
-
-        {{-- Body: paragraph-wrapped, drop cap on the first paragraph,
-             generous line-height tuned for long-form reading. --}}
+    {{-- Dark Hero Banner --}}
+    <section class="bg-warm-900 relative overflow-hidden pt-8">
         <div
-            class="article-body font-body"
-            style="color: var(--warm-700); font-size: 1.0625rem; line-height: 1.72;"
-        >
-            @foreach ($paragraphs as $paragraph)
-                <p>{!! $paragraph !!}</p>
-            @endforeach
-        </div>
+            class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]"
+            aria-hidden="true"
+        ></div>
 
-        {{-- End-of-article flourish: short hairline + asterisk + short hairline,
-             centered. The same Pophams divider mark used elsewhere. --}}
-        <div class="flex items-center justify-center" style="margin-top: 2.5rem; margin-bottom: 1.25rem; gap: 0.875rem;">
-            <span aria-hidden="true" style="display: inline-block; width: 2.5rem; height: 1px; background: var(--warm-300);"></span>
-            <span class="font-display" style="color: var(--warm-500); font-size: 1.125rem; line-height: 1; font-weight: 500;">&#x2733;</span>
-            <span aria-hidden="true" style="display: inline-block; width: 2.5rem; height: 1px; background: var(--warm-300);"></span>
-        </div>
-
-        @if (count($tagList) > 0)
-            <p class="text-center font-body uppercase" style="font-size: 0.6875rem; letter-spacing: 0.22em; color: var(--warm-700); opacity: 0.65;">
-                Filed under
-                <span style="font-weight: 600; opacity: 1; color: var(--warm-700);">{{ implode(' · ', $tagList) }}</span>
-            </p>
-        @endif
-
-        {{-- Author signature — left-aligned credit line, restrained. The
-             "read more" CTA is intentionally omitted because the related-posts
-             section directly below already serves that purpose. --}}
-        <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in oklab, var(--warm-700) 18%, transparent);">
-            <p class="font-body uppercase" style="font-size: 0.6875rem; letter-spacing: 0.22em; color: var(--warm-700); opacity: 0.6; margin-bottom: 0.375rem;">
-                Written by
-            </p>
-            <p class="font-display" style="color: var(--warm-700); font-size: 1.25rem; font-weight: 500; line-height: 1.2; margin-bottom: 0.375rem;">
-                {{ $authorName }}
-            </p>
-            <p style="color: var(--warm-700); font-size: 0.9375rem; line-height: 1.55; opacity: 0.85;">
-                Notes, recipes, and updates from {{ $settings->store->name ?? 'our kitchen' }}.
+        <div class="relative z-10 mx-auto max-w-7xl px-4 py-16 md:py-24">
+            <x-storefront.eyebrow align="left" class="mb-6">Fresh From Our Ovens</x-storefront.eyebrow>
+            <h1 class="font-display text-warm-100 mb-4 text-4xl font-bold md:text-6xl">Place Your Order</h1>
+            <p class="text-warm-100 max-w-2xl text-lg">
+                Choose your items, tell us when you need them, and we'll have everything freshly prepared. Orders need {{ $settings->orders->leadTimeHours }} hours
+                notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
             </p>
         </div>
-    </div>
+    </section>
 
-</article>
+    {{-- Main Content --}}
+    <section class="bg-warm-900 relative">
+        <div class="relative z-10 mx-auto max-w-7xl px-4 pb-24" x-data="orderForm()" x-init="init()">
+            <form data-test="order-form" @submit.prevent="submitOrder" class="grid gap-8 lg:grid-cols-3">
+                {{-- Product Selection --}}
+                <div class="space-y-10 lg:col-span-2">
+                    <div class="flex items-center gap-4">
+                        <h2 class="font-display text-warm-100 text-2xl font-bold whitespace-nowrap">
+                            Select Your Items
+                        </h2>
+                        <div class="bg-warm-600/25 h-px flex-1"></div>
+                    </div>
 
-{{-- ═══ Related Reading ═══ --}}
-@if ($relatedPosts->isNotEmpty())
-    <section style="background: var(--warm-100); border-top: 1px solid color-mix(in oklab, var(--warm-700) 22%, transparent);">
-        <div class="max-w-6xl mx-auto px-5 md:px-8" style="padding-top: clamp(1.75rem, 3vw, 2.5rem); padding-bottom: clamp(2.5rem, 4.5vw, 4rem);">
+                    @foreach ($categories as $category)
+                        <div>
+                            <div class="mb-6 flex items-center gap-3">
+                                <span class="bg-warm-500 block h-px w-6"></span>
+                                <h3 class="font-display text-warm-300 text-xl font-semibold">{{ $category->name }}</h3>
+                            </div>
 
-            <div class="flex items-center gap-3 mb-8" style="color: var(--warm-700);">
-                <span aria-hidden="true" style="display: inline-block; width: 1.75rem; height: 1px; background: var(--warm-500);"></span>
-                <span class="font-body uppercase font-semibold" style="font-size: 0.6875rem; letter-spacing: 0.24em;">More from the kitchen</span>
-            </div>
+                            <div class="grid gap-5 sm:grid-cols-2">
+                                @foreach ($category->products as $product)
+                                    @if ($product->is_active)
+                                        <div
+                                            class="order-product-card"
+                                            data-product-id="{{ $product->id }}"
+                                            data-product-name="{{ $product->name }}"
+                                        >
+                                            {{-- Favorite Heart --}}
+                                            <button
+                                                type="button"
+                                                @click="toggleFavorite({{ $product->id }})"
+                                                class="bg-warm-900/60 absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-sm transition-all"
+                                                :class="isFavorite({{ $product->id }}) ? '' : 'hover:scale-110'"
+                                                :aria-label="isFavorite({{ $product->id }}) ? 'Remove ' + @js($product->name) + ' from favorites' : 'Add ' + @js($product->name) + ' to favorites'"
+                                            >
+                                                <x-heroicon-s-heart
+                                                    x-show="isFavorite({{ $product->id }})"
+                                                    class="h-5 w-5 text-red-500"
+                                                />
+                                                <x-heroicon-o-heart
+                                                    x-show="! isFavorite({{ $product->id }})"
+                                                    class="text-warm-300 h-5 w-5"
+                                                />
+                                            </button>
 
-            {{-- Text-first cards. With-image posts get a compact 16:10 ratio
-                 (proportioned for a card, not a hero); image-less posts skip
-                 the image slot entirely and rely on a top hairline + tag
-                 eyebrow + display-font title — looks intentional, not absent. --}}
-            <div class="grid md:grid-cols-3" style="row-gap: 2.5rem; column-gap: clamp(2.5rem, 4vw, 4rem);">
-                @foreach ($relatedPosts as $related)
-                    <a
-                        href="{{ route('storefront.blog.show', $related) }}"
-                        class="group block"
-                        style="color: var(--warm-700); padding-top: 1.25rem; border-top: 1px solid color-mix(in oklab, var(--warm-700) 18%, transparent);"
-                    >
-                        @if ($related->featured_image)
-                            <div style="overflow: hidden; margin-bottom: 1.125rem;">
-                                <img
-                                    src="{{ Storage::url($related->featured_image) }}"
-                                    alt="{{ $related->title }}"
-                                    style="width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);"
-                                    class="group-hover:scale-[1.03]"
+                                            {{-- Product Image --}}
+                                            <div class="relative aspect-[4/3] overflow-hidden">
+                                                @if ($product->image)
+                                                    <img
+                                                        src="{{ Storage::url($product->image) }}"
+                                                        alt="{{ $product->name }}"
+                                                        class="h-full w-full object-cover"
+                                                    />
+                                                @else
+                                                    <x-storefront.image-placeholder
+                                                        :name="$product->name"
+                                                        :category="$product->category?->name"
+                                                    />
+                                                @endif
+                                                {{-- Price badge --}}
+                                                <div class="bg-warm-900/80 text-warm-400 border-warm-500/20 absolute top-3 left-3 rounded-full border px-3 py-1.5 text-sm font-bold backdrop-blur-sm">
+                                                    @money($product->price)
+                                                </div>
+                                            </div>
+
+                                            <div class="p-5">
+                                                <h4 class="font-display text-warm-100 mb-1 text-lg font-semibold">
+                                                    {{ $product->name }}
+                                                </h4>
+                                                @if ($product->description)
+                                                    <p class="text-warm-500 mb-3 line-clamp-2 text-sm">
+                                                        {{ $product->description }}
+                                                    </p>
+                                                @endif
+                                                <div class="mt-2 flex items-center justify-between">
+                                                    <div
+                                                        x-show="getQuantity({{ $product->id }}) > 0"
+                                                        class="text-warm-400 text-sm font-medium"
+                                                    >
+                                                        <span x-text="getQuantity({{ $product->id }})"></span> in cart
+                                                    </div>
+                                                    <div x-show="getQuantity({{ $product->id }}) === 0"></div>
+                                                    <div class="flex items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            @click="decrementItem({{ $product->id }})"
+                                                            :disabled="getQuantity({{ $product->id }}) <= 0"
+                                                            class="order-qty-btn"
+                                                        >
+                                                            −
+                                                        </button>
+                                                        <span
+                                                            class="text-warm-100 min-w-[1.5rem] text-center text-sm font-bold"
+                                                            x-text="getQuantity({{ $product->id }})"
+                                                        ></span>
+                                                        <button
+                                                            type="button"
+                                                            @click="incrementItem({{ $product->id }}, {{ $product->price?->dollars() ?? 0 }})"
+                                                            class="order-qty-btn"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Order Summary Sidebar --}}
+                <div class="lg:col-span-1">
+                    <div class="order-sidebar-card sticky top-24 p-6 md:p-8">
+                        <div class="mb-6 flex items-center gap-3">
+                            <span class="bg-warm-500 block h-px w-6"></span>
+                            <h3 class="font-display text-warm-100 text-xl font-semibold">Your Order</h3>
+                        </div>
+
+                        {{-- Cart Items --}}
+                        <div class="mb-4 space-y-2" x-show="cartItems.length > 0">
+                            <template x-for="item in cartItems" :key="item.id">
+                                <div class="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2 text-sm">
+                                    <span class="text-warm-400">
+                                        <span class="text-warm-300 font-semibold" x-text="item.quantity"></span> ×
+                                        <span x-text="item.name"></span>
+                                    </span>
+                                    <span
+                                        class="text-warm-300 font-semibold"
+                                        x-text="'$' + (item.quantity * item.price).toFixed(2)"
+                                    ></span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div x-show="cartItems.length === 0" class="mb-4 py-8 text-center">
+                            <div class="mb-3 text-4xl opacity-30">🧺</div>
+                            <p class="text-warm-300 text-sm">
+                                {{ $content['empty_cart_heading'] ?? 'Your cart is empty' }}
+                            </p>
+                            <p class="text-warm-500 mt-1 text-xs">
+                                {{ $content['empty_cart_subtext'] ?? 'Add items to get started' }}
+                            </p>
+                        </div>
+
+                        {{-- Coupon Section --}}
+                        <div class="border-warm-700/20 mb-4 border-t pt-4">
+                            <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Coupon Code</label>
+                            <div class="flex gap-2">
+                                <input
+                                    type="text"
+                                    data-test="order-form-coupon-code"
+                                    x-model="couponCode"
+                                    placeholder="Enter coupon"
+                                    class="order-input flex-1"
+                                />
+                                <button type="button"
+                                    @click="applyCoupon()"
+                                    :disabled="! couponCode || isApplyingCoupon"
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
+                                    :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
+                                <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
+                                </button>
+                            </div>
+                            <div x-show="couponError" class="mt-2 text-sm text-red-400" x-text="couponError"></div>
+                            <div x-show="appliedCoupon" class="mt-2 text-sm text-green-400">
+                                ✓ <span x-text="appliedCoupon?.label"></span> applied!
+                            </div>
+                        </div>
+
+                        {{-- Gift Card Section --}}
+                        <div class="border-warm-700/20 mb-4 border-t pt-4">
+                            <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Gift Card</label>
+                            <div class="flex gap-2">
+                                <input
+                                    type="text"
+                                    data-test="order-form-gift-card-code"
+                                    x-model="giftCardCode"
+                                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                                    class="order-input flex-1 font-mono text-sm tracking-wider uppercase"
+                                />
+                                <button
+                                    type="button"
+                                    @click="applyGiftCard()"
+                                    :disabled="! giftCardCode || isApplyingGiftCard"
+                                    class="bg-warm-500/15 text-warm-400 border-warm-500/30 rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
+                                    :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
                                 >
+                                    <span x-text="isApplyingGiftCard ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
+                                </button>
+                            </div>
+                            <div x-show="giftCardError" class="mt-2 text-sm text-red-400" x-text="giftCardError"></div>
+                            <div x-show="appliedGiftCard" class="mt-2 text-sm text-green-400">
+                                ✓ Gift card applied! Balance: $<span
+                                    x-text="appliedGiftCard?.available_balance?.toFixed(2)"
+                                ></span>
+                            </div>
+                        </div>
+
+                        {{-- Tip --}}
+                        <div x-show="cartItems.length > 0" class="border-warm-700/20 mt-4 border-t pt-4">
+                            <div class="mb-3 flex items-center gap-2">
+                                <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">Add a Tip</span>
+                            </div>
+                            <div class="grid grid-cols-5 gap-2">
+                                <button
+                                    type="button"
+                                    @click="selectTipPreset(0)"
+                                    :class="tipMode === 'preset' && tipPercent === 0
+                                        ? 'bg-warm-400 text-warm-900'
+                                        : 'bg-white/[0.03] text-warm-400'"
+                                    class="border-warm-600/15 rounded-lg border px-2 py-2 text-xs font-semibold transition-all"
+                                >
+                                    None
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="selectTipPreset(15)"
+                                    :class="tipMode === 'preset' && tipPercent === 15
+                                        ? 'bg-warm-400 text-warm-900'
+                                        : 'bg-white/[0.03] text-warm-400'"
+                                    class="border-warm-600/15 rounded-lg border px-2 py-2 text-xs font-semibold transition-all"
+                                >
+                                    15%
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="selectTipPreset(18)"
+                                    :class="tipMode === 'preset' && tipPercent === 18
+                                        ? 'bg-warm-400 text-warm-900'
+                                        : 'bg-white/[0.03] text-warm-400'"
+                                    class="border-warm-600/15 rounded-lg border px-2 py-2 text-xs font-semibold transition-all"
+                                >
+                                    18%
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="selectTipPreset(20)"
+                                    :class="tipMode === 'preset' && tipPercent === 20
+                                        ? 'bg-warm-400 text-warm-900'
+                                        : 'bg-white/[0.03] text-warm-400'"
+                                    class="border-warm-600/15 rounded-lg border px-2 py-2 text-xs font-semibold transition-all"
+                                >
+                                    20%
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="selectCustomTip()"
+                                    :class="tipMode === 'custom'
+                                        ? 'bg-warm-400 text-warm-900'
+                                        : 'bg-white/[0.03] text-warm-400'"
+                                    class="border-warm-600/15 rounded-lg border px-2 py-2 text-xs font-semibold transition-all"
+                                >
+                                    Custom
+                                </button>
+                            </div>
+                            <div x-show="tipMode === 'custom'" class="mt-3">
+                                <label for="custom-tip-input" class="sr-only">Custom tip amount in dollars</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-warm-500">$</span>
+                                    <input
+                                        id="custom-tip-input"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        inputmode="decimal"
+                                        x-model="customTip"
+                                        @input="calculateTotals()"
+                                        class="border-warm-600/15 text-warm-300 flex-1 rounded-lg border bg-white/[0.03] px-3 py-2 text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Totals --}}
+                        <div class="border-warm-700/20 space-y-2 border-t pt-4 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-warm-500">Subtotal</span>
+                                <span class="text-warm-300" x-text="'$' + subtotal.toFixed(2)"></span>
+                            </div>
+                            <div x-show="deliveryFee > 0" class="flex justify-between">
+                                <span class="text-warm-500">Delivery</span>
+                                <span class="text-warm-300" x-text="'$' + deliveryFee.toFixed(2)"></span>
+                            </div>
+                            <div x-show="saleDiscount > 0" class="flex justify-between text-green-400">
+                                <span x-text="sitewideSaleLabel + ' (' + sitewideSalePercent + '% off)'"></span>
+                                <span x-text="'-$' + saleDiscount.toFixed(2)"></span>
+                            </div>
+                            <div x-show="appliedCoupon" class="flex justify-between text-green-400">
+                                <span>Coupon</span>
+                                <span x-text="'-$' + discountAmount.toFixed(2)"></span>
+                            </div>
+                            <div x-show="appliedGiftCard" class="flex justify-between text-green-400">
+                                <span>Gift Card</span>
+                                <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
+                            </div>
+                            <div x-show="tipAmount > 0" class="flex justify-between">
+                                <span class="text-warm-500">Tip</span>
+                                <span class="text-warm-300" x-text="'$' + tipAmount.toFixed(2)"></span>
+                            </div>
+                            <div class="border-warm-700/20 flex justify-between border-t pt-3">
+                                <span class="font-display text-warm-100 text-lg font-bold">Total</span>
+                                <span
+                                    class="font-display text-warm-400 text-2xl font-bold"
+                                    x-text="'$' + total.toFixed(2)"
+                                ></span>
+                            </div>
+                        </div>
+
+                        {{-- Customer Information --}}
+                        <div class="border-warm-700/20 mt-6 border-t pt-6">
+                            <div class="mb-4 flex items-center gap-2">
+                                <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">Your Details</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-warm-400 mb-1 block text-xs font-medium">Name *</label>
+                                    <input
+                                        type="text"
+                                        data-test="order-form-customer-name"
+                                        x-model="form.customer_name"
+                                        required
+                                        class="order-input"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-400 mb-1 block text-xs font-medium">Email *</label>
+                                    <input
+                                        type="email"
+                                        data-test="order-form-customer-email"
+                                        x-model="form.customer_email"
+                                        @input="saveEmail()"
+                                        required
+                                        class="order-input"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
+                                    <input
+                                        type="tel"
+                                        data-test="order-form-customer-phone"
+                                        x-model="form.customer_phone"
+                                        class="order-input"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="text-warm-400 mb-1 block text-xs font-medium">Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
+                                    <input
+                                        type="date"
+                                        data-test="order-form-customer-birthday"
+                                        x-model="form.customer_birthday"
+                                        class="order-input"
+                                        max="{{ date('Y-m-d') }}"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Delivery Options --}}
+                        <div class="border-warm-700/20 mt-6 border-t pt-6">
+                            <div class="mb-4 flex items-center gap-2">
+                                <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">Delivery</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label
+                                    class="border-warm-600/15 flex cursor-pointer items-center rounded-xl border bg-white/[0.03] px-4 py-3 transition-all"
+                                    :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''"
+                                >
+                                    <input
+                                        type="radio"
+                                        data-test="order-form-delivery-type-pickup"
+                                        x-model="form.delivery_type"
+                                        value="pickup"
+                                        @change="calculateTotals()"
+                                        class="order-radio mr-3"
+                                    />
+                                    <span class="text-warm-200">Pickup <span class="text-warm-500 text-sm">(Free)</span></span>
+                                </label>
+
+                                @if ($settings->orders->deliveryEnabled)
+                                    <label
+                                        class="border-warm-600/15 flex cursor-pointer items-center rounded-xl border bg-white/[0.03] px-4 py-3 transition-all"
+                                        :class="form.delivery_type === 'delivery'
+                                            ? 'border-warm-500 bg-warm-500/[0.08]'
+                                            : ''"
+                                    >
+                                        <input
+                                            type="radio"
+                                            data-test="order-form-delivery-type-delivery"
+                                            x-model="form.delivery_type"
+                                            value="delivery"
+                                            @change="calculateTotals()"
+                                            class="order-radio mr-3"
+                                        />
+                                        <span class="text-warm-200">Delivery</span>
+                                    </label>
+                                @endif
+                            </div>
+
+                            @if ($settings->orders->deliveryEnabled)
+                                <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
+                                    <div>
+                                        <label class="text-warm-400 mb-1 block text-xs font-medium">Delivery Address *</label>
+                                        <textarea
+                                            data-test="order-form-delivery-address"
+                                            x-model="form.delivery_address"
+                                            placeholder="Full address"
+                                            class="order-input"
+                                            rows="3"
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="text-warm-400 mb-1 block text-xs font-medium">Distance</label>
+                                        <select
+                                            data-test="order-form-delivery-tier"
+                                            x-model="form.delivery_tier"
+                                            @change="calculateTotals()"
+                                            class="order-input"
+                                        >
+                                            <option value="">Select distance</option>
+                                            @foreach ($settings->orders->deliveryFeeTiers as $index => $tier)
+                                                <option value="{{ $index }}">
+                                                    {{ $tier['description'] }} (
+                                                    @money($tier['fee'])
+                                                    )
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @if ($settings->orders->freeDeliveryMinimum)
+                                        <p class="text-warm-500 text-sm">
+                                            🚚 Free delivery on orders over
+                                            @money((float) $settings->orders->freeDeliveryMinimum)
+                                            !
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Date & Time --}}
+                        <div class="border-warm-700/20 mt-6 border-t pt-6">
+                            <div class="mb-4 flex items-center gap-2">
+                                <span class="text-warm-500 text-xs font-semibold tracking-[0.2em] uppercase">When</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-warm-400 mb-1 block text-xs font-medium">
+                                        <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span>
+                                        *
+                                    </label>
+                                    <input
+                                        type="date"
+                                        data-test="order-form-delivery-date"
+                                        x-model="form.delivery_date"
+                                        :min="minDate"
+                                        @change="onDateChange()"
+                                        required
+                                        class="order-input"
+                                    />
+                                    <div
+                                        x-show="capacityWarning"
+                                        class="mt-1 text-sm text-amber-400"
+                                        x-text="capacityWarning"
+                                    ></div>
+                                    <div
+                                        x-show="capacityError"
+                                        class="mt-1 text-sm text-red-400"
+                                        x-text="capacityError"
+                                    ></div>
+                                </div>
+                                <div>
+                                    @if ($settings->orders->pickupSlotsEnabled)
+                                        <label
+                                            for="order-pickup-slot"
+                                            class="text-warm-400 mb-1 block text-xs font-medium"
+                                        >
+                                            <span
+                                                x-text="
+                                                    form.delivery_type === 'pickup' ? 'Pickup Time' : 'Preferred Time'
+                                                "
+                                            ></span>
+                                        </label>
+                                        <template x-if="form.delivery_type === 'pickup'">
+                                            <select
+                                                id="order-pickup-slot"
+                                                data-test="order-form-delivery-time"
+                                                x-model="form.delivery_time"
+                                                class="order-input"
+                                            >
+                                                <option value="">{{ '— Select a time —' }}</option>
+                                                <template x-for="slot in availableSlots" :key="slot">
+                                                    <option :value="slot" x-text="slot"></option>
+                                                </template>
+                                            </select>
+                                        </template>
+                                        <template x-if="form.delivery_type !== 'pickup'">
+                                            <input
+                                                type="text"
+                                                data-test="order-form-delivery-time"
+                                                x-model="form.delivery_time"
+                                                placeholder="e.g., 10:00 AM"
+                                                class="order-input"
+                                            />
+                                        </template>
+                                        <div
+                                            x-show="
+                                                form.delivery_type === 'pickup' &&
+                                                availableSlots.length === 0 &&
+                                                form.delivery_date
+                                            "
+                                            class="mt-1 text-sm text-amber-400"
+                                        >
+                                            No pickup slots available for this date.
+                                        </div>
+                                    @else
+                                        <label
+                                            for="order-delivery-time"
+                                            class="text-warm-400 mb-1 block text-xs font-medium"
+                                        >Preferred Time</label>
+                                        <input
+                                            id="order-delivery-time"
+                                            type="text"
+                                            data-test="order-form-delivery-time"
+                                            x-model="form.delivery_time"
+                                            placeholder="e.g., 10:00 AM"
+                                            class="order-input"
+                                        />
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Pickup contact (when someone else is picking up) --}}
+                        <div x-show="form.delivery_type === 'pickup'" class="border-warm-700/20 mt-6 border-t pt-6">
+                            <label class="flex cursor-pointer items-center gap-2">
+                                <input type="checkbox" x-model="hasPickupContact" class="h-4 w-4" />
+                                <span class="text-warm-300 text-sm font-medium">Someone else is picking up this order</span>
+                            </label>
+                            <div x-show="hasPickupContact" class="mt-3 space-y-3">
+                                <div>
+                                    <label
+                                        for="pickup-contact-name"
+                                        class="text-warm-400 mb-1 block text-xs font-medium"
+                                    >Name *</label>
+                                    <input
+                                        id="pickup-contact-name"
+                                        type="text"
+                                        x-model="form.pickup_contact_name"
+                                        :required="hasPickupContact"
+                                        placeholder="Their name"
+                                        class="order-input"
+                                    />
+                                </div>
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    <div>
+                                        <label
+                                            for="pickup-contact-phone"
+                                            class="text-warm-400 mb-1 block text-xs font-medium"
+                                        >Phone</label>
+                                        <input
+                                            id="pickup-contact-phone"
+                                            type="tel"
+                                            x-model="form.pickup_contact_phone"
+                                            placeholder="555-0123"
+                                            class="order-input"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            for="pickup-contact-email"
+                                            class="text-warm-400 mb-1 block text-xs font-medium"
+                                        >Email</label>
+                                        <input
+                                            id="pickup-contact-email"
+                                            type="email"
+                                            x-model="form.pickup_contact_email"
+                                            placeholder="them@example.com"
+                                            class="order-input"
+                                        />
+                                    </div>
+                                </div>
+                                <p class="text-warm-500 text-xs">
+                                    If you provide their email, we'll send them the pickup-ready notification too.
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Notes --}}
+                        <div class="border-warm-700/20 mt-6 border-t pt-6">
+                            <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Special Instructions</label>
+                            <textarea
+                                data-test="order-form-notes"
+                                x-model="form.notes"
+                                placeholder="Allergies, decorations, anything..."
+                                class="order-input"
+                                rows="3"
+                            ></textarea>
+                        </div>
+
+                        @if (! empty($settings->payment->methodsAccepted))
+                            <div class="border-warm-700/20 mt-4 border-t pt-4">
+                                <p class="text-warm-300 text-xs">
+                                    <span class="text-warm-500 font-medium">Payment:</span>
+                                    {{ implode(', ', array_map('ucfirst', $settings->payment->methodsAccepted)) }}
+                                </p>
                             </div>
                         @endif
 
-                        @php $relatedTag = is_array($related->tags) ? ($related->tags[0] ?? null) : null; @endphp
-                        @if ($relatedTag)
-                            <p class="font-body uppercase" style="font-size: 0.625rem; letter-spacing: 0.22em; color: var(--warm-700); opacity: 0.65; margin-bottom: 0.5rem;">
-                                {{ $relatedTag }}
-                            </p>
+                        @if ($settings->branding->allergyDisclaimer)
+                            <div class="border-warm-700/20 mt-4 border-t pt-4">
+                                <p class="text-warm-300 text-xs leading-relaxed">
+                                    <strong class="text-warm-500">⚠ Allergy Notice:</strong>
+                                    {{ $settings->branding->allergyDisclaimer }}
+                                </p>
+                            </div>
                         @endif
-                        <h3 class="font-display group-hover:underline" style="color: var(--warm-700); font-size: 1.25rem; font-weight: 500; line-height: 1.25; text-underline-offset: 4px;">
-                            {{ $related->title }}
-                        </h3>
-                        @if ($related->excerpt)
-                            <p style="color: var(--warm-700); font-size: 0.9375rem; line-height: 1.55; margin-top: 0.5rem; opacity: 0.85;">
-                                {{ Str::limit($related->excerpt, 110) }}
-                            </p>
-                        @endif
-                        <p class="font-body uppercase" style="font-size: 0.625rem; letter-spacing: 0.18em; color: var(--warm-700); opacity: 0.55; margin-top: 0.75rem;">
-                            {{ $related->published_at?->format('F j, Y') }}
-                        </p>
-                    </a>
-                @endforeach
-            </div>
+
+                        {{-- Minimum order notice --}}
+                        <div
+                            x-show="cartItems.length > 0 && ! meetsMinimumOrder"
+                            class="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300"
+                        >
+                            <span
+                                x-text="
+                                    `Minimum ${form.delivery_type === 'delivery' ? 'delivery' : 'pickup'} order is $${currentMinimumOrder.toFixed(2)}. Add $${amountBelowMinimum.toFixed(2)} more to continue.`
+                                "
+                            ></span>
+                        </div>
+
+                        {{-- Submit --}}
+                        <x-storefront.button
+                            type="submit"
+                            size="lg"
+                            fullWidth
+                            fontDisplay
+                            data-test="order-form-submit"
+                            x-bind:disabled="! canSubmit || isSubmitting"
+                            class="mt-6"
+                            x-bind:class="! canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : ''"
+                        >
+                            <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
+                        </x-storefront.button>
+
+                        <div
+                            x-show="submitError"
+                            class="mt-3 text-center text-sm text-red-400"
+                            x-text="submitError"
+                        ></div>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
-@endif
-
+    @include('partials.order-form-script')
 </x-layouts.storefront>

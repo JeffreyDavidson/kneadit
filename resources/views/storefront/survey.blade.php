@@ -1,120 +1,47 @@
-@use(App\Enums\Engagement\SurveyQuestionType)
 <x-layouts.storefront>
+    <section class="mx-auto max-w-md px-4 py-16">
+        <div class="mb-8 text-center">
+            <h1 class="font-display text-warm-900 mb-2 text-3xl md:text-4xl">Forgot your password?</h1>
+            <p class="text-warm-600">We'll email you a link to reset it.</p>
+        </div>
 
-@if (session('survey_submitted'))
-{{-- Success State --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="hero-img" min-height="60vh">
+        <div class="card p-8">
+            @if (session('status'))
+                <div class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                    {{ session('status') }}
+                </div>
+            @endif
 
- <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
- <x-storefront.icon-circle size="lg" variant="bold" class="mx-auto mb-6 hero-fade-1">
- <x-heroicon-o-check class="w-10 h-10 text-warm-500" stroke-width="2.5" />
- </x-storefront.icon-circle>
- <h1 class="font-display text-4xl font-bold mb-4 hero-fade-2 text-warm-100">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
- <p class="text-lg mb-10 hero-fade-3 text-warm-100">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
- <x-storefront.button :href="route('home')" size="lg" class="hero-fade-4">
- Back to {{ $settings->store->name }}
- </x-storefront.button>
- </div>
-</x-storefront.hero-section>
-@else
+            <form
+                method="POST"
+                action="{{ route('account.password.email') }}"
+                class="space-y-5"
+                data-test="forgot-password-form"
+            >
+                @csrf
 
-{{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your feedback" image-class="hero-img" min-height="40vh">
+                <x-storefront.form.field name="email" label="Email">
+                    <x-storefront.form.input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        required
+                        autofocus
+                        autocomplete="email"
+                        data-test="forgot-password-form-email"
+                    />
+                </x-storefront.form.field>
 
- <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
- <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
- <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight hero-fade-2 text-warm-100">{{ $survey->title }}</h1>
- @if ($survey->description)
- <p class="font-script text-2xl md:text-3xl hero-fade-3 text-warm-400">{{ $survey->description }}</p>
- @endif
- </div>
-</x-storefront.hero-section>
+                <x-storefront.buttons.primary type="submit" data-test="forgot-password-form-submit">
+                    Send reset link
+                </x-storefront.buttons.primary>
+            </form>
 
-{{-- Survey Form --}}
-<section class="py-16 px-4 bg-warm-50">
- <div class="max-w-2xl mx-auto" x-data="{ totalQuestions: {{ count($survey->questions) + 1 }} }">
-
- {{-- Progress Bar --}}
- <div class="mb-10">
- <div class="flex justify-between items-center mb-2">
- <span class="text-sm font-semibold text-warm-600">{{ count($survey->questions) }} questions</span>
- <span class="text-sm text-warm-500">Takes about {{ max(1, ceil(count($survey->questions) * 0.5)) }} min</span>
- </div>
- <div class="w-full rounded-full h-2 bg-warm-200">
- <div class="h-full rounded-full bg-gradient-to-r from-warm-500 to-warm-400 w-0" id="surveyProgress"></div>
- </div>
- </div>
-
- <form method="POST" action="{{ route('survey.submit', $survey) }}" class="space-y-6">
- @csrf
-
- {{-- Contact Info --}}
- <div class="rounded-2xl p-6 md:p-8 bg-white border border-warm-200">
- <p class="font-script text-2xl md:text-3xl mb-4 text-warm-400">A little about you</p>
- <div class="grid gap-4 sm:grid-cols-2">
- <div>
- <label class="block text-sm font-semibold mb-1 text-warm-700">Your Name (optional)</label>
- <input type="text" name="customer_name" class="input-field">
- </div>
- <div>
- <label class="block text-sm font-semibold mb-1 text-warm-700">Your Email (optional)</label>
- <input type="email" name="customer_email" class="input-field">
- </div>
- </div>
- </div>
-
- {{-- Questions --}}
- @foreach ($survey->questions as $index => $question)
- <div class="rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg bg-white border border-warm-200">
- <div class="flex items-start gap-4 mb-4">
- <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-warm-500 text-warm-900">{{ $index + 1 }}</span>
- <label class="font-display text-lg font-semibold leading-snug text-warm-900">
- {{ $question['question'] }}
- </label>
- </div>
-
- <div class="pl-12">
- @if ($question['type'] === SurveyQuestionType::Rating->value)
- <div x-data="ratingPicker(0)" class="flex gap-2 items-center">
- @for ($star = 1; $star <= 5; $star++)
- <button type="button"
- @click="set({{ $star }})"
- x-bind:class="isFilled({{ $star }}) ? 'text-warm-500' : 'text-warm-400 opacity-30'"
- class="text-4xl transition-all duration-200 hover:scale-125 cursor-pointer">
- ★
- </button>
- @endfor
- <input type="hidden" name="answers[{{ $index }}]" x-bind:value="rating">
- <span class="ml-3 text-sm font-semibold text-warm-500" x-show="rating > 0" x-text="['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][rating]"></span>
- </div>
-
- @elseif ($question['type'] === SurveyQuestionType::Text->value)
- <textarea name="answers[{{ $index }}]" rows="3" class="input-field" placeholder="Type your answer..."></textarea>
-
- @elseif ($question['type'] === SurveyQuestionType::MultipleChoice->value)
- <div class="space-y-2">
- @foreach ($question['options'] ?? [] as $option)
- <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm border border-warm-200 hover:border-warm-400">
- <input type="radio" name="answers[{{ $index }}]" value="{{ $option }}"
- class="w-4 h-4 accent-warm-500">
- <span class="font-medium text-warm-800">{{ $option }}</span>
- </label>
- @endforeach
- </div>
- @endif
- </div>
- </div>
- @endforeach
-
- {{-- Submit --}}
- <div class="text-center pt-4">
- <x-storefront.button type="submit" size="xl">
- {{ $content['submit_button'] ?? 'Submit Feedback' }}
- </x-storefront.button>
- <p class="text-sm mt-4 text-warm-500">{{ $content['submit_footer'] ?? 'Your feedback helps us bake better for you' }}</p>
- </div>
- </form>
- </div>
-</section>
-@endif
+            <p class="text-warm-600 mt-6 text-center text-sm">
+                <a href="{{ route('account.login.show') }}" class="text-warm-800 font-semibold hover:underline"
+                    >Back to sign in</a>
+            </p>
+        </div>
+    </section>
 </x-layouts.storefront>

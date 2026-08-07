@@ -41,10 +41,7 @@
                         ])
                 }}
             >
-                <canvas
-                    x-ref="canvas"
-                    @if ($maxHeight) style="max-height: {{ $maxHeight }}" @endif
-                ></canvas>
+                <canvas x-ref="canvas" @if ($maxHeight) style="max-height: {{ $maxHeight }}" @endif></canvas>
 
                 <span x-ref="backgroundColorElement" class="fi-wi-chart-bg-color"></span>
                 <span x-ref="borderColorElement" class="fi-wi-chart-border-color"></span>

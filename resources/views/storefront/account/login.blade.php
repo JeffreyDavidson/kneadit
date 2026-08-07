@@ -1,51 +1,41 @@
 <x-layouts.storefront>
-    <section class="max-w-md mx-auto px-4 py-16">
-        <div class="text-center mb-8">
-            <h1 class="font-display text-3xl md:text-4xl text-warm-900 mb-2">Welcome back</h1>
-            <p class="text-warm-600">Sign in to see your orders and favorites.</p>
+    <section class="mx-auto max-w-md px-4 py-16">
+        <div class="mb-8 text-center">
+            <h1 class="font-display text-warm-900 mb-2 text-3xl md:text-4xl">Verify your email</h1>
+            <p class="text-warm-600">We sent a verification link to your inbox.</p>
         </div>
 
-        <div class="card p-8">
+        <div class="card space-y-5 p-8">
             @if (session('status'))
-                <div class="mb-5 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
                     {{ session('status') }}
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('account.login') }}" class="space-y-5" data-test="login-form">
-                @csrf
-
-                <x-storefront.form.field name="email" label="Email">
-                    <x-storefront.form.input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                        autocomplete="email"
-                        data-test="login-form-email" />
-                </x-storefront.form.field>
-
-                <x-storefront.form.field name="password" label="Password">
-                    <x-storefront.form.input type="password" id="password" name="password" required
-                        autocomplete="current-password"
-                        data-test="login-form-password" />
-                </x-storefront.form.field>
-
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 text-sm text-warm-700">
-                        <input type="checkbox" name="remember" value="1" class="rounded border-warm-300" data-test="login-form-remember">
-                        Keep me signed in
-                    </label>
-                    <a href="{{ route('account.password.request') }}" class="text-sm font-semibold text-warm-700 hover:text-warm-900 hover:underline">
-                        Forgot password?
-                    </a>
-                </div>
-
-                <x-storefront.buttons.primary type="submit" data-test="login-form-submit">
-                    Sign in
-                </x-storefront.buttons.primary>
-            </form>
-
-            <p class="mt-6 text-center text-sm text-warm-600">
-                Don't have an account?
-                <a href="{{ route('account.register.show') }}" class="font-semibold text-warm-800 hover:underline">Create one</a>
+            <p class="text-warm-700 text-sm leading-relaxed">
+                Click the link in the email we just sent to <strong>{{ auth('customer')->user()->email }}</strong> to
+                activate full access to your account — including any previous orders tied to this email.
             </p>
+
+            <p class="text-warm-600 text-sm">Didn't get it? Check your spam folder, or request another.</p>
+
+            <div class="flex items-center justify-between gap-3">
+                <form method="POST" action="{{ route('account.email.verify.send') }}">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="bg-warm-800 hover:bg-warm-900 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition"
+                    >
+                        Resend verification email
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('account.logout') }}">
+                    @csrf
+                    <button type="submit" class="text-warm-700 hover:text-warm-900 text-sm font-semibold underline">
+                        Sign out
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
 </x-layouts.storefront>

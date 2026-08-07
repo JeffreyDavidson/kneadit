@@ -1,5 +1,1 @@
-@props(['for'])
-
-<label for="{{ $for }}" {{ $attributes->class(['block text-sm font-medium text-warm-800']) }}>
-    {{ $slot }}
-</label>
+<p {{ $attributes->class(['mt-1 text-xs text-warm-500']) }}>{{ $slot }}</p>

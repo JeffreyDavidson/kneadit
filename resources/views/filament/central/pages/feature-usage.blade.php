@@ -3,18 +3,19 @@
         {{-- Empty State --}}
         <x-central.card padding="p-12" class="text-center">
             <div class="mb-4">
-                <x-heroicon-o-chart-bar class="w-12 h-12 inline-block text-honey" />
+                <x-heroicon-o-chart-bar class="text-honey inline-block h-12 w-12" />
             </div>
-            <div class="text-white font-bold text-base mb-2">No Usage Data Yet</div>
-            <p class="text-cinnamon max-w-[480px] mx-auto mb-4">
-                Feature usage tracking hasn't recorded any data yet. Once tracking middleware is added to the tenant application,
-                you'll see detailed analytics about which features your bakeries use most.
+            <div class="mb-2 text-base font-bold text-white">No Usage Data Yet</div>
+            <p class="text-cinnamon mx-auto mb-4 max-w-[480px]">
+                Feature usage tracking hasn't recorded any data yet. Once tracking middleware is added to the tenant
+                application, you'll see detailed analytics about which features your bakeries use most.
             </p>
-            <div class="bg-espresso rounded-lg p-4 inline-block text-left">
+            <div class="bg-espresso inline-block rounded-lg p-4 text-left">
                 <x-central.eyebrow class="mb-2">Features that will be tracked</x-central.eyebrow>
                 <div class="flex flex-wrap gap-1.5">
                     @foreach (['quick_order', 'recipe_calculator', 'shopping_list', 'instagram_captions', 'delivery_planner', 'baking_sheet', 'order_calendar', 'review_analytics', 'storefront'] as $feature)
-                        <x-central.badge color="honey-soft-light" :uppercase="false">{{ str_replace('_', ' ', ucfirst($feature)) }}</x-central.badge>
+                        <x-central.badge color="honey-soft-light" :uppercase="false">
+                            {{ str_replace('_', ' ', ucfirst($feature)) }}</x-central.badge>
                     @endforeach
                 </div>
             </div>
@@ -31,41 +32,45 @@
         @endphp
 
         {{-- Summary Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
             <x-central.card class="bg-honey/5 border-honey/20">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-9 h-9 rounded-xl bg-honey/15 border border-honey/25 flex items-center justify-center">
-                        <x-heroicon-o-fire class="w-4 h-4 text-honey" />
+                <div class="mb-2 flex items-center gap-3">
+                    <div class="bg-honey/15 border-honey/25 flex h-9 w-9 items-center justify-center rounded-xl border">
+                        <x-heroicon-o-fire class="text-honey h-4 w-4" />
                     </div>
                     <x-central.eyebrow>Most used</x-central.eyebrow>
                 </div>
-                <div class="text-white font-bold text-[1.1rem] truncate">{{ $this->formatFeatureName($mostUsed ?? '—') }}</div>
-                <div class="text-cinnamon text-[0.75rem] mt-1">{{ number_format($mostUsedCount) }} all-time uses</div>
+                <div class="truncate text-[1.1rem] font-bold text-white">
+                    {{ $this->formatFeatureName($mostUsed ?? '—') }}
+                </div>
+                <div class="text-cinnamon mt-1 text-[0.75rem]">{{ number_format($mostUsedCount) }} all-time uses</div>
             </x-central.card>
 
             <x-central.card>
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-9 h-9 rounded-xl bg-cinnamon/15 border border-cinnamon/25 flex items-center justify-center">
-                        <x-heroicon-o-moon class="w-4 h-4 text-cinnamon" />
+                <div class="mb-2 flex items-center gap-3">
+                    <div class="bg-cinnamon/15 border-cinnamon/25 flex h-9 w-9 items-center justify-center rounded-xl border">
+                        <x-heroicon-o-moon class="text-cinnamon h-4 w-4" />
                     </div>
                     <x-central.eyebrow>Least used</x-central.eyebrow>
                 </div>
-                <div class="text-white font-bold text-[1.1rem] truncate">{{ $this->formatFeatureName($leastUsed ?? '—') }}</div>
-                <div class="text-cinnamon text-[0.75rem] mt-1">{{ number_format($leastUsedCount) }} all-time uses</div>
+                <div class="truncate text-[1.1rem] font-bold text-white">
+                    {{ $this->formatFeatureName($leastUsed ?? '—') }}
+                </div>
+                <div class="text-cinnamon mt-1 text-[0.75rem]">{{ number_format($leastUsedCount) }} all-time uses</div>
             </x-central.card>
 
             <x-central.card>
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
-                        <x-heroicon-o-calendar class="w-4 h-4 text-emerald-400" />
+                <div class="mb-2 flex items-center gap-3">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/15">
+                        <x-heroicon-o-calendar class="h-4 w-4 text-emerald-400" />
                     </div>
                     <x-central.eyebrow>This month</x-central.eyebrow>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-white font-bold text-[1.75rem] leading-none">{{ number_format($thisMonth) }}</span>
+                    <span class="text-[1.75rem] leading-none font-bold text-white">{{ number_format($thisMonth) }}</span>
                     <span class="text-cinnamon text-[0.75rem]">interactions</span>
                 </div>
-                <div class="text-cinnamon text-[0.75rem] mt-1">
+                <div class="text-cinnamon mt-1 text-[0.75rem]">
                     {{ $monthShare }}% of {{ number_format($allTime) }} all-time
                 </div>
             </x-central.card>
@@ -76,8 +81,11 @@
             <div class="flex flex-col gap-2.5">
                 @foreach ($this->getFeatureUsageBars() as $bar)
                     @php $isSelected = $this->selectedFeature === $bar['feature']; @endphp
-                    <button type="button" wire:click="selectFeature('{{ $bar['feature'] }}')"
-                        class="w-full flex items-center gap-3 text-left rounded-lg px-2 py-1.5 -mx-2 hover:bg-honey/5 transition-colors cursor-pointer {{ $isSelected ? 'bg-honey/10' : '' }}">
+                    <button
+                        type="button"
+                        wire:click="selectFeature('{{ $bar['feature'] }}')"
+                        class="w-full flex items-center gap-3 text-left rounded-lg px-2 py-1.5 -mx-2 hover:bg-honey/5 transition-colors cursor-pointer {{ $isSelected ? 'bg-honey/10' : '' }}"
+                    >
                         <div class="w-40 flex-shrink-0 text-right">
                             <span @class([
                                 'text-[0.8rem]',
@@ -87,24 +95,31 @@
                                 {{ $this->formatFeatureName($bar['feature']) }}
                             </span>
                         </div>
-                        <div class="flex-1 bg-espresso rounded-full h-2 overflow-hidden">
-                            <div class="h-full rounded-full min-w-[4px] bg-gradient-to-r from-honey to-golden" style="width: {{ $bar['percent'] }}%;"></div>
+                        <div class="bg-espresso h-2 flex-1 overflow-hidden rounded-full">
+                            <div
+                                class="from-honey to-golden h-full min-w-[4px] rounded-full bg-gradient-to-r"
+                                style="width: {{ $bar['percent'] }}%;"
+                            ></div>
                         </div>
-                        <span class="text-parchment text-xs font-bold tabular-nums w-[60px] text-right">{{ number_format($bar['total']) }}</span>
+                        <span class="text-parchment w-[60px] text-right text-xs font-bold tabular-nums">{{ number_format($bar['total']) }}</span>
                     </button>
                 @endforeach
             </div>
-            <div class="mt-3 text-cinnamon text-[0.7rem]">Click a feature to see which bakeries use it most.</div>
+            <div class="text-cinnamon mt-3 text-[0.7rem]">Click a feature to see which bakeries use it most.</div>
         </x-central.card>
 
         {{-- Per-feature tenant breakdown --}}
         @if ($this->selectedFeature)
             <x-central.card class="mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <x-central.eyebrow>{{ $this->formatFeatureName($this->selectedFeature) }} — top bakeries</x-central.eyebrow>
-                    <button type="button" wire:click="selectFeature(null)"
-                        class="inline-flex items-center gap-1 text-[0.7rem] text-cinnamon hover:text-honey transition-colors cursor-pointer">
-                        <x-heroicon-o-x-mark class="w-3.5 h-3.5" />
+                <div class="mb-4 flex items-center justify-between">
+                    <x-central.eyebrow>
+                        {{ $this->formatFeatureName($this->selectedFeature) }} — top bakeries</x-central.eyebrow>
+                    <button
+                        type="button"
+                        wire:click="selectFeature(null)"
+                        class="text-cinnamon hover:text-honey inline-flex cursor-pointer items-center gap-1 text-[0.7rem] transition-colors"
+                    >
+                        <x-heroicon-o-x-mark class="h-3.5 w-3.5" />
                         Clear
                     </button>
                 </div>
@@ -117,11 +132,14 @@
                         @foreach ($breakdown as $row)
                             @php $pct = round(($row['total'] / $topUses) * 100); @endphp
                             <div class="flex items-center gap-3">
-                                <span class="text-parchment text-[0.85rem] w-[180px] truncate">{{ $row['name'] }}</span>
-                                <div class="flex-1 bg-espresso rounded-full h-2 overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-honey to-golden" style="width: {{ $pct }}%;"></div>
+                                <span class="text-parchment w-[180px] truncate text-[0.85rem]">{{ $row['name'] }}</span>
+                                <div class="bg-espresso h-2 flex-1 overflow-hidden rounded-full">
+                                    <div
+                                        class="from-honey to-golden h-full rounded-full bg-gradient-to-r"
+                                        style="width: {{ $pct }}%;"
+                                    ></div>
                                 </div>
-                                <span class="text-honey font-bold text-[0.75rem] tabular-nums w-[60px] text-right">{{ number_format($row['total']) }}</span>
+                                <span class="text-honey w-[60px] text-right text-[0.75rem] font-bold tabular-nums">{{ number_format($row['total']) }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -135,39 +153,41 @@
             $heatmapHasActivity = collect($heatmap['rows'])->some(fn ($r) => collect($r['cells'])->some(fn ($c) => $c['count'] > 0));
         @endphp
         <x-central.card class="overflow-x-auto">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <x-central.eyebrow>7-day usage heatmap</x-central.eyebrow>
-                <div class="flex items-center gap-2 text-[0.7rem] text-cinnamon">
+                <div class="text-cinnamon flex items-center gap-2 text-[0.7rem]">
                     <span>Less</span>
                     <div class="flex gap-0.5">
-                        <span class="w-3 h-3 rounded-sm" style="background:#2a1f18"></span>
-                        <span class="w-3 h-3 rounded-sm" style="background:#3d2c1e"></span>
-                        <span class="w-3 h-3 rounded-sm" style="background:#6b4c1e"></span>
-                        <span class="w-3 h-3 rounded-sm" style="background:#d4920c"></span>
-                        <span class="w-3 h-3 rounded-sm" style="background:#e8b04a"></span>
+                        <span class="h-3 w-3 rounded-sm" style="background: #2a1f18"></span>
+                        <span class="h-3 w-3 rounded-sm" style="background: #3d2c1e"></span>
+                        <span class="h-3 w-3 rounded-sm" style="background: #6b4c1e"></span>
+                        <span class="h-3 w-3 rounded-sm" style="background: #d4920c"></span>
+                        <span class="h-3 w-3 rounded-sm" style="background: #e8b04a"></span>
                     </div>
                     <span>More</span>
                 </div>
             </div>
 
             @if (! $heatmapHasActivity)
-                <div class="text-center py-6 text-cinnamon text-[0.85rem]">
+                <div class="text-cinnamon py-6 text-center text-[0.85rem]">
                     No feature activity recorded in the last 7 days.
                 </div>
             @else
                 <x-central.table>
                     <thead>
                         <x-central.tr :border="false">
-                            <x-central.eyebrow as="th" class="text-left py-2 px-3">Feature</x-central.eyebrow>
+                            <x-central.eyebrow as="th" class="px-3 py-2 text-left">Feature</x-central.eyebrow>
                             @foreach ($heatmap['days'] as $day)
-                                <x-central.eyebrow as="th" class="text-center py-2 px-1.5">{{ $day }}</x-central.eyebrow>
+                                <x-central.eyebrow as="th" class="px-1.5 py-2 text-center">
+                                    {{ $day }}</x-central.eyebrow>
                             @endforeach
                         </x-central.tr>
                     </thead>
                     <tbody>
                         @foreach ($heatmap['rows'] as $row)
                             <x-central.tr :border="false">
-                                <x-central.td padding="py-1.5 px-3" class="text-[0.8rem] whitespace-nowrap">{{ $this->formatFeatureName($row['feature']) }}</x-central.td>
+                                <x-central.td padding="py-1.5 px-3" class="text-[0.8rem] whitespace-nowrap">
+                                    {{ $this->formatFeatureName($row['feature']) }}</x-central.td>
                                 @foreach ($row['cells'] as $cell)
                                     @php
                                         $i = $cell['intensity'];
@@ -183,8 +203,15 @@
                                             $bg = '#e8b04a';
                                         }
                                     @endphp
-                                    <x-central.td align="center" padding="p-1.5" title="{{ $cell['count'] }} uses on {{ $cell['date'] }}">
-                                        <div style="background: {{ $bg }}; color: {{ $i >= 0.5 ? '#1c1410' : '#8b6844' }};" class="rounded w-9 h-9 inline-flex items-center justify-center text-[0.7rem] font-semibold">
+                                    <x-central.td
+                                        align="center"
+                                        padding="p-1.5"
+                                        title="{{ $cell['count'] }} uses on {{ $cell['date'] }}"
+                                    >
+                                        <div
+                                            style="background: {{ $bg }}; color: {{ $i >= 0.5 ? '#1c1410' : '#8b6844' }};"
+                                            class="inline-flex h-9 w-9 items-center justify-center rounded text-[0.7rem] font-semibold"
+                                        >
                                             {{ $cell['count'] ?: '' }}
                                         </div>
                                     </x-central.td>

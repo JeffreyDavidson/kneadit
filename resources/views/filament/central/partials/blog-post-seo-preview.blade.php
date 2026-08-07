@@ -38,55 +38,63 @@
     };
 @endphp
 
-<div class="space-y-6 mb-2">
+<div class="mb-2 space-y-6">
     {{-- Google search result preview --}}
     <div>
-        <div class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-3">Google search preview</div>
-        <div class="bg-white rounded-lg border border-honey/10 p-5">
-            <div class="flex items-center gap-2 text-[0.75rem] text-gray-500 mb-1">
-                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-[0.6rem] font-bold text-gray-700">K</span>
+        <div class="text-cinnamon mb-3 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+            Google search preview
+        </div>
+        <div class="border-honey/10 rounded-lg border bg-white p-5">
+            <div class="mb-1 flex items-center gap-2 text-[0.75rem] text-gray-500">
+                <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-[0.6rem] font-bold text-gray-700">K</span>
                 <span>KneadIt</span>
                 <span class="text-gray-400">·</span>
                 <span class="truncate">{{ $fullUrl }}</span>
             </div>
-            <div class="text-[1.15rem] leading-tight text-[#1a0dab] font-normal mb-2">{{ $displayTitle }}</div>
-            <div class="text-[0.82rem] text-gray-700 leading-snug">{{ \Illuminate\Support\Str::limit($description, 160, '…') }}</div>
+            <div class="mb-2 text-[1.15rem] leading-tight font-normal text-[#1a0dab]">{{ $displayTitle }}</div>
+            <div class="text-[0.82rem] leading-snug text-gray-700">
+                {{ \Illuminate\Support\Str::limit($description, 160, '…') }}
+            </div>
         </div>
     </div>
 
     {{-- Character meters --}}
     <div class="space-y-5">
         <div>
-            <div class="flex items-baseline justify-between mb-2">
-                <span class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold">Meta title</span>
+            <div class="mb-2 flex items-baseline justify-between">
+                <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Meta title</span>
                 <span class="{{ $titleTone }} text-[0.75rem] font-semibold tabular-nums">{{ $titleLen }} / 60</span>
             </div>
-            <div class="h-1.5 rounded-full bg-espresso overflow-hidden">
-                <div class="h-full rounded-full transition-all
+            <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
+                <div
+                    class="h-full rounded-full transition-all
                     @if ($titleLen === 0) bg-cinnamon
                     @elseif ($titleLen < 40) bg-amber-500
                     @elseif ($titleLen <= 60) bg-emerald-500
                     @elseif ($titleLen <= 70) bg-amber-500
                     @else bg-red-500
                     @endif"
-                    style="width: {{ min(100, ($titleLen / 60) * 100) }}%;"></div>
+                    style="width: {{ min(100, ($titleLen / 60) * 100) }}%;"
+                ></div>
             </div>
             <div class="{{ $titleTone }} text-[0.7rem] mt-2">{{ $titleHint }}</div>
         </div>
 
         <div>
-            <div class="flex items-baseline justify-between mb-2">
-                <span class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold">Meta description</span>
+            <div class="mb-2 flex items-baseline justify-between">
+                <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Meta description</span>
                 <span class="{{ $descTone }} text-[0.75rem] font-semibold tabular-nums">{{ $descLen }} / 160</span>
             </div>
-            <div class="h-1.5 rounded-full bg-espresso overflow-hidden">
-                <div class="h-full rounded-full transition-all
+            <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
+                <div
+                    class="h-full rounded-full transition-all
                     @if ($descLen === 0) bg-cinnamon
                     @elseif ($descLen < 120) bg-amber-500
                     @elseif ($descLen <= 160) bg-emerald-500
                     @else bg-red-500
                     @endif"
-                    style="width: {{ min(100, ($descLen / 160) * 100) }}%;"></div>
+                    style="width: {{ min(100, ($descLen / 160) * 100) }}%;"
+                ></div>
             </div>
             <div class="{{ $descTone }} text-[0.7rem] mt-2">{{ $descHint }}</div>
         </div>
@@ -94,8 +102,8 @@
 
     {{-- URL preview --}}
     <div>
-        <div class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-2">Post URL</div>
-        <div class="bg-espresso border border-honey/10 rounded-lg px-3 py-2.5 text-parchment text-[0.8rem] font-mono break-all">
+        <div class="text-cinnamon mb-2 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Post URL</div>
+        <div class="bg-espresso border-honey/10 text-parchment rounded-lg border px-3 py-2.5 font-mono text-[0.8rem] break-all">
             {{ $fullUrl }}
         </div>
     </div>

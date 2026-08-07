@@ -4,7 +4,7 @@
         @php $variant = AnnouncementType::from($announcement['type']); @endphp
         <div
             x-data="{ dismissed: localStorage.getItem('announcement-dismissed-{{ $announcement['id'] }}') === 'true' }"
-            x-show="!dismissed"
+            x-show="! dismissed"
             x-cloak
             class="px-4 py-3 mb-3 rounded-lg flex items-start justify-between gap-3 border text-warm-black {{ $variant->bgClass() }} {{ $variant->borderClass() }}"
         >
@@ -19,16 +19,16 @@
                     @endif
                     {{ $announcement['title'] }}
                 </div>
-                <div class="text-[0.85rem] leading-normal">
-                    {!! clean($announcement['body']) !!}
-                </div>
+                <div class="text-[0.85rem] leading-normal">{!! clean($announcement['body']) !!}</div>
             </div>
             @if ($announcement['is_dismissable'])
                 <button
                     x-on:click="dismissed = true; localStorage.setItem('announcement-dismissed-{{ $announcement['id'] }}', 'true')"
-                    class="bg-transparent border-0 cursor-pointer text-[1.2rem] text-gray-500 px-1 leading-none"
+                    class="cursor-pointer border-0 bg-transparent px-1 text-[1.2rem] leading-none text-gray-500"
                     title="Dismiss"
-                >&times;</button>
+                >
+                    &times;
+                </button>
             @endif
         </div>
     @endforeach

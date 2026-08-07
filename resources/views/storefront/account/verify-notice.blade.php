@@ -1,40 +1,86 @@
 <x-layouts.storefront>
-    <section class="max-w-md mx-auto px-4 py-16">
-        <div class="text-center mb-8">
-            <h1 class="font-display text-3xl md:text-4xl text-warm-900 mb-2">Verify your email</h1>
-            <p class="text-warm-600">We sent a verification link to your inbox.</p>
+    <section class="mx-auto max-w-md px-4 py-16">
+        <div class="mb-8 text-center">
+            <h1 class="font-display text-warm-900 mb-2 text-3xl md:text-4xl">Create an account</h1>
+            <p class="text-warm-600">Save your favorites and track every order.</p>
         </div>
 
-        <div class="card p-8 space-y-5">
-            @if (session('status'))
-                <div class="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
-                    {{ session('status') }}
-                </div>
-            @endif
+        <div class="card p-8">
+            <form method="POST" action="{{ route('account.register') }}" class="space-y-5" data-test="register-form">
+                @csrf
 
-            <p class="text-sm text-warm-700 leading-relaxed">
-                Click the link in the email we just sent to <strong>{{ auth('customer')->user()->email }}</strong> to
-                activate full access to your account — including any previous orders tied to this email.
+                <x-storefront.form.field name="name" label="Name">
+                    <x-storefront.form.input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ old('name') }}"
+                        required
+                        autofocus
+                        autocomplete="name"
+                        data-test="register-form-name"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="email" label="Email">
+                    <x-storefront.form.input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        required
+                        autocomplete="email"
+                        data-test="register-form-email"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field
+                    name="phone"
+                    label='Phone <span class="text-warm-500 font-normal">(optional)</span>'
+                >
+                    <x-storefront.form.input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value="{{ old('phone') }}"
+                        autocomplete="tel"
+                        data-test="register-form-phone"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="password" label="Password">
+                    <x-storefront.form.input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        autocomplete="new-password"
+                        data-test="register-form-password"
+                    />
+                    <x-storefront.form.help>At least 8 characters, with letters and numbers.</x-storefront.form.help>
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="password_confirmation" label="Confirm password">
+                    <x-storefront.form.input
+                        type="password"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        required
+                        autocomplete="new-password"
+                        data-test="register-form-password-confirmation"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.buttons.primary type="submit" data-test="register-form-submit">
+                    Create account
+                </x-storefront.buttons.primary>
+            </form>
+
+            <p class="text-warm-600 mt-6 text-center text-sm">
+                Already have an account?
+                <a href="{{ route('account.login.show') }}" class="text-warm-800 font-semibold hover:underline"
+                    >Sign in</a>
             </p>
-
-            <p class="text-sm text-warm-600">
-                Didn't get it? Check your spam folder, or request another.
-            </p>
-
-            <div class="flex items-center justify-between gap-3">
-                <form method="POST" action="{{ route('account.email.verify.send') }}">
-                    @csrf
-                    <button type="submit" class="rounded-full bg-warm-800 text-white font-semibold py-2.5 px-5 hover:bg-warm-900 transition text-sm">
-                        Resend verification email
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('account.logout') }}">
-                    @csrf
-                    <button type="submit" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
-                        Sign out
-                    </button>
-                </form>
-            </div>
         </div>
     </section>
 </x-layouts.storefront>
