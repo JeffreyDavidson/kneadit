@@ -1,68 +1,44 @@
-@if ($reviews->count() > 0)
-    <section class="bg-warm-100 relative overflow-hidden px-4 py-28">
+@if ($categories->isNotEmpty())
+    <section class="bg-warm-200 relative overflow-hidden px-4 py-20">
         <div class="mx-auto max-w-6xl">
-            <div class="mb-6 text-center">
-                <x-storefront.eyebrow line-opacity="0.5" class="mb-4">What People Say</x-storefront.eyebrow>
+            {{-- Header --}}
+            <div class="mb-14 text-center">
+                <x-storefront.eyebrow line-opacity="0.5" class="mb-4">Explore</x-storefront.eyebrow>
+                <h2 class="font-display text-warm-900 text-3xl font-bold md:text-5xl">{{ $title }}</h2>
             </div>
 
-            @if ($featuredReview)
-                {{-- Hero testimonial: massive quote --}}
-                <div class="mx-auto mb-20 max-w-4xl text-center">
-                    {{-- Big decorative quote mark --}}
-                    <div
-                        class="font-display mb-6 leading-none font-bold"
-                        style="font-size: 6rem; color: var(--warm-500); opacity: 0.15; line-height: 0.6"
+            {{-- Category cards grid --}}
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                @foreach ($categories as $category)
+                    <a
+                        href="{{ route('storefront.menu') }}"
+                        class="group bg-warm-900 relative aspect-square overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                     >
-                        &ldquo;
-                    </div>
+                        {{-- Background gradient with ghost letter --}}
+                        <div class="from-warm-800 to-warm-700 absolute inset-0 bg-gradient-to-br"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="font-display text-warm-600 text-[6rem] font-bold opacity-15">{{ strtoupper(substr($category->name, 0, 1)) }}</span>
+                        </div>
 
-                    <blockquote class="font-display text-warm-800 mb-8 text-2xl leading-snug font-medium tracking-tight md:text-4xl lg:text-5xl">
-                        {{ $featuredReview->comment }}
-                    </blockquote>
+                        {{-- Overlay --}}
+                        <div class="from-warm-900/90 via-warm-900/40 absolute inset-0 bg-gradient-to-t to-transparent opacity-80 transition-opacity duration-300"></div>
+                        <div class="bg-warm-500/15 absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
 
-                    {{-- Stars --}}
-                    <x-storefront.star-rating
-                        :rating="$featuredReview->rating"
-                        empty-color="--warm-300"
-                        class="mb-4 justify-center"
-                    />
-
-                    <p class="text-warm-700 text-lg font-semibold">{{ $featuredReview->customer_name }}</p>
-                </div>
-            @endif
-
-            @if ($reviews->count() > 1)
-                {{-- Secondary reviews: horizontal cards --}}
-                <div class="grid md:grid-cols-{{ min($reviews->count() - 1, 3) }} gap-6">
-                    @foreach ($reviews->skip(1)->take(3) as $review)
-                        <div class="border-warm-200 rounded-2xl border bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                            {{-- Stars --}}
-                            <x-storefront.star-rating
-                                :rating="$review->rating"
-                                size="sm"
-                                empty-color="--warm-300"
-                                class="mb-4"
-                            />
-                            <p class="text-warm-700 mb-6 text-base leading-relaxed">
-                                "{{ Str::limit($review->comment ?? '', 150) }}"
-                            </p>
-                            <div class="flex items-center gap-3">
-                                <x-storefront.avatar-initial :name="$review->customer_name" />
-                                <span class="text-warm-800 text-sm font-semibold">{{ $review->customer_name }}</span>
+                        {{-- Content --}}
+                        <div class="absolute right-0 bottom-0 left-0 p-5">
+                            <h3 class="font-display text-warm-100 mb-1 text-lg font-semibold md:text-xl">
+                                {{ $category->name }}
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-warm-400 text-xs font-medium">{{ $category->products_count }} {{ Str::plural('item', $category->products_count ?? 0) }}</span>
+                                <x-heroicon-o-chevron-right
+                                    class="text-warm-500 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                                    stroke-width="2"
+                                />
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @endif
-
-            <div class="mt-12 text-center">
-                <a
-                    href="{{ route('storefront.reviews') }}"
-                    class="text-warm-600 inline-flex items-center gap-2 font-semibold transition-all duration-200 hover:gap-3"
-                >
-                    Read All Reviews
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                </a>
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>

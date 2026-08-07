@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ __('auth.reset_password.title', ['app' => config('app.name')]) }}</title>
+    <title>{{ __('auth.verify_email.title', ['app' => config('app.name')]) }}</title>
     <link rel="icon" href="/images/logo-icon.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,7 +11,88 @@
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet"
     />
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
+    <style @cspnonce>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --warm-black: #1c1410;
+            --espresso: #2a1f18;
+            --walnut: #4a3728;
+            --cinnamon: #8b6844;
+            --honey: #d4920c;
+            --golden: #e8b04a;
+            --cream: #fef9ef;
+            --white: #fff;
+            --sage: #5a7a5a;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'DM Sans', system-ui, sans-serif;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--warm-black);
+            color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+        }
+        .auth-brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-card {
+            background: var(--espresso);
+            border: 1px solid rgba(212, 146, 12, 0.12);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        .auth-card h1 {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .auth-card p {
+            color: var(--cinnamon);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .auth-btn {
+            display: inline-block;
+            padding: 0.85rem 2rem;
+            border-radius: 14px;
+            border: none;
+            background: var(--honey);
+            color: var(--white);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .auth-btn:hover {
+            background: var(--golden);
+        }
+        .success {
+            color: var(--sage);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        a {
+            color: var(--honey);
+            text-decoration: none;
+        }
+    </style>
     @include('partials.fathom')
 </head>
 <body>
@@ -25,60 +106,21 @@
             /></a>
         </div>
         <div class="auth-card">
-            <h1>{{ __('auth.reset_password.heading') }}</h1>
-            <p class="subtitle">{{ __('auth.reset_password.subtitle') }}</p>
+            <h1>{{ __('auth.verify_email.heading') }}</h1>
+            <p>{!! __('auth.verify_email.description', ['email' => e(auth()->user()->email)]) !!}</p>
 
-            <form method="POST" action="{{ route('password.update') }}">
+            @session('message')
+                <div class="success">{{ $value }}</div>
+            @endsession
+
+            <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
-
-                <input type="hidden" name="token" value="{{ $token }}" />
-
-                <div class="form-group">
-                    <label for="email">{{ __('forms.labels.email') }}</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value="{{ old('email', $email) }}"
-                        placeholder="{{ __('forms.placeholders.email') }}"
-                        required
-                    />
-                    @error('email')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password">{{ __('auth.reset_password.new_password') }}</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="{{ __('forms.placeholders.at_least_characters') }}"
-                        required
-                    />
-                    @error('password')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password_confirmation">{{ __('forms.labels.confirm_password') }}</label>
-                    <input
-                        type="password"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        placeholder="{{ __('forms.placeholders.confirm_password') }}"
-                        required
-                    />
-                </div>
-
-                <button type="submit" class="auth-btn">{{ __('auth.reset_password.submit') }}</button>
+                <button type="submit" class="auth-btn">{{ __('auth.verify_email.resend') }}</button>
             </form>
 
-            <div class="auth-footer">
-                <a href="/register">{{ __('auth.reset_password.back') }}</a>
-            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.875rem">
+                <a href="/">{{ __('auth.verify_email.continue', ['app' => config('app.name')]) }}</a>
+            </p>
         </div>
     </div>
 </body>

@@ -1,13 +1,85 @@
-@php
-    /** @var App\Models\Customers\CateringInquiry $inquiry */
-@endphp
 <x-layouts.storefront>
-    <section class="bg-warm-50 flex min-h-[60vh] items-center px-4 py-20">
-        <div class="card mx-auto max-w-xl p-10 text-center">
-            <h1 class="font-display text-warm-900 mb-3 text-2xl">Deposit not paid</h1>
-            <p class="text-warm-600 mb-6">
-                No worries — your quote is still active. You can come back any time using the link in the original quote
-                email, or reply to that email if you'd prefer to pay another way.
+    <section class="mx-auto max-w-md px-4 py-16">
+        <div class="mb-8 text-center">
+            <h1 class="font-display text-warm-900 mb-2 text-3xl md:text-4xl">Create an account</h1>
+            <p class="text-warm-600">Save your favorites and track every order.</p>
+        </div>
+
+        <div class="card p-8">
+            <form method="POST" action="{{ route('account.register') }}" class="space-y-5" data-test="register-form">
+                @csrf
+
+                <x-storefront.form.field name="name" label="Name">
+                    <x-storefront.form.input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ old('name') }}"
+                        required
+                        autofocus
+                        autocomplete="name"
+                        data-test="register-form-name"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="email" label="Email">
+                    <x-storefront.form.input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        required
+                        autocomplete="email"
+                        data-test="register-form-email"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field
+                    name="phone"
+                    label='Phone <span class="text-warm-500 font-normal">(optional)</span>'
+                >
+                    <x-storefront.form.input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value="{{ old('phone') }}"
+                        autocomplete="tel"
+                        data-test="register-form-phone"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="password" label="Password">
+                    <x-storefront.form.input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        autocomplete="new-password"
+                        data-test="register-form-password"
+                    />
+                    <x-storefront.form.help>At least 8 characters, with letters and numbers.</x-storefront.form.help>
+                </x-storefront.form.field>
+
+                <x-storefront.form.field name="password_confirmation" label="Confirm password">
+                    <x-storefront.form.input
+                        type="password"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        required
+                        autocomplete="new-password"
+                        data-test="register-form-password-confirmation"
+                    />
+                </x-storefront.form.field>
+
+                <x-storefront.buttons.primary type="submit" data-test="register-form-submit">
+                    Create account
+                </x-storefront.buttons.primary>
+            </form>
+
+            <p class="text-warm-600 mt-6 text-center text-sm">
+                Already have an account?
+                <a href="{{ route('account.login.show') }}" class="text-warm-800 font-semibold hover:underline"
+                    >Sign in</a>
             </p>
         </div>
     </section>

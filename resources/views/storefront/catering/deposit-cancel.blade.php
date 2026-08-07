@@ -1,90 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Deliveries — {{ $settings->store->name }}</title>
-    <link rel="stylesheet" href="{{ asset('css/driver.css') }}" />
-</head>
-<body>
-    <div class="header">
-        <div class="header-top">
-            <span class="store-name">🚗 {{ $settings->store->name }}</span>
-            <a href="/admin" class="admin-link">← Admin</a>
+@php
+    /** @var App\Models\Customers\CateringInquiry $inquiry */
+@endphp
+<x-layouts.storefront>
+    <section class="bg-warm-50 flex min-h-[60vh] items-center px-4 py-20">
+        <div class="card mx-auto max-w-xl p-10 text-center">
+            <h1 class="font-display text-warm-900 mb-3 text-2xl">Deposit not paid</h1>
+            <p class="text-warm-600 mb-6">
+                No worries — your quote is still active. You can come back any time using the link in the original quote
+                email, or reply to that email if you'd prefer to pay another way.
+            </p>
         </div>
-        <div class="header-meta">
-            <span>{{ now()->format('l, M j') }}</span>
-            <span>{{ $orders->count() }} {{ Str::plural('delivery', $orders->count()) }}</span>
-        </div>
-    </div>
-
-    @session('success')
-        <div class="flash flash-success">✅ {{ $value }}</div>
-    @endsession
-
-    <div class="pull-hint">Pull down to refresh</div>
-
-    <div class="orders-list">
-        @forelse ($orders as $order)
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <div class="customer-name">{{ $order->customer->name ?? 'Unknown' }}</div>
-                        <div class="order-number">{{ $order->order_number }}</div>
-                    </div>
-                    <span class="badge badge-{{ $order->status }}">{{ $order->status }}</span>
-                </div>
-
-                @if ($order->delivery_address)
-                    <div class="order-detail">
-                        <span class="icon">📍</span>
-                        <a
-                            href="https://maps.google.com/?q={{ urlencode($order->delivery_address) }}"
-                            target="_blank"
-                            class="maps-link"
-                        >
-                            {{ $order->delivery_address }}
-                        </a>
-                    </div>
-                @endif
-
-                @if ($order->delivery_time)
-                    <div class="order-detail">
-                        <span class="icon">🕐</span>
-                        <span>{{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}</span>
-                    </div>
-                @endif
-
-                @if ($order->orderItems->count())
-                    <div class="items-list">
-                        {{ $order->orderItems->map(fn($i) => $i->quantity . '× ' . ($i->product->name ?? 'Item'))->join(', ') }}
-                    </div>
-                @endif
-
-                @if ($order->notes)
-                    <div class="order-detail">
-                        <span class="icon">📝</span>
-                        <span>{{ $order->notes }}</span>
-                    </div>
-                @endif
-
-                <div class="order-footer">
-                    <span class="order-total">@money($order->total)</span>
-                    <form action="{{ route('driver.delivered', $order) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn-delivered" onclick="return confirm('Mark as delivered?');">
-                            ✅ Mark Delivered
-                        </button>
-                    </form>
-                </div>
-            </div>
-        @empty
-            <div class="empty-state">
-                <div class="emoji">🍞</div>
-                <h2>No deliveries scheduled for today</h2>
-                <p>Check back later or pull down to refresh</p>
-            </div>
-        @endforelse
-    </div>
-</body>
-</html>
+    </section>
+</x-layouts.storefront>

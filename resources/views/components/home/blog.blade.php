@@ -1,210 +1,99 @@
-@use(App\Presenters\OrderItemPresenter)
-@use(App\Enums\Orders\DeliveryType)
-@use(App\Enums\Orders\PaymentStatus)
-@php
-    $brand = $settings->branding->brandColorPrimary ?? '#d4920c';
-    $isDelivery = $order->delivery_type === DeliveryType::Delivery;
-    $isPaid = $order->payment_status === PaymentStatus::Paid;
-    $logoUrl = $settings->store->logoUrl();
-    $tagline = $settings->store->tagline ?: $settings->branding->businessTagline;
-    $allergyDisclaimer = $settings->branding->allergyDisclaimer;
-@endphp
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invoice — {{ $order->order_number }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('css/invoice.css') }}" />
-    <style @cspnonce>
-        :root {
-            --brand: __PINT_BLADE_0__;
-        }
-    </style>
-</head>
-<body>
-    {{-- Print toolbar (hidden on print) --}}
-    <div class="toolbar no-print">
-        <button type="button" class="btn-print" onclick="window.print()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0v3H7V4h6zm0 8v4H7v-4h6z" />
-            </svg>
-            Print
-        </button>
-    </div>
-
-    <main class="invoice {{ $isPaid ? 'invoice--paid' : '' }}">
-        @if ($isPaid)
-            <div class="invoice__paid-stamp" aria-hidden="true">PAID</div>
-        @endif
-        {{-- ============== HEADER ============== --}}
-        <header class="invoice__header">
-            <div class="invoice__brand">
-                @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $settings->store->name }}" class="invoice__logo" />
-                @endif
-                <h1 class="invoice__store">{{ $settings->store->name }}</h1>
-                @if ($tagline)
-                    <p class="invoice__tagline">{{ $tagline }}</p>
-                @endif
-                <p class="invoice__line">{{ $settings->store->address ?? '' }}</p>
-                @if ($settings->store->phone)
-                    <p class="invoice__line">{{ $settings->store->phone }}</p>
-                @endif
-                @if ($settings->store->email)
-                    <p class="invoice__line">{{ $settings->store->email }}</p>
-                @endif
-                @if ($settings->store->website)
-                    <p class="invoice__line">{{ $settings->store->website }}</p>
-                @endif
-            </div>
-            <div class="invoice__meta">
-                <div class="invoice__label">Invoice</div>
-                <div class="invoice__number">{{ $order->order_number }}</div>
-                <div class="invoice__date">{{ $order->created_at->format('F j, Y') }}</div>
-            </div>
-        </header>
-
-        {{-- ============== PARTIES ============== --}}
-        <section class="invoice__parties">
-            <div class="party">
-                <div class="party__heading">Bill To</div>
-                <div class="party__name">{{ $order->customer->name ?? '—' }}</div>
-                @if ($order->customer?->email)
-                    <div class="party__line">{{ $order->customer->email }}</div>
-                @endif
-                @if ($order->customer?->phone)
-                    <div class="party__line">{{ $order->customer->phone }}</div>
-                @endif
-                @if ($order->delivery_address)
-                    <div class="party__address">{{ $order->delivery_address }}</div>
-                @endif
-            </div>
-
-            <dl class="details">
-                <div class="details__heading">Order Details</div>
-                <div class="details__row">
-                    <dt>Status</dt>
-                    <dd>
-                        <span class="status status--{{ $order->status->value }}">{{ $order->status->getLabel() }}</span>
-                    </dd>
+@if ($latestPosts->isNotEmpty())
+    <section class="bg-warm-100 px-4 py-24">
+        <div class="mx-auto max-w-6xl">
+            {{-- Header --}}
+            <div class="mb-14 flex flex-col md:flex-row md:items-end md:justify-between">
+                <div>
+                    <x-storefront.eyebrow align="left" class="mb-4">Blog</x-storefront.eyebrow>
+                    <h2 class="font-display text-warm-900 text-3xl font-bold md:text-5xl">{{ $title }}</h2>
+                    <p class="text-warm-600 mt-2 text-base">{{ $subtitle }}</p>
                 </div>
-                <div class="details__row">
-                    <dt>Order date</dt>
-                    <dd>{{ $order->created_at->format('M j, Y · g:i A') }}</dd>
-                </div>
-                @if ($order->delivery_date)
-                    <div class="details__row">
-                        <dt>{{ $isDelivery ? 'Delivery' : 'Pickup' }}</dt>
-                        <dd>
-                            {{ \Carbon\Carbon::parse($order->delivery_date)->format('M j, Y') }}
-                            @if ($order->delivery_time)
-                                · {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
-                            @endif
-                        </dd>
+                <a
+                    href="{{ route('storefront.blog') }}"
+                    class="text-warm-600 mt-4 hidden items-center gap-2 font-semibold transition-all duration-200 hover:gap-3 md:mt-0 md:inline-flex"
+                >
+                    View All Posts
+                    <x-heroicon-o-arrow-right class="h-4 w-4" stroke-width="2" />
+                </a>
+            </div>
+
+            <div class="grid gap-8 md:grid-cols-3">
+                {{-- Lead post: spans 2 columns --}}
+                @php $lead = $latestPosts->first(); @endphp
+                <a
+                    href="{{ route('storefront.blog.show', $lead->slug) }}"
+                    class="group overflow-hidden rounded-2xl bg-white transition-all duration-300 hover:shadow-2xl md:col-span-2"
+                >
+                    <div class="relative overflow-hidden" style="aspect-ratio: 16/9">
+                        @if ($lead->featured_image)
+                            <img
+                                src="{{ Storage::disk('public')->url($lead->featured_image) }}"
+                                alt="{{ $lead->title }}"
+                                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                        @else
+                            <div
+                                class="flex h-full w-full items-center justify-center"
+                                style="background: linear-gradient(135deg, var(--warm-800), var(--warm-700))"
+                            >
+                                <x-heroicon-o-document-text class="text-warm-500/30 h-16 w-16" />
+                            </div>
+                        @endif
                     </div>
-                @endif
-                <div class="details__row">
-                    <dt>Payment</dt>
-                    <dd>{{ $order->payment_method?->getLabel() ?? '—' }}</dd>
-                </div>
-            </dl>
-        </section>
+                    <div class="p-8">
+                        <p class="text-warm-500 mb-3 text-xs font-semibold tracking-widest uppercase">
+                            {{ $lead->published_at->format('M j, Y') }}
+                        </p>
+                        <h3 class="font-display text-warm-900 mb-3 text-2xl font-bold transition-colors group-hover:underline md:text-3xl">
+                            {{ $lead->title }}
+                        </h3>
+                        @if ($lead->excerpt)
+                            <p class="text-warm-600 text-base leading-relaxed">{{ Str::limit($lead->excerpt, 160) }}</p>
+                        @endif
+                    </div>
+                </a>
 
-        {{-- ============== ITEMS ============== --}}
-        <section class="invoice__items">
-            <table class="items">
-                <thead>
-                    <tr>
-                        <th class="items__product">Product</th>
-                        <th class="items__qty">Qty</th>
-                        <th class="items__price">Unit price</th>
-                        <th class="items__total">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($order->orderItems as $item)
-                        <tr>
-                            <td class="items__product">
-                                <div class="items__name">{{ $item->product?->name ?? '— removed —' }}</div>
-                                @if ($item->product?->description)
-                                    <div class="items__desc">{{ Str::limit($item->product->description, 80) }}</div>
+                {{-- Sidebar posts --}}
+                @if ($latestPosts->count() > 1)
+                    <div class="flex flex-col gap-6">
+                        @foreach ($latestPosts->skip(1) as $post)
+                            <a
+                                href="{{ route('storefront.blog.show', $post->slug) }}"
+                                class="group flex-1 overflow-hidden rounded-2xl bg-white transition-all duration-300 hover:shadow-xl"
+                            >
+                                @if ($post->featured_image)
+                                    <div class="overflow-hidden" style="aspect-ratio: 16/9">
+                                        <img
+                                            src="{{ Storage::disk('public')->url($post->featured_image) }}"
+                                            alt="{{ $post->title }}"
+                                            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                    </div>
                                 @endif
-                                @if ($item->special_instructions)
-                                    <div class="items__instr">"{{ $item->special_instructions }}"</div>
-                                @endif
-                            </td>
-                            <td class="items__qty">{{ $item->quantity }}</td>
-                            <td class="items__price">@money($item->unit_price)</td>
-                            <td class="items__total">@money(OrderItemPresenter::for($item)->totalPrice())</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
+                                <div class="p-5">
+                                    <p class="text-warm-500 mb-2 text-xs font-semibold tracking-widest uppercase">
+                                        {{ $post->published_at->format('M j, Y') }}
+                                    </p>
+                                    <h3 class="font-display text-warm-900 text-lg font-bold transition-colors group-hover:underline">
+                                        {{ $post->title }}
+                                    </h3>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
 
-        {{-- ============== TOTALS ============== --}}
-        <section class="invoice__totals">
-            <dl class="totals">
-                <div class="totals__row">
-                    <dt>Subtotal</dt>
-                    <dd>@money($order->subtotal)</dd>
-                </div>
-                @if ($order->delivery_fee->isPositive())
-                    <div class="totals__row">
-                        <dt>Delivery fee</dt>
-                        <dd>@money($order->delivery_fee)</dd>
-                    </div>
-                @endif
-                @if ($order->discount_amount->isPositive())
-                    <div class="totals__row totals__row--credit">
-                        <dt>Discount</dt>
-                        <dd>
-                            −
-                            @money($order->discount_amount)
-                        </dd>
-                    </div>
-                @endif
-                @if ($order->gift_card_amount->isPositive())
-                    <div class="totals__row totals__row--credit">
-                        <dt>Gift card</dt>
-                        <dd>
-                            −
-                            @money($order->gift_card_amount)
-                        </dd>
-                    </div>
-                @endif
-                @if ($order->tip_amount->isPositive())
-                    <div class="totals__row">
-                        <dt>Tip</dt>
-                        <dd>@money($order->tip_amount)</dd>
-                    </div>
-                @endif
-                <div class="totals__row totals__row--total">
-                    <dt>Total</dt>
-                    <dd>@money($order->total)</dd>
-                </div>
-            </dl>
-        </section>
-
-        {{-- ============== FOOTER ============== --}}
-        <footer class="invoice__footer">
-            @if ($allergyDisclaimer)
-                <p class="footer__disclaimer">{{ $allergyDisclaimer }}</p>
-            @endif
-            <p class="footer__thanks">Thank you for your business!</p>
-            <p class="footer__line">Generated {{ now()->format('F j, Y \a\t g:i A') }}</p>
-            @if ($settings->store->email || $settings->store->phone)
-                <p class="footer__line">
-                    Questions? {{ $settings->store->email }}
-                    @if ($settings->store->email && $settings->store->phone) · @endif
-                    {{ $settings->store->phone }}
-                </p>
-            @endif
-        </footer>
-    </main>
-</body>
-</html>
+            {{-- Mobile CTA --}}
+            <div class="mt-10 text-center md:hidden">
+                <a
+                    href="{{ route('storefront.blog') }}"
+                    class="text-warm-600 inline-flex items-center gap-2 font-semibold"
+                >
+                    View All Posts
+                    <x-heroicon-o-arrow-right class="h-4 w-4" stroke-width="2" />
+                </a>
+            </div>
+        </div>
+    </section>
+@endif
