@@ -11,7 +11,7 @@
 ])
 <div class="flex items-center gap-2 text-sm">
     <span class="{{ $labelWidth }} {{ $labelAlign }}">{{ $label }}</span>
-    <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+    <div class="h-4 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
         <div class="{{ $color }} h-full rounded-full" style="width: {{ $percentage }}%"></div>
     </div>
     <span class="{{ $countWidth }} text-gray-500 {{ $countAlign }}">{{ $countSuffix ?? $count }}</span>

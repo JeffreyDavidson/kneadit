@@ -5,16 +5,30 @@
            rules below are catalog-specific layout + the inline-style
            recolor overrides for hardcoded thumbnail colors. */
 
-        .catalog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
 
         /* Force-recolor inline-style hex colors in thumbnails to land
            on central panel tokens. Thumbnails were originally written
            against tenant brand colors; this layer maps them. */
-        .preview-widget-body [style*="color: #3d2314"] { color: var(--platform-100) !important; }
-        .preview-widget-body [style*="color: #6b4c3b"] { color: var(--platform-200) !important; }
-        .preview-widget-body [style*="color: #a08060"] { color: var(--platform-400) !important; }
-        .preview-widget-body [style*="color: #8b6844"] { color: var(--accent) !important; }
-        .preview-widget-body [style*="background: #fdf8f2"] { background: var(--platform-800) !important; }
+        .preview-widget-body [style*='color: #3d2314'] {
+            color: var(--platform-100) !important;
+        }
+        .preview-widget-body [style*='color: #6b4c3b'] {
+            color: var(--platform-200) !important;
+        }
+        .preview-widget-body [style*='color: #a08060'] {
+            color: var(--platform-400) !important;
+        }
+        .preview-widget-body [style*='color: #8b6844'] {
+            color: var(--accent) !important;
+        }
+        .preview-widget-body [style*='background: #fdf8f2'] {
+            background: var(--platform-800) !important;
+        }
 
         /* All-sizes mode — one row per widget, tiles inside (sm/md/lg/xl
            where allowed). Each row is its own mini grid so the tiles
@@ -34,8 +48,16 @@
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border-subtle);
         }
-        .catalog-row-name { color: var(--platform-100); font-weight: 600; font-size: 0.95rem; }
-        .catalog-row-key { color: var(--platform-400); font-size: 0.7rem; font-family: monospace; }
+        .catalog-row-name {
+            color: var(--platform-100);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .catalog-row-key {
+            color: var(--platform-400);
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
         .catalog-row-grid {
             display: grid;
             gap: 8px;
@@ -43,13 +65,19 @@
                allowed sizes — each variant gets equal width so SM/MD/LG
                can be compared directly. */
         }
-        .catalog-row-cell { position: relative; }
+        .catalog-row-cell {
+            position: relative;
+        }
         .catalog-size-label {
-            position: absolute; top: 4px; right: 6px;
-            font-size: 0.55rem; font-weight: 700;
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.55rem;
+            font-weight: 700;
             background: rgba(0, 0, 0, 0.5);
             color: var(--accent);
-            padding: 2px 5px; border-radius: 4px;
+            padding: 2px 5px;
+            border-radius: 4px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             z-index: 1;
@@ -57,10 +85,10 @@
     </style>
 
     <div class="mb-6 flex items-start justify-between gap-4">
-        <p class="text-sm text-cinnamon flex-1">
-            Representative thumbnails of every tenant widget at its default size.
-            Use this page to review new widgets and their layouts before bakery owners see them.
-            Each tile uses the same partial that powers the bakery dashboard configurator.
+        <p class="text-cinnamon flex-1 text-sm">
+            Representative thumbnails of every tenant widget at its default size. Use this page to review new widgets
+            and their layouts before bakery owners see them. Each tile uses the same partial that powers the bakery
+            dashboard configurator.
         </p>
         <x-filament::button size="sm" color="gray" wire:click="toggleAllSizes">
             {{ $showAllSizes ? 'Show defaults' : 'Show all sizes' }}
@@ -74,8 +102,10 @@
                     <span class="catalog-row-name">{{ $widget['name'] }}</span>
                     <span class="catalog-row-key">{{ $widget['key'] }}</span>
                 </div>
-                <div class="catalog-row-grid"
-                     style="grid-template-columns: repeat({{ count($widget['allowedSizes']) }}, 1fr);">
+                <div
+                    class="catalog-row-grid"
+                    style="grid-template-columns: repeat({{ count($widget['allowedSizes']) }}, 1fr);"
+                >
                     @foreach ($widget['allowedSizes'] as $size)
                         <div class="catalog-row-cell">
                             <span class="catalog-size-label">{{ $size }}</span>

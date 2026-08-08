@@ -1,6 +1,11 @@
 {
     "preset": "laravel",
+    "notPath": [
+        "resources/views/central/blog/central-feed.blade.php",
+        "resources/views/platform/sitemap.blade.php"
+    ],
     "rules": {
+        "Pint/laravel_blade": true,
         "array_syntax": {
             "syntax": "short"
         },
