@@ -4,7 +4,7 @@ use App\Actions\Content\ApproveCustomerPhoto;
 use App\Models\Customers\CustomerPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\actingAs;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

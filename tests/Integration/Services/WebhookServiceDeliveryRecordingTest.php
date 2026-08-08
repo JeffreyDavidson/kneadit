@@ -5,7 +5,7 @@ use App\Services\Platform\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

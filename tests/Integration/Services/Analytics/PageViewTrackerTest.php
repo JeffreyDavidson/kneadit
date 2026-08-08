@@ -5,7 +5,7 @@ use App\Services\Analytics\PageViewTracker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

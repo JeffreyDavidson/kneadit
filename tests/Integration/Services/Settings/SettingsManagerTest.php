@@ -4,7 +4,7 @@ use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

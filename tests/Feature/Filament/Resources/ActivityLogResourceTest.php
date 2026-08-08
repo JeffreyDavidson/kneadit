@@ -7,7 +7,7 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

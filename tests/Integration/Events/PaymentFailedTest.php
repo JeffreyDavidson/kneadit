@@ -4,7 +4,7 @@ use App\Events\Platform\PaymentFailed;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

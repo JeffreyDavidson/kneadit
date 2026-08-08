@@ -16,7 +16,7 @@ use Illuminate\Testing\TestResponse;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-uses(DatabaseMigrations::class);
+pest()->use(DatabaseMigrations::class);
 
 beforeEach(function () {
     Mail::fake();

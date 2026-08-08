@@ -4,10 +4,11 @@ use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
 use App\Models\Customers\Customer;
 use App\Services\Engagement\EngagementDispatcher;
+use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 
-function makeFakeTenantSettings(): App\Services\Settings\TenantSettings
+function makeFakeTenantSettings(): TenantSettings
 {
     return makeTenantSettings();
 }

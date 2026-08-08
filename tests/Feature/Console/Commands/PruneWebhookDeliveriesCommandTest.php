@@ -21,7 +21,7 @@ beforeEach(function () {
         });
 });
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 test('prune deletes rows older than the default 30-day window', function () {
     $stale = WebhookDelivery::factory()->create(['dispatched_at' => now()->subDays(45)]);

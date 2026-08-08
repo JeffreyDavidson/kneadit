@@ -6,7 +6,7 @@ use App\Models\Inventory\Product;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -24,8 +24,9 @@ test('status is cast to WaitlistStatus enum', function () {
         'status' => WaitlistStatus::Waiting,
     ]);
 
-    expect($entry->fresh()->status)->toBeInstanceOf(WaitlistStatus::class)
-        ->and($entry->fresh()->status)->toBe(WaitlistStatus::Waiting);
+    $entry->refresh();
+
+    expect($entry->getAttribute('status'))->toBe(WaitlistStatus::Waiting);
 });
 
 test('requested date is cast to date', function () {
@@ -33,7 +34,9 @@ test('requested date is cast to date', function () {
         'requested_date' => '2026-05-01',
     ]);
 
-    expect($entry->fresh()->requested_date)->toBeInstanceOf(Carbon::class);
+    $entry->refresh();
+
+    expect($entry->requested_date)->toBeInstanceOf(Carbon::class);
 });
 
 test('for date scope filters by requested date', function () {

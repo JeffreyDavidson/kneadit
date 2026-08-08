@@ -4,7 +4,7 @@ use App\Actions\Customers\SubmitContactMessage;
 use App\Models\Customers\ContactMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

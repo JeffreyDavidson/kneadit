@@ -3,7 +3,7 @@
 use App\Http\Requests\Storefront\Account\ForgotPasswordRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

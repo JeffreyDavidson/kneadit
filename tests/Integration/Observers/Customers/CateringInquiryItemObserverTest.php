@@ -4,7 +4,7 @@ use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -4,7 +4,7 @@ use App\Models\Financial\Coupon;
 use App\Services\Coupon\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/pestphp/pest-plugin-phpstan/extension.neon
+
+parameters:
+    paths:
+        - tests/
+    level: 0
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    excludePaths:
+        - tests/Browser/
+    scanDirectories:
+        - vendor/filament
+    ignoreErrors:
+        - identifier: pest.expectation.redundant

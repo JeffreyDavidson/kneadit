@@ -7,7 +7,7 @@ use App\Models\Customers\CustomerProfile;
 use App\Models\Customers\CustomerReminder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

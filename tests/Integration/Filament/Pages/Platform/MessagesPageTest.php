@@ -58,7 +58,8 @@ test('get viewing record returns message', function () {
 });
 
 test('back to list resets state', function () {
-    test()->page->viewingMessage = 123;
+    $message = PlatformMessage::factory()->create(['tenant_id' => 'test']);
+    test()->page->viewThread($message->id);
     test()->page->replyBody = 'Draft reply';
 
     test()->page->backToList();

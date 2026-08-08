@@ -11,7 +11,9 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 
-uses(RefreshDatabase::class);
+use function Pest\Laravel\assertDatabaseHas;
+
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -131,7 +133,7 @@ test('dispatchForRecipient creates a reminder record and dispatches event', func
     $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
     Event::assertDispatched(RepeatOrderReminderDue::class);
-    $this->assertDatabaseHas('customer_reminders', [
+    assertDatabaseHas('customer_reminders', [
         'customer_id' => $customer->id,
     ]);
 });

@@ -5,7 +5,7 @@ use App\Models\Marketing\EmailTemplate;
 use App\Services\Email\EmailTemplateRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

@@ -83,7 +83,7 @@ test('survey response saves answers as json', function () {
         ]);
 
     $surveyResponse = SurveyResponse::query()->first();
-    expect($surveyResponse->answers)->toBeArray()->toBe(['5', 'Great bread!']);
+    expect($surveyResponse->getAttribute('answers'))->toBeArray()->toBe(['5', 'Great bread!']);
 });
 
 test('survey response increments responses count', function () {
