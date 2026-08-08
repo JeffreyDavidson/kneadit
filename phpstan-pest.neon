@@ -14,3 +14,9 @@ parameters:
         - vendor/filament
     ignoreErrors:
         - identifier: pest.expectation.redundant
+
+services:
+    -
+        class: Tests\Support\PHPStan\TestFunctionReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
