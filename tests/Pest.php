@@ -1,10 +1,17 @@
 <?php
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Events\Platform\TenantOnboarded;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
+use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
+use App\Listeners\Platform\SendWelcomeBakerEmailListener;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Testing\TestResponse;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -480,6 +487,148 @@ function createTenant(array $attributes = []): object
     DB::table('tenants')->insert($data);
 
     return DB::table('tenants')->where('id', $data['id'])->first();
+}
+
+/**
+ * Create a central tenant row plus its primary domain/subdomain record.
+ * Use this in behavior tests instead of opaque Tenant::factory() arrays.
+ *
+ * @param array<string, mixed> $attributes
+ */
+function createTenantWithDomain(
+    string $tenantId = 'test-bakery',
+    ?string $domain = null,
+    array $attributes = [],
+): Tenant {
+    createTenant([
+        'id' => $tenantId,
+        'store_name' => str($tenantId)->replace('-', ' ')->title()->toString(),
+        ...$attributes,
+    ]);
+
+    $domain ??= "{$tenantId}.kneadit.test";
+
+    DB::table('domains')->updateOrInsert(
+        ['domain' => $domain],
+        [
+            'tenant_id' => $tenantId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+    );
+
+    return Tenant::query()->findOrFail($tenantId);
+}
+
+/**
+ * Register a signup-style visitor as a tenant and queue the onboarding mail.
+ * Returns the created central user, tenant model, and storefront domain.
+ *
+ * @param array<string, mixed> $userAttributes
+ * @param array<string, mixed> $tenantAttributes
+ * @return array{user: User, tenant: Tenant, domain: string, admin_url: string}
+ */
+function registerVisitorAsTenant(
+    array $userAttributes = [],
+    array $tenantAttributes = [],
+    ?string $tenantId = null,
+    ?string $domain = null,
+): array {
+    $tenantId ??= str($tenantAttributes['store_name'] ?? $userAttributes['name'] ?? 'test-bakery')
+        ->slug()
+        ->append('-', str()->random(6))
+        ->toString();
+
+    $domain ??= "{$tenantId}.kneadit.test";
+
+    $user = User::factory()->create([
+        'name' => 'Test Baker',
+        'email' => 'baker@example.com',
+        ...$userAttributes,
+    ]);
+
+    $tenant = createTenantWithDomain($tenantId, $domain, [
+        'name' => $user->name,
+        'email' => $user->email,
+        ...$tenantAttributes,
+    ]);
+
+    $adminUrl = "https://{$domain}/admin";
+    queueTenantOnboardingNotifications($user, $tenant, $adminUrl);
+
+    return [
+        'user' => $user,
+        'tenant' => $tenant,
+        'domain' => $domain,
+        'admin_url' => $adminUrl,
+    ];
+}
+
+/**
+ * Create and authenticate a tenant-admin user in the current tenant test DB.
+ * Call setUpTenantTest() first when the test is not bootstrapping tenancy via HTTP.
+ *
+ * @param array<string, mixed> $attributes
+ */
+function actingAsTenantAdmin(?Tenant $tenant = null, array $attributes = []): User
+{
+    $admin = User::factory()->owner()->create([
+        'name' => 'Tenant Admin',
+        'email' => $tenant ? "admin@{$tenant->id}.test" : 'tenant-admin@example.com',
+        ...$attributes,
+    ]);
+
+    test()->actingAs($admin);
+
+    return $admin;
+}
+
+/**
+ * Visit a tenant storefront route with the correct Host header so feature tests
+ * exercise domain/subdomain tenancy middleware instead of hard-coded URLs.
+ *
+ * @param array<string, string> $headers
+ */
+function visitStorefrontAsTenant(Tenant $tenant, string $path = '/', array $headers = []): TestResponse
+{
+    $domain = DB::table('domains')->where('tenant_id', $tenant->id)->value('domain')
+        ?? "{$tenant->id}.kneadit.test";
+
+    $url = "https://{$domain}/" . ltrim($path, '/');
+
+    return test()->get($url, $headers);
+}
+
+function queueTenantOnboardingNotifications(User $user, Tenant $tenant, ?string $adminUrl = null): void
+{
+    config(['mail.platform_notify' => config('mail.platform_notify') ?: 'platform@example.com']);
+
+    $domain = DB::table('domains')->where('tenant_id', $tenant->id)->value('domain')
+        ?? "{$tenant->id}.kneadit.test";
+
+    $event = new TenantOnboarded(
+        user: $user,
+        tenant: $tenant,
+        adminUrl: $adminUrl ?? "https://{$domain}/admin",
+    );
+
+    (new SendWelcomeBakerEmailListener)->handle($event);
+    (new NotifyPlatformOfNewTenantListener)->handle($event);
+}
+
+/**
+ * Assert a mailable notification was queued. This keeps behavior tests focused
+ * on the business notification instead of the Mail fake's implementation API.
+ */
+function assertNotificationQueued(string $mailableClass, ?callable $callback = null): void
+{
+    if ($callback) {
+        Mail::assertQueued($mailableClass, $callback);
+
+        return;
+    }
+
+    Mail::assertQueued($mailableClass);
 }
 
 /*
