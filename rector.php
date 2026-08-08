@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+use Pest\Rector\Rules\ChainExpectCallsRector;
+use Pest\Rector\Rules\Pest2ToPest3\UsesToExtendRector;
+use Pest\Rector\Rules\SimplifyToBeTruthyFalsyRector;
+use Pest\Rector\Rules\SimplifyToLiteralBooleanRector;
+use Pest\Rector\Rules\UseEachModifierRector;
+use Pest\Rector\Rules\UseToBeInRector;
+use Pest\Rector\Rules\UseToContainRector;
+use Pest\Rector\Rules\UseToHaveLengthRector;
+use Pest\Rector\Rules\UseToStartWithRector;
+use Pest\Rector\Rules\UseToThrowRector;
+use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
 use RectorLaravel\Rector\FuncCall\AppToResolveRector;
@@ -16,14 +27,6 @@ use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector;
 use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 use RectorLaravel\Set\LaravelSetList;
-use RectorPest\Rules\ChainExpectCallsRector;
-use RectorPest\Rules\SimplifyToLiteralBooleanRector;
-use RectorPest\Rules\UseEachModifierRector;
-use RectorPest\Rules\UseToBeInRector;
-use RectorPest\Rules\UseToContainRector;
-use RectorPest\Rules\UseToHaveLengthRector;
-use RectorPest\Rules\UseToThrowRector;
-use RectorPest\Set\PestSetList;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -45,6 +48,7 @@ return RectorConfig::configure()
         EloquentMagicMethodToQueryBuilderRector::class,
         EloquentOrderByToLatestOrOldestRector::class,
         ServerVariableToRequestFacadeRector::class,
+        SimplifyToBeTruthyFalsyRector::class,
         SimplifyToLiteralBooleanRector::class,
         ThrowIfAndThrowUnlessExceptionsToUseClassStringRector::class,
         ThrowIfRector::class,
@@ -53,6 +57,8 @@ return RectorConfig::configure()
         UseToBeInRector::class,
         UseToContainRector::class,
         UseToHaveLengthRector::class,
+        UsesToExtendRector::class,
+        UseToStartWithRector::class,
         UseToThrowRector::class,
     ])
     ->withSets([
@@ -64,9 +70,7 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
         LaravelSetList::LARAVEL_COLLECTION,
         LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
-        PestSetList::PEST_40,
-        PestSetList::PEST_CODE_QUALITY,
-        PestSetList::PEST_CHAIN,
+        PestSetList::CODING_STYLE,
     ])
     ->withRules([
         RouteActionCallableRector::class,
