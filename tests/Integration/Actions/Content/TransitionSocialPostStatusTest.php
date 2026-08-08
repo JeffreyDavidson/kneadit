@@ -5,7 +5,7 @@ use App\Enums\Marketing\SocialPostStatus;
 use App\Models\Content\SocialPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

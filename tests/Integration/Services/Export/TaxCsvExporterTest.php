@@ -9,7 +9,7 @@ use App\Models\Orders\OrderItem;
 use App\Services\Financial\TaxCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

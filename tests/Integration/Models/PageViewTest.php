@@ -5,7 +5,7 @@ use App\Models\Inventory\Product;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

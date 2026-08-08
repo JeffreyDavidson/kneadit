@@ -5,7 +5,7 @@ use App\Models\Customers\CustomerFavorite;
 use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

@@ -4,7 +4,7 @@ use App\Http\Resources\ReviewResource;
 use App\Models\Engagement\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

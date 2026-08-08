@@ -4,7 +4,7 @@ use App\Actions\Staff\RevokeStaffInvitation;
 use App\Models\Staff\StaffInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

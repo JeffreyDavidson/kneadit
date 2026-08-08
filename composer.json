@@ -77,11 +77,25 @@
         "test": ["@php artisan config:clear --ansi", "@php artisan test --exclude-testsuite=Browser"],
         "test:coverage": "herd coverage vendor/bin/pest --coverage --compact -d memory_limit=1G",
         "lint": "vendor/bin/pint --dirty --format agent",
-        "analyse": "vendor/bin/phpstan analyse --no-progress --memory-limit=1G",
+        "analyse": "@test:types",
         "filacheck": "vendor/bin/filacheck",
         "filacheck:fix": "vendor/bin/filacheck --fix",
-        "rector": "vendor/bin/rector process --dry-run",
-        "rector:fix": "vendor/bin/rector process",
+        "rector": "@test:rector",
+        "rector:fix": [
+            "vendor/bin/rector process",
+            "@rector:pest:fix"
+        ],
+        "rector:pest:fix": "vendor/bin/rector process --config=rector-pest.php",
+        "test:rector": [
+            "vendor/bin/rector process --dry-run",
+            "@test:rector:pest"
+        ],
+        "test:rector:pest": "vendor/bin/rector process --config=rector-pest.php --dry-run",
+        "test:types": [
+            "vendor/bin/phpstan analyse --no-progress --memory-limit=1G",
+            "@test:types:pest"
+        ],
+        "test:types:pest": "vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --no-progress --memory-limit=1G",
         "types": "php -d memory_limit=1G vendor/bin/pest --type-coverage --min=100",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
