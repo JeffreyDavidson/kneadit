@@ -15,7 +15,7 @@ beforeEach(function () {
 });
 
 it('logs structured context on authentication exception', function () {
-    Log::spy();
+    $logger = Log::spy();
 
     Http::preventStrayRequests();
     Http::fake([
@@ -28,7 +28,7 @@ it('logs structured context on authentication exception', function () {
     $result = $manager->getAccessToken();
 
     expect($result)->toBeNull();
-    Log::shouldHaveReceived('error')
+    $logger->shouldHaveReceived('error')
         ->withArgs(
             fn ($message, $context) => $message === 'PayPal authentication error'
             && isset($context['error']),
@@ -37,7 +37,7 @@ it('logs structured context on authentication exception', function () {
 });
 
 it('logs structured context on invoice status check exception', function () {
-    Log::spy();
+    $logger = Log::spy();
 
     Http::preventStrayRequests();
     Http::fake([
@@ -56,7 +56,7 @@ it('logs structured context on invoice status check exception', function () {
     $result = $verifier->getInvoiceStatus('INV-456');
 
     expect($result)->toBeNull();
-    Log::shouldHaveReceived('error')
+    $logger->shouldHaveReceived('error')
         ->withArgs(
             fn ($message, $context) => $message === 'PayPal invoice status check error'
             && isset($context['invoice_id'])
