@@ -128,12 +128,8 @@ test('critical effect failure rolls back the status transition', function () {
 
     $order = Order::factory()->confirmed()->create();
 
-    try {
-        resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking);
-        expect(false)->toBeTrue('Expected exception to be thrown');
-    } catch (RuntimeException $e) {
-        expect($e->getMessage())->toBe('Inventory deduction failed');
-    }
+    expect(fn () => resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking))
+        ->toThrow(RuntimeException::class, 'Inventory deduction failed');
 
     expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
 });

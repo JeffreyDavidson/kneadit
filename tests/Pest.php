@@ -72,9 +72,9 @@ pest()->extend(TestCase::class)
      * property_exists() return true, so connectionsToTransact() returns our
      * value instead of the (default-dependent) fallback. sqlite always rolls
      * back cleanly.
-     */
+    */
     ->beforeEach(function () {
-        $this->connectionsToTransact = ['sqlite'];
+        test()->connectionsToTransact = ['sqlite'];
     })
     ->afterEach($cleanupTenantFiles)
     ->in('Feature', 'Integration', 'Unit', 'Browser');

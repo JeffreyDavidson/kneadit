@@ -6,11 +6,13 @@ use App\Models\Operations\ActivityLog;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    actingAs(User::factory()->owner()->create());
 });
 
 test('creating a model logs activity', function () {
