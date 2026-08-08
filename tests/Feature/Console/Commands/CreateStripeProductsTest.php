@@ -1,6 +1,28 @@
 <?php
 
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
+use Stripe\Price;
+use Stripe\Product;
+use Stripe\Service\PriceService;
+use Stripe\Service\ProductService;
 use Stripe\StripeClient;
+
+class FakeStripeProductsClient extends StripeClient
+{
+    public function __construct(
+        public ProductService $products,
+        public PriceService $prices,
+    ) {}
+}
+
+function bindStripeProductsClient(ProductService $products, PriceService $prices): void
+{
+    app()->bind(
+        StripeClient::class,
+        fn () => new FakeStripeProductsClient($products, $prices),
+    );
+}
 
 test('stripe create-products command is registered and has correct signature', function () {
     $command = new App\Console\Commands\Stripe\CreateStripeProductsCommand;
@@ -19,27 +41,20 @@ test('stripe create-products iterates all configured plans', function () {
 test('stripe create-products creates products and prices for each plan', function () {
     $plans = config('kneadit.plans');
 
-    $productMock = new stdClass;
-    $productMock->id = 'prod_test123';
+    $product = new Product('prod_test123');
+    $price = new Price('price_test456');
 
-    $priceMock = new stdClass;
-    $priceMock->id = 'price_test456';
-
-    $productsService = Mockery::mock();
-    $productsService->shouldReceive('create')
+    $productsService = Double::for(ProductService::class);
+    $productsService->expects('create')
         ->times(count($plans))
-        ->andReturn($productMock);
+        ->returns($product);
 
-    $pricesService = Mockery::mock();
-    $pricesService->shouldReceive('create')
+    $pricesService = Double::for(PriceService::class);
+    $pricesService->expects('create')
         ->times(count($plans))
-        ->andReturn($priceMock);
+        ->returns($price);
 
-    $stripeClient = Mockery::mock(StripeClient::class);
-    $stripeClient->products = $productsService;
-    $stripeClient->prices = $pricesService;
-
-    app()->bind(StripeClient::class, fn () => $stripeClient);
+    bindStripeProductsClient($productsService, $pricesService);
 
     $this->artisan('stripe:create-products')
         ->expectsOutputToContain('prod_test123')
@@ -51,62 +66,59 @@ test('stripe create-products creates products and prices for each plan', functio
 test('stripe create-products passes correct data to stripe product creation', function () {
     $plans = config('kneadit.plans');
 
-    $productMock = new stdClass;
-    $productMock->id = 'prod_test';
+    $product = new Product('prod_test');
+    $price = new Price('price_test');
 
-    $priceMock = new stdClass;
-    $priceMock->id = 'price_test';
+    $productsService = Double::for(ProductService::class);
+    $productsService->expects('create')
+        ->with(Argument::satisfies(function (mixed $data): bool {
+            if (! is_array($data)) {
+                return false;
+            }
 
-    $productsService = Mockery::mock();
-    $productsService->shouldReceive('create')
-        ->withArgs(function (array $data) {
             return str_starts_with($data['name'], 'KneadIt ')
                 && isset($data['description'])
                 && isset($data['metadata']['plan_key']);
-        })
+        }))
         ->times(count($plans))
-        ->andReturn($productMock);
+        ->returns($product);
 
-    $pricesService = Mockery::mock();
-    $pricesService->shouldReceive('create')
-        ->withArgs(function (array $data) {
+    $pricesService = Double::for(PriceService::class);
+    $pricesService->expects('create')
+        ->with(Argument::satisfies(function (mixed $data): bool {
+            if (! is_array($data)) {
+                return false;
+            }
+
             return $data['product'] === 'prod_test'
                 && $data['currency'] === 'usd'
                 && $data['recurring']['interval'] === 'month'
                 && isset($data['metadata']['plan_key'])
                 && $data['metadata']['rate'] === 'founding';
-        })
+        }))
         ->times(count($plans))
-        ->andReturn($priceMock);
+        ->returns($price);
 
-    $stripeClient = Mockery::mock(StripeClient::class);
-    $stripeClient->products = $productsService;
-    $stripeClient->prices = $pricesService;
-
-    app()->bind(StripeClient::class, fn () => $stripeClient);
+    bindStripeProductsClient($productsService, $pricesService);
 
     $this->artisan('stripe:create-products')
         ->assertSuccessful();
 });
 
 test('stripe create-products outputs env variable instructions', function () {
-    $productMock = new stdClass;
-    $productMock->id = 'prod_test';
+    $plans = config('kneadit.plans');
 
-    $priceMock = new stdClass;
-    $priceMock->id = 'price_test';
+    $productsService = Double::for(ProductService::class);
+    $productsService->expects('create')
+        ->times(count($plans))
+        ->returns(new Product('prod_test'));
 
-    $productsService = Mockery::mock();
-    $productsService->shouldReceive('create')->andReturn($productMock);
+    $pricesService = Double::for(PriceService::class);
+    $pricesService->expects('create')
+        ->times(count($plans))
+        ->returns(new Price('price_test'));
 
-    $pricesService = Mockery::mock();
-    $pricesService->shouldReceive('create')->andReturn($priceMock);
-
-    $stripeClient = Mockery::mock(StripeClient::class);
-    $stripeClient->products = $productsService;
-    $stripeClient->prices = $pricesService;
-
-    app()->bind(StripeClient::class, fn () => $stripeClient);
+    bindStripeProductsClient($productsService, $pricesService);
 
     $this->artisan('stripe:create-products')
         ->expectsOutputToContain('STRIPE_PRICE_STARTER')
