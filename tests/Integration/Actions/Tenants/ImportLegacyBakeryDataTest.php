@@ -1,6 +1,8 @@
 <?php
 
+use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -41,14 +43,19 @@ it('imports a legacy catalog and order history idempotently while converting dol
         'contact_messages' => [['id' => 90, 'name' => 'Jane Baker', 'email' => 'jane@example.com', 'subject' => 'Question', 'message' => 'Are you open?', 'status' => 'replied']],
         'waitlist_entries' => [['id' => 91, 'customer_name' => 'Jane Baker', 'customer_email' => 'jane@example.com', 'requested_date' => '2026-08-20', 'product_interest' => 'Sourdough', 'status' => 'waiting']],
         'customer_favorites' => [['id' => 92, 'customer_email' => 'jane@example.com', 'product_id' => 20]],
-        'settings' => [['key' => 'business_name', 'value' => 'Bakery on Biscotto'], ['key' => 'tagline', 'value' => 'Freshly baked with love']],
+        'settings' => [
+            ['key' => 'business_name', 'value' => 'Bakery on Biscotto'],
+            ['key' => 'tagline', 'value' => 'Freshly baked with love'],
+            ['key' => 'delivery_fee_tiers', 'value' => '0-5:5.00,5-10:8.00,10+:12.00'],
+            ['key' => 'operating_hours', 'value' => "Mon-Fri: 7am - 6pm\nSat: 8am - 4pm\nSun: Closed"],
+        ],
     ];
 
     $import = resolve(ImportLegacyBakeryData::class);
     $firstResult = $import($data);
     $secondResult = $import($data);
 
-    expect($firstResult)->toMatchArray(['categories' => 1, 'products' => 1, 'customers' => 1, 'orders' => 1, 'order_items' => 1, 'reviews' => 1, 'settings' => 2])
+    expect($firstResult)->toMatchArray(['categories' => 1, 'products' => 1, 'customers' => 1, 'orders' => 1, 'order_items' => 1, 'reviews' => 1, 'settings' => 4])
         ->and($secondResult)->toEqual($firstResult);
 
     test()->assertDatabaseCount('categories', 1)
@@ -81,4 +88,39 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->assertDatabaseHas('settings', ['key' => 'store_tagline', 'value' => 'Freshly baked with love'])
         ->assertDatabaseHas('settings', ['key' => 'storefront_theme', 'value' => 'classic'])
         ->assertDatabaseHas('settings', ['key' => 'admin_theme', 'value' => 'honey']);
+
+    $deliveryFeeTiers = json_decode((string) DB::table('settings')->where('key', 'delivery_fee_tiers')->value('value'), true);
+    $operatingHours = json_decode((string) DB::table('settings')->where('key', 'operating_hours')->value('value'), true);
+
+    expect($deliveryFeeTiers)->toHaveCount(3)
+        ->and($deliveryFeeTiers[0])->toMatchArray(['min_distance' => 0, 'max_distance' => 5, 'fee' => '5.00'])
+        ->and($operatingHours['monday'])->toBe(['open' => '07:00', 'close' => '18:00'])
+        ->and($operatingHours['sunday'])->toBe([]);
+});
+
+it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {
+    Storage::fake('local');
+    Storage::fake('public');
+    $assetDirectory = Storage::disk('local')->path('legacy-public');
+    mkdir("{$assetDirectory}/images", recursive: true);
+
+    foreach (['logo.jpg', 'hero-banner.jpg', 'cassie-portrait.jpg', 'product-sourdough.jpg'] as $filename) {
+        file_put_contents("{$assetDirectory}/images/{$filename}", "image-{$filename}");
+    }
+
+    $result = resolve(ImportLegacyBakeryAssets::class)([
+        'products' => [['id' => 1, 'name' => 'Sourdough', 'image' => 'images/product-sourdough.jpg']],
+        'settings' => [],
+    ], $assetDirectory, 'bakery-on-biscotto');
+
+    expect($result['store_logo'])->toBe('tenants/bakery-on-biscotto/bakery-on-biscotto/logo.jpg')
+        ->and($result['data']['products'][0]['image'])->toBe('tenants/bakery-on-biscotto/bakery-on-biscotto/product-sourdough.jpg')
+        ->and(collect($result['data']['settings'])->pluck('key'))->toContain('hero_image', 'store_photo', 'about_us_text', 'faq_items');
+
+    Storage::disk('public')->assertExists([
+        'tenants/bakery-on-biscotto/bakery-on-biscotto/logo.jpg',
+        'tenants/bakery-on-biscotto/bakery-on-biscotto/hero-banner.jpg',
+        'tenants/bakery-on-biscotto/bakery-on-biscotto/cassie-portrait.jpg',
+        'tenants/bakery-on-biscotto/bakery-on-biscotto/product-sourdough.jpg',
+    ]);
 });

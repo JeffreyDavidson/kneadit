@@ -2,17 +2,18 @@
 
 namespace App\Console\Commands\Tenants;
 
+use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('tenant:import-legacy-bakery {tenant : Existing KneadIt tenant ID} {file : Path to the legacy JSON export} {--dry-run : Validate and summarize without writing data}')]
+#[Signature('tenant:import-legacy-bakery {tenant : Existing KneadIt tenant ID} {file : Path to the legacy JSON export} {--assets= : Path to the legacy public asset directory} {--dry-run : Validate and summarize without writing data}')]
 #[Description('Import a legacy Bakery on Biscotto dataset into an existing KneadIt tenant')]
 class ImportLegacyBakeryCommand extends Command
 {
-    public function handle(ImportLegacyBakeryData $import): int
+    public function handle(ImportLegacyBakeryData $import, ImportLegacyBakeryAssets $importAssets): int
     {
         $path = realpath((string) $this->argument('file'));
 
@@ -50,10 +51,28 @@ class ImportLegacyBakeryCommand extends Command
             return self::FAILURE;
         }
 
+        $assetDirectory = $this->option('assets');
+
+        if (! is_string($assetDirectory) || $assetDirectory === '') {
+            $this->error('The --assets option is required for a complete Bakery on Biscotto import.');
+
+            return self::FAILURE;
+        }
+
+        try {
+            $assetImport = $importAssets($data, $assetDirectory, (string) $tenant->getKey());
+            $data = $assetImport['data'];
+        } catch (\InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
+
         $tenant->update([
             'store_name' => 'Bakery on Biscotto',
             'brand_color_primary' => '#8b5e3c',
             'brand_color_secondary' => '#d4a574',
+            'store_logo' => $assetImport['store_logo'],
             'storefront_enabled' => true,
             'is_active' => true,
         ]);
