@@ -10,6 +10,7 @@ it('imports a legacy catalog and order history idempotently while converting dol
     $data = [
         'categories' => [['id' => 10, 'name' => 'Breads', 'description' => 'Fresh bread', 'sort_order' => 1]],
         'products' => [['id' => 20, 'category_id' => 10, 'name' => 'Sourdough', 'description' => 'A loaf', 'price' => '12.50', 'cost' => '3.25', 'is_available' => true]],
+        'coupons' => [['id' => 25, 'code' => 'welcome5', 'type' => 'fixed_amount', 'value' => '5.00', 'minimum_order' => '20.00', 'times_used' => 2]],
         'orders' => [[
             'id' => 30,
             'order_number' => 'BOB-TEST',
@@ -26,9 +27,20 @@ it('imports a legacy catalog and order history idempotently while converting dol
             'status' => 'confirmed',
             'payment_status' => 'paid',
             'payment_method' => 'cash',
+            'coupon_id' => 25,
         ]],
         'order_items' => [['id' => 40, 'order_id' => 30, 'product_id' => 20, 'product_name' => 'Sourdough', 'unit_price' => '12.50', 'quantity' => 2]],
         'reviews' => [['id' => 50, 'name' => 'Jane Baker', 'email' => 'jane@example.com', 'rating' => 5, 'body' => 'Excellent', 'status' => 'approved', 'is_featured' => true]],
+        'recipes' => [['id' => 60, 'product_id' => 20, 'name' => 'Sourdough Recipe', 'prep_time_minutes' => 30]],
+        'recipe_ingredients' => [['id' => 61, 'recipe_id' => 60, 'name' => 'Flour', 'quantity' => 2, 'unit' => 'lb', 'cost_per_unit' => '1.50']],
+        'recipe_stages' => [['id' => 62, 'recipe_id' => 60, 'name' => 'Mix', 'instructions' => 'Combine ingredients.', 'sort_order' => 1]],
+        'expenses' => [['id' => 70, 'description' => 'Fuel', 'amount' => '20.00', 'category' => 'delivery_gas', 'date' => '2026-08-01', 'business_percentage' => 50]],
+        'incomes' => [['id' => 71, 'description' => 'Custom cake', 'amount' => '75.00', 'source' => 'custom_order', 'date' => '2026-08-02']],
+        'capacity_limits' => [['id' => 80, 'day_of_week' => 1, 'specific_date' => null, 'max_orders' => 10, 'is_blocked' => false]],
+        'holidays' => [['id' => 81, 'name' => 'Labor Day', 'date' => '2026-09-07', 'is_active' => true]],
+        'contact_messages' => [['id' => 90, 'name' => 'Jane Baker', 'email' => 'jane@example.com', 'subject' => 'Question', 'message' => 'Are you open?', 'status' => 'replied']],
+        'waitlist_entries' => [['id' => 91, 'customer_name' => 'Jane Baker', 'customer_email' => 'jane@example.com', 'requested_date' => '2026-08-20', 'product_interest' => 'Sourdough', 'status' => 'waiting']],
+        'customer_favorites' => [['id' => 92, 'customer_email' => 'jane@example.com', 'product_id' => 20]],
         'settings' => [['key' => 'business_name', 'value' => 'Bakery on Biscotto'], ['key' => 'tagline', 'value' => 'Freshly baked with love']],
     ];
 
@@ -45,10 +57,26 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->assertDatabaseCount('orders', 1)
         ->assertDatabaseCount('order_items', 1)
         ->assertDatabaseCount('reviews', 1)
+        ->assertDatabaseCount('recipes', 1)
+        ->assertDatabaseCount('expenses', 1)
+        ->assertDatabaseCount('incomes', 1)
+        ->assertDatabaseCount('coupons', 1)
+        ->assertDatabaseCount('capacity_limits', 1)
+        ->assertDatabaseCount('holidays', 1)
+        ->assertDatabaseCount('contact_messages', 1)
+        ->assertDatabaseCount('waitlist_entries', 1)
+        ->assertDatabaseCount('customer_favorites', 1)
         ->assertDatabaseHas('products', ['slug' => 'sourdough', 'price' => 1250, 'cost' => 325])
         ->assertDatabaseHas('customers', ['email' => 'jane@example.com'])
-        ->assertDatabaseHas('orders', ['order_number' => 'BOB-TEST', 'subtotal' => 2500, 'discount_amount' => 250, 'total' => 2250])
+        ->assertDatabaseHas('orders', ['order_number' => 'BOB-TEST', 'subtotal' => 2500, 'discount_amount' => 250, 'total' => 2250, 'coupon_id' => 1])
         ->assertDatabaseHas('order_items', ['name' => 'Sourdough', 'unit_price' => 1250])
+        ->assertDatabaseHas('coupons', ['code' => 'WELCOME5', 'type' => 'fixed', 'fixed_amount' => 500, 'min_order_amount' => 2000])
+        ->assertDatabaseHas('recipes', ['name' => 'Sourdough Recipe', 'cost' => 300])
+        ->assertDatabaseHas('expenses', ['description' => 'Fuel', 'amount' => 2000, 'category' => 'delivery', 'deductible_amount' => 1000])
+        ->assertDatabaseHas('incomes', ['description' => 'Custom cake', 'amount' => 7500, 'source' => 'other'])
+        ->assertDatabaseHas('holidays', ['name' => 'Labor Day', 'date' => '2026-09-07'])
+        ->assertDatabaseHas('contact_messages', ['email' => 'jane@example.com', 'is_read' => true])
+        ->assertDatabaseHas('customer_favorites', ['customer_email' => 'jane@example.com'])
         ->assertDatabaseHas('settings', ['key' => 'store_name', 'value' => 'Bakery on Biscotto'])
         ->assertDatabaseHas('settings', ['key' => 'store_tagline', 'value' => 'Freshly baked with love'])
         ->assertDatabaseHas('settings', ['key' => 'storefront_theme', 'value' => 'classic'])

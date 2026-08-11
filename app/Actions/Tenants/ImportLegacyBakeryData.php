@@ -16,23 +16,69 @@ class ImportLegacyBakeryData
         return DB::transaction(function () use ($data): array {
             $categoryIds = $this->importCategories($data['categories'] ?? []);
             $productIds = $this->importProducts($data['products'] ?? [], $categoryIds);
+            $couponIds = $this->importCoupons($data['coupons'] ?? []);
             $customerIds = $this->importCustomers($data['orders'] ?? []);
-            $orderIds = $this->importOrders($data['orders'] ?? [], $customerIds);
+            $orderIds = $this->importOrders($data['orders'] ?? [], $customerIds, $couponIds);
 
             $this->importOrderItems($data['order_items'] ?? [], $orderIds, $productIds);
             $this->importReviews($data['reviews'] ?? [], $productIds);
+            $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
+            $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
+            $this->importCapacityLimits($data['capacity_limits'] ?? []);
+            $this->importHolidays($data['holidays'] ?? []);
+            $this->importEngagement($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
             $this->importSettings($data['settings'] ?? []);
 
             return [
                 'categories' => count($categoryIds),
                 'products' => count($productIds),
+                'coupons' => count($couponIds),
                 'customers' => count($customerIds),
                 'orders' => count($orderIds),
                 'order_items' => count($data['order_items'] ?? []),
                 'reviews' => count($data['reviews'] ?? []),
+                'recipes' => count($data['recipes'] ?? []),
+                'expenses' => count($data['expenses'] ?? []),
+                'incomes' => count($data['incomes'] ?? []),
+                'capacity_limits' => count($data['capacity_limits'] ?? []),
+                'holidays' => count($data['holidays'] ?? []),
+                'contact_messages' => count($data['contact_messages'] ?? []),
+                'waitlist_entries' => count($data['waitlist_entries'] ?? []),
+                'customer_favorites' => count($data['customer_favorites'] ?? []),
                 'settings' => count($data['settings'] ?? []),
             ];
         });
+    }
+
+    /** @param array<int, array<string, mixed>> $coupons
+     * @return array<int, int>
+     */
+    private function importCoupons(array $coupons): array
+    {
+        $ids = [];
+
+        foreach ($coupons as $coupon) {
+            $type = $coupon['type'] === 'fixed_amount' ? 'fixed' : $coupon['type'];
+            DB::table('coupons')->updateOrInsert(
+                ['code' => Str::upper((string) $coupon['code'])],
+                [
+                    'type' => $type,
+                    'fixed_amount' => $type === 'fixed' ? $this->cents($coupon['value']) : null,
+                    'percentage' => $type === 'percentage' ? $coupon['value'] : null,
+                    'min_order_amount' => isset($coupon['minimum_order']) ? $this->cents($coupon['minimum_order']) : null,
+                    'max_uses' => $coupon['max_uses'] ?? null,
+                    'used_count' => $coupon['times_used'] ?? 0,
+                    'starts_at' => $coupon['starts_at'] ?? null,
+                    'expires_at' => $coupon['expires_at'] ?? null,
+                    'is_active' => $coupon['is_active'] ?? true,
+                    'created_at' => $coupon['created_at'] ?? now(),
+                    'updated_at' => $coupon['updated_at'] ?? now(),
+                ],
+            );
+            $ids[(int) $coupon['id']] = (int) DB::table('coupons')->where('code', Str::upper((string) $coupon['code']))->value('id');
+        }
+
+        return $ids;
     }
 
     /** @param array<int, array<string, mixed>> $categories
@@ -120,9 +166,10 @@ class ImportLegacyBakeryData
 
     /** @param array<int, array<string, mixed>> $orders
      * @param array<string, int> $customerIds
+     * @param array<int, int> $couponIds
      * @return array<int, int>
      */
-    private function importOrders(array $orders, array $customerIds): array
+    private function importOrders(array $orders, array $customerIds, array $couponIds): array
     {
         $ids = [];
 
@@ -132,6 +179,7 @@ class ImportLegacyBakeryData
                 ['order_number' => $order['order_number']],
                 [
                     'customer_id' => $customerIds[$email],
+                    'coupon_id' => isset($order['coupon_id']) ? ($couponIds[(int) $order['coupon_id']] ?? null) : null,
                     'status' => $order['status'] ?? 'pending',
                     'payment_status' => $order['payment_status'] ?? 'unpaid',
                     'payment_method' => $order['payment_method'] ?: 'other',
@@ -197,6 +245,177 @@ class ImportLegacyBakeryData
                     'created_at' => $review['created_at'] ?? now(),
                     'updated_at' => $review['updated_at'] ?? now(),
                 ],
+            );
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $recipes
+     * @param array<int, array<string, mixed>> $ingredients
+     * @param array<int, array<string, mixed>> $stages
+     * @param array<int, int> $productIds
+     */
+    private function importRecipes(array $recipes, array $ingredients, array $stages, array $productIds): void
+    {
+        foreach ($recipes as $recipe) {
+            $recipeIngredients = array_values(array_map(
+                fn (array $ingredient): array => [
+                    'name' => $ingredient['name'],
+                    'quantity' => (float) $ingredient['quantity'],
+                    'unit' => $ingredient['unit'],
+                    'cost' => (float) ($ingredient['cost_per_unit'] ?? 0),
+                ],
+                array_filter($ingredients, fn (array $ingredient): bool => (int) $ingredient['recipe_id'] === (int) $recipe['id']),
+            ));
+            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => (int) $stage['recipe_id'] === (int) $recipe['id']));
+            usort($recipeStages, fn (array $first, array $second): int => ($first['sort_order'] ?? 0) <=> ($second['sort_order'] ?? 0));
+            $instructions = collect($recipeStages)
+                ->map(fn (array $stage): string => "{$stage['name']}\n{$stage['instructions']}")
+                ->implode("\n\n");
+            $cost = collect($recipeIngredients)->sum(fn (array $ingredient): float => $ingredient['quantity'] * $ingredient['cost']);
+
+            DB::table('recipes')->updateOrInsert(
+                ['name' => $recipe['name']],
+                [
+                    'product_id' => isset($recipe['product_id']) ? ($productIds[(int) $recipe['product_id']] ?? null) : null,
+                    'ingredients' => json_encode($recipeIngredients, JSON_THROW_ON_ERROR),
+                    'instructions' => $instructions ?: ($recipe['description'] ?? ''),
+                    'prep_time_minutes' => $recipe['prep_time_minutes'] ?? 0,
+                    'cost' => $this->cents($cost),
+                    'created_at' => $recipe['created_at'] ?? now(),
+                    'updated_at' => $recipe['updated_at'] ?? now(),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $expenses
+     * @param array<int, array<string, mixed>> $incomes
+     */
+    private function importFinancials(array $expenses, array $incomes): void
+    {
+        foreach ($expenses as $expense) {
+            $businessPercentage = (int) ($expense['business_percentage'] ?? 100);
+            DB::table('expenses')->updateOrInsert(
+                ['description' => $expense['description'], 'date' => $expense['date']],
+                [
+                    'amount' => $this->cents($expense['amount']),
+                    'category' => $expense['category'] === 'delivery_gas' ? 'delivery' : $expense['category'],
+                    'receipt_image' => $expense['receipt'] ?? null,
+                    'notes' => $expense['notes'] ?? null,
+                    'business_percentage' => $businessPercentage,
+                    'deductible_amount' => $this->cents((float) $expense['amount'] * $businessPercentage / 100),
+                    'created_at' => $expense['created_at'] ?? now(),
+                    'updated_at' => $expense['updated_at'] ?? now(),
+                ],
+            );
+        }
+
+        foreach ($incomes as $income) {
+            $source = in_array($income['source'], ['farmers_market', 'cash_sale', 'paypal_direct', 'catering'], true)
+                ? $income['source']
+                : 'other';
+            DB::table('incomes')->updateOrInsert(
+                ['description' => $income['description'], 'date' => $income['date']],
+                [
+                    'amount' => $this->cents($income['amount']),
+                    'source' => $source,
+                    'notes' => $income['notes'] ?? null,
+                    'created_at' => $income['created_at'] ?? now(),
+                    'updated_at' => $income['updated_at'] ?? now(),
+                ],
+            );
+        }
+    }
+
+    /** @param array<int, array<string, mixed>> $capacityLimits */
+    private function importCapacityLimits(array $capacityLimits): void
+    {
+        foreach ($capacityLimits as $capacityLimit) {
+            $dayOfWeek = $capacityLimit['day_of_week'] ?? null;
+            $specificDate = $capacityLimit['specific_date'] ?? null;
+            $date = $specificDate ?? now()->startOfWeek()->addDays((int) $dayOfWeek)->toDateString();
+
+            DB::table('capacity_limits')->updateOrInsert(
+                $specificDate ? ['specific_date' => $specificDate] : ['day_of_week' => (string) $dayOfWeek],
+                [
+                    'date' => $date,
+                    'max_orders' => $capacityLimit['max_orders'],
+                    'is_blocked' => $capacityLimit['is_blocked'] ?? false,
+                    'notes' => $capacityLimit['notes'] ?? null,
+                    'created_at' => $capacityLimit['created_at'] ?? now(),
+                    'updated_at' => $capacityLimit['updated_at'] ?? now(),
+                ],
+            );
+        }
+    }
+
+    /** @param array<int, array<string, mixed>> $holidays */
+    private function importHolidays(array $holidays): void
+    {
+        foreach ($holidays as $holiday) {
+            DB::table('holidays')->updateOrInsert(
+                ['name' => $holiday['name'], 'date' => $holiday['date']],
+                [
+                    'lead_days' => $holiday['lead_days'] ?? 7,
+                    'order_deadline' => $holiday['order_deadline'] ?? null,
+                    'prep_start' => $holiday['prep_start'] ?? null,
+                    'max_orders' => $holiday['max_orders'] ?? null,
+                    'notes' => $holiday['notes'] ?? null,
+                    'is_active' => $holiday['is_active'] ?? true,
+                    'created_at' => $holiday['created_at'] ?? now(),
+                    'updated_at' => $holiday['updated_at'] ?? now(),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $contactMessages
+     * @param array<int, array<string, mixed>> $waitlistEntries
+     * @param array<int, array<string, mixed>> $favorites
+     * @param array<int, int> $productIds
+     */
+    private function importEngagement(array $contactMessages, array $waitlistEntries, array $favorites, array $productIds): void
+    {
+        foreach ($contactMessages as $message) {
+            DB::table('contact_messages')->updateOrInsert(
+                ['email' => $message['email'], 'message' => $message['message']],
+                [
+                    'name' => $message['name'],
+                    'subject' => $message['subject'] ?? 'Legacy contact message',
+                    'is_read' => ($message['status'] ?? 'new') !== 'new',
+                    'created_at' => $message['created_at'] ?? now(),
+                    'updated_at' => $message['updated_at'] ?? now(),
+                ],
+            );
+        }
+
+        foreach ($waitlistEntries as $entry) {
+            $notes = collect([$entry['product_interest'] ?? null, $entry['notes'] ?? null])->filter()->implode("\n\n");
+            DB::table('waitlist_entries')->updateOrInsert(
+                ['customer_email' => $entry['customer_email'], 'requested_date' => $entry['requested_date']],
+                [
+                    'customer_name' => $entry['customer_name'],
+                    'customer_phone' => $entry['customer_phone'] ?? null,
+                    'product_id' => isset($entry['product_id']) ? ($productIds[(int) $entry['product_id']] ?? null) : null,
+                    'notes' => $notes ?: null,
+                    'status' => $entry['status'] ?? 'waiting',
+                    'created_at' => $entry['created_at'] ?? now(),
+                    'updated_at' => $entry['updated_at'] ?? now(),
+                ],
+            );
+        }
+
+        foreach ($favorites as $favorite) {
+            if (! isset($productIds[(int) $favorite['product_id']])) {
+                continue;
+            }
+
+            DB::table('customer_favorites')->updateOrInsert(
+                ['customer_email' => Str::lower((string) $favorite['customer_email']), 'product_id' => $productIds[(int) $favorite['product_id']]],
+                ['created_at' => $favorite['created_at'] ?? now(), 'updated_at' => $favorite['updated_at'] ?? now()],
             );
         }
     }
