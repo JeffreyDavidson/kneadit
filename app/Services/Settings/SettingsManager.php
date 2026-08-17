@@ -7,6 +7,10 @@ use App\Models\Platform\Tenant;
 
 class SettingsManager extends AbstractSettingsManager
 {
+    public function __construct(
+        private TenantSettingCipher $cipher,
+    ) {}
+
     protected function cacheKey(): string
     {
         $tenant = tenant();
@@ -48,5 +52,15 @@ class SettingsManager extends AbstractSettingsManager
         $content = json_decode($json, true);
 
         return is_array($content) ? $content : [];
+    }
+
+    protected function valueForStorage(string $key, mixed $value): mixed
+    {
+        return $this->cipher->encrypt($key, $value);
+    }
+
+    protected function valueFromStorage(string $key, mixed $value): mixed
+    {
+        return $this->cipher->decrypt($key, $value);
     }
 }

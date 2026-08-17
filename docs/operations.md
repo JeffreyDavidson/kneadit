@@ -87,7 +87,7 @@ Before merging a release:
 2. Run the PHP quality suite and production frontend build.
 3. Run targeted browser smoke tests against a realistic seeded tenant.
 4. Verify Stripe webhook endpoints/secrets and other environment changes before traffic reaches new code.
-5. Deploy central migrations, tenant migrations, cached configuration/routes/views as appropriate, and built frontend assets.
+5. Deploy central migrations, tenant migrations, cached configuration/routes/views as appropriate, and built frontend assets. Tenant migrations include credential encryption and therefore require the production `APP_KEY` to remain stable and available.
 6. Restart queue workers so they load the new release.
 7. Confirm `/up`, the central landing page, a tenant storefront, both Filament login pages, queue processing, scheduler execution, and recent error logs.
 8. Verify database backups before any migration that is difficult to reverse.
