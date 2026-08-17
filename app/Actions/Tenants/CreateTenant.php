@@ -23,7 +23,7 @@ class CreateTenant
                 'name' => $user->name,
                 'email' => $user->email,
                 'plan' => SubscriptionTier::Starter->value,
-                'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
+                'trial_ends_at' => now()->addDays($this->trialDays()),
                 'store_name' => $storeName,
                 'storefront_enabled' => $useKneadItStorefront,
                 'external_website' => $useKneadItStorefront ? null : $externalWebsite,
@@ -81,5 +81,20 @@ class CreateTenant
         }
 
         return $tenant;
+    }
+
+    private function trialDays(): int
+    {
+        $value = config('kneadit.trial_days', 30);
+
+        if (is_int($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
+            throw new \UnexpectedValueException('The tenant trial length must be an integer number of days.');
+        }
+
+        return (int) $value;
     }
 }

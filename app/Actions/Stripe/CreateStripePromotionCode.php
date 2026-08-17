@@ -53,10 +53,22 @@ class CreateStripePromotionCode
             throw new InvalidArgumentException('durationInMonths is required when duration is "repeating".');
         }
 
+        $currency = null;
+
+        if ($amountOffCents !== null) {
+            $configuredCurrency = config('cashier.currency', 'usd');
+
+            if (! is_string($configuredCurrency) || $configuredCurrency === '') {
+                throw new \UnexpectedValueException('The Stripe currency must be a non-empty string.');
+            }
+
+            $currency = $configuredCurrency;
+        }
+
         $couponPayload = array_filter([
             'percent_off' => $percentOff,
             'amount_off' => $amountOffCents,
-            'currency' => $amountOffCents !== null ? config('cashier.currency', 'usd') : null,
+            'currency' => $currency,
             'duration' => $duration,
             'duration_in_months' => $duration === 'repeating' ? $durationInMonths : null,
             'name' => $name,
