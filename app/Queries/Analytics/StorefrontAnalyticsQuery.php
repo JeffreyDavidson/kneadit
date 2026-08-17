@@ -5,6 +5,7 @@ namespace App\Queries\Analytics;
 use App\Models\Engagement\PageView;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Support\DatabaseValue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -53,7 +54,7 @@ class StorefrontAnalyticsQuery
         return round(($ordersQuery->count() / $orderPageViews) * 100, 1);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, PageView> */
     public function pageViewsByPage(): Collection
     {
         return $this->baseQuery()
@@ -63,7 +64,7 @@ class StorefrontAnalyticsQuery
             ->get();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, PageView> */
     public function dailyTrend(int $days = 30): Collection
     {
         return PageView::query()
@@ -75,7 +76,7 @@ class StorefrontAnalyticsQuery
             ->get();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, object{name: string, views: int}&\stdClass> */
     public function topProducts(int $limit = 10): Collection
     {
         $data = $this->productQuery()
@@ -89,8 +90,8 @@ class StorefrontAnalyticsQuery
 
         return $data->map(
             fn (PageView $row) => (object) [
-                'name' => $products[$row->product_id] ?? 'Unknown',
-                'views' => $row->views,
+                'name' => is_string($products[$row->product_id] ?? null) ? $products[$row->product_id] : 'Unknown',
+                'views' => DatabaseValue::int($row->views),
             ],
         );
     }

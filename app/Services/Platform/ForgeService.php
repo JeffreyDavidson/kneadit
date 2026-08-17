@@ -3,6 +3,7 @@
 namespace App\Services\Platform;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -18,9 +19,9 @@ class ForgeService
 
     public function __construct()
     {
-        $this->token = config('services.forge.token', '');
-        $this->serverId = config('services.forge.server_id', '');
-        $this->siteId = config('services.forge.site_id', '');
+        $this->token = $this->configString('services.forge.token');
+        $this->serverId = $this->configString('services.forge.server_id');
+        $this->siteId = $this->configString('services.forge.site_id');
     }
 
     public static function isConfigured(): bool
@@ -52,8 +53,7 @@ class ForgeService
                 return false;
             }
 
-            $site = $response->json('site');
-            $currentAliases = $site['aliases'] ?? [];
+            $currentAliases = $this->aliasesFromSite($response->json('site'));
 
             if (in_array($domain, $currentAliases)) {
                 return true; // Already added
@@ -129,9 +129,10 @@ class ForgeService
                 return false;
             }
 
-            $site = $response->json('site');
-            $currentAliases = $site['aliases'] ?? [];
-            $currentAliases = array_values(array_filter($currentAliases, fn (string $a) => $a !== $domain));
+            $currentAliases = array_values(array_filter(
+                $this->aliasesFromSite($response->json('site')),
+                fn (string $alias): bool => $alias !== $domain,
+            ));
 
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",
@@ -144,5 +145,26 @@ class ForgeService
 
             return false;
         }
+    }
+
+    private function configString(string $key): string
+    {
+        return Config::string($key, '');
+    }
+
+    /** @return list<string> */
+    private function aliasesFromSite(mixed $site): array
+    {
+        if (! is_array($site)) {
+            return [];
+        }
+
+        $aliases = $site['aliases'] ?? null;
+
+        if (! is_array($aliases)) {
+            return [];
+        }
+
+        return array_values(array_filter($aliases, is_string(...)));
     }
 }

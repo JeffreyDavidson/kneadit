@@ -2,7 +2,9 @@
 
 namespace App\Actions\Stripe;
 
+use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
@@ -13,7 +15,13 @@ class InitiateStripeConnect
     public function __construct(
         private SettingsManager $settings,
     ) {
-        $this->stripe = new StripeClient(config('cashier.secret'));
+        $secret = Config::string('cashier.secret');
+
+        if ($secret === '') {
+            throw new \UnexpectedValueException('A Stripe secret is required to initiate Connect onboarding.');
+        }
+
+        $this->stripe = new StripeClient($secret);
     }
 
     public function __invoke(string $refreshUrl, string $returnUrl): string
@@ -34,11 +42,19 @@ class InitiateStripeConnect
     {
         $connectId = $this->settings->get('stripe_connect_id');
 
-        if ($connectId) {
+        if (is_string($connectId) && $connectId !== '') {
             return $connectId;
         }
 
+        if ($connectId !== null && $connectId !== '') {
+            throw new \UnexpectedValueException('The stored Stripe Connect account ID must be a string.');
+        }
+
         $tenant = tenant();
+
+        if (! $tenant instanceof Tenant) {
+            throw new \UnexpectedValueException('Stripe Connect onboarding requires an active tenant.');
+        }
 
         $account = $this->stripe->accounts->create([
             'type' => 'standard',
@@ -49,6 +65,10 @@ class InitiateStripeConnect
                 'tenant_id' => $tenant->id,
             ],
         ]);
+
+        if ($account->id === '') {
+            throw new \UnexpectedValueException('Stripe returned an invalid Connect account ID.');
+        }
 
         $this->settings->set('stripe_connect_id', $account->id);
 

@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 
 final class PaymentsStep extends OnboardingStep
 {
@@ -26,9 +27,14 @@ final class PaymentsStep extends OnboardingStep
     {
         $manager = resolve(SettingsManager::class);
         $methods = $manager->get('payment_methods');
+        $decodedMethods = is_string($methods) ? json_decode($methods, true) : null;
+        $selectedMethods = collect(is_array($decodedMethods) ? $decodedMethods : [])
+            ->filter(is_string(...))
+            ->values()
+            ->all();
 
         return [
-            'payment_methods' => $methods ? json_decode($methods, true) : [PaymentMethod::Cash->value],
+            'payment_methods' => $selectedMethods !== [] ? $selectedMethods : [PaymentMethod::Cash->value],
             'paypal_client_id' => $manager->get('paypal_client_id', ''),
             'paypal_client_secret' => $manager->get('paypal_client_secret', ''),
             'paypal_sandbox' => $manager->get('paypal_sandbox', '1') === '1',
@@ -66,7 +72,7 @@ final class PaymentsStep extends OnboardingStep
                             ->schema([
                                 View::make('filament.pages.shared.stripe-connect-status'),
                             ])
-                            ->visible(fn (Get $get) => in_array(PaymentMethod::Stripe->value, $get('payments.payment_methods') ?? [])),
+                            ->visible(fn (Get $get): bool => in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
 
                         Section::make('PayPal Connection')
                             ->description('Connect your PayPal Business account.')
@@ -76,19 +82,19 @@ final class PaymentsStep extends OnboardingStep
                                     ->placeholder('Your PayPal Client ID')
                                     ->maxLength(255)
                                     ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.')
-                                    ->required(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payments.payment_methods') ?? [])),
+                                    ->required(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                                 TextInput::make('payments.paypal_client_secret')
                                     ->label('PayPal Client Secret')
                                     ->password()
                                     ->placeholder('Your PayPal Client Secret')
                                     ->maxLength(255)
-                                    ->required(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payments.payment_methods') ?? [])),
+                                    ->required(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                                 Toggle::make('payments.paypal_sandbox')
                                     ->label('Sandbox Mode (Testing)')
                                     ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
                                     ->default(true),
                             ])
-                            ->visible(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payments.payment_methods') ?? [])),
+                            ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                     ])
                     ->footerActions([])
                     ->footerActionsAlignment(null),
@@ -98,19 +104,40 @@ final class PaymentsStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        $methods = $data['payment_methods'] ?? [PaymentMethod::Cash->value];
+        $methods = self::normalizePaymentMethods($data['payment_methods'] ?? []);
+        $methods = $methods !== [] ? $methods : [PaymentMethod::Cash->value];
 
         $settings = [
             'payment_methods' => json_encode($methods),
-            'payment_method' => $methods[0] ?? PaymentMethod::Cash->value,
+            'payment_method' => $methods[0],
         ];
 
-        if (in_array(PaymentMethod::PayPal->value, $methods)) {
+        if (in_array(PaymentMethod::PayPal->value, $methods, true)) {
             $settings['paypal_client_id'] = $data['paypal_client_id'];
             $settings['paypal_client_secret'] = $data['paypal_client_secret'];
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
         }
 
         resolve(SettingsManager::class)->setMany($settings);
+    }
+
+    /** @return list<string> */
+    private static function selectedMethods(Get $get): array
+    {
+        return self::normalizePaymentMethods($get('payments.payment_methods'));
+    }
+
+    /** @return list<string> */
+    private static function normalizePaymentMethods(mixed $state): array
+    {
+        $methods = [];
+
+        foreach (Arr::wrap($state) as $method) {
+            if (is_string($method)) {
+                $methods[] = $method;
+            }
+        }
+
+        return $methods;
     }
 }

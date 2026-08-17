@@ -19,9 +19,9 @@ class BlogPosts extends Component
     /** @param array<string, mixed> $config */
     public function __construct(public array $config = [])
     {
-        $count = $config['count'] ?? 3;
-        $this->title = $config['title'] ?? 'From the Kitchen';
-        $this->subtitle = $config['subtitle'] ?? 'Stories, tips, and updates';
+        $count = is_int($config['count'] ?? null) ? $config['count'] : 3;
+        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'From the Kitchen';
+        $this->subtitle = is_string($config['subtitle'] ?? null) ? $config['subtitle'] : 'Stories, tips, and updates';
 
         try {
             $this->latestPosts = BlogPost::query()
