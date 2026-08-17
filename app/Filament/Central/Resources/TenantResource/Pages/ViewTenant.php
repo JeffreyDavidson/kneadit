@@ -41,12 +41,7 @@ class ViewTenant extends ViewRecord
                 ->label('Visit Storefront')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->color('info')
-                ->url(fn () => sprintf(
-                    '%s://%s.%s',
-                    parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https',
-                    $this->record->id,
-                    parse_url(config('app.url'), PHP_URL_HOST) ?: 'getkneadit.app',
-                ))
+                ->url(fn (): string => $this->storefrontUrl())
                 ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];
@@ -139,5 +134,28 @@ class ViewTenant extends ViewRecord
             ->title('Note deleted')
             ->success()
             ->send();
+    }
+
+    private function storefrontUrl(): string
+    {
+        $appUrl = config('app.url');
+
+        if (! is_string($appUrl)) {
+            throw new \UnexpectedValueException('The application URL must be a string.');
+        }
+
+        $host = parse_url($appUrl, PHP_URL_HOST);
+        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
+
+        if (! is_string($host) || $host === '') {
+            throw new \UnexpectedValueException('The application URL must contain a host.');
+        }
+
+        return sprintf(
+            '%s://%s.%s',
+            is_string($scheme) && $scheme !== '' ? $scheme : 'https',
+            $this->record->id,
+            $host,
+        );
     }
 }
