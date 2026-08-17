@@ -42,6 +42,14 @@ class InvoiceService
 
             $invoiceId = $response->json('id');
 
+            if (! is_string($invoiceId) || $invoiceId === '') {
+                Log::error('PayPal invoice response did not contain an invoice ID', [
+                    'order_id' => $order->id,
+                ]);
+
+                return null;
+            }
+
             $sendResponse = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                 'Authorization' => "Bearer {$accessToken}",
                 'Content-Type' => 'application/json',
