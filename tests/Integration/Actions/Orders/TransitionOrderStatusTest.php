@@ -120,9 +120,9 @@ test('does not dispatch OrderDelivered or OrderCancelled on other transitions', 
 });
 
 test('critical effect failure rolls back the status transition', function () {
-    $inventoryManager = Mockery::mock(InventoryManager::class, [
-        'deductForOrder' => fn () => throw new RuntimeException('Inventory deduction failed'),
-    ]);
+    $inventoryManager = Mockery::mock(InventoryManager::class);
+    mockExpectation($inventoryManager, 'deductForOrder')
+        ->andThrow(new RuntimeException('Inventory deduction failed'));
 
     app()->instance(InventoryManager::class, $inventoryManager);
 

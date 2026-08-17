@@ -17,5 +17,5 @@ test('returns user when stripe customer is found', function () {
 
     $result = StripeCustomerLookupQuery::find('cus_test_123');
 
-    expect($result['user'])->toBe($user);
+    expect($result['user']?->is($user))->toBeTrue();
 });
