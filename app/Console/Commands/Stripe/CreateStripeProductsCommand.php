@@ -5,6 +5,7 @@ namespace App\Console\Commands\Stripe;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Laravel\Cashier\Cashier;
 
 #[Signature('stripe:create-products')]
@@ -49,11 +50,7 @@ class CreateStripeProductsCommand extends Command
     /** @return array<string, array{name: string, description: string, founding_price_monthly: int}> */
     private function plans(): array
     {
-        $configuredPlans = config('kneadit.plans', []);
-
-        if (! is_array($configuredPlans)) {
-            return [];
-        }
+        $configuredPlans = Config::array('kneadit.plans', []);
 
         $plans = [];
 

@@ -14,16 +14,17 @@ class DescriptionGeneratorService
         $templates = $this->templatesForTone($tone);
         $adjectivePool = $this->adjectivesForCategory($category);
 
-        $selectedTemplates = Arr::random($templates, min($count, count($templates)));
+        $selectedTemplates = collect($templates)
+            ->shuffle()
+            ->take(min($count, count($templates)));
 
         $descriptions = [];
         foreach ($selectedTemplates as $template) {
-            $adjective = Arr::random($adjectivePool);
-            $text = str_replace(
+            $adjective = $this->randomString($adjectivePool);
+            $text = Str::of($template)->replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
                 [$product, $category ?: 'baked goods', $adjective, (string) ($price ? Number::currency($price) : '')],
-                $template,
-            );
+            )->toString();
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
         }
 
@@ -80,11 +81,19 @@ class DescriptionGeneratorService
         /** @var array<int, string> $extras */
         $extras = config('description-templates.long_extras', []);
 
-        $adj = Arr::random($adjectives);
+        $adj = $this->randomString($adjectives);
         $selectedExtras = Arr::random($extras, 2);
 
-        $replace = fn (string $s) => Str::replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
+        $replace = fn (string $s): string => Str::of($s)
+            ->replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj])
+            ->toString();
 
         return $base . ' ' . $replace($selectedExtras[0]) . ' ' . $replace($selectedExtras[1]);
+    }
+
+    /** @param array<int, string> $values */
+    private function randomString(array $values): string
+    {
+        return collect($values)->random();
     }
 }

@@ -23,10 +23,10 @@ class CompleteOnboardingController extends Controller
     ): RedirectResponse {
         $tenant = $createTenant(
             user: $user,
-            storeName: $request->validated('store_name'),
+            storeName: $request->string('store_name')->toString(),
             subdomain: $request->subdomain(),
             useKneadItStorefront: $request->usesKneadItStorefront(),
-            externalWebsite: $request->validated('external_website'),
+            externalWebsite: $request->filled('external_website') ? $request->string('external_website')->toString() : null,
         );
 
         $completeReferral(

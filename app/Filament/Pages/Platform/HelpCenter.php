@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Platform;
 use App\Support\Help\HelpRepository;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Config;
 use Livewire\Attributes\Url;
 
 class HelpCenter extends Page
@@ -23,7 +24,7 @@ class HelpCenter extends Page
     #[Url(as: 'article')]
     public ?string $articlePath = null;
 
-    /** @return array<int, mixed> */
+    /** @return array<int, array{title: string, slug: string, icon: mixed, color: string, articles: array<int, array{title: string, slug: string, content: string}>}> */
     public function getTopics(): array
     {
         return resolve(HelpRepository::class)->topics();
@@ -34,16 +35,27 @@ class HelpCenter extends Page
     {
         $repo = resolve(HelpRepository::class);
         $titles = collect($this->getTopics())->keyBy('slug');
+        $articles = [];
 
-        return collect((array) config('help.popular', []))
-            ->map(fn (string $path) => $repo->find($path))
-            ->filter()
-            ->map(fn (array $a) => [
-                'topic' => $titles[$a['topicSlug']]['title'] ?? '',
-                'title' => $a['title'],
-                'slug' => "{$a['topicSlug']}/{$a['slug']}",
-            ])
-            ->values()
-            ->all();
+        foreach (Config::array('help.popular', []) as $path) {
+            if (! is_string($path)) {
+                continue;
+            }
+
+            $article = $repo->find($path);
+
+            if ($article === null) {
+                continue;
+            }
+
+            $topic = $titles->get($article['topicSlug']);
+            $articles[] = [
+                'topic' => is_array($topic) ? $topic['title'] : '',
+                'title' => $article['title'],
+                'slug' => "{$article['topicSlug']}/{$article['slug']}",
+            ];
+        }
+
+        return $articles;
     }
 }
