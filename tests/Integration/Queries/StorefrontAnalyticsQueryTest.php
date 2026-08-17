@@ -56,6 +56,7 @@ test('conversion rate calculates correctly with orders', function () {
 test('conversion funnel returns all steps with percentages and dropoff', function () {
     PageView::query()->insert([
         ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
         ['page' => 'home', 'session_id' => 'b', 'created_at' => now()],
         ['page' => 'menu', 'session_id' => 'a', 'created_at' => now()],
         ['page' => 'order', 'session_id' => 'a', 'created_at' => now()],
@@ -71,4 +72,18 @@ test('conversion funnel returns all steps with percentages and dropoff', functio
         ->and($funnel[0]['dropoff'])->toBeNull()
         ->and($funnel[1]['label'])->toBe('Menu')
         ->and($funnel[1]['dropoff'])->toBe(50.0);
+});
+
+test('conversion funnel counts unique sessions and excludes confirmation reloads from order starts', function () {
+    PageView::query()->insert([
+        ['page' => 'order', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'order', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
+    ]);
+
+    $funnel = (new StorefrontAnalyticsQuery(now()->startOfWeek()))->conversionFunnel();
+
+    expect($funnel[2])
+        ->toMatchArray(['label' => 'Order Page', 'count' => 1]);
 });

@@ -184,7 +184,7 @@ class DashboardConfig extends Page
         $defaults = [];
         $i = 1;
         foreach (WidgetMeta::all() as $key => $meta) {
-            $defaults[$key] = ['visible' => true, 'order' => $i++];
+            $defaults[$key] = ['visible' => ! WidgetMeta::isDefaultHidden($key), 'order' => $i++];
         }
 
         return $defaults;
