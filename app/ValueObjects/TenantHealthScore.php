@@ -21,9 +21,9 @@ final readonly class TenantHealthScore
         int $setupCompleted,
         int $setupTotal = 7,
     ) {
-        $this->loginScore = self::scoreLogin($daysSinceLogin);
-        $this->orderScore = self::scoreOrders($orderCount);
-        $this->productScore = self::scoreProducts($productCount);
+        $this->loginScore = $this->scoreLogin($daysSinceLogin);
+        $this->orderScore = $this->scoreOrders($orderCount);
+        $this->productScore = $this->scoreProducts($productCount);
         $this->setupScore = $setupTotal > 0
             ? (int) round(($setupCompleted / $setupTotal) * 30)
             : 0;
@@ -49,7 +49,7 @@ final readonly class TenantHealthScore
         };
     }
 
-    private static function scoreLogin(?int $days): int
+    private function scoreLogin(?int $days): int
     {
         if ($days === null) {
             return 0;
@@ -64,7 +64,7 @@ final readonly class TenantHealthScore
         };
     }
 
-    private static function scoreOrders(int $count): int
+    private function scoreOrders(int $count): int
     {
         return match (true) {
             $count >= 50 => 25,
@@ -75,7 +75,7 @@ final readonly class TenantHealthScore
         };
     }
 
-    private static function scoreProducts(int $count): int
+    private function scoreProducts(int $count): int
     {
         return match (true) {
             $count >= 20 => 20,

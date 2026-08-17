@@ -38,7 +38,10 @@ class ModifyOrder
 
             foreach ($items as $update) {
                 $item = $itemsById->get($update['order_item_id']);
-                if (! $item || $item->order_id !== $order->id) {
+                if (! $item) {
+                    continue;
+                }
+                if ($item->order_id !== $order->id) {
                     continue;
                 }
 
