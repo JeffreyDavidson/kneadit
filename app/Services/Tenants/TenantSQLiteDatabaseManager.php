@@ -2,46 +2,73 @@
 
 namespace App\Services\Tenants;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
+use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\TenantDatabaseManagers\SQLiteDatabaseManager;
 use Throwable;
 
 class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 {
+    public function __construct(private readonly TenantDatabasePath $databasePath) {}
+
     protected function tenantDbPath(string $name): string
     {
-        $sharedBase = config('tenancy.tenant_db_path');
-
-        if ($sharedBase) {
-            return $sharedBase . '/' . $name;
-        }
-
-        return database_path($name);
+        return $this->databasePath->resolve($name);
     }
 
-    public function createDatabase(mixed $tenant): bool
+    public function createDatabase(TenantWithDatabase $tenant): bool
     {
-        $path = $this->tenantDbPath($tenant->database()->getName());
+        $databaseName = $tenant->database()->getName();
+
+        if ($databaseName === null) {
+            return false;
+        }
+
+        $path = $this->tenantDbPath($databaseName);
         $dir = dirname($path);
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
+        File::ensureDirectoryExists($dir, 0700);
+
+        if (File::exists($path) || is_link($path)) {
+            return false;
         }
 
-        return (bool) file_put_contents($path, '');
+        $handle = fopen($path, 'x');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        fclose($handle);
+
+        if (File::chmod($path, 0600) !== true) {
+            File::delete($path);
+
+            throw new RuntimeException('Unable to secure the tenant database permissions.');
+        }
+
+        return true;
     }
 
-    public function deleteDatabase(mixed $tenant): bool
+    public function deleteDatabase(TenantWithDatabase $tenant): bool
     {
-        $path = $this->tenantDbPath($tenant->database()->getName());
+        $databaseName = $tenant->database()->getName();
+
+        if ($databaseName === null) {
+            return false;
+        }
+
+        $path = $this->tenantDbPath($databaseName);
 
         // Audit logging so the next time tenant SQLite files vanish we know
         // who called for it. Captures the full call chain — Artisan command
         // (if any), running test class, and a stack trace. See investigation
         // notes around the orphan-tenant 503 (#474, #478).
-        if (file_exists($path)) {
+        if (File::exists($path) || is_link($path)) {
             Log::warning('Tenant database deletion requested', [
-                'tenant_id' => $tenant->id ?? null,
+                'tenant_id' => $tenant->getTenantKey(),
                 'path' => $path,
                 'artisan_command' => $this->currentArtisanCommand(),
                 'running_test' => $this->currentTestClass(),
@@ -49,8 +76,17 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
             ]);
         }
 
-        if (file_exists($path)) {
-            return unlink($path);
+        if (is_link($path)) {
+            Log::error('Refusing to delete a symlink at a tenant database path.', [
+                'tenant_id' => $tenant->getTenantKey(),
+                'path' => $path,
+            ]);
+
+            return false;
+        }
+
+        if (File::exists($path)) {
+            return File::delete($path);
         }
 
         return true;
@@ -113,17 +149,28 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 
     public function databaseExists(string $name): bool
     {
-        return file_exists($this->tenantDbPath($name));
+        $path = $this->tenantDbPath($name);
+
+        return ! is_link($path) && File::isFile($path);
     }
 
-    /** @return array<string, mixed> */
     /**
      * @param array<string, mixed> $baseConfig
      * @return array<string, mixed>
      */
     public function makeConnectionConfig(array $baseConfig, string $databaseName): array
     {
-        $baseConfig['database'] = $this->tenantDbPath($databaseName);
+        $path = $this->tenantDbPath($databaseName);
+
+        if (is_link($path)) {
+            throw new RuntimeException('Refusing to connect through a tenant database symlink.');
+        }
+
+        if (File::isFile($path) && File::chmod($path, 0600) !== true) {
+            throw new RuntimeException('Unable to secure the tenant database permissions.');
+        }
+
+        $baseConfig['database'] = $path;
 
         return $baseConfig;
     }

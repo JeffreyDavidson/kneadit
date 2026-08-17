@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+
 use function Pest\Laravel\postJson;
 
 beforeEach(function () {
@@ -26,4 +29,29 @@ test('csp report endpoint accepts a bare body too (browser shape varies)', funct
     ]);
 
     $response->assertNoContent();
+});
+
+test('csp report endpoint logs only bounded diagnostic fields', function () {
+    Log::shouldReceive('channel')->once()->with('stack')->andReturnSelf();
+    Log::shouldReceive('warning')->once()->with('CSP violation report', [
+        'blocked-uri' => 'https://example.test/script.js',
+        'script-sample' => str_repeat('x', 2_048),
+    ]);
+
+    postJson(route('csp.report', [], false), [
+        'csp-report' => [
+            'blocked-uri' => 'https://example.test/script.js',
+            'script-sample' => str_repeat('x', 3_000),
+            'untrusted-extra-field' => 'must not enter logs',
+        ],
+    ])->assertNoContent();
+});
+
+test('csp report endpoint rejects oversized payloads before logging', function () {
+    config(['csp.max_report_bytes' => 64]);
+    Log::shouldReceive('channel')->never();
+
+    postJson(route('csp.report', [], false), [
+        'csp-report' => ['blocked-uri' => str_repeat('x', 128)],
+    ])->assertStatus(Response::HTTP_REQUEST_ENTITY_TOO_LARGE);
 });
