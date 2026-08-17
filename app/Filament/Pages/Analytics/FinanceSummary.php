@@ -50,10 +50,10 @@ class FinanceSummary extends Page
 
     public float $revenueCapProgress = 0;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, array{month_name: string, revenue: float, expenses: float, net: float}> */
     public Collection $monthlyBreakdown;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, array{category: string, amount: float, percentage: float}> */
     public Collection $expenseBreakdown;
 
     public float $cogsAmount = 0;
@@ -63,7 +63,8 @@ class FinanceSummary extends Page
     public function mount(): void
     {
         $this->selectedYear = now()->year;
-        $this->revenueCap = (float) resolve(SettingsManager::class)->get('revenue_cap', 250000);
+        $revenueCap = resolve(SettingsManager::class)->get('revenue_cap', 250000);
+        $this->revenueCap = is_numeric($revenueCap) ? floatval($revenueCap) : 250000;
         $this->loadFinancialData();
     }
 

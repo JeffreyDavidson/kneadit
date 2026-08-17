@@ -75,11 +75,11 @@ class OrderForm
         // ->live() and re-runs this callback after edit, so the disabled
         // Total field stays in sync as the user types.
         $recalculateTotal = function (Get $get, Set $set): void {
-            $total = (float) $get('subtotal')
-                + (float) $get('delivery_fee')
-                - (float) $get('discount_amount')
-                - (float) $get('gift_card_amount')
-                + (float) $get('tip_amount');
+            $total = self::moneyState($get, 'subtotal')
+                + self::moneyState($get, 'delivery_fee')
+                - self::moneyState($get, 'discount_amount')
+                - self::moneyState($get, 'gift_card_amount')
+                + self::moneyState($get, 'tip_amount');
             $set('total', max(0, round($total, 2)));
         };
 
@@ -141,5 +141,20 @@ class OrderForm
 
                 Textarea::make('notes')->rows(3),
             ]);
+    }
+
+    private static function moneyState(Get $get, string $key): float
+    {
+        $value = $get($key);
+
+        if (is_float($value) || is_int($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || ! is_numeric($value)) {
+            throw new \UnexpectedValueException("Order {$key} must be numeric.");
+        }
+
+        return (float) $value;
     }
 }

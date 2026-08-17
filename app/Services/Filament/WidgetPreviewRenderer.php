@@ -52,6 +52,10 @@ class WidgetPreviewRenderer
         try {
             $html = $demo->run(fn (): string => Livewire::mount($widgetClass));
 
+            if (! is_string($html)) {
+                return $this->placeholder('Widget render returned an invalid response.');
+            }
+
             return new HtmlString($html);
         } catch (Throwable $e) {
             Log::warning('WidgetPreviewRenderer failed', [

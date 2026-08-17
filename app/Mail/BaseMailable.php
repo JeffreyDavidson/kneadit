@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,11 +24,13 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
     {
         $settings = resolve(TenantSettings::class);
         $store = $settings->store;
+        $tenant = tenancy()->tenant;
+        $secondaryColor = $tenant instanceof Tenant ? $tenant->brand_color_secondary : null;
 
         return array_merge(parent::buildViewData(), [
             'storeName' => $store->name,
             'primaryColor' => $settings->branding->brandColorPrimary,
-            'secondaryColor' => tenant()->brand_color_secondary ?? '#1c1410',
+            'secondaryColor' => $secondaryColor ?? '#1c1410',
             'storeEmail' => $store->email ?? '',
             'storePhone' => $store->phone ?? '',
             'storeAddress' => $store->address ?? '',
