@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
+/** @property array{customer_email: string, product_id: int, favorited: bool} $resource */
 class FavoriteToggleResource extends JsonApiResource
 {
     /**

@@ -6,7 +6,11 @@ use App\Models\Customers\CustomerFavorite;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @mixin CustomerFavorite */
+/**
+ * @property CustomerFavorite $resource
+ *
+ * @mixin CustomerFavorite
+ */
 class FavoriteResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
@@ -16,7 +20,7 @@ class FavoriteResource extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string) $this->resource->getKey();
+        return (string) $this->resource->id;
     }
 
     public function toType(Request $request): string
