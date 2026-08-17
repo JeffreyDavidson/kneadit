@@ -9,21 +9,22 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
+/** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
 class TenantHealthService
 {
     public function __construct(
         protected TenancyManager $tenancyManager,
     ) {}
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, HealthData> */
     public function getTenantHealthData(): Collection
     {
-        $results = collect();
+        $results = [];
 
-        Tenant::query()->lazy()->each(function (Tenant $tenant) use ($results) {
+        foreach (Tenant::query()->lazy() as $tenant) {
             $healthScore = $this->calculateHealthScore($tenant);
 
-            $results->push([
+            $results[] = [
                 'id' => $tenant->id,
                 'name' => $tenant->store_name ?? $tenant->name,
                 'owner' => $tenant->name,
@@ -34,10 +35,10 @@ class TenantHealthService
                 'order_score' => $healthScore->orderScore,
                 'product_score' => $healthScore->productScore,
                 'setup_score' => $healthScore->setupScore,
-            ]);
-        });
+            ];
+        }
 
-        return $results->sortBy('health_score')->values();
+        return collect($results)->sortBy('health_score')->values();
     }
 
     public function calculateHealthScore(Tenant $tenant): TenantHealthScore
@@ -66,7 +67,7 @@ class TenantHealthService
                 $categoryCount = DB::table('categories')->count();
 
                 return [
-                    'days_since_login' => $lastLogin ? (int) Date::parse($lastLogin)->diffInDays(now()) : null,
+                    'days_since_login' => is_string($lastLogin) ? (int) Date::parse($lastLogin)->diffInDays(now()) : null,
                     'total_orders' => $orderCount,
                     'total_products' => $productCount,
                     'has_products' => $productCount > 0,
@@ -86,7 +87,7 @@ class TenantHealthService
         }
     }
 
-    /** @return array<string, mixed> */
+    /** @return array{average: float|int, healthy: int, at_risk: int, critical: int, total: int} */
     public function getHealthSummaryStats(): array
     {
         $data = $this->getTenantHealthData();
@@ -119,7 +120,9 @@ class TenantHealthService
     public function getLastLogin(Tenant $tenant): ?string
     {
         try {
-            return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
+            $lastLogin = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
+
+            return is_string($lastLogin) ? $lastLogin : null;
         } catch (\Throwable) {
             return null;
         }
