@@ -21,7 +21,7 @@ class CreateQuickOrder
 
             $subtotal = collect($data->orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
             $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value)
-                ? (float) config('kneadit.delivery_fees.5to10', 5.00)
+                ? $this->deliveryFee()
                 : 0.00;
 
             $order = Order::query()->create([
@@ -71,5 +71,20 @@ class CreateQuickOrder
             'email' => $data->customerEmail,
             'phone' => $data->customerPhone,
         ]);
+    }
+
+    private function deliveryFee(): float
+    {
+        $value = config('kneadit.delivery_fees.5to10', 5.00);
+
+        if (is_float($value) || is_int($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || ! is_numeric($value)) {
+            throw new \UnexpectedValueException('The configured delivery fee must be numeric.');
+        }
+
+        return (float) $value;
     }
 }
