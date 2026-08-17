@@ -7,6 +7,7 @@ use App\Models\Orders\Order;
 use App\Queries\Financial\ProductSalesQuery;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class SalesReport
@@ -42,7 +43,7 @@ class SalesReport
 
                 return [
                     'date' => is_string($date) ? $date : '',
-                    'revenue' => (int) $row->getAttribute('revenue_cents') / 100,
+                    'revenue' => Arr::integer($row->getAttributes(), 'revenue_cents', 0) / 100,
                 ];
             })
             ->all();

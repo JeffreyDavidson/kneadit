@@ -25,7 +25,7 @@ class TopProductsWidget extends Widget
 
         return $this->cached("main_{$limit}", [900, 1800], function () use ($limit): array {
             $products = ProductSalesQuery::topByRevenue(DateRange::thisMonth(), $limit)->all();
-            $maxRevenue = max((float) (collect($products)->max('revenue') ?? 1), 1);
+            $maxRevenue = max(array_column($products, 'revenue') ?: [1.0]);
 
             return collect($products)->map(fn (array $p): array => [
                 'name' => $p['name'],

@@ -4,6 +4,7 @@ namespace App\Queries\Financial;
 
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -43,7 +44,7 @@ class RevenueQuery
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue_cents')
             ->groupBy('date')
             ->pluck('revenue_cents', 'date')
-            ->map(fn (mixed $v): float => (int) $v / 100)
+            ->map(fn (mixed $v): float => Arr::integer(['value' => $v], 'value', 0) / 100)
             ->all();
     }
 

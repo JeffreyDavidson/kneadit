@@ -5,6 +5,7 @@ namespace App\Queries\Platform;
 use App\Models\Platform\FeatureUsageLog;
 use App\Models\Platform\Tenant;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
@@ -67,13 +68,17 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $max = (int) ($data->max('total') ?? 1);
+        $max = Arr::integer(['total' => $data->max('total')], 'total', 1);
 
-        return $data->map(fn (FeatureUsageLog $row) => [
-            'feature' => $row->feature,
-            'total' => (int) $row->total,
-            'percent' => round(((int) $row->total / max($max, 1)) * 100),
-        ]);
+        return $data->map(function (FeatureUsageLog $row) use ($max): array {
+            $total = Arr::integer($row->getAttributes(), 'total', 0);
+
+            return [
+                'feature' => $row->feature,
+                'total' => $total,
+                'percent' => round(($total / max($max, 1)) * 100),
+            ];
+        });
     }
 
     /** @return array<string, mixed> */
@@ -96,16 +101,18 @@ class FeatureUsageQuery
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxCount = (int) ($logs->max(
-            fn (Collection $group): int => (int) $group->sum('usage_count'),
-        ) ?? 1);
+        $maxCount = Arr::integer(['count' => $logs->max(
+            fn (Collection $group): mixed => $group->sum('usage_count'),
+        )], 'count', 1);
 
         $rows = [];
         foreach ($features as $feature) {
             $cells = [];
             foreach ($days as $day) {
                 $key = $feature . '|' . $day->toDateString();
-                $count = isset($logs[$key]) ? (int) $logs[$key]->sum('usage_count') : 0;
+                $count = isset($logs[$key])
+                    ? Arr::integer(['count' => $logs[$key]->sum('usage_count')], 'count', 0)
+                    : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [
                     'date' => $day->format('M d'),

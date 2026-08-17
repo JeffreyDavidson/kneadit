@@ -25,7 +25,7 @@ class CustomerEmailVerificationRequest extends FormRequest
             'hash' => ['required', 'string'],
         ])->safe();
 
-        throw_unless(hash_equals((string) $customer->getKey(), $route->string('id')->toString()), AuthorizationException::class);
+        throw_unless(hash_equals((string) $customer->id, $route->string('id')->toString()), AuthorizationException::class);
 
         return hash_equals(sha1($customer->getEmailForVerification()), $route->string('hash')->toString());
     }
