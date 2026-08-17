@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Engagement\Review;
+use App\Support\DatabaseValue;
 use Filament\Widgets\Widget;
 
 class ReviewSummaryWidget extends Widget
@@ -18,7 +19,7 @@ class ReviewSummaryWidget extends Widget
 
     public function getAverageRating(): float
     {
-        return $this->cached('avg', [3600, 7200], fn (): float => round((float) Review::query()->approved()->avg('rating'), 1));
+        return $this->cached('avg', [3600, 7200], fn (): float => round(DatabaseValue::float(Review::query()->approved()->avg('rating')), 1));
     }
 
     public function getTotalReviews(): int
@@ -41,6 +42,7 @@ class ReviewSummaryWidget extends Widget
                 ->pluck('count', 'rating')
                 ->toArray();
 
+            $counts = array_map(DatabaseValue::int(...), $counts);
             $total = array_sum($counts);
             $distribution = [];
 

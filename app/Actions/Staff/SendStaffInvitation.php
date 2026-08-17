@@ -8,6 +8,7 @@ use App\Exceptions\Staff\StaffInvitationException;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 class SendStaffInvitation
@@ -38,7 +39,7 @@ class SendStaffInvitation
             'email' => $email,
             'role' => $role->value,
             'token' => Str::random(64),
-            'expires_at' => now()->addDays(config('kneadit.invitation_expiry_days', 7)),
+            'expires_at' => now()->addDays(Config::integer('kneadit.invitation_expiry_days', 7)),
             'invited_by' => $invitedBy,
         ]);
 

@@ -33,7 +33,7 @@ class BirthdayWidget extends Widget
         return Customer::query()->whereNotNull('birthday')->exists();
     }
 
-    /** @return Collection<int, stdClass> */
+    /** @return Collection<int, object{customer_name: string, birthday_date: non-falsy-string, days_until: int<0, 30>, is_today: bool}&stdClass> */
     public function getUpcomingBirthdays(): Collection
     {
         $limit = match ($this->size()) {

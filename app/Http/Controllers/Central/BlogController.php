@@ -13,7 +13,7 @@ class BlogController extends Controller
     public function index(IndexBlogPostsRequest $request): View
     {
         $categories = BlogPostCategory::options();
-        $activeCategory = $request->validated('category', 'all');
+        $activeCategory = $request->string('category', 'all')->toString();
         $posts = BlogPost::query()->forListing($activeCategory)->paginate(18);
 
         return view('central.blog.index', [
