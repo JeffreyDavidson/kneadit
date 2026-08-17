@@ -9,7 +9,7 @@ use UnexpectedValueException;
 class TenantSettingCipher
 {
     /** @var list<string> */
-    private const SENSITIVE_KEYS = [
+    private const array SENSITIVE_KEYS = [
         'paypal_client_id',
         'paypal_client_secret',
         'webhook_secret',
