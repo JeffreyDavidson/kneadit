@@ -32,7 +32,7 @@ class CapacityLimitForm
                         ->options(DayOfWeek::options() + ['specific' => 'Specific Date'])
                         ->required()
                         ->live()
-                        ->afterStateHydrated(function (mixed $component, ?CapacityLimit $record) {
+                        ->afterStateHydrated(function (Select $component, ?CapacityLimit $record): void {
                             if (! $record) {
                                 return;
                             }

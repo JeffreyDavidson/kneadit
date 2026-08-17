@@ -28,7 +28,7 @@ class CustomersTable
 {
     public static function configure(Table $table): Table
     {
-        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
+        $atRiskDays = self::atRiskDays();
 
         return $table
             ->modifyQueryUsing(fn (CustomerQueryBuilder $query) => $query->withOrderMetrics())
@@ -54,6 +54,10 @@ class CustomersTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
+                        if (! is_string($state)) {
+                            return null;
+                        }
+
                         if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
@@ -67,9 +71,7 @@ class CustomersTable
                     ->badge()
                     ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
                     ->icon(fn (Customer $record): ?Heroicon => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? Heroicon::OutlinedCake : null)
-                    ->formatStateUsing(fn (mixed $state, Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday)
-                        ? 'Today!'
-                        : ($state ? Date::parse($state)->format('M j') : '—'))
+                    ->formatStateUsing(fn (mixed $state, Customer $record): string => self::birthdayLabel($state, $record))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -172,5 +174,33 @@ class CustomersTable
             ->defaultSort('name')
             ->emptyStateHeading('No customers yet')
             ->emptyStateDescription('Customers will appear here once they place their first order.');
+    }
+
+    private static function atRiskDays(): int
+    {
+        $value = config('analytics.at_risk_threshold_days', 30);
+
+        if (is_int($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
+            throw new \UnexpectedValueException('The at-risk threshold must be an integer number of days.');
+        }
+
+        return (int) $value;
+    }
+
+    private static function birthdayLabel(mixed $state, Customer $customer): string
+    {
+        if (resolve(BirthdayCalculator::class)->isToday($customer->birthday)) {
+            return 'Today!';
+        }
+
+        if (! is_string($state) && ! $state instanceof \DateTimeInterface) {
+            return '—';
+        }
+
+        return Date::parse($state)->format('M j');
     }
 }
