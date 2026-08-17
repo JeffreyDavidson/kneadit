@@ -5,16 +5,16 @@ use App\Services\Tenants\TenancyManager;
 use Stancl\Tenancy\Tenancy;
 
 beforeEach(function () {
-    $this->tenancy = Mockery::mock(Tenancy::class);
+    $this->tenancy = Tests\Support\TypedMock::make(Tenancy::class);
     $this->app->instance(Tenancy::class, $this->tenancy);
 });
 
 it('initializes tenancy, runs callback, and ends tenancy', function () {
-    $tenant = Mockery::mock(Tenant::class);
+    $tenant = new Tenant;
     $callbackExecuted = false;
 
-    $this->tenancy->shouldReceive('initialize')->with($tenant)->once();
-    $this->tenancy->shouldReceive('end')->once();
+    $this->tenancy->expects('initialize');
+    $this->tenancy->expects('end');
 
     $manager = new TenancyManager;
     $result = $manager->withinTenant($tenant, function () use (&$callbackExecuted) {
@@ -27,10 +27,10 @@ it('initializes tenancy, runs callback, and ends tenancy', function () {
 });
 
 it('ends tenancy even when callback throws an exception', function () {
-    $tenant = Mockery::mock(Tenant::class);
+    $tenant = new Tenant;
 
-    $this->tenancy->shouldReceive('initialize')->with($tenant)->once();
-    $this->tenancy->shouldReceive('end')->once();
+    $this->tenancy->expects('initialize');
+    $this->tenancy->expects('end');
 
     $manager = new TenancyManager;
 
@@ -40,11 +40,11 @@ it('ends tenancy even when callback throws an exception', function () {
 });
 
 it('passes the tenant to the callback', function () {
-    $tenant = Mockery::mock(Tenant::class);
+    $tenant = new Tenant;
     $receivedTenant = null;
 
-    $this->tenancy->shouldReceive('initialize')->with($tenant)->once();
-    $this->tenancy->shouldReceive('end')->once();
+    $this->tenancy->expects('initialize');
+    $this->tenancy->expects('end');
 
     $manager = new TenancyManager;
     $manager->withinTenant($tenant, function (Tenant $t) use (&$receivedTenant) {

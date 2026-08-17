@@ -60,8 +60,12 @@ test('find() returns parsed article or null', function () {
     $repo = new HelpRepository(test()->tmp);
 
     $hit = $repo->find('billing/plans');
-    expect($hit)->not->toBeNull()
-        ->and($hit['title'])->toBe('Plans')
+
+    if ($hit === null) {
+        throw new RuntimeException('Expected the billing article to exist.');
+    }
+
+    expect($hit['title'])->toBe('Plans')
         ->and($hit['topicSlug'])->toBe('billing');
 
     expect($repo->find('billing/missing'))->toBeNull();
@@ -73,6 +77,10 @@ test('articles missing an H1 fall back to a slug-derived title', function () {
 
     $repo = new HelpRepository(test()->tmp);
     $article = $repo->find('billing/no-heading');
+
+    if ($article === null) {
+        throw new RuntimeException('Expected the article without a heading to exist.');
+    }
 
     expect($article['title'])->toBe('No Heading');
 });
