@@ -4,7 +4,7 @@ use App\Contracts\Engagement\EngagementRecipient;
 use Illuminate\Database\Eloquent\Model;
 
 test('EngagementRecipient stores all properties', function () {
-    $model = Mockery::mock(Model::class);
+    $model = new class extends Model {};
 
     $recipient = new EngagementRecipient(
         email: 'jane@example.com',
@@ -21,7 +21,7 @@ test('EngagementRecipient stores all properties', function () {
 });
 
 test('EngagementRecipient context defaults to empty array', function () {
-    $model = Mockery::mock(Model::class);
+    $model = new class extends Model {};
 
     $recipient = new EngagementRecipient(
         email: 'test@example.com',
