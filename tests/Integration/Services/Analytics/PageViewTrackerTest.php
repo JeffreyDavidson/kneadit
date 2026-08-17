@@ -1,9 +1,16 @@
 <?php
 
+use App\Actions\Analytics\RecordPageView;
+use App\Actions\Analytics\RecordProductImpressions;
 use App\Models\Engagement\PageView;
 use App\Services\Analytics\PageViewTracker;
+use App\Services\Analytics\VisitorIdentifier;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Facades\Schema;
+use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
 
@@ -84,8 +91,51 @@ test('track creates a PageView record for known pages', function () {
 
     $tracker->track($request);
 
+    $pageView = PageView::query()->where('page', 'menu')->firstOrFail();
+
     expect(PageView::query()->count())->toBeGreaterThanOrEqual(1)
-        ->and(PageView::query()->where('page', 'menu')->exists())->toBeTrue();
+        ->and($pageView->session_id)->toHaveLength(64)
+        ->and($pageView->session_id)->not->toBe($request->session()->getId())
+        ->and(Schema::hasColumn('page_views', 'ip_address'))->toBeFalse()
+        ->and(Schema::hasColumn('page_views', 'user_agent'))->toBeFalse();
+});
+
+test('track reports recording failures without breaking the request', function () {
+    $exception = new RuntimeException('analytics storage unavailable');
+    $exceptionHandler = Double::for(ExceptionHandler::class);
+    $exceptionHandler->expects('report')->with($exception);
+    Exceptions::swap($exceptionHandler);
+    $recordPageView = new class($exception) extends RecordPageView {
+        public bool $invoked = false;
+
+        public function __construct(private readonly Throwable $exception) {}
+
+        /** @param array{page: string, session_id: string} $data */
+        public function __invoke(array $data): void
+        {
+            $this->invoked = true;
+
+            throw $this->exception;
+        }
+    };
+    $tracker = new PageViewTracker(
+        $recordPageView,
+        resolve(RecordProductImpressions::class),
+        resolve(VisitorIdentifier::class),
+    );
+
+    $request = Request::create('/about', 'GET');
+    $request->setLaravelSession(resolve('session.store'));
+    $request->setRouteResolver(function () {
+        $route = new Illuminate\Routing\Route('GET', '/about', []);
+        $route->name('storefront.about');
+
+        return $route;
+    });
+
+    $tracker->track($request);
+
+    expect($recordPageView->invoked)->toBeTrue();
 });
 
 test('track does not create record for unknown pages', function () {
