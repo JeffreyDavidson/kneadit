@@ -28,11 +28,16 @@ it('logs structured context on authentication exception', function () {
     $result = $manager->getAccessToken();
 
     expect($result)->toBeNull();
-    $logger->shouldHaveReceived('error')
-        ->withArgs(
-            fn ($message, $context) => $message === 'PayPal authentication error'
-            && isset($context['error']),
-        )
+    $verification = $logger->shouldHaveReceived('error');
+
+    if (! $verification instanceof Mockery\VerificationDirector) {
+        throw new RuntimeException('Expected a concrete Mockery verification.');
+    }
+
+    $verification->withArgs(
+        fn ($message, $context) => $message === 'PayPal authentication error'
+        && isset($context['error']),
+    )
         ->once();
 });
 
@@ -56,11 +61,16 @@ it('logs structured context on invoice status check exception', function () {
     $result = $verifier->getInvoiceStatus('INV-456');
 
     expect($result)->toBeNull();
-    $logger->shouldHaveReceived('error')
-        ->withArgs(
-            fn ($message, $context) => $message === 'PayPal invoice status check error'
-            && isset($context['invoice_id'])
-            && isset($context['error']),
-        )
+    $verification = $logger->shouldHaveReceived('error');
+
+    if (! $verification instanceof Mockery\VerificationDirector) {
+        throw new RuntimeException('Expected a concrete Mockery verification.');
+    }
+
+    $verification->withArgs(
+        fn ($message, $context) => $message === 'PayPal invoice status check error'
+        && isset($context['invoice_id'])
+        && isset($context['error']),
+    )
         ->once();
 });
