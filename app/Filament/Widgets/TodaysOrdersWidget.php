@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
+use App\Support\DatabaseValue;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 
@@ -27,7 +28,7 @@ class TodaysOrdersWidget extends Widget
         return Order::query()->whereDate('delivery_date', Date::today())->exists();
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return array<int, array{id: int, order_number: string, time: string, customer: string, total: string, total_cents: int, status: \App\Enums\Orders\OrderStatus, dot_color: string}> */
     public function getOrderRows(): array
     {
         return $this->cached('main_' . Date::today()->toDateString(), [60, 120], fn (): array => Order::query()
@@ -38,7 +39,7 @@ class TodaysOrdersWidget extends Widget
                 'id' => $order->id,
                 'order_number' => $order->order_number,
                 'time' => $order->delivery_time?->format('g:i A') ?? '—',
-                'customer' => (string) $order->getAttribute('customer_name'),
+                'customer' => DatabaseValue::nullableString($order->getAttribute('customer_name')) ?? 'Unknown Customer',
                 'total' => $order->total->formatted(),
                 'total_cents' => $order->total->cents(),
                 'status' => $order->status,
@@ -49,7 +50,7 @@ class TodaysOrdersWidget extends Widget
 
     public function getRevenueToday(): string
     {
-        $cents = (int) array_sum(array_column($this->getOrderRows(), 'total_cents'));
+        $cents = array_sum(array_column($this->getOrderRows(), 'total_cents'));
 
         return '$' . number_format($cents / 100, 2);
     }

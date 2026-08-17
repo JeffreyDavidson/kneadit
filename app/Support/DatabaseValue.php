@@ -9,6 +9,11 @@ final class DatabaseValue
         return is_numeric($value) ? (int) $value : $default;
     }
 
+    public static function nullableInt(mixed $value): ?int
+    {
+        return is_numeric($value) ? (int) $value : null;
+    }
+
     public static function float(mixed $value, float $default = 0.0): float
     {
         return is_numeric($value) ? (float) $value : $default;

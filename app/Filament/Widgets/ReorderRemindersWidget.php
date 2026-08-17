@@ -6,6 +6,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
+use App\Support\DatabaseValue;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class ReorderRemindersWidget extends Widget
      */
     public static function canView(): bool
     {
-        $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+        $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
         return DB::table(
             Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
@@ -43,7 +44,7 @@ class ReorderRemindersWidget extends Widget
     public function getLapsedCustomers(): array
     {
         return $this->cached('lapsed_customers', [1800, 3600], function (): array {
-            $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+            $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
             return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
                 ->join('orders', 'orders.customer_id', '=', 'customers.id')
@@ -67,7 +68,7 @@ class ReorderRemindersWidget extends Widget
     public function getLapsedCount(): int
     {
         return $this->cached('lapsed_count', [1800, 3600], function (): int {
-            $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+            $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
             return (int) DB::table(
                 Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
