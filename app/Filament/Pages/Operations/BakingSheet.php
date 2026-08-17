@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Models\Orders\OrderItem;
 use App\Queries\Orders\BakingSheetQuery;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -54,7 +55,7 @@ class BakingSheet extends Page
      * Print action's dispatch caused the re-rendered HTML to show the
      * empty state because the Collection deserialised broken.
      *
-     * @return Collection<int, object>
+     * @return Collection<int, OrderItem>
      */
     #[Computed]
     public function bakingItems(): Collection

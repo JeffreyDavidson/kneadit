@@ -65,6 +65,11 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
         /** @var Customer $customer */
         $customer = $recipient->model;
         $reminderDays = $recipient->context['reminder_days'];
+        $daysSinceLastOrder = $recipient->context['days_since_last_order'];
+
+        if (! is_int($reminderDays) || ! is_int($daysSinceLastOrder)) {
+            return;
+        }
 
         CustomerReminder::query()->updateOrCreate(
             ['customer_id' => $customer->id],
@@ -75,6 +80,6 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ],
         );
 
-        event(new RepeatOrderReminderDue($customer, $recipient->context['days_since_last_order']));
+        event(new RepeatOrderReminderDue($customer, $daysSinceLastOrder));
     }
 }
