@@ -11,6 +11,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  frontend:
+    name: Frontend Build
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Build production assets
+        run: npm run build
+
   tests:
     name: Pest
     runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
