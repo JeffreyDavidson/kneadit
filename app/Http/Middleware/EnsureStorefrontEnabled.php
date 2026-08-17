@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Closure;
 use Illuminate\Http\Request;
@@ -11,9 +12,9 @@ class EnsureStorefrontEnabled
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $tenant = tenant();
+        $tenant = tenancy()->tenant;
 
-        if ($tenant && ! $tenant->storefront_enabled) {
+        if ($tenant instanceof Tenant && ! $tenant->storefront_enabled) {
             // Redirect to external website if set
             if ($tenant->external_website) {
                 return redirect()->away($tenant->external_website);
