@@ -31,9 +31,11 @@ class ResetPasswordController extends Controller
             },
         );
 
+        $translationKey = is_string($status) ? $status : 'passwords.user';
+
         return $status === Password::PASSWORD_RESET
-            ? to_route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+            ? to_route('login')->with('status', __($translationKey))
+            : back()->withErrors(['email' => [__($translationKey)]]);
     }
 
     public function show(Request $request, ?string $token = null): View
