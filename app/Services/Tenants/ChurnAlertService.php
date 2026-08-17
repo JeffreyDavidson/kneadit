@@ -6,6 +6,7 @@ use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
+/** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
 class ChurnAlertService
 {
     public function __construct(
@@ -34,7 +35,7 @@ class ChurnAlertService
     }
 
     /**
-     * @param array<string, mixed>|null $health
+     * @param HealthData|null $health
      * @param Collection<int, array<string, mixed>> $alerts
      */
     private function checkTrialExpiring(Tenant $tenant, ?array $health, int $daysSinceSignup, Collection $alerts): void
@@ -44,12 +45,12 @@ class ChurnAlertService
         }
 
         $trialEnds = Date::parse($tenant->trial_ends_at);
-        if (! $trialEnds->isFuture() || abs($trialEnds->diffInHours(now())) > config('monitoring.churn_trial_alert_hours', 48)) {
+        if (! $trialEnds->isFuture() || abs($trialEnds->diffInHours(now())) > $this->configInt('monitoring.churn_trial_alert_hours', 48)) {
             return;
         }
 
         $setupScore = $health ? $health['setup_score'] : 0;
-        if ($setupScore >= config('monitoring.churn_low_setup_threshold', 15)) {
+        if ($setupScore >= $this->configInt('monitoring.churn_low_setup_threshold', 15)) {
             return;
         }
 
@@ -73,7 +74,7 @@ class ChurnAlertService
         }
 
         $days = (int) Date::parse($lastLogin)->diffInDays(now());
-        if ($days < config('monitoring.churn_no_login_days', 7)) {
+        if ($days < $this->configInt('monitoring.churn_no_login_days', 7)) {
             return;
         }
 
@@ -91,11 +92,12 @@ class ChurnAlertService
     /** @param Collection<int, array<string, mixed>> $alerts */
     private function checkNoOrders(Tenant $tenant, int $daysSinceSignup, Collection $alerts): void
     {
-        if ($daysSinceSignup <= config('monitoring.churn_min_tenant_age_days', 14)) {
+        if ($daysSinceSignup <= $this->configInt('monitoring.churn_min_tenant_age_days', 14)) {
             return;
         }
 
-        $recentOrders = $this->healthService->getRecentOrderCount($tenant, config('monitoring.churn_no_orders_days', 30));
+        $days = $this->configInt('monitoring.churn_no_orders_days', 30);
+        $recentOrders = $this->healthService->getRecentOrderCount($tenant, $days);
         if ($recentOrders > 0) {
             return;
         }
@@ -105,7 +107,7 @@ class ChurnAlertService
             'name' => $tenant->store_name ?? $tenant->name,
             'type' => 'no_orders',
             'type_label' => 'No Orders',
-            'description' => 'Zero orders in the last ' . config('monitoring.churn_no_orders_days', 30) . ' days.',
+            'description' => "Zero orders in the last {$days} days.",
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'warning',
         ]);
@@ -114,7 +116,7 @@ class ChurnAlertService
     /** @param Collection<int, array<string, mixed>> $alerts */
     private function checkLowHealth(Tenant $tenant, int $healthScore, int $daysSinceSignup, Collection $alerts): void
     {
-        if ($healthScore >= config('monitoring.churn_low_health_threshold', 40)) {
+        if ($healthScore >= $this->configInt('monitoring.churn_low_health_threshold', 40)) {
             return;
         }
 
@@ -127,5 +129,12 @@ class ChurnAlertService
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'critical',
         ]);
+    }
+
+    private function configInt(string $key, int $default): int
+    {
+        $value = config($key, $default);
+
+        return is_int($value) ? $value : $default;
     }
 }
