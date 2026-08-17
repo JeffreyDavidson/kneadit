@@ -41,10 +41,10 @@ class OrderCalendar extends Page
 
     public int $currentMonth;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<string, mixed> */
     public Collection $orderCounts;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Order> */
     public Collection $selectedDayOrders;
 
     public ?string $selectedDate = null;
@@ -110,7 +110,8 @@ class OrderCalendar extends Page
 
         while ($current->lte($endOfCalendar)) {
             $dateString = $current->format('Y-m-d');
-            $orderCount = $this->orderCounts->get($dateString, 0);
+            $orderCount = filter_var($this->orderCounts->get($dateString, 0), FILTER_VALIDATE_INT);
+            $orderCount = is_int($orderCount) ? $orderCount : 0;
 
             $days->push([
                 'date' => $current->copy(),

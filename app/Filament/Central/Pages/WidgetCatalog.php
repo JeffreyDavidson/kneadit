@@ -52,12 +52,18 @@ class WidgetCatalog extends Page
         $catalog = [];
 
         foreach (WidgetMeta::all() as $key => $meta) {
+            $defaultSize = $meta['defaultSize'] ?? WidgetSize::Small;
+
+            if (! $defaultSize instanceof WidgetSize) {
+                throw new \UnexpectedValueException("Widget {$key} has an invalid default size.");
+            }
+
             $entry = [
                 'key' => $key,
                 'name' => $meta['name'],
                 'description' => $meta['description'],
                 'icon' => $meta['icon'],
-                'size' => ($meta['defaultSize'] ?? WidgetSize::Small)->value,
+                'size' => $defaultSize->value,
                 'visible' => true,
             ];
 

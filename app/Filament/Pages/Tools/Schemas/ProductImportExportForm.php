@@ -84,7 +84,7 @@ class ProductImportExportForm
                         ->action(function (Livewire $livewire) {
                             $filePath = $livewire->data['csv_file'] ?? null;
 
-                            if (! $filePath) {
+                            if (! is_string($filePath) || $filePath === '') {
                                 Notification::make()->title('Please upload a CSV file first.')->danger()->send();
 
                                 return;
@@ -131,7 +131,7 @@ class ProductImportExportForm
                         ->action(function (Livewire $livewire) {
                             $filePath = $livewire->data['csv_file'] ?? null;
 
-                            if (! $filePath) {
+                            if (! is_string($filePath) || $filePath === '') {
                                 Notification::make()->title('Please upload a CSV file first.')->danger()->send();
 
                                 return;
