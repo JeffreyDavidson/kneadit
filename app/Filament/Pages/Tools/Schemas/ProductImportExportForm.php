@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Tools\Schemas;
 use App\Actions\Inventory\ImportProducts;
 use App\Filament\Pages\Tools\ProductImportExport as Livewire;
 use App\Services\Export\ProductCsvExporter;
+use App\Services\Inventory\ProductCsvUploadResolver;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
@@ -74,6 +75,7 @@ class ProductImportExportForm
                     ->label('CSV File')
                     ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel'])
                     ->maxSize(5120)
+                    ->disk('local')
                     ->directory('csv-imports')
                     ->visibility('private'),
                 Actions::make([
@@ -82,28 +84,13 @@ class ProductImportExportForm
                         ->icon(Heroicon::OutlinedEye)
                         ->color('warning')
                         ->action(function (Livewire $livewire) {
-                            $filePath = $livewire->data['csv_file'] ?? null;
+                            $file = self::uploadedCsv($livewire);
 
-                            if (! is_string($filePath) || $filePath === '') {
-                                Notification::make()->title('Please upload a CSV file first.')->danger()->send();
-
-                                return;
-                            }
-
-                            $fullPath = storage_path('app/private/' . $filePath);
-
-                            if (! file_exists($fullPath)) {
-                                // Try public disk
-                                $fullPath = storage_path('app/public/' . $filePath);
-                            }
-
-                            if (! file_exists($fullPath)) {
-                                Notification::make()->title('File not found. Please re-upload.')->danger()->send();
+                            if ($file === null) {
+                                Notification::make()->title('Invalid file. Please re-upload your CSV.')->danger()->send();
 
                                 return;
                             }
-
-                            $file = new UploadedFile($fullPath, basename($fullPath));
                             $result = resolve(ProductCsvExporter::class)->parseForPreview($file);
 
                             $livewire->previewData = $result['rows'];
@@ -129,27 +116,13 @@ class ProductImportExportForm
                         ->modalHeading('Confirm Import')
                         ->modalDescription('This will create new products and update existing ones matched by name. Continue?')
                         ->action(function (Livewire $livewire) {
-                            $filePath = $livewire->data['csv_file'] ?? null;
+                            $file = self::uploadedCsv($livewire);
 
-                            if (! is_string($filePath) || $filePath === '') {
-                                Notification::make()->title('Please upload a CSV file first.')->danger()->send();
-
-                                return;
-                            }
-
-                            $fullPath = storage_path('app/private/' . $filePath);
-
-                            if (! file_exists($fullPath)) {
-                                $fullPath = storage_path('app/public/' . $filePath);
-                            }
-
-                            if (! file_exists($fullPath)) {
-                                Notification::make()->title('File not found. Please re-upload.')->danger()->send();
+                            if ($file === null) {
+                                Notification::make()->title('Invalid file. Please re-upload your CSV.')->danger()->send();
 
                                 return;
                             }
-
-                            $file = new UploadedFile($fullPath, basename($fullPath));
                             $livewire->importResults = resolve(ImportProducts::class)($file);
 
                             if (empty($livewire->importResults['errors'])) {
@@ -171,5 +144,16 @@ class ProductImportExportForm
                         }),
                 ]),
             ]);
+    }
+
+    private static function uploadedCsv(Livewire $livewire): ?UploadedFile
+    {
+        $path = $livewire->data['csv_file'] ?? null;
+
+        if (! is_string($path) || $path === '') {
+            return null;
+        }
+
+        return resolve(ProductCsvUploadResolver::class)->resolve($path);
     }
 }
