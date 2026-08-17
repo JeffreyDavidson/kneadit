@@ -4,7 +4,6 @@ use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
-use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -26,7 +25,7 @@ test('can render the view tenant page', function () {
         ]);
     }
 
-    Livewire::test(ViewTenant::class, ['record' => 'test-bakery'])
+    livewire(ViewTenant::class, ['record' => 'test-bakery'])
         ->assertOk();
 });
 
@@ -40,7 +39,7 @@ test('can render the view ticket page', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticket])
+    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticket])
         ->assertOk();
 });
 
@@ -67,7 +66,7 @@ test('can render the view message page', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
+    livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 });
 
@@ -94,7 +93,7 @@ test('viewing an unread message marks it as read', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
+    livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
     $message = DB::table('platform_messages')->where('id', $messageId)->first();
@@ -111,7 +110,7 @@ test('can add reply to support ticket', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->set('replyBody', 'We are looking into this.')
         ->call('addReply');
 
@@ -131,7 +130,7 @@ test('can update support ticket status', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'in_progress');
 
     $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
@@ -148,7 +147,7 @@ test('resolving ticket sets resolved_at timestamp', function () {
         'updated_at' => now(),
     ]);
 
-    Livewire::test(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'resolved');
 
     $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
@@ -169,7 +168,7 @@ test('tenant view page returns tenant stats', function () {
         ]);
     }
 
-    $component = Livewire::test(ViewTenant::class, ['record' => 'test-bakery']);
+    $component = livewire(ViewTenant::class, ['record' => 'test-bakery']);
 
     $stats = $component->instance()->getTenantStats();
 

@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Testing\TestResponse;
+use Livewire\Component;
+use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -98,6 +101,18 @@ function setUpTenantTest(): void
             '--realpath' => true,
         ]);
     }
+}
+
+/**
+ * @template TComponent of Component
+ *
+ * @param class-string<TComponent> $component
+ * @param array<string, mixed> $parameters
+ * @return Testable<TComponent>
+ */
+function livewire(string $component, array $parameters = []): Testable
+{
+    return Livewire::test($component, $parameters);
 }
 
 function tenantMiddleware(): array

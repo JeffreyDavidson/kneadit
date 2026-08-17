@@ -4,7 +4,6 @@ use App\Filament\Pages\Analytics\FinanceSummary;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,14 +14,16 @@ beforeEach(function () {
 });
 
 test('finance summary page renders with default current-year data', function () {
-    Livewire::test(FinanceSummary::class)
-        ->assertOk()
-        ->assertSet('selectedYear', now()->year);
+    $component = livewire(FinanceSummary::class);
+
+    $component->assertOk();
+    $component->assertSet('selectedYear', now()->year);
 });
 
 test('switching the year reloads financial data', function () {
-    Livewire::test(FinanceSummary::class)
-        ->set('selectedYear', now()->year - 1)
-        ->assertOk()
-        ->assertSet('selectedYear', now()->year - 1);
+    $component = livewire(FinanceSummary::class);
+
+    $component->set('selectedYear', now()->year - 1);
+    $component->assertOk();
+    $component->assertSet('selectedYear', now()->year - 1);
 });
