@@ -166,7 +166,7 @@ class ViewCateringInquiry extends ViewRecord
                     ]),
             ])
             ->action(function (array $data): void {
-                $rows = self::quoteItemRows($data['items'] ?? []);
+                $rows = $this->quoteItemRows($data['items'] ?? []);
 
                 $existing = $this->record->items()->get()->keyBy('id');
                 $submittedIds = array_values(array_filter(
@@ -344,7 +344,7 @@ class ViewCateringInquiry extends ViewRecord
     }
 
     /** @return array<int, array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
-    private static function quoteItemRows(mixed $value): array
+    private function quoteItemRows(mixed $value): array
     {
         if (! is_array($value)) {
             throw new \UnexpectedValueException('Quote items must be an array.');
@@ -358,18 +358,18 @@ class ViewCateringInquiry extends ViewRecord
             }
 
             $rows[] = [
-                'id' => isset($row['id']) ? self::integerValue($row['id'], "items.{$index}.id") : null,
-                'name' => self::stringValue($row['name'] ?? null, "items.{$index}.name"),
-                'quantity' => self::integerValue($row['quantity'] ?? null, "items.{$index}.quantity"),
-                'unit_price' => self::floatValue($row['unit_price'] ?? null, "items.{$index}.unit_price"),
-                'special_instructions' => self::nullableStringValue($row['special_instructions'] ?? null, "items.{$index}.special_instructions"),
+                'id' => isset($row['id']) ? $this->integerValue($row['id'], "items.{$index}.id") : null,
+                'name' => $this->stringValue($row['name'] ?? null, "items.{$index}.name"),
+                'quantity' => $this->integerValue($row['quantity'] ?? null, "items.{$index}.quantity"),
+                'unit_price' => $this->floatValue($row['unit_price'] ?? null, "items.{$index}.unit_price"),
+                'special_instructions' => $this->nullableStringValue($row['special_instructions'] ?? null, "items.{$index}.special_instructions"),
             ];
         }
 
         return $rows;
     }
 
-    private static function stringValue(mixed $value, string $key): string
+    private function stringValue(mixed $value, string $key): string
     {
         if (! is_string($value)) {
             throw new \UnexpectedValueException("{$key} must be a string.");
@@ -378,16 +378,16 @@ class ViewCateringInquiry extends ViewRecord
         return $value;
     }
 
-    private static function nullableStringValue(mixed $value, string $key): ?string
+    private function nullableStringValue(mixed $value, string $key): ?string
     {
         if ($value === null || $value === '') {
             return null;
         }
 
-        return self::stringValue($value, $key);
+        return $this->stringValue($value, $key);
     }
 
-    private static function integerValue(mixed $value, string $key): int
+    private function integerValue(mixed $value, string $key): int
     {
         if (is_int($value)) {
             return $value;
@@ -400,7 +400,7 @@ class ViewCateringInquiry extends ViewRecord
         return (int) $value;
     }
 
-    private static function floatValue(mixed $value, string $key): float
+    private function floatValue(mixed $value, string $key): float
     {
         if (is_float($value) || is_int($value)) {
             return $value;

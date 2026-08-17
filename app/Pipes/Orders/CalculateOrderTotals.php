@@ -17,7 +17,10 @@ class CalculateOrderTotals
 
         foreach ($payload->data->items as $item) {
             $product = $products->get($item['product_id']);
-            if (! $product || ! $product->is_active) {
+            if (! $product) {
+                continue;
+            }
+            if (! $product->is_active) {
                 continue;
             }
 

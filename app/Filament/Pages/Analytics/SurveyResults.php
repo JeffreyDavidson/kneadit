@@ -54,19 +54,19 @@ class SurveyResults extends Page
             $questions = $survey->questions;
             $headers = ['Response #', 'Customer Name', 'Customer Email', 'Date'];
             foreach ($questions as $q) {
-                $headers[] = self::csvValue($q['question']);
+                $headers[] = $this->csvValue($q['question']);
             }
             fputcsv($handle, $headers);
 
             foreach ($survey->responses as $i => $response) {
                 $row = [
                     $i + 1,
-                    self::csvValue($response->customer_name),
-                    self::csvValue($response->customer_email),
+                    $this->csvValue($response->customer_name),
+                    $this->csvValue($response->customer_email),
                     $response->created_at?->format('Y-m-d H:i'),
                 ];
                 foreach ($questions as $qi => $q) {
-                    $row[] = self::csvValue($response->answers[$qi] ?? '');
+                    $row[] = $this->csvValue($response->answers[$qi] ?? '');
                 }
                 fputcsv($handle, $row);
             }
@@ -74,7 +74,7 @@ class SurveyResults extends Page
         }, "survey-{$survey->id}-results.csv");
     }
 
-    private static function csvValue(mixed $value): bool|float|int|string|null
+    private function csvValue(mixed $value): bool|float|int|string|null
     {
         return is_scalar($value) || $value === null ? $value : '';
     }

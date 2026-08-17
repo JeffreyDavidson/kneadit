@@ -55,15 +55,22 @@ class CreateStripeProductsCommand extends Command
         $plans = [];
 
         foreach ($configuredPlans as $key => $plan) {
-            if (! is_string($key) || ! is_array($plan)) {
+            if (! is_string($key)) {
                 continue;
             }
-
+            if (! is_array($plan)) {
+                continue;
+            }
             $name = $plan['name'] ?? null;
             $description = $plan['description'] ?? null;
             $foundingPrice = $plan['founding_price_monthly'] ?? null;
-
-            if (! is_string($name) || ! is_string($description) || ! is_int($foundingPrice)) {
+            if (! is_string($name)) {
+                continue;
+            }
+            if (! is_string($description)) {
+                continue;
+            }
+            if (! is_int($foundingPrice)) {
                 continue;
             }
 

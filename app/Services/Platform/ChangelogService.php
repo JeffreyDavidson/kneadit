@@ -58,10 +58,12 @@ class ChangelogService
             $entries = [];
 
             foreach ($releases as $release) {
-                if (! is_array($release) || ($release['draft'] ?? false) === true) {
+                if (! is_array($release)) {
                     continue;
                 }
-
+                if (($release['draft'] ?? false) === true) {
+                    continue;
+                }
                 $publishedAt = $this->stringValue($release['published_at'] ?? $release['created_at'] ?? '');
                 $tagName = $this->stringValue($release['tag_name'] ?? '');
                 $name = $this->stringValue($release['name'] ?? $tagName);
