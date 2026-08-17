@@ -18,7 +18,7 @@ class ShowOrderConfirmationController extends Controller
         $content = settingsPageContent('order_confirmation');
 
         $storedSteps = $manager->get('order_journey_steps');
-        $journeySteps = $storedSteps
+        $journeySteps = is_string($storedSteps) && $storedSteps !== ''
             ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
             : config('kneadit.default_journey_steps');
 

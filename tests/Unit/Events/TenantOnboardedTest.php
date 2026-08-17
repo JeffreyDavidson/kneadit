@@ -16,7 +16,7 @@ beforeEach(function () {
 test('it can be constructed with user, tenant, and admin url', function () {
     $user = User::factory()->create();
     $tenantRecord = createTenant(['id' => 'test-bakery']);
-    $tenant = Tenant::query()->find('test-bakery');
+    $tenant = Tenant::query()->findOrFail('test-bakery');
 
     $event = new TenantOnboarded($user, $tenant, 'https://test-bakery.kneadit.test/admin');
 
