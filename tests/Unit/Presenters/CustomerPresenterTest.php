@@ -21,8 +21,8 @@ function makeCustomerMetrics(): CustomerMetrics
 
 test('delegates computed metrics to CustomerIntelligence', function () {
     $customer = new Customer(['name' => 'Ada']);
-    $intelligence = Mockery::mock(CustomerIntelligence::class);
-    $intelligence->shouldReceive('metrics')->once()->with($customer)->andReturn(makeCustomerMetrics());
+    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
+    $intelligence->allows(['metrics' => makeCustomerMetrics()]);
 
     $presenter = new CustomerPresenter($customer, $intelligence);
 
@@ -38,8 +38,8 @@ test('delegates computed metrics to CustomerIntelligence', function () {
 
 test('memoizes metrics across multiple reads', function () {
     $customer = new Customer(['name' => 'Ada']);
-    $intelligence = Mockery::mock(CustomerIntelligence::class);
-    $intelligence->shouldReceive('metrics')->once()->andReturn(makeCustomerMetrics());
+    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
+    $intelligence->allows(['metrics' => makeCustomerMetrics()]);
 
     $presenter = new CustomerPresenter($customer, $intelligence);
 
@@ -51,9 +51,9 @@ test('memoizes metrics across multiple reads', function () {
 test('for() resolves CustomerIntelligence from the container', function () {
     $customer = new Customer(['name' => 'Linus']);
     $fakeMetrics = makeCustomerMetrics();
-    app()->instance(CustomerIntelligence::class, Mockery::mock(CustomerIntelligence::class, function ($mock) use ($fakeMetrics) {
-        $mock->shouldReceive('metrics')->once()->andReturn($fakeMetrics);
-    }));
+    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
+    $intelligence->allows(['metrics' => $fakeMetrics]);
+    app()->instance(CustomerIntelligence::class, $intelligence);
 
     $presenter = CustomerPresenter::for($customer);
 
@@ -68,7 +68,7 @@ test('address() builds an Address value object from the customer columns', funct
         'zip' => '62704',
     ]);
 
-    $presenter = new CustomerPresenter($customer, Mockery::mock(CustomerIntelligence::class));
+    $presenter = new CustomerPresenter($customer, Tests\Support\TypedMock::make(CustomerIntelligence::class));
 
     expect($presenter->address())
         ->street->toBe('123 Main St')
