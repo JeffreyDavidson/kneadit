@@ -32,13 +32,15 @@ class InitializeTenancyIfNeeded
         }
 
         // Skip if we're on a central domain
-        if (in_array($host, config('tenancy.central_domains', []), true)) {
+        $centralDomains = config('tenancy.central_domains', []);
+
+        if (is_array($centralDomains) && in_array($host, $centralDomains, true)) {
             return $next($request);
         }
 
         // We're on a subdomain — initialize tenancy
         try {
-            return resolve(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
+            return $this->initializeTenancy($request, $next);
         } catch (TenantCouldNotBeIdentifiedOnDomainException) {
             Log::warning('Tenant not found for domain', ['domain' => $host]);
             abort(404, 'Bakery not found.');
@@ -70,7 +72,7 @@ class InitializeTenancyIfNeeded
             if ($tenant && $this->recreateMissingDatabase($tenant)) {
                 Log::info('Auto-recreated orphan tenant database', ['tenant_id' => $tenantId]);
 
-                return resolve(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
+                return $this->initializeTenancy($request, $next);
             }
         }
 
@@ -82,6 +84,17 @@ class InitializeTenancyIfNeeded
         $parts = explode('.', $request->getHost());
 
         return $parts[0];
+    }
+
+    private function initializeTenancy(Request $request, Closure $next): Response
+    {
+        $response = resolve(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
+
+        if (! $response instanceof Response) {
+            throw new \UnexpectedValueException('Tenancy middleware must return an HTTP response.');
+        }
+
+        return $response;
     }
 
     private function recreateMissingDatabase(Tenant $tenant): bool

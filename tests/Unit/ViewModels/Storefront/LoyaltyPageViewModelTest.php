@@ -13,6 +13,9 @@ function makeLoyaltyTenantSettings(): App\Services\Settings\TenantSettings
     );
 }
 
+/**
+ * @param array{settings?: App\Services\Settings\TenantSettings, customer?: ?Customer, balance?: LoyaltyBalance, history?: Illuminate\Support\Collection<int, App\Models\Engagement\LoyaltyPoint>, rewards?: Illuminate\Support\Collection<int, LoyaltyReward>, content?: array<string, string>, howSteps?: array<int, array<string, string>>, customerNotFound?: bool} $overrides
+ */
 function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
 {
     $defaults = [
@@ -61,6 +64,10 @@ test('nextReward is first reward above current points', function () {
         'balance' => new LoyaltyBalance(earned: 200, redeemed: 0, adjusted: 0),
         'rewards' => $rewards,
     ]);
+
+    if ($vm->nextReward === null) {
+        throw new RuntimeException('Expected a next reward.');
+    }
 
     expect($vm->nextReward->name)->toBe('Medium');
 });

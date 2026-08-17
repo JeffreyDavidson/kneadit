@@ -6,6 +6,7 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Queries\Financial\ProductSalesQuery;
+use App\Support\DatabaseValue;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
 
@@ -25,7 +26,7 @@ class TopProductsWidget extends Widget
 
         return $this->cached("main_{$limit}", [900, 1800], function () use ($limit): array {
             $products = ProductSalesQuery::topByRevenue(DateRange::thisMonth(), $limit)->all();
-            $maxRevenue = collect($products)->max('revenue') ?: 1;
+            $maxRevenue = max(DatabaseValue::float(collect($products)->max('revenue'), 1), 1);
 
             return collect($products)->map(fn (array $p): array => [
                 'name' => $p['name'],

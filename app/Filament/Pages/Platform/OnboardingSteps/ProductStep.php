@@ -27,7 +27,8 @@ final class ProductStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $productId = resolve(SettingsManager::class)->get('onboarding_product_id');
-        $product = $productId ? Product::query()->find((int) $productId) : null;
+        $productId = filter_var($productId, FILTER_VALIDATE_INT);
+        $product = is_int($productId) ? Product::query()->find($productId) : null;
 
         if ($product) {
             return [
@@ -83,9 +84,15 @@ final class ProductStep extends OnboardingStep
                                         ->rows(2),
                                 ])
                                 ->createOptionUsing(function (array $data): int {
+                                    $name = $data['name'] ?? null;
+
+                                    if (! is_string($name)) {
+                                        throw new \InvalidArgumentException('A category name is required.');
+                                    }
+
                                     $category = Category::query()->create([
-                                        'name' => $data['name'],
-                                        'slug' => Str::slug($data['name']),
+                                        'name' => $name,
+                                        'slug' => Str::slug($name),
                                         'description' => $data['description'] ?? null,
                                         'is_active' => true,
                                     ]);
@@ -102,12 +109,17 @@ final class ProductStep extends OnboardingStep
     {
         $manager = resolve(SettingsManager::class);
         $existingId = $manager->get('onboarding_product_id');
+        $name = $data['name'] ?? null;
+
+        if (! is_string($name)) {
+            throw new \InvalidArgumentException('A product name is required.');
+        }
 
         $product = Product::query()->updateOrCreate(
-            $existingId ? ['id' => $existingId] : ['slug' => Str::slug($data['name'])],
+            $existingId ? ['id' => $existingId] : ['slug' => Str::slug($name)],
             [
-                'name' => $data['name'],
-                'slug' => Str::slug($data['name']),
+                'name' => $name,
+                'slug' => Str::slug($name),
                 'description' => $data['description'],
                 'price' => $data['price'],
                 'category_id' => $data['category_id'],
