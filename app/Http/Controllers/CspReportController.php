@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 class CspReportController extends Controller
@@ -18,11 +19,12 @@ class CspReportController extends Controller
         // Browsers POST a JSON document like {"csp-report": {...}}; support
         // both the legacy report-uri shape and a bare body for safety.
         $report = $request->json('csp-report') ?? $request->json()->all();
+        $context = is_array($report) && $report !== []
+            ? $report
+            : ['raw' => $request->getContent()];
 
-        Log::channel(config('logging.csp_channel', 'stack'))
-            ->warning('CSP violation report', $report ?: [
-                'raw' => $request->getContent(),
-            ]);
+        Log::channel(Config::string('logging.csp_channel', 'stack'))
+            ->warning('CSP violation report', $context);
 
         return response()->noContent();
     }

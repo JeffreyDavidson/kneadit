@@ -7,6 +7,7 @@ use App\Models\Customers\Referral;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -32,12 +33,7 @@ beforeEach(function () {
     $this->subdomainCounter = 0;
 });
 
-afterEach(function () {
-    foreach ($this->createdSubdomains as $subdomain) {
-        @unlink(database_path("tenant{$subdomain}"));
-    }
-});
-
+/** @param array<string, mixed> $overrides */
 function createSignupUser(array $overrides = []): User
 {
     return User::factory()->create($overrides);
@@ -54,11 +50,15 @@ function uniqueSubdomain(): string
     return $sub;
 }
 
+/**
+ * @param array<string, mixed> $data
+ * @return TestResponse<Symfony\Component\HttpFoundation\Response>
+ */
 function submitOnboarding(User $user, array $data = []): TestResponse
 {
     if (! isset($data['subdomain'])) {
         $data['subdomain'] = uniqueSubdomain();
-    } else {
+    } elseif (is_string($data['subdomain'])) {
         $sub = strtolower($data['subdomain']);
         if (! in_array($sub, test()->createdSubdomains)) {
             $subs = test()->createdSubdomains;
@@ -145,7 +145,9 @@ test('successful onboarding creates domain record with correct subdomain', funct
     $domain = DB::connection('central')->table('domains')
         ->where('tenant_id', $sub)->first();
 
-    expect($domain)->not->toBeNull()->and($domain->domain)->toBe($sub);
+    expect($domain)->not->toBeNull();
+    throw_unless($domain instanceof stdClass, RuntimeException::class, 'Expected the tenant domain to exist.');
+    expect($domain->domain)->toBe($sub);
 });
 
 test('successful onboarding creates tenant user with same email', function () {
@@ -153,7 +155,7 @@ test('successful onboarding creates tenant user with same email', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $tenant = Tenant::query()->find($sub);
+    $tenant = Tenant::query()->findOrFail($sub);
     $tenant->run(function () use ($user) {
         test()->assertDatabaseHas('users', ['email' => $user->email]);
     });
@@ -164,7 +166,7 @@ test('successful onboarding seeds store name setting in tenant', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub, 'store_name' => 'Artisan Breads']);
 
-    $tenant = Tenant::query()->find($sub);
+    $tenant = Tenant::query()->findOrFail($sub);
     $tenant->run(function () {
         test()->assertDatabaseHas('settings', [
             'key' => 'store_name',
@@ -178,7 +180,7 @@ test('successful onboarding seeds store email setting in tenant', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $tenant = Tenant::query()->find($sub);
+    $tenant = Tenant::query()->findOrFail($sub);
     $tenant->run(function () use ($user) {
         test()->assertDatabaseHas('settings', [
             'key' => 'store_email',
@@ -208,6 +210,7 @@ test('onboarding with storefront choice kneadit sets storefront enabled true', f
     submitOnboarding($user, ['subdomain' => $sub, 'storefront_choice' => 'kneadit']);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
+    throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
     expect($tenant->storefront_enabled)->toBeTruthy();
 });
 
@@ -221,6 +224,7 @@ test('onboarding with storefront choice own sets storefront enabled false', func
     ]);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
+    throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
     expect($tenant->storefront_enabled)->toBeFalsy();
 });
 
@@ -229,7 +233,7 @@ test('onboarding redirects to tenant admin url', function () {
     $sub = uniqueSubdomain();
     $response = submitOnboarding($user, ['subdomain' => $sub]);
 
-    $host = parse_url(config('app.url'), PHP_URL_HOST);
+    $host = parse_url(Config::string('app.url'), PHP_URL_HOST);
     $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
 });
 
@@ -330,6 +334,7 @@ test('tenant gets trial ends at set to 30 days from now', function () {
     submitOnboarding($user, ['subdomain' => $sub]);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
+    throw_unless($tenant instanceof stdClass && is_string($tenant->trial_ends_at), RuntimeException::class, 'Expected a tenant trial end date.');
     $trialEnds = Date::parse($tenant->trial_ends_at);
 
     expect(

@@ -54,7 +54,7 @@ class FeatureUsage extends Page
         return FeatureUsageQuery::featureTotalCount($feature);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array{feature: string, total: int, percent: float}> */
     public function getFeatureUsageBars(): Collection
     {
         return FeatureUsageQuery::featureUsageBars();
@@ -71,7 +71,7 @@ class FeatureUsage extends Page
         $this->selectedFeature = $this->selectedFeature === $feature ? null : $feature;
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array{tenant_id: string, name: string, total: int}> */
     public function getFeatureTenantBreakdown(): Collection
     {
         if (! $this->selectedFeature) {

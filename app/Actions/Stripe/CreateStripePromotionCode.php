@@ -3,6 +3,7 @@
 namespace App\Actions\Stripe;
 
 use App\DataTransferObjects\Stripe\StripePromotionCodeResult;
+use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Stripe\StripeClient;
 
@@ -53,10 +54,22 @@ class CreateStripePromotionCode
             throw new InvalidArgumentException('durationInMonths is required when duration is "repeating".');
         }
 
+        $currency = null;
+
+        if ($amountOffCents !== null) {
+            $configuredCurrency = Config::string('cashier.currency', 'usd');
+
+            if ($configuredCurrency === '') {
+                throw new \UnexpectedValueException('The Stripe currency must be a non-empty string.');
+            }
+
+            $currency = $configuredCurrency;
+        }
+
         $couponPayload = array_filter([
             'percent_off' => $percentOff,
             'amount_off' => $amountOffCents,
-            'currency' => $amountOffCents !== null ? config('cashier.currency', 'usd') : null,
+            'currency' => $currency,
             'duration' => $duration,
             'duration_in_months' => $duration === 'repeating' ? $durationInMonths : null,
             'name' => $name,

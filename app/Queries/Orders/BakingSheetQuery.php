@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class BakingSheetQuery
 {
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, OrderItem> */
     public static function forDate(string $date): Collection
     {
         $groupConcat = DB::getDriverName() === 'sqlite'
