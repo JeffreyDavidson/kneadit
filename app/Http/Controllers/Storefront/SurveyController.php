@@ -16,9 +16,9 @@ class SurveyController extends Controller
     {
         $submitResponse(
             survey: $survey,
-            answers: $request->validated('answers'),
-            customerName: $request->validated('customer_name'),
-            customerEmail: $request->validated('customer_email'),
+            answers: $request->array('answers'),
+            customerName: $request->filled('customer_name') ? $request->string('customer_name')->toString() : null,
+            customerEmail: $request->filled('customer_email') ? $request->string('customer_email')->toString() : null,
         );
 
         return to_route('storefront.survey', $survey)->with('survey_submitted', true);

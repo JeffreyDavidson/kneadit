@@ -5,6 +5,7 @@ namespace App\Services\PayPal;
 use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 
 class InvoicePayloadBuilder
@@ -18,8 +19,7 @@ class InvoicePayloadBuilder
     public function build(Order $order): array
     {
         $order->loadMissing(['customer', 'orderItems.product']);
-        $configuredCurrency = config('kneadit.paypal.currency', 'USD');
-        $currency = is_string($configuredCurrency) ? $configuredCurrency : 'USD';
+        $currency = Config::string('kneadit.paypal.currency', 'USD');
 
         return [
             'detail' => [

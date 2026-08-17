@@ -6,6 +6,7 @@ use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use App\Queries\Platform\StripeCustomerLookupQuery;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
@@ -132,11 +133,7 @@ class StripeWebhookController extends WebhookController
     /** @return array<string, string> */
     private function stripePriceMap(): array
     {
-        $configuredPrices = config('kneadit.stripe_prices', []);
-
-        if (! is_array($configuredPrices)) {
-            return [];
-        }
+        $configuredPrices = Config::array('kneadit.stripe_prices', []);
 
         $priceMap = [];
 

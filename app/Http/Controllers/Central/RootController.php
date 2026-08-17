@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Storefront\HomeController;
+use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +18,8 @@ class RootController extends Controller
 {
     public function __invoke(): View|Response
     {
-        $centralDomains = config('tenancy.central_domains', []);
+        $centralDomains = Config::array('tenancy.central_domains', []);
+        $centralDomains = array_values(array_filter($centralDomains, is_string(...)));
 
         if (in_array(request()->getHost(), $centralDomains)) {
             return view('platform.welcome');
@@ -29,17 +33,21 @@ class RootController extends Controller
         // dispatches between central and tenant contexts across the entire route configuration.
         $middleware = resolve(InitializeTenancyByDomainOrSubdomain::class);
 
-        return $middleware->handle(request(), function (Request $request) {
+        $response = $middleware->handle(request(), function (Request $request): View|Response {
             $tenant = tenant();
 
+            if (! $tenant instanceof Tenant) {
+                return view('platform.welcome');
+            }
+
             // If storefront is disabled and they have an external website, redirect there
-            $externalUrl = $tenant?->external_website;
-            if ($tenant && ! $tenant->storefront_enabled && $externalUrl && (Str::startsWith($externalUrl, 'https://') || Str::startsWith($externalUrl, 'http://')) && filter_var($externalUrl, FILTER_VALIDATE_URL)) {
+            $externalUrl = $tenant->external_website;
+            if (! $tenant->storefront_enabled && $externalUrl && (Str::startsWith($externalUrl, 'https://') || Str::startsWith($externalUrl, 'http://')) && filter_var($externalUrl, FILTER_VALIDATE_URL)) {
                 return redirect()->away($externalUrl);
             }
 
             // If storefront is disabled but no external URL, show a minimal page
-            if ($tenant && ! $tenant->storefront_enabled) {
+            if (! $tenant->storefront_enabled) {
                 $settings = resolve(TenantSettings::class);
 
                 return response()->view('platform.storefront-disabled', [
@@ -50,5 +58,11 @@ class RootController extends Controller
 
             return resolve(HomeController::class)(resolve(TenantSettings::class));
         });
+
+        if ($response instanceof View || $response instanceof Response) {
+            return $response;
+        }
+
+        throw new RuntimeException('Root tenant middleware returned an unsupported response.');
     }
 }

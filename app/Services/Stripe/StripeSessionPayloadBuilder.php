@@ -3,6 +3,7 @@
 namespace App\Services\Stripe;
 
 use App\Models\Orders\Order;
+use Illuminate\Support\Facades\Config;
 use LogicException;
 
 /** @phpstan-type StripeLineItem array{price_data: array{currency: string, product_data: array{name: string, description?: string}, unit_amount: int}, quantity: int} */
@@ -45,8 +46,7 @@ class StripeSessionPayloadBuilder
     /** @return list<StripeLineItem> */
     public function lineItems(Order $order): array
     {
-        $configuredCurrency = config('cashier.currency', 'usd');
-        $currency = is_string($configuredCurrency) ? $configuredCurrency : 'usd';
+        $currency = Config::string('cashier.currency', 'usd');
         $lineItems = [];
 
         foreach ($order->orderItems as $item) {
