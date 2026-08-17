@@ -4,7 +4,6 @@ use App\Filament\Pages\Operations\ScheduleManager;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,7 +14,8 @@ beforeEach(function () {
 });
 
 test('schedule manager renders and saves', function () {
-    Livewire::test(ScheduleManager::class)
-        ->assertOk()
-        ->call('save');
+    $component = livewire(ScheduleManager::class);
+
+    $component->assertOk();
+    $component->call('save');
 });
