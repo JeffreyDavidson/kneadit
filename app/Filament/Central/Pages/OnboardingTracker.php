@@ -2,15 +2,13 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Models\Platform\Tenant;
-use App\Services\Tenants\TenancyManager;
+use App\Services\Tenants\TenantOnboardingMetrics;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class OnboardingTracker extends Page
@@ -63,17 +61,17 @@ class OnboardingTracker extends Page
                 'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
                 'checks' => $checks,
                 'completed' => $completed,
-                'total' => 7,
+                'total' => TenantOnboardingMetrics::TOTAL_CHECKS,
             ];
         });
 
         if ($this->filterStatus === 'needs_attention') {
             $data = $data->filter(fn (array $t) => $t['completed'] < 6);
         } elseif ($this->filterStatus === 'fully_onboarded') {
-            $data = $data->filter(fn (array $t) => $t['completed'] === 7);
+            $data = $data->filter(fn (array $t) => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS);
         } elseif ($this->filterStatus === 'stuck') {
             // Stuck = signed up >= 7 days ago but not fully onboarded
-            $data = $data->filter(fn (array $t) => $t['days_since_signup'] >= 7 && $t['completed'] < 7);
+            $data = $data->filter(fn (array $t) => $t['days_since_signup'] >= 7 && $t['completed'] < TenantOnboardingMetrics::TOTAL_CHECKS);
         }
 
         if ($this->filterPlan !== 'all') {
@@ -97,31 +95,10 @@ class OnboardingTracker extends Page
         $this->sort = 'progress_asc';
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<string, bool> */
     protected function getOnboardingChecks(Tenant $tenant): array
     {
-        $checks = [
-            'store_name' => ! empty($tenant->store_name),
-            'store_logo' => ! empty($tenant->store_logo),
-            'storefront_enabled' => (bool) $tenant->storefront_enabled,
-            'brand_customized' => ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== BrandingSettings::DEFAULT_BRAND_COLOR,
-            'has_products' => false,
-            'has_categories' => false,
-            'has_orders' => false,
-        ];
-
-        try {
-            $tenantChecks = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
-                'has_products' => DB::table('products')->count() > 0,
-                'has_categories' => DB::table('categories')->count() > 0,
-                'has_orders' => DB::table('orders')->count() > 0,
-            ]);
-            $checks = array_merge($checks, $tenantChecks);
-        } catch (\Throwable) {
-            // Tenant database may not be accessible
-        }
-
-        return $checks;
+        return resolve(TenantOnboardingMetrics::class)->checks($tenant);
     }
 
     /** @return array<string, mixed> */
@@ -131,7 +108,7 @@ class OnboardingTracker extends Page
 
         return [
             'total' => $data->count(),
-            'fully_onboarded' => $data->filter(fn (array $t) => $t['completed'] === 7)->count(),
+            'fully_onboarded' => $data->filter(fn (array $t) => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS)->count(),
             'needs_attention' => $data->filter(fn (array $t) => $t['completed'] < 6)->count(),
         ];
     }
