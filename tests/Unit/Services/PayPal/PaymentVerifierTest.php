@@ -5,8 +5,8 @@ use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
 
 test('returns null when token manager has no access token', function () {
-    $tokenManager = Mockery::mock(TokenManager::class);
-    $tokenManager->shouldReceive('getAccessToken')->once()->andReturnNull();
+    $tokenManager = Tests\Support\TypedMock::make(TokenManager::class);
+    $tokenManager->allows(['getAccessToken' => null]);
 
     $verifier = new PaymentVerifier($tokenManager);
 
@@ -18,9 +18,11 @@ test('returns status when API responds successfully', function () {
         '*/v2/invoicing/invoices/INV-001' => Http::response(['status' => 'PAID']),
     ]);
 
-    $tokenManager = Mockery::mock(TokenManager::class);
-    $tokenManager->shouldReceive('getAccessToken')->once()->andReturn('test-token');
-    $tokenManager->shouldReceive('getBaseUrl')->once()->andReturn('https://api-m.sandbox.paypal.com');
+    $tokenManager = Tests\Support\TypedMock::make(TokenManager::class);
+    $tokenManager->allows([
+        'getAccessToken' => 'test-token',
+        'getBaseUrl' => 'https://api-m.sandbox.paypal.com',
+    ]);
 
     $verifier = new PaymentVerifier($tokenManager);
 
@@ -32,9 +34,11 @@ test('returns null and logs error when API fails', function () {
         '*/v2/invoicing/invoices/INV-001' => Http::response(['error' => 'not found'], 404),
     ]);
 
-    $tokenManager = Mockery::mock(TokenManager::class);
-    $tokenManager->shouldReceive('getAccessToken')->once()->andReturn('test-token');
-    $tokenManager->shouldReceive('getBaseUrl')->once()->andReturn('https://api-m.sandbox.paypal.com');
+    $tokenManager = Tests\Support\TypedMock::make(TokenManager::class);
+    $tokenManager->allows([
+        'getAccessToken' => 'test-token',
+        'getBaseUrl' => 'https://api-m.sandbox.paypal.com',
+    ]);
 
     $verifier = new PaymentVerifier($tokenManager);
 

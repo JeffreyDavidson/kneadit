@@ -37,6 +37,11 @@ class ContactMessagesTable
                     ->limit(100)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
+
+                        if (! is_string($state)) {
+                            return null;
+                        }
+
                         if (Str::length($state) <= 100) {
                             return null;
                         }

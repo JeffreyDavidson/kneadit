@@ -3,6 +3,7 @@
 namespace App\Enums\Platform;
 
 use App\Models\Staff\User;
+use App\Support\DatabaseValue;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -45,7 +46,7 @@ enum SubscriptionTier: string implements HasColor, HasLabel
 
     public function priceInDollars(): int
     {
-        return (int) (config("kneadit.plans.{$this->value}.price_monthly", 0) / 100);
+        return intdiv(DatabaseValue::int(config("kneadit.plans.{$this->value}.price_monthly")), 100);
     }
 
     public function labelWithPrice(): string
@@ -63,9 +64,15 @@ enum SubscriptionTier: string implements HasColor, HasLabel
 
     public static function fromPriceId(string $priceId): ?self
     {
-        $plan = array_search($priceId, config('kneadit.stripe_prices', []), true);
+        $prices = config('kneadit.stripe_prices', []);
 
-        return $plan ? self::tryFrom($plan) : null;
+        if (! is_array($prices)) {
+            return null;
+        }
+
+        $plan = array_search($priceId, $prices, true);
+
+        return is_string($plan) ? self::tryFrom($plan) : null;
     }
 
     public static function resolve(User $user): ?self

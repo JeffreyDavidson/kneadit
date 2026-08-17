@@ -4,6 +4,7 @@ namespace App\Actions\Stripe;
 
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
@@ -14,9 +15,9 @@ class InitiateStripeConnect
     public function __construct(
         private SettingsManager $settings,
     ) {
-        $secret = config('cashier.secret');
+        $secret = Config::string('cashier.secret');
 
-        if (! is_string($secret) || $secret === '') {
+        if ($secret === '') {
             throw new \UnexpectedValueException('A Stripe secret is required to initiate Connect onboarding.');
         }
 
