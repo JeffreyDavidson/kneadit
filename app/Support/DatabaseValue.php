@@ -23,4 +23,9 @@ final class DatabaseValue
     {
         return is_string($value) ? $value : null;
     }
+
+    public static function scalarString(mixed $value, string $default = ''): string
+    {
+        return is_scalar($value) ? (string) $value : $default;
+    }
 }

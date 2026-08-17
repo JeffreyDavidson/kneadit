@@ -32,7 +32,7 @@ class CentralPanelProvider extends PanelProvider
         return $panel
             ->id('central')
             ->path('admin')
-            ->domains(config('tenancy.central_domains'))
+            ->domains($this->centralDomains())
             ->login()
             ->spa()
             ->maxContentWidth('full')
@@ -115,5 +115,13 @@ class CentralPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /** @return list<string> */
+    private function centralDomains(): array
+    {
+        $domains = config('tenancy.central_domains', []);
+
+        return is_array($domains) ? array_values(array_filter($domains, is_string(...))) : [];
     }
 }
