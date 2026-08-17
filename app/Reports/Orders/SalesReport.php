@@ -6,6 +6,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Queries\Financial\ProductSalesQuery;
 use App\Queries\Financial\RevenueQuery;
+use App\Support\DatabaseValue;
 use App\ValueObjects\DateRange;
 use Illuminate\Support\Facades\DB;
 
@@ -37,7 +38,10 @@ class SalesReport
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->map(fn (Order $row) => ['date' => $row->getAttribute('date'), 'revenue' => (int) $row->getAttribute('revenue_cents') / 100])
+            ->map(fn (Order $row) => [
+                'date' => DatabaseValue::nullableString($row->getAttribute('date')) ?? '',
+                'revenue' => DatabaseValue::int($row->getAttribute('revenue_cents')) / 100,
+            ])
             ->all();
 
         return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];

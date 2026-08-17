@@ -4,13 +4,14 @@ namespace App\Queries\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
+use App\Support\DatabaseValue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class TenantAnalyticsQuery
 {
-    /** @return array<int, array<string, mixed>> */
+    /** @return array<int, array{label: string, count: int}> */
     public static function signupsByMonth(): array
     {
         $startDate = Date::now()->subMonths(11)->startOfMonth();
@@ -21,17 +22,17 @@ class TenantAnalyticsQuery
             ->groupBy(fn (Tenant $tenant) => $tenant->created_at?->format('Y-m') ?? '')
             ->map(fn (Collection $group) => $group->count());
 
-        $months = collect();
+        $months = [];
         for ($i = 11; $i >= 0; $i--) {
             $date = Date::now()->subMonths($i);
             $key = $date->format('Y-m');
-            $months->push([
+            $months[] = [
                 'label' => $date->format('M Y'),
                 'count' => (int) ($counts[$key] ?? 0),
-            ]);
+            ];
         }
 
-        return $months->toArray();
+        return $months;
     }
 
     /** @return array<string, mixed> */
@@ -62,7 +63,7 @@ class TenantAnalyticsQuery
         ];
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return array<int, array{label: string, rate: float|int}> */
     public static function monthlyGrowth(): array
     {
         $signups = static::signupsByMonth();
@@ -117,7 +118,7 @@ class TenantAnalyticsQuery
             return $plan->value;
         }
 
-        return $plan ?? 'N/A';
+        return DatabaseValue::nullableString($plan) ?? 'N/A';
     }
 
     /**
