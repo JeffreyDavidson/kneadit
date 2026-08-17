@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Models\Platform\Tenant;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 
@@ -31,7 +32,7 @@ class UpgradePlan extends Page
 
     public function mount(): void
     {
-        $this->currentPlan = tenant()->plan->value ?? SubscriptionTier::Starter->value;
+        $this->currentPlan = $this->tenant()->plan->value;
 
         $this->plans = [
             SubscriptionTier::Starter->value => [
@@ -92,6 +93,17 @@ class UpgradePlan extends Page
 
     public function redirectToBilling(): void
     {
-        $this->redirect(tenant()?->billingPortalUrl() ?? '#');
+        $this->redirect(route('billing.plans'));
+    }
+
+    private function tenant(): Tenant
+    {
+        $tenant = tenant();
+
+        if (! $tenant instanceof Tenant) {
+            throw new \LogicException('A tenant must be initialized to manage billing.');
+        }
+
+        return $tenant;
     }
 }

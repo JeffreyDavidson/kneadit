@@ -82,10 +82,18 @@ class TaxExport extends Page
     /** @param array<string, mixed> $data */
     public function generateExport(array $data): StreamedResponse
     {
-        $year = (int) $data['year'];
-        $type = TaxExportType::from($data['export_type']);
-        $dateFrom = $data['date_from'] ?? "{$year}-01-01";
-        $dateTo = $data['date_to'] ?? "{$year}-12-31";
+        $year = filter_var($data['year'] ?? null, FILTER_VALIDATE_INT);
+        $exportType = $data['export_type'] ?? null;
+
+        if (! is_int($year) || ! is_string($exportType)) {
+            throw new \InvalidArgumentException('A valid tax year and export type are required.');
+        }
+
+        $type = TaxExportType::from($exportType);
+        $dateFrom = $data['date_from'] ?? null;
+        $dateTo = $data['date_to'] ?? null;
+        $dateFrom = is_string($dateFrom) ? $dateFrom : "{$year}-01-01";
+        $dateTo = is_string($dateTo) ? $dateTo : "{$year}-12-31";
 
         $filename = "tax-export-{$year}-{$type->value}.csv";
 

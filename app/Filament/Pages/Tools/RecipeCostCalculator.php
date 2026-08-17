@@ -46,7 +46,7 @@ class RecipeCostCalculator extends Page
 
     public ?ProductCostAnalysis $analysis = null;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Recipe> */
     public Collection $recipes;
 
     public function mount(): void
