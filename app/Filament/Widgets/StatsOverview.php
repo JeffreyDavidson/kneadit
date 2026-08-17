@@ -67,7 +67,20 @@ class StatsOverview extends Widget
         return 'stats_overview';
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     todaysOrders: int,
+     *     ordersChart: list<int>,
+     *     weekAvgOrders: float|int,
+     *     pendingOrders: int,
+     *     pendingChart: list<int>,
+     *     thisWeekRevenue: float,
+     *     lastWeekRevenue: float,
+     *     revenueChart: list<int>,
+     *     viewsToday: int,
+     *     viewsChart: list<int>
+     * }
+     */
     private function loadData(): array
     {
         $today = Date::today();

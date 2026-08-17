@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
+/** @property array{code: string, valid: bool, discount_amount: float, type: ?string, value: ?float} $resource */
 class CouponValidationResource extends JsonApiResource
 {
     /**

@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Laravel\Pennant\Feature;
 
 class SmartShoppingList extends Page
@@ -46,13 +47,13 @@ class SmartShoppingList extends Page
 
     public bool $includeUpcoming = false;
 
-    /** @var Collection<int|string, mixed> */
+    /** @var Collection<int|string, array<string, mixed>> */
     public Collection $supplierGroups;
 
     public function mount(): void
     {
         $this->startDate = now()->format('Y-m-d');
-        $this->endDate = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
+        $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
         $this->supplierGroups = collect();
         $this->generateList();
     }
@@ -74,9 +75,9 @@ class SmartShoppingList extends Page
 
     public function sendPurchaseOrder(int $supplierId): void
     {
-        $group = $this->supplierGroups->get($supplierId);
+        $group = $this->purchaseOrderGroup($this->supplierGroups->get($supplierId));
 
-        if (! $group || ! $group['supplier']['email']) {
+        if ($group === null) {
             Notification::make()
                 ->title('No email address')
                 ->body('This supplier does not have an email address configured.')
@@ -88,9 +89,24 @@ class SmartShoppingList extends Page
 
         $storeName = resolve(TenantSettings::class)->store->name;
 
-        event(new PurchaseOrderRequested(supplierEmail: $group['supplier']['email'], supplierName: $group['supplier']['name'], storeName: $storeName, items: $group['items'], total: $group['total'], requestedDate: now()->addDays(
-            (int) max(3, ...array_column($group['items'], 'lead_time_days')),
-        )->format('Y-m-d')));
+        $leadTimeDays = 3;
+
+        foreach ($group['items'] as $item) {
+            $leadTime = filter_var($item['lead_time_days'] ?? null, FILTER_VALIDATE_INT);
+
+            if (is_int($leadTime)) {
+                $leadTimeDays = max($leadTimeDays, $leadTime);
+            }
+        }
+
+        event(new PurchaseOrderRequested(
+            supplierEmail: $group['supplier']['email'],
+            supplierName: $group['supplier']['name'],
+            storeName: $storeName,
+            items: $group['items'],
+            total: $group['total'],
+            requestedDate: now()->addDays($leadTimeDays)->format('Y-m-d'),
+        ));
 
         Notification::make()
             ->title('Purchase order sent!')
@@ -106,6 +122,55 @@ class SmartShoppingList extends Page
                 ->label('Refresh')
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(fn () => $this->generateList()),
+        ];
+    }
+
+    /**
+     * @return array{supplier: array{name: string, email: string}, items: list<array<string, mixed>>, total: float}|null
+     */
+    private function purchaseOrderGroup(mixed $value): ?array
+    {
+        if (! is_array($value)) {
+            return null;
+        }
+
+        $supplier = $value['supplier'] ?? null;
+        $rawItems = $value['items'] ?? null;
+        $total = $value['total'] ?? null;
+
+        if (! is_array($supplier) || ! is_array($rawItems) || ! is_numeric($total)) {
+            return null;
+        }
+
+        $name = $supplier['name'] ?? null;
+        $email = $supplier['email'] ?? null;
+
+        if (! is_string($name) || ! is_string($email) || $email === '') {
+            return null;
+        }
+
+        $items = [];
+
+        foreach ($rawItems as $rawItem) {
+            if (! is_array($rawItem)) {
+                continue;
+            }
+
+            $item = [];
+
+            foreach ($rawItem as $key => $itemValue) {
+                if (is_string($key)) {
+                    $item[$key] = $itemValue;
+                }
+            }
+
+            $items[] = $item;
+        }
+
+        return [
+            'supplier' => ['name' => $name, 'email' => $email],
+            'items' => $items,
+            'total' => floatval($total),
         ];
     }
 }
