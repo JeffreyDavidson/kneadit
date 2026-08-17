@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Storefront\Account;
 
+use App\Models\Customers\Customer;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerEmailVerificationRequest extends FormRequest
 {
@@ -11,13 +13,21 @@ class CustomerEmailVerificationRequest extends FormRequest
     {
         $customer = $this->user('customer');
 
-        if (! $customer) {
+        if (! $customer instanceof Customer) {
             return false;
         }
 
-        throw_unless(hash_equals((string) $customer->getKey(), (string) $this->route('id')), AuthorizationException::class);
+        $route = Validator::make([
+            'id' => $this->route('id'),
+            'hash' => $this->route('hash'),
+        ], [
+            'id' => ['required', 'string'],
+            'hash' => ['required', 'string'],
+        ])->safe();
 
-        return hash_equals(sha1($customer->getEmailForVerification()), (string) $this->route('hash'));
+        throw_unless(hash_equals((string) $customer->getKey(), $route->string('id')->toString()), AuthorizationException::class);
+
+        return hash_equals(sha1($customer->getEmailForVerification()), $route->string('hash')->toString());
     }
 
     /** @return array<string, array<int, string>> */

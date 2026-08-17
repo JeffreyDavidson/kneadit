@@ -5,6 +5,7 @@ namespace App\Enums\Customers;
 use Carbon\Carbon;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Facades\Config;
 
 enum CustomerStatus: string implements HasColor, HasLabel
 {
@@ -39,7 +40,7 @@ enum CustomerStatus: string implements HasColor, HasLabel
             return self::Active;
         }
 
-        $threshold = $thresholdDays ?? (int) (string) config('analytics.at_risk_threshold_days', 30);
+        $threshold = $thresholdDays ?? Config::integer('analytics.at_risk_threshold_days', 30);
 
         return $lastOrderDate->diffInDays(now()) > $threshold
             ? self::AtRisk
