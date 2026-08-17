@@ -86,7 +86,7 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->assertDatabaseHas('customer_favorites', ['customer_email' => 'jane@example.com'])
         ->assertDatabaseHas('settings', ['key' => 'store_name', 'value' => 'Bakery on Biscotto'])
         ->assertDatabaseHas('settings', ['key' => 'store_tagline', 'value' => 'Freshly baked with love'])
-        ->assertDatabaseHas('settings', ['key' => 'storefront_theme', 'value' => 'classic'])
+        ->assertDatabaseHas('settings', ['key' => 'storefront_theme', 'value' => 'biscotto'])
         ->assertDatabaseHas('settings', ['key' => 'admin_theme', 'value' => 'honey']);
 
     $deliveryFeeTiers = json_decode((string) DB::table('settings')->where('key', 'delivery_fee_tiers')->value('value'), true);

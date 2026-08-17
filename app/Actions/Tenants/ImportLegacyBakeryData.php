@@ -449,7 +449,7 @@ class ImportLegacyBakeryData
             }
         }
 
-        foreach (['storefront_theme' => 'classic', 'admin_theme' => 'honey', 'storefront_enabled' => '1'] as $key => $value) {
+        foreach (['storefront_theme' => 'biscotto', 'admin_theme' => 'honey', 'storefront_enabled' => '1'] as $key => $value) {
             DB::table('settings')->updateOrInsert(
                 ['key' => $key],
                 ['value' => $value, 'updated_at' => now(), 'created_at' => now()],

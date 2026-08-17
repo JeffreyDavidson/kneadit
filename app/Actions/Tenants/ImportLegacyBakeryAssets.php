@@ -53,6 +53,9 @@ class ImportLegacyBakeryAssets
             'store_logo' => $destinations['store_logo'],
             'hero_image' => $destinations['hero_image'],
             'store_photo' => $destinations['store_photo'],
+            'store_tagline' => 'With love and flour dust',
+            'store_email' => 'bakeryonbiscotto@gmail.com',
+            'store_address' => 'Davenport, FL',
             'business_tagline' => 'Freshly baked with love',
             'hero_tagline' => 'Where Sourdough Dreams Come True',
             'hero_primary_cta_text' => 'Explore Our Menu',
@@ -61,6 +64,10 @@ class ImportLegacyBakeryAssets
             'allergy_disclaimer' => 'While certain items may not contain allergens, they are produced in an environment where allergens could be present. Please proceed with caution.',
             'faq_items' => json_encode($this->faqItems(), JSON_THROW_ON_ERROR),
             'homepage_sections' => json_encode($this->homepageSections(), JSON_THROW_ON_ERROR),
+            'social_media_links' => json_encode([
+                'facebook' => 'https://facebook.com/bakeryonbiscotto',
+                'instagram' => 'https://instagram.com/bakeryonbiscotto',
+            ], JSON_THROW_ON_ERROR),
         ];
 
         foreach ($settings as $key => $value) {
