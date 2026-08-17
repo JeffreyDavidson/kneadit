@@ -18,7 +18,8 @@ class InvoicePayloadBuilder
     public function build(Order $order): array
     {
         $order->loadMissing(['customer', 'orderItems.product']);
-        $currency = config('kneadit.paypal.currency', 'USD');
+        $configuredCurrency = config('kneadit.paypal.currency', 'USD');
+        $currency = is_string($configuredCurrency) ? $configuredCurrency : 'USD';
 
         return [
             'detail' => [

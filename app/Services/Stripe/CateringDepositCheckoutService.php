@@ -4,6 +4,7 @@ namespace App\Services\Stripe;
 
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -23,7 +24,7 @@ class CateringDepositCheckoutService
     public function __construct(
         private StripeSettingsReader $settings,
     ) {
-        $this->stripe = new StripeClient(config('cashier.secret'));
+        $this->stripe = new StripeClient($this->configString('cashier.secret'));
     }
 
     public function redirectToCheckout(CateringInquiry $inquiry, float $depositDollars): ?string
@@ -56,6 +57,12 @@ class CateringDepositCheckoutService
             return null;
         }
 
+        $tenant = tenant();
+
+        if (! $tenant instanceof Tenant) {
+            return null;
+        }
+
         try {
             $session = $this->stripe->checkout->sessions->create(
                 [
@@ -66,7 +73,7 @@ class CateringDepositCheckoutService
                     'line_items' => [[
                         'quantity' => 1,
                         'price_data' => [
-                            'currency' => config('cashier.currency', 'usd'),
+                            'currency' => $this->configString('cashier.currency', 'usd'),
                             'unit_amount' => (int) round($depositDollars * 100),
                             'product_data' => [
                                 'name' => "Catering deposit — {$inquiry->event_type}",
@@ -76,7 +83,7 @@ class CateringDepositCheckoutService
                     ]],
                     'metadata' => [
                         'catering_inquiry_id' => (string) $inquiry->id,
-                        'tenant_id' => (string) tenant()->getTenantKey(),
+                        'tenant_id' => $tenant->getTenantKey(),
                     ],
                 ],
                 ['stripe_account' => $connectId],
@@ -143,5 +150,12 @@ class CateringDepositCheckoutService
 
             return null;
         }
+    }
+
+    private function configString(string $key, string $default = ''): string
+    {
+        $value = config($key, $default);
+
+        return is_string($value) ? $value : $default;
     }
 }
