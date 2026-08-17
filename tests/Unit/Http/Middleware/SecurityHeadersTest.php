@@ -16,7 +16,7 @@ test('security headers middleware adds required headers', function () {
         ->and($response->headers->get('Referrer-Policy'))->toBe('strict-origin-when-cross-origin');
 });
 
-test('security headers middleware emits CSP in Report-Only mode (no enforcement yet)', function () {
+test('security headers middleware emits CSP in report-only mode by default', function () {
     $middleware = new SecurityHeaders(new CspNonce);
     $request = Request::create('/test');
 
@@ -28,7 +28,36 @@ test('security headers middleware emits CSP in Report-Only mode (no enforcement 
         ->toContain('https://fonts.gstatic.com')
         ->toContain('report-uri ')
         ->and($response->headers->get('Content-Security-Policy'))
-        ->toBeNull(); // Enforcement not enabled yet
+        ->toBeNull();
+});
+
+test('security headers middleware can enforce CSP', function () {
+    config(['csp.mode' => 'enforce']);
+
+    $middleware = new SecurityHeaders(new CspNonce);
+    $request = Request::create('/test');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->headers->get('Content-Security-Policy'))
+        ->toContain("default-src 'self'")
+        ->toContain('report-uri ')
+        ->and($response->headers->get('Content-Security-Policy-Report-Only'))
+        ->toBeNull();
+});
+
+test('security headers middleware falls back to report-only for an invalid CSP mode', function () {
+    config(['csp.mode' => 'invalid']);
+
+    $middleware = new SecurityHeaders(new CspNonce);
+    $request = Request::create('/test');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->headers->get('Content-Security-Policy-Report-Only'))
+        ->toContain("default-src 'self'")
+        ->and($response->headers->get('Content-Security-Policy'))
+        ->toBeNull();
 });
 
 test('CSP header includes a nonce token in script-src and style-src', function () {
