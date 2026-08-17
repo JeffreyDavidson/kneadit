@@ -98,9 +98,9 @@ class StorefrontAnalyticsQuery
     /** @return array<int, array<string, mixed>> */
     public function conversionFunnel(): array
     {
-        $homeViews = (clone $this->baseQuery())->where('page', 'home')->count();
-        $menuViews = (clone $this->baseQuery())->where('page', 'menu')->count();
-        $orderViews = (clone $this->baseQuery())->where('page', 'order')->count();
+        $homeViews = $this->uniqueSessionsForPage('home');
+        $menuViews = $this->uniqueSessionsForPage('menu');
+        $orderViews = $this->uniqueSessionsForPage('order');
 
         $ordersQuery = Order::query();
         if ($this->startDate) {
@@ -112,7 +112,7 @@ class StorefrontAnalyticsQuery
             ['label' => 'Home', 'count' => $homeViews],
             ['label' => 'Menu', 'count' => $menuViews],
             ['label' => 'Order Page', 'count' => $orderViews],
-            ['label' => 'Completed Orders', 'count' => $completedOrders],
+            ['label' => 'Orders Placed', 'count' => $completedOrders],
         ];
 
         $maxVal = max(1, max(array_column($funnel, 'count')) ?: 1);
@@ -120,7 +120,7 @@ class StorefrontAnalyticsQuery
         foreach ($funnel as $i => &$step) {
             $step['percentage'] = round(($step['count'] / $maxVal) * 100);
             $step['dropoff'] = $i > 0 && $funnel[$i - 1]['count'] > 0
-                ? round((1 - $step['count'] / $funnel[$i - 1]['count']) * 100, 1)
+                ? max(0, round((1 - $step['count'] / $funnel[$i - 1]['count']) * 100, 1))
                 : null;
         }
 
@@ -149,5 +149,13 @@ class StorefrontAnalyticsQuery
         }
 
         return $query;
+    }
+
+    private function uniqueSessionsForPage(string $page): int
+    {
+        return (clone $this->baseQuery())
+            ->where('page', $page)
+            ->distinct()
+            ->count('session_id');
     }
 }

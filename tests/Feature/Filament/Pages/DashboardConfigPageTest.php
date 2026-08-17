@@ -25,6 +25,13 @@ test('renders and saves the default layout', function () {
     expect(settings('dashboard_widgets'))->not->toBeNull();
 });
 
+test('default layout keeps reporting widgets opt in', function () {
+    Livewire::test(DashboardConfig::class)
+        ->assertSet('widgets', fn (array $widgets): bool => collect($widgets)
+            ->whereIn('key', ['weekly_revenue', 'top_products', 'customer_insights'])
+            ->every(fn (array $widget): bool => $widget['visible'] === false));
+});
+
 test('reorder swaps two widgets in place', function () {
     $page = Livewire::test(DashboardConfig::class);
     $first = $page->get('widgets')[0];

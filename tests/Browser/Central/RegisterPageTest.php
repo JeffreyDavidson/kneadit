@@ -8,7 +8,7 @@ test('central register page renders without JS errors', function () use ($centra
         ->assertVisible('input[name="password"]')
         ->assertSee('Create Account')
         ->assertNoJavaScriptErrors();
-});
+})->group('launch-smoke');
 
 test('central register page exposes every required input', function () use ($centralUrl) {
     visit("{$centralUrl}/register")
@@ -41,4 +41,4 @@ test('register submit with mismatched password confirmation is rejected by serve
         ->assertPathIs('/register')
         ->assertVisible('input[name="email"]')
         ->assertNoJavaScriptErrors();
-});
+})->group('launch-smoke');

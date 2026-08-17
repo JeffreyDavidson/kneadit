@@ -22,13 +22,16 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        // Content Security Policy still in Report-Only mode. The per-request
-        // nonce is now in the policy and rendered onto every inline tag via
-        // the @cspnonce Blade directive, so a future PR can drop 'unsafe-inline'
-        // and switch to enforcement once the violation log stays quiet.
-        $response->headers->set('Content-Security-Policy-Report-Only', $this->csp());
+        $response->headers->set($this->cspHeader(), $this->csp());
 
         return $response;
+    }
+
+    private function cspHeader(): string
+    {
+        return config('csp.mode') === 'enforce'
+            ? 'Content-Security-Policy'
+            : 'Content-Security-Policy-Report-Only';
     }
 
     private function csp(): string

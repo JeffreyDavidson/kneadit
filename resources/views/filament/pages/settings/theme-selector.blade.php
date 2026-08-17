@@ -51,6 +51,18 @@
                 'sample_heading' => 'Fresh Sourdough',
                 'sample_text' => 'Baked daily with love',
             ],
+            'biscotto' => [
+                'name' => 'Biscotto',
+                'desc' => 'Warm sourdough-inspired styling with rich brown tones and editorial typography',
+                'bg' => '#f5e6d0',
+                'text' => '#3d2314',
+                'accent' => '#d4a574',
+                'heading_font' => "'Playfair Display', serif",
+                'body_font' => "'Inter', sans-serif",
+                'radius' => '18px',
+                'sample_heading' => 'Fresh Sourdough',
+                'sample_text' => 'With love and flour dust',
+            ],
         ];
     @endphp
 

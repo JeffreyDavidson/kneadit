@@ -14,6 +14,7 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 use RuntimeException;
@@ -74,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Cashier::useCustomerModel(User::class);
+
         Model::preventLazyLoading(! app()->isProduction());
 
         // Surface cache reads that returned __PHP_Incomplete_Class — usually

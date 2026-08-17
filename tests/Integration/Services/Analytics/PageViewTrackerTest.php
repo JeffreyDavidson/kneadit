@@ -39,6 +39,13 @@ test('detectPage returns correct page type for order.create', function () {
     expect($tracker->detectPage('order.create', '/order'))->toBe('order');
 });
 
+test('detectPage separates order confirmation from order form views', function () {
+    $tracker = resolve(PageViewTracker::class);
+
+    expect($tracker->detectPage('order.confirmation', '/order/confirmation/ABC123'))
+        ->toBe('order_confirmation');
+});
+
 test('detectPage returns correct page type for contact.show', function () {
     $tracker = resolve(PageViewTracker::class);
 

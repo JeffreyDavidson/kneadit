@@ -56,6 +56,36 @@
     @endphp
 
     <!-- Navigation -->
+    @if ($storefrontTheme === 'biscotto')
+    <nav class="biscotto-nav" x-data="{ open: false }">
+        <a href="{{ url('/') }}" class="biscotto-nav-brand">{{ $storeName }}</a>
+        <div class="biscotto-nav-links">
+            <a href="{{ url('/') }}" @class(['active' => request()->routeIs('storefront.home')])>Home</a>
+            <a href="{{ route('storefront.about') }}" @class(['active' => request()->routeIs('storefront.about')])
+                >About</a>
+            <a href="{{ route('storefront.menu') }}" @class(['active' => request()->routeIs('storefront.menu')])
+                >Menu</a>
+            <a href="{{ route('storefront.gallery') }}" @class(['active' => request()->routeIs('storefront.gallery')])
+                >Gallery</a>
+            <a href="{{ route('contact.show') }}#faq">FAQ</a>
+            <a href="{{ route('order.create') }}" @class(['active' => request()->routeIs('order.create')])>Order</a>
+            <a href="{{ route('contact.show') }}" @class(['active' => request()->routeIs('contact.show')])>Contact</a>
+        </div>
+        <button @click="open = ! open" class="biscotto-nav-toggle" aria-label="Toggle navigation" :aria-expanded="open">
+            <x-heroicon-o-bars-3 x-show="! open" class="h-6 w-6" />
+            <x-heroicon-o-x-mark x-show="open" x-cloak class="h-6 w-6" />
+        </button>
+        <div x-show="open" x-collapse class="biscotto-mobile-links">
+            <a href="{{ url('/') }}">Home</a>
+            <a href="{{ route('storefront.about') }}">About</a>
+            <a href="{{ route('storefront.menu') }}">Menu</a>
+            <a href="{{ route('storefront.gallery') }}">Gallery</a>
+            <a href="{{ route('contact.show') }}#faq">FAQ</a>
+            <a href="{{ route('order.create') }}">Order</a>
+            <a href="{{ route('contact.show') }}">Contact</a>
+        </div>
+    </nav>
+    @else
     <nav class="fixed top-4 left-1/2 z-50 w-max max-w-[95vw] -translate-x-1/2 transform">
         <div class="bg-warm-800 border-warm-700/20 rounded-full border px-6 py-3 backdrop-blur-sm">
             <!-- Desktop Nav -->
@@ -325,11 +355,12 @@
             </div>
         </div>
     </nav>
+    @endif
 
     @php
         $pageTestId = 'page-' . str_replace(['storefront.', '.'], ['', '-'], request()->route()?->getName() ?? 'unknown');
     @endphp
-    <main class="min-h-screen pt-24" data-test="{{ $pageTestId }}">
+    <main @class(['min-h-screen', 'pt-24' => $storefrontTheme !== 'biscotto']) data-test="{{ $pageTestId }}">
         @php
             $announcementEnabled = $settings->engagement->announcementEnabled ? '1' : '0';
             $announcementText = $settings->engagement->announcementText;

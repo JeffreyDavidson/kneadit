@@ -10,9 +10,8 @@ class CspReportController extends Controller
 {
     /**
      * Receive Content-Security-Policy violation reports from browsers and log
-     * them. The header is currently in Report-Only mode (see SecurityHeaders),
-     * so reports flow in but nothing is blocked. Once the log goes quiet the
-     * policy can be tightened and switched to enforcement.
+     * them. Reports are emitted in both report-only and enforcement modes (see
+     * SecurityHeaders), providing visibility during staged CSP rollout.
      */
     public function __invoke(Request $request): Response
     {

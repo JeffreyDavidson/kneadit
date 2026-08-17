@@ -20,6 +20,7 @@
                 $iconComponent = $cmd['icon'] instanceof \Filament\Support\Icons\Heroicon ? 'heroicon-' . $cmd['icon']->value : $cmd['icon'];
                 $lastRun = $this->getLastRun($cmd['key']);
                 $lastRunCarbon = $lastRun ? \Illuminate\Support\Carbon::parse($lastRun) : null;
+                $taskStatus = $this->getTaskStatus($cmd['key']);
             @endphp
 
             <x-central.card class="flex flex-col {{ $tone['bg'] }}">
@@ -59,6 +60,27 @@
                         <span wire:loading wire:target="run('{{ $cmd['key'] }}')">Running…</span>
                     </button>
                 </div>
+                @if ($taskStatus !== [])
+                    <div class="text-cinnamon/80 mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-white/10 pt-3 text-[0.68rem]">
+                        <span
+                            @class([
+                                'font-semibold',
+                                'text-emerald-400' => ($taskStatus['status'] ?? null) === 'succeeded',
+                                'text-red-400' => ($taskStatus['status'] ?? null) === 'failed',
+                                'text-amber-400' => ($taskStatus['status'] ?? null) === 'running',
+                            ])
+                        >{{ ucfirst($taskStatus['status'] ?? 'unknown') }}</span>
+                        @if (isset($taskStatus['runtime_seconds']))
+                            <span>{{ number_format((float) $taskStatus['runtime_seconds'], 2) }}s</span>
+                        @endif
+                        @if (($taskStatus['error'] ?? null) !== null)
+                            <span
+                                class="w-full truncate text-red-300"
+                                title="{{ $taskStatus['error'] }}"
+                            >{{ $taskStatus['error'] }}</span>
+                        @endif
+                    </div>
+                @endif
             </x-central.card>
         @endforeach
     </div>

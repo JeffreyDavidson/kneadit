@@ -17,7 +17,7 @@ class PageViewTracker
         'storefront.about' => PageType::About,
         'storefront.reviews' => PageType::Reviews,
         'order.create' => PageType::Order,
-        'order.confirmation' => PageType::Order,
+        'order.confirmation' => PageType::OrderConfirmation,
         'order.track' => PageType::Track,
         'contact.show' => PageType::Contact,
     ];
