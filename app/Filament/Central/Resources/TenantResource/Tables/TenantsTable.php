@@ -20,6 +20,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 class TenantsTable
@@ -212,11 +213,7 @@ class TenantsTable
 
     private static function storefrontUrl(Tenant $tenant): string
     {
-        $appUrl = config('app.url');
-
-        if (! is_string($appUrl)) {
-            throw new \UnexpectedValueException('The application URL must be a string.');
-        }
+        $appUrl = Config::string('app.url');
 
         $host = parse_url($appUrl, PHP_URL_HOST);
         $scheme = parse_url($appUrl, PHP_URL_SCHEME);
@@ -235,16 +232,6 @@ class TenantsTable
 
     private static function trialDays(): int
     {
-        $value = config('kneadit.trial_days', 30);
-
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
-            throw new \UnexpectedValueException('The tenant trial length must be an integer number of days.');
-        }
-
-        return (int) $value;
+        return Config::integer('kneadit.trial_days', 30);
     }
 }

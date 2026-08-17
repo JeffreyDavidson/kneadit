@@ -4,6 +4,7 @@ namespace App\Services\Tenants;
 
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 
 /** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
@@ -133,8 +134,6 @@ class ChurnAlertService
 
     private function configInt(string $key, int $default): int
     {
-        $value = config($key, $default);
-
-        return is_int($value) ? $value : $default;
+        return Config::integer($key, $default);
     }
 }

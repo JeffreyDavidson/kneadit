@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings;
 use App\Actions\Operations\RegenerateWebhookSecret;
 use App\Actions\Operations\SendTestWebhook;
 use App\Actions\Tenants\SaveTenantSettings;
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Settings\Schemas\ManageSettingsForm;
@@ -195,170 +196,57 @@ class ManageSettings extends Page
      */
     private function applySettings(array $values, array $defaults): void
     {
-        $this->store_name = $this->stringValue($values['store_name'] ?? null, $defaults['store_name'] ?? '');
-        $this->store_email = $this->stringValue($values['store_email'] ?? null, $defaults['store_email'] ?? '');
-        $this->store_phone = $this->stringValue($values['store_phone'] ?? null, $defaults['store_phone'] ?? '');
-        $this->store_address = $this->stringValue($values['store_address'] ?? null, $defaults['store_address'] ?? '');
-        $this->default_daily_capacity = $this->nullableIntValue($values['default_daily_capacity'] ?? null, $defaults['default_daily_capacity'] ?? null);
-        $this->minimum_order_lead_hours = $this->nullableIntValue($values['minimum_order_lead_hours'] ?? null, $defaults['minimum_order_lead_hours'] ?? 48);
-        $this->delivery_fee_tiers = $this->mapListValue($values['delivery_fee_tiers'] ?? null);
-        $this->minimum_pickup_order_amount = $this->stringValue($values['minimum_pickup_order_amount'] ?? null, $defaults['minimum_pickup_order_amount'] ?? '0');
-        $this->minimum_delivery_order_amount = $this->stringValue($values['minimum_delivery_order_amount'] ?? null, $defaults['minimum_delivery_order_amount'] ?? '0');
-        $this->repeat_reminders_enabled = $this->boolValue($values['repeat_reminders_enabled'] ?? null, $this->boolValue($defaults['repeat_reminders_enabled'] ?? null));
-        $this->birthday_program_enabled = $this->boolValue($values['birthday_program_enabled'] ?? null, $this->boolValue($defaults['birthday_program_enabled'] ?? null));
-        $this->email_order_placed_enabled = $this->boolValue($values['email_order_placed_enabled'] ?? null, true);
-        $this->email_order_confirmed_enabled = $this->boolValue($values['email_order_confirmed_enabled'] ?? null, true);
-        $this->email_order_baking_enabled = $this->boolValue($values['email_order_baking_enabled'] ?? null, true);
-        $this->email_order_ready_enabled = $this->boolValue($values['email_order_ready_enabled'] ?? null, true);
-        $this->email_order_delivered_enabled = $this->boolValue($values['email_order_delivered_enabled'] ?? null, true);
-        $this->email_order_cancelled_enabled = $this->boolValue($values['email_order_cancelled_enabled'] ?? null, true);
-        $this->email_order_message_enabled = $this->boolValue($values['email_order_message_enabled'] ?? null, true);
-        $this->email_product_available_enabled = $this->boolValue($values['email_product_available_enabled'] ?? null, true);
-        $this->allergy_disclaimer = $this->stringValue($values['allergy_disclaimer'] ?? null, $defaults['allergy_disclaimer'] ?? '');
-        $this->revenue_cap = $this->stringValue($values['revenue_cap'] ?? null, $defaults['revenue_cap'] ?? '250000');
-        $this->payment_methods = $this->stringListValue($values['payment_methods'] ?? null, $defaults['payment_methods'] ?? [PaymentMethod::Cash->value]);
-        $this->paypal_client_id = $this->stringValue($values['paypal_client_id'] ?? null, $defaults['paypal_client_id'] ?? '');
-        $this->paypal_client_secret = $this->stringValue($values['paypal_client_secret'] ?? null, $defaults['paypal_client_secret'] ?? '');
-        $this->paypal_sandbox = $this->boolValue($values['paypal_sandbox'] ?? null, true);
-        $this->webhook_url = $this->stringValue($values['webhook_url'] ?? null, $defaults['webhook_url'] ?? '');
-        $this->webhook_secret = $this->stringValue($values['webhook_secret'] ?? null, $defaults['webhook_secret'] ?? '');
-        $this->cancellation_policy = $this->stringValue($values['cancellation_policy'] ?? null, $defaults['cancellation_policy'] ?? '');
-        $this->deposit_policy = $this->stringValue($values['deposit_policy'] ?? null, $defaults['deposit_policy'] ?? '');
-        $this->refund_policy = $this->stringValue($values['refund_policy'] ?? null, $defaults['refund_policy'] ?? '');
-        $this->pickup_policy = $this->stringValue($values['pickup_policy'] ?? null, $defaults['pickup_policy'] ?? '');
-        $this->additional_terms = $this->stringValue($values['additional_terms'] ?? null, $defaults['additional_terms'] ?? '');
-        $this->show_policies_on_storefront = $this->boolValue($values['show_policies_on_storefront'] ?? null, $this->boolValue($defaults['show_policies_on_storefront'] ?? null));
-        $this->catering_event_types = $this->stringListValue($values['catering_event_types'] ?? null, $defaults['catering_event_types'] ?? []);
-        $this->gift_card_preset_amounts = $this->stringValue($values['gift_card_preset_amounts'] ?? null, $defaults['gift_card_preset_amounts'] ?? '');
-        $this->gift_card_default_amount = $this->nullableIntValue($values['gift_card_default_amount'] ?? null, $defaults['gift_card_default_amount'] ?? 25);
-        $this->order_journey_steps = $this->stringMapListValue($values['order_journey_steps'] ?? null, $defaults['order_journey_steps'] ?? []);
-    }
+        $this->store_name = SettingValue::string($values['store_name'] ?? null, SettingValue::string($defaults['store_name'] ?? null));
+        $this->store_email = SettingValue::string($values['store_email'] ?? null, SettingValue::string($defaults['store_email'] ?? null));
+        $this->store_phone = SettingValue::string($values['store_phone'] ?? null, SettingValue::string($defaults['store_phone'] ?? null));
+        $this->store_address = SettingValue::string($values['store_address'] ?? null, SettingValue::string($defaults['store_address'] ?? null));
+        $this->default_daily_capacity = SettingValue::nullableInt($values['default_daily_capacity'] ?? null, SettingValue::nullableInt($defaults['default_daily_capacity'] ?? null));
+        $this->minimum_order_lead_hours = SettingValue::nullableInt($values['minimum_order_lead_hours'] ?? null, SettingValue::nullableInt($defaults['minimum_order_lead_hours'] ?? null, 48));
+        $this->delivery_fee_tiers = SettingValue::mapList($values['delivery_fee_tiers'] ?? null);
+        $this->minimum_pickup_order_amount = SettingValue::string($values['minimum_pickup_order_amount'] ?? null, SettingValue::string($defaults['minimum_pickup_order_amount'] ?? null, '0'));
+        $this->minimum_delivery_order_amount = SettingValue::string($values['minimum_delivery_order_amount'] ?? null, SettingValue::string($defaults['minimum_delivery_order_amount'] ?? null, '0'));
+        $this->repeat_reminders_enabled = SettingValue::bool($values['repeat_reminders_enabled'] ?? null, SettingValue::bool($defaults['repeat_reminders_enabled'] ?? null));
+        $this->birthday_program_enabled = SettingValue::bool($values['birthday_program_enabled'] ?? null, SettingValue::bool($defaults['birthday_program_enabled'] ?? null));
+        $this->email_order_placed_enabled = SettingValue::bool($values['email_order_placed_enabled'] ?? null, true);
+        $this->email_order_confirmed_enabled = SettingValue::bool($values['email_order_confirmed_enabled'] ?? null, true);
+        $this->email_order_baking_enabled = SettingValue::bool($values['email_order_baking_enabled'] ?? null, true);
+        $this->email_order_ready_enabled = SettingValue::bool($values['email_order_ready_enabled'] ?? null, true);
+        $this->email_order_delivered_enabled = SettingValue::bool($values['email_order_delivered_enabled'] ?? null, true);
+        $this->email_order_cancelled_enabled = SettingValue::bool($values['email_order_cancelled_enabled'] ?? null, true);
+        $this->email_order_message_enabled = SettingValue::bool($values['email_order_message_enabled'] ?? null, true);
+        $this->email_product_available_enabled = SettingValue::bool($values['email_product_available_enabled'] ?? null, true);
+        $this->allergy_disclaimer = SettingValue::string($values['allergy_disclaimer'] ?? null, SettingValue::string($defaults['allergy_disclaimer'] ?? null));
+        $this->revenue_cap = SettingValue::string($values['revenue_cap'] ?? null, SettingValue::string($defaults['revenue_cap'] ?? null, '250000'));
+        $this->payment_methods = $this->withListFallback(SettingValue::stringList($values['payment_methods'] ?? null), SettingValue::stringList($defaults['payment_methods'] ?? [PaymentMethod::Cash->value]));
+        $this->paypal_client_id = SettingValue::string($values['paypal_client_id'] ?? null, SettingValue::string($defaults['paypal_client_id'] ?? null));
+        $this->paypal_client_secret = SettingValue::string($values['paypal_client_secret'] ?? null, SettingValue::string($defaults['paypal_client_secret'] ?? null));
+        $this->paypal_sandbox = SettingValue::bool($values['paypal_sandbox'] ?? null, true);
+        $this->webhook_url = SettingValue::string($values['webhook_url'] ?? null, SettingValue::string($defaults['webhook_url'] ?? null));
+        $this->webhook_secret = SettingValue::string($values['webhook_secret'] ?? null, SettingValue::string($defaults['webhook_secret'] ?? null));
+        $this->cancellation_policy = SettingValue::string($values['cancellation_policy'] ?? null, SettingValue::string($defaults['cancellation_policy'] ?? null));
+        $this->deposit_policy = SettingValue::string($values['deposit_policy'] ?? null, SettingValue::string($defaults['deposit_policy'] ?? null));
+        $this->refund_policy = SettingValue::string($values['refund_policy'] ?? null, SettingValue::string($defaults['refund_policy'] ?? null));
+        $this->pickup_policy = SettingValue::string($values['pickup_policy'] ?? null, SettingValue::string($defaults['pickup_policy'] ?? null));
+        $this->additional_terms = SettingValue::string($values['additional_terms'] ?? null, SettingValue::string($defaults['additional_terms'] ?? null));
+        $this->show_policies_on_storefront = SettingValue::bool($values['show_policies_on_storefront'] ?? null, SettingValue::bool($defaults['show_policies_on_storefront'] ?? null));
+        $this->catering_event_types = $this->withListFallback(SettingValue::stringList($values['catering_event_types'] ?? null), SettingValue::stringList($defaults['catering_event_types'] ?? []));
+        $this->gift_card_preset_amounts = SettingValue::string($values['gift_card_preset_amounts'] ?? null, SettingValue::string($defaults['gift_card_preset_amounts'] ?? null));
+        $this->gift_card_default_amount = SettingValue::nullableInt($values['gift_card_default_amount'] ?? null, SettingValue::nullableInt($defaults['gift_card_default_amount'] ?? null, 25));
 
-    private function stringValue(mixed $value, mixed $default): string
-    {
-        if (is_string($value)) {
-            return $value;
-        }
-
-        return is_string($default) ? $default : '';
-    }
-
-    private function nullableIntValue(mixed $value, mixed $default): ?int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (is_string($value)) {
-            $filtered = filter_var($value, FILTER_VALIDATE_INT);
-
-            if (is_int($filtered)) {
-                return $filtered;
-            }
-        }
-
-        return is_int($default) ? $default : null;
-    }
-
-    private function boolValue(mixed $value, bool $default = false): bool
-    {
-        $filtered = filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
-
-        return is_bool($filtered) ? $filtered : $default;
-    }
-
-    /** @return list<array<string, mixed>> */
-    private function mapListValue(mixed $value): array
-    {
-        $items = $this->decodedListValue($value);
-        $maps = [];
-
-        foreach ($items as $item) {
-            if (! is_array($item)) {
-                continue;
-            }
-
-            $map = [];
-
-            foreach ($item as $key => $mapValue) {
-                if (is_string($key)) {
-                    $map[$key] = $mapValue;
-                }
-            }
-
-            $maps[] = $map;
-        }
-
-        return $maps;
-    }
-
-    /** @return list<string> */
-    private function stringListValue(mixed $value, mixed $default): array
-    {
-        $strings = array_values(array_filter(
-            $this->decodedListValue($value),
-            fn (mixed $item): bool => is_string($item) && trim($item) !== '',
-        ));
-
-        if ($strings !== []) {
-            return $strings;
-        }
-
-        return array_values(array_filter(
-            is_array($default) ? $default : [],
-            fn (mixed $item): bool => is_string($item) && trim($item) !== '',
-        ));
-    }
-
-    /** @return list<array<string, string>> */
-    private function stringMapListValue(mixed $value, mixed $default): array
-    {
-        $maps = $this->stringMaps($this->decodedListValue($value));
-
-        if ($maps !== []) {
-            return $maps;
-        }
-
-        return $this->stringMaps(is_array($default) ? array_values($default) : []);
+        $journeySteps = SettingValue::stringMapList($values['order_journey_steps'] ?? null);
+        $this->order_journey_steps = $journeySteps !== []
+            ? $journeySteps
+            : SettingValue::stringMapList($defaults['order_journey_steps'] ?? []);
     }
 
     /**
-     * @param list<mixed> $items
-     * @return list<array<string, string>>
+     * @param list<string> $values
+     * @param list<string> $defaults
+     * @return list<string>
      */
-    private function stringMaps(array $items): array
+    private function withListFallback(array $values, array $defaults): array
     {
-        $maps = [];
-
-        foreach ($items as $item) {
-            if (! is_array($item)) {
-                continue;
-            }
-
-            $map = [];
-
-            foreach ($item as $key => $mapValue) {
-                if (is_string($key) && is_string($mapValue)) {
-                    $map[$key] = $mapValue;
-                }
-            }
-
-            if ($map !== []) {
-                $maps[] = $map;
-            }
-        }
-
-        return $maps;
-    }
-
-    /** @return list<mixed> */
-    private function decodedListValue(mixed $value): array
-    {
-        if (is_string($value)) {
-            $value = json_decode($value, true);
-        }
-
-        return is_array($value) && array_is_list($value) ? $value : [];
+        return $values !== [] ? $values : $defaults;
     }
 
     /** @return array<string, mixed> */
