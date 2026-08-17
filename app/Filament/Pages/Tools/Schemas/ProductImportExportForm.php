@@ -75,8 +75,7 @@ class ProductImportExportForm
                     ->label('CSV File')
                     ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel'])
                     ->maxSize(5120)
-                    ->disk('local')
-                    ->directory('csv-imports')
+                    ->disk('imports')
                     ->visibility('private'),
                 Actions::make([
                     Action::make('previewImport')
