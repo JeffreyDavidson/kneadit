@@ -7,6 +7,7 @@ use App\Actions\Analytics\RecordProductImpressions;
 use App\Enums\Content\PageType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Exceptions;
 
 class PageViewTracker
 {
@@ -25,6 +26,7 @@ class PageViewTracker
     public function __construct(
         protected RecordPageView $recordPageView,
         protected RecordProductImpressions $recordProductImpressions,
+        protected VisitorIdentifier $visitorIdentifier,
     ) {}
 
     public function detectPage(?string $routeName, string $path): ?string
@@ -58,9 +60,7 @@ class PageViewTracker
 
         $data = [
             'page' => $page,
-            'session_id' => $request->session()->getId(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
+            'session_id' => $this->visitorIdentifier->fromSessionId($request->session()->getId()),
         ];
 
         try {
@@ -69,8 +69,8 @@ class PageViewTracker
             if ($this->shouldTrackProductImpressions($request, $page)) {
                 ($this->recordProductImpressions)($data);
             }
-        } catch (\Exception) {
-            // Silently fail if page_views table doesn't exist yet
+        } catch (\Throwable $exception) {
+            Exceptions::report($exception);
         }
     }
 

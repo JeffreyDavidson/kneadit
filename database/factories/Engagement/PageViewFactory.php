@@ -21,8 +21,6 @@ class PageViewFactory extends Factory
             'page' => '/' . fake()->slug(2),
             'product_id' => Product::factory(),
             'session_id' => fake()->uuid(),
-            'ip_address' => fake()->ipv4(),
-            'user_agent' => fake()->userAgent(),
         ];
     }
 }
