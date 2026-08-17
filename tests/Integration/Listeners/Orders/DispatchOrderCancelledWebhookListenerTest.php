@@ -31,7 +31,11 @@ test('it dispatches order.cancelled webhook with order data', function () {
     );
 
     Http::assertSent(function ($request) use ($order) {
-        $body = json_decode($request->body(), true);
+        $body = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+
+        if (! is_array($body) || ! is_array($body['data'] ?? null)) {
+            return false;
+        }
 
         return $request->hasHeader('X-KneadIt-Event', 'order.cancelled')
             && $body['event'] === 'order.cancelled'

@@ -9,6 +9,7 @@ use App\Filament\Resources\Recipes\RecipeResource;
 use App\Filament\Resources\Reviews\ReviewResource;
 use App\Filament\Resources\SocialPosts\SocialPostResource;
 use App\Models\Staff\User;
+use Filament\Resources\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
@@ -18,6 +19,15 @@ beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
 });
+
+function resourceCanAccess(string $resourceClass): bool
+{
+    if (! is_subclass_of($resourceClass, Resource::class)) {
+        throw new InvalidArgumentException("{$resourceClass} is not a Filament resource.");
+    }
+
+    return $resourceClass::canAccess();
+}
 
 // -- canAccess tests for pro-feature-gated resources --
 
@@ -31,13 +41,13 @@ dataset('proFeatureResources', [
 test('pro-feature resource can be accessed when feature is active', function (string $resourceClass) {
     Feature::define('pro-features', fn () => true);
 
-    expect($resourceClass::canAccess())->toBeTrue();
+    expect(resourceCanAccess($resourceClass))->toBeTrue();
 })->with('proFeatureResources');
 
 test('pro-feature resource cannot be accessed when feature is inactive', function (string $resourceClass) {
     Feature::define('pro-features', fn () => false);
 
-    expect($resourceClass::canAccess())->toBeFalse();
+    expect(resourceCanAccess($resourceClass))->toBeFalse();
 })->with('proFeatureResources');
 
 // -- canAccess tests for growth-feature-gated resources --
@@ -52,13 +62,13 @@ dataset('growthFeatureResources', [
 test('growth-feature resource can be accessed when feature is active', function (string $resourceClass) {
     Feature::define('growth-features', fn () => true);
 
-    expect($resourceClass::canAccess())->toBeTrue();
+    expect(resourceCanAccess($resourceClass))->toBeTrue();
 })->with('growthFeatureResources');
 
 test('growth-feature resource cannot be accessed when feature is inactive', function (string $resourceClass) {
     Feature::define('growth-features', fn () => false);
 
-    expect($resourceClass::canAccess())->toBeFalse();
+    expect(resourceCanAccess($resourceClass))->toBeFalse();
 })->with('growthFeatureResources');
 
 // -- ShowsUpgradeBadge: getNavigationBadge tests --

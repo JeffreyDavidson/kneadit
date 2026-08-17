@@ -13,7 +13,11 @@ return new class extends Migration {
             ->whereIn('key', TenantSettingCipher::sensitiveKeys())
             ->orderBy('id')
             ->each(function (object $setting) use ($cipher): void {
-                if (! isset($setting->id, $setting->key) || ! is_int($setting->id) || ! is_string($setting->key)) {
+                if (
+                    ! isset($setting->id, $setting->key)
+                    || (! is_int($setting->id) && ! is_string($setting->id))
+                    || ! is_string($setting->key)
+                ) {
                     return;
                 }
 

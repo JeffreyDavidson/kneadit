@@ -96,13 +96,8 @@ test('getTenantUsageData handles exception gracefully', function () {
     ]);
 
     $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $expectation = $tenancyManager->shouldReceive('withinTenant');
-
-    if (! $expectation instanceof Mockery\Expectation) {
-        throw new RuntimeException('Expected a concrete Mockery expectation.');
-    }
-
-    $expectation->andThrow(new RuntimeException('DB error'));
+    mockExpectation($tenancyManager, 'withinTenant')
+        ->andThrow(new RuntimeException('DB error'));
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();

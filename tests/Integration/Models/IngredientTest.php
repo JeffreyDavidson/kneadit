@@ -45,7 +45,7 @@ test('adjust stock updates current stock', function () {
 
     resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage, 'Order usage');
 
-    expect($ingredient->fresh()->current_stock)->toBe('15.00');
+    expect($ingredient->refresh()->current_stock)->toBe('15.00');
 });
 
 test('AdjustIngredientStock throws when an adjustment would push stock below zero', function () {
@@ -61,7 +61,7 @@ test('AdjustIngredientStock throws when an adjustment would push stock below zer
         ->toThrow(StockWouldGoNegativeException::class);
 
     // Stock unchanged; no adjustment row written.
-    expect($ingredient->fresh()->current_stock)->toBe('2.00');
+    expect($ingredient->refresh()->current_stock)->toBe('2.00');
 });
 
 test('low stock threshold detection', function () {
@@ -109,5 +109,5 @@ test('cost per unit is stored correctly', function () {
         'cost_per_unit' => 12.75,
     ]);
 
-    expect($ingredient->cost_per_unit->dollars())->toBe(12.75);
+    expect($ingredient->cost_per_unit?->dollars())->toBe(12.75);
 });

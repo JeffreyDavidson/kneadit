@@ -30,8 +30,8 @@ test('redeliver re-fires the webhook with the original payload data', function (
     Http::assertSent(function ($request) {
         $body = json_decode($request->body(), true);
 
-        return $body['event'] === 'order.created'
-            && $body['data']['order_number'] === 'ORD-XYZ';
+        return data_get($body, 'event') === 'order.created'
+            && data_get($body, 'data.order_number') === 'ORD-XYZ';
     });
 
     expect(WebhookDelivery::count())->toBe(2);

@@ -168,7 +168,12 @@ arch('mail classes should not call settings() directly')
 arch('all listeners should extend QueuedListener')
     ->expect('App\Listeners')
     ->toExtend(App\Listeners\QueuedListener::class)
-    ->ignoring(App\Listeners\QueuedListener::class);
+    ->ignoring([
+        App\Listeners\QueuedListener::class,
+        // Scheduler lifecycle events must be recorded synchronously and contain
+        // process-local task objects that are not safe queue payloads.
+        App\Listeners\Platform\RecordScheduledTaskStatusListener::class,
+    ]);
 
 test('all listeners have retry configuration', function () {
     $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php') ?: [];

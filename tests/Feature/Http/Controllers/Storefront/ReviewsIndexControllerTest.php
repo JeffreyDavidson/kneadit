@@ -32,7 +32,6 @@ test('reviews controller passes a fully-assembled VM to view', function () {
 
     $response->assertOk()
         ->assertViewHas('vm', fn (ReviewsPageViewModel $vm) => $vm->settings !== null
-            && is_array($vm->content)
             && $vm->totalReviews >= 0);
 });
 

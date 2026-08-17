@@ -10,6 +10,7 @@ use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Inventory\Category;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Date;
 
@@ -23,10 +24,55 @@ beforeEach(function () {
     ]);
 });
 
+function initializeOnboardingTenant(): void
+{
+    $tenant = new class extends Tenant {
+        /** @param array<string, mixed> $options */
+        public function save(array $options = []): bool
+        {
+            return true;
+        }
+    };
+    $tenant->fill([
+        'id' => 'onboarding-test',
+        'name' => 'Test Bakery',
+        'email' => 'owner@example.com',
+    ]);
+
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
+}
+
+function onboardingSetting(string $key): string
+{
+    $value = settings($key);
+
+    if (! is_string($value)) {
+        throw new RuntimeException("Expected {$key} to be a string.");
+    }
+
+    return $value;
+}
+
+/** @return array<array-key, mixed> */
+function decodedOnboardingSetting(string $key): array
+{
+    $value = json_decode(onboardingSetting($key), true, flags: JSON_THROW_ON_ERROR);
+
+    if (! is_array($value)) {
+        throw new RuntimeException("Expected {$key} to contain a JSON object.");
+    }
+
+    return $value;
+}
+
 test('onboarding page is registered in filament', function () {
     $page = new Onboarding;
-    expect($page::$title ?? (new ReflectionClass($page))->getStaticPropertyValue('title'))
-        ->toBe('Welcome to KneadIt')->and($page::$shouldRegisterNavigation ?? (new ReflectionClass($page))->getStaticPropertyValue('shouldRegisterNavigation'))->toBeFalse();
+    $reflection = new ReflectionClass($page);
+
+    expect($reflection->getStaticPropertyValue('title'))
+        ->toBe('Welcome to KneadIt')
+        ->and($reflection->getStaticPropertyValue('shouldRegisterNavigation'))->toBeFalse();
 });
 
 test('completed onboarding is detected', function () {
@@ -38,6 +84,8 @@ test('completed onboarding is detected', function () {
 });
 
 test('welcome step saves bakery name and owner', function () {
+    initializeOnboardingTenant();
+
     WelcomeStep::save([
         'bakery_name' => 'Sweet Sunrise Bakery',
         'owner_name' => 'Jane Baker',
@@ -59,6 +107,8 @@ test('contact step saves all contact info', function () {
 });
 
 test('branding step saves colors', function () {
+    initializeOnboardingTenant();
+
     BrandingStep::save([
         'color_primary' => '#ff5500',
         'color_secondary' => '#00aaff',
@@ -139,7 +189,7 @@ test('business hours step saves open days only', function () {
         'sunday_close' => '17:00',
     ]);
 
-    $hours = json_decode(settings('operating_hours'), true);
+    $hours = decodedOnboardingSetting('operating_hours');
 
     expect($hours)->toHaveKeys(['monday', 'tuesday'])
         ->not->toHaveKey('wednesday')
@@ -147,8 +197,8 @@ test('business hours step saves open days only', function () {
         ->toHaveKey('friday')
         ->not->toHaveKey('saturday')
         ->not->toHaveKey('sunday')
-        ->and($hours['monday'])->toMatchArray(['open' => '08:00', 'close' => '17:00'])
-        ->and($hours['friday'])->toMatchArray(['open' => '09:00', 'close' => '15:00']);
+        ->and(data_get($hours, 'monday'))->toMatchArray(['open' => '08:00', 'close' => '17:00'])
+        ->and(data_get($hours, 'friday'))->toMatchArray(['open' => '09:00', 'close' => '15:00']);
 });
 
 test('business hours with no days saves empty schedule', function () {
@@ -176,7 +226,7 @@ test('business hours with no days saves empty schedule', function () {
         'sunday_close' => '17:00',
     ]);
 
-    $hours = json_decode(settings('operating_hours'), true);
+    $hours = decodedOnboardingSetting('operating_hours');
     expect($hours)->toBeEmpty();
 });
 
@@ -314,7 +364,7 @@ test('complete onboarding timestamp is valid iso date', function () {
     $page = new Onboarding;
     $page->completeOnboarding();
 
-    $timestamp = settings('onboarding_completed_at');
+    $timestamp = onboardingSetting('onboarding_completed_at');
     $parsed = Date::parse($timestamp);
     expect($parsed)->not->toBeNull()
         ->and($parsed->isToday())->toBeTrue();
@@ -328,6 +378,8 @@ test('onboarding page is hidden from navigation', function () {
 });
 
 test('full onboarding flow saves all settings', function () {
+    initializeOnboardingTenant();
+
     // Step 1: Welcome
     WelcomeStep::save([
         'bakery_name' => 'Sunrise Bakery',
@@ -436,6 +488,6 @@ test('full onboarding flow saves all settings', function () {
         'price' => 350,
     ]);
 
-    $hours = json_decode(settings('operating_hours'), true);
+    $hours = decodedOnboardingSetting('operating_hours');
     expect($hours)->toHaveCount(5); // Mon-Fri
 });

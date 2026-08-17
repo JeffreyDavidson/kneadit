@@ -29,9 +29,9 @@ test('points awarded when order delivered', function () {
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Delivered);
 
     assertDatabaseHas('loyalty_points', [
         'customer_id' => test()->customer->id,
@@ -47,11 +47,11 @@ test('points calculated correctly', function () {
         ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Delivered);
 
-    $points = LoyaltyPoint::query()->where('order_id', $order->id)->first();
+    $points = LoyaltyPoint::query()->where('order_id', $order->id)->firstOrFail();
 
     expect($points->points)->toBe(255); // 25.50 * 10
 });
@@ -65,9 +65,9 @@ test('points not awarded when loyalty disabled', function () {
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Delivered);
 
     expect(LoyaltyPoint::query()->where('order_id', $order->id)->count())->toBe(0);
 });
@@ -79,12 +79,12 @@ test('points not double awarded', function () {
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
-    resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)($order->refresh(), OrderStatus::Delivered);
 
     // Manually award again to test idempotency
-    resolve(LoyaltyLedger::class)->creditOrder($order->fresh());
+    resolve(LoyaltyLedger::class)->creditOrder($order->refresh());
 
     expect(LoyaltyPoint::query()->where('order_id', $order->id)->where('type', 'earned')->count())->toBe(1);
 });

@@ -18,5 +18,9 @@ it('creates a birthday coupon for a customer', function () {
 
     $coupon = resolve(CreateBirthdayCoupon::class)($customer, discountPercent: 15, validDays: 7);
 
+    if (! $coupon instanceof Coupon || $coupon->percentage === null || $coupon->expires_at === null) {
+        throw new RuntimeException('Expected a complete birthday coupon.');
+    }
+
     expect($coupon)->toBeInstanceOf(Coupon::class)->and($coupon->code)->toBe("BDAY-{$customer->id}-2026")->and((int) $coupon->percentage->value())->toBe(15)->and($coupon->expires_at->toDateString())->toBe('2026-04-01');
 });

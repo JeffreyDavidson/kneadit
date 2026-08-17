@@ -26,7 +26,11 @@ test('it dispatches order.created webhook with order data', function () {
     $listener->handle($event);
 
     Http::assertSent(function ($request) use ($order) {
-        $body = json_decode($request->body(), true);
+        $body = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+
+        if (! is_array($body) || ! is_array($body['data'] ?? null)) {
+            return false;
+        }
 
         return $request->hasHeader('X-KneadIt-Event', 'order.created')
             && $body['event'] === 'order.created'

@@ -38,7 +38,7 @@ it('creates a tenant with domain and seeds the tenant database', function () {
         ->and($tenant->storefront_enabled)->toBeTrue()
         ->and($tenant->is_active)->toBeTrue()
         ->and($tenant->domains)->toHaveCount(1)
-        ->and($tenant->domains->first()->domain)->toBe('testbakery');
+        ->and($tenant->domains->firstOrFail()->domain)->toBe('testbakery');
 });
 
 it('persists external website and disables storefront when storefront choice is "own"', function () {
@@ -73,6 +73,7 @@ it('rolls back the central tenant + domain row when tenant-DB seeding fails', fu
     // binding with one that explodes on setMany().
     app()->bind(SettingsManager::class, function () {
         return new class {
+            /** @param array<string, mixed> $settings */
             public function setMany(array $settings): void
             {
                 throw new RuntimeException('Simulated tenant DB seed failure');

@@ -8,19 +8,19 @@ beforeEach(function () {
 });
 
 test('webhook controller extends cashier', function () {
-    expect(is_subclass_of(StripeWebhookController::class, WebhookController::class))->toBeTrue();
+    expect((new ReflectionClass(StripeWebhookController::class))->isSubclassOf(WebhookController::class))->toBeTrue();
 });
 
 test('webhook controller handles subscription updated', function () {
-    expect(method_exists(StripeWebhookController::class, 'handleCustomerSubscriptionUpdated'))->toBeTrue();
+    expect((new ReflectionClass(StripeWebhookController::class))->hasMethod('handleCustomerSubscriptionUpdated'))->toBeTrue();
 });
 
 test('webhook controller handles payment failed', function () {
-    expect(method_exists(StripeWebhookController::class, 'handleInvoicePaymentFailed'))->toBeTrue();
+    expect((new ReflectionClass(StripeWebhookController::class))->hasMethod('handleInvoicePaymentFailed'))->toBeTrue();
 });
 
 test('webhook controller handles subscription deleted', function () {
-    expect(method_exists(StripeWebhookController::class, 'handleCustomerSubscriptionDeleted'))->toBeTrue();
+    expect((new ReflectionClass(StripeWebhookController::class))->hasMethod('handleCustomerSubscriptionDeleted'))->toBeTrue();
 });
 
 test('price id to plan mapping uses SubscriptionTier::fromPriceId', function () {

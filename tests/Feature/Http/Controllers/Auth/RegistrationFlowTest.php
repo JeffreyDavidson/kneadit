@@ -126,7 +126,7 @@ test('onboarding store creates tenant', function () {
     $user = User::factory()->create();
 
     $this->mock(Tenant::class, function ($mock) {
-        $mock->shouldReceive('create')->andReturn(new Tenant);
+        mockExpectation($mock, 'create')->andReturn(new Tenant);
     });
 
     $response = actingAs($user)
@@ -175,7 +175,7 @@ test('onboarding does not require external website for kneadit', function () {
             'storefront_choice' => 'kneadit',
         ]);
 
-    expect(array_keys(session('errors')?->toArray() ?? []))->not->toContain('external_website');
+    $response->assertSessionMissing('errors');
 });
 
 test('guest cannot access onboarding', function () {

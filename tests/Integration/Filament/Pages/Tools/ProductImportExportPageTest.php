@@ -26,6 +26,7 @@ test('preview errors defaults to null', function () {
 test('get view data includes import results', function () {
     $method = new ReflectionMethod(ProductImportExport::class, 'getViewData');
     $viewData = $method->invoke(test()->page);
+    throw_unless(is_array($viewData), UnexpectedValueException::class, 'Expected product import view data.');
 
     expect($viewData)->toHaveKeys(['importResults', 'previewData', 'previewErrors']);
 });
@@ -37,6 +38,8 @@ test('get view data reflects current state', function () {
 
     $method = new ReflectionMethod(ProductImportExport::class, 'getViewData');
     $viewData = $method->invoke(test()->page);
+    throw_unless(is_array($viewData), UnexpectedValueException::class, 'Expected product import view data.');
+    throw_unless(is_array($viewData['importResults']), UnexpectedValueException::class, 'Expected import results.');
 
     expect($viewData['importResults']['created'])->toBe(5)
         ->and($viewData['previewData'])->toHaveCount(1)

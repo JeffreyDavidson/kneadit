@@ -16,7 +16,7 @@ test('can create ticket', function () {
         'tenant_id' => 'tenant-1',
     ]);
 
-    $found = SupportTicket::query()->where('subject', 'Help needed')->first();
+    $found = SupportTicket::query()->where('subject', 'Help needed')->firstOrFail();
     expect($found)->not->toBeNull()->and($found->priority)->toBe(SupportTicketPriority::High);
 });
 
@@ -25,7 +25,7 @@ test('status defaults to open', function () {
         'tenant_id' => 't1',
     ]);
 
-    expect($ticket->fresh()->status)->toBe(SupportTicketStatus::Open);
+    expect($ticket->refresh()->status)->toBe(SupportTicketStatus::Open);
 });
 
 test('priority defaults to normal', function () {
@@ -33,7 +33,7 @@ test('priority defaults to normal', function () {
         'tenant_id' => 't1',
     ]);
 
-    expect($ticket->fresh()->priority)->toBe(SupportTicketPriority::Normal);
+    expect($ticket->refresh()->priority)->toBe(SupportTicketPriority::Normal);
 });
 
 test('replies relationship', function () {

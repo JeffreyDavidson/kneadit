@@ -12,11 +12,15 @@ use Illuminate\Support\Facades\Mail;
 
 beforeEach(fn () => setUpCentralTest());
 
-function mockTenancyManager(): Mockery\MockInterface
+function mockTenancyManager(?int $expectedCalls = null): Mockery\MockInterface
 {
     $mock = Mockery::mock(TenancyManager::class);
-    $mock->shouldReceive('withinTenant')
+    $expectation = mockExpectation($mock, 'withinTenant')
         ->andReturnUsing(fn ($tenant, $callback) => $callback($tenant));
+
+    if ($expectedCalls !== null) {
+        $expectation->times($expectedCalls);
+    }
     app()->instance(TenancyManager::class, $mock);
 
     return $mock;
@@ -38,14 +42,14 @@ test('sends campaign to all customers across active tenants', function () {
     resolve(SendEmailCampaign::class)($campaign);
 
     Mail::assertQueued(CustomerBlastMail::class, 3);
-    expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent)
-        ->and($campaign->fresh()->recipient_count)->toBe(3)
-        ->and($campaign->fresh()->sent_at)->not->toBeNull();
+    expect($campaign->refresh()->status)->toBe(EmailCampaignStatus::Sent)
+        ->and($campaign->refresh()->recipient_count)->toBe(3)
+        ->and($campaign->refresh()->sent_at)->not->toBeNull();
 });
 
 test('only targets tenants matching starter segment', function () {
     Mail::fake();
-    $mock = mockTenancyManager();
+    mockTenancyManager(expectedCalls: 1);
 
     Tenant::factory()->starter()->create();
     Tenant::factory()->growth()->create();
@@ -57,12 +61,11 @@ test('only targets tenants matching starter segment', function () {
 
     resolve(SendEmailCampaign::class)($campaign);
 
-    $mock->shouldHaveReceived('withinTenant')->once();
 });
 
 test('only targets tenants matching growth segment', function () {
     Mail::fake();
-    $mock = mockTenancyManager();
+    mockTenancyManager(expectedCalls: 1);
 
     Tenant::factory()->starter()->create();
     Tenant::factory()->growth()->create();
@@ -74,12 +77,11 @@ test('only targets tenants matching growth segment', function () {
 
     resolve(SendEmailCampaign::class)($campaign);
 
-    $mock->shouldHaveReceived('withinTenant')->once();
 });
 
 test('excludes inactive tenants from all segment', function () {
     Mail::fake();
-    $mock = mockTenancyManager();
+    mockTenancyManager(expectedCalls: 1);
 
     Tenant::factory()->starter()->create();
     Tenant::factory()->starter()->inactive()->create();
@@ -89,12 +91,11 @@ test('excludes inactive tenants from all segment', function () {
 
     resolve(SendEmailCampaign::class)($campaign);
 
-    $mock->shouldHaveReceived('withinTenant')->once();
 });
 
 test('targets only inactive tenants for inactive segment', function () {
     Mail::fake();
-    $mock = mockTenancyManager();
+    mockTenancyManager(expectedCalls: 1);
 
     Tenant::factory()->starter()->create();
     Tenant::factory()->starter()->inactive()->create();
@@ -106,12 +107,11 @@ test('targets only inactive tenants for inactive segment', function () {
 
     resolve(SendEmailCampaign::class)($campaign);
 
-    $mock->shouldHaveReceived('withinTenant')->once();
 });
 
 test('targets tenants on trial for trial segment', function () {
     Mail::fake();
-    $mock = mockTenancyManager();
+    mockTenancyManager(expectedCalls: 1);
 
     Tenant::factory()->starter()->create();
     Tenant::factory()->onTrial()->create();
@@ -123,7 +123,6 @@ test('targets tenants on trial for trial segment', function () {
 
     resolve(SendEmailCampaign::class)($campaign);
 
-    $mock->shouldHaveReceived('withinTenant')->once();
 });
 
 test('deduplicates emails across tenants', function () {
@@ -138,5 +137,5 @@ test('deduplicates emails across tenants', function () {
     resolve(SendEmailCampaign::class)($campaign);
 
     Mail::assertQueued(CustomerBlastMail::class, 1);
-    expect($campaign->fresh()->recipient_count)->toBe(1);
+    expect($campaign->refresh()->recipient_count)->toBe(1);
 });

@@ -55,7 +55,7 @@ test('creates and sends invoice successfully', function () {
     $invoiceId = $service->createAndSend($order);
 
     expect($invoiceId)->toBe('INV-123')
-        ->and($order->fresh()?->paypal_invoice_id)->toBe('INV-123');
+        ->and($order->refresh()->paypal_invoice_id)->toBe('INV-123');
 });
 
 test('returns null when no access token', function () {

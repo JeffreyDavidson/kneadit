@@ -163,9 +163,9 @@ class SeedLocalCommand extends Command
      */
     private function generateTenantSpec(\Faker\Generator $faker, int $index): array
     {
-        $storeName = ucfirst($faker->word) . ' ' . self::STORE_TYPES[array_rand(self::STORE_TYPES)];
+        $storeName = ucfirst($faker->word) . ' ' . collect(self::STORE_TYPES)->random();
         $id = Str::slug($storeName) . '-' . ($index + 1);
-        $palette = self::PALETTES[array_rand(self::PALETTES)];
+        $palette = collect(self::PALETTES)->random();
 
         return [
             'id' => $id,
@@ -188,7 +188,7 @@ class SeedLocalCommand extends Command
             SubscriptionTier::Growth,
             SubscriptionTier::Pro,
         ];
-        $plan = $plans[array_rand($plans)];
+        $plan = collect($plans)->random();
 
         $isActive = $faker->boolean(85);
         $freeForever = $faker->boolean(5);

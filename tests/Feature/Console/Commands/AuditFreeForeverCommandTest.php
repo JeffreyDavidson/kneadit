@@ -3,9 +3,8 @@
 use App\Mail\Platform\UnapprovedFreeForeverAlertMail;
 use App\Models\Platform\FreeForeverGrant;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
-
-use function Pest\Laravel\artisan;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -22,9 +21,8 @@ test('does not alert when every free_forever tenant has an active grant', functi
         'granted_at' => now(),
     ]);
 
-    artisan('platform:audit-free-forever')
-        ->expectsOutputToContain('All free_forever tenants have an approved grant')
-        ->assertSuccessful();
+    expect(Artisan::call('platform:audit-free-forever'))->toBe(0)
+        ->and(Artisan::output())->toContain('All free_forever tenants have an approved grant');
 
     Mail::assertNothingQueued();
 });
@@ -34,7 +32,7 @@ test('alerts platform admins when a free_forever tenant has no grant', function 
     createTenant(['id' => 'rogue-tenant', 'name' => 'Rogue Bakery', 'email' => 'rogue@example.com', 'free_forever' => true]);
     // No FreeForeverGrant row — this is the suspect row the audit should catch.
 
-    artisan('platform:audit-free-forever')->assertSuccessful();
+    expect(Artisan::call('platform:audit-free-forever'))->toBe(0);
 
     Mail::assertQueued(UnapprovedFreeForeverAlertMail::class, function (UnapprovedFreeForeverAlertMail $mail) use ($admin): bool {
         $payload = $mail->unapproved;
@@ -55,7 +53,7 @@ test('does not alert when the grant is revoked (tenant no longer free)', functio
         'revoked_at' => now(),
     ]);
 
-    artisan('platform:audit-free-forever')->assertSuccessful();
+    expect(Artisan::call('platform:audit-free-forever'))->toBe(0);
 
     Mail::assertNothingQueued();
 });
@@ -70,7 +68,7 @@ test('alerts when the only grant for a free_forever tenant is revoked', function
         'revoked_at' => now()->subDay(),
     ]);
 
-    artisan('platform:audit-free-forever')->assertSuccessful();
+    expect(Artisan::call('platform:audit-free-forever'))->toBe(0);
 
     Mail::assertQueued(UnapprovedFreeForeverAlertMail::class);
 });
@@ -80,9 +78,8 @@ test('succeeds silently when no platform admins exist to alert', function () {
     createTenant(['id' => 'orphaned-alert', 'free_forever' => true]);
     // No grant — would alert if there were admins.
 
-    artisan('platform:audit-free-forever')
-        ->expectsOutputToContain('No platform admins found')
-        ->assertSuccessful();
+    expect(Artisan::call('platform:audit-free-forever'))->toBe(0)
+        ->and(Artisan::output())->toContain('No platform admins found');
 
     Mail::assertNothingQueued();
 });

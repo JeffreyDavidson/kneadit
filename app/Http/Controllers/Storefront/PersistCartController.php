@@ -45,7 +45,10 @@ class PersistCartController extends Controller
             $quantity = $item['quantity'] ?? null;
 
             if (is_int($productId) && is_int($quantity)) {
-                $normalized[] = ['product_id' => $productId, 'quantity' => $quantity];
+                $normalized[] = [
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                ];
             }
         }
 

@@ -11,10 +11,14 @@ use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Testing\PendingCommand;
 use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
+use Mockery\Expectation;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -160,6 +164,36 @@ function verifiedOrdersSession(array $orders): array
 function authenticatedVisit(string $url)
 {
     return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
+}
+
+/**
+ * Start an Artisan command with Laravel's mocked console output enabled.
+ *
+ * @param array<string, mixed> $parameters
+ */
+function pendingArtisan(string $command, array $parameters = []): PendingCommand
+{
+    $pendingCommand = test()->artisan($command, $parameters);
+
+    throw_if(is_int($pendingCommand), LogicException::class, 'Console output mocking must be enabled for pending Artisan assertions.');
+
+    return $pendingCommand;
+}
+
+function mockExpectation(MockInterface|LegacyMockInterface $mock, string $method): Expectation
+{
+    $mock->shouldReceive($method);
+    $director = $mock->mockery_getExpectationsFor($method);
+
+    throw_if($director === null, LogicException::class, "Mockery did not register an expectation for {$method}.");
+
+    $expectations = $director->getExpectations();
+    $lastKey = array_key_last($expectations);
+    $expectation = $lastKey === null ? null : $expectations[$lastKey];
+
+    throw_unless($expectation instanceof Expectation, LogicException::class, "Expected a Mockery expectation for {$method}.");
+
+    return $expectation;
 }
 
 function authenticatedCentralVisit(string $url): Pest\Browser\Api\PendingAwaitablePage

@@ -47,7 +47,7 @@ test('top customers returns customers ordered by balance', function () {
     $top = resolve(LoyaltyAnalytics::class)->topCustomers(2);
 
     expect($top)->toHaveCount(2)
-        ->and($top->first()->id)->toBe($customer2->id);
+        ->and($top->firstOrFail()->id)->toBe($customer2->id);
 });
 
 test('leaderboard returns formatted array', function () {
@@ -67,7 +67,7 @@ test('recent activity returns points with customers', function () {
     $activity = resolve(LoyaltyAnalytics::class)->recentActivity();
 
     expect($activity)->toHaveCount(1)
-        ->and($activity->first()->customer)->not->toBeNull();
+        ->and($activity->firstOrFail()->customer)->not->toBeNull();
 });
 
 test('outstanding points returns total sum', function () {

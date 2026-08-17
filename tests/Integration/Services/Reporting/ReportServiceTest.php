@@ -35,6 +35,32 @@ function createPaidOrder(float $total, string $date): Order
         ]);
 }
 
+function reportNumber(mixed $value): float
+{
+    $number = filter_var($value, FILTER_VALIDATE_FLOAT);
+    throw_if($number === false, RuntimeException::class, 'Expected a numeric report value.');
+
+    return $number;
+}
+
+/**
+ * @param array<string, mixed> $report
+ * @return array{is_low: mixed}
+ */
+function reportedIngredient(array $report, string $name): array
+{
+    $ingredients = data_get($report, 'ingredients', []);
+    throw_unless(is_array($ingredients), RuntimeException::class, 'Expected report ingredients to be an array.');
+
+    foreach ($ingredients as $ingredient) {
+        if (is_array($ingredient) && data_get($ingredient, 'name') === $name) {
+            return ['is_low' => data_get($ingredient, 'is_low')];
+        }
+    }
+
+    throw new RuntimeException("Ingredient {$name} was not found in the report.");
+}
+
 test('sales report returns correct totals', function () {
     createPaidOrder(50.00, '2026-03-01');
     createPaidOrder(30.00, '2026-03-02');
@@ -42,7 +68,7 @@ test('sales report returns correct totals', function () {
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
     expect($report['totalOrders'])->toBe(2)
-        ->and((float) $report['totalRevenue'])->toBe(80.00);
+        ->and(reportNumber($report['totalRevenue']))->toBe(80.00);
 });
 
 test('sales report respects date range', function () {
@@ -52,7 +78,7 @@ test('sales report respects date range', function () {
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
     expect($report['totalOrders'])->toBe(1)
-        ->and((float) $report['totalRevenue'])->toBe(30.00);
+        ->and(reportNumber($report['totalRevenue']))->toBe(30.00);
 });
 
 test('customer report returns data for date range', function () {
@@ -82,9 +108,9 @@ test('financial summary calculates profit', function () {
 
     $report = resolve(FinancialReport::class)->generate(2026);
 
-    expect((float) $report['totalRevenue'])->toBe(100.00)
-        ->and((float) $report['totalExpenses'])->toBe(30.00)
-        ->and((float) $report['profit'])->toBe(70.00);
+    expect(reportNumber($report['totalRevenue']))->toBe(100.00)
+        ->and(reportNumber($report['totalExpenses']))->toBe(30.00)
+        ->and(reportNumber($report['profit']))->toBe(70.00);
 });
 
 test('inventory report flags low stock', function () {
@@ -106,6 +132,6 @@ test('inventory report flags low stock', function () {
     $report = resolve(InventoryReport::class)->generate();
 
     expect($report['lowStockItems'])->toBe(1);
-    $flour = collect($report['ingredients'])->firstWhere('name', 'Flour');
+    $flour = reportedIngredient($report, 'Flour');
     expect($flour['is_low'])->toBeTrue();
 });

@@ -25,19 +25,19 @@ function setTenantPlanForAccess(string $plan): void
             return 'id';
         }
 
-        public function getTenantKey()
+        public function getTenantKey(): string
         {
             return 'test';
         }
 
-        public function getInternal(string $key)
+        public function getInternal(string $key): mixed
         {
             return $key === 'plan' ? $this->plan : null;
         }
 
-        public function setInternal(string $key, $value) {}
+        public function setInternal(string $key, mixed $value): void {}
 
-        public function run(callable $callback)
+        public function run(callable $callback): mixed
         {
             return $callback($this);
         }

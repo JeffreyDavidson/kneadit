@@ -1,6 +1,8 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$centralUrl = Config::string('browser-testing.central_url');
 
 test('central forgot password page renders without JS errors', function () use ($centralUrl) {
     visit("{$centralUrl}/forgot-password")

@@ -6,17 +6,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Testing\PendingCommand;
 use JMac\Testing\Double;
 
-use function Pest\Laravel\artisan;
-
 beforeEach(fn () => setUpCentralTest());
 
 function syncOnboardingMetricsCommand(): PendingCommand
 {
-    $command = artisan('tenants:sync-onboarding-metrics');
-
-    throw_unless($command instanceof PendingCommand, RuntimeException::class, 'Console output must be mocked.');
-
-    return $command;
+    return pendingArtisan('tenants:sync-onboarding-metrics');
 }
 
 test('command synchronizes every tenant', function () {

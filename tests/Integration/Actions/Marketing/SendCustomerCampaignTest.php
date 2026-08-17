@@ -30,9 +30,9 @@ test('queues mail to all recipients and marks campaign sent', function () {
     $sent = resolve(SendCustomerCampaign::class)($campaign);
 
     expect($sent)->toBe(2)
-        ->and($campaign->fresh()->status)->toBe(CustomerCampaignStatus::Sent)
-        ->and($campaign->fresh()->sent_at)->not->toBeNull()
-        ->and($campaign->fresh()->recipient_count)->toBe(2);
+        ->and($campaign->refresh()->status)->toBe(CustomerCampaignStatus::Sent)
+        ->and($campaign->refresh()->sent_at)->not->toBeNull()
+        ->and($campaign->refresh()->recipient_count)->toBe(2);
 
     Mail::assertQueued(CustomerCampaignMail::class, 2);
 });
@@ -45,7 +45,7 @@ test('refuses to re-send a campaign that is already Sent', function () {
     expect($sent)->toBe(0);
     Mail::assertNothingQueued();
     // Recipient count unchanged.
-    expect($campaign->fresh()->recipient_count)->toBe(50);
+    expect($campaign->refresh()->recipient_count)->toBe(50);
 });
 
 test('queues nothing when there are no recipients in the segment', function () {
@@ -54,7 +54,7 @@ test('queues nothing when there are no recipients in the segment', function () {
     $sent = resolve(SendCustomerCampaign::class)($campaign);
 
     expect($sent)->toBe(0)
-        ->and($campaign->fresh()->status)->toBe(CustomerCampaignStatus::Sent)
-        ->and($campaign->fresh()->recipient_count)->toBe(0);
+        ->and($campaign->refresh()->status)->toBe(CustomerCampaignStatus::Sent)
+        ->and($campaign->refresh()->recipient_count)->toBe(0);
     Mail::assertNothingQueued();
 });

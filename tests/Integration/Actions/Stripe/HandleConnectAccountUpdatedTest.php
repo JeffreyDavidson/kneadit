@@ -53,7 +53,7 @@ test('updates tenant settings when tenant exists and charges enabled', function 
     $tenant = createTenant(['id' => 'stripe-tenant', 'email' => 'stripe@test.com']);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
+    mockExpectation($tenancyManager, 'withinTenant')
         ->once()
         ->andReturnUsing(fn ($tenant, $callback) => $callback());
 
@@ -74,7 +74,7 @@ test('logs error when tenant context callback throws exception', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
+    mockExpectation($tenancyManager, 'withinTenant')
         ->once()
         ->andThrow(new Exception('Connection failed'));
 

@@ -98,7 +98,7 @@
 - See `ReviewRequestMail` + `ShowReviewFormController` for the reference implementation, and `CustomerVerifyEmailNotification` for the auth email variant.
 
 ### Content Security Policy
-- CSP is currently in **Report-Only mode** (see `SecurityHeaders` middleware). Violation reports POST to `/csp-report` and log to the `csp_channel` log channel.
+- CSP is enforced by default (see `SecurityHeaders` middleware). Set `CSP_MODE=report-only` only as an explicit rollout rollback. Violation reports POST to `/csp-report` and log to the `csp_channel` log channel.
 - Every inline `<script>` and `<style>` must have `@cspnonce` — the directive emits `nonce="..."` using the per-request `CspNonce` (request-scoped singleton) that the middleware writes into the CSP header. When adding a new inline block, add `@cspnonce` as an attribute.
 - External `<script src="...">` tags don't need the nonce (CSP src whitelist covers them) but new external domains need to be added to the policy in `SecurityHeaders::csp()`.
 

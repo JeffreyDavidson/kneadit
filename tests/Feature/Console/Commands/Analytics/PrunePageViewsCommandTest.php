@@ -2,11 +2,10 @@
 
 use App\Models\Engagement\PageView;
 use App\Models\Platform\Tenant;
+use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\PendingCommand;
-
-use function Pest\Laravel\artisan;
 
 pest()->use(RefreshDatabase::class);
 
@@ -16,7 +15,7 @@ beforeEach(function () {
     $tenancyManager = new class extends TenancyManager {
         public function forEachTenant(callable $callback, ?callable $onError = null): int
         {
-            $callback(new Tenant(['id' => 'test-tenant']));
+            $callback(new Tenant(['id' => 'test-tenant']), resolve(TenantSettings::class));
 
             return 0;
         }
@@ -28,11 +27,7 @@ beforeEach(function () {
 /** @param array<string, bool|int|string|null> $parameters */
 function prunePageViewsCommand(array $parameters = []): PendingCommand
 {
-    $command = artisan('analytics:prune-page-views', $parameters);
-
-    throw_unless($command instanceof PendingCommand, RuntimeException::class, 'Console output must be mocked.');
-
-    return $command;
+    return pendingArtisan('analytics:prune-page-views', $parameters);
 }
 
 test('it prunes page views outside the configured retention window', function () {
@@ -59,4 +54,15 @@ test('it accepts a positive retention override', function () {
 
 test('it rejects a non-positive retention window', function () {
     prunePageViewsCommand(['--days' => 0])->assertExitCode(2);
+});
+
+test('it fails when any tenant cannot be pruned', function () {
+    app()->instance(TenancyManager::class, new class extends TenancyManager {
+        public function forEachTenant(callable $callback, ?callable $onError = null): int
+        {
+            return 1;
+        }
+    });
+
+    prunePageViewsCommand()->assertFailed();
 });

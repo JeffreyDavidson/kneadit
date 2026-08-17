@@ -20,10 +20,17 @@ beforeEach(function () {
     Mail::fake();
 });
 
+function requireCreatedOrder(?Order $order): Order
+{
+    throw_unless($order instanceof Order, RuntimeException::class, 'Expected the order to be created.');
+
+    return $order;
+}
+
 test('creates order with correct totals and items', function () {
     $product = Product::factory()->create(['price' => 12.50]);
 
-    $order = resolve(CreateOrder::class)(
+    $order = requireCreatedOrder(resolve(CreateOrder::class)(
         CreateOrderData::fromArray([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
@@ -33,7 +40,7 @@ test('creates order with correct totals and items', function () {
                 ['product_id' => $product->id, 'quantity' => 2],
             ],
         ])
-    );
+    ));
 
     expect($order)
         ->not->toBeNull()
@@ -42,7 +49,7 @@ test('creates order with correct totals and items', function () {
         ->and($order->total->dollars())->toBe(25.00);
 
     $order->load('orderItems', 'customer');
-    expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
+    expect($order->orderItems)->toHaveCount(1)->and($order->customer?->email)->toBe('jane@example.com');
 });
 
 test('returns null when capacity is full', function () {
@@ -70,7 +77,7 @@ test('returns null when capacity is full', function () {
 test('persists tip_amount and includes it in total', function () {
     $product = Product::factory()->create(['price' => 20.00]);
 
-    $order = resolve(CreateOrder::class)(
+    $order = requireCreatedOrder(resolve(CreateOrder::class)(
         CreateOrderData::fromArray([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
@@ -81,7 +88,7 @@ test('persists tip_amount and includes it in total', function () {
             ],
             'tip_amount' => 4.50,
         ])
-    );
+    ));
 
     expect($order)->not->toBeNull()
         ->and($order->subtotal->dollars())->toBe(20.00)

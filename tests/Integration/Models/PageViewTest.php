@@ -15,7 +15,7 @@ test('product relationship returns the associated product', function () {
         'product_id' => $product->id,
     ]);
 
-    expect($pageView->product->id)->toBe($product->id);
+    expect($pageView->product?->id)->toBe($product->id);
 });
 
 test('created at is cast to datetime', function () {

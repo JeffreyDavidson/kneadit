@@ -33,7 +33,7 @@ test('passes through for unauthenticated users', function () {
 });
 
 test('passes through for auth routes', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant = Tests\Support\TypedMock::make(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
     app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
@@ -50,7 +50,7 @@ test('passes through for auth routes', function () {
 });
 
 test('passes through when already on onboarding page', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant = Tests\Support\TypedMock::make(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
     app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
@@ -98,8 +98,9 @@ test('passes through for livewire hashed paths', function () {
 });
 
 test('passes through when onboarding is complete', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
+    $tenant = Tests\Support\TypedMock::make(Stancl\Tenancy\Contracts\Tenant::class);
+    $tenant->shouldIgnoreMissing();
+    $tenant->allows(['getTenantKey' => 'test-bakery']);
     app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
@@ -120,8 +121,9 @@ test('passes through when onboarding is complete', function () {
 });
 
 test('passes through gracefully when TenantSettings throws exception', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
+    $tenant = Tests\Support\TypedMock::make(Stancl\Tenancy\Contracts\Tenant::class);
+    $tenant->shouldIgnoreMissing();
+    $tenant->allows(['getTenantKey' => 'test-bakery']);
     app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 

@@ -389,15 +389,13 @@ class ViewCateringInquiry extends ViewRecord
 
     private function integerValue(mixed $value, string $key): int
     {
-        if (is_int($value)) {
-            return $value;
-        }
+        $integer = filter_var($value, FILTER_VALIDATE_INT);
 
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
+        if ($integer === false) {
             throw new \UnexpectedValueException("{$key} must be an integer.");
         }
 
-        return (int) $value;
+        return $integer;
     }
 
     private function floatValue(mixed $value, string $key): float

@@ -24,11 +24,18 @@ test('it marks the first image by sort order as primary', function () {
         ->where('product_id', $product->id)
         ->orderBy('sort_order')
         ->get();
+    $first = $images->get(0);
+    $second = $images->get(1);
+    $third = $images->get(2);
 
-    expect($images[0]->sort_order)->toBe(1)
-        ->and($images[0]->is_primary)->toBeTrue()
-        ->and($images[1]->is_primary)->toBeFalse()
-        ->and($images[2]->is_primary)->toBeFalse();
+    if (! $first instanceof ProductImage || ! $second instanceof ProductImage || ! $third instanceof ProductImage) {
+        throw new RuntimeException('Expected three product images.');
+    }
+
+    expect($first->sort_order)->toBe(1)
+        ->and($first->is_primary)->toBeTrue()
+        ->and($second->is_primary)->toBeFalse()
+        ->and($third->is_primary)->toBeFalse();
 });
 
 test('it promotes next image when primary is deleted', function () {
@@ -41,7 +48,7 @@ test('it promotes next image when primary is deleted', function () {
 
     $remaining = ProductImage::query()
         ->where('product_id', $product->id)
-        ->first();
+        ->firstOrFail();
 
     expect($remaining->is_primary)->toBeTrue();
 });
@@ -56,5 +63,5 @@ test('it syncs product image column with primary image path', function () {
 
     resolve(SyncProductPrimaryImage::class)($product->id);
 
-    expect($product->fresh()->image)->toBe('images/first.jpg');
+    expect($product->refresh()->image)->toBe('images/first.jpg');
 });

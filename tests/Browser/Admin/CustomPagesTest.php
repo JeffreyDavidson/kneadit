@@ -1,6 +1,8 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$storefrontUrl = Config::string('browser-testing.storefront_url');
 
 // Smoke tests for admin custom (non-resource) pages. Each test loads a
 // pre-authenticated browser context via authenticatedVisit() and asserts

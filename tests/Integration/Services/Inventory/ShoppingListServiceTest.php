@@ -12,6 +12,31 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
+/** @param array<int|string, array<string, mixed>> $groups */
+function shoppingListNeed(array $groups, int $ingredientId): float
+{
+    foreach ($groups as $group) {
+        $items = data_get($group, 'items', []);
+
+        if (! is_array($items)) {
+            continue;
+        }
+
+        foreach ($items as $item) {
+            if (! is_array($item) || data_get($item, 'ingredient_id') !== $ingredientId) {
+                continue;
+            }
+
+            $needed = filter_var(data_get($item, 'needed'), FILTER_VALIDATE_FLOAT);
+            throw_if($needed === false, RuntimeException::class, 'Expected a numeric shopping-list need.');
+
+            return $needed;
+        }
+    }
+
+    throw new RuntimeException("Ingredient {$ingredientId} was not found in the shopping list.");
+}
+
 test('generates shopping list with low stock ingredients', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
     Ingredient::factory()->create(['current_stock' => 100, 'low_stock_threshold' => 5]);
@@ -96,8 +121,8 @@ test('upcoming order ingredient needs increase the suggested quantity', function
         endDate: now()->addWeek()->format('Y-m-d'),
     );
 
-    $needWithout = collect($without)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
-    $needWith = collect($with)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
+    $needWithout = shoppingListNeed($without, $ingredient->id);
+    $needWith = shoppingListNeed($with, $ingredient->id);
 
     expect($needWith)->toBe($needWithout + 20.0);
 });
@@ -132,8 +157,8 @@ test('groups ingredients by supplier with best price', function () {
     $result = $service->generate();
 
     expect($result)->toHaveKey($supplier->id)
-        ->and($result[$supplier->id]['supplier']['name'])->toBe('Best Flour Co')
-        ->and($result[$supplier->id]['items'])->not->toBeEmpty();
+        ->and(data_get($result, "{$supplier->id}.supplier.name"))->toBe('Best Flour Co')
+        ->and(data_get($result, "{$supplier->id}.items"))->not->toBeEmpty();
 });
 
 test('ingredients without suppliers go into no supplier group', function () {
@@ -143,7 +168,7 @@ test('ingredients without suppliers go into no supplier group', function () {
     $result = $service->generate();
 
     expect($result)->toHaveKey('none')
-        ->and($result['none']['supplier']['name'])->toBe('No Supplier Assigned');
+        ->and(data_get($result, 'none.supplier.name'))->toBe('No Supplier Assigned');
 });
 
 test('skips ingredient when needed quantity is zero', function () {

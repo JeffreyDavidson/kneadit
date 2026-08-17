@@ -2,7 +2,7 @@
 
 namespace App\DataTransferObjects\Settings;
 
-final class SettingValue
+final readonly class SettingValue
 {
     public static function string(mixed $value, string $default = ''): string
     {

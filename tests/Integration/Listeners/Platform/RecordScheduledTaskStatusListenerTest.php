@@ -37,5 +37,5 @@ test('records scheduled task failures without exposing unbounded messages', func
     $status = resolve(ScheduledTaskMonitor::class)->status('health:check');
 
     expect($status['status'])->toBe('failed')
-        ->and(mb_strlen($status['error']))->toBe(500);
+        ->and($status['error'])->toBeString()->toHaveLength(500);
 });

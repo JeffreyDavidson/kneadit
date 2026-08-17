@@ -20,7 +20,7 @@ test('current scope returns items available now', function () {
     $results = SeasonalItem::query()->current()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($current->id);
+        ->and($results->firstOrFail()->id)->toBe($current->id);
 });
 
 test('isCurrentlyAvailable method agrees with current scope', function () {

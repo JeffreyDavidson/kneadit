@@ -18,5 +18,5 @@ test('coupon code is uppercased on update', function () {
 
     $coupon->update(['code' => 'winter10']);
 
-    expect($coupon->fresh()->code)->toBe('WINTER10');
+    expect($coupon->refresh()->code)->toBe('WINTER10');
 });

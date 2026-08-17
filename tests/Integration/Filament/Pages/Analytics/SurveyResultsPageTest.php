@@ -37,6 +37,7 @@ test('get view data returns surveys list', function () {
 
     $method = new ReflectionMethod(SurveyResults::class, 'getViewData');
     $viewData = $method->invoke(test()->page);
+    throw_unless(is_array($viewData), UnexpectedValueException::class, 'Expected survey view data.');
 
     expect($viewData)->toHaveKey('surveys')
         ->and($viewData['surveys'])->toHaveCount(2);
@@ -45,6 +46,7 @@ test('get view data returns surveys list', function () {
 test('get view data includes current survey as null when none selected', function () {
     $method = new ReflectionMethod(SurveyResults::class, 'getViewData');
     $viewData = $method->invoke(test()->page);
+    throw_unless(is_array($viewData), UnexpectedValueException::class, 'Expected survey view data.');
 
     expect($viewData['survey'])->toBeNull();
 });

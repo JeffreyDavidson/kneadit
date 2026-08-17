@@ -14,7 +14,7 @@ test('unread scope returns only unread messages', function () {
     $results = ContactMessage::query()->unread()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($unread->id);
+        ->and($results->firstOrFail()->id)->toBe($unread->id);
 });
 
 test('read scope returns only read messages', function () {
@@ -24,5 +24,5 @@ test('read scope returns only read messages', function () {
     $results = ContactMessage::query()->read()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($read->id);
+        ->and($results->firstOrFail()->id)->toBe($read->id);
 });

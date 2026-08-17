@@ -14,5 +14,5 @@ test('transitions social post from draft to scheduled', function () {
 
     resolve(TransitionSocialPostStatus::class)($post, SocialPostStatus::Scheduled);
 
-    expect($post->fresh()->status)->toBe(SocialPostStatus::Scheduled);
+    expect($post->refresh()->status)->toBe(SocialPostStatus::Scheduled);
 });

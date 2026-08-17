@@ -63,14 +63,20 @@ test('tenantsExpired yields tenants whose trial passed and storefront still on',
 test('userFor returns the user matching tenant email', function () {
     $user = User::factory()->create(['email' => 'baker@example.com']);
     createTenant(['id' => 'baker-bakery', 'email' => 'baker@example.com']);
-    $tenant = Tenant::query()->find('baker-bakery');
+    $tenant = Tenant::query()->findOrFail('baker-bakery');
 
-    expect(resolve(TrialExpirationReader::class)->userFor($tenant)->id)->toBe($user->id);
+    $matchedUser = resolve(TrialExpirationReader::class)->userFor($tenant);
+
+    if ($matchedUser === null) {
+        throw new RuntimeException('Expected a user matching the tenant email.');
+    }
+
+    expect($matchedUser->id)->toBe($user->id);
 });
 
 test('userFor returns null when no user matches the tenant email', function () {
     createTenant(['id' => 'orphan', 'email' => 'noone@example.com']);
-    $tenant = Tenant::query()->find('orphan');
+    $tenant = Tenant::query()->findOrFail('orphan');
 
     expect(resolve(TrialExpirationReader::class)->userFor($tenant))->toBeNull();
 });

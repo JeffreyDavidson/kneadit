@@ -43,7 +43,7 @@ class SafeWebhookUrl implements ValidationRule
             return $this->isPublicIpAddress($host) ? $host : null;
         }
 
-        $records = dns_get_record($host, DNS_A | DNS_AAAA);
+        $records = $this->recordsForHost($host);
 
         if ($records === false || $records === []) {
             return null;
@@ -64,6 +64,12 @@ class SafeWebhookUrl implements ValidationRule
         }
 
         return $addresses[0];
+    }
+
+    /** @return array<int, array<string, mixed>>|false */
+    protected function recordsForHost(string $host): array|false
+    {
+        return dns_get_record($host, DNS_A | DNS_AAAA);
     }
 
     private function isPublicIpAddress(string $address): bool

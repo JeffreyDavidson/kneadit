@@ -17,7 +17,7 @@ test('active scope returns only active categories', function () {
     $results = Category::query()->active()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($active->id);
+        ->and($results->firstOrFail()->id)->toBe($active->id);
 });
 
 test('withFeaturedProducts scope eager loads only active featured products', function () {
@@ -26,10 +26,10 @@ test('withFeaturedProducts scope eager loads only active featured products', fun
     Product::factory()->recycle($category)->active()->create(['name' => 'Regular']);
     Product::factory()->recycle($category)->inactive()->featured()->create(['name' => 'Inactive']);
 
-    $result = Category::query()->withFeaturedProducts()->first();
+    $result = Category::query()->withFeaturedProducts()->firstOrFail();
 
     expect($result->products)->toHaveCount(1)
-        ->and($result->products->first()->name)->toBe('Featured');
+        ->and($result->products->firstOrFail()->name)->toBe('Featured');
 });
 
 test('withFeaturedProducts eager-loads seasonalItems and primaryImage to prevent N+1 in ProductPresenter', function () {
@@ -38,7 +38,7 @@ test('withFeaturedProducts eager-loads seasonalItems and primaryImage to prevent
     SeasonalItem::factory()->recycle($product)->create();
     ProductImage::factory()->recycle($product)->create(['is_primary' => true]);
 
-    $loaded = Category::query()->withFeaturedProducts()->first()->products->first();
+    $loaded = Category::query()->withFeaturedProducts()->firstOrFail()->products->firstOrFail();
 
     expect($loaded->relationLoaded('seasonalItems'))->toBeTrue()
         ->and($loaded->relationLoaded('primaryImage'))->toBeTrue();
@@ -50,7 +50,7 @@ test('withActiveProducts eager-loads seasonalItems and primaryImage to prevent N
     SeasonalItem::factory()->recycle($product)->create();
     ProductImage::factory()->recycle($product)->create(['is_primary' => true]);
 
-    $loaded = Category::query()->withActiveProducts()->first()->products->first();
+    $loaded = Category::query()->withActiveProducts()->firstOrFail()->products->firstOrFail();
 
     expect($loaded->relationLoaded('seasonalItems'))->toBeTrue()
         ->and($loaded->relationLoaded('primaryImage'))->toBeTrue();

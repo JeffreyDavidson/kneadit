@@ -6,8 +6,22 @@ use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Mailables\Envelope;
 
 pest()->use(RefreshDatabase::class);
+
+/** @param array<int, mixed> $arguments */
+function orderMailEnvelope(string $mailClass, array $arguments): Envelope
+{
+    $mail = new $mailClass(...$arguments);
+
+    return match (true) {
+        $mail instanceof OrderPlacedMail,
+        $mail instanceof OrderStatusMail,
+        $mail instanceof NewOrderNotificationMail => $mail->envelope(),
+        default => throw new RuntimeException('Expected a supported order mailable.'),
+    };
+}
 
 beforeEach(function () {
     setUpTenantTest();
@@ -20,8 +34,7 @@ beforeEach(function () {
 });
 
 test('order mailables have correct envelope subjects', function (string $mailClass, array $args, string $expectedSubjectFragment) {
-    $mail = new $mailClass(...$args);
-    $subject = $mail->envelope()->subject;
+    $subject = orderMailEnvelope($mailClass, $args)->subject;
 
     expect($subject)->toContain($expectedSubjectFragment);
 })->with([

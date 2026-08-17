@@ -23,7 +23,7 @@ test('store review controller creates review and renders the success view', func
         ->assertViewHas('settings');
 
     expect(Review::query()->count())->toBe(1)
-        ->and(Review::query()->first()->rating)->toBe(5);
+        ->and(Review::query()->firstOrFail()->rating)->toBe(5);
 });
 
 test('store review controller validates rating is required', function () {

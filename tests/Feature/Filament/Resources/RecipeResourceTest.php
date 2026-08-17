@@ -50,7 +50,7 @@ test('can edit a recipe via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($recipe->fresh()->name)->toBe('Updated Recipe');
+    expect($recipe->refresh()->name)->toBe('Updated Recipe');
 });
 
 test('can create a recipe with ingredients', function () {

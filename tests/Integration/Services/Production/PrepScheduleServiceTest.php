@@ -71,9 +71,15 @@ test('generatePrepSchedule creates tasks for items with recipes', function () {
     $data = $service->loadWeeklyData($monday);
     $prepSchedule = $data['prepSchedule'];
 
+    $prepTask = $prepSchedule[$monday]?->firstOrFail();
+
+    if ($prepTask === null) {
+        throw new RuntimeException('Expected a prep task for Monday.');
+    }
+
     expect($prepSchedule)->toHaveCount(1)
         ->and($prepSchedule[$monday])->toHaveCount(1)
-        ->and($prepSchedule[$monday][0])
+        ->and($prepTask)
         ->product_name->toBe($product->name)
         ->quantity->toBe(2)
         ->prep_time_minutes->toBe(45);
@@ -194,8 +200,14 @@ test('getTimelineView formats prep tasks for display', function () {
     $data = $service->loadWeeklyData($monday);
     $timeline = $service->getTimelineView($data['prepSchedule']);
 
+    $mondayTimeline = $timeline[$monday] ?? null;
+
+    if ($mondayTimeline === null) {
+        throw new RuntimeException('Expected a Monday timeline.');
+    }
+
     expect($timeline)->toHaveCount(1)
-        ->and($timeline[$monday]->first())
+        ->and($mondayTimeline->firstOrFail())
         ->toHaveKeys(['time', 'task', 'duration', 'order', 'delivery_time'])
         ->duration->toBe(30)
         ->delivery_time->toBe('10:00');

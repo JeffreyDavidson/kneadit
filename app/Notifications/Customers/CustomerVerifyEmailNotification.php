@@ -27,7 +27,7 @@ class CustomerVerifyEmailNotification extends Notification
             now()->addMinutes(DatabaseValue::int(config('auth.verification.expire'), 60)),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'hash' => hash('sha256', $notifiable->getEmailForVerification()),
             ],
         );
 

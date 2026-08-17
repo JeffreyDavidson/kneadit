@@ -72,7 +72,11 @@ test('store review fails validation with missing fields', function () {
 
     $response->assertUnprocessable();
 
-    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
+    $errors = $response->json('errors');
+
+    throw_unless(is_array($errors), UnexpectedValueException::class, 'Expected JSON:API validation errors.');
+
+    $pointers = collect($errors)->pluck('source.pointer')->all();
     expect($pointers)->toContain(
         '/data/attributes/customer_name',
         '/data/attributes/customer_email',

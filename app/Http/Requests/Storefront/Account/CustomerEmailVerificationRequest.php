@@ -22,7 +22,7 @@ class CustomerEmailVerificationRequest extends FormRequest
 
         throw_unless(hash_equals(DatabaseValue::scalarString($customer->getKey()), $routeId), AuthorizationException::class);
 
-        return hash_equals(sha1($customer->getEmailForVerification()), $routeHash);
+        return hash_equals(hash('sha256', $customer->getEmailForVerification()), $routeHash);
     }
 
     /** @return array<string, array<int, string>> */

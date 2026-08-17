@@ -34,7 +34,7 @@ test('orders ingredients by quantity descending from the recipe pivot', function
         $sugar->id => ['quantity' => 1.5, 'unit' => 'cups'],
     ]);
 
-    $presenter = ProductLabelPresenter::for($product->fresh());
+    $presenter = ProductLabelPresenter::for($product->refresh());
 
     expect($presenter->ingredientNames())->toBe(['Flour', 'Sugar', 'Salt']);
 });
@@ -55,7 +55,7 @@ test('derives allergen statement from the union of linked ingredient allergens',
         $salt->id => ['quantity' => 0.5, 'unit' => 'tsp'],
     ]);
 
-    $presenter = ProductLabelPresenter::for($product->fresh());
+    $presenter = ProductLabelPresenter::for($product->refresh());
 
     expect($presenter->allergens())
         ->toHaveCount(3)
@@ -72,7 +72,7 @@ test('falls back to the recipe JSON ingredients column when no pantry ingredient
         ],
     ]);
 
-    $presenter = ProductLabelPresenter::for($product->fresh());
+    $presenter = ProductLabelPresenter::for($product->refresh());
 
     expect($presenter->ingredientNames())->toBe(['Sourdough starter', 'Butter', 'Sea salt'])
         ->and($presenter->allergenStatement())->toBeNull();
@@ -90,7 +90,7 @@ test('de-duplicates allergens even when multiple ingredients share one', functio
         $cream->id => ['quantity' => 2, 'unit' => 'cups'],
     ]);
 
-    $presenter = ProductLabelPresenter::for($product->fresh());
+    $presenter = ProductLabelPresenter::for($product->refresh());
 
     expect($presenter->allergens())->toHaveCount(1)
         ->and($presenter->allergenStatement())->toBe('Contains: Milk.');

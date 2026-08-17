@@ -82,7 +82,7 @@ test('survey response saves answers as json', function () {
             'answers' => ['5', 'Great bread!'],
         ]);
 
-    $surveyResponse = SurveyResponse::query()->first();
+    $surveyResponse = SurveyResponse::query()->firstOrFail();
     expect($surveyResponse->getAttribute('answers'))->toBeArray()->toBe(['5', 'Great bread!']);
 });
 
@@ -96,7 +96,9 @@ test('survey response increments responses count', function () {
             'answers' => ['Nice!'],
         ]);
 
-    expect($survey->fresh()->responses_count)->toBe(1);
+    $survey->refresh();
+
+    expect($survey->responses_count)->toBe(1);
 });
 
 test('rating questions accept valid values', function () {
@@ -109,7 +111,7 @@ test('rating questions accept valid values', function () {
             'answers' => ['3'],
         ]);
 
-    $surveyResponse = SurveyResponse::query()->first();
+    $surveyResponse = SurveyResponse::query()->firstOrFail();
     expect($surveyResponse->answers)->toBe(['3']);
 });
 
@@ -123,6 +125,6 @@ test('text questions accept string answers', function () {
             'answers' => ['I love your croissants!'],
         ]);
 
-    $surveyResponse = SurveyResponse::query()->first();
+    $surveyResponse = SurveyResponse::query()->firstOrFail();
     expect($surveyResponse->answers)->toBe(['I love your croissants!']);
 });

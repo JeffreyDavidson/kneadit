@@ -16,8 +16,9 @@ class CheckoutController extends Controller
         $tier = SubscriptionTier::tryFrom($plan);
         abort_unless($tier !== null, 404, 'Plan not found.');
 
-        $priceId = Config::string("kneadit.stripe_prices.{$tier->value}");
-        abort_unless($priceId !== '', 404, 'Plan not found.');
+        $priceKey = "kneadit.stripe_prices.{$tier->value}";
+        $priceId = Config::get($priceKey);
+        abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
         return $user
             ->newSubscription('default', $priceId)

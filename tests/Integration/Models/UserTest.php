@@ -11,8 +11,7 @@ test('can access central panel only as platform admin', function () {
     $admin = User::factory()->platformAdmin()->create();
     $owner = User::factory()->owner()->create();
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('central');
+    $panel = Panel::make()->id('central');
 
     expect($admin->canAccessPanel($panel))->toBeTrue()
         ->and($owner->canAccessPanel($panel))->toBeFalse();
@@ -21,8 +20,7 @@ test('can access central panel only as platform admin', function () {
 test('can access non-central panel for any role', function (string $factoryState) {
     $user = User::factory()->{$factoryState}()->create();
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('app');
+    $panel = Panel::make()->id('app');
 
     expect($user->canAccessPanel($panel))->toBeTrue();
 })->with(['owner', 'manager', 'staff']);

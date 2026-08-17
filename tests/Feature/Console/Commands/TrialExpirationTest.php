@@ -10,7 +10,7 @@ beforeEach(fn () => setUpCentralTest());
 test('trial:check command runs successfully', function () {
     Event::fake();
 
-    $this->artisan('trial:check')->assertSuccessful();
+    pendingArtisan('trial:check')->assertSuccessful();
 });
 
 test('trial:check reports reminders and pausings in output', function () {
@@ -25,7 +25,7 @@ test('trial:check reports reminders and pausings in output', function () {
         'is_active' => true,
     ]);
 
-    $this->artisan('trial:check')
+    pendingArtisan('trial:check')
         ->expectsOutputToContain('1 reminders sent')
         ->assertSuccessful();
 
@@ -45,7 +45,7 @@ test('trial:check pauses expired storefronts via the action', function () {
         'storefront_enabled' => true,
     ]);
 
-    $this->artisan('trial:check')
+    pendingArtisan('trial:check')
         ->expectsOutputToContain('1 storefronts paused')
         ->assertSuccessful();
 

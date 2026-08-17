@@ -1,6 +1,8 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$centralUrl = Config::string('browser-testing.central_url');
 
 test('central onboarding page renders for an authenticated user without JS errors', function () use ($centralUrl) {
     authenticatedCentralVisit("{$centralUrl}/onboarding")
