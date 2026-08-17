@@ -29,15 +29,18 @@ class ImportProducts
         $categoryCache = [];
 
         foreach ($parsed['rows'] as $row) {
-            if (! empty($row['_errors'])) {
-                $errors[] = "Row {$row['_line']}: " . implode(', ', $row['_errors']);
+            $line = $this->integerValue($row['_line'] ?? null);
+            $rowErrors = $this->stringList($row['_errors'] ?? []);
+
+            if ($rowErrors !== []) {
+                $errors[] = "Row {$line}: " . implode(', ', $rowErrors);
 
                 continue;
             }
 
             try {
                 $categoryId = null;
-                $categoryName = trim($row['category'] ?? '');
+                $categoryName = trim($this->stringValue($row['category'] ?? ''));
                 if ($categoryName !== '') {
                     if (! isset($categoryCache[$categoryName])) {
                         $categoryCache[$categoryName] = Category::query()->firstOrCreate(
@@ -48,20 +51,21 @@ class ImportProducts
                     $categoryId = $categoryCache[$categoryName];
                 }
 
-                $existing = Product::query()->where('name', trim($row['name']))->first();
+                $name = trim($this->stringValue($row['name'] ?? null));
+                $existing = Product::query()->where('name', $name)->first();
 
                 $data = [
-                    'name' => trim($row['name']),
-                    'slug' => Str::slug(trim($row['name'])),
-                    'description' => trim($row['description'] ?? ''),
-                    'price' => (float) $row['price'],
+                    'name' => $name,
+                    'slug' => Str::slug($name),
+                    'description' => trim($this->stringValue($row['description'] ?? '')),
+                    'price' => $this->floatValue($row['price'] ?? null),
                     'category_id' => $categoryId,
                     'is_active' => (bool) ($row['is_active'] ?? true),
                     'is_featured' => (bool) ($row['is_featured'] ?? false),
                 ];
 
                 if (isset($row['cost']) && $row['cost'] !== '') {
-                    $data['cost'] = (float) $row['cost'];
+                    $data['cost'] = $this->floatValue($row['cost']);
                 }
 
                 if ($existing) {
@@ -72,10 +76,53 @@ class ImportProducts
                     $created++;
                 }
             } catch (\Throwable $e) {
-                $errors[] = "Row {$row['_line']}: {$e->getMessage()}";
+                $errors[] = "Row {$line}: {$e->getMessage()}";
             }
         }
 
         return ['created' => $created, 'updated' => $updated, 'errors' => $errors];
+    }
+
+    private function stringValue(mixed $value): string
+    {
+        if (! is_string($value)) {
+            throw new \UnexpectedValueException('Expected a CSV string value.');
+        }
+
+        return $value;
+    }
+
+    private function integerValue(mixed $value): int
+    {
+        if (! is_int($value)) {
+            throw new \UnexpectedValueException('Expected a CSV row number.');
+        }
+
+        return $value;
+    }
+
+    private function floatValue(mixed $value): float
+    {
+        if (! is_string($value) || ! is_numeric($value)) {
+            throw new \UnexpectedValueException('Expected a numeric CSV value.');
+        }
+
+        return (float) $value;
+    }
+
+    /** @return array<int, string> */
+    private function stringList(mixed $value): array
+    {
+        if (! is_array($value)) {
+            throw new \UnexpectedValueException('Expected a list of CSV validation errors.');
+        }
+
+        $errors = [];
+
+        foreach ($value as $error) {
+            $errors[] = $this->stringValue($error);
+        }
+
+        return $errors;
     }
 }

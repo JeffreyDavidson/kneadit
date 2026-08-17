@@ -19,7 +19,7 @@ final class WelcomeStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $tenant = tenant();
+        $tenant = self::tenant();
 
         return [
             'bakery_name' => resolve(SettingsManager::class)->get('store_name')
@@ -56,11 +56,9 @@ final class WelcomeStep extends OnboardingStep
     {
         resolve(SettingsManager::class)->set('store_name', $data['bakery_name']);
 
-        $tenant = tenant();
-        if ($tenant) {
-            $tenant->name = $data['owner_name'];
-            $tenant->store_name = $data['bakery_name'];
-            $tenant->save();
-        }
+        $tenant = self::tenant();
+        $tenant->name = is_string($data['owner_name'] ?? null) ? $data['owner_name'] : '';
+        $tenant->store_name = is_string($data['bakery_name'] ?? null) ? $data['bakery_name'] : '';
+        $tenant->save();
     }
 }
