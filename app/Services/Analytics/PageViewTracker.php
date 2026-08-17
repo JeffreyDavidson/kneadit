@@ -78,7 +78,7 @@ class PageViewTracker
     {
         $trackedAt = $request->session()->get($key);
 
-        return $trackedAt && now()->diffInMinutes(Date::parse($trackedAt)) < 60;
+        return is_string($trackedAt) && now()->diffInMinutes(Date::parse($trackedAt)) < 60;
     }
 
     protected function shouldTrackProductImpressions(Request $request, string $page): bool

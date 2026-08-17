@@ -17,7 +17,7 @@ class PercentageStateCast implements StateCast
             return $state->value();
         }
 
-        return floatval($state);
+        return $this->numericValue($state);
     }
 
     public function set(mixed $state): ?float
@@ -30,6 +30,19 @@ class PercentageStateCast implements StateCast
             return $state->value();
         }
 
-        return floatval($state);
+        return $this->numericValue($state);
+    }
+
+    private function numericValue(mixed $state): float
+    {
+        if (is_float($state) || is_int($state)) {
+            return $state;
+        }
+
+        if (! is_string($state) || ! is_numeric($state)) {
+            throw new \UnexpectedValueException('Percentage form state must be numeric.');
+        }
+
+        return (float) $state;
     }
 }

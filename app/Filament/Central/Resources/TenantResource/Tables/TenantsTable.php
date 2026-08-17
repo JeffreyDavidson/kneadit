@@ -20,6 +20,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 class TenantsTable
@@ -106,12 +107,7 @@ class TenantsTable
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
                         ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                        ->url(fn (Tenant $record) => sprintf(
-                            '%s://%s.%s',
-                            parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https',
-                            $record->id,
-                            parse_url(config('app.url'), PHP_URL_HOST) ?: 'getkneadit.app',
-                        ))
+                        ->url(fn (Tenant $record): string => self::storefrontUrl($record))
                         ->openUrlInNewTab(),
                 ]),
             ])
@@ -152,7 +148,7 @@ class TenantsTable
                         ->icon(Heroicon::OutlinedClock)
                         ->authorize('platform-admin')
                         ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30))]))
+                        ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(self::trialDays())]))
                         ->deselectRecordsAfterCompletion(),
                     BulkAction::make('change_plan')
                         ->label('Change plan')
@@ -213,5 +209,29 @@ class TenantsTable
                     ->button(),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    private static function storefrontUrl(Tenant $tenant): string
+    {
+        $appUrl = Config::string('app.url');
+
+        $host = parse_url($appUrl, PHP_URL_HOST);
+        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
+
+        if (! is_string($host) || $host === '') {
+            throw new \UnexpectedValueException('The application URL must contain a host.');
+        }
+
+        return sprintf(
+            '%s://%s.%s',
+            is_string($scheme) && $scheme !== '' ? $scheme : 'https',
+            $tenant->id,
+            $host,
+        );
+    }
+
+    private static function trialDays(): int
+    {
+        return Config::integer('kneadit.trial_days', 30);
     }
 }

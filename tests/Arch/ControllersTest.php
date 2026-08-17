@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
-$controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'))
-    ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
-    ->map(function ($file) {
+$controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php') ?: [])
+    ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php') ?: [])
+    ->map(function (string $file): string {
         $relative = str_replace(__DIR__ . '/../../app/', '', $file);
 
         return str_replace(['/', '.php'], ['\\', ''], 'App\\' . $relative);
