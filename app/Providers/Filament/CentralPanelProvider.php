@@ -22,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -120,8 +121,8 @@ class CentralPanelProvider extends PanelProvider
     /** @return list<string> */
     private function centralDomains(): array
     {
-        $domains = config('tenancy.central_domains', []);
+        $domains = Config::array('tenancy.central_domains', []);
 
-        return is_array($domains) ? array_values(array_filter($domains, is_string(...))) : [];
+        return array_values(array_filter($domains, is_string(...)));
     }
 }
