@@ -6,12 +6,16 @@ use App\Models\Content\GalleryPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @mixin GalleryPhoto */
+/**
+ * @property GalleryPhoto $resource
+ *
+ * @mixin GalleryPhoto
+ */
 class GalleryPhotoResource extends JsonApiResource
 {
     public function toId(Request $request): string
     {
-        return (string) $this->resource->getKey();
+        return (string) $this->resource->id;
     }
 
     public function toType(Request $request): string
