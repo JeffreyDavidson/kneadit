@@ -6,6 +6,8 @@ use App\Actions\Stripe\HandleCheckoutComplete;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
+use App\Models\Platform\Tenant;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -18,7 +20,7 @@ class StripeCheckoutService
         private StripeSessionPayloadBuilder $payloadBuilder,
         private StripeSettingsReader $settings,
     ) {
-        $this->stripe = new StripeClient(config('cashier.secret'));
+        $this->stripe = new StripeClient(Config::string('cashier.secret', ''));
     }
 
     public function redirectToCheckout(Order $order): ?string
@@ -46,11 +48,17 @@ class StripeCheckoutService
             return null;
         }
 
+        $tenant = tenant();
+
+        if (! $tenant instanceof Tenant) {
+            return null;
+        }
+
         try {
             $discounts = $this->buildDiscounts($order, $connectId);
             $sessionParams = $this->payloadBuilder->build(
                 $order,
-                (string) tenant()->getTenantKey(),
+                $tenant->getTenantKey(),
                 $successUrl,
                 $cancelUrl,
                 $discounts,
@@ -125,7 +133,7 @@ class StripeCheckoutService
         }
     }
 
-    /** @return array<int, array<string, string>> */
+    /** @return list<array{coupon: string}> */
     private function buildDiscounts(Order $order, string $connectId): array
     {
         if (! $order->discount_amount->isPositive()) {
@@ -134,11 +142,16 @@ class StripeCheckoutService
 
         $coupon = $this->stripe->coupons->create([
             'amount_off' => $order->discount_amount->cents(),
-            'currency' => config('cashier.currency', 'usd'),
+            'currency' => $this->currency(),
             'duration' => 'once',
             'name' => 'Order Discount',
         ], ['stripe_account' => $connectId]);
 
         return [['coupon' => $coupon->id]];
+    }
+
+    private function currency(): string
+    {
+        return Config::string('cashier.currency', 'usd');
     }
 }

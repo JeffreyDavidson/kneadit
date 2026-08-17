@@ -41,8 +41,13 @@ test('flush() resets the cached instance', function () {
     expect($first)->not->toBe($second);
 });
 
+/** @param class-string $expectedClass */
 test('each accessor returns the correct sub-DTO type', function (string $accessor, string $expectedClass) {
     $registry = resolve(TenantSettingsRegistry::class);
+
+    if (! class_exists($expectedClass)) {
+        throw new RuntimeException("Expected {$expectedClass} to be a class.");
+    }
 
     expect($registry->{$accessor}())->toBeInstanceOf($expectedClass);
 })->with([
