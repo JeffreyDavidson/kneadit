@@ -20,7 +20,7 @@ final class ContactStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $tenant = tenant();
+        $tenant = self::tenant();
         $manager = resolve(SettingsManager::class);
 
         return [

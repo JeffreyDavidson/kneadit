@@ -17,10 +17,10 @@ class GalleryController extends Controller
     {
         $createPhoto(
             photo: $request->file('photo'),
-            customerName: $request->validated('customer_name'),
-            customerEmail: $request->validated('customer_email'),
-            caption: $request->validated('caption'),
-            productId: $request->validated('product_id'),
+            customerName: $request->string('customer_name')->toString(),
+            customerEmail: $request->string('customer_email')->toString(),
+            caption: $request->filled('caption') ? $request->string('caption')->toString() : null,
+            productId: $request->filled('product_id') ? $request->integer('product_id') : null,
         );
 
         return to_route('storefront.gallery')

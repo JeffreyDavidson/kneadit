@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Staff\DayOfWeek;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
@@ -33,21 +34,22 @@ final class BusinessHoursStep extends OnboardingStep
         }
 
         // Override with existing settings if available
-        $existingHours = resolve(SettingsManager::class)->get('operating_hours');
-        if ($existingHours) {
-            $hours = json_decode($existingHours, true);
-            if (is_array($hours)) {
-                // First, mark all days as closed
-                foreach (DayOfWeek::cases() as $day) {
-                    $defaults[$day->value] = false;
+        $hours = SettingValue::decodedMap(resolve(SettingsManager::class)->get('operating_hours'));
+        if ($hours !== []) {
+            // First, mark all days as closed
+            foreach (DayOfWeek::cases() as $day) {
+                $defaults[$day->value] = false;
+            }
+
+            // Then mark saved days as open
+            foreach ($hours as $dayValue => $times) {
+                if (! is_array($times)) {
+                    continue;
                 }
 
-                // Then mark saved days as open
-                foreach ($hours as $dayValue => $times) {
-                    $defaults[$dayValue] = true;
-                    $defaults["{$dayValue}_open"] = $times['open'] ?? '07:00';
-                    $defaults["{$dayValue}_close"] = $times['close'] ?? '18:00';
-                }
+                $defaults[$dayValue] = true;
+                $defaults["{$dayValue}_open"] = is_string($times['open'] ?? null) ? $times['open'] : '07:00';
+                $defaults["{$dayValue}_close"] = is_string($times['close'] ?? null) ? $times['close'] : '18:00';
             }
         }
 

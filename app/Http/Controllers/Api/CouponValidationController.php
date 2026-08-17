@@ -13,9 +13,8 @@ class CouponValidationController extends Controller
 {
     public function __invoke(ApplyDiscountRequest $request, CouponService $couponService): CouponValidationResource
     {
-        $validated = $request->validated();
-
-        $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
+        $code = $request->string('code')->toString();
+        $result = $couponService->validate($code, $request->float('subtotal'));
 
         if (! $result->valid) {
             throw ValidationException::withMessages([
@@ -30,7 +29,7 @@ class CouponValidationController extends Controller
             : $coupon?->fixed_amount?->dollars();
 
         return new CouponValidationResource([
-            'code' => $validated['code'],
+            'code' => $code,
             'valid' => true,
             'discount_amount' => $result->discount,
             'type' => $coupon?->type?->value,
