@@ -38,9 +38,10 @@ test('blocked dates show as unavailable', function () {
 
     $response->assertOk();
 
-    $dates = collect($response->json('data'));
-    $blockedEntry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($blockedEntry)->not->toBeNull()->and($blockedEntry['available'])->toBeFalse();
+    $response->assertJsonFragment([
+        'date' => $tomorrow->toDateString(),
+        'available' => false,
+    ]);
 });
 
 test('closed days show as unavailable', function () {
@@ -60,9 +61,11 @@ test('closed days show as unavailable', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json('data'));
-    $entry = $dates->firstWhere('date', $target->toDateString());
-    expect($entry)->not->toBeNull()->and($entry['available'])->toBeFalse()->and($entry['reason'])->toBe('Closed');
+    $response->assertJsonFragment([
+        'date' => $target->toDateString(),
+        'available' => false,
+        'reason' => 'Closed',
+    ]);
 });
 
 test('open days show as available', function () {
@@ -78,9 +81,10 @@ test('open days show as available', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json('data'));
-    $entry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($entry)->not->toBeNull()->and($entry['available'])->toBeTrue();
+    $response->assertJsonFragment([
+        'date' => $tomorrow->toDateString(),
+        'available' => true,
+    ]);
 });
 
 test('capacity is reflected in availability response', function () {
@@ -94,7 +98,8 @@ test('capacity is reflected in availability response', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json('data'));
-    $entry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($entry)->toHaveKey('remaining_capacity')->and($entry['remaining_capacity'])->toBe(10);
+    $response->assertJsonFragment([
+        'date' => $tomorrow->toDateString(),
+        'remaining_capacity' => 10,
+    ]);
 });

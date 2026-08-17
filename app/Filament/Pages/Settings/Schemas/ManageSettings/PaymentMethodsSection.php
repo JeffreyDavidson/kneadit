@@ -30,7 +30,7 @@ class PaymentMethodsSection
                     ->columnSpanFull(),
 
                 View::make('filament.pages.shared.stripe-connect-status')
-                    ->visible(fn (Get $get) => in_array(PaymentMethod::Stripe->value, $get('payment_methods') ?? [])),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
 
                 Grid::make(2)
                     ->schema([
@@ -41,12 +41,24 @@ class PaymentMethodsSection
                             ->label('PayPal Client Secret')
                             ->password(),
                     ])
-                    ->visible(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payment_methods') ?? [])),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
 
                 Toggle::make('paypal_sandbox')
                     ->label('PayPal Sandbox Mode')
                     ->helperText('Enable to test payments without real money')
-                    ->visible(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payment_methods') ?? [])),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
             ]);
+    }
+
+    /** @return list<string> */
+    private static function selectedMethods(Get $get): array
+    {
+        $methods = $get('payment_methods');
+
+        if (! is_array($methods)) {
+            return [];
+        }
+
+        return array_values(array_filter($methods, is_string(...)));
     }
 }

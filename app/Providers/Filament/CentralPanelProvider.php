@@ -22,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -32,7 +33,7 @@ class CentralPanelProvider extends PanelProvider
         return $panel
             ->id('central')
             ->path('admin')
-            ->domains(config('tenancy.central_domains'))
+            ->domains($this->centralDomains())
             ->login()
             ->spa()
             ->maxContentWidth('full')
@@ -115,5 +116,13 @@ class CentralPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /** @return list<string> */
+    private function centralDomains(): array
+    {
+        $domains = Config::array('tenancy.central_domains', []);
+
+        return array_values(array_filter($domains, is_string(...)));
     }
 }

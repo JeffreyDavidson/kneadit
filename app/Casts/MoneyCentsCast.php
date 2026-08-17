@@ -5,6 +5,7 @@ namespace App\Casts;
 use App\ValueObjects\Money;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 /**
  * Cast for money columns stored as integer cents (bigint).
@@ -23,6 +24,10 @@ class MoneyCentsCast implements CastsAttributes
     {
         if ($value === null) {
             return null;
+        }
+
+        if (! is_int($value) && ! is_string($value)) {
+            throw new InvalidArgumentException("{$key} must contain integer cents.");
         }
 
         return Money::fromCents((int) $value);

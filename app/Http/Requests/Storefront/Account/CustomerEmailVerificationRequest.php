@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Storefront\Account;
 
+use App\Models\Customers\Customer;
+use App\Support\DatabaseValue;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,13 +13,16 @@ class CustomerEmailVerificationRequest extends FormRequest
     {
         $customer = $this->user('customer');
 
-        if (! $customer) {
+        if (! $customer instanceof Customer) {
             return false;
         }
 
-        throw_unless(hash_equals((string) $customer->getKey(), (string) $this->route('id')), AuthorizationException::class);
+        $routeId = DatabaseValue::nullableString($this->route('id')) ?? '';
+        $routeHash = DatabaseValue::nullableString($this->route('hash')) ?? '';
 
-        return hash_equals(sha1($customer->getEmailForVerification()), (string) $this->route('hash'));
+        throw_unless(hash_equals(DatabaseValue::scalarString($customer->getKey()), $routeId), AuthorizationException::class);
+
+        return hash_equals(sha1($customer->getEmailForVerification()), $routeHash);
     }
 
     /** @return array<string, array<int, string>> */

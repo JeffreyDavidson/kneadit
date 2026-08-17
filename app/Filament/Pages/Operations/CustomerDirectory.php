@@ -89,13 +89,13 @@ class CustomerDirectory extends Page
         return CustomerDirectoryStatsQuery::get();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array{id: int, name: string, email: string, phone: string, total_orders: int|null, total_spent: string|false, last_order_date: non-falsy-string}> */
     public function getCustomers(): Collection
     {
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function (mixed $query) {
+            ->with(['orders' => function (EloquentBuilder $query): void {
                 $query->latest()->take(1);
             }]);
 
@@ -143,11 +143,16 @@ class CustomerDirectory extends Page
 
     public function addNote(int $customerId): void
     {
-        $this->noteForm->validate();
+        $state = $this->noteForm->getState();
+        $note = $state['note'] ?? null;
+
+        if (! is_string($note)) {
+            throw new \InvalidArgumentException('A customer note is required.');
+        }
 
         resolve(AddCustomerNote::class)(
             $customerId,
-            ($this->noteData ?? [])['note'] ?? '',
+            $note,
             (int) Auth::id(),
         );
 

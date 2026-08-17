@@ -68,7 +68,20 @@ class TenantComparisonQuery
         return $results;
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /**
+     * @return array<int, array{
+     *     id: string,
+     *     name: string,
+     *     plan: string,
+     *     total_orders: int,
+     *     month_orders: int,
+     *     total_products: int,
+     *     total_categories: int,
+     *     avg_review: float,
+     *     owner: string,
+     *     email: string
+     * }>
+     */
     public static function leaderboard(): array
     {
         $tenants = Tenant::all();
@@ -119,7 +132,7 @@ class TenantComparisonQuery
         ];
     }
 
-    /** @param  array<string, mixed>  $data */
+    /** @param array{total_orders: int, total_products: int, setup_completed: int} $data */
     public static function calculateHealthScore(Tenant $tenant, array $data): int
     {
         $daysSinceLogin = $tenant->last_login_at

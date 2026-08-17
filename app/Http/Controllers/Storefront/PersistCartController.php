@@ -16,15 +16,39 @@ class PersistCartController extends Controller
 
         $manager->updateContact(
             $cart,
-            $request->validated('customer_email'),
-            $request->validated('customer_name'),
+            $request->filled('customer_email') ? $request->string('customer_email')->toString() : null,
+            $request->filled('customer_name') ? $request->string('customer_name')->toString() : null,
         );
 
-        $manager->replaceItems($cart, $request->validated('items') ?? []);
+        $manager->replaceItems($cart, $this->items($request->array('items')));
 
         return ApiResponse::success([
             'cart_token' => $cart->cart_token,
             'item_count' => $cart->items()->count(),
         ], 'Cart saved.');
+    }
+
+    /**
+     * @param array<int, mixed> $items
+     * @return array<int, array{product_id: int, quantity: int}>
+     */
+    private function items(array $items): array
+    {
+        $normalized = [];
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $productId = $item['product_id'] ?? null;
+            $quantity = $item['quantity'] ?? null;
+
+            if (is_int($productId) && is_int($quantity)) {
+                $normalized[] = ['product_id' => $productId, 'quantity' => $quantity];
+            }
+        }
+
+        return $normalized;
     }
 }
