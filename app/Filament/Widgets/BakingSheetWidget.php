@@ -39,7 +39,7 @@ class BakingSheetWidget extends Widget
             ->exists();
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return array<int, array{product_id: int, name: string, quantity: int}> */
     public function getRows(): array
     {
         return OrderItem::query()
@@ -59,8 +59,8 @@ class BakingSheetWidget extends Widget
             ->orderByDesc('total_quantity')
             ->get()
             ->map(fn (OrderItem $item): array => [
-                'product_id' => $item->product_id,
-                'name' => (string) $item->getAttribute('product_name'),
+                'product_id' => (int) $item->product_id,
+                'name' => is_string($item->getAttribute('product_name')) ? $item->getAttribute('product_name') : 'Unknown Product',
                 'quantity' => (int) $item->getAttribute('total_quantity'),
             ])
             ->all();

@@ -49,7 +49,11 @@ class CateringPipelineWidget extends Widget
     {
         // Cache the id, not the model. Cache stores hydrate as __PHP_Incomplete_Class
         // because config(cache.serializable_classes) is false. Same shape as #302.
-        $id = $this->cached('latest_id', [900, 1800], fn (): ?int => CateringInquiry::query()->latest()->value('id'));
+        $id = $this->cached('latest_id', [900, 1800], function (): ?int {
+            $id = CateringInquiry::query()->latest()->value('id');
+
+            return is_numeric($id) ? (int) $id : null;
+        });
 
         return $id ? CateringInquiry::query()->whereKey($id)->first() : null;
     }
