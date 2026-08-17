@@ -6,12 +6,16 @@ use App\Models\Orders\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @mixin Order */
+/**
+ * @property Order $resource
+ *
+ * @mixin Order
+ */
 class OrderResource extends JsonApiResource
 {
     public function toId(Request $request): string
     {
-        return (string) $this->resource->getKey();
+        return (string) $this->resource->id;
     }
 
     public function toType(Request $request): string
