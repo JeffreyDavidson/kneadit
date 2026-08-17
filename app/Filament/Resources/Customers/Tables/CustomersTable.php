@@ -21,6 +21,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
@@ -178,17 +179,7 @@ class CustomersTable
 
     private static function atRiskDays(): int
     {
-        $value = config('analytics.at_risk_threshold_days', 30);
-
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
-            throw new \UnexpectedValueException('The at-risk threshold must be an integer number of days.');
-        }
-
-        return (int) $value;
+        return Config::integer('analytics.at_risk_threshold_days', 30);
     }
 
     private static function birthdayLabel(mixed $state, Customer $customer): string

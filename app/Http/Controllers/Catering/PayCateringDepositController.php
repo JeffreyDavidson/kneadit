@@ -8,6 +8,7 @@ use App\Models\Customers\CateringInquiry;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\CateringDepositCheckoutService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
 
 class PayCateringDepositController extends Controller
 {
@@ -18,7 +19,7 @@ class PayCateringDepositController extends Controller
         RecordCateringDeposit $depositAction,
     ): RedirectResponse {
         if ($inquiry->deposit_paid_at !== null) {
-            return redirect()->away(config('app.url'))
+            return redirect()->away(Config::string('app.url'))
                 ->with('success', 'Deposit already received — thank you!');
         }
 
@@ -31,7 +32,7 @@ class PayCateringDepositController extends Controller
 
         $url = $checkout->redirectToCheckout($inquiry, $depositDollars);
 
-        abort_unless((bool) $url, 503, 'Online deposit payment is not currently available.');
+        abort_if($url === null, 503, 'Online deposit payment is not currently available.');
 
         return redirect($url);
     }
