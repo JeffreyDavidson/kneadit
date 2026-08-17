@@ -65,8 +65,15 @@ test('dispatch body contains event and data', function () {
     Http::assertSent(function ($request) {
         $body = json_decode($request->body(), true);
 
+        if (! is_array($body)) {
+            return false;
+        }
+
+        $data = $body['data'] ?? null;
+
         return $body['event'] === 'order.created'
-            && $body['data']['order_number'] === 'ORD-001'
+            && is_array($data)
+            && ($data['order_number'] ?? null) === 'ORD-001'
             && isset($body['timestamp']);
     });
 });

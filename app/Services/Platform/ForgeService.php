@@ -3,6 +3,7 @@
 namespace App\Services\Platform;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -148,9 +149,7 @@ class ForgeService
 
     private function configString(string $key): string
     {
-        $value = config($key, '');
-
-        return is_string($value) ? $value : '';
+        return Config::string($key, '');
     }
 
     /** @return list<string> */
