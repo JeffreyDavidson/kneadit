@@ -46,7 +46,10 @@ class ModifyOrderController extends Controller
             $quantity = $item['quantity'] ?? null;
 
             if (is_int($orderItemId) && is_int($quantity)) {
-                $normalized[] = ['order_item_id' => $orderItemId, 'quantity' => $quantity];
+                $normalized[] = [
+                    'order_item_id' => $orderItemId,
+                    'quantity' => $quantity,
+                ];
             }
         }
 

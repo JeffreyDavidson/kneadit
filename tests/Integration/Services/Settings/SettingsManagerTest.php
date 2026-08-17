@@ -62,7 +62,7 @@ test('sensitive tenant settings are encrypted at rest and decrypted when read', 
 ]);
 
 test('legacy plaintext credentials remain readable before their migration runs', function () {
-    Setting::query()->create(['key' => 'webhook_secret', 'value' => 'legacy-plaintext-secret']);
+    Setting::factory()->create(['key' => 'webhook_secret', 'value' => 'legacy-plaintext-secret']);
 
     $manager = resolve(SettingsManager::class);
     $manager->flushCache();
@@ -71,7 +71,7 @@ test('legacy plaintext credentials remain readable before their migration runs',
 });
 
 test('credential migration encrypts legacy values without double encryption', function () {
-    Setting::query()->create(['key' => 'paypal_client_secret', 'value' => 'legacy-paypal-secret']);
+    Setting::factory()->create(['key' => 'paypal_client_secret', 'value' => 'legacy-paypal-secret']);
 
     $migration = require database_path('migrations/tenant/2026_08_17_000000_encrypt_sensitive_tenant_settings.php');
     $migration->up();
