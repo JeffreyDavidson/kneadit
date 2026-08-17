@@ -13,13 +13,14 @@ Both surfaces share application code. The request host and tenancy middleware de
 
 The central connection is named `central`. It contains the platform tenant and domain records plus central concerns such as platform settings and subscription state. Every bakery has a separate SQLite database. `config/tenancy.php` uses `TenantSQLiteDatabaseManager`, with files rooted at `TENANT_DB_PATH` or `database_path()` when the variable is unset. `TenantDatabasePath` rejects path separators/traversal, and the manager refuses symlinks before connecting.
 
-Tenancy bootstraps three Laravel facilities:
+Tenancy bootstraps four Laravel facilities:
 
 - The database connection switches to the tenant database.
 - cache operations receive a tenant-specific tag.
+- the private CSV import disk receives a tenant-specific root.
 - queued work carries tenant context through `QueueTenancyBootstrapper`.
 
-Filesystem tenancy is intentionally disabled; tenant asset paths must use the application's explicit asset and settings conventions rather than assuming the storage root changes automatically.
+Filesystem tenancy is deliberately scoped to the `imports` disk. Existing local/public asset URLs keep their established behavior, while sensitive imports cannot cross tenant roots.
 
 Tenant creation runs database creation and tenant migrations synchronously from `TenancyServiceProvider`. Tenant deletion removes the tenant database synchronously. Central migrations live in `database/migrations`; tenant migrations live in `database/migrations/tenant` and are run through `tenants:migrate`.
 
@@ -41,7 +42,7 @@ Central domains are configured in `config/tenancy.php`; production includes `get
 
 An unknown tenant domain returns 404. If a central tenant record exists but its SQLite file does not, local development recreates and migrates it automatically. Production returns 503 and instructs the operator to run `php artisan tenants:doctor --fix`.
 
-The root URL is deliberately universal: `RootController` serves the platform landing page on a central domain and the bakery storefront on a tenant domain.
+The root URL is deliberately universal: the global middleware establishes central or tenant context once, then `RootController` serves the platform landing page or bakery storefront without re-running tenancy middleware.
 
 ## Application layers
 
@@ -69,7 +70,7 @@ Models, actions, services, enums, builders, queries, policies, factories, and te
 - **Financial:** income, expenses, coupons, gift cards, refunds, reporting, tax export, Stripe, and PayPal.
 - **Operations and staff:** schedules, blocked dates, holidays, capacity, check-ins, staff invitations and roles, activity logs, and webhook delivery.
 - **Analytics:** page and product-impression records use a keyed, pseudonymous visitor identifier. Raw network/device identifiers are not persisted, recording failures are reported without breaking storefront responses, and scheduled tenant-wide retention bounds stored history.
-- **Storage:** tenant-aware public assets remain on the `public` disk. Sensitive CSV imports use a dedicated private disk that is neither directly served nor shared across tenant storage roots; all configured disks fail loudly on storage errors.
+- **Storage:** intentionally public assets remain on the established `public` disk. Sensitive CSV imports use a dedicated private disk that is neither directly served nor shared across tenant roots; all configured disks fail loudly on storage errors.
 
 ## Order lifecycle
 
@@ -111,6 +112,8 @@ Settings are database-backed key/value records with separate tenant and platform
 Controllers should receive the typed `TenantSettings` DTO when rendering storefront data. Write paths use the relevant action plus `SettingsManager`. Tenancy transitions flush the manager cache, preventing values from one bakery surviving into another tenant context.
 
 Central onboarding screens read denormalized product, category, and order counts from the tenant record instead of opening every tenant database during a web request. `tenants:sync-onboarding-metrics` reconciles those counts every fifteen minutes and should be run once immediately after deploying its central migration.
+
+Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
 
 ## Frontend
 

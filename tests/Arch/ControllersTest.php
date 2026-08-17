@@ -52,6 +52,10 @@ arch('controllers should not use DB facade directly')
         App\Http\Controllers\Central\ConsumeImpersonationController::class,
     ]);
 
+arch('controllers should not invoke tenancy middleware directly')
+    ->expect('Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain')
+    ->not->toBeUsedIn('App\Http\Controllers');
+
 foreach ($controllerFiles as $controllerClass) {
     $shortName = str_replace('App\\Http\\Controllers\\', '', $controllerClass);
 

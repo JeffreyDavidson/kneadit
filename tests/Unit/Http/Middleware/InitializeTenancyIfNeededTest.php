@@ -45,9 +45,12 @@ test('passes through for central domains', function () {
 test('returns 503 when central row exists but tenant SQLite file is missing', function () {
     config(['tenancy.central_domains' => ['getkneadit.app']]);
 
-    $stancl = Mockery::mock(Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class);
-    $stancl->shouldReceive('handle')
-        ->andThrow(new Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException('tenantfoo'));
+    $stancl = new class extends Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain {
+        public function handle(mixed $request, Closure $next): never
+        {
+            throw new Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException('tenantfoo');
+        }
+    };
     app()->instance(Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class, $stancl);
 
     $middleware = new InitializeTenancyIfNeeded;

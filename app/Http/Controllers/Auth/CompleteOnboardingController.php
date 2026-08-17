@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Tenants\CompleteReferral;
-use App\Actions\Tenants\CreateTenant;
-use App\Events\Platform\TenantOnboarded;
+use App\Actions\Tenants\CompleteTenantOnboarding;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOnboardingRequest;
 use App\Models\Staff\User;
@@ -18,29 +16,24 @@ class CompleteOnboardingController extends Controller
         StoreOnboardingRequest $request,
         #[CurrentUser]
         User $user,
-        CreateTenant $createTenant,
-        CompleteReferral $completeReferral,
+        CompleteTenantOnboarding $completeOnboarding,
     ): RedirectResponse {
-        $tenant = $createTenant(
+        $adminUrl = $request->adminUrl();
+
+        $completeOnboarding(
             user: $user,
-            storeName: $request->validated('store_name'),
+            storeName: $request->string('store_name')->toString(),
             subdomain: $request->subdomain(),
             useKneadItStorefront: $request->usesKneadItStorefront(),
-            externalWebsite: $request->validated('external_website'),
-        );
-
-        $completeReferral(
+            externalWebsite: $request->filled('external_website') ? $request->string('external_website')->toString() : null,
             referralCode: $request->referralCode(),
-            tenantId: (string) $tenant->id,
-            email: $user->email,
+            adminUrl: $adminUrl,
         );
-
-        event(new TenantOnboarded($user, $tenant, $request->adminUrl()));
 
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->away($request->adminUrl());
+        return redirect()->away($adminUrl);
     }
 }
