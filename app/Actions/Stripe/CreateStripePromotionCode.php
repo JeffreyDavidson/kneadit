@@ -3,6 +3,7 @@
 namespace App\Actions\Stripe;
 
 use App\DataTransferObjects\Stripe\StripePromotionCodeResult;
+use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Stripe\StripeClient;
 
@@ -56,9 +57,9 @@ class CreateStripePromotionCode
         $currency = null;
 
         if ($amountOffCents !== null) {
-            $configuredCurrency = config('cashier.currency', 'usd');
+            $configuredCurrency = Config::string('cashier.currency', 'usd');
 
-            if (! is_string($configuredCurrency) || $configuredCurrency === '') {
+            if ($configuredCurrency === '') {
                 throw new \UnexpectedValueException('The Stripe currency must be a non-empty string.');
             }
 

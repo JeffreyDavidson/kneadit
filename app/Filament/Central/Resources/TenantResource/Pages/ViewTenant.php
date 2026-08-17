@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Rule;
@@ -138,11 +139,7 @@ class ViewTenant extends ViewRecord
 
     private function storefrontUrl(): string
     {
-        $appUrl = config('app.url');
-
-        if (! is_string($appUrl)) {
-            throw new \UnexpectedValueException('The application URL must be a string.');
-        }
+        $appUrl = Config::string('app.url');
 
         $host = parse_url($appUrl, PHP_URL_HOST);
         $scheme = parse_url($appUrl, PHP_URL_SCHEME);
