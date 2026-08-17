@@ -4,6 +4,8 @@ namespace App\Queries\Financial;
 
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class RevenueQuery
 {
@@ -14,7 +16,7 @@ class RevenueQuery
      */
     public static function total(DateRange|array $range): float
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         // orders.total is now bigint cents (see migration 2026_04_22_201500);
         // convert the aggregate back to dollars for callers that still expect a float.
@@ -32,7 +34,7 @@ class RevenueQuery
      */
     public static function dailyBreakdown(DateRange|array $range): array
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         return Order::query()
             ->active()->paid()
@@ -52,11 +54,25 @@ class RevenueQuery
      */
     public static function orderCount(DateRange|array $range): int
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         return Order::query()
             ->active()
             ->whereBetween('delivery_date', $dates)
             ->count();
+    }
+
+    /**
+     * @param DateRange|array<int, string> $range
+     * @return array{Carbon, Carbon}
+     */
+    private static function bounds(DateRange|array $range): array
+    {
+        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+
+        return [
+            Date::parse($dates[0])->startOfDay(),
+            Date::parse($dates[1])->endOfDay(),
+        ];
     }
 }
