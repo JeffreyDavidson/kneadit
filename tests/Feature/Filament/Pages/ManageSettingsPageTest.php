@@ -76,7 +76,7 @@ test('sendTestWebhook persists current settings then dispatches a synthetic orde
     Http::fake(['*' => Http::response('ok', 200)]);
 
     Livewire::test(ManageSettings::class)
-        ->set('webhook_url', 'https://hooks.example.com/test')
+        ->set('webhook_url', 'https://8.8.8.8/test')
         ->set('webhook_secret', 'test-secret')
         ->call('sendTestWebhook');
 
