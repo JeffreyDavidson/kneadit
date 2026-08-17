@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('customers:backfill-referral-codes runs successfully with no tenants', function () {
-    $this->artisan('customers:backfill-referral-codes')
-        ->expectsOutputToContain('Total customers updated: 0')
-        ->assertSuccessful();
+    expect(Artisan::call('customers:backfill-referral-codes'))->toBe(0)
+        ->and(Artisan::output())->toContain('Total customers updated: 0');
 });
 
 test('command source uses TenancyManager + GenerateCustomerReferralCode action', function () {

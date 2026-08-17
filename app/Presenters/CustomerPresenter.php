@@ -99,7 +99,7 @@ final class CustomerPresenter
     }
 
     /** @return array<int, array<string, mixed>> */
-    protected function formattedOrders(): array
+    private function formattedOrders(): array
     {
         return $this->customer->orders->map(fn (Order $order) => [
             'id' => $order->id,
@@ -113,7 +113,7 @@ final class CustomerPresenter
     }
 
     /** @return array<int, array<string, mixed>> */
-    protected function formattedNotes(): array
+    private function formattedNotes(): array
     {
         return $this->customer->customerNotes->map(fn (CustomerNote $note) => [
             'id' => $note->id,
@@ -124,7 +124,7 @@ final class CustomerPresenter
     }
 
     /** @return array<string, mixed> */
-    protected function stats(): array
+    private function stats(): array
     {
         $orders = $this->customer->orders;
         // ->sum('total') would call (float) on Money objects via __toString and parse
@@ -140,10 +140,10 @@ final class CustomerPresenter
                 : 0,
             'last_order' => $orders->first()?->created_at?->format('M j, Y'),
             'last_order_at' => $orders->first()?->created_at,
-            'days_since_last_order' => $this->daysSinceLastOrder(),
-            'is_at_risk' => $this->isAtRisk(),
-            'total_points' => $this->totalPoints(),
-            'lifetime_points' => $this->lifetimePointsEarned(),
+            'days_since_last_order' => $this->metrics()->daysSinceLastOrder,
+            'is_at_risk' => $this->metrics()->isAtRisk,
+            'total_points' => $this->metrics()->totalPoints,
+            'lifetime_points' => $this->metrics()->lifetimePointsEarned,
             'created_at' => $this->customer->created_at,
         ];
     }

@@ -2,6 +2,8 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\AdminAuditLog;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -10,7 +12,7 @@ beforeEach(function () {
 });
 
 test('command runs without errors', function () {
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 });
 
 test('trial expiring in 48h creates churn alert', function () {
@@ -25,14 +27,13 @@ test('trial expiring in 48h creates churn alert', function () {
         'updated_at' => now(),
     ]);
 
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'expiring-bakery')
-        ->first();
+        ->firstOrFail();
 
-    expect($log)->not->toBeNull('Expected a churn_alert audit log for expiring tenant')
-        ->and($log->description)->toContain('Trial Expiring');
+    expect($log->description)->toContain('Trial Expiring');
 });
 
 test('no login in 7+ days creates churn alert', function () {
@@ -47,7 +48,7 @@ test('no login in 7+ days creates churn alert', function () {
         'updated_at' => now(),
     ]);
 
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'no-login-bakery')
@@ -57,7 +58,7 @@ test('no login in 7+ days creates churn alert', function () {
 });
 
 test('zero orders creates churn alert for old tenants', function () {
-    $minAgeDays = config('monitoring.churn_min_tenant_age_days', 14);
+    $minAgeDays = Config::integer('monitoring.churn_min_tenant_age_days', 14);
 
     createTenant([
         'id' => 'no-orders-bakery',
@@ -68,15 +69,14 @@ test('zero orders creates churn alert for old tenants', function () {
         'updated_at' => now()->subDays($minAgeDays + 5),
     ]);
 
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'no-orders-bakery')
         ->whereJsonContains('metadata->type', 'no_orders')
-        ->first();
+        ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->description)->toContain('Zero orders');
+    expect($log->description)->toContain('Zero orders');
 });
 
 test('young tenants are not checked for zero orders', function () {
@@ -89,7 +89,7 @@ test('young tenants are not checked for zero orders', function () {
         'updated_at' => now()->subDays(3),
     ]);
 
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'young-bakery')
@@ -112,7 +112,7 @@ test('tenant with trial far in the future does not trigger trial alert', functio
         'updated_at' => now(),
     ]);
 
-    $this->artisan('churn:check')->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0);
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'healthy-bakery')
@@ -123,7 +123,6 @@ test('tenant with trial far in the future does not trigger trial alert', functio
 });
 
 test('command outputs total alert count', function () {
-    $this->artisan('churn:check')
-        ->expectsOutputToContain('Churn check complete. 0 alert(s) logged.')
-        ->assertSuccessful();
+    expect(Artisan::call('churn:check'))->toBe(0)
+        ->and(Artisan::output())->toContain('Churn check complete. 0 alert(s) logged.');
 });

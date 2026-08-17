@@ -16,7 +16,7 @@ test('product relationship returns the associated product', function () {
         'product_id' => $product->id,
     ]);
 
-    expect($entry->product->id)->toBe($product->id);
+    expect($entry->product?->id)->toBe($product->id);
 });
 
 test('status is cast to WaitlistStatus enum', function () {
@@ -50,7 +50,7 @@ test('for date scope filters by requested date', function () {
     $results = WaitlistEntry::query()->forDate('2026-06-15')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($entry->id);
+        ->and($results->firstOrFail()->id)->toBe($entry->id);
 });
 
 test('for date scope accepts Carbon instance', function () {
@@ -61,5 +61,5 @@ test('for date scope accepts Carbon instance', function () {
     $results = WaitlistEntry::query()->forDate(Illuminate\Support\Facades\Date::parse('2026-07-04'))->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($entry->id);
+        ->and($results->firstOrFail()->id)->toBe($entry->id);
 });

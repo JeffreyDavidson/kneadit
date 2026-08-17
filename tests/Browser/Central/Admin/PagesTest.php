@@ -1,6 +1,8 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$centralUrl = Config::string('browser-testing.central_url');
 
 // Smoke tests for the landlord (central) admin panel — resource indexes and
 // platform pages. Each test loads a pre-authenticated browser context via

@@ -16,7 +16,7 @@ test('creating an item recomputes the parent quoted_amount', function () {
         'quantity' => 3,
     ]);
 
-    expect($inquiry->fresh()->quoted_amount->dollars())->toBe(300.00);
+    expect($inquiry->refresh()->quoted_amount?->dollars())->toBe(300.00);
 });
 
 test('updating an item recomputes the parent quoted_amount', function () {
@@ -28,7 +28,7 @@ test('updating an item recomputes the parent quoted_amount', function () {
 
     $item->update(['quantity' => 5]);
 
-    expect($inquiry->fresh()->quoted_amount->dollars())->toBe(250.00);
+    expect($inquiry->refresh()->quoted_amount?->dollars())->toBe(250.00);
 });
 
 test('deleting an item recomputes the parent quoted_amount', function () {
@@ -38,7 +38,7 @@ test('deleting an item recomputes the parent quoted_amount', function () {
 
     $delete->delete();
 
-    expect($inquiry->fresh()->quoted_amount->dollars())->toBe(100.00);
+    expect($inquiry->refresh()->quoted_amount?->dollars())->toBe(100.00);
 });
 
 test('removing the last item zeroes the parent quoted_amount', function () {
@@ -47,7 +47,7 @@ test('removing the last item zeroes the parent quoted_amount', function () {
 
     $only->delete();
 
-    expect($inquiry->fresh()->quoted_amount->dollars())->toBe(0.00);
+    expect($inquiry->refresh()->quoted_amount?->dollars())->toBe(0.00);
 });
 
 test('multiple items sum correctly', function () {
@@ -57,5 +57,5 @@ test('multiple items sum correctly', function () {
     CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create(['unit_price' => 25, 'quantity' => 4]); // 100
     CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create(['unit_price' => 200, 'quantity' => 1]); // 200
 
-    expect($inquiry->fresh()->quoted_amount->dollars())->toBe(400.00);
+    expect($inquiry->refresh()->quoted_amount?->dollars())->toBe(400.00);
 });

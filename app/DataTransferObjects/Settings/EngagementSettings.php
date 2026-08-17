@@ -39,15 +39,15 @@ final readonly class EngagementSettings
         return new self(
             birthdayProgramEnabled: settings('birthday_program_enabled', '0') === '1',
             birthdayCouponEnabled: settings('birthday_coupon_enabled', '1') === '1',
-            birthdayDiscountPercentage: (int) settings('birthday_discount_percentage', '15'),
-            birthdayCouponValidDays: (int) settings('birthday_coupon_valid_days', '7'),
+            birthdayDiscountPercentage: SettingValue::int(settings('birthday_discount_percentage'), 15),
+            birthdayCouponValidDays: SettingValue::int(settings('birthday_coupon_valid_days'), 7),
             reviewRequestsEnabled: settings('review_requests_enabled', '0') === '1',
-            reviewRequestDelayHours: (int) settings('review_request_delay_hours', '24'),
+            reviewRequestDelayHours: SettingValue::int(settings('review_request_delay_hours'), 24),
             repeatRemindersEnabled: settings('repeat_reminders_enabled', '0') === '1',
-            repeatReminderDays: (int) settings('repeat_reminder_days', '30'),
+            repeatReminderDays: SettingValue::int(settings('repeat_reminder_days'), 30),
             announcementEnabled: settings('announcement_enabled', '0') === '1',
-            announcementText: (string) settings('announcement_text', ''),
-            announcementType: (string) settings('announcement_type', 'info'),
+            announcementText: SettingValue::string(settings('announcement_text')),
+            announcementType: SettingValue::string(settings('announcement_type'), 'info'),
             // Per-email toggles default true (backwards compat for existing tenants).
             emailOrderPlacedEnabled: settings('email_order_placed_enabled', '1') === '1',
             emailOrderConfirmedEnabled: settings('email_order_confirmed_enabled', '1') === '1',
@@ -58,11 +58,11 @@ final readonly class EngagementSettings
             emailOrderMessageEnabled: settings('email_order_message_enabled', '1') === '1',
             emailProductAvailableEnabled: settings('email_product_available_enabled', '1') === '1',
             customerReferralProgramEnabled: settings('customer_referral_program_enabled', '0') === '1',
-            customerReferralDiscountDollars: (int) settings('customer_referral_discount_dollars', '10'),
+            customerReferralDiscountDollars: SettingValue::int(settings('customer_referral_discount_dollars'), 10),
             abandonedCartRecoveryEnabled: settings('abandoned_cart_recovery_enabled', '0') === '1',
-            abandonedCartRecoveryHours: (int) settings('abandoned_cart_recovery_hours', '24'),
-            abandonedCartRecoveryCouponDollars: (int) settings('abandoned_cart_recovery_coupon_dollars', '5'),
-            lowReviewAlertThreshold: (int) settings('low_review_alert_threshold', '2'),
+            abandonedCartRecoveryHours: SettingValue::int(settings('abandoned_cart_recovery_hours'), 24),
+            abandonedCartRecoveryCouponDollars: SettingValue::int(settings('abandoned_cart_recovery_coupon_dollars'), 5),
+            lowReviewAlertThreshold: SettingValue::int(settings('low_review_alert_threshold'), 2),
         );
     }
 

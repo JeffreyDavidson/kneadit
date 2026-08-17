@@ -11,10 +11,14 @@ use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Testing\PendingCommand;
 use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
+use Mockery\Expectation;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -115,6 +119,7 @@ function livewire(string $component, array $parameters = []): Testable
     return Livewire::test($component, $parameters);
 }
 
+/** @return list<class-string> */
 function tenantMiddleware(): array
 {
     return [
@@ -161,12 +166,42 @@ function authenticatedVisit(string $url)
     return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
 }
 
-function authenticatedCentralVisit(string $url)
+/**
+ * Start an Artisan command with Laravel's mocked console output enabled.
+ *
+ * @param array<string, mixed> $parameters
+ */
+function pendingArtisan(string $command, array $parameters = []): PendingCommand
+{
+    $pendingCommand = test()->artisan($command, $parameters);
+
+    throw_if(is_int($pendingCommand), LogicException::class, 'Console output mocking must be enabled for pending Artisan assertions.');
+
+    return $pendingCommand;
+}
+
+function mockExpectation(MockInterface|LegacyMockInterface $mock, string $method): Expectation
+{
+    $mock->shouldReceive($method);
+    $director = $mock->mockery_getExpectationsFor($method);
+
+    throw_if($director === null, LogicException::class, "Mockery did not register an expectation for {$method}.");
+
+    $expectations = $director->getExpectations();
+    $lastKey = array_key_last($expectations);
+    $expectation = $lastKey === null ? null : $expectations[$lastKey];
+
+    throw_unless($expectation instanceof Expectation, LogicException::class, "Expected a Mockery expectation for {$method}.");
+
+    return $expectation;
+}
+
+function authenticatedCentralVisit(string $url): Pest\Browser\Api\PendingAwaitablePage
 {
     return authenticatedVisitFor($url, 'tests/Browser/.central-admin-session.json');
 }
 
-function authenticatedVisitFor(string $url, string $relativeSessionPath)
+function authenticatedVisitFor(string $url, string $relativeSessionPath): Pest\Browser\Api\PendingAwaitablePage
 {
     ensureFreshAdminSessions(base_path($relativeSessionPath));
 
@@ -183,9 +218,9 @@ function fixtureId(string $key): int
 
     $ids = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
 
-    throw_unless(isset($ids[$key]), RuntimeException::class, "Fixture ID '{$key}' not found in {$path}. The prepare-admin-session script may need updating.");
+    throw_unless(is_array($ids) && isset($ids[$key]) && is_int($ids[$key]), RuntimeException::class, "Fixture ID '{$key}' not found in {$path}. The prepare-admin-session script may need updating.");
 
-    return (int) $ids[$key];
+    return $ids[$key];
 }
 
 /**
@@ -226,8 +261,26 @@ function adminSessionIsStale(): bool
         $state = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
         $now = time();
 
-        foreach ($state['cookies'] ?? [] as $cookie) {
-            $expires = (int) ($cookie['expires'] ?? 0);
+        if (! is_array($state)) {
+            return true;
+        }
+
+        $cookies = $state['cookies'] ?? [];
+
+        if (! is_array($cookies)) {
+            return true;
+        }
+
+        foreach ($cookies as $cookie) {
+            if (! is_array($cookie)) {
+                return true;
+            }
+
+            $expires = $cookie['expires'] ?? 0;
+
+            if (! is_int($expires) && ! is_float($expires)) {
+                return true;
+            }
 
             // Treat any cookie within 60s of expiry as already stale to
             // avoid a session expiring mid-test.
@@ -483,7 +536,8 @@ function createCentralTables(): void
     }
 }
 
-function createTenant(array $attributes = []): object
+/** @param array<string, mixed> $attributes */
+function createTenant(array $attributes = []): stdClass
 {
     $defaults = [
         'id' => 'test-bakery',
@@ -501,7 +555,13 @@ function createTenant(array $attributes = []): object
     $data = array_merge($defaults, $attributes);
     DB::table('tenants')->insert($data);
 
-    return DB::table('tenants')->where('id', $data['id'])->first();
+    $tenant = DB::table('tenants')->where('id', $data['id'])->first();
+
+    if (! $tenant instanceof stdClass) {
+        throw new RuntimeException('The tenant fixture could not be loaded after creation.');
+    }
+
+    return $tenant;
 }
 
 /**
@@ -549,7 +609,13 @@ function registerVisitorAsTenant(
     ?string $tenantId = null,
     ?string $domain = null,
 ): array {
-    $tenantId ??= str($tenantAttributes['store_name'] ?? $userAttributes['name'] ?? 'test-bakery')
+    $tenantName = $tenantAttributes['store_name'] ?? $userAttributes['name'] ?? 'test-bakery';
+
+    if (! is_string($tenantName)) {
+        throw new InvalidArgumentException('The tenant fixture name must be a string.');
+    }
+
+    $tenantId ??= str($tenantName)
         ->slug()
         ->append('-', str()->random(6))
         ->toString();
@@ -603,11 +669,16 @@ function actingAsTenantAdmin(?Tenant $tenant = null, array $attributes = []): Us
  * exercise domain/subdomain tenancy middleware instead of hard-coded URLs.
  *
  * @param array<string, string> $headers
+ * @return TestResponse<Symfony\Component\HttpFoundation\Response>
  */
 function visitStorefrontAsTenant(Tenant $tenant, string $path = '/', array $headers = []): TestResponse
 {
     $domain = DB::table('domains')->where('tenant_id', $tenant->id)->value('domain')
         ?? "{$tenant->id}.kneadit.test";
+
+    if (! is_string($domain)) {
+        throw new RuntimeException('The tenant domain must be a string.');
+    }
 
     $url = "https://{$domain}/" . ltrim($path, '/');
 
@@ -620,6 +691,10 @@ function queueTenantOnboardingNotifications(User $user, Tenant $tenant, ?string 
 
     $domain = DB::table('domains')->where('tenant_id', $tenant->id)->value('domain')
         ?? "{$tenant->id}.kneadit.test";
+
+    if (! is_string($domain)) {
+        throw new RuntimeException('The tenant domain must be a string.');
+    }
 
     $event = new TenantOnboarded(
         user: $user,
@@ -654,7 +729,7 @@ function assertNotificationQueued(string $mailableClass, ?callable $callback = n
 | tests only override the fields they care about.
 */
 
-/** @param array<string, mixed> $overrides */
+/** @param array{name?: string, email?: ?string, phone?: ?string, address?: ?string, website?: ?string, photo?: ?string, logo?: ?string, tagline?: ?string} $overrides */
 function makeStoreInfo(array $overrides = []): App\DataTransferObjects\Settings\StoreInfo
 {
     return new App\DataTransferObjects\Settings\StoreInfo(...array_merge([
@@ -669,7 +744,9 @@ function makeStoreInfo(array $overrides = []): App\DataTransferObjects\Settings\
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/**
+ * @param array{brandColorPrimary?: string, storefrontTheme?: string, businessTagline?: ?string, aboutUsText?: ?string, heroImage?: ?string, heroStyle?: string, heroTagline?: ?string, heroPrimaryCtaText?: string, heroSecondaryCtaText?: string, allergyDisclaimer?: ?string, cateringHeroImage?: ?string, loyaltyHeroImage?: ?string, giftCardsHeroImage?: ?string} $overrides
+ */
 function makeBrandingSettings(array $overrides = []): App\DataTransferObjects\Settings\BrandingSettings
 {
     return new App\DataTransferObjects\Settings\BrandingSettings(...array_merge([
@@ -689,7 +766,9 @@ function makeBrandingSettings(array $overrides = []): App\DataTransferObjects\Se
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/**
+ * @param array{leadTimeHours?: int, deliveryEnabled?: bool, freeDeliveryMinimum?: string, minimumPickupOrderAmount?: string, minimumDeliveryOrderAmount?: string, deliveryFeeTiers?: array<int, array<string, mixed>>, defaultDailyCapacity?: int, modificationWindowMinutes?: int, pickupSlotsEnabled?: bool, pickupSlotIntervalMinutes?: int, pickupSlotMaxPerWindow?: int, sitewideSaleEnabled?: bool, sitewideSalePercent?: int, sitewideSaleLabel?: string} $overrides
+ */
 function makeOrderSettings(array $overrides = []): App\DataTransferObjects\Settings\OrderSettings
 {
     return new App\DataTransferObjects\Settings\OrderSettings(...array_merge([
@@ -703,7 +782,9 @@ function makeOrderSettings(array $overrides = []): App\DataTransferObjects\Setti
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/**
+ * @param array{birthdayProgramEnabled?: bool, birthdayCouponEnabled?: bool, birthdayDiscountPercentage?: int, birthdayCouponValidDays?: int, reviewRequestsEnabled?: bool, reviewRequestDelayHours?: int, repeatRemindersEnabled?: bool, repeatReminderDays?: int, announcementEnabled?: bool, announcementText?: string, announcementType?: string, emailOrderPlacedEnabled?: bool, emailOrderConfirmedEnabled?: bool, emailOrderBakingEnabled?: bool, emailOrderReadyEnabled?: bool, emailOrderDeliveredEnabled?: bool, emailOrderCancelledEnabled?: bool, emailOrderMessageEnabled?: bool, emailProductAvailableEnabled?: bool, customerReferralProgramEnabled?: bool, customerReferralDiscountDollars?: int, abandonedCartRecoveryEnabled?: bool, abandonedCartRecoveryHours?: int, abandonedCartRecoveryCouponDollars?: int, lowReviewAlertThreshold?: int} $overrides
+ */
 function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\Settings\EngagementSettings
 {
     return new App\DataTransferObjects\Settings\EngagementSettings(...array_merge([
@@ -729,7 +810,7 @@ function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/** @param array{showOnStorefront?: bool, cancellation?: string, deposit?: string, refund?: string, pickup?: string, additionalTerms?: string} $overrides */
 function makePolicySettings(array $overrides = []): App\DataTransferObjects\Settings\PolicySettings
 {
     return new App\DataTransferObjects\Settings\PolicySettings(...array_merge([
@@ -742,7 +823,9 @@ function makePolicySettings(array $overrides = []): App\DataTransferObjects\Sett
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/**
+ * @param array{socialMediaLinks?: array<string, string>, operatingHours?: array<string, mixed>, faqItems?: array<int, array<string, mixed>>, sections?: array<string, array<string, mixed>>} $overrides
+ */
 function makeHomepageSettings(array $overrides = []): App\DataTransferObjects\Settings\HomepageSettings
 {
     return new App\DataTransferObjects\Settings\HomepageSettings(...array_merge([
@@ -753,7 +836,7 @@ function makeHomepageSettings(array $overrides = []): App\DataTransferObjects\Se
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/** @param array{enabled?: bool, minimumGuests?: string, leadTimeDays?: string, eventTypes?: array<int, string>, depositPercent?: int} $overrides */
 function makeCateringSettings(array $overrides = []): App\DataTransferObjects\Settings\CateringSettings
 {
     return new App\DataTransferObjects\Settings\CateringSettings(...array_merge([
@@ -764,7 +847,9 @@ function makeCateringSettings(array $overrides = []): App\DataTransferObjects\Se
     ], $overrides));
 }
 
-/** @param array<string, mixed> $overrides */
+/**
+ * @param array{enabled?: bool, pointsPerDollar?: int, programName?: string, tiersEnabled?: bool, tierSilverThreshold?: int, tierGoldThreshold?: int, tierPlatinumThreshold?: int, tierPerksEnabled?: bool, tierSilverMultiplier?: float, tierSilverFreeDelivery?: bool, tierGoldMultiplier?: float, tierGoldFreeDelivery?: bool, tierPlatinumMultiplier?: float, tierPlatinumFreeDelivery?: bool} $overrides
+ */
 function makeLoyaltySettings(array $overrides = []): App\DataTransferObjects\Settings\LoyaltySettings
 {
     return new App\DataTransferObjects\Settings\LoyaltySettings(...array_merge([

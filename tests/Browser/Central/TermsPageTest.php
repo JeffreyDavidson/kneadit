@@ -1,6 +1,8 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$centralUrl = Config::string('browser-testing.central_url');
 
 test('terms page renders without JS errors', function () use ($centralUrl) {
     visit("{$centralUrl}/terms")

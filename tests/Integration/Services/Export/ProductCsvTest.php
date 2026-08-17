@@ -56,7 +56,14 @@ test('import updates existing products by name', function () {
 
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
     $result = resolve(ImportProducts::class)($file);
-    expect($result)->toMatchArray(['updated' => 1, 'created' => 0])->and(Product::query()->where('name', 'Sourdough')->first()->price->dollars())->toBe(10.00);
+    $price = Product::query()->where('name', 'Sourdough')->firstOrFail()->price;
+
+    if ($price === null) {
+        throw new RuntimeException('Expected the imported product to have a price.');
+    }
+
+    expect($result)->toMatchArray(['updated' => 1, 'created' => 0])
+        ->and($price->dollars())->toBe(10.00);
 });
 
 test('import handles missing required fields', function () {

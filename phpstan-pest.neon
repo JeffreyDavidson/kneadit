@@ -1,19 +1,25 @@
-includes:
-    - vendor/larastan/larastan/extension.neon
-    - vendor/pestphp/pest-plugin-phpstan/extension.neon
-
 parameters:
     paths:
         - tests/
-    level: 1
+    level: 9
     bootstrapFiles:
+        - bootstrap/app.php
         - phpstan-bootstrap.php
+    stubFiles:
+        - stubs/Illuminate/Http/Response.stub
+        - stubs/Illuminate/Testing/TestResponse.stub
+        - stubs/Symfony/Component/HttpFoundation/Response.stub
     excludePaths:
-        - tests/Browser/
+        - bootstrap/cache/
+        - storage/
     scanDirectories:
         - vendor/filament
     ignoreErrors:
         - identifier: pest.expectation.redundant
+    type_coverage:
+        param: 0
+        return: 0
+        property: 0
 
 services:
     -

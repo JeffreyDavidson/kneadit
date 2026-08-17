@@ -19,7 +19,7 @@ test('identifies customers with no recent orders', function () {
     $result = AtRiskCustomersQuery::get(days: 30);
 
     expect($result)->toHaveCount(1)
-        ->and($result->first()->id)->toBe($atRisk->id);
+        ->and($result->firstOrFail()->id)->toBe($atRisk->id);
 });
 
 test('count returns number of at-risk customers', function () {

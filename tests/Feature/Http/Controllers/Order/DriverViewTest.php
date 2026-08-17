@@ -18,6 +18,7 @@ beforeEach(function () {
     ];
 });
 
+/** @param array<string, mixed> $attrs */
 function createDeliveryOrder(array $attrs = []): Order
 {
     $user = User::factory()->owner()->create(['email' => 'baker@test.com']);
@@ -73,19 +74,19 @@ test('driver page hides past orders', function () {
 
 test('mark delivered changes order status', function () {
     $order = createDeliveryOrder(['status' => OrderStatus::Ready]);
-    $user = User::query()->firstWhere('email', 'baker@test.com');
+    $user = User::query()->where('email', 'baker@test.com')->firstOrFail();
 
     $response = actingAs($user)
         ->withoutMiddleware(test()->driverMiddleware)
         ->post(route('driver.delivered', $order->order_number, false));
 
     $response->assertRedirect();
-    expect($order->fresh()->status)->toBe(OrderStatus::Delivered);
+    expect($order->refresh()->status)->toBe(OrderStatus::Delivered);
 });
 
 test('mark delivered redirects back', function () {
     $order = createDeliveryOrder(['status' => OrderStatus::Ready]);
-    $user = User::query()->firstWhere('email', 'baker@test.com');
+    $user = User::query()->where('email', 'baker@test.com')->firstOrFail();
 
     $response = actingAs($user)
         ->withoutMiddleware(test()->driverMiddleware)

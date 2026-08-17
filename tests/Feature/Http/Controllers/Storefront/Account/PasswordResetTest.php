@@ -2,10 +2,11 @@
 
 use App\Models\Customers\Customer;
 use App\Notifications\Customers\CustomerPasswordResetNotification;
+use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Auth\Passwords\PasswordBrokerManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Password;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -37,7 +38,11 @@ test('forgot-password still reports success for unknown emails to avoid leaking 
 test('reset-password updates the customer password and redirects to login', function () {
     $customer = Customer::factory()->withPassword('old-password-1')->create(['email' => 'jane@example.com']);
 
-    $token = Password::broker('customers')->createToken($customer);
+    $broker = resolve(PasswordBrokerManager::class)->broker('customers');
+
+    throw_unless($broker instanceof PasswordBroker, UnexpectedValueException::class, 'Expected the customer password broker.');
+
+    $token = $broker->createToken($customer);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('account.password.update', [], false), [
@@ -50,7 +55,11 @@ test('reset-password updates the customer password and redirects to login', func
     $response->assertRedirect(route('account.login.show', [], false))
         ->assertSessionHas('status');
 
-    expect(Hash::check('new-password-1', $customer->fresh()->password))->toBeTrue();
+    $customer->refresh();
+
+    throw_unless(is_string($customer->password), UnexpectedValueException::class, 'Expected a hashed customer password.');
+
+    expect(Hash::check('new-password-1', $customer->password))->toBeTrue();
 });
 
 test('reset-password rejects an invalid token', function () {

@@ -14,7 +14,7 @@ test('approved scope returns only approved photos', function () {
     $results = CustomerPhoto::query()->approved()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($approved->id);
+        ->and($results->firstOrFail()->id)->toBe($approved->id);
 });
 
 test('withCaptionLike scope filters by caption', function () {

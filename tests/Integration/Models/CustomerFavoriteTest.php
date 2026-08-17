@@ -14,7 +14,7 @@ test('product relationship returns the associated product', function () {
         'product_id' => $product->id,
     ]);
 
-    expect($favorite->product->id)->toBe($product->id);
+    expect($favorite->product?->id)->toBe($product->id);
 });
 
 test('for customer scope filters by email', function () {
@@ -28,7 +28,7 @@ test('for customer scope filters by email', function () {
     $results = CustomerFavorite::query()->forCustomer('jane@example.com')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($favorite->id);
+        ->and($results->firstOrFail()->id)->toBe($favorite->id);
 });
 
 test('for product scope filters by product id', function () {
@@ -41,5 +41,5 @@ test('for product scope filters by product id', function () {
     $results = CustomerFavorite::query()->forProduct($product->id)->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($favorite->id);
+        ->and($results->firstOrFail()->id)->toBe($favorite->id);
 });

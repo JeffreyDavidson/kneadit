@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\Operations\BackupDatabasesCommand;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
@@ -26,13 +27,11 @@ afterEach(function () {
 });
 
 test('backup command exists', function () {
-    $this->artisan('backup:databases')
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases'))->toBe(0);
 });
 
 test('backup command accepts keep option', function () {
-    $this->artisan('backup:databases', ['--keep' => 3])
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases', ['--keep' => 3]))->toBe(0);
 });
 
 test('backup command class has correct signature', function () {
@@ -42,7 +41,7 @@ test('backup command class has correct signature', function () {
 });
 
 test('backup creates backup directory', function () {
-    $this->artisan('backup:databases');
+    Artisan::call('backup:databases');
 
     $possibleDirs = [
         dirname(base_path()) . '/backups',
@@ -61,10 +60,10 @@ test('backup creates backup directory', function () {
 });
 
 test('backup outputs progress messages', function () {
-    $this->artisan('backup:databases')
-        ->expectsOutputToContain('Backing up to')
-        ->expectsOutputToContain('Backup complete')
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases'))->toBe(0)
+        ->and(Artisan::output())
+        ->toContain('Backing up to')
+        ->toContain('Backup complete');
 });
 
 test('backup logs completion', function () {
@@ -76,8 +75,7 @@ test('backup logs completion', function () {
                 && isset($context['size']);
         });
 
-    $this->artisan('backup:databases')
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases'))->toBe(0);
 });
 
 test('backup default keep is 7 days', function () {
@@ -89,7 +87,7 @@ test('backup default keep is 7 days', function () {
 });
 
 test('backup creates timestamped subdirectory', function () {
-    $this->artisan('backup:databases');
+    Artisan::call('backup:databases');
 
     $possibleDirs = [
         dirname(base_path()) . '/backups',
@@ -116,12 +114,10 @@ test('backup creates timestamped subdirectory', function () {
 test('backup handles missing central database gracefully', function () {
     config(['database.connections.sqlite.database' => '/nonexistent/path/db.sqlite']);
 
-    $this->artisan('backup:databases')
-        ->expectsOutputToContain('Central DB not found')
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases'))->toBe(0)
+        ->and(Artisan::output())->toContain('Central DB not found');
 });
 
 test('backup reports tenant database count or missing directory', function () {
-    $this->artisan('backup:databases')
-        ->assertSuccessful();
+    expect(Artisan::call('backup:databases'))->toBe(0);
 });

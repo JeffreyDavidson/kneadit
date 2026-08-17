@@ -2,86 +2,64 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Models\Platform\Tenant as PlatformTenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Stancl\Tenancy\Contracts\Tenant;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-function setTenantPlanForAccess(string $plan): void
+function setTenantPlanForAccess(string $plan): PlatformTenant
 {
-    $tenant = new class($plan) implements Tenant {
-        public ?SubscriptionTier $plan;
+    $tenant = PlatformTenant::factory()->make([
+        'plan' => SubscriptionTier::from($plan),
+    ]);
 
-        public function __construct(string $plan)
-        {
-            $this->plan = SubscriptionTier::from($plan);
-        }
-
-        public function getTenantKeyName(): string
-        {
-            return 'id';
-        }
-
-        public function getTenantKey()
-        {
-            return 'test';
-        }
-
-        public function getInternal(string $key)
-        {
-            return $key === 'plan' ? $this->plan : null;
-        }
-
-        public function setInternal(string $key, $value) {}
-
-        public function run(callable $callback)
-        {
-            return $callback($this);
-        }
-    };
-
-    app()->instance(Tenant::class, $tenant);
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
 
     Feature::purge(['growth-features', 'pro-features']);
+
+    return $tenant;
 }
 
 test('growth-features is active for growth plan', function () {
-    setTenantPlanForAccess('growth');
+    $tenant = setTenantPlanForAccess('growth');
 
-    expect(Feature::active('growth-features'))->toBeTrue();
+    expect(Feature::for($tenant)->active('growth-features'))->toBeTrue();
 });
 
 test('growth-features is inactive for starter plan', function () {
-    setTenantPlanForAccess('starter');
+    $tenant = setTenantPlanForAccess('starter');
 
-    expect(Feature::active('growth-features'))->toBeFalse();
+    expect(Feature::for($tenant)->active('growth-features'))->toBeFalse();
 });
 
 test('pro-features is active for pro plan', function () {
-    setTenantPlanForAccess('pro');
+    $tenant = setTenantPlanForAccess('pro');
 
-    expect(Feature::active('pro-features'))->toBeTrue();
+    expect(Feature::for($tenant)->active('pro-features'))->toBeTrue();
 });
 
 test('pro-features is inactive for growth plan', function () {
-    setTenantPlanForAccess('growth');
+    $tenant = setTenantPlanForAccess('growth');
 
-    expect(Feature::active('pro-features'))->toBeFalse();
+    expect(Feature::for($tenant)->active('pro-features'))->toBeFalse();
 });
 
 test('pro plan has access to both growth and pro features', function () {
-    setTenantPlanForAccess('pro');
+    $tenant = setTenantPlanForAccess('pro');
 
-    expect(Feature::active('growth-features'))->toBeTrue()->and(Feature::active('pro-features'))->toBeTrue();
+    expect(Feature::for($tenant)->active('growth-features'))->toBeTrue()
+        ->and(Feature::for($tenant)->active('pro-features'))->toBeTrue();
 });
 
 test('starter plan has no access to growth or pro features', function () {
-    setTenantPlanForAccess('starter');
+    $tenant = setTenantPlanForAccess('starter');
 
-    expect(Feature::active('growth-features'))->toBeFalse()->and(Feature::active('pro-features'))->toBeFalse();
+    expect(Feature::for($tenant)->active('growth-features'))->toBeFalse()
+        ->and(Feature::for($tenant)->active('pro-features'))->toBeFalse();
 });
 
 // --- ShowsUpgradeBadge tests ---

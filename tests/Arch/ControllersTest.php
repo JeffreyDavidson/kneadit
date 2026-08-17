@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
-$controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'))
-    ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
-    ->map(function ($file) {
+$controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php') ?: [])
+    ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php') ?: [])
+    ->map(function (string $file): string {
         $relative = str_replace(__DIR__ . '/../../app/', '', $file);
 
         return str_replace(['/', '.php'], ['\\', ''], 'App\\' . $relative);
@@ -51,6 +51,10 @@ arch('controllers should not use DB facade directly')
         App\Http\Controllers\Central\ImpersonateController::class,
         App\Http\Controllers\Central\ConsumeImpersonationController::class,
     ]);
+
+arch('controllers should not invoke tenancy middleware directly')
+    ->expect('Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain')
+    ->not->toBeUsedIn('App\Http\Controllers');
 
 foreach ($controllerFiles as $controllerClass) {
     $shortName = str_replace('App\\Http\\Controllers\\', '', $controllerClass);

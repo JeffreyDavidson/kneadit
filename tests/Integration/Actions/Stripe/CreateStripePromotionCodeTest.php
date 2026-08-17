@@ -8,24 +8,40 @@ use Stripe\StripeClient;
 
 beforeEach(fn () => setUpCentralTest());
 
+class FakePromotionStripeClient extends StripeClient
+{
+    public function __construct(
+        public CouponService $coupons,
+        public PromotionCodeService $promotionCodes,
+    ) {}
+}
+
+function requireCouponService(MockInterface $service): CouponService
+{
+    throw_unless($service instanceof CouponService, RuntimeException::class, 'Expected a Stripe coupon service mock.');
+
+    return $service;
+}
+
+function requirePromotionCodeService(MockInterface $service): PromotionCodeService
+{
+    throw_unless($service instanceof PromotionCodeService, RuntimeException::class, 'Expected a Stripe promotion-code service mock.');
+
+    return $service;
+}
+
 function bindMockedStripe(callable $couponsExpectations, callable $promoExpectations): void
 {
-    $coupons = mock(CouponService::class, $couponsExpectations);
-    $promotionCodes = mock(PromotionCodeService::class, $promoExpectations);
+    $coupons = requireCouponService(mock(CouponService::class, $couponsExpectations));
+    $promotionCodes = requirePromotionCodeService(mock(PromotionCodeService::class, $promoExpectations));
 
-    app()->bind(StripeClient::class, function () use ($coupons, $promotionCodes): StripeClient {
-        $client = mock(StripeClient::class);
-        $client->coupons = $coupons;
-        $client->promotionCodes = $promotionCodes;
-
-        return $client;
-    });
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakePromotionStripeClient($coupons, $promotionCodes));
 }
 
 test('creates a percent-off once coupon and a promotion code', function () {
     bindMockedStripe(
         function (MockInterface $m): void {
-            $m->shouldReceive('create')
+            mockExpectation($m, 'create')
                 ->once()
                 ->with(Mockery::on(fn (array $payload): bool => ($payload['percent_off'] ?? null) === 100
                     && ($payload['duration'] ?? null) === 'once'
@@ -34,7 +50,7 @@ test('creates a percent-off once coupon and a promotion code', function () {
                 ->andReturn((object) ['id' => 'coupon_abc']);
         },
         function (MockInterface $m): void {
-            $m->shouldReceive('create')
+            mockExpectation($m, 'create')
                 ->once()
                 ->with(Mockery::on(fn (array $payload): bool => ($payload['coupon'] ?? null) === 'coupon_abc'
                     && ($payload['code'] ?? null) === 'VIP-JANE'))
@@ -56,14 +72,14 @@ test('creates a percent-off once coupon and a promotion code', function () {
 test('creates a repeating coupon with duration_in_months', function () {
     bindMockedStripe(
         function (MockInterface $m): void {
-            $m->shouldReceive('create')
+            mockExpectation($m, 'create')
                 ->once()
                 ->with(Mockery::on(fn (array $payload): bool => ($payload['duration'] ?? null) === 'repeating'
                     && ($payload['duration_in_months'] ?? null) === 3))
                 ->andReturn((object) ['id' => 'coupon_rep']);
         },
         function (MockInterface $m): void {
-            $m->shouldReceive('create')
+            mockExpectation($m, 'create')
                 ->once()
                 ->andReturn((object) ['id' => 'promo_rep', 'code' => 'THREE-MONTHS']);
         },
@@ -80,7 +96,7 @@ test('creates a repeating coupon with duration_in_months', function () {
 test('creates an amount-off coupon with currency', function () {
     bindMockedStripe(
         function (MockInterface $m): void {
-            $m->shouldReceive('create')
+            mockExpectation($m, 'create')
                 ->once()
                 ->with(Mockery::on(fn (array $payload): bool => ($payload['amount_off'] ?? null) === 2500
                     && ($payload['currency'] ?? null) === 'usd'
@@ -88,7 +104,7 @@ test('creates an amount-off coupon with currency', function () {
                 ->andReturn((object) ['id' => 'coupon_amt']);
         },
         function (MockInterface $m): void {
-            $m->shouldReceive('create')->once()->andReturn((object) ['id' => 'p', 'code' => 'X']);
+            mockExpectation($m, 'create')->once()->andReturn((object) ['id' => 'p', 'code' => 'X']);
         },
     );
 

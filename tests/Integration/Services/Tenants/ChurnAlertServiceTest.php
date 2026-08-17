@@ -8,11 +8,15 @@ beforeEach(function () {
     setUpCentralTest();
 });
 
+/**
+ * @param array<int, array{id: string, health_score: int, setup_score: int}> $healthData
+ */
 function mockHealthService(array $healthData = [], int $recentOrders = 0): void
 {
-    $mock = Mockery::mock(TenantHealthService::class);
-    $mock->shouldReceive('getTenantHealthData')->andReturn(collect($healthData));
-    $mock->shouldReceive('getRecentOrderCount')->andReturn($recentOrders);
+    $mock = Mockery::mock(TenantHealthService::class, [
+        'getTenantHealthData' => collect($healthData),
+        'getRecentOrderCount' => $recentOrders,
+    ]);
     app()->instance(TenantHealthService::class, $mock);
 }
 
@@ -32,7 +36,7 @@ test('returns trial expiring alert when trial ends soon with low setup', functio
 
     expect($alerts)->toHaveCount(2)
         ->and($alerts->firstWhere('type', 'trial_expiring'))->not->toBeNull()
-        ->and($alerts->firstWhere('type', 'trial_expiring')['severity'])->toBe('critical');
+        ->and(data_get($alerts->firstWhere('type', 'trial_expiring'), 'severity'))->toBe('critical');
 });
 
 test('does not alert for trial with good setup progress', function () {
@@ -95,7 +99,7 @@ test('returns no orders alert for established tenant with no recent orders', fun
     $noOrders = $alerts->firstWhere('type', 'no_orders');
 
     expect($noOrders)->not->toBeNull()
-        ->and($noOrders['severity'])->toBe('warning');
+        ->and(data_get($noOrders, 'severity'))->toBe('warning');
 });
 
 test('does not alert for no orders on new tenants', function () {
@@ -131,8 +135,8 @@ test('returns low health alert when health score is below 40', function () {
     $lowHealth = $alerts->firstWhere('type', 'low_health');
 
     expect($lowHealth)->not->toBeNull()
-        ->and($lowHealth['severity'])->toBe('critical')
-        ->and($lowHealth['description'])->toContain('20/100');
+        ->and(data_get($lowHealth, 'severity'))->toBe('critical')
+        ->and(data_get($lowHealth, 'description'))->toContain('20/100');
 });
 
 test('does not alert for healthy tenants', function () {
@@ -167,7 +171,7 @@ test('critical alerts are sorted before warnings', function () {
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     if ($alerts->count() >= 2) {
-        expect($alerts->first()['severity'])->toBe('critical');
+        expect(data_get($alerts->first(), 'severity'))->toBe('critical');
     } else {
         expect(true)->toBeTrue();
     }

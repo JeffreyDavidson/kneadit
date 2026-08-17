@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Testing\PendingCommand;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 use Stripe\Price;
@@ -24,6 +26,11 @@ function bindStripeProductsClient(ProductService $products, PriceService $prices
     );
 }
 
+function createStripeProductsCommand(): PendingCommand
+{
+    return pendingArtisan('stripe:create-products');
+}
+
 test('stripe create-products command is registered and has correct signature', function () {
     $command = new App\Console\Commands\Stripe\CreateStripeProductsCommand;
 
@@ -32,14 +39,14 @@ test('stripe create-products command is registered and has correct signature', f
 });
 
 test('stripe create-products iterates all configured plans', function () {
-    $plans = config('kneadit.plans');
+    $plans = Config::array('kneadit.plans');
 
     expect($plans)->not->toBeEmpty()
         ->and($plans)->each->toHaveKeys(['name', 'description', 'founding_price_monthly']);
 });
 
 test('stripe create-products creates products and prices for each plan', function () {
-    $plans = config('kneadit.plans');
+    $plans = Config::array('kneadit.plans');
 
     $product = new Product('prod_test123');
     $price = new Price('price_test456');
@@ -56,7 +63,7 @@ test('stripe create-products creates products and prices for each plan', functio
 
     bindStripeProductsClient($productsService, $pricesService);
 
-    $this->artisan('stripe:create-products')
+    createStripeProductsCommand()
         ->expectsOutputToContain('prod_test123')
         ->expectsOutputToContain('price_test456')
         ->expectsOutputToContain('STRIPE_PRICE_STARTER')
@@ -64,7 +71,7 @@ test('stripe create-products creates products and prices for each plan', functio
 });
 
 test('stripe create-products passes correct data to stripe product creation', function () {
-    $plans = config('kneadit.plans');
+    $plans = Config::array('kneadit.plans');
 
     $product = new Product('prod_test');
     $price = new Price('price_test');
@@ -76,9 +83,12 @@ test('stripe create-products passes correct data to stripe product creation', fu
                 return false;
             }
 
-            return str_starts_with($data['name'], 'KneadIt ')
-                && isset($data['description'])
-                && isset($data['metadata']['plan_key']);
+            $name = data_get($data, 'name');
+
+            return is_string($name)
+                && str_starts_with($name, 'KneadIt ')
+                && data_get($data, 'description') !== null
+                && data_get($data, 'metadata.plan_key') !== null;
         }))
         ->times(count($plans))
         ->returns($product);
@@ -90,23 +100,23 @@ test('stripe create-products passes correct data to stripe product creation', fu
                 return false;
             }
 
-            return $data['product'] === 'prod_test'
-                && $data['currency'] === 'usd'
-                && $data['recurring']['interval'] === 'month'
-                && isset($data['metadata']['plan_key'])
-                && $data['metadata']['rate'] === 'founding';
+            return data_get($data, 'product') === 'prod_test'
+                && data_get($data, 'currency') === 'usd'
+                && data_get($data, 'recurring.interval') === 'month'
+                && data_get($data, 'metadata.plan_key') !== null
+                && data_get($data, 'metadata.rate') === 'founding';
         }))
         ->times(count($plans))
         ->returns($price);
 
     bindStripeProductsClient($productsService, $pricesService);
 
-    $this->artisan('stripe:create-products')
+    createStripeProductsCommand()
         ->assertSuccessful();
 });
 
 test('stripe create-products outputs env variable instructions', function () {
-    $plans = config('kneadit.plans');
+    $plans = Config::array('kneadit.plans');
 
     $productsService = Double::for(ProductService::class);
     $productsService->expects('create')
@@ -120,7 +130,7 @@ test('stripe create-products outputs env variable instructions', function () {
 
     bindStripeProductsClient($productsService, $pricesService);
 
-    $this->artisan('stripe:create-products')
+    createStripeProductsCommand()
         ->expectsOutputToContain('STRIPE_PRICE_STARTER')
         ->expectsOutputToContain('STRIPE_PRICE_GROWTH')
         ->expectsOutputToContain('STRIPE_PRICE_PRO')

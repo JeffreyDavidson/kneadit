@@ -1,6 +1,8 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$storefrontUrl = Config::string('browser-testing.storefront_url');
 
 // Dashboard smoke test. The login flow test only checks the heading is visible
 // immediately after redirect — it doesn't wait for widgets to poll and render,

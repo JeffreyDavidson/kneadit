@@ -3,6 +3,7 @@
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
+use Illuminate\Database\Eloquent\Model;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -14,7 +15,13 @@ test('mrr calculation with different plans', function () {
 
     $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
     $activeTenants = Tenant::query()->where('is_active', true)->get();
-    $mrr = $activeTenants->sum(fn ($t) => $planPrices[$t->plan->value] ?? 0);
+    $mrr = $activeTenants->sum(function (Model $model) use ($planPrices): int {
+        if (! $model instanceof Tenant) {
+            return 0;
+        }
+
+        return $planPrices[$model->plan->value];
+    });
 
     expect($mrr)->toBe(57)->and($activeTenants)->toHaveCount(3);
 });
@@ -50,7 +57,13 @@ test('mrr excludes inactive tenants', function () {
     createTenant(['id' => 'i1', 'name' => 'I1', 'email' => 'i1@test.com', 'plan' => SubscriptionTier::Pro, 'is_active' => false]);
 
     $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
-    $mrr = Tenant::query()->where('is_active', true)->get()->sum(fn ($t) => $planPrices[$t->plan->value] ?? 0);
+    $mrr = Tenant::query()->where('is_active', true)->get()->sum(function (Model $model) use ($planPrices): int {
+        if (! $model instanceof Tenant) {
+            return 0;
+        }
+
+        return $planPrices[$model->plan->value];
+    });
 
     expect($mrr)->toBe(0);
 });

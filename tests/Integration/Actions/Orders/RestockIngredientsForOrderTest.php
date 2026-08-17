@@ -29,7 +29,7 @@ test('restocks ingredient stock based on recipe quantities and order item quanti
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($flour->fresh()->current_stock)->toBe('51.50');
+    expect($flour->refresh()->current_stock)->toBe('51.50');
 });
 
 test('writes a Restock stock-adjustment row tagged with the order number', function () {
@@ -58,7 +58,7 @@ test('skips order items whose product has been deleted', function () {
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($unrelatedIngredient->fresh()->current_stock)->toBe('10.00');
+    expect($unrelatedIngredient->refresh()->current_stock)->toBe('10.00');
 });
 
 test('handles multiple ingredients per recipe and multiple recipes per product', function () {
@@ -75,6 +75,6 @@ test('handles multiple ingredients per recipe and multiple recipes per product',
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($flour->fresh()->current_stock)->toBe('22.00')
-        ->and($butter->fresh()->current_stock)->toBe('5.40');
+    expect($flour->refresh()->current_stock)->toBe('22.00')
+        ->and($butter->refresh()->current_stock)->toBe('5.40');
 });

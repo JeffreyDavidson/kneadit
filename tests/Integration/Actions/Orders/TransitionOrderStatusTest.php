@@ -39,7 +39,7 @@ test('transitions order from pending to confirmed', function () {
 
     $result = resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
-    expect($result->fresh()->status)->toBe(OrderStatus::Confirmed);
+    expect($result->refresh()->status)->toBe(OrderStatus::Confirmed);
 });
 
 test('throws exception for invalid transition', function () {
@@ -121,7 +121,7 @@ test('does not dispatch OrderDelivered or OrderCancelled on other transitions', 
 
 test('critical effect failure rolls back the status transition', function () {
     $inventoryManager = Mockery::mock(InventoryManager::class);
-    $inventoryManager->shouldReceive('deductForOrder')
+    mockExpectation($inventoryManager, 'deductForOrder')
         ->andThrow(new RuntimeException('Inventory deduction failed'));
 
     app()->instance(InventoryManager::class, $inventoryManager);
@@ -131,7 +131,7 @@ test('critical effect failure rolls back the status transition', function () {
     expect(fn () => resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking))
         ->toThrow(RuntimeException::class, 'Inventory deduction failed');
 
-    expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
+    expect($order->refresh()->status)->toBe(OrderStatus::Confirmed);
 });
 
 test('cancellation decrements coupon used_count and creates reversal transaction', function () {
@@ -148,11 +148,10 @@ test('cancellation decrements coupon used_count and creates reversal transaction
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($coupon->fresh()->used_count)->toBe(2);
+    expect($coupon->refresh()->used_count)->toBe(2);
 
-    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
-    expect($transaction)->not->toBeNull()
-        ->and($transaction->type)->toBe(CouponTransactionType::Reversal)
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->firstOrFail();
+    expect($transaction->type)->toBe(CouponTransactionType::Reversal)
         ->and($transaction->coupon_id)->toBe($coupon->id);
 });
 
@@ -167,11 +166,10 @@ test('cancellation from Baking restocks ingredients with positive Restock adjust
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($flour->fresh()->current_stock)->toBe('16.00');
+    expect($flour->refresh()->current_stock)->toBe('16.00');
 
-    $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->first();
-    expect($restock)->not->toBeNull()
-        ->and((float) $restock->quantity)->toBe(6.0)
+    $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->firstOrFail();
+    expect($restock->quantity)->toBe('6.00')
         ->and($restock->notes)->toBe("Order #{$order->order_number} cancelled");
 });
 
@@ -186,7 +184,7 @@ test('cancellation from Pending does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($butter->fresh()->current_stock)->toBe('5.00')
+    expect($butter->refresh()->current_stock)->toBe('5.00')
         ->and($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
@@ -201,7 +199,7 @@ test('cancellation from Confirmed does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($eggs->fresh()->current_stock)->toBe('12.00')
+    expect($eggs->refresh()->current_stock)->toBe('12.00')
         ->and($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
@@ -222,14 +220,13 @@ test('cancellation restores gift card balance and creates refund transaction', f
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($giftCard->fresh()->current_balance->dollars())->toBe(50.00);
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
 
     $refund = GiftCardTransaction::query()
         ->where('order_id', $order->id)
         ->where('type', GiftCardTransactionType::Refund)
-        ->first();
+        ->firstOrFail();
 
-    expect($refund)->not->toBeNull()
-        ->and($refund->amount->dollars())->toBe(20.00)
+    expect($refund->amount->dollars())->toBe(20.00)
         ->and($refund->gift_card_id)->toBe($giftCard->id);
 });

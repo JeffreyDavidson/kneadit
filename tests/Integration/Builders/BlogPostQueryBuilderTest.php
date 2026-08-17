@@ -62,7 +62,7 @@ test('relatedTo returns posts in the same category excluding the given post', fu
     $results = BlogPost::query()->relatedTo($post)->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($related->id);
+        ->and($results->firstOrFail()->id)->toBe($related->id);
 });
 
 test('relatedTo respects the limit parameter', function () {
@@ -84,10 +84,15 @@ test('forListing returns published posts ordered by published_at descending', fu
     BlogPost::factory()->draft()->create();
 
     $results = BlogPost::query()->forListing()->get();
+    $last = $results->last();
+
+    if (! $last instanceof BlogPost) {
+        throw new RuntimeException('Expected an older blog post.');
+    }
 
     expect($results)->toHaveCount(2)
-        ->and($results->first()->id)->toBe($newer->id)
-        ->and($results->last()->id)->toBe($older->id);
+        ->and($results->firstOrFail()->id)->toBe($newer->id)
+        ->and($last->id)->toBe($older->id);
 });
 
 test('forListing filters by category when provided', function () {

@@ -38,7 +38,7 @@ test('updates quantities and recalculates totals', function () {
     ]);
 
     $order->refresh();
-    expect($order->orderItems()->first()->quantity)->toBe(5)
+    expect($order->orderItems()->value('quantity'))->toBe(5)
         ->and($order->subtotal->dollars())->toBe(50.00)
         ->and($order->total->dollars())->toBe(50.00);
     Event::assertDispatched(OrderModified::class);
@@ -123,7 +123,7 @@ test('rolls back when modification would leave order with no items', function ()
     expect(fn () => resolve(ModifyOrder::class)($order, [
         ['order_item_id' => $only->id, 'quantity' => 0],
     ]))->toThrow(OrderNotModifiableException::class)
-        ->and($order->fresh()->orderItems()->count())->toBe(1);
+        ->and($order->refresh()->orderItems()->count())->toBe(1);
 });
 
 test('throws InsufficientStockException when modification exceeds ingredient stock', function () {
@@ -141,7 +141,7 @@ test('throws InsufficientStockException when modification exceeds ingredient sto
         InsufficientStockException::class,
         'insufficient stock for Flour',
     )
-        ->and($order->fresh()->orderItems()->first()->quantity)->toBe(2);
+        ->and($order->refresh()->orderItems()->value('quantity'))->toBe(2);
 });
 
 test('rolls back item-quantity changes when stock check fails', function () {
@@ -161,7 +161,7 @@ test('rolls back item-quantity changes when stock check fails', function () {
         // expected
     }
 
-    expect($order->fresh()->orderItems()->first()->quantity)->toBe(3);
+    expect($order->refresh()->orderItems()->value('quantity'))->toBe(3);
 });
 
 test('reports every shortage when several ingredients fall short', function () {
@@ -193,7 +193,7 @@ test('allows modification when stock is sufficient', function () {
         ['order_item_id' => $item->id, 'quantity' => 10],
     ]);
 
-    expect($order->fresh()->orderItems()->first()->quantity)->toBe(10);
+    expect($order->refresh()->orderItems()->value('quantity'))->toBe(10);
 });
 
 test('allows decreasing quantity even when current order draw exceeds stock', function () {
@@ -211,5 +211,5 @@ test('allows decreasing quantity even when current order draw exceeds stock', fu
         ['order_item_id' => $item->id, 'quantity' => 2],
     ]);
 
-    expect($order->fresh()->orderItems()->first()->quantity)->toBe(2);
+    expect($order->refresh()->orderItems()->value('quantity'))->toBe(2);
 });

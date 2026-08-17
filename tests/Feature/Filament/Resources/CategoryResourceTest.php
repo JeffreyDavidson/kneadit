@@ -55,7 +55,7 @@ test('can edit a category via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($category->fresh()->name)->toBe('Updated Category');
+    expect($category->refresh()->name)->toBe('Updated Category');
 });
 
 test('can render category table columns', function (string $column) {

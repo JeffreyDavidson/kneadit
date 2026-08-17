@@ -1,6 +1,8 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$storefrontUrl = Config::string('browser-testing.storefront_url');
 
 // Full checkout isn't tested here — the submit handler redirects to Stripe
 // Checkout, which can't be driven from a Pest browser test without end-to-end

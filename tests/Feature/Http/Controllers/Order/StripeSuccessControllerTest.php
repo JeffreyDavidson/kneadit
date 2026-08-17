@@ -11,7 +11,7 @@ test('redirects to order confirmation with success message', function () {
     $order = Order::factory()->create();
 
     $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
+    mockExpectation($mock, 'handleCheckoutComplete')->never();
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -25,7 +25,7 @@ test('calls handleCheckoutComplete when session_id is present', function () {
     $order = Order::factory()->create();
 
     $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')
+    mockExpectation($mock, 'handleCheckoutComplete')
         ->once()
         ->with('cs_test_123');
     app()->instance(StripeCheckoutService::class, $mock);
@@ -41,7 +41,7 @@ test('does not call handleCheckoutComplete when session_id is absent', function 
     $order = Order::factory()->create();
 
     $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
+    mockExpectation($mock, 'handleCheckoutComplete')->never();
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())

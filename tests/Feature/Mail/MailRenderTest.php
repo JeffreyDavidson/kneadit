@@ -2,6 +2,9 @@
 
 use App\Enums\Orders\OrderStatus;
 use App\Mail\Customers\RepeatOrderReminderMail;
+use App\Mail\Customers\ReviewRequestMail;
+use App\Mail\Orders\NewOrderNotificationMail;
+use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Customers\Customer;
@@ -31,13 +34,19 @@ test('order-based mail classes render without errors', function (string $mailCla
     $order = Order::factory()->create();
     $order->load('customer', 'orderItems.product');
 
-    $html = (new $mailClass($order))->render();
+    $mail = match ($mailClass) {
+        NewOrderNotificationMail::class => new NewOrderNotificationMail($order),
+        OrderPlacedMail::class => new OrderPlacedMail($order),
+        ReviewRequestMail::class => new ReviewRequestMail($order),
+        default => throw new InvalidArgumentException("Unsupported order mail class: {$mailClass}"),
+    };
+    $html = $mail->render();
 
     expect($html)->toBeString()->not->toBeEmpty();
 })->with([
-    'NewOrderNotification' => [App\Mail\Orders\NewOrderNotificationMail::class],
-    'OrderPlaced' => [App\Mail\Orders\OrderPlacedMail::class],
-    'ReviewRequest' => [App\Mail\Customers\ReviewRequestMail::class],
+    'NewOrderNotification' => [NewOrderNotificationMail::class],
+    'OrderPlaced' => [OrderPlacedMail::class],
+    'ReviewRequest' => [ReviewRequestMail::class],
 ]);
 
 test('OrderStatusMail renders for all statuses', function (OrderStatus $status) {

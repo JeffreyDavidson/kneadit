@@ -38,8 +38,9 @@ test('creates order with customer and items', function () {
     ]);
 
     $order = resolve(CreateQuickOrder::class)($data);
+    $customer = $order->customer()->firstOrFail();
 
     expect($order)
         ->toBeInstanceOf(Order::class)
-        ->and($order->total->dollars())->toEqual(20.0)->and($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
+        ->and($order->total->dollars())->toEqual(20.0)->and($order->orderItems)->toHaveCount(1)->and($customer->email)->toBe('jane@example.com');
 });

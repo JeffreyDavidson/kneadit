@@ -13,5 +13,5 @@ test('it approves a review', function () {
 
     resolve(ApproveReview::class)($review);
 
-    expect($review->fresh()->is_approved)->toBeTrue();
+    expect($review->refresh()->is_approved)->toBeTrue();
 });

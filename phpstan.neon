@@ -1,14 +1,20 @@
-includes:
-    - vendor/larastan/larastan/extension.neon
-
 parameters:
     paths:
         - app/
-    level: 8
+    level: 9
     bootstrapFiles:
+        - bootstrap/app.php
         - phpstan-bootstrap.php
+    excludePaths:
+        - bootstrap/cache/
+        - storage/
     scanDirectories:
         - vendor/filament
+    type_coverage:
+        param: 85
+        return: 85
+        property: 85
+    treatPhpDocTypesAsCertain: true
     ignoreErrors:
         # Tenant domains relation from vendor trait (HasDomains)
         - identifier: larastan.relationExistence

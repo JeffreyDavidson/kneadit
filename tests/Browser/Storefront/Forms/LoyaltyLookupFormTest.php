@@ -1,6 +1,8 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+use Illuminate\Support\Facades\Config;
+
+$storefrontUrl = Config::string('browser-testing.storefront_url');
 
 test('loyalty lookup form blocks empty submit via HTML5 required', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/rewards")

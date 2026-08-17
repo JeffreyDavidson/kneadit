@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 test('inventory:send-low-stock-alert command runs successfully with no tenants', function () {
     Mail::fake();
 
-    $this->artisan('inventory:send-low-stock-alert')->assertSuccessful();
+    pendingArtisan('inventory:send-low-stock-alert')->assertSuccessful();
 
     Mail::assertNothingQueued();
 });

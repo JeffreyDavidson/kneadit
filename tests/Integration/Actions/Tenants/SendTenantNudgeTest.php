@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 
 test('creates a nudge message for the tenant', function () {
     createTenant(['store_name' => 'Sweet Dreams']);
-    $tenant = App\Models\Platform\Tenant::query()->find('test-bakery');
+    $tenant = App\Models\Platform\Tenant::query()->findOrFail('test-bakery');
 
     $message = resolve(SendTenantNudge::class)($tenant);
 

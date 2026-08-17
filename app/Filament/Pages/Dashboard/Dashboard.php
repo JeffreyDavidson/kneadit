@@ -40,6 +40,10 @@ use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 
+/**
+ * @phpstan-type SavedWidgetSettings array{visible: bool, order: int, size?: string}
+ * @phpstan-type SavedDashboardConfig array<string, SavedWidgetSettings>
+ */
 class Dashboard extends BaseDashboard
 {
     protected static ?string $navigationLabel = 'Dashboard';
@@ -101,16 +105,14 @@ class Dashboard extends BaseDashboard
     {
         $registry = $this->getWidgetRegistry();
 
-        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
-        $config = $saved ? json_decode($saved, true) : null;
+        $config = $this->getSavedDashboardConfig();
 
         // No saved layout yet → render every registered widget in default order
         // at its widget-meta default size. The DashboardConfig page
         // (Settings → Dashboard Configuration) is where bakers customize this.
         // Skip widgets flagged defaultHidden so reporting-flavoured tiles
         // don't crowd a fresh ops dashboard.
-        if (! $config) {
-            /** @var array<class-string<Widget>|WidgetConfiguration> */
+        if ($config === null || $config === []) {
             return collect($registry)
                 ->reject(fn (string $class, string $key): bool => WidgetMeta::isDefaultHidden($key))
                 ->map(fn (string $class, string $key) => $this->wrapWithSize($class, $key, null))
@@ -119,12 +121,12 @@ class Dashboard extends BaseDashboard
         }
 
         // Sort by saved order, drop hidden widgets, drop unknown keys.
-        uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
+        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
 
         /** @var array<int, class-string<Widget>|WidgetConfiguration> $widgets */
         $widgets = [];
         foreach ($config as $key => $settings) {
-            if (! ($settings['visible'] ?? true)) {
+            if (! $settings['visible']) {
                 continue;
             }
             if (! isset($registry[$key])) {
@@ -169,13 +171,58 @@ class Dashboard extends BaseDashboard
         }
 
         $allowed = WidgetMeta::allowedSizesFor($key);
-        $resolved = WidgetSize::tryFrom((string) $savedSize);
+        $resolved = $savedSize === null ? null : WidgetSize::tryFrom($savedSize);
 
         if ($resolved === null || ! in_array($resolved, $allowed, true)) {
-            $meta = WidgetMeta::get($key);
-            $resolved = $meta['defaultSize'] ?? WidgetSize::Small;
+            $resolved = $this->getDefaultSize($key);
         }
 
         return $class::make(['dashboardSize' => $resolved->value]);
+    }
+
+    /** @return SavedDashboardConfig|null */
+    private function getSavedDashboardConfig(): ?array
+    {
+        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
+
+        if (! is_string($saved) || $saved === '') {
+            return null;
+        }
+
+        $decoded = json_decode($saved, true);
+
+        if (! is_array($decoded)) {
+            return null;
+        }
+
+        $config = [];
+
+        foreach ($decoded as $key => $settings) {
+            if (! is_string($key)) {
+                continue;
+            }
+            if (! is_array($settings)) {
+                continue;
+            }
+            $normalized = [
+                'visible' => is_bool($settings['visible'] ?? null) ? $settings['visible'] : true,
+                'order' => is_int($settings['order'] ?? null) ? $settings['order'] : 99,
+            ];
+
+            if (is_string($settings['size'] ?? null)) {
+                $normalized['size'] = $settings['size'];
+            }
+
+            $config[$key] = $normalized;
+        }
+
+        return $config;
+    }
+
+    private function getDefaultSize(string $key): WidgetSize
+    {
+        $defaultSize = WidgetMeta::get($key)['defaultSize'] ?? null;
+
+        return $defaultSize instanceof WidgetSize ? $defaultSize : WidgetSize::Small;
     }
 }

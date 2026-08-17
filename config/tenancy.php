@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
+use App\Tenancy\TenantFilesystemBootstrapper;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
@@ -24,7 +25,7 @@ return [
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
-    'tenant_db_path' => env('TENANT_DB_PATH', database_path()),
+    'tenant_db_path' => env('TENANT_DB_PATH') ?: database_path(),
 
     'central_domains' => [
         '127.0.0.1',
@@ -43,7 +44,7 @@ return [
     'bootstrappers' => [
         DatabaseTenancyBootstrapper::class,
         CacheTenancyBootstrapper::class,
-        // Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class, // Disabled — causes "Undefined array key local" on central admin tenant queries
+        TenantFilesystemBootstrapper::class,
         QueueTenancyBootstrapper::class,
         // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
     ],
@@ -109,14 +110,10 @@ return [
      * https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper.
      */
     'filesystem' => [
-        /**
-         * Each disk listed in the 'disks' array will be suffixed by the suffix_base, followed by the tenant_id.
-         */
+        /** Only the sensitive import disk is isolated by this bootstrapper. */
         'suffix_base' => 'tenant',
         'disks' => [
-            'local',
-            'public',
-            // 's3',
+            'imports',
         ],
 
         /**
@@ -125,21 +122,13 @@ return [
          * See https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper
          */
         'root_override' => [
-            // Disks whose roots should be overridden after storage_path() is suffixed.
-            'local' => '%storage_path%/app/',
-            'public' => '%storage_path%/app/public/',
+            // Only sensitive imports are tenant-prefixed. Existing public/local
+            // asset behavior remains unchanged until its migration is planned.
+            'imports' => '%storage_path%/app/private/csv-imports/tenant%tenant%/',
         ],
 
-        /**
-         * Should storage_path() be suffixed.
-         *
-         * Note: Disabling this will likely break local disk tenancy. Only disable this if you're using an external file storage service like S3.
-         *
-         * For the vast majority of applications, this feature should be enabled. But in some
-         * edge cases, it can cause issues (like using Passport with Vapor - see #196), so
-         * you may want to disable this if you are experiencing these edge case issues.
-         */
-        'suffix_storage_path' => true,
+        /** Keep framework storage paths stable; root_override isolates imports. */
+        'suffix_storage_path' => false,
 
         /**
          * By default, asset() calls are made multi-tenant too. You can use global_asset() and mix()

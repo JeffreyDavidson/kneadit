@@ -3,7 +3,10 @@
 namespace App\Queries\Financial;
 
 use App\Models\Orders\Order;
+use App\Support\DatabaseValue;
 use App\ValueObjects\DateRange;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class RevenueQuery
 {
@@ -14,14 +17,14 @@ class RevenueQuery
      */
     public static function total(DateRange|array $range): float
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         // orders.total is now bigint cents (see migration 2026_04_22_201500);
         // convert the aggregate back to dollars for callers that still expect a float.
-        return (int) Order::query()
+        return DatabaseValue::int(Order::query()
             ->active()->paid()
             ->whereBetween('delivery_date', $dates)
-            ->sum('total') / 100;
+            ->sum('total')) / 100;
     }
 
     /**
@@ -32,7 +35,7 @@ class RevenueQuery
      */
     public static function dailyBreakdown(DateRange|array $range): array
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         return Order::query()
             ->active()->paid()
@@ -41,7 +44,7 @@ class RevenueQuery
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue_cents')
             ->groupBy('date')
             ->pluck('revenue_cents', 'date')
-            ->map(fn (mixed $v): float => (int) $v / 100)
+            ->map(fn (mixed $v): float => DatabaseValue::int($v) / 100)
             ->all();
     }
 
@@ -52,11 +55,25 @@ class RevenueQuery
      */
     public static function orderCount(DateRange|array $range): int
     {
-        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+        $dates = self::bounds($range);
 
         return Order::query()
             ->active()
             ->whereBetween('delivery_date', $dates)
             ->count();
+    }
+
+    /**
+     * @param DateRange|array<int, string> $range
+     * @return array{Carbon, Carbon}
+     */
+    private static function bounds(DateRange|array $range): array
+    {
+        $dates = $range instanceof DateRange ? $range->toArray() : $range;
+
+        return [
+            Date::parse($dates[0])->startOfDay(),
+            Date::parse($dates[1])->endOfDay(),
+        ];
     }
 }

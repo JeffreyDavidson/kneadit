@@ -39,7 +39,7 @@ test('a signed verification URL marks the email verified and redirects to the da
     $url = URL::temporarySignedRoute(
         'account.email.verify',
         now()->addMinutes(60),
-        ['id' => $customer->id, 'hash' => sha1($customer->email)],
+        ['id' => $customer->id, 'hash' => hash('sha256', $customer->email)],
     );
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -47,7 +47,9 @@ test('a signed verification URL marks the email verified and redirects to the da
         ->get($url);
 
     $response->assertRedirect(route('account.dashboard', [], false));
-    expect($customer->fresh()->hasVerifiedEmail())->toBeTrue();
+    $customer->refresh();
+
+    expect($customer->hasVerifiedEmail())->toBeTrue();
     Event::assertDispatched(Verified::class);
 });
 
@@ -56,10 +58,12 @@ test('an unsigned verification URL is rejected', function () {
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
-        ->get(route('account.email.verify', ['id' => $customer->id, 'hash' => sha1($customer->email)], false));
+        ->get(route('account.email.verify', ['id' => $customer->id, 'hash' => hash('sha256', $customer->email)], false));
 
     $response->assertForbidden();
-    expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
+    $customer->refresh();
+
+    expect($customer->hasVerifiedEmail())->toBeFalse();
 });
 
 test('a verification URL with a mismatched id is rejected', function () {
@@ -68,7 +72,7 @@ test('a verification URL with a mismatched id is rejected', function () {
     $url = URL::temporarySignedRoute(
         'account.email.verify',
         now()->addMinutes(60),
-        ['id' => 9999, 'hash' => sha1($customer->email)],
+        ['id' => 9999, 'hash' => hash('sha256', $customer->email)],
     );
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -86,7 +90,7 @@ test('a verification URL whose hash does not match the customer email is rejecte
     $url = URL::temporarySignedRoute(
         'account.email.verify',
         now()->addMinutes(60),
-        ['id' => $customer->id, 'hash' => sha1('different@example.com')],
+        ['id' => $customer->id, 'hash' => hash('sha256', 'different@example.com')],
     );
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -94,7 +98,9 @@ test('a verification URL whose hash does not match the customer email is rejecte
         ->get($url);
 
     $response->assertForbidden();
-    expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
+    $customer->refresh();
+
+    expect($customer->hasVerifiedEmail())->toBeFalse();
 });
 
 test('the resend route sends another verification email', function () {

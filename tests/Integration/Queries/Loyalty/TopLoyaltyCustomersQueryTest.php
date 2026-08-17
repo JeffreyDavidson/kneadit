@@ -3,6 +3,7 @@
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Queries\Loyalty\TopLoyaltyCustomersQuery;
+use App\Support\DatabaseValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -19,9 +20,8 @@ test('returns customers ranked by loyalty point balance', function () {
     $result = TopLoyaltyCustomersQuery::get(limit: 10);
 
     expect($result)->toHaveCount(2)
-        ->and($result->first()->id)->toBe($topCustomer->id)
-        ->and((int) $result->first()->balance)->toBe(300)
-        ->and($result->last()->id)->toBe($secondCustomer->id);
+        ->and($result->pluck('id')->all())->toBe([$topCustomer->id, $secondCustomer->id])
+        ->and(DatabaseValue::int($result->firstOrFail()->getAttribute('balance')))->toBe(300);
 });
 
 test('subtracts redeemed points from balance', function () {
@@ -31,8 +31,8 @@ test('subtracts redeemed points from balance', function () {
 
     $result = TopLoyaltyCustomersQuery::get();
 
-    expect((int) $result->first()->balance)->toBe(150)
-        ->and((int) $result->first()->total_earned)->toBe(200);
+    expect(DatabaseValue::int($result->firstOrFail()->getAttribute('balance')))->toBe(150)
+        ->and(DatabaseValue::int($result->firstOrFail()->getAttribute('total_earned')))->toBe(200);
 });
 
 test('respects the limit parameter', function () {
@@ -54,5 +54,5 @@ test('excludes customers with no loyalty points', function () {
     $result = TopLoyaltyCustomersQuery::get();
 
     expect($result)->toHaveCount(1)
-        ->and($result->first()->id)->toBe($withPoints->id);
+        ->and($result->firstOrFail()->id)->toBe($withPoints->id);
 });

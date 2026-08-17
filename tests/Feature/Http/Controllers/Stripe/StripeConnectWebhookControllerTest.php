@@ -34,6 +34,8 @@ test('webhook returns 500 when secret not configured', function () {
         ],
     ]);
 
+    throw_unless(is_string($payload), UnexpectedValueException::class, 'Expected a JSON webhook payload.');
+
     $response = test()->call('POST', '/stripe/connect-webhook', [], [], [], [
         'CONTENT_TYPE' => 'application/json',
     ], $payload);
@@ -49,6 +51,8 @@ test('webhook returns 500 for unknown event type without secret', function () {
         'type' => 'some.unknown.event',
         'data' => ['object' => ['id' => 'obj_123']],
     ]);
+
+    throw_unless(is_string($payload), UnexpectedValueException::class, 'Expected a JSON webhook payload.');
 
     $response = test()->call('POST', '/stripe/connect-webhook', [], [], [], [
         'CONTENT_TYPE' => 'application/json',

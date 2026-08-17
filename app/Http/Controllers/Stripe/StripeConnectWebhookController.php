@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\Webhook;
 
@@ -25,17 +26,17 @@ class StripeConnectWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $secret = config('kneadit.stripe_connect.webhook_secret');
-
         // Webhook signature verification is mandatory
-        if (! $secret) {
+        $secret = Config::get('kneadit.stripe_connect.webhook_secret');
+
+        if (! is_string($secret) || $secret === '') {
             Log::error('STRIPE_CONNECT_WEBHOOK_SECRET not configured');
 
             return response('Webhook secret not configured', 500);
         }
 
         try {
-            $event = Webhook::constructEvent($payload, (string) $sigHeader, $secret);
+            $event = Webhook::constructEvent($payload, $sigHeader ?? '', $secret);
         } catch (\Exception $e) {
             Log::warning('Stripe Connect webhook signature verification failed', [
                 'error' => $e->getMessage(),

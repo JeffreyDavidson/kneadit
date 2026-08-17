@@ -45,7 +45,7 @@ test('can edit a setting via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($setting->fresh()->value)->toBe('Updated value');
+    expect($setting->refresh()->value)->toBe('Updated value');
 });
 
 test('create setting validates key is required', function () {

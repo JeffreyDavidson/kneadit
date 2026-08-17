@@ -107,3 +107,20 @@ test('percentage calculation is correct', function () {
 
     expect($stats['percentage'])->toEqual(0);
 });
+
+test('fully onboarded count uses central metrics', function () {
+    Tenant::factory()->create([
+        'store_name' => 'Complete Bakery',
+        'store_logo' => 'logo.png',
+        'storefront_enabled' => true,
+        'brand_color_primary' => '#ff0000',
+        'onboarding_products_count' => 1,
+        'onboarding_categories_count' => 1,
+        'onboarding_orders_count' => 1,
+    ]);
+
+    $stats = test()->widget->getOnboardingStats();
+
+    expect($stats['onboarded'])->toBe(1)
+        ->and($stats['percentage'])->toBe(100.0);
+});

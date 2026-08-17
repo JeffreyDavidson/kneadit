@@ -6,9 +6,11 @@ use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
+use App\Support\DatabaseValue;
+use DateTimeInterface;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class ReorderRemindersWidget extends Widget
 {
@@ -26,33 +28,20 @@ class ReorderRemindersWidget extends Widget
      */
     public static function canView(): bool
     {
-        $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+        $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
-        return DB::table(
-            Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
-                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                ->groupBy('customers.id')
-                ->havingRaw('COUNT(orders.id) >= 2')
-                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                ->select('customers.id')->toBase(),
-            'lapsed',
-        )->exists();
+        return self::lapsedCustomersQuery($thirtyDaysAgo)->exists();
     }
 
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
         return $this->cached('lapsed_customers', [1800, 3600], function (): array {
-            $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+            $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
-            return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
-                ->join('orders', 'orders.customer_id', '=', 'customers.id')
-                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                ->selectRaw('MAX(orders.created_at) as last_order_at')
-                ->groupBy('customers.id', 'customers.name', 'customers.email')
-                ->havingRaw('COUNT(orders.id) >= 2')
-                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                ->orderByRaw('MAX(orders.created_at) DESC')
+            return self::lapsedCustomersQuery($thirtyDaysAgo)
+                ->select('customers.id', 'customers.name', 'customers.email')
+                ->orderByDesc('last_order_at')
                 ->limit(10)
                 ->get()
                 ->map(fn (Customer $c) => [
@@ -67,18 +56,23 @@ class ReorderRemindersWidget extends Widget
     public function getLapsedCount(): int
     {
         return $this->cached('lapsed_count', [1800, 3600], function (): int {
-            $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
+            $thirtyDaysAgo = Date::now()->subDays(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30));
 
-            return (int) DB::table(
-                Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
-                    ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                    ->groupBy('customers.id')
-                    ->havingRaw('COUNT(orders.id) >= 2')
-                    ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                    ->select('customers.id')->toBase(),
-                'lapsed',
-            )->count();
+            return self::lapsedCustomersQuery($thirtyDaysAgo)->count();
         });
+    }
+
+    /** @return Builder<Customer> */
+    private static function lapsedCustomersQuery(DateTimeInterface $cutoff): Builder
+    {
+        $eligibleOrders = fn (Builder $query): Builder => $query
+            ->whereNotIn('status', [OrderStatus::Cancelled->value]);
+
+        return Customer::query()
+            ->withMax(['orders as last_order_at' => $eligibleOrders], 'created_at')
+            ->whereHas('orders', $eligibleOrders, '>=', 2)
+            ->whereDoesntHave('orders', fn (Builder $query): Builder => $eligibleOrders($query)
+                ->where('created_at', '>=', $cutoff));
     }
 
     protected function cachePrefix(): string

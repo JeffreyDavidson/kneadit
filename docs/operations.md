@@ -11,7 +11,7 @@ A production environment needs all of the following:
 - built Vite assets and writable Laravel storage/cache directories
 - configured mail and any enabled Stripe, Stripe Connect, PayPal, Resend, Fathom, AWS, or Sentry credentials
 
-Do not run tenant database files from ephemeral storage. `TENANT_DB_PATH` must resolve to durable storage shared by every process serving the application.
+Do not run tenant database files from ephemeral storage. `TENANT_DB_PATH` must resolve to durable storage shared by every process serving the application. Tenant database names are confined to that root, symlinked database files are refused, and newly provisioned files use owner-only permissions.
 
 ## Queue operations
 
@@ -35,12 +35,14 @@ Retry only after correcting the cause and confirming the operation is safe to re
 
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
+| Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
 | Every 30 minutes | `health:check` | Application health checks |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
 | Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders |
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
+| Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
 | Daily 07:00 | `inventory:send-low-stock-alert` | Send low-stock alerts |
@@ -65,6 +67,7 @@ Central schema changes use the normal migration command. Tenant schema changes b
 ```bash
 php artisan migrate --force
 php artisan tenants:migrate --force
+php artisan tenants:sync-onboarding-metrics
 ```
 
 Tenant provisioning runs tenant migrations automatically. Existing tenant migrations are forward-only history and must not be edited after merge.
@@ -87,7 +90,7 @@ Before merging a release:
 2. Run the PHP quality suite and production frontend build.
 3. Run targeted browser smoke tests against a realistic seeded tenant.
 4. Verify Stripe webhook endpoints/secrets and other environment changes before traffic reaches new code.
-5. Deploy central migrations, tenant migrations, cached configuration/routes/views as appropriate, and built frontend assets.
+5. Deploy central migrations, tenant migrations, cached configuration/routes/views as appropriate, and built frontend assets. Tenant migrations encrypt credentials and pseudonymize analytics identifiers, so the production `APP_KEY` must remain stable and available.
 6. Restart queue workers so they load the new release.
 7. Confirm `/up`, the central landing page, a tenant storefront, both Filament login pages, queue processing, scheduler execution, and recent error logs.
 8. Verify database backups before any migration that is difficult to reverse.
@@ -143,11 +146,13 @@ Browser tests perform real writes. Use disposable local fixture data, never a pr
 ## Security
 
 - Web responses add `nosniff`, `SAMEORIGIN`, and strict-origin referrer headers.
-- CSP is currently **Report-Only**. Per-request nonces are emitted on inline script/style elements and violations POST to `/csp-report`. Review violation logs before moving the policy to enforcement.
+- CSP is enforced by default. Per-request nonces authorize inline script/style blocks, while inline script blocks without a nonce are rejected. Violations POST a bounded, allow-listed payload to `/csp-report`; `CSP_MODE=report-only` is an explicit temporary rollback switch.
 - Stripe and Stripe Connect webhook endpoints are excluded from CSRF but verify Stripe signatures. Connect delivery records provide idempotency across supported events.
 - Sensitive write routes use named throttles; signed URLs protect verification, exports, impersonation, and customer links where configured.
 - Policies, gates, and middleware protect application and Filament operations. A successful UI hide is not a substitute for server-side authorization.
 - Sentry defaults to no-op when its DSN is unset. PII transmission is disabled by default.
+- Page-view analytics store only an `APP_KEY`-derived visitor identifier, not raw session IDs, IP addresses, or user-agent strings. `PAGE_VIEW_RETENTION_DAYS` defaults to 90 days, and `analytics:prune-page-views` enforces it across tenants.
+- Filesystem disks throw on failed operations instead of silently returning false. Product CSVs use a dedicated, private, non-servable `imports` disk; public storage is reserved for intentionally public assets.
 - Never expose Stripe/PayPal/Resend/AWS/Sentry credentials, `.env`, tenant databases, or backup archives through public storage or logs.
 
 Before every release, check for debug helpers, temporary routes, unexpected authorization changes, unsafe mass assignment, raw SQL interpolation, user-controlled paths, and secrets in the diff.
@@ -156,7 +161,7 @@ Before every release, check for debug helpers, temporary routes, unexpected auth
 
 Application logs use the configured Laravel log stack. Sentry receives unhandled exceptions and can trace requests, SQL, Livewire, queues, notifications, and outbound HTTP when configured. `/up` is Laravel's basic health endpoint and is excluded from Sentry performance tracing.
 
-Important structured events include order placement, Stripe session creation/completion/refunds, Stripe Connect account changes/webhooks, PayPal failures, missing tenant databases, and tenancy auto-recovery. Logs should include identifiers such as tenant, order number, checkout session, or webhook event; they should not include payment credentials or unnecessary customer data.
+Important structured events include order placement, Stripe session creation/completion/refunds, Stripe Connect account changes/webhooks, PayPal failures, analytics recording failures, missing tenant databases, and tenancy auto-recovery. Logs should include identifiers such as tenant, order number, checkout session, or webhook event; they should not include payment credentials or unnecessary customer data.
 
 For an incident, determine the active layer before changing data:
 

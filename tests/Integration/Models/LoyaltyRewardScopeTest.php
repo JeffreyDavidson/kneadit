@@ -14,5 +14,5 @@ test('active scope returns only active rewards', function () {
     $results = LoyaltyReward::query()->active()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($active->id);
+        ->and($results->firstOrFail()->id)->toBe($active->id);
 });

@@ -21,10 +21,9 @@ test('writes an activity log entry when an observed model is created', function 
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
         ->where('action', ActivityAction::Created)
-        ->first();
+        ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->action)->toBe(ActivityAction::Created)
+    expect($log->action)->toBe(ActivityAction::Created)
         ->and($log->user_name)->toBe('System')
         ->and($log->description)->toBe("Customer #{$customer->id} was created");
 });
@@ -38,7 +37,7 @@ test('does not write a spurious Updated row when a Customer is created (referral
         ->get();
 
     expect($logs)->toHaveCount(1)
-        ->and($logs->first()->action)->toBe(ActivityAction::Created);
+        ->and($logs->firstOrFail()->action)->toBe(ActivityAction::Created);
 });
 
 test('writes an activity log entry when an observed model is updated, with changes payload', function () {
@@ -51,11 +50,14 @@ test('writes an activity log entry when an observed model is updated, with chang
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
         ->where('action', ActivityAction::Updated)
-        ->first();
+        ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->properties)->toHaveKey('changes')
-        ->and($log->properties['changes'])->toHaveKey('name');
+    $properties = $log->getAttribute('properties');
+    throw_unless(is_array($properties), RuntimeException::class, 'Expected activity properties to be an array.');
+    $changes = $properties['changes'] ?? null;
+    throw_unless(is_array($changes), RuntimeException::class, 'Expected activity changes to be an array.');
+
+    expect($changes)->toHaveKey('name');
 });
 
 test('writes an activity log entry when an observed model is deleted', function () {
@@ -69,7 +71,7 @@ test('writes an activity log entry when an observed model is deleted', function 
         ->where('model_type', Customer::class)
         ->where('model_id', $customerId)
         ->where('action', ActivityAction::Deleted)
-        ->first();
+        ->firstOrFail();
 
     expect($log)->not->toBeNull();
 });
@@ -84,7 +86,7 @@ test('records the authenticated user name when a user is logged in', function ()
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
         ->where('action', ActivityAction::Created)
-        ->first();
+        ->firstOrFail();
 
     expect($log->user_name)->toBe('Ada Lovelace')
         ->and($log->user_id)->toBe($user->id);
@@ -98,10 +100,9 @@ test('falls back to System when no user is authenticated (regression: null-safe)
     $log = ActivityLog::query()
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
-        ->first();
+        ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->user_name)->toBe('System')
+    expect($log->user_name)->toBe('System')
         ->and($log->user_id)->toBeNull();
 
     $logger->shouldNotHaveReceived('warning');
@@ -116,7 +117,7 @@ test('reads actor from context when set explicitly (simulates queue propagation)
     $log = ActivityLog::query()
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
-        ->first();
+        ->firstOrFail();
 
     expect($log->user_name)->toBe('Background Worker')
         ->and($log->user_id)->toBe($user->id);

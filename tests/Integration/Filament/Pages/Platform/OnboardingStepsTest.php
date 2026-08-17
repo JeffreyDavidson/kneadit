@@ -12,11 +12,21 @@ use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 
 beforeEach(function () {
     setUpTenantTest();
+
+    $tenant = Tenant::query()->make([
+        'id' => 'onboarding-steps-test',
+        'name' => 'Test Bakery',
+        'email' => 'owner@example.com',
+    ]);
+
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
 });
 
 // --- CompleteStep ---

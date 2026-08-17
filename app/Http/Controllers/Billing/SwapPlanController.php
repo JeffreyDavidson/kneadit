@@ -7,14 +7,16 @@ use App\Models\Staff\User;
 use Exception;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 class SwapPlanController extends Controller
 {
     public function __invoke(#[CurrentUser] User $user, string $plan): RedirectResponse
     {
-        $priceId = config("kneadit.stripe_prices.{$plan}");
-        abort_unless($priceId, 404, 'Plan not found.');
+        $priceKey = "kneadit.stripe_prices.{$plan}";
+        $priceId = Config::get($priceKey);
+        abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
         try {
             $user->subscription('default')?->swap($priceId);

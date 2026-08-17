@@ -21,5 +21,7 @@ test('it marks an order as delivered', function () {
     $response->assertRedirect()
         ->assertSessionHas('success');
 
-    expect($order->fresh()->status)->toBe(OrderStatus::Delivered);
+    $order->refresh();
+
+    expect($order->status)->toBe(OrderStatus::Delivered);
 });

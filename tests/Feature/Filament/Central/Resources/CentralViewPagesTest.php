@@ -96,8 +96,8 @@ test('viewing an unread message marks it as read', function () {
     livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
-    $message = DB::table('platform_messages')->where('id', $messageId)->first();
-    expect($message->is_read)->toBeTruthy();
+    $isRead = DB::table('platform_messages')->where('id', $messageId)->value('is_read');
+    expect($isRead)->toBeTruthy();
 });
 
 test('can add reply to support ticket', function () {
@@ -114,10 +114,8 @@ test('can add reply to support ticket', function () {
         ->set('replyBody', 'We are looking into this.')
         ->call('addReply');
 
-    $reply = DB::table('support_replies')->where('ticket_id', $ticketId)->first();
-    expect($reply)
-        ->not->toBeNull()
-        ->and($reply->body)->toBe('We are looking into this.');
+    $replyBody = DB::table('support_replies')->where('ticket_id', $ticketId)->value('body');
+    expect($replyBody)->toBe('We are looking into this.');
 });
 
 test('can update support ticket status', function () {
@@ -133,8 +131,8 @@ test('can update support ticket status', function () {
     livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'in_progress');
 
-    $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
-    expect($ticket->status)->toBe('in_progress');
+    $status = DB::table('support_tickets')->where('id', $ticketId)->value('status');
+    expect($status)->toBe('in_progress');
 });
 
 test('resolving ticket sets resolved_at timestamp', function () {
@@ -150,8 +148,8 @@ test('resolving ticket sets resolved_at timestamp', function () {
     livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'resolved');
 
-    $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
-    expect($ticket->status)->toBe('resolved');
+    $status = DB::table('support_tickets')->where('id', $ticketId)->value('status');
+    expect($status)->toBe('resolved');
 });
 
 test('tenant view page returns tenant stats', function () {
