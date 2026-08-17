@@ -19,8 +19,8 @@ class AcceptInvitationController extends Controller
 
         $user = $acceptInvitation(
             invitation: $invitation,
-            name: $request->validated('name'),
-            password: $request->validated('password'),
+            name: $request->filled('name') ? $request->string('name')->toString() : null,
+            password: $request->filled('password') ? $request->string('password')->toString() : null,
         );
 
         Auth::login($user);

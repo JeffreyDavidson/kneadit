@@ -3,6 +3,7 @@
 namespace App\Services\Tenants;
 
 use Illuminate\Support\Facades\Log;
+use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\TenantDatabaseManagers\SQLiteDatabaseManager;
 use Throwable;
 
@@ -12,16 +13,22 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
     {
         $sharedBase = config('tenancy.tenant_db_path');
 
-        if ($sharedBase) {
+        if (is_string($sharedBase) && $sharedBase !== '') {
             return $sharedBase . '/' . $name;
         }
 
         return database_path($name);
     }
 
-    public function createDatabase(mixed $tenant): bool
+    public function createDatabase(TenantWithDatabase $tenant): bool
     {
-        $path = $this->tenantDbPath($tenant->database()->getName());
+        $databaseName = $tenant->database()->getName();
+
+        if ($databaseName === null) {
+            return false;
+        }
+
+        $path = $this->tenantDbPath($databaseName);
         $dir = dirname($path);
 
         if (! is_dir($dir)) {
@@ -31,9 +38,15 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         return (bool) file_put_contents($path, '');
     }
 
-    public function deleteDatabase(mixed $tenant): bool
+    public function deleteDatabase(TenantWithDatabase $tenant): bool
     {
-        $path = $this->tenantDbPath($tenant->database()->getName());
+        $databaseName = $tenant->database()->getName();
+
+        if ($databaseName === null) {
+            return false;
+        }
+
+        $path = $this->tenantDbPath($databaseName);
 
         // Audit logging so the next time tenant SQLite files vanish we know
         // who called for it. Captures the full call chain — Artisan command
@@ -41,7 +54,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         // notes around the orphan-tenant 503 (#474, #478).
         if (file_exists($path)) {
             Log::warning('Tenant database deletion requested', [
-                'tenant_id' => $tenant->id ?? null,
+                'tenant_id' => $tenant->getTenantKey(),
                 'path' => $path,
                 'artisan_command' => $this->currentArtisanCommand(),
                 'running_test' => $this->currentTestClass(),
@@ -64,12 +77,20 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 
         $argv = $_SERVER['argv'] ?? [];
 
-        return implode(' ', array_slice($argv, 1)) ?: null;
+        if (! is_array($argv)) {
+            return null;
+        }
+
+        $arguments = array_values(array_filter(array_slice($argv, 1), is_string(...)));
+
+        return implode(' ', $arguments) ?: null;
     }
 
     private function currentTestClass(): ?string
     {
-        if (! defined('PHPUNIT_COMPOSER_INSTALL') && ! str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'pest')) {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+
+        if (! defined('PHPUNIT_COMPOSER_INSTALL') && (! is_string($scriptName) || ! str_contains($scriptName, 'pest'))) {
             return null;
         }
 
