@@ -83,9 +83,37 @@ class LoyaltyPageViewModel
      */
     private static function loadContent(): array
     {
-        $content = settingsPageContent('loyalty');
+        $rawContent = settingsPageContent('loyalty');
+        $content = [];
 
-        return [$content, $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps')];
+        foreach ($rawContent as $key => $value) {
+            if (is_string($value)) {
+                $content[$key] = $value;
+            }
+        }
+
+        $rawSteps = $rawContent['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps', []);
+        $howSteps = [];
+
+        if (is_array($rawSteps)) {
+            foreach ($rawSteps as $step) {
+                if (! is_array($step)) {
+                    continue;
+                }
+
+                $normalized = [];
+
+                foreach ($step as $key => $value) {
+                    if (is_string($key) && is_string($value)) {
+                        $normalized[$key] = $value;
+                    }
+                }
+
+                $howSteps[] = $normalized;
+            }
+        }
+
+        return [$content, $howSteps];
     }
 
     public readonly int $totalPoints;

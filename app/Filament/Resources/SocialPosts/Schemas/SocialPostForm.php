@@ -124,6 +124,10 @@ class SocialPostForm
 
     private static function platformFor(Get $get): SocialPlatform
     {
-        return SocialPlatform::tryFrom($get('platform') ?? 'instagram') ?? SocialPlatform::Instagram;
+        $platform = $get('platform');
+
+        return is_string($platform)
+            ? SocialPlatform::tryFrom($platform) ?? SocialPlatform::Instagram
+            : SocialPlatform::Instagram;
     }
 }

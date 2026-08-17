@@ -43,10 +43,10 @@ class SocialCalendar extends Page
 
     public ?string $selectedDate = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, list<array<string, mixed>>> */
     public array $posts = [];
 
-    /** @var array<string, mixed> */
+    /** @var list<array<string, mixed>> */
     public array $selectedDayPosts = [];
 
     public function mount(): void

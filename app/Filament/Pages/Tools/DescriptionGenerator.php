@@ -49,7 +49,7 @@ class DescriptionGenerator extends Page
     /** @var array<int, string> */
     public array $descriptions = [];
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, Product> */
     public function getProductsProperty(): Collection
     {
         return Product::query()

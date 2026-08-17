@@ -18,7 +18,7 @@ class PanelThemes
         // config('kneadit.central_theme') (env CENTRAL_THEME) is the boot default.
         $value = platformSettings('central_theme') ?? config('kneadit.central_theme');
 
-        return array_key_exists($value, self::AVAILABLE) ? $value : 'honey';
+        return is_string($value) && array_key_exists($value, self::AVAILABLE) ? $value : 'honey';
     }
 
     public static function rootCss(): string
