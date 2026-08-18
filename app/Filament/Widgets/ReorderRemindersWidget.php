@@ -7,9 +7,10 @@ use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class ReorderRemindersWidget extends Widget
 {
@@ -27,33 +28,16 @@ class ReorderRemindersWidget extends Widget
      */
     public static function canView(): bool
     {
-        $thirtyDaysAgo = Date::now()->subDays(Config::integer('analytics.at_risk_threshold_days', 30));
-
-        return DB::table(
-            Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
-                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                ->groupBy('customers.id')
-                ->havingRaw('COUNT(orders.id) >= 2')
-                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                ->select('customers.id')->toBase(),
-            'lapsed',
-        )->exists();
+        return self::lapsedCustomersQuery()->exists();
     }
 
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
         return $this->cached('lapsed_customers', [1800, 3600], function (): array {
-            $thirtyDaysAgo = Date::now()->subDays(Config::integer('analytics.at_risk_threshold_days', 30));
-
-            return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
-                ->join('orders', 'orders.customer_id', '=', 'customers.id')
-                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                ->selectRaw('MAX(orders.created_at) as last_order_at')
-                ->groupBy('customers.id', 'customers.name', 'customers.email')
-                ->havingRaw('COUNT(orders.id) >= 2')
-                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                ->orderByRaw('MAX(orders.created_at) DESC')
+            return self::lapsedCustomersQuery()
+                ->withMax(['orders as last_order_at' => self::eligibleOrders(...)], 'created_at')
+                ->orderByDesc('last_order_at')
                 ->limit(10)
                 ->get()
                 ->map(fn (Customer $c) => [
@@ -68,18 +52,28 @@ class ReorderRemindersWidget extends Widget
     public function getLapsedCount(): int
     {
         return $this->cached('lapsed_count', [1800, 3600], function (): int {
-            $thirtyDaysAgo = Date::now()->subDays(Config::integer('analytics.at_risk_threshold_days', 30));
-
-            return (int) DB::table(
-                Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
-                    ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-                    ->groupBy('customers.id')
-                    ->havingRaw('COUNT(orders.id) >= 2')
-                    ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-                    ->select('customers.id')->toBase(),
-                'lapsed',
-            )->count();
+            return self::lapsedCustomersQuery()->count();
         });
+    }
+
+    /** @return Builder<Customer> */
+    private static function lapsedCustomersQuery(): Builder
+    {
+        $cutoff = Date::now()->subDays(Config::integer('analytics.at_risk_threshold_days', 30));
+
+        return Customer::query()
+            ->select(['customers.id', 'customers.name', 'customers.email'])
+            ->whereHas('orders', self::eligibleOrders(...), '>=', 2)
+            ->whereDoesntHave('orders', function (Builder $query) use ($cutoff): void {
+                self::eligibleOrders($query);
+                $query->where('created_at', '>=', $cutoff);
+            });
+    }
+
+    /** @param Builder<Model> $query */
+    private static function eligibleOrders(Builder $query): void
+    {
+        $query->where('status', '!=', OrderStatus::Cancelled);
     }
 
     protected function cachePrefix(): string
