@@ -37,6 +37,7 @@ class VerifyOrderAccessController extends Controller
         return view('storefront.order-verify', [
             'order' => $order,
             'settings' => $settings,
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }
