@@ -5,7 +5,9 @@ use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Models\Platform\Setting;
 use App\Models\Staff\User;
+use App\Services\Settings\SettingsManager;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -26,7 +28,20 @@ test('order tracking controller passes settings and content to view', function (
 
     $response->assertOk()
         ->assertViewHas('settings')
-        ->assertViewHas('content');
+        ->assertViewHas('content')
+        ->assertViewHas('storefrontTheme');
+});
+
+test('biscotto tracking page uses the themed follow-up presentation', function () {
+    Setting::factory()->create(['key' => 'storefront_theme', 'value' => 'biscotto']);
+    resolve(SettingsManager::class)->flushCache();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.track', [], false));
+
+    $response->assertOk()
+        ->assertSee('biscotto-order-tracking', false)
+        ->assertSee('Track Your Order');
 });
 
 test('tracking with valid email returns orders', function () {
