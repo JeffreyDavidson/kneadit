@@ -4,7 +4,10 @@ use App\Services\Platform\ChangelogService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-beforeEach(fn () => setUpCentralTest());
+beforeEach(function () {
+    setUpCentralTest();
+    Cache::flush();
+});
 
 test('returns entries from GitHub releases API', function () {
     Http::fake([

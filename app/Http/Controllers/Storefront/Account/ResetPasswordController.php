@@ -24,7 +24,7 @@ class ResetPasswordController extends Controller
 
         if ($status !== Password::PasswordReset) {
             throw ValidationException::withMessages([
-                'email' => trans($status),
+                'email' => trans(is_string($status) ? $status : 'passwords.user'),
             ]);
         }
 
