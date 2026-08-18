@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class ProductCsvUploadResolver
 {
-    private const DIRECTORY = 'csv-imports';
+    private const string DIRECTORY = 'csv-imports';
 
     public function resolve(string $path): ?UploadedFile
     {
