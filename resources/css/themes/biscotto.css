@@ -714,6 +714,240 @@
     text-align: center;
 }
 
+[data-theme='biscotto'] .biscotto-reviews-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 148px 24px 82px;
+    background:
+        radial-gradient(ellipse 600px 400px at 18% 50%, rgb(212 165 116 / 12%), transparent),
+        radial-gradient(ellipse 500px 350px at 82% 50%, rgb(193 127 78 / 9%), transparent),
+        var(--warm-900);
+    color: var(--warm-100);
+    text-align: center;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-hero > p:first-child {
+    color: var(--warm-500);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-hero h1 {
+    margin: 6px 0 18px;
+    font-family: var(--font-script);
+    font-size: clamp(3.8rem, 8vw, 5.8rem);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--warm-500);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-score > span {
+    letter-spacing: 0.12em;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-score strong {
+    color: var(--warm-100);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-score small,
+[data-theme='biscotto'] .biscotto-reviews-intro {
+    color: rgb(245 230 208 / 58%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured {
+    padding: 92px 24px;
+    background: #f1dfc2;
+    color: var(--warm-900);
+    text-align: center;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured > div {
+    width: min(840px, 100%);
+    margin: 0 auto;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured > div > span {
+    color: rgb(193 127 78 / 35%);
+    font-family: Georgia, serif;
+    font-size: 6rem;
+    line-height: 0.5;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured blockquote {
+    margin: 20px 0 26px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+[data-theme='biscotto'] .biscotto-review-stars {
+    display: flex;
+    gap: 4px;
+    color: rgb(139 94 60 / 20%);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured .biscotto-review-stars {
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+[data-theme='biscotto'] .biscotto-review-stars .filled {
+    color: var(--warm-500);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured p {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-featured small {
+    display: block;
+    margin-top: 4px;
+    color: var(--warm-700);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-list {
+    padding: 84px 24px 96px;
+    background: #f8ecd8;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-list > header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 48px;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-list > header span {
+    width: 70px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--warm-500));
+}
+
+[data-theme='biscotto'] .biscotto-reviews-list > header span:last-child {
+    background: linear-gradient(90deg, var(--warm-500), transparent);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-list h2 {
+    color: var(--warm-900);
+    font-family: var(--font-script);
+    font-size: clamp(2.5rem, 5vw, 3.7rem);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-grid {
+    display: grid;
+    width: min(1050px, 100%);
+    margin: 0 auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-grid article {
+    border: 1px solid rgb(212 165 116 / 24%);
+    border-radius: 18px;
+    padding: 30px;
+    background: #fffaf1;
+    box-shadow: 0 8px 28px rgb(61 35 20 / 7%);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-grid blockquote {
+    margin: 18px 0 24px;
+    color: var(--warm-700);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-grid footer {
+    display: flex;
+    flex-direction: column;
+    color: var(--warm-900);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-grid footer small {
+    margin-top: 3px;
+    color: var(--warm-500);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-pagination {
+    width: min(1050px, 100%);
+    margin: 44px auto 0;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-empty {
+    padding: 90px 24px;
+    background: #f1dfc2;
+    color: var(--warm-900);
+    text-align: center;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-empty > span {
+    color: var(--warm-500);
+    font-size: 3rem;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-empty h2 {
+    font-family: var(--font-script);
+    font-size: 3rem;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-empty p {
+    color: var(--warm-700);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-cta {
+    padding: 82px 24px 92px;
+    background: var(--warm-900);
+    color: var(--warm-100);
+    text-align: center;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-cta > p {
+    color: var(--warm-500);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+[data-theme='biscotto'] .biscotto-reviews-cta h2 {
+    margin: 8px 0;
+    font-family: var(--font-script);
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-cta > span {
+    display: block;
+    margin-bottom: 26px;
+    color: rgb(245 230 208 / 58%);
+}
+
+[data-theme='biscotto'] .biscotto-reviews-cta a {
+    display: inline-flex;
+    gap: 12px;
+    border-radius: 999px;
+    padding: 13px 28px;
+    background: var(--warm-500);
+    color: var(--warm-900);
+    font-weight: 700;
+    text-decoration: none;
+}
+
 [data-theme='biscotto'] .biscotto-contact-hero h1 {
     color: var(--warm-100);
     font-family: var(--font-script);
@@ -1091,6 +1325,14 @@
         gap: 10px;
     }
     [data-theme='biscotto'] .biscotto-gallery-featured { grid-row: span 1; grid-column: span 2; }
+
+    [data-theme='biscotto'] .biscotto-reviews-hero { padding: 132px 20px 68px; }
+    [data-theme='biscotto'] .biscotto-reviews-score { flex-wrap: wrap; }
+    [data-theme='biscotto'] .biscotto-reviews-featured { padding: 72px 20px; }
+    [data-theme='biscotto'] .biscotto-reviews-list { padding: 68px 16px 78px; }
+    [data-theme='biscotto'] .biscotto-reviews-grid { grid-template-columns: 1fr; }
+    [data-theme='biscotto'] .biscotto-reviews-list > header span { width: 34px; }
+    [data-theme='biscotto'] .biscotto-reviews-grid article { padding: 24px; }
 
     [data-theme='biscotto'] .biscotto-contact-hero { padding: 132px 20px 68px; }
     [data-theme='biscotto'] .biscotto-contact-stage { padding-right: 16px; padding-bottom: 70px; padding-left: 16px; }

@@ -17,6 +17,7 @@ class ReviewsIndexController extends Controller
         $starCounts = Review::query()->ratingBreakdown();
 
         return view('storefront.reviews', [
+            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
             'vm' => new ReviewsPageViewModel(
                 reviews: $reviews,
                 stats: $stats,
