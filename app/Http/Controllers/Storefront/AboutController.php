@@ -22,6 +22,7 @@ class AboutController extends Controller
             'customerCount' => $stats['customer_count'],
             'avgRating' => $stats['avg_rating'],
             'orderCount' => $stats['order_count'],
+            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
         ]);
     }
 }
