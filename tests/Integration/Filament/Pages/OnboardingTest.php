@@ -10,13 +10,21 @@ use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Inventory\Category;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function () {
-    setUpTenantTest();
+    setUpCentralTest();
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize(new Tenant([
+        'id' => 'onboarding-test',
+        'name' => 'Onboarding Test Owner',
+        'email' => 'owner@onboarding.test',
+        'store_name' => 'Onboarding Test Bakery',
+    ]));
 
     test()->user = User::factory()->owner()->create([
 
