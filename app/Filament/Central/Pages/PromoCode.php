@@ -6,7 +6,6 @@ use App\Actions\Stripe\CreateStripePromotionCode;
 use App\DataTransferObjects\Stripe\StripePromotionCodeResult;
 use App\Models\Platform\PlatformPromoCode;
 use App\Models\Platform\Tenant;
-use App\Support\DatabaseValue;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +18,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Stripe\Exception\ApiErrorException;
@@ -168,12 +168,12 @@ class PromoCode extends Page implements HasForms
 
         try {
             $isPercent = ($state['discount_type'] ?? 'percent') === 'percent';
-            $value = DatabaseValue::nullableInt($state['discount_value'] ?? null);
-            $duration = DatabaseValue::nullableString($state['duration'] ?? null) ?? 'once';
-            $durationInMonths = DatabaseValue::nullableInt($state['duration_in_months'] ?? null);
-            $maxRedemptions = DatabaseValue::int($state['max_redemptions'] ?? null, 1);
+            $value = Arr::has($state, 'discount_value') ? Arr::integer($state, 'discount_value') : null;
+            $duration = Arr::string($state, 'duration', 'once');
+            $durationInMonths = Arr::has($state, 'duration_in_months') ? Arr::integer($state, 'duration_in_months') : null;
+            $maxRedemptions = Arr::integer($state, 'max_redemptions', 1);
             $expiresInDays = isset($state['expires_in_days']) && $state['expires_in_days'] !== ''
-                ? DatabaseValue::nullableInt($state['expires_in_days'])
+                ? Arr::integer($state, 'expires_in_days')
                 : null;
 
             $this->result = $action(
@@ -181,11 +181,11 @@ class PromoCode extends Page implements HasForms
                 amountOffCents: ! $isPercent && $value !== null ? $value * 100 : null,
                 duration: $duration,
                 durationInMonths: $durationInMonths,
-                code: DatabaseValue::nullableString($state['code'] ?? null),
+                code: Arr::has($state, 'code') ? Arr::string($state, 'code') : null,
                 maxRedemptions: $maxRedemptions,
                 expiresInDays: $expiresInDays,
-                tenantId: DatabaseValue::nullableString($state['tenant_id'] ?? null),
-                name: DatabaseValue::nullableString($state['name'] ?? null),
+                tenantId: Arr::has($state, 'tenant_id') ? Arr::string($state, 'tenant_id') : null,
+                name: Arr::has($state, 'name') ? Arr::string($state, 'name') : null,
             );
 
             PlatformPromoCode::query()->create([
