@@ -92,7 +92,7 @@
         </div>
     @endif
     {{-- Dark Hero Banner --}}
-    <section class="bg-warm-900 relative overflow-hidden pt-8">
+    <section @class(['bg-warm-900 relative overflow-hidden pt-8', 'biscotto-order-hero' => $storefrontTheme === 'biscotto'])>
         <div
             class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]"
             aria-hidden="true"
@@ -109,7 +109,7 @@
     </section>
 
     {{-- Main Content --}}
-    <section class="bg-warm-900 relative">
+    <section @class(['bg-warm-900 relative', 'biscotto-order-stage' => $storefrontTheme === 'biscotto'])>
         <div class="relative z-10 mx-auto max-w-7xl px-4 pb-24" x-data="orderForm()" x-init="init()">
             <form data-test="order-form" @submit.prevent="submitOrder" class="grid gap-8 lg:grid-cols-3">
                 {{-- Product Selection --}}
