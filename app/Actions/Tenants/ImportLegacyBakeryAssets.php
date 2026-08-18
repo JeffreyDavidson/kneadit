@@ -27,8 +27,7 @@ class ImportLegacyBakeryAssets
 
         foreach ($data['products'] ?? [] as $product) {
             if (! empty($product['image'])) {
-                $productId = $this->stringValue($product['id'] ?? null, 'product id');
-                $assets["product_{$productId}"] = $this->stringValue($product['image'], 'product image');
+                $assets["product_{$product['id']}"] = (string) $product['image'];
             }
         }
 
@@ -46,8 +45,7 @@ class ImportLegacyBakeryAssets
 
         foreach ($data['products'] ?? [] as $index => $product) {
             if (! empty($product['image'])) {
-                $productId = $this->stringValue($product['id'] ?? null, 'product id');
-                $data['products'][$index]['image'] = $destinations["product_{$productId}"];
+                $data['products'][$index]['image'] = $destinations["product_{$product['id']}"];
             }
         }
 
@@ -77,15 +75,6 @@ class ImportLegacyBakeryAssets
         }
 
         return ['data' => $data, 'store_logo' => $destinations['store_logo']];
-    }
-
-    private function stringValue(mixed $value, string $description): string
-    {
-        if (! is_string($value) && ! is_int($value)) {
-            throw new InvalidArgumentException("The legacy {$description} must be a string-compatible value.");
-        }
-
-        return (string) $value;
     }
 
     private function resolveSource(string $root, string $relativePath): string

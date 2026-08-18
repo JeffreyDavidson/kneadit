@@ -14,10 +14,7 @@ test('payment step stores payment methods as json array', function () {
     ]);
 
     $stored = settings('payment_methods');
-
-    if (! is_string($stored)) {
-        throw new RuntimeException('Expected payment methods to be stored as JSON.');
-    }
+    expect($stored)->not->toBeNull();
 
     $decoded = json_decode($stored, true);
     expect($decoded)->toBeArray()->toContain('cash')->toContain('paypal')->toContain('stripe');

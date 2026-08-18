@@ -25,18 +25,18 @@ final readonly class LoyaltySettings
     {
         return new self(
             enabled: settings('loyalty_enabled', '1') === '1',
-            pointsPerDollar: SettingValue::int(settings('loyalty_points_per_dollar'), 10),
-            programName: SettingValue::string(settings('loyalty_program_name'), 'Rewards'),
+            pointsPerDollar: (int) settings('loyalty_points_per_dollar', '10'),
+            programName: (string) settings('loyalty_program_name', 'Rewards'),
             tiersEnabled: settings('loyalty_tiers_enabled', '0') === '1',
-            tierSilverThreshold: SettingValue::int(settings('loyalty_tier_silver_threshold'), 500),
-            tierGoldThreshold: SettingValue::int(settings('loyalty_tier_gold_threshold'), 2000),
-            tierPlatinumThreshold: SettingValue::int(settings('loyalty_tier_platinum_threshold'), 5000),
+            tierSilverThreshold: (int) settings('loyalty_tier_silver_threshold', '500'),
+            tierGoldThreshold: (int) settings('loyalty_tier_gold_threshold', '2000'),
+            tierPlatinumThreshold: (int) settings('loyalty_tier_platinum_threshold', '5000'),
             tierPerksEnabled: settings('loyalty_tier_perks_enabled', '0') === '1',
-            tierSilverMultiplier: SettingValue::float(settings('loyalty_tier_silver_multiplier'), 1.0),
+            tierSilverMultiplier: (float) settings('loyalty_tier_silver_multiplier', '1.0'),
             tierSilverFreeDelivery: settings('loyalty_tier_silver_free_delivery', '0') === '1',
-            tierGoldMultiplier: SettingValue::float(settings('loyalty_tier_gold_multiplier'), 1.5),
+            tierGoldMultiplier: (float) settings('loyalty_tier_gold_multiplier', '1.5'),
             tierGoldFreeDelivery: settings('loyalty_tier_gold_free_delivery', '1') === '1',
-            tierPlatinumMultiplier: SettingValue::float(settings('loyalty_tier_platinum_multiplier'), 2.0),
+            tierPlatinumMultiplier: (float) settings('loyalty_tier_platinum_multiplier', '2.0'),
             tierPlatinumFreeDelivery: settings('loyalty_tier_platinum_free_delivery', '1') === '1',
         );
     }

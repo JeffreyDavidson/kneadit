@@ -47,7 +47,7 @@ test('findRecipients returns delivered orders past delay threshold', function ()
     $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toHaveCount(1)
-        ->and($recipients->firstOrFail()->email)->toBe('buyer@example.com');
+        ->and($recipients->first()->email)->toBe('buyer@example.com');
 });
 
 test('findRecipients excludes orders already sent a review request', function () {
@@ -125,5 +125,5 @@ test('dispatchForRecipient dispatches ReviewRequested event and marks order', fu
     $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
     Event::assertDispatched(ReviewRequested::class);
-    expect($order->refresh()->review_request_sent_at)->not->toBeNull();
+    expect($order->fresh()->review_request_sent_at)->not->toBeNull();
 });

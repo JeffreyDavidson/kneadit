@@ -44,7 +44,7 @@ test('can edit a gift card via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($giftCard->refresh()->purchaser_name)->toBe('Updated Name');
+    expect($giftCard->fresh()->purchaser_name)->toBe('Updated Name');
 });
 
 test('can render gift card table columns', function (string $column) {
@@ -91,7 +91,7 @@ test('can create a gift card via header action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $giftCard = GiftCard::query()->firstOrFail();
+    $giftCard = GiftCard::query()->first();
     expect($giftCard)
         ->purchaser_name->toBe('Jane Doe')
         ->purchaser_email->toBe('jane@example.com')

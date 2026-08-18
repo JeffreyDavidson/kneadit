@@ -51,9 +51,9 @@ test('replaceItems wipes existing items and inserts the new set', function () {
 
     $items = $cart->items()->get();
     expect($items)->toHaveCount(1)
-        ->and($items->firstOrFail()->product_id)->toBe($newProduct->id)
-        ->and($items->firstOrFail()->quantity)->toBe(3)
-        ->and($items->firstOrFail()->unit_price->dollars())->toBe(12.50);
+        ->and($items->first()->product_id)->toBe($newProduct->id)
+        ->and($items->first()->quantity)->toBe(3)
+        ->and($items->first()->unit_price->dollars())->toBe(12.50);
 });
 
 test('replaceItems with an empty array clears the cart', function () {
@@ -82,7 +82,7 @@ test('updateContact normalizes whitespace and persists', function () {
 
     resolve(CartManager::class)->updateContact($cart, '  alice@example.com  ', '  Alice  ');
 
-    expect($cart->refresh())
+    expect($cart->fresh())
         ->customer_email->toBe('alice@example.com')
         ->customer_name->toBe('Alice');
 });
@@ -92,27 +92,15 @@ test('updateContact treats empty strings as null', function () {
 
     resolve(CartManager::class)->updateContact($cart, '   ', '');
 
-    expect($cart->refresh()->customer_email)->toBeNull()
-        ->and($cart->refresh()->customer_name)->toBeNull();
+    expect($cart->fresh()->customer_email)->toBeNull()
+        ->and($cart->fresh()->customer_name)->toBeNull();
 });
 
 test('touch refreshes last_activity_at', function () {
     $cart = Cart::factory()->abandoned(48)->create();
     $previousActivity = $cart->last_activity_at;
 
-    if ($previousActivity === null) {
-        throw new RuntimeException('Expected the abandoned cart to have an activity timestamp.');
-    }
-
     resolve(CartManager::class)->touch($cart);
 
-    $lastActivity = $cart->refresh()->last_activity_at;
-
-    expect($lastActivity)->not->toBeNull();
-
-    if ($lastActivity === null) {
-        throw new RuntimeException('The cart activity timestamp was not refreshed.');
-    }
-
-    expect($lastActivity->isAfter($previousActivity))->toBeTrue();
+    expect($cart->fresh()->last_activity_at?->isAfter($previousActivity))->toBeTrue();
 });

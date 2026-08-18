@@ -93,12 +93,7 @@ test('save persists sections to settings', function () {
     test()->page->toggleVisibility('hero');
     test()->page->save();
 
-    $savedSections = settings('homepage_sections');
-    throw_unless(is_string($savedSections), UnexpectedValueException::class, 'Expected saved homepage sections JSON.');
-
-    $saved = json_decode($savedSections, true);
-    throw_unless(is_array($saved), UnexpectedValueException::class, 'Expected decoded homepage sections.');
-    throw_unless(isset($saved['hero']) && is_array($saved['hero']), UnexpectedValueException::class, 'Expected saved hero section.');
+    $saved = json_decode(settings('homepage_sections'), true);
 
     expect($saved['hero']['visible'])->toBeFalse();
 });

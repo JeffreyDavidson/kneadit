@@ -87,7 +87,6 @@ test('register request rejects values longer than 255 chars', function (string $
     'bakery name too long' => ['bakery_name', str_repeat('a', 256)],
 ]);
 
-/** @return array<string, mixed> */
 function validRegistrationData(): array
 {
     return [

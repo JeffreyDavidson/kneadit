@@ -14,7 +14,7 @@ test('active scope returns only active products', function () {
     $results = Product::query()->active()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($active->id);
+        ->and($results->first()->id)->toBe($active->id);
 });
 
 test('featured scope returns only featured products', function () {
@@ -24,5 +24,5 @@ test('featured scope returns only featured products', function () {
     $results = Product::query()->featured()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($featured->id);
+        ->and($results->first()->id)->toBe($featured->id);
 });

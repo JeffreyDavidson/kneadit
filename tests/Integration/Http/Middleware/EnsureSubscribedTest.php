@@ -5,27 +5,22 @@ use App\Models\Staff\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
-use Mockery\MockInterface;
 
 beforeEach(fn () => setUpCentralTest());
 
-function subscribedUserMock(): User&MockInterface
-{
-    $user = User::factory()->owner()->create();
-    $mock = Mockery::mock($user)->makePartial();
-
-    if (! $mock instanceof User || ! $mock instanceof MockInterface) {
-        throw new RuntimeException('Mockery did not create a User instance.');
-    }
-
-    return $mock;
-}
-
 test('allows subscribed users through', function () {
-    $user = subscribedUserMock();
-    $user->allows(['subscribed' => true]);
+    $user = User::factory()->owner()->create();
+    $user->subscription = Mockery::mock()
+        ->shouldReceive('valid')->andReturn(true)
+        ->getMock();
 
     $request = Request::create('/admin');
+    $request->setUserResolver(fn () => $user);
+
+    // Mock user subscribed method
+    $user = Mockery::mock($user)->makePartial();
+    $user->shouldReceive('subscribed')->with('default')->andReturn(true);
+
     $request->setUserResolver(fn () => $user);
 
     $middleware = new EnsureSubscribed;
@@ -35,11 +30,9 @@ test('allows subscribed users through', function () {
 });
 
 test('allows trial users through', function () {
-    $user = subscribedUserMock();
-    $user->allows([
-        'subscribed' => false,
-        'onTrial' => true,
-    ]);
+    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
+    $user->shouldReceive('subscribed')->with('default')->andReturn(false);
+    $user->shouldReceive('onTrial')->andReturn(true);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
@@ -51,11 +44,9 @@ test('allows trial users through', function () {
 });
 
 test('redirects unsubscribed non-trial users to billing', function () {
-    $user = subscribedUserMock();
-    $user->allows([
-        'subscribed' => false,
-        'onTrial' => false,
-    ]);
+    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
+    $user->shouldReceive('subscribed')->with('default')->andReturn(false);
+    $user->shouldReceive('onTrial')->andReturn(false);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
@@ -80,8 +71,8 @@ test('allows free-forever tenants through without a subscription', function () {
 });
 
 test('aborts with 403 for wrong plan when plan parameter specified', function () {
-    $user = subscribedUserMock();
-    $user->allows(['subscribed' => true]);
+    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
+    $user->shouldReceive('subscribed')->with('default')->andReturn(true);
 
     Gate::define('has-plan', fn () => false);
 

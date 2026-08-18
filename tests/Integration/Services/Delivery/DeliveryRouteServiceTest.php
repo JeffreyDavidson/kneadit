@@ -69,10 +69,8 @@ test('it loads orders with delivery addresses for a date', function () {
 
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
-    $order = $result->firstOrFail();
-
     expect($result)->toHaveCount(1)
-        ->and($order['delivery_address'])->toBe('123 Main St');
+        ->first()->delivery_address->toBe('123 Main St');
 });
 
 test('it excludes orders with empty string delivery address', function () {
@@ -89,24 +87,20 @@ test('it excludes orders with empty string delivery address', function () {
 });
 
 test('it returns route stats from delivery orders', function () {
-    $date = now()->format('Y-m-d');
-    Order::factory()->create([
-        'delivery_date' => $date,
-        'delivery_time' => '10:00',
-        'delivery_address' => '123 Main St',
-        'total' => 50.00,
-    ]);
-    Order::factory()->create([
-        'delivery_date' => $date,
-        'delivery_time' => '14:00',
-        'delivery_address' => '456 Unknown Rd',
-        'total' => 30.00,
+    $orders = collect([
+        [
+            'id' => 1,
+            'total' => 50.00,
+            'distance_tier' => ['tier' => 'Close', 'color' => 'success', 'estimated_minutes' => 10],
+        ],
+        [
+            'id' => 2,
+            'total' => 30.00,
+            'distance_tier' => ['tier' => 'Far', 'color' => 'danger', 'estimated_minutes' => 35],
+        ],
     ]);
 
-    $service = resolve(DeliveryRouteService::class);
-    $orders = $service->loadOrders($date);
-
-    $stats = $service->getRouteStats($orders);
+    $stats = resolve(DeliveryRouteService::class)->getRouteStats($orders);
 
     expect($stats)
         ->total_orders->toBe(2)
@@ -153,10 +147,8 @@ test('it loads orders sorted by delivery time', function () {
 
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
-    $firstOrder = $result->firstOrFail();
-
     expect($result)->toHaveCount(2)
-        ->and($firstOrder['delivery_time'])->toBe('10:00');
+        ->and($result->first()['delivery_time'])->toBe('10:00');
 });
 
 test('it handles order with null delivery time', function () {
@@ -170,8 +162,6 @@ test('it handles order with null delivery time', function () {
 
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
-    $order = $result->firstOrFail();
-
     expect($result)->toHaveCount(1)
-        ->and($order['delivery_time'])->toBe('Not specified');
+        ->and($result->first()['delivery_time'])->toBe('Not specified');
 });

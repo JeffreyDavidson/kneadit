@@ -14,10 +14,7 @@ final readonly class PaymentSettings
     public static function resolve(): self
     {
         return new self(
-            methodsAccepted: array_values(array_filter(
-                SettingValue::decodedList(settings('payment_methods_accepted')),
-                fn (mixed $method): bool => is_string($method),
-            )),
+            methodsAccepted: (array) json_decode((string) settings('payment_methods_accepted', '[]'), true),
         );
     }
 }

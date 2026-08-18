@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 test('dispatches webhook with transition payload', function () {
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
@@ -30,11 +30,7 @@ test('dispatches webhook with transition payload', function () {
     );
 
     Http::assertSent(function ($request) {
-        $body = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-        if (! is_array($body) || ! is_array($body['data'] ?? null)) {
-            return false;
-        }
+        $body = json_decode($request->body(), true);
 
         return $request->hasHeader('X-KneadIt-Event', 'order.updated')
             && $body['data']['status'] === 'confirmed'

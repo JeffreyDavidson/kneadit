@@ -26,7 +26,6 @@ beforeEach(function () {
 
     app()->instance(TenantContract::class, $fakeTenant);
     Feature::define('pro-features', fn () => true);
-    Feature::define('growth-features', fn () => true);
 });
 
 test('qr code generator page can render', function () {

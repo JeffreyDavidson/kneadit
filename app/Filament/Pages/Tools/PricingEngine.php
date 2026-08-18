@@ -58,12 +58,12 @@ class PricingEngine extends Page
 
     public function mount(): void
     {
-        $this->hourlyLaborRate = $this->floatSetting('hourly_labor_rate', 15);
-        $this->overheadPercentage = $this->floatSetting('overhead_percentage', 20);
-        $this->targetProfitMargin = $this->intSetting('target_profit_margin', 50);
+        $this->hourlyLaborRate = (float) (Setting::query()->where('key', 'hourly_labor_rate')->value('value') ?? 15);
+        $this->overheadPercentage = (float) (Setting::query()->where('key', 'overhead_percentage')->value('value') ?? 20);
+        $this->targetProfitMargin = (int) (Setting::query()->where('key', 'target_profit_margin')->value('value') ?? 50);
     }
 
-    /** @return Collection<int, Product> */
+    /** @return Collection<int, mixed> */
     public function getProductsProperty(): Collection
     {
         return Product::query()->with(['category', 'recipes'])->orderBy('name')->get();
@@ -111,20 +111,5 @@ class PricingEngine extends Page
             positioning: PricingPosition::from($this->positioning),
             currentPrice: $currentPrice,
         );
-    }
-
-    private function floatSetting(string $key, float $default): float
-    {
-        $value = Setting::query()->where('key', $key)->value('value');
-
-        return is_numeric($value) ? floatval($value) : $default;
-    }
-
-    private function intSetting(string $key, int $default): int
-    {
-        $value = Setting::query()->where('key', $key)->value('value');
-        $filtered = filter_var($value, FILTER_VALIDATE_INT);
-
-        return is_int($filtered) ? $filtered : $default;
     }
 }

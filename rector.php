@@ -2,58 +2,54 @@
 
 declare(strict_types=1);
 
-use Rector\CodeQuality\Rector\Attribute\SortAttributeNamedArgsRector;
-use Rector\CodeQuality\Rector\BooleanAnd\RepeatedAndNotEqualToNotInArrayRector;
-use Rector\CodeQuality\Rector\BooleanNot\NegatedAndsToPositiveOrsRector;
-use Rector\CodeQuality\Rector\Empty_\SimplifyEmptyCheckOnEmptyArrayRector;
-use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
-use Rector\CodeQuality\Rector\If_\SimplifyIfReturnBoolRector;
-use Rector\CodeQuality\Rector\New_\NewStaticToNewSelfRector;
-use Rector\CodeQuality\Rector\Ternary\UnnecessaryTernaryExpressionRector;
 use Rector\Config\RectorConfig;
-use Rector\EarlyReturn\Rector\Return_\ReturnBinaryOrToEarlyReturnRector;
-use Rector\EarlyReturn\Rector\StmtsAwareInterface\ReturnEarlyIfVariableRector;
-use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
-use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
-use Rector\Transform\Rector\String_\StringToClassConstantRector;
-use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
-use Rector\TypeDeclaration\Rector\Closure\AddClosureVoidReturnTypeWhereNoReturnRector;
-use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;
-use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
-use RectorLaravel\Rector\ClassMethod\MigrateToSimplifiedAttributeRector;
-use RectorLaravel\Set\LaravelLevelSetList;
+use RectorLaravel\Rector\ArrayDimFetch\ServerVariableToRequestFacadeRector;
+use RectorLaravel\Rector\FuncCall\AppToResolveRector;
+use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
+use RectorLaravel\Rector\FuncCall\TypeHintTappableCallRector;
+use RectorLaravel\Rector\If_\ThrowIfRector;
+use RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector;
+use RectorLaravel\Rector\MethodCall\EloquentOrderByToLatestOrOldestRector;
+use RectorLaravel\Rector\MethodCall\WhereToWhereLikeRector;
+use RectorLaravel\Rector\StaticCall\AssertWithClassStringToTypeHintedClosureRector;
+use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
+use RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector;
+use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
+use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/app',
-    ])
-    ->withSets([
-        LaravelLevelSetList::UP_TO_LARAVEL_130,
+        __DIR__ . '/config',
+        __DIR__ . '/database',
+        __DIR__ . '/routes',
     ])
     ->withSkip([
-        StringToClassConstantRector::class,
-        NewStaticToNewSelfRector::class,
-        FlipTypeControlToUseExclusiveTypeRector::class,
-        AddArrowFunctionReturnTypeRector::class,
-        AddClosureVoidReturnTypeWhereNoReturnRector::class,
-        SortAttributeNamedArgsRector::class,
-        SimplifyEmptyCheckOnEmptyArrayRector::class,
-        RepeatedAndNotEqualToNotInArrayRector::class,
-        DisallowedEmptyRuleFixerRector::class,
-        ReturnEarlyIfVariableRector::class,
-        RemoveExtraParametersRector::class,
-        SimplifyIfReturnBoolRector::class,
-        ClosureReturnTypeRector::class,
-        UnnecessaryTernaryExpressionRector::class,
-        MigrateToSimplifiedAttributeRector::class,
-        ReturnBinaryOrToEarlyReturnRector::class,
-        NegatedAndsToPositiveOrsRector::class,
-        SafeDeclareStrictTypesRector::class,
+        __DIR__ . '/vendor',
+        __DIR__ . '/storage',
+        __DIR__ . '/bootstrap/cache',
+        AppToResolveRector::class,
+        AssertStatusToAssertMethodRector::class,
+        AssertWithClassStringToTypeHintedClosureRector::class,
+        CarbonToDateFacadeRector::class,
+        EloquentMagicMethodToQueryBuilderRector::class,
+        EloquentOrderByToLatestOrOldestRector::class,
+        ServerVariableToRequestFacadeRector::class,
+        ThrowIfAndThrowUnlessExceptionsToUseClassStringRector::class,
+        ThrowIfRector::class,
+        TypeHintTappableCallRector::class,
     ])
-    ->withPreparedSets(
-        deadCode: false,
-        codeQuality: true,
-        typeDeclarations: true,
-        privatization: true,
-        earlyReturn: true,
-    );
+    ->withSets([
+        LaravelSetList::LARAVEL_130,
+        LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
+        LaravelSetList::LARAVEL_TESTING,
+        LaravelSetList::LARAVEL_IF_HELPERS,
+        LaravelSetList::LARAVEL_CODE_QUALITY,
+        LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
+        LaravelSetList::LARAVEL_COLLECTION,
+        LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
+    ])
+    ->withRules([
+        RouteActionCallableRector::class,
+        WhereToWhereLikeRector::class,
+    ]);

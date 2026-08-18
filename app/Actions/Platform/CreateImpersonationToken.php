@@ -4,7 +4,6 @@ namespace App\Actions\Platform;
 
 use App\Models\Platform\ImpersonationToken;
 use App\Models\Platform\Tenant;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 class CreateImpersonationToken
@@ -25,18 +24,8 @@ class CreateImpersonationToken
         // tenants store both the FQDN AND the bare subdomain — concatenating
         // either with $appHost can produce a doubled host like
         // "{id}.kneadit.test.kneadit.test").
-        $appUrl = Config::string('app.url');
-
-        $appHost = parse_url($appUrl, PHP_URL_HOST);
-        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
-
-        if (! is_string($appHost) || $appHost === '') {
-            throw new \UnexpectedValueException('The application URL must contain a host.');
-        }
-
-        if (! is_string($scheme) || $scheme === '') {
-            $scheme = 'https';
-        }
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
 
         return "{$scheme}://{$tenant->id}.{$appHost}/impersonate/{$token}";
     }

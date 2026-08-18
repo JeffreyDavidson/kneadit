@@ -4,7 +4,6 @@ namespace App\Queries\Financial;
 
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use App\Support\DatabaseValue;
 use App\ValueObjects\DateRange;
 use Illuminate\Support\Collection;
 
@@ -34,8 +33,8 @@ class ProductSalesQuery
             ->get()
             ->map(fn (OrderItem $item) => [
                 'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => DatabaseValue::int($item->getAttribute('units_sold')),
-                'revenue' => DatabaseValue::float(DatabaseValue::int($item->getAttribute('revenue_cents')) / 100),
+                'units_sold' => (int) $item->getAttribute('units_sold'),
+                'revenue' => (float) ((int) $item->getAttribute('revenue_cents') / 100),
             ]);
     }
 
@@ -62,8 +61,8 @@ class ProductSalesQuery
             ->get()
             ->map(fn (OrderItem $item) => [
                 'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => DatabaseValue::int($item->getAttribute('units_sold')),
-                'revenue' => DatabaseValue::float(DatabaseValue::int($item->getAttribute('revenue_cents')) / 100),
+                'units_sold' => (int) $item->getAttribute('units_sold'),
+                'revenue' => (float) ((int) $item->getAttribute('revenue_cents') / 100),
             ]);
     }
 }

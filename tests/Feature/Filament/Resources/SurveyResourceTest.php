@@ -47,7 +47,7 @@ test('can edit a survey via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($survey->refresh()->title)->toBe('Updated Survey');
+    expect($survey->fresh()->title)->toBe('Updated Survey');
 });
 
 test('can create a survey with questions repeater', function () {
@@ -70,7 +70,7 @@ test('can create a survey with questions repeater', function () {
     $component->callMountedAction()
         ->assertHasNoFormErrors();
 
-    $survey = Survey::query()->firstOrFail();
+    $survey = Survey::query()->first();
     expect($survey)
         ->title->toBe('Customer Satisfaction')
         ->questions->toHaveCount(1)->and($survey->questions[0]['question'])->toBe('How was your experience?');

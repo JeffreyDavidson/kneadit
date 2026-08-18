@@ -48,7 +48,7 @@ test('can edit a supplier via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($supplier->refresh()->name)->toBe('Updated Supplier');
+    expect($supplier->fresh()->name)->toBe('Updated Supplier');
 });
 
 test('can search suppliers by name', function () {
@@ -107,5 +107,5 @@ test('owner can bulk-delete selected suppliers via the AuthorizedDeleteBulkActio
 
     expect(Supplier::query()->count())->toBe(1)
         ->and(Supplier::query()->find($kept->id))->not->toBeNull()
-        ->and(Supplier::query()->find($doomed->firstOrFail()->id))->toBeNull();
+        ->and(Supplier::query()->find($doomed->first()->id))->toBeNull();
 });

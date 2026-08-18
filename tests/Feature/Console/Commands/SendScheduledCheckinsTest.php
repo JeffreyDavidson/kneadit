@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Event;
 beforeEach(fn () => setUpCentralTest());
 
 test('checkins:send reports no active checkins', function () {
-    pendingArtisan('checkins:send')
+    $this->artisan('checkins:send')
         ->expectsOutputToContain('No active check-ins found')
         ->assertSuccessful();
 });
@@ -35,7 +35,7 @@ test('checkins:send logs the count when checkins exist', function () {
         'updated_at' => now()->subDays($daysAgo)->startOfDay(),
     ]);
 
-    pendingArtisan('checkins:send')
+    $this->artisan('checkins:send')
         ->expectsOutputToContain('1 check-in(s)')
         ->assertSuccessful();
 

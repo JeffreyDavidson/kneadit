@@ -1,11 +1,5 @@
 <?php
 
-$appUrl = env('APP_URL', 'http://localhost');
-
-if (! is_string($appUrl)) {
-    $appUrl = 'http://localhost';
-}
-
 return [
 
     /*
@@ -40,23 +34,17 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/private'),
             'serve' => true,
-            'throw' => true,
-        ],
-
-        'imports' => [
-            'driver' => 'local',
-            'root' => storage_path('app/private/csv-imports'),
-            'serve' => false,
-            'visibility' => 'private',
-            'throw' => true,
+            'throw' => false,
+            'report' => false,
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim($appUrl, '/') . '/storage',
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
-            'throw' => true,
+            'throw' => false,
+            'report' => false,
         ],
 
         's3' => [
@@ -68,7 +56,8 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => true,
+            'throw' => false,
+            'report' => false,
         ],
 
     ],

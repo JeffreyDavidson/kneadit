@@ -10,7 +10,6 @@ use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Inventory\Product;
-use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -22,10 +21,9 @@ beforeEach(function () {
     test()->product = Product::factory()->create(['price' => 20.00]);
 });
 
-/** @param array<string, mixed> $overrides */
-function createOrderWith(array $overrides = []): Order
+function createOrderWith(array $overrides = []): ?App\Models\Orders\Order
 {
-    $order = resolve(CreateOrder::class)(
+    return resolve(CreateOrder::class)(
         CreateOrderData::fromArray(array_merge([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
@@ -36,10 +34,6 @@ function createOrderWith(array $overrides = []): Order
             ],
         ], $overrides))
     );
-
-    throw_unless($order instanceof Order, RuntimeException::class, 'Expected the order to be created.');
-
-    return $order;
 }
 
 test('order with coupon stores discount_amount and creates coupon transaction', function () {
@@ -55,7 +49,7 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
 
     expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
 
-    $transaction = CouponTransaction::query()->where('order_id', $order->id)->firstOrFail();
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
     expect($transaction)
         ->coupon_id->toBe($coupon->id)
         ->type->toBe(CouponTransactionType::Usage)
@@ -158,6 +152,6 @@ test('percentage coupon creates transaction with calculated amount', function ()
     expect($order->discount_amount->dollars())->toBe(10.00);
     expect($order->total->dollars())->toBe(30.00);
 
-    $transaction = CouponTransaction::query()->where('order_id', $order->id)->firstOrFail();
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
     expect($transaction->amount->dollars())->toBe(10.00);
 });

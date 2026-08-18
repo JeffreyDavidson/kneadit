@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Enums\Operations\ActivityAction;
 use App\Models\Operations\ActivityLog;
 use App\Services\Audit\ActorContext;
-use App\Support\DatabaseValue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -36,16 +35,14 @@ class LogsActivityObserver
         }
 
         try {
-            $modelKey = DatabaseValue::scalarString($model->getKey(), 'unknown');
-
             ActivityLog::query()->create([
                 'user_id' => ActorContext::id(),
                 'user_name' => ActorContext::name(),
                 'action' => $action,
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
-                'description' => class_basename($model) . " #{$modelKey} was {$action->value}",
-                'properties' => empty($changes) ? null : ['changes' => $changes],
+                'description' => class_basename($model) . " #{$model->getKey()} was {$action->value}",
+                'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable $e) {

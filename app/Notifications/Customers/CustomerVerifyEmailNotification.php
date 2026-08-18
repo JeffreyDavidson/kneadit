@@ -4,7 +4,6 @@ namespace App\Notifications\Customers;
 
 use App\Models\Customers\Customer;
 use App\Services\Settings\TenantSettings;
-use App\Support\DatabaseValue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -24,10 +23,10 @@ class CustomerVerifyEmailNotification extends Notification
     {
         $url = URL::temporarySignedRoute(
             'account.email.verify',
-            now()->addMinutes(DatabaseValue::int(config('auth.verification.expire'), 60)),
+            now()->addMinutes(config('auth.verification.expire', 60)),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => hash('sha256', $notifiable->getEmailForVerification()),
+                'hash' => sha1($notifiable->getEmailForVerification()),
             ],
         );
 

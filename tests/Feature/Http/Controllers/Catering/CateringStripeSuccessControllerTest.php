@@ -43,7 +43,7 @@ test('finalizes the checkout via the service when session_id is provided and dep
     $inquiry = CateringInquiry::factory()->create(['deposit_paid_at' => null]);
 
     test()->mock(CateringDepositCheckoutService::class, function (MockInterface $mock) use ($inquiry) {
-        mockExpectation($mock, 'handleCheckoutComplete')
+        $mock->shouldReceive('handleCheckoutComplete')
             ->once()
             ->with('cs_test_abc')
             ->andReturnUsing(function () use ($inquiry) {

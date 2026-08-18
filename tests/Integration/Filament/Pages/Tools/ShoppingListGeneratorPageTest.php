@@ -2,7 +2,6 @@
 
 use App\Filament\Pages\Tools\ShoppingListGenerator;
 use App\Services\Orders\OrderIngredientAggregator;
-use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -18,7 +17,7 @@ test('mount sets start date to today', function () {
 test('mount sets end date to planning days ahead', function () {
     test()->page->mount();
 
-    $expectedEnd = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
+    $expectedEnd = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
     expect(test()->page->endDate)->toBe($expectedEnd);
 });
 

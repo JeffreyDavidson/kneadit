@@ -27,6 +27,4 @@ Schedule::withoutOverlapping()
         Schedule::command('carts:send-abandonment-emails')->hourly()->name('carts:send-abandonment-emails');
         Schedule::command('platform:audit-free-forever')->dailyAt('06:00')->name('platform:audit-free-forever');
         Schedule::command('webhooks:prune')->dailyAt('04:00')->name('webhooks:prune');
-        Schedule::command('analytics:prune-page-views')->dailyAt('04:15')->name('analytics:prune-page-views');
-        Schedule::command('tenants:sync-onboarding-metrics')->everyFifteenMinutes()->name('tenants:sync-onboarding-metrics');
     });

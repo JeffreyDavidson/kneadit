@@ -15,7 +15,7 @@ test('active scope returns only active coupons', function () {
     $results = Coupon::query()->active()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($active->id);
+        ->and($results->first()->id)->toBe($active->id);
 });
 
 test('valid scope excludes expired coupons', function () {
@@ -25,7 +25,7 @@ test('valid scope excludes expired coupons', function () {
     $results = Coupon::query()->valid()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($valid->id);
+        ->and($results->first()->id)->toBe($valid->id);
 });
 
 test('isValid method agrees with valid scope', function () {

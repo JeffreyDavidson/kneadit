@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 test('carts:send-abandonment-emails runs successfully with no tenants', function () {
     Mail::fake();
 
-    pendingArtisan('carts:send-abandonment-emails')->assertSuccessful();
+    $this->artisan('carts:send-abandonment-emails')->assertSuccessful();
 
     Mail::assertNothingQueued();
 });

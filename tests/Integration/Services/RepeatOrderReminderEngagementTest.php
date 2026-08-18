@@ -48,7 +48,7 @@ test('findRecipients returns customers whose last paid order exceeds reminder da
     $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toHaveCount(1)
-        ->and($recipients->firstOrFail()->email)->toBe('loyal@example.com');
+        ->and($recipients->first()->email)->toBe('loyal@example.com');
 });
 
 test('findRecipients excludes customers with recent orders', function () {

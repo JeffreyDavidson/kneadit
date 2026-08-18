@@ -43,7 +43,6 @@
         "pestphp/pest-plugin-phpstan": "^5.0",
         "pestphp/pest-plugin-rector": "^5.0",
         "pestphp/pest-plugin-type-coverage": "^5.0",
-        "phpstan/extension-installer": "^1.4",
         "phpunit/phpunit": "^13.2",
         "rector/rector": "^2.3",
         "spatie/pest-plugin-snapshots": "^2.2"
@@ -94,10 +93,10 @@
         ],
         "test:rector:pest": "vendor/bin/rector process --config=rector-pest.php --dry-run",
         "test:types": [
-            "vendor/bin/phpstan analyse --no-progress --memory-limit=4G",
+            "vendor/bin/phpstan analyse --no-progress --memory-limit=1G",
             "@test:types:pest"
         ],
-        "test:types:pest": "vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --no-progress --memory-limit=4G",
+        "test:types:pest": "vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --no-progress --memory-limit=1G",
         "types": "php -d memory_limit=1G vendor/bin/pest --type-coverage --min=100",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -139,8 +138,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true,
-            "phpstan/extension-installer": true
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "stable",

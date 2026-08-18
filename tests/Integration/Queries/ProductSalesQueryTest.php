@@ -23,7 +23,7 @@ test('topByRevenue returns products sorted by revenue', function () {
     $result = ProductSalesQuery::topByRevenue($range);
 
     expect($result)->toHaveCount(2)
-        ->and($result->firstOrFail()['name'])->toBe($expensive->name);
+        ->and($result->first()['name'])->toBe($expensive->name);
 });
 
 test('topByQuantity returns products sorted by quantity sold', function () {
@@ -38,10 +38,10 @@ test('topByQuantity returns products sorted by quantity sold', function () {
     $result = ProductSalesQuery::topByQuantity($range);
 
     expect($result)->toHaveCount(2)
-        ->and($result->firstOrFail()['name'])->toBe($highQuantity->name)
-        ->and($result->firstOrFail()['units_sold'])->toBe(20)
-        ->and($result->reverse()->firstOrFail()['name'])->toBe($lowQuantity->name)
-        ->and($result->reverse()->firstOrFail()['units_sold'])->toBe(1);
+        ->and($result->first()['name'])->toBe($highQuantity->name)
+        ->and($result->first()['units_sold'])->toBe(20)
+        ->and($result->last()['name'])->toBe($lowQuantity->name)
+        ->and($result->last()['units_sold'])->toBe(1);
 });
 
 test('topByQuantity excludes cancelled orders', function () {
@@ -56,7 +56,7 @@ test('topByQuantity excludes cancelled orders', function () {
     $result = ProductSalesQuery::topByQuantity($range);
 
     expect($result)->toHaveCount(1)
-        ->and($result->firstOrFail()['units_sold'])->toBe(3);
+        ->and($result->first()['units_sold'])->toBe(3);
 });
 
 test('topByQuantity respects the limit parameter', function () {
@@ -90,5 +90,5 @@ test('topByQuantity excludes orders outside date range', function () {
     $result = ProductSalesQuery::topByQuantity($range);
 
     expect($result)->toHaveCount(1)
-        ->and($result->firstOrFail()['name'])->toBe($inRange->name);
+        ->and($result->first()['name'])->toBe($inRange->name);
 });

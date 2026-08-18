@@ -60,7 +60,7 @@ test('returns null when order has no customer', function () {
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     // Simulate an order without a customer by clearing the field in memory
-    $order->setAttribute('customer_id', null);
+    $order->customer_id = null;
 
     $result = resolve(LoyaltyLedger::class)->creditOrder($order);
 

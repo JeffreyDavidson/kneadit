@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 test('review requests command runs successfully with no tenants', function () {
     Mail::fake();
 
-    pendingArtisan('reviews:send-requests')
+    $this->artisan('reviews:send-requests')
         ->assertSuccessful();
 
     Mail::assertNothingSent();

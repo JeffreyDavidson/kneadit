@@ -10,5 +10,5 @@ beforeEach(function () {
 test('expense category is cast to ExpenseCategory enum', function () {
     $expense = Expense::factory()->forCategory(ExpenseCategory::Ingredients)->create();
 
-    expect($expense->refresh()->category)->toBe(ExpenseCategory::Ingredients);
+    expect($expense->fresh()->category)->toBe(ExpenseCategory::Ingredients);
 });

@@ -6,11 +6,7 @@ use App\Models\Inventory\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/**
- * @property Product $resource
- *
- * @mixin Product
- */
+/** @mixin Product */
 class ProductResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
@@ -20,7 +16,7 @@ class ProductResource extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string) $this->resource->id;
+        return (string) $this->resource->getKey();
     }
 
     public function toType(Request $request): string

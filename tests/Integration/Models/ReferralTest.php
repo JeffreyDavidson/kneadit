@@ -37,7 +37,7 @@ test('referred relationship returns the referred tenant', function () {
         'referred_tenant_id' => $referred->id,
     ]);
 
-    expect($referral->referred?->id)->toBe($referred->id);
+    expect($referral->referred->id)->toBe($referred->id);
 });
 
 test('referred relationship returns null when no referred tenant', function () {

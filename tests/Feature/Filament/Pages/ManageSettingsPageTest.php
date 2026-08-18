@@ -55,23 +55,10 @@ test('delivery fee tiers round-trip as structured rows through save and reload',
         ])
         ->call('save');
 
-    $storedJson = settings('delivery_fee_tiers');
-
-    if (! is_string($storedJson)) {
-        throw new RuntimeException('Expected delivery fee tiers to be stored as JSON.');
-    }
-
-    $stored = json_decode($storedJson, true, flags: JSON_THROW_ON_ERROR);
-
-    if (! is_array($stored) || ! is_array($stored[0] ?? null)) {
-        throw new RuntimeException('Expected one structured delivery fee tier.');
-    }
-
-    $storedTier = $stored[0];
-
+    $stored = json_decode(settings('delivery_fee_tiers'), true);
     expect($stored)->toHaveCount(1)
-        ->and($storedTier['max_distance'] ?? null)->toBe(8)
-        ->and($storedTier['fee'] ?? null)->toBe(4);
+        ->and($stored[0]['max_distance'])->toBe(8)
+        ->and($stored[0]['fee'])->toBe(4);
 });
 
 test('regenerateWebhookSecret writes a fresh 40-char secret and updates the page property', function () {
@@ -89,12 +76,12 @@ test('sendTestWebhook persists current settings then dispatches a synthetic orde
     Http::fake(['*' => Http::response('ok', 200)]);
 
     Livewire::test(ManageSettings::class)
-        ->set('webhook_url', 'https://8.8.8.8/test')
+        ->set('webhook_url', 'https://hooks.example.com/test')
         ->set('webhook_secret', 'test-secret')
         ->call('sendTestWebhook');
 
     Http::assertSent(function ($request) {
-        $body = $request->data();
+        $body = json_decode($request->body(), true);
 
         return $body['event'] === 'order.created' && ($body['data']['test'] ?? false) === true;
     });
@@ -113,13 +100,7 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
 
     $reflection = new ReflectionMethod($page, 'toSettingsArray');
     $reflection->setAccessible(true);
-    $sentSettings = $reflection->invoke($page);
-
-    if (! is_array($sentSettings)) {
-        throw new RuntimeException('Expected ManageSettings::toSettingsArray() to return an array.');
-    }
-
-    $sentKeys = array_keys($sentSettings);
+    $sentKeys = array_keys($reflection->invoke($page));
 
     Livewire::test(ManageSettings::class)->call('save');
 

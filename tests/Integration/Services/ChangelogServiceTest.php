@@ -4,15 +4,6 @@ use App\Services\Platform\ChangelogService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-/**
- * @param Illuminate\Support\Collection<int, array{date: string, version: string, title: string, items: array<int, string>}> $entries
- * @return array{date: string, version: string, title: string, items: array<int, string>}
- */
-function firstChangelogEntry(Illuminate\Support\Collection $entries): array
-{
-    return $entries->firstOrFail();
-}
-
 beforeEach(fn () => setUpCentralTest());
 
 test('returns entries from GitHub releases API', function () {
@@ -30,12 +21,10 @@ test('returns entries from GitHub releases API', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    $entry = firstChangelogEntry($entries);
-
     expect($entries)->toHaveCount(1)
-        ->and($entry['version'])->toBe('1.5.0')
-        ->and($entry['title'])->toBe('Blog & Platform Polish')
-        ->and($entry['items'])->toHaveCount(3);
+        ->and($entries->first()['version'])->toBe('1.5.0')
+        ->and($entries->first()['title'])->toBe('Blog & Platform Polish')
+        ->and($entries->first()['items'])->toHaveCount(3);
 });
 
 test('falls back to config when GitHub API fails', function () {
@@ -71,7 +60,7 @@ test('filters out draft releases', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries)->toHaveCount(1)
-        ->and(firstChangelogEntry($entries)['title'])->toBe('Published Release');
+        ->and($entries->first()['title'])->toBe('Published Release');
 });
 
 test('falls back to config when GitHub API throws exception', function () {
@@ -86,7 +75,7 @@ test('falls back to config when GitHub API throws exception', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries)->toHaveCount(1)
-        ->and(firstChangelogEntry($entries)['title'])->toBe('Fallback');
+        ->and($entries->first()['title'])->toBe('Fallback');
 });
 
 test('parses empty body into empty items array', function () {
@@ -104,7 +93,7 @@ test('parses empty body into empty items array', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect(firstChangelogEntry($entries)['items'])->toBeEmpty();
+    expect($entries->first()['items'])->toBeEmpty();
 });
 
 test('cached payload survives unserialize with allowed_classes=false (the prod cache config)', function () {
@@ -147,5 +136,5 @@ test('parses body with asterisk bullet points', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect(firstChangelogEntry($entries)['items'])->toHaveCount(2);
+    expect($entries->first()['items'])->toHaveCount(2);
 });

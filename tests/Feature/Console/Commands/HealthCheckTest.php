@@ -29,7 +29,7 @@ test('health check command exists', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->assertSuccessful();
 });
 
@@ -37,7 +37,7 @@ test('health check verifies database connection', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Database connection OK')
         ->assertSuccessful();
 });
@@ -46,7 +46,7 @@ test('health check verifies users table', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Users table OK')
         ->assertSuccessful();
 });
@@ -55,7 +55,7 @@ test('health check verifies disk space', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Disk space OK')
         ->assertSuccessful();
 });
@@ -64,7 +64,7 @@ test('health check verifies storage writable', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Storage/logs writable')
         ->assertSuccessful();
 });
@@ -73,7 +73,7 @@ test('health check detects homepage failure', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('Server Error', 500)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->assertFailed();
 });
 
@@ -83,7 +83,7 @@ test('health check dispatches event on failure', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('Server Error', 500)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('alert dispatched')
         ->assertFailed();
 
@@ -96,7 +96,7 @@ test('health check detects homepage connection failure', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => fn () => throw new Illuminate\Http\Client\ConnectionException('Connection refused')]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Homepage unreachable')
         ->assertFailed();
 });
@@ -105,7 +105,7 @@ test('health check reports all passing checks', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('All health checks passed')
         ->assertSuccessful();
 });
@@ -119,7 +119,7 @@ test('health check detects non-writable storage logs', function () {
     $nonExistentDir = sys_get_temp_dir() . '/kneadit_nonexistent_' . getmypid() . '_' . mt_rand();
     $this->app->useStoragePath($nonExistentDir);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Storage/logs')
         ->assertFailed();
 });
@@ -128,7 +128,7 @@ test('health check verifies tenant db directory', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
-    pendingArtisan('health:check')
+    $this->artisan('health:check')
         ->expectsOutputToContain('Tenant DB directory')
         ->assertSuccessful();
 });

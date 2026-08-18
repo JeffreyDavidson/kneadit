@@ -51,7 +51,7 @@ test('get monthly data property returns numeric values', function () {
     $data = test()->widget->getMonthlyDataProperty();
 
     expect($data['goal'])->toBeFloat()
-        ->and($data['revenue'])->toBeNumeric()
+        ->and($data['revenue'])->toBeFloat()
         ->and($data['percentage'])->toBeNumeric();
 });
 
@@ -66,7 +66,7 @@ test('get yearly data property returns numeric values', function () {
     $data = test()->widget->getYearlyDataProperty();
 
     expect($data['goal'])->toBeFloat()
-        ->and($data['revenue'])->toBeNumeric()
+        ->and($data['revenue'])->toBeFloat()
         ->and($data['percentage'])->toBeNumeric();
 });
 

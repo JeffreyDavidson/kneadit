@@ -19,13 +19,13 @@ test('builds payload with correct structure for a basic order', function () {
 
     expect($payload)
         ->toHaveKeys(['detail', 'invoicer', 'primary_recipients', 'items', 'configuration', 'amount'])
-        ->and(data_get($payload, 'detail.invoice_number'))->toBe($order->order_number)
-        ->and(data_get($payload, 'detail.reference'))->toBe("Order #{$order->order_number}")
-        ->and(data_get($payload, 'invoicer.address.country_code'))->toBe('US')
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.name.given_name'))->toBe('Jane')
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.name.surname'))->toBe('Doe')
-        ->and(data_get($payload, 'items'))->toHaveCount(2)
-        ->and(data_get($payload, 'configuration.allow_tip'))->toBeFalse();
+        ->and($payload['detail']['invoice_number'])->toBe($order->order_number)
+        ->and($payload['detail']['reference'])->toBe("Order #{$order->order_number}")
+        ->and($payload['invoicer']['address']['country_code'])->toBe('US')
+        ->and($payload['primary_recipients'][0]['billing_info']['name']['given_name'])->toBe('Jane')
+        ->and($payload['primary_recipients'][0]['billing_info']['name']['surname'])->toBe('Doe')
+        ->and($payload['items'])->toHaveCount(2)
+        ->and($payload['configuration']['allow_tip'])->toBeFalse();
 });
 
 test('includes delivery fee as line item when delivery fee is positive', function () {
@@ -37,9 +37,11 @@ test('includes delivery fee as line item when delivery fee is positive', functio
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'items'))->toHaveCount(2)
-        ->and(data_get($payload, 'items.1.name'))->toBe('Delivery Fee')
-        ->and(data_get($payload, 'items.1.unit_amount.value'))->toBe('5.00');
+    $lastItem = end($payload['items']);
+
+    expect($payload['items'])->toHaveCount(2)
+        ->and($lastItem['name'])->toBe('Delivery Fee')
+        ->and($lastItem['unit_amount']['value'])->toBe('5.00');
 });
 
 test('excludes delivery fee line item when delivery fee is zero', function () {
@@ -50,7 +52,7 @@ test('excludes delivery fee line item when delivery fee is zero', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'items'))->toHaveCount(1);
+    expect($payload['items'])->toHaveCount(1);
 });
 
 test('includes discount breakdown when discount amount is positive', function () {
@@ -62,7 +64,7 @@ test('includes discount breakdown when discount amount is positive', function ()
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'amount.breakdown'))->toHaveKey('discount');
+    expect($payload['amount']['breakdown'])->toHaveKey('discount');
 });
 
 test('excludes discount breakdown when discount amount is zero', function () {
@@ -74,7 +76,7 @@ test('excludes discount breakdown when discount amount is zero', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'amount.breakdown'))->not->toHaveKey('discount');
+    expect($payload['amount']['breakdown'])->not->toHaveKey('discount');
 });
 
 test('parses single-word customer name correctly', function () {
@@ -84,8 +86,10 @@ test('parses single-word customer name correctly', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'primary_recipients.0.billing_info.name.given_name'))->toBe('Madonna')
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.name.surname'))->toBeEmpty();
+    $name = $payload['primary_recipients'][0]['billing_info']['name'];
+
+    expect($name['given_name'])->toBe('Madonna')
+        ->and($name['surname'])->toBeEmpty();
 });
 
 test('parses multi-word customer name correctly', function () {
@@ -95,8 +99,10 @@ test('parses multi-word customer name correctly', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'primary_recipients.0.billing_info.name.given_name'))->toBe('Mary')
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.name.surname'))->toBe('Jane Watson');
+    $name = $payload['primary_recipients'][0]['billing_info']['name'];
+
+    expect($name['given_name'])->toBe('Mary')
+        ->and($name['surname'])->toBe('Jane Watson');
 });
 
 test('handles empty customer name gracefully', function () {
@@ -106,8 +112,10 @@ test('handles empty customer name gracefully', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'primary_recipients.0.billing_info.name.given_name'))->toBeEmpty()
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.name.surname'))->toBeEmpty();
+    $name = $payload['primary_recipients'][0]['billing_info']['name'];
+
+    expect($name['given_name'])->toBeEmpty()
+        ->and($name['surname'])->toBeEmpty();
 });
 
 test('strips non-digit characters from customer phone number', function () {
@@ -117,8 +125,10 @@ test('strips non-digit characters from customer phone number', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'primary_recipients.0.billing_info.phones'))->toHaveCount(1)
-        ->and(data_get($payload, 'primary_recipients.0.billing_info.phones.0.national_number'))->toBe('5551234567');
+    $phones = $payload['primary_recipients'][0]['billing_info']['phones'];
+
+    expect($phones)->toHaveCount(1)
+        ->and($phones[0]['national_number'])->toBe('5551234567');
 });
 
 test('returns empty phone array when customer has no phone', function () {
@@ -128,7 +138,9 @@ test('returns empty phone array when customer has no phone', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'primary_recipients.0.billing_info.phones'))->toBeEmpty();
+    $phones = $payload['primary_recipients'][0]['billing_info']['phones'];
+
+    expect($phones)->toBeEmpty();
 });
 
 test('formats item unit prices with two decimal places', function () {
@@ -138,5 +150,5 @@ test('formats item unit prices with two decimal places', function () {
     $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
-    expect(data_get($payload, 'items.0.unit_amount.value'))->toBe('10.00');
+    expect($payload['items'][0]['unit_amount']['value'])->toBe('10.00');
 });

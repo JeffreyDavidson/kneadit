@@ -27,5 +27,5 @@ test('target plans is cast to array', function () {
 test('is active defaults to true', function () {
     $ann = PlatformAnnouncement::factory()->create();
 
-    expect($ann->refresh()->is_active)->toBeTrue();
+    expect($ann->fresh()->is_active)->toBeTrue();
 });

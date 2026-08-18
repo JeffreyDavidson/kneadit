@@ -12,36 +12,6 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-/**
- * @param array<int, array<string, mixed>> $result
- * @return array{name: mixed, current: mixed, previous: mixed, change: mixed, trend: mixed}
- */
-function trendProduct(array $result, int $categoryIndex = 0): array
-{
-    $product = data_get($result, "{$categoryIndex}.products.0");
-    throw_unless(is_array($product), RuntimeException::class, 'Expected product trend data.');
-
-    return [
-        'name' => data_get($product, 'name'),
-        'current' => data_get($product, 'current'),
-        'previous' => data_get($product, 'previous'),
-        'change' => data_get($product, 'change'),
-        'trend' => data_get($product, 'trend'),
-    ];
-}
-
-/**
- * @param array<int, array<string, mixed>> $result
- * @return array<string, mixed>
- */
-function trendCategory(array $result, int $index): array
-{
-    $category = $result[$index] ?? null;
-    throw_unless(is_array($category), RuntimeException::class, 'Expected product trend category data.');
-
-    return $category;
-}
-
 test('returns products with order counts for the given month', function () {
     $category = Category::factory()->create();
     $product = Product::factory()->inCategory($category)->create();
@@ -62,7 +32,7 @@ test('returns products with order counts for the given month', function () {
     expect($result)
         ->toBeArray()
         ->toHaveCount(1)
-        ->and(trendProduct($result))
+        ->and($result[0]['products'][0])
         ->name->toBe($product->name)
         ->current->toBe(5);
 });
@@ -92,7 +62,7 @@ test('includes change percentage comparing to previous month', function () {
     ]);
 
     $result = (new ProductTrendsService)->calculate(2026, 3);
-    $productData = trendProduct($result);
+    $productData = $result[0]['products'][0];
 
     expect($productData)
         ->current->toBe(15)
@@ -126,7 +96,7 @@ test('sets trend to up when current exceeds previous', function () {
 
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
-    expect(trendProduct($result)['trend'])->toBe('up');
+    expect($result[0]['products'][0]['trend'])->toBe('up');
 });
 
 test('sets trend to down when current is less than previous', function () {
@@ -155,7 +125,7 @@ test('sets trend to down when current is less than previous', function () {
 
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
-    expect(trendProduct($result)['trend'])->toBe('down');
+    expect($result[0]['products'][0]['trend'])->toBe('down');
 });
 
 test('sets trend to flat when current equals previous', function () {
@@ -184,7 +154,7 @@ test('sets trend to flat when current equals previous', function () {
 
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
-    expect(trendProduct($result)['trend'])->toBe('flat');
+    expect($result[0]['products'][0]['trend'])->toBe('flat');
 });
 
 test('excludes products with zero orders in both months', function () {
@@ -224,8 +194,8 @@ test('groups products by category', function () {
 
     expect($result)
         ->toHaveCount(2)
-        ->and(trendCategory($result, 0)['category'])->toBe('Breads')
-        ->and(trendCategory($result, 1)['category'])->toBe('Pastries');
+        ->and($result[0]['category'])->toBe('Breads')
+        ->and($result[1]['category'])->toBe('Pastries');
 });
 
 test('excludes cancelled orders from counts', function () {

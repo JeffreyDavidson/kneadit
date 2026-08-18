@@ -10,21 +10,18 @@ beforeEach(fn () => setUpCentralTest());
 
 test('onboarded() factory state produces a fully-onboarded tenant', function () {
     $tenant = Tenant::factory()->onboarded()->create();
-    $tenant->refresh();
 
     // Central-DB columns set by the wizard
-    expect($tenant->store_name)->not->toBeEmpty()
-        ->and($tenant->store_logo)->not->toBeEmpty()
-        ->and($tenant->storefront_enabled)->toBeTrue()
-        ->and($tenant->brand_color_primary)->not->toBe(BrandingSettings::DEFAULT_BRAND_COLOR);
+    expect($tenant->fresh()->store_name)->not->toBeEmpty()
+        ->and($tenant->fresh()->store_logo)->not->toBeEmpty()
+        ->and((bool) $tenant->fresh()->storefront_enabled)->toBeTrue()
+        ->and($tenant->fresh()->brand_color_primary)->not->toBe(BrandingSettings::DEFAULT_BRAND_COLOR);
 
     $tenantData = $tenant->run(fn () => [
         'products' => DB::table('products')->count(),
         'categories' => DB::table('categories')->count(),
         'completedAt' => resolve(SettingsManager::class)->get('onboarding_completed_at'),
     ]);
-
-    throw_unless(is_array($tenantData), UnexpectedValueException::class, 'Expected tenant onboarding metrics.');
 
     expect($tenantData['products'])->toBeGreaterThan(0)
         ->and($tenantData['categories'])->toBeGreaterThan(0)
@@ -46,8 +43,6 @@ test('justSignedUp() factory state leaves tenant DB empty of seeded content', fu
         'products' => DB::table('products')->count(),
         'categories' => DB::table('categories')->count(),
     ]);
-
-    throw_unless(is_array($counts), UnexpectedValueException::class, 'Expected tenant seed counts.');
 
     expect($counts['products'])->toBe(0)
         ->and($counts['categories'])->toBe(0);

@@ -8,20 +8,9 @@ beforeEach(function () {
     setUpCentralTest();
 });
 
-function referralCodeTenant(string $id): Tenant
-{
-    $tenant = Tenant::query()->find($id);
-
-    if (! $tenant instanceof Tenant) {
-        throw new RuntimeException('Expected one tenant.');
-    }
-
-    return $tenant;
-}
-
 test('it creates a new referral code for a tenant', function () {
     $row = createTenant(['store_name' => 'Test Bakery']);
-    $tenant = referralCodeTenant($row->id);
+    $tenant = Tenant::query()->find($row->id);
 
     $code = resolve(GenerateReferralCode::class)($tenant);
 
@@ -30,7 +19,7 @@ test('it creates a new referral code for a tenant', function () {
 
 test('it returns existing referral code if one exists', function () {
     $row = createTenant(['store_name' => 'Test Bakery']);
-    $tenant = referralCodeTenant($row->id);
+    $tenant = Tenant::query()->find($row->id);
 
     $code1 = resolve(GenerateReferralCode::class)($tenant);
     $code2 = resolve(GenerateReferralCode::class)($tenant);
@@ -40,7 +29,7 @@ test('it returns existing referral code if one exists', function () {
 
 test('it regenerates when existing code collides', function () {
     $row = createTenant(['store_name' => 'Test Bakery']);
-    $tenant = referralCodeTenant($row->id);
+    $tenant = Tenant::query()->find($row->id);
 
     $otherRow = createTenant(['id' => 'other-bakery', 'name' => 'Other Owner', 'email' => 'other@test.com', 'store_name' => 'Other Bakery']);
 

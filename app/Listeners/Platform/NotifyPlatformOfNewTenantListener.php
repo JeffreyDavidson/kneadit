@@ -6,14 +6,13 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
-use App\Support\DatabaseValue;
 use Illuminate\Contracts\Mail\Mailable;
 
 class NotifyPlatformOfNewTenantListener extends SendEmailListener
 {
     protected function getRecipient(object $event): ?string
     {
-        return DatabaseValue::nullableString(config('mail.platform_notify'));
+        return config('mail.platform_notify');
     }
 
     protected function getMailable(object $event): Mailable

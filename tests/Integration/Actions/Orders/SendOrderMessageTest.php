@@ -51,5 +51,5 @@ test('baker message marks unread customer messages as read', function () {
         senderType: SenderType::Baker,
     );
 
-    expect($order->messages()->where('sender_type', SenderType::Customer)->firstOrFail()->is_read)->toBeTrue();
+    expect($order->messages()->where('sender_type', SenderType::Customer)->first()->is_read)->toBeTrue();
 });

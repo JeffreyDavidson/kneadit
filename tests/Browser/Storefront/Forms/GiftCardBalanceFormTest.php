@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-
-$storefrontUrl = Config::string('browser-testing.storefront_url');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 
 test('gift card balance form surfaces a not-found error for an unknown code', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/gift-cards")

@@ -45,12 +45,12 @@ test('can edit a holiday via table action', function () {
     Livewire::test(ListHolidays::class)
         ->callAction(TestAction::make('edit')->table($holiday), data: [
             'name' => 'Updated Holiday',
-            'date' => '2026-12-25',
-            'order_deadline' => '2026-12-20',
+            'date' => $holiday->date->format('Y-m-d'),
+            'order_deadline' => $holiday->order_deadline->format('Y-m-d'),
         ])
         ->assertHasNoFormErrors();
 
-    expect($holiday->refresh()->name)->toBe('Updated Holiday');
+    expect($holiday->fresh()->name)->toBe('Updated Holiday');
 });
 
 test('can render holiday table columns', function (string $column) {

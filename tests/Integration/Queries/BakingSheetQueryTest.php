@@ -6,7 +6,6 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use App\Queries\Orders\BakingSheetQuery;
-use App\Support\DatabaseValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -41,9 +40,8 @@ test('returns aggregated baking items for a given date', function () {
     ]);
 
     $items = BakingSheetQuery::forDate($date);
-    $item = $items->firstOrFail();
 
     expect($items)->toHaveCount(1)
-        ->and($item->getAttribute('product_name'))->toBe('Sourdough')
-        ->and(DatabaseValue::int($item->getAttribute('total_quantity')))->toBe(3);
+        ->and($items->first()->product_name)->toBe('Sourdough')
+        ->and((int) $items->first()->total_quantity)->toBe(3);
 });

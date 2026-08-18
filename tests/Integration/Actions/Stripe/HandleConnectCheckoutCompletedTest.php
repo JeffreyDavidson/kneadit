@@ -49,7 +49,7 @@ test('it processes checkout session within tenant context', function () {
     $tenant = createTenant(['id' => 'checkout-tenant', 'email' => 'checkout@test.com']);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
-    mockExpectation($tenancyManager, 'withinTenant')
+    $tenancyManager->shouldReceive('withinTenant')
         ->once()
         ->andReturnUsing(fn ($tenant, $callback) => $callback());
 
@@ -72,7 +72,7 @@ test('it catches exceptions during tenant context processing', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
-    mockExpectation($tenancyManager, 'withinTenant')
+    $tenancyManager->shouldReceive('withinTenant')
         ->once()
         ->andThrow(new Exception('Processing failed'));
 

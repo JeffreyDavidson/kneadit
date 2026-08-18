@@ -6,7 +6,6 @@ use App\Actions\Stripe\CreateStripePromotionCode;
 use App\DataTransferObjects\Stripe\StripePromotionCodeResult;
 use App\Models\Platform\PlatformPromoCode;
 use App\Models\Platform\Tenant;
-use App\Support\DatabaseValue;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -168,12 +167,12 @@ class PromoCode extends Page implements HasForms
 
         try {
             $isPercent = ($state['discount_type'] ?? 'percent') === 'percent';
-            $value = DatabaseValue::nullableInt($state['discount_value'] ?? null);
-            $duration = DatabaseValue::nullableString($state['duration'] ?? null) ?? 'once';
-            $durationInMonths = DatabaseValue::nullableInt($state['duration_in_months'] ?? null);
-            $maxRedemptions = DatabaseValue::int($state['max_redemptions'] ?? null, 1);
+            $value = isset($state['discount_value']) ? (int) $state['discount_value'] : null;
+            $duration = $state['duration'] ?? 'once';
+            $durationInMonths = isset($state['duration_in_months']) ? (int) $state['duration_in_months'] : null;
+            $maxRedemptions = (int) ($state['max_redemptions'] ?? 1);
             $expiresInDays = isset($state['expires_in_days']) && $state['expires_in_days'] !== ''
-                ? DatabaseValue::nullableInt($state['expires_in_days'])
+                ? (int) $state['expires_in_days']
                 : null;
 
             $this->result = $action(
@@ -181,11 +180,11 @@ class PromoCode extends Page implements HasForms
                 amountOffCents: ! $isPercent && $value !== null ? $value * 100 : null,
                 duration: $duration,
                 durationInMonths: $durationInMonths,
-                code: DatabaseValue::nullableString($state['code'] ?? null),
+                code: $state['code'] ?: null,
                 maxRedemptions: $maxRedemptions,
                 expiresInDays: $expiresInDays,
-                tenantId: DatabaseValue::nullableString($state['tenant_id'] ?? null),
-                name: DatabaseValue::nullableString($state['name'] ?? null),
+                tenantId: $state['tenant_id'] ?: null,
+                name: $state['name'] ?: null,
             );
 
             PlatformPromoCode::query()->create([

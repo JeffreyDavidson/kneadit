@@ -43,84 +43,23 @@ final readonly class PricingRecommendation implements Wireable
         ];
     }
 
+    /**
+     * @param array<string, mixed> $value
+     */
     public static function fromLivewire(mixed $value): self
     {
-        if (! is_array($value)) {
-            throw new \UnexpectedValueException('Expected the pricing recommendation payload to be an array.');
-        }
-
         return new self(
-            ingredientCost: self::floatValue($value['ingredientCost'] ?? null, 'ingredientCost'),
-            laborCost: self::floatValue($value['laborCost'] ?? null, 'laborCost'),
-            overhead: self::floatValue($value['overhead'] ?? null, 'overhead'),
-            totalCost: self::floatValue($value['totalCost'] ?? null, 'totalCost'),
-            recommendedPrice: self::floatValue($value['recommendedPrice'] ?? null, 'recommendedPrice'),
-            minPrice: self::floatValue($value['minPrice'] ?? null, 'minPrice'),
-            maxPrice: self::floatValue($value['maxPrice'] ?? null, 'maxPrice'),
-            currentPrice: isset($value['currentPrice']) ? self::floatValue($value['currentPrice'], 'currentPrice') : null,
-            profitPerUnit: self::floatValue($value['profitPerUnit'] ?? null, 'profitPerUnit'),
-            actualMarginPercent: self::floatValue($value['actualMarginPercent'] ?? null, 'actualMarginPercent'),
-            bulkTiers: self::bulkTiers($value['bulkTiers'] ?? null),
+            ingredientCost: (float) $value['ingredientCost'],
+            laborCost: (float) $value['laborCost'],
+            overhead: (float) $value['overhead'],
+            totalCost: (float) $value['totalCost'],
+            recommendedPrice: (float) $value['recommendedPrice'],
+            minPrice: (float) $value['minPrice'],
+            maxPrice: (float) $value['maxPrice'],
+            currentPrice: isset($value['currentPrice']) ? (float) $value['currentPrice'] : null,
+            profitPerUnit: (float) $value['profitPerUnit'],
+            actualMarginPercent: (float) $value['actualMarginPercent'],
+            bulkTiers: (array) $value['bulkTiers'],
         );
-    }
-
-    private static function floatValue(mixed $value, string $key): float
-    {
-        if (is_float($value) || is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || ! is_numeric($value)) {
-            throw new \UnexpectedValueException("Expected {$key} to be numeric.");
-        }
-
-        return (float) $value;
-    }
-
-    private static function integerValue(mixed $value, string $key): int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
-            throw new \UnexpectedValueException("Expected {$key} to be an integer.");
-        }
-
-        return (int) $value;
-    }
-
-    private static function stringValue(mixed $value, string $key): string
-    {
-        if (! is_string($value)) {
-            throw new \UnexpectedValueException("Expected {$key} to be a string.");
-        }
-
-        return $value;
-    }
-
-    /** @return array<int, array{qty: int, label: string, unit_price: float, total: float}> */
-    private static function bulkTiers(mixed $value): array
-    {
-        if (! is_array($value)) {
-            throw new \UnexpectedValueException('Expected bulkTiers to be an array.');
-        }
-
-        $bulkTiers = [];
-
-        foreach (array_values($value) as $index => $tier) {
-            if (! is_array($tier)) {
-                throw new \UnexpectedValueException("Expected bulkTiers.{$index} to be an array.");
-            }
-
-            $bulkTiers[] = [
-                'qty' => self::integerValue($tier['qty'] ?? null, "bulkTiers.{$index}.qty"),
-                'label' => self::stringValue($tier['label'] ?? null, "bulkTiers.{$index}.label"),
-                'unit_price' => self::floatValue($tier['unit_price'] ?? null, "bulkTiers.{$index}.unit_price"),
-                'total' => self::floatValue($tier['total'] ?? null, "bulkTiers.{$index}.total"),
-            ];
-        }
-
-        return $bulkTiers;
     }
 }

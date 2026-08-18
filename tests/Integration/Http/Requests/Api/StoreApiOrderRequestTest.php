@@ -100,7 +100,6 @@ test('valid pickup order passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-/** @return array<string, mixed> */
 function validApiOrderData(): array
 {
     $product = Product::factory()->create();

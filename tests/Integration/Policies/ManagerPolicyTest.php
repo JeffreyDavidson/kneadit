@@ -7,25 +7,6 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-function managerPolicyResult(string $policyClass, string $ability, User $user, ?object $model = null): bool
-{
-    $policy = new $policyClass;
-
-    if (! method_exists($policy, $ability)) {
-        throw new LogicException("Policy {$policyClass} does not define {$ability}.");
-    }
-
-    $result = $model === null
-        ? $policy->{$ability}($user)
-        : $policy->{$ability}($user, $model);
-
-    if (! is_bool($result)) {
-        throw new LogicException("Policy {$policyClass}::{$ability} did not return a boolean.");
-    }
-
-    return $result;
-}
-
 dataset('managerPolicies', [
     'BlockedDate' => [App\Policies\Operations\BlockedDatePolicy::class, App\Models\Operations\BlockedDate::class],
     'CapacityLimit' => [App\Policies\Operations\CapacityLimitPolicy::class, App\Models\Operations\CapacityLimit::class],
@@ -52,33 +33,36 @@ dataset('managerPolicies', [
 ]);
 
 test('manager policies deny staff users', function (string $policyClass, string $modelClass) {
+    $policy = new $policyClass;
     $user = User::factory()->staff()->create();
     $model = new $modelClass;
 
-    expect(managerPolicyResult($policyClass, 'viewAny', $user))->toBeFalse()
-        ->and(managerPolicyResult($policyClass, 'view', $user, $model))->toBeFalse()
-        ->and(managerPolicyResult($policyClass, 'create', $user))->toBeFalse()
-        ->and(managerPolicyResult($policyClass, 'update', $user, $model))->toBeFalse()
-        ->and(managerPolicyResult($policyClass, 'delete', $user, $model))->toBeFalse();
+    expect($policy->viewAny($user))->toBeFalse()
+        ->and($policy->view($user, $model))->toBeFalse()
+        ->and($policy->create($user))->toBeFalse()
+        ->and($policy->update($user, $model))->toBeFalse()
+        ->and($policy->delete($user, $model))->toBeFalse();
 })->with('managerPolicies');
 
 test('manager policies allow owner users', function (string $policyClass, string $modelClass) {
+    $policy = new $policyClass;
     $user = User::factory()->owner()->create();
     $model = new $modelClass;
 
-    expect(managerPolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    expect($policy->viewAny($user))->toBeTrue()
+        ->and($policy->view($user, $model))->toBeTrue()
+        ->and($policy->create($user))->toBeTrue()
+        ->and($policy->update($user, $model))->toBeTrue()
+        ->and($policy->delete($user, $model))->toBeTrue();
 })->with('managerPolicies');
 test('manager policies allow manager users', function (string $policyClass, string $modelClass) {
+    $policy = new $policyClass;
     $user = User::factory()->manager()->create();
     $model = new $modelClass;
 
-    expect(managerPolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(managerPolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    expect($policy->viewAny($user))->toBeTrue()
+        ->and($policy->view($user, $model))->toBeTrue()
+        ->and($policy->create($user))->toBeTrue()
+        ->and($policy->update($user, $model))->toBeTrue()
+        ->and($policy->delete($user, $model))->toBeTrue();
 })->with('managerPolicies');

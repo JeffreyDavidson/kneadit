@@ -10,20 +10,17 @@ test('handler throws in non-production when an unserializable class is read from
     // The array cache driver bypasses serialize/unserialize, so we exercise
     // the handler directly with the same arguments the framework would pass.
     $logger = Log::spy();
-    mockExpectation($logger, 'error')
-        ->with(Mockery::on(fn (string $msg): bool => str_contains($msg, 'orders.dashboard.cards')))
-        ->once();
 
     $reflection = new ReflectionClass(CacheRepository::class);
     $handler = $reflection->getStaticPropertyValue('unserializableClassHandler');
 
-    if (! is_callable($handler)) {
-        throw new RuntimeException('AppServiceProvider should register the handler.');
-    }
+    expect($handler)->not->toBeNull('AppServiceProvider should register the handler.');
 
     expect(fn () => $handler('orders.dashboard.cards', App\Models\Orders\Order::class))
         ->toThrow(RuntimeException::class, 'Cache returned __PHP_Incomplete_Class for key [orders.dashboard.cards]');
 
+    $logger->shouldHaveReceived('error')
+        ->with(Mockery::on(fn (string $msg): bool => str_contains($msg, 'orders.dashboard.cards')));
 });
 
 test('handler still fires (logs + throws) when class name is unknown', function () {
@@ -31,10 +28,6 @@ test('handler still fires (logs + throws) when class name is unknown', function 
 
     $reflection = new ReflectionClass(CacheRepository::class);
     $handler = $reflection->getStaticPropertyValue('unserializableClassHandler');
-
-    if (! is_callable($handler)) {
-        throw new RuntimeException('AppServiceProvider should register the handler.');
-    }
 
     expect(fn () => $handler('some.key', null))
         ->toThrow(RuntimeException::class, 'original class: unknown');

@@ -6,11 +6,7 @@ use App\Models\Inventory\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/**
- * @property Category $resource
- *
- * @mixin Category
- */
+/** @mixin Category */
 class CategoryResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
@@ -20,7 +16,7 @@ class CategoryResource extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string) $this->resource->id;
+        return (string) $this->resource->getKey();
     }
 
     public function toType(Request $request): string

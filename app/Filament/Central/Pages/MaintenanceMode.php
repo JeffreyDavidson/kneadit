@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\DataTransferObjects\Settings\SettingValue;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -35,13 +34,10 @@ class MaintenanceMode extends Page
     public function mount(): void
     {
         $this->maintenance_mode = platformSettings('maintenance_mode', '0') === '1';
-        $this->maintenance_message = SettingValue::nullableString(platformSettings('maintenance_message')) ?? '';
-        $this->maintenance_scheduled_start = SettingValue::nullableString(platformSettings('maintenance_scheduled_start'));
-        $this->maintenance_scheduled_end = SettingValue::nullableString(platformSettings('maintenance_scheduled_end'));
-        $this->affected_services = array_values(array_filter(
-            SettingValue::decodedList(platformSettings('affected_services')),
-            is_string(...),
-        ));
+        $this->maintenance_message = platformSettings('maintenance_message', '');
+        $this->maintenance_scheduled_start = platformSettings('maintenance_scheduled_start');
+        $this->maintenance_scheduled_end = platformSettings('maintenance_scheduled_end');
+        $this->affected_services = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
     }
 
     public function toggleMaintenance(): void

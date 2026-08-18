@@ -4,7 +4,6 @@ namespace App\Services\Platform;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -35,7 +34,7 @@ class ChangelogService
     private function fetchFromGitHub(): Collection
     {
         try {
-            $response = Http::withToken(Config::string('services.github.token'))
+            $response = Http::withToken(config('services.github.token'))
                 ->accept('application/vnd.github+json')
                 ->get('https://api.github.com/repos/' . self::REPO . '/releases', [
                     'per_page' => 30,
@@ -49,35 +48,18 @@ class ChangelogService
                 return $this->fallback();
             }
 
+            /** @var array<int, array<string, mixed>> $releases */
             $releases = $response->json() ?? [];
 
-            if (! is_array($releases)) {
-                return $this->fallback();
-            }
-
-            $entries = [];
-
-            foreach ($releases as $release) {
-                if (! is_array($release)) {
-                    continue;
-                }
-                if (($release['draft'] ?? false) === true) {
-                    continue;
-                }
-                $publishedAt = $this->stringValue($release['published_at'] ?? $release['created_at'] ?? '');
-                $tagName = $this->stringValue($release['tag_name'] ?? '');
-                $name = $this->stringValue($release['name'] ?? $tagName);
-                $body = $this->stringValue($release['body'] ?? '');
-
-                $entries[] = [
-                    'date' => substr($publishedAt, 0, 10),
-                    'version' => ltrim($tagName, 'v'),
-                    'title' => $name !== '' ? $name : 'Release',
-                    'items' => $this->parseBodyToItems($body),
-                ];
-            }
-
-            return collect($entries);
+            return collect($releases)
+                ->reject(fn (array $release) => $release['draft'] ?? false)
+                ->map(fn (array $release) => [
+                    'date' => substr((string) ($release['published_at'] ?? $release['created_at'] ?? ''), 0, 10),
+                    'version' => ltrim((string) ($release['tag_name'] ?? ''), 'v'),
+                    'title' => (string) ($release['name'] ?? $release['tag_name'] ?? 'Release'),
+                    'items' => $this->parseBodyToItems((string) ($release['body'] ?? '')),
+                ])
+                ->values();
         } catch (\Throwable $e) {
             Log::warning('GitHub Releases API error', [
                 'error' => $e->getMessage(),
@@ -106,11 +88,6 @@ class ChangelogService
             ->all();
     }
 
-    private function stringValue(mixed $value): string
-    {
-        return is_string($value) ? $value : '';
-    }
-
     /**
      * Fallback to config-based changelog if GitHub API is unavailable.
      *
@@ -118,33 +95,9 @@ class ChangelogService
      */
     private function fallback(): Collection
     {
-        $configured = Config::array('changelog', []);
-        $entries = [];
+        /** @var array<int, array{date: string, version: string, title: string, items: array<int, string>}> $configured */
+        $configured = config('changelog', []);
 
-        foreach ($configured as $entry) {
-            if (! is_array($entry)) {
-                continue;
-            }
-
-            $items = $entry['items'] ?? [];
-            $normalizedItems = [];
-
-            if (is_array($items)) {
-                foreach ($items as $key => $item) {
-                    if (is_int($key) && is_string($item)) {
-                        $normalizedItems[$key] = $item;
-                    }
-                }
-            }
-
-            $entries[] = [
-                'date' => $this->stringValue($entry['date'] ?? ''),
-                'version' => $this->stringValue($entry['version'] ?? ''),
-                'title' => $this->stringValue($entry['title'] ?? ''),
-                'items' => $normalizedItems,
-            ];
-        }
-
-        return collect($entries);
+        return collect($configured);
     }
 }

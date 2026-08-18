@@ -120,9 +120,8 @@ test('BlogPostCategory::options returns all cases plus All Posts', function () {
     $options = BlogPostCategory::options();
 
     expect($options)
-        ->toHaveCount(count(BlogPostCategory::cases()) + 1);
-
-    expect($options->first())->toBe('All Posts');
+        ->toHaveCount(count(BlogPostCategory::cases()) + 1)
+        ->first()->toBe('All Posts');
 });
 
 test('BlogPostCategory::options includes case', function (BlogPostCategory $case) {

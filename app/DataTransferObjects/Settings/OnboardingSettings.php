@@ -11,7 +11,7 @@ final readonly class OnboardingSettings
     public static function resolve(): self
     {
         return new self(
-            completedAt: SettingValue::nullableString(settings('onboarding_completed_at')),
+            completedAt: settings('onboarding_completed_at'),
         );
     }
 }

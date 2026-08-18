@@ -7,7 +7,6 @@ use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
-use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -35,47 +34,41 @@ test('default layout keeps reporting widgets opt in', function () {
 
 test('reorder swaps two widgets in place', function () {
     $page = livewire(DashboardConfig::class);
-    $first = $page->instance()->widgets[0];
-    $second = $page->instance()->widgets[1];
+    $first = $page->get('widgets')[0];
+    $second = $page->get('widgets')[1];
 
     $page->call('reorder', 0, 1);
 
-    expect($page->instance()->widgets[0])->toBe($second)
-        ->and($page->instance()->widgets[1])->toBe($first);
+    expect($page->get('widgets')[0])->toBe($second)
+        ->and($page->get('widgets')[1])->toBe($first);
 });
 
 test('toggleWidget flips visibility', function () {
     $page = livewire(DashboardConfig::class);
-    $beforeVisible = $page->instance()->widgets[0]['visible'];
+    $beforeVisible = $page->get('widgets')[0]['visible'];
 
     $page->call('toggleWidget', 0);
 
-    expect($page->instance()->widgets[0]['visible'])->toBe(! $beforeVisible);
+    expect($page->get('widgets')[0]['visible'])->toBe(! $beforeVisible);
 });
 
 test('setSize accepts t-shirt size strings, ignores unknown values, and rejects disallowed sizes', function () {
     $page = livewire(DashboardConfig::class);
 
     // recent_orders allows all three sizes — sm → md transitions cleanly.
-    $recentIndex = array_find_key(
-        $page->instance()->widgets,
-        fn (array $widget): bool => $widget['key'] === 'recent_orders',
-    ) ?? throw new RuntimeException('The recent orders widget was not loaded.');
+    $recentIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'recent_orders');
     $page->call('setSize', $recentIndex, 'md');
-    expect($page->instance()->widgets[$recentIndex]['size'])->toBe('md');
+    expect($page->get('widgets')[$recentIndex]['size'])->toBe('md');
 
     // welcome_banner is locked to large — sm should be rejected and the size unchanged.
-    $welcomeIndex = array_find_key(
-        $page->instance()->widgets,
-        fn (array $widget): bool => $widget['key'] === 'welcome_banner',
-    ) ?? throw new RuntimeException('The welcome banner widget was not loaded.');
-    $sizeBefore = $page->instance()->widgets[$welcomeIndex]['size'];
+    $welcomeIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'welcome_banner');
+    $sizeBefore = $page->get('widgets')[$welcomeIndex]['size'];
     $page->call('setSize', $welcomeIndex, 'sm');
-    expect($page->instance()->widgets[$welcomeIndex]['size'])->toBe($sizeBefore);
+    expect($page->get('widgets')[$welcomeIndex]['size'])->toBe($sizeBefore);
 
     // Unknown size strings on an unrestricted widget fall back to small.
     $page->call('setSize', $recentIndex, 'bogus');
-    expect($page->instance()->widgets[$recentIndex]['size'])->toBe('sm');
+    expect($page->get('widgets')[$recentIndex]['size'])->toBe('sm');
 });
 
 test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and standard sizes for unconstrained widgets', function () {
@@ -100,13 +93,10 @@ test('saved sizes that violate allowedSizes are clamped to the widget default on
     ]));
 
     $page = livewire(DashboardConfig::class);
-    $welcomeBanner = collect($page->instance()->widgets)
-        ->firstOrFail(fn (array $widget): bool => $widget['key'] === 'welcome_banner');
-    $storefrontViews = collect($page->instance()->widgets)
-        ->firstOrFail(fn (array $widget): bool => $widget['key'] === 'storefront_views');
+    $widgets = collect($page->get('widgets'))->keyBy('key');
 
-    expect($welcomeBanner['size'])->toBe('sm')
-        ->and($storefrontViews['size'])->toBe('sm');
+    expect($widgets['welcome_banner']['size'])->toBe('sm')
+        ->and($widgets['storefront_views']['size'])->toBe('sm');
 });
 
 test('legacy integer span values are migrated to t-shirt sizes on load', function () {
@@ -120,16 +110,11 @@ test('legacy integer span values are migrated to t-shirt sizes on load', functio
     ]));
 
     $page = livewire(DashboardConfig::class);
-    $recentOrders = collect($page->instance()->widgets)
-        ->firstOrFail(fn (array $widget): bool => $widget['key'] === 'recent_orders');
-    $todaysOrders = collect($page->instance()->widgets)
-        ->firstOrFail(fn (array $widget): bool => $widget['key'] === 'todays_orders');
-    $statsOverview = collect($page->instance()->widgets)
-        ->firstOrFail(fn (array $widget): bool => $widget['key'] === 'stats_overview');
+    $widgets = collect($page->get('widgets'))->keyBy('key');
 
-    expect($recentOrders['size'])->toBe('sm')
-        ->and($todaysOrders['size'])->toBe('md')
-        ->and($statsOverview['size'])->toBe('lg');
+    expect($widgets['recent_orders']['size'])->toBe('sm')
+        ->and($widgets['todays_orders']['size'])->toBe('md')
+        ->and($widgets['stats_overview']['size'])->toBe('lg');
 });
 
 test('Dashboard::getWidgets returns the full registry when no saved layout exists', function () {
@@ -151,7 +136,7 @@ test('Dashboard::getWidgets honors saved order and visibility', function () {
     // Widgets that use HasDashboardSize get wrapped in WidgetConfiguration so
     // their dashboardSize property gets piped through Livewire mount.
     $classes = collect($widgets)->map(
-        fn (string|WidgetConfiguration $widget): string => is_string($widget) ? $widget : $widget->widget,
+        fn ($w) => is_string($w) ? $w : $w->widget,
     )->all();
 
     // recent_orders is the only saved-visible widget, so it leads the list.
@@ -171,9 +156,7 @@ test('Dashboard::getWidgets pipes the saved size into widgets that use HasDashbo
 
     $widgets = (new Dashboard)->getWidgets();
 
-    $widget = $widgets[0];
-
-    expect($widget)->toBeInstanceOf(WidgetConfiguration::class)
-        ->and($widget instanceof WidgetConfiguration ? $widget->widget : null)->toBe(TodaysOrdersWidget::class)
-        ->and($widget instanceof WidgetConfiguration ? $widget->getProperties() : null)->toBe(['dashboardSize' => 'lg']);
+    expect($widgets[0])->toBeInstanceOf(Filament\Widgets\WidgetConfiguration::class)
+        ->and($widgets[0]->widget)->toBe(TodaysOrdersWidget::class)
+        ->and($widgets[0]->getProperties())->toBe(['dashboardSize' => 'lg']);
 });

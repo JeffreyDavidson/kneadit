@@ -9,7 +9,7 @@ use JMac\Testing\Double;
 beforeEach(fn () => setUpCentralTest());
 
 test('digest:weekly command runs successfully with no tenants', function () {
-    pendingArtisan('digest:weekly')
+    $this->artisan('digest:weekly')
         ->assertSuccessful();
 });
 
@@ -24,14 +24,14 @@ test('digest:weekly skips tenants with digest disabled', function () {
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->resolves(function (...$arguments) {
+        ->resolves(function ($tenant, $callback) {
             // Simulate settings returning '0' for digest
             return null;
         });
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    pendingArtisan('digest:weekly')
+    $this->artisan('digest:weekly')
         ->assertSuccessful();
 
     Event::assertNotDispatched(WeeklyDigestRequested::class);
@@ -56,7 +56,7 @@ test('digest:weekly returns failure when tenant processing fails', function () {
             return str_contains($message, 'Weekly digest processing failed');
         });
 
-    pendingArtisan('digest:weekly')
+    $this->artisan('digest:weekly')
         ->expectsOutputToContain('Failed')
         ->assertFailed();
 });

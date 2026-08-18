@@ -17,10 +17,6 @@ test('percentage cast get converts int to Percentage', function () {
 
     $pct = $cast->get($model, 'pct', 25, []);
 
-    if ($pct === null) {
-        throw new RuntimeException('Expected the cast to hydrate Percentage.');
-    }
-
     expect($pct)->toBeInstanceOf(Percentage::class)
         ->and($pct->value())->toBe(25.0);
 });
@@ -30,10 +26,6 @@ test('percentage cast get converts decimal string to Percentage', function () {
     $model = new class extends Model {};
 
     $pct = $cast->get($model, 'pct', '12.5', []);
-
-    if ($pct === null) {
-        throw new RuntimeException('Expected the cast to hydrate Percentage.');
-    }
 
     expect($pct->value())->toBe(12.5);
 });
@@ -69,10 +61,6 @@ test('percentage cast roundtrips Percentage value through set then get', functio
     $original = Percentage::fromFloat(33.5);
     $stored = $cast->set($model, 'pct', $original, []);
     $retrieved = $cast->get($model, 'pct', $stored, []);
-
-    if ($retrieved === null) {
-        throw new RuntimeException('Expected the cast to hydrate Percentage.');
-    }
 
     expect($retrieved->equals($original))->toBeTrue();
 });

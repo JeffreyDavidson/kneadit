@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Closure;
 use Illuminate\Http\Request;
@@ -14,9 +13,7 @@ class EnsureOnboardingComplete
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $tenant = tenancy()->tenant;
-
-        if (! $tenant instanceof Tenant) {
+        if (! tenant()) {
             return $next($request);
         }
 
@@ -44,7 +41,7 @@ class EnsureOnboardingComplete
             }
         } catch (\Throwable $e) {
             Log::warning('Failed to check onboarding status', [
-                'tenant' => $tenant->getTenantKey(),
+                'tenant' => tenant()->getTenantKey(),
                 'error' => $e->getMessage(),
             ]);
         }

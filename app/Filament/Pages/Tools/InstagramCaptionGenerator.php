@@ -120,13 +120,10 @@ class InstagramCaptionGenerator extends Page
             return;
         }
 
-        $style = $formData['style'] ?? null;
-        $tone = $formData['tone'] ?? null;
-
         $this->captions = resolve(CaptionGeneratorService::class)->generate(
             $product,
-            is_string($style) ? CaptionStyle::tryFrom($style) ?? CaptionStyle::Playful : CaptionStyle::Playful,
-            is_string($tone) ? $tone : 'warm',
+            CaptionStyle::tryFrom($formData['style'] ?? '') ?? CaptionStyle::Playful,
+            $formData['tone'] ?? 'warm',
         );
     }
 }

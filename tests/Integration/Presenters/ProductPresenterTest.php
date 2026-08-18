@@ -14,7 +14,7 @@ test('primaryImageUrl returns the primary image path', function () {
     $product = Product::factory()->create(['image' => null]);
     ProductImage::factory()->primary()->for($product)->create(['path' => 'products/primary.jpg']);
 
-    $url = ProductPresenter::for($product->refresh())->primaryImageUrl();
+    $url = ProductPresenter::for($product->fresh())->primaryImageUrl();
 
     expect($url)->toBeString()->and($url)->toContain('primary.jpg');
 });

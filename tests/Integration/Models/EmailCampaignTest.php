@@ -28,7 +28,7 @@ test('status can be updated to sent', function () {
     $campaign = EmailCampaign::factory()->create();
     $campaign->update(['status' => EmailCampaignStatus::Sent, 'sent_at' => now()]);
 
-    expect($campaign->refresh()->status)->toBe(EmailCampaignStatus::Sent);
+    expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent);
 });
 
 test('recipient count stored correctly', function () {

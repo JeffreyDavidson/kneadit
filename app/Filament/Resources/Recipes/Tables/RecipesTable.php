@@ -37,20 +37,13 @@ class RecipesTable
                     ->sortable(),
 
                 TextColumn::make('ingredients')
-                    ->formatStateUsing(function (mixed $state): string {
-                        if (! is_array($state)) {
-                            return '-';
+                    ->formatStateUsing(function (mixed $state) {
+                        if (is_array($state)) {
+                            return collect($state)->take(3)->pluck('name')->join(', ') .
+                                   (count($state) > 3 ? '...' : '');
                         }
 
-                        $names = [];
-
-                        foreach (array_slice($state, 0, 3) as $ingredient) {
-                            if (is_array($ingredient) && is_string($ingredient['name'] ?? null)) {
-                                $names[] = $ingredient['name'];
-                            }
-                        }
-
-                        return implode(', ', $names) . (count($state) > 3 ? '...' : '');
+                        return '-';
                     })
                     ->limit(50),
 

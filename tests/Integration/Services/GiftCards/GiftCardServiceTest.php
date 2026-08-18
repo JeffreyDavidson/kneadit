@@ -121,7 +121,7 @@ test('redeem fails when card expired', function () {
         'initial_balance' => 50,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
-        'expires_at' => now()->subDay()->toDateString(),
+        'expires_at' => now()->subDay(),
     ]));
 
     $result = resolve(RedeemGiftCard::class)($card->code, 10);

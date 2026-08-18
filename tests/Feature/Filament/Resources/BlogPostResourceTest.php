@@ -51,7 +51,7 @@ test('can edit a blog post', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($post->refresh()->title)->toBe('Updated Title');
+    expect($post->fresh()->title)->toBe('Updated Title');
 });
 
 test('create blog post validates required fields', function (array $data, array $errors) {

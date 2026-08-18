@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\EnsureOnboardingComplete;
-use App\Models\Platform\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,20 +10,6 @@ use function Pest\Laravel\actingAs;
 pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
-
-function initializeTenantForOnboardingMiddleware(): Tenant
-{
-    $tenant = Tenant::query()->make([
-        'id' => 'onboarding-middleware-test',
-        'name' => 'Test Bakery',
-        'email' => 'owner@example.com',
-    ]);
-
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize($tenant);
-
-    return $tenant;
-}
 
 test('passes through when no tenant is initialized', function () {
     $middleware = new EnsureOnboardingComplete;
@@ -36,7 +21,8 @@ test('passes through when no tenant is initialized', function () {
 });
 
 test('passes through for unauthenticated users', function () {
-    initializeTenantForOnboardingMiddleware();
+    // Bind a fake tenant so tenant() returns truthy
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing());
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin');
@@ -47,7 +33,9 @@ test('passes through for unauthenticated users', function () {
 });
 
 test('passes through for auth routes', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -62,7 +50,9 @@ test('passes through for auth routes', function () {
 });
 
 test('passes through when already on onboarding page', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -76,7 +66,9 @@ test('passes through when already on onboarding page', function () {
 });
 
 test('passes through for livewire update requests', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -90,7 +82,9 @@ test('passes through for livewire update requests', function () {
 });
 
 test('passes through for livewire hashed paths', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -104,7 +98,10 @@ test('passes through for livewire hashed paths', function () {
 });
 
 test('passes through when onboarding is complete', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -123,7 +120,10 @@ test('passes through when onboarding is complete', function () {
 });
 
 test('passes through gracefully when TenantSettings throws exception', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
@@ -141,7 +141,9 @@ test('passes through gracefully when TenantSettings throws exception', function 
 });
 
 test('redirects to onboarding when onboardingCompletedAt is null using TenantSettings', function () {
-    initializeTenantForOnboardingMiddleware();
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);

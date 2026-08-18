@@ -14,9 +14,9 @@ class ProductWaitlistController extends Controller
     public function __invoke(StoreProductWaitlistRequest $request, JoinProductWaitlist $joinWaitlist): JsonResponse|RedirectResponse
     {
         $joinWaitlist(
-            productId: $request->integer('product_id'),
-            customerEmail: $request->string('customer_email')->toString(),
-            customerName: $request->filled('customer_name') ? $request->string('customer_name')->toString() : null,
+            productId: $request->validated('product_id'),
+            customerEmail: $request->validated('customer_email'),
+            customerName: $request->validated('customer_name'),
         );
 
         if ($request->wantsJson()) {

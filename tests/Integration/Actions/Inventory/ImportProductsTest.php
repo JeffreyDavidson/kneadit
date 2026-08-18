@@ -3,39 +3,12 @@
 use App\Actions\Inventory\ImportProducts;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
-use App\Services\Export\ProductCsvExporter;
-use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
-
-function importedProductMoney(?Money $money): Money
-{
-    if ($money === null) {
-        test()->fail('Expected the imported product to have a monetary value.');
-    }
-
-    return $money;
-}
-
-/**
- * @param array{rows: list<array<string, mixed>>, errors: list<string>} $preview
- */
-function productCsvExporterReturning(array $preview): ProductCsvExporter
-{
-    $exporter = Mockery::mock(ProductCsvExporter::class, [
-        'parseForPreview' => $preview,
-    ]);
-
-    if (! $exporter instanceof ProductCsvExporter) {
-        test()->fail('Expected a product CSV exporter mock.');
-    }
-
-    return $exporter;
-}
 
 test('it imports new products from csv', function () {
     $csv = "name,description,price,category,is_active\n"
@@ -70,11 +43,12 @@ test('it updates existing products on reimport', function () {
 
     expect($result['created'])->toBe(0)
         ->and($result['updated'])->toBe(1)
-        ->and(importedProductMoney(Product::query()->where('name', 'Sourdough Loaf')->firstOrFail()->price)->dollars())->toBe(9.00);
+        ->and(Product::query()->where('name', 'Sourdough Loaf')->first()->price->dollars())->toBe(9.00);
 });
 
 test('it skips rows with row-level errors from parser', function () {
-    $exporter = productCsvExporterReturning([
+    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
+    $exporter->shouldReceive('parseForPreview')->andReturn([
         'rows' => [
             [
                 'name' => '',
@@ -119,12 +93,13 @@ test('it includes cost when provided in csv', function () {
     expect($result['created'])->toBe(1)
         ->and($result['errors'])->toBeEmpty();
 
-    $product = Product::query()->where('name', 'Sourdough Loaf')->firstOrFail();
-    expect(importedProductMoney($product->cost)->dollars())->toBe(3.50);
+    $product = Product::query()->where('name', 'Sourdough Loaf')->first();
+    expect($product->cost->dollars())->toBe(3.50);
 });
 
 test('it catches throwable during product save and records error', function () {
-    $exporter = productCsvExporterReturning([
+    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
+    $exporter->shouldReceive('parseForPreview')->andReturn([
         'rows' => [
             [
                 'name' => 'Test Product',

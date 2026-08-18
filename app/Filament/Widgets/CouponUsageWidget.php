@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Financial\Coupon;
-use App\Support\DatabaseValue;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 
@@ -25,17 +24,17 @@ class CouponUsageWidget extends Widget
 
     public function getTotalRedemptions(): int
     {
-        return $this->cached('total_redemptions', [300, 600], fn (): int => DatabaseValue::int(Coupon::query()->sum('used_count')));
+        return $this->cached('total_redemptions', [300, 600], fn (): int => (int) Coupon::query()->sum('used_count'));
     }
 
     public function getMostUsedCoupon(): ?Coupon
     {
         // Cache the id, not the model. Cache stores hydrate as __PHP_Incomplete_Class
         // because config(cache.serializable_classes) is false. Same shape as #302.
-        $id = $this->cached('most_used_id', [300, 600], fn (): ?int => DatabaseValue::nullableInt(Coupon::query()
+        $id = $this->cached('most_used_id', [300, 600], fn (): ?int => Coupon::query()
             ->where('used_count', '>', 0)
             ->orderByDesc('used_count')
-            ->value('id')));
+            ->value('id'));
 
         return $id ? Coupon::query()->whereKey($id)->first() : null;
     }

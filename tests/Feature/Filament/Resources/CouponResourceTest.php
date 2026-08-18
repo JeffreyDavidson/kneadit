@@ -55,12 +55,12 @@ test('can edit a coupon via table action', function () {
         ->callAction(TestAction::make('edit')->table($coupon), data: [
             'code' => 'UPDATED01',
             'type' => $coupon->type->value,
-            'percentage' => 10,
+            'percentage' => $coupon->percentage->value(),
             'is_active' => true,
         ])
         ->assertHasNoFormErrors();
 
-    expect($coupon->refresh()->code)->toBe('UPDATED01');
+    expect($coupon->fresh()->code)->toBe('UPDATED01');
 });
 
 test('can search coupons by code', function () {

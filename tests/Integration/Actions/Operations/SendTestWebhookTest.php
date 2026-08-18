@@ -9,7 +9,7 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 });
 
@@ -22,9 +22,9 @@ test('sends a synthetic order.created payload flagged with test:true', function 
         $body = json_decode($request->body(), true);
 
         return $request->hasHeader('X-KneadIt-Event', 'order.created')
-            && data_get($body, 'event') === 'order.created'
-            && data_get($body, 'data.test') === true
-            && data_get($body, 'data.order_number') === 'TEST-0001';
+            && $body['event'] === 'order.created'
+            && $body['data']['test'] === true
+            && $body['data']['order_number'] === 'TEST-0001';
     });
 
     expect(WebhookDelivery::sole())

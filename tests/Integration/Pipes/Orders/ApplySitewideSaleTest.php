@@ -22,22 +22,10 @@ function makeSalePayload(float $subtotal = 100.0): OrderPipelineData
     return $payload;
 }
 
-function continueSitewideSalePipeline(OrderPipelineData $payload): OrderPipelineData
-{
-    return $payload;
-}
-
-function sitewideSalePipelineResult(mixed $result): OrderPipelineData
-{
-    throw_unless($result instanceof OrderPipelineData, RuntimeException::class, 'Expected order pipeline data.');
-
-    return $result;
-}
-
 test('skips when sale is disabled', function () {
     settings(['sitewide_sale_enabled' => false, 'sitewide_sale_percent' => 15]);
 
-    $result = sitewideSalePipelineResult(resolve(ApplySitewideSale::class)->handle(makeSalePayload(), continueSitewideSalePipeline(...)));
+    $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
     expect($result->discountAmount)->toBe(0.0)
         ->and($result->total)->toBe(100.0);
@@ -46,7 +34,7 @@ test('skips when sale is disabled', function () {
 test('skips when sale percent is 0', function () {
     settings(['sitewide_sale_enabled' => true, 'sitewide_sale_percent' => 0]);
 
-    $result = sitewideSalePipelineResult(resolve(ApplySitewideSale::class)->handle(makeSalePayload(), continueSitewideSalePipeline(...)));
+    $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
     expect($result->discountAmount)->toBe(0.0);
 });
@@ -54,7 +42,7 @@ test('skips when sale percent is 0', function () {
 test('applies the discount to total when enabled', function () {
     settings(['sitewide_sale_enabled' => true, 'sitewide_sale_percent' => 15]);
 
-    $result = sitewideSalePipelineResult(resolve(ApplySitewideSale::class)->handle(makeSalePayload(), continueSitewideSalePipeline(...)));
+    $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
     expect($result->discountAmount)->toBe(15.0)
         ->and($result->total)->toBe(85.0);
@@ -63,7 +51,7 @@ test('applies the discount to total when enabled', function () {
 test('clamps percent above 100 (defensive)', function () {
     settings(['sitewide_sale_enabled' => true, 'sitewide_sale_percent' => 150]);
 
-    $result = sitewideSalePipelineResult(resolve(ApplySitewideSale::class)->handle(makeSalePayload(), continueSitewideSalePipeline(...)));
+    $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
     expect($result->discountAmount)->toBe(100.0)
         ->and($result->total)->toBe(0.0);
@@ -73,7 +61,7 @@ test('does nothing when subtotal is 0', function () {
     settings(['sitewide_sale_enabled' => true, 'sitewide_sale_percent' => 15]);
 
     $payload = makeSalePayload(0.0);
-    $result = sitewideSalePipelineResult(resolve(ApplySitewideSale::class)->handle($payload, continueSitewideSalePipeline(...)));
+    $result = resolve(ApplySitewideSale::class)->handle($payload, fn ($p) => $p);
 
     expect($result->discountAmount)->toBe(0.0);
 });

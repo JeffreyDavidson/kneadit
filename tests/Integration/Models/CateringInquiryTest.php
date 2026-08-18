@@ -13,5 +13,5 @@ test('status is cast to CateringInquiryStatus enum', function () {
         'status' => CateringInquiryStatus::Inquiry,
     ]);
 
-    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Inquiry);
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Inquiry);
 });

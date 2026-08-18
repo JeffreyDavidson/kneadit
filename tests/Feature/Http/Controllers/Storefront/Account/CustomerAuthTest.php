@@ -24,8 +24,6 @@ test('register creates a customer, hashes the password, and sends them to verify
 
     $customer = Customer::query()->where('email', 'jane@example.com')->firstOrFail();
 
-    throw_unless(is_string($customer->password), UnexpectedValueException::class, 'Expected a hashed customer password.');
-
     expect($customer->name)->toBe('Jane Doe')
         ->and(Hash::check('password123', $customer->password))->toBeTrue()
         ->and(auth('customer')->id())->toBe($customer->id)

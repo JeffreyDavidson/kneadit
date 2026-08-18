@@ -11,23 +11,6 @@ use App\Http\Requests\Storefront\StoreContactMessageRequest;
 use App\Http\Requests\Storefront\StoreOrderMessageRequest;
 use App\Http\Requests\Storefront\StoreSurveyResponseRequest;
 use App\Http\Requests\Storefront\TrackOrderRequest;
-use Illuminate\Foundation\Http\FormRequest;
-
-/** @return array<string, mixed> */
-function formRequestRules(string $requestClass): array
-{
-    if (! is_a($requestClass, FormRequest::class, true)) {
-        throw new RuntimeException("{$requestClass} is not a form request.");
-    }
-
-    $request = new $requestClass;
-
-    if (! method_exists($request, 'rules')) {
-        throw new RuntimeException("{$requestClass} does not define validation rules.");
-    }
-
-    return $request->rules();
-}
 
 dataset('requestsWithRequiredFields', [
     'ForgotPasswordRequest' => [ForgotPasswordRequest::class, ['email']],
@@ -53,7 +36,8 @@ dataset('requestsWithRequiredFields', [
 ]);
 
 test('form request rejects empty data for required fields', function (string $requestClass, array $requiredFields) {
-    $validator = validator([], formRequestRules($requestClass));
+    $request = new $requestClass;
+    $validator = validator([], $request->rules());
 
     expect($validator->fails())->toBeTrue();
 
@@ -82,7 +66,8 @@ dataset('requestsWithEmailFields', [
 ]);
 
 test('form request rejects invalid email', function (string $requestClass, string $emailField) {
-    $validator = validator([$emailField => 'not-an-email'], formRequestRules($requestClass));
+    $request = new $requestClass;
+    $validator = validator([$emailField => 'not-an-email'], $request->rules());
 
     expect($validator->errors()->has($emailField))->toBeTrue(
         "Expected '{$emailField}' to reject invalid email in {$requestClass}",

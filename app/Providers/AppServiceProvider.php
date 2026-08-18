@@ -14,14 +14,12 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Support\Csp\CspNonce;
-use App\Support\DatabaseValue;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\Repository as CacheRepository;
@@ -69,9 +67,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Centralized Stripe client so Stripe-using actions can be tested with
         // a mocked binding rather than instantiating the client themselves.
-        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(
-            DatabaseValue::nullableString(config('cashier.secret')) ?? '',
-        ));
+        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(config('cashier.secret')));
 
         foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
             $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
@@ -111,8 +107,8 @@ class AppServiceProvider extends ServiceProvider
         // files readable and lets the browser-test bypass live in one
         // place rather than as a dedicated middleware subclass.
         $key = fn (\Illuminate\Http\Request $request): string => $request->user()?->getAuthIdentifier() !== null
-            ? DatabaseValue::scalarString($request->user()->getAuthIdentifier())
-            : DatabaseValue::nullableString($request->ip()) ?? 'unknown';
+            ? (string) $request->user()->getAuthIdentifier()
+            : (string) $request->ip();
 
         $bypass = fn (\Illuminate\Http\Request $request): bool => $request->getHost() === 'browser-test.kneadit.test';
 
@@ -146,8 +142,8 @@ class AppServiceProvider extends ServiceProvider
             ? Limit::none()
             : Limit::perMinute(60)->by($key($request)));
 
-        Feature::define('growth-features', fn (): bool => $this->tenantMeetsRequirement(SubscriptionTier::Growth));
-        Feature::define('pro-features', fn (): bool => $this->tenantMeetsRequirement(SubscriptionTier::Pro));
+        Feature::define('growth-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Growth) ?? false);
+        Feature::define('pro-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Pro) ?? false);
 
         FilamentView::registerRenderHook(
             'panels::body.end',
@@ -159,12 +155,5 @@ class AppServiceProvider extends ServiceProvider
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomainOrSubdomain::class,
         ]);
-    }
-
-    private function tenantMeetsRequirement(SubscriptionTier $required): bool
-    {
-        $tenant = tenancy()->tenant;
-
-        return $tenant instanceof Tenant && $tenant->plan->meetsRequirement($required);
     }
 }

@@ -6,8 +6,6 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
-use App\Support\DatabaseValue;
-use DateTimeInterface;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Carbon;
 
@@ -26,32 +24,25 @@ class AtRiskCustomersWidget extends Widget
      */
     public static function canView(): bool
     {
-        return AtRiskCustomersQuery::count(DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30)) > 0;
+        return AtRiskCustomersQuery::count((int) config('analytics.at_risk_threshold_days', 30)) > 0;
     }
 
-    /** @return array<int, array{id: int, name: string, last_order: string, days_inactive: int, lifetime_value: string}> */
+    /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {
-        $threshold = DatabaseValue::int(config('analytics.at_risk_threshold_days'), 30);
+        $threshold = (int) config('analytics.at_risk_threshold_days', 30);
 
         return AtRiskCustomersQuery::query($threshold)
             ->orderBy('last_order_date')
             ->limit($this->rowLimit())
             ->get()
-            ->map(function (Customer $customer): array {
-                $lastOrderDate = $customer->getAttribute('last_order_date');
-                $lastOrder = is_string($lastOrderDate) || $lastOrderDate instanceof DateTimeInterface
-                    ? Carbon::parse($lastOrderDate)->diffForHumans()
-                    : 'Never';
-
-                return [
-                    'id' => $customer->id,
-                    'name' => $customer->name,
-                    'last_order' => $lastOrder,
-                    'days_inactive' => DatabaseValue::int($customer->getAttribute('days_since_last_order')),
-                    'lifetime_value' => '$' . number_format(DatabaseValue::float($customer->getAttribute('lifetime_value')), 0),
-                ];
-            })
+            ->map(fn (Customer $customer): array => [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'last_order' => Carbon::parse($customer->getAttribute('last_order_date'))->diffForHumans(),
+                'days_inactive' => (int) $customer->getAttribute('days_since_last_order'),
+                'lifetime_value' => '$' . number_format((float) $customer->getAttribute('lifetime_value'), 0),
+            ])
             ->all();
     }
 

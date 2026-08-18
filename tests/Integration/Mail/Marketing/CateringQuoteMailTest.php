@@ -28,7 +28,7 @@ test('renders the itemized table when the inquiry has items', function () {
         'unit_price' => 3,
     ]);
 
-    $html = (new CateringQuoteMail($inquiry->refresh()))->render();
+    $html = (new CateringQuoteMail($inquiry->fresh()))->render();
 
     expect($html)->toContain("What's included")
         ->and($html)->toContain('Wedding cake')

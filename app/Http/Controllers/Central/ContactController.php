@@ -11,10 +11,12 @@ class ContactController extends Controller
 {
     public function __invoke(ContactRequest $request, SendMarketingContactMessage $send): JsonResponse
     {
+        $validated = $request->validated();
+
         $send(
-            name: $request->string('name')->toString(),
-            email: $request->string('email')->toString(),
-            body: $request->string('message')->toString(),
+            name: $validated['name'],
+            email: $validated['email'],
+            body: $validated['message'],
         );
 
         return response()->json([

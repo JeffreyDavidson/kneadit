@@ -3,7 +3,6 @@
 namespace App\Mail\Concerns;
 
 use App\Services\Settings\TenantSettings;
-use App\Support\DatabaseValue;
 use Illuminate\Mail\Mailables\Address;
 
 trait BakerBranded
@@ -17,7 +16,7 @@ trait BakerBranded
         $store = resolve(TenantSettings::class)->store;
 
         return new Address(
-            address: DatabaseValue::nullableString(config('mail.from.address')) ?? 'hello@getkneadit.app',
+            address: config('mail.from.address', 'hello@getkneadit.app'),
             name: "{$store->name} via KneadIt",
         );
     }

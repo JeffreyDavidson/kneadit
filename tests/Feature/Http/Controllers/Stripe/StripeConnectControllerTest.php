@@ -6,15 +6,13 @@ use Illuminate\Http\RedirectResponse;
 
 test('stripe connect controller redirects to onboarding url', function () {
     $action = Mockery::mock(InitiateStripeConnect::class);
-    mockExpectation($action, '__invoke')
+    $action->shouldReceive('__invoke')
         ->once()
         ->with(
             Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=refresh')),
             Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=complete')),
         )
         ->andReturn('https://connect.stripe.com/setup/test123');
-
-    throw_unless($action instanceof InitiateStripeConnect, UnexpectedValueException::class, 'Expected a mocked Stripe Connect action.');
 
     $controller = new StripeConnectController;
     $response = $controller($action);
@@ -28,7 +26,7 @@ test('stripe connect controller passes correct refresh and return urls', functio
     $capturedReturn = null;
 
     $action = Mockery::mock(InitiateStripeConnect::class);
-    mockExpectation($action, '__invoke')
+    $action->shouldReceive('__invoke')
         ->once()
         ->andReturnUsing(function (string $refreshUrl, string $returnUrl) use (&$capturedRefresh, &$capturedReturn) {
             $capturedRefresh = $refreshUrl;
@@ -36,8 +34,6 @@ test('stripe connect controller passes correct refresh and return urls', functio
 
             return 'https://connect.stripe.com/test';
         });
-
-    throw_unless($action instanceof InitiateStripeConnect, UnexpectedValueException::class, 'Expected a mocked Stripe Connect action.');
 
     $controller = new StripeConnectController;
     $controller($action);

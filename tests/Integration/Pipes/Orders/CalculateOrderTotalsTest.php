@@ -11,18 +11,6 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-function continueCalculatedOrder(OrderPipelineData $payload): OrderPipelineData
-{
-    return $payload;
-}
-
-function calculatedOrderResult(mixed $result): OrderPipelineData
-{
-    throw_unless($result instanceof OrderPipelineData, RuntimeException::class, 'Expected order pipeline data.');
-
-    return $result;
-}
-
 test('calculates subtotal and total for active products', function () {
     $product = Product::factory()->create(['price' => 10.00, 'is_active' => true]);
 
@@ -37,7 +25,7 @@ test('calculates subtotal and total for active products', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->subtotal)->toBe(30.0)
         ->and($result->total)->toBe(30.0)
@@ -63,7 +51,7 @@ test('skips inactive products', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->subtotal)->toBe(10.0)
         ->and($result->orderItems)->toHaveCount(1);
@@ -83,7 +71,7 @@ test('cancels order when no valid items exist', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->cancelled)->toBeTrue()
         ->and($result->orderItems)->toBeEmpty();
@@ -106,7 +94,7 @@ test('adds delivery fee for delivery orders', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(5.0)
         ->and($result->total)->toBe(25.0);
@@ -126,7 +114,7 @@ test('does not add delivery fee for pickup orders', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(0.0)
         ->and($result->total)->toBe(20.0);
@@ -147,7 +135,7 @@ test('adds tip to total when tipAmount is provided', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->tipAmount)->toBe(4.0)
         ->and($result->total)->toBe(24.0);
@@ -168,7 +156,7 @@ test('clamps negative tipAmount to zero', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->tipAmount)->toBe(0.0)
         ->and($result->total)->toBe(20.0);
@@ -192,7 +180,7 @@ test('tip stacks with delivery fee in total', function () {
     $payload = new OrderPipelineData($data);
     $pipe = new CalculateOrderTotals;
 
-    $result = calculatedOrderResult($pipe->handle($payload, continueCalculatedOrder(...)));
+    $result = $pipe->handle($payload, fn ($p) => $p);
 
     expect($result->subtotal)->toBe(20.0)
         ->and($result->deliveryFee)->toBe(5.0)

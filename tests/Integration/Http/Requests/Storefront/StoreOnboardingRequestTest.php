@@ -144,7 +144,6 @@ test('referralCode returns null when neither session nor cookie has a value', fu
     expect($request->referralCode())->toBeNull();
 });
 
-/** @return array<string, mixed> */
 function validOnboardingData(): array
 {
     return [

@@ -86,7 +86,7 @@ test('can edit an ingredient via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($ingredient->refresh()->name)->toBe('Updated Flour');
+    expect($ingredient->fresh()->name)->toBe('Updated Flour');
 });
 
 test('can filter ingredients by low stock', function () {

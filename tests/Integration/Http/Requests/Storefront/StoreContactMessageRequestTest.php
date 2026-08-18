@@ -40,7 +40,6 @@ test('valid input passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-/** @return array<string, mixed> */
 function validContactMessageData(): array
 {
     return [

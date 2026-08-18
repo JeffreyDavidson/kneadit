@@ -116,7 +116,7 @@ test('can edit a product via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($product->refresh()->name)->toBe('Updated Bread');
+    expect($product->fresh()->name)->toBe('Updated Bread');
 });
 
 test('resource returns globally searchable attributes', function () {
@@ -156,5 +156,5 @@ test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction
 
     expect(Product::query()->count())->toBe(1)
         ->and(Product::query()->find($kept->id))->not->toBeNull()
-        ->and(Product::query()->find($doomed->firstOrFail()->id))->toBeNull();
+        ->and(Product::query()->find($doomed->first()->id))->toBeNull();
 });
