@@ -24,8 +24,22 @@ class CreateImpersonationToken
         // tenants store both the FQDN AND the bare subdomain — concatenating
         // either with $appHost can produce a doubled host like
         // "{id}.kneadit.test.kneadit.test").
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-        $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
+        $appUrl = config('app.url');
+
+        if (! is_string($appUrl)) {
+            throw new \UnexpectedValueException('The application URL must be a string.');
+        }
+
+        $appHost = parse_url($appUrl, PHP_URL_HOST);
+        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
+
+        if (! is_string($appHost) || $appHost === '') {
+            throw new \UnexpectedValueException('The application URL must contain a host.');
+        }
+
+        if (! is_string($scheme) || $scheme === '') {
+            $scheme = 'https';
+        }
 
         return "{$scheme}://{$tenant->id}.{$appHost}/impersonate/{$token}";
     }
