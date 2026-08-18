@@ -28,7 +28,7 @@ class ShowOrderConfirmationController extends Controller
 
         return view('storefront.order-confirmation', [
             'settings' => $settings,
-            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
             'order' => $order,
             'content' => $content,
             'journeySteps' => $journeySteps,
