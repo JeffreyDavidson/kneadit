@@ -21,18 +21,14 @@ class SecurityHeaders
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'camera=(), geolocation=(), microphone=()');
 
-        $response->headers->set($this->cspHeader(), $this->csp());
+        // Content Security Policy still in Report-Only mode. The per-request
+        // nonce is now in the policy and rendered onto every inline tag via
+        // the @cspnonce Blade directive, so a future PR can drop 'unsafe-inline'
+        // and switch to enforcement once the violation log stays quiet.
+        $response->headers->set('Content-Security-Policy-Report-Only', $this->csp());
 
         return $response;
-    }
-
-    private function cspHeader(): string
-    {
-        return config('csp.mode') === 'report-only'
-            ? 'Content-Security-Policy-Report-Only'
-            : 'Content-Security-Policy';
     }
 
     private function csp(): string
@@ -49,8 +45,8 @@ class SecurityHeaders
         // noise so real violations are visible in the report log.
         return implode('; ', [
             "default-src 'self'",
-            "script-src 'self' {$nonce} 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
-            "script-src-elem 'self' {$nonce} https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
+            "script-src 'self' {$nonce} 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
+            "script-src-elem 'self' {$nonce} 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
             "script-src-attr 'unsafe-inline'",
             "style-src 'self' {$nonce} 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "style-src-elem 'self' {$nonce} 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",

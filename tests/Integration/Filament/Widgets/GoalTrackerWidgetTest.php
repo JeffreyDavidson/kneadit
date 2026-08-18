@@ -24,7 +24,7 @@ test('open edit modal sets modal state for yearly', function () {
 });
 
 test('close edit modal hides modal', function () {
-    test()->widget->openEditModal('monthly');
+    test()->widget->showEditModal = true;
 
     test()->widget->closeEditModal();
 
@@ -32,8 +32,9 @@ test('close edit modal hides modal', function () {
 });
 
 test('save goal closes modal', function () {
-    test()->widget->openEditModal('monthly');
+    test()->widget->editingType = 'monthly';
     test()->widget->editingGoal = '8000';
+    test()->widget->showEditModal = true;
 
     test()->widget->saveGoal();
 

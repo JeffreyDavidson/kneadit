@@ -7,7 +7,6 @@ use App\Models\Orders\Order;
 use App\Queries\Financial\ProductSalesQuery;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class SalesReport
@@ -38,14 +37,7 @@ class SalesReport
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->map(function (Order $row): array {
-                $date = $row->getAttribute('date');
-
-                return [
-                    'date' => is_string($date) ? $date : '',
-                    'revenue' => Arr::integer($row->getAttributes(), 'revenue_cents', 0) / 100,
-                ];
-            })
+            ->map(fn (Order $row) => ['date' => $row->getAttribute('date'), 'revenue' => (int) $row->getAttribute('revenue_cents') / 100])
             ->all();
 
         return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];

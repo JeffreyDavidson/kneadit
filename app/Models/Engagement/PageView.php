@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[WithoutTimestamps]
-#[Fillable('page', 'product_id', 'session_id', 'created_at')]
+#[Fillable('page', 'product_id', 'session_id', 'ip_address', 'user_agent', 'created_at')]
 #[UseFactory(PageViewFactory::class)]
 class PageView extends Model
 {

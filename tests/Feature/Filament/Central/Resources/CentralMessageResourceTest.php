@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -44,7 +45,7 @@ function createTestMessage(array $overrides = []): int
 }
 
 test('can render the list messages page', function () {
-    livewire(ListMessages::class)
+    Livewire::test(ListMessages::class)
         ->assertOk();
 });
 
@@ -78,7 +79,7 @@ test('can render the view message page for admin message', function () {
         'is_read' => true,
     ]);
 
-    livewire(ViewMessage::class, ['record' => $messageId])
+    Livewire::test(ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 });
 
@@ -89,7 +90,7 @@ test('view message page displays title from subject', function () {
         'is_read' => true,
     ]);
 
-    $component = livewire(ViewMessage::class, ['record' => $messageId]);
+    $component = Livewire::test(ViewMessage::class, ['record' => $messageId]);
 
     expect($component->instance()->getTitle())
         ->toBe('Important Question');
@@ -113,7 +114,7 @@ test('view message page returns thread replies', function () {
         'updated_at' => now(),
     ]);
 
-    $component = livewire(ViewMessage::class, ['record' => $messageId]);
+    $component = Livewire::test(ViewMessage::class, ['record' => $messageId]);
     $thread = $component->instance()->getThread();
 
     expect($thread)->toHaveCount(1);
@@ -126,7 +127,7 @@ test('can send reply from view message page', function () {
         'is_read' => true,
     ]);
 
-    livewire(ViewMessage::class, ['record' => $messageId])
+    Livewire::test(ViewMessage::class, ['record' => $messageId])
         ->set('replyBody', 'We can help with that!')
         ->call('sendReply');
 
@@ -147,7 +148,7 @@ test('viewing an unread message marks it as read', function () {
         'is_read' => false,
     ]);
 
-    livewire(ViewMessage::class, ['record' => $messageId])
+    Livewire::test(ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
     $message = DB::table('platform_messages')->where('id', $messageId)->first();

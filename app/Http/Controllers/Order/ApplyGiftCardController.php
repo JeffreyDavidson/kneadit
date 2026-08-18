@@ -12,7 +12,7 @@ class ApplyGiftCardController extends Controller
 {
     public function __invoke(ApplyDiscountRequest $request, GiftCardService $service): JsonResponse
     {
-        $card = $service->checkBalance($request->string('code')->toString());
+        $card = $service->checkBalance($request->code);
 
         if (! $card) {
             return ApiResponse::error('Gift card not found.');
@@ -26,7 +26,7 @@ class ApplyGiftCardController extends Controller
             'gift_card_id' => $card->id,
             'code' => $card->code,
             'available_balance' => $card->current_balance->dollars(),
-            'applicable_amount' => min($card->current_balance->dollars(), $request->float('subtotal')),
+            'applicable_amount' => min($card->current_balance->dollars(), (float) $request->validated('subtotal')),
         ], 'Gift card applied successfully.');
     }
 }

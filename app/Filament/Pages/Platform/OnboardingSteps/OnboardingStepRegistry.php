@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Wizard\Step;
 final class OnboardingStepRegistry
 {
     /** @var array<int, class-string<OnboardingStep>> */
-    private const array STEPS = [
+    private const STEPS = [
         WelcomeStep::class,
         ContactStep::class,
         BrandingStep::class,

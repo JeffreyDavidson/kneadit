@@ -16,7 +16,7 @@ class FavoriteController extends Controller
     public function index(IndexFavoritesRequest $request): AnonymousResourceCollection
     {
         $favorites = CustomerFavorite::query()
-            ->forCustomer($request->string('email')->toString())
+            ->forCustomer($request->validated('email'))
             ->with('product')
             ->get();
 
@@ -25,8 +25,8 @@ class FavoriteController extends Controller
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): FavoriteToggleResource
     {
-        $email = $request->string('email')->toString();
-        $productId = $request->integer('product_id');
+        $email = $request->validated('email');
+        $productId = (int) $request->validated('product_id');
 
         $favorited = $toggleFavorite($email, $productId);
 

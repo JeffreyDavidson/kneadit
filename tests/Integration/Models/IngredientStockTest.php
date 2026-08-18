@@ -4,7 +4,7 @@ use App\Enums\Inventory\StockStatus;
 use App\Models\Inventory\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

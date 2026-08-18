@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 test('it dispatches order.delivered webhook with order data', function () {
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();

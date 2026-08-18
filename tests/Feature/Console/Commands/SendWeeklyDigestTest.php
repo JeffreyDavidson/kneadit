@@ -4,7 +4,6 @@ use App\Events\Platform\WeeklyDigestRequested;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -22,9 +21,10 @@ test('digest:weekly skips tenants with digest disabled', function () {
         'email' => 'disabled@test.com',
     ]);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->resolves(function ($tenant, $callback) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturnUsing(function ($tenant, $callback) {
             // Simulate settings returning '0' for digest
             return null;
         });
@@ -44,9 +44,10 @@ test('digest:weekly returns failure when tenant processing fails', function () {
         'email' => 'failing@test.com',
     ]);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->throws(new RuntimeException('Tenant DB unavailable'));
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andThrow(new RuntimeException('Tenant DB unavailable'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 

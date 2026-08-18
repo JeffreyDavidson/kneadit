@@ -5,11 +5,11 @@ use App\Models\Operations\WebhookDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 });
 

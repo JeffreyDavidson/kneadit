@@ -5,11 +5,13 @@
     $enabled = $this->announcement_enabled;
 @endphp
 
-@if (! $enabled)
-    <div class="py-4 text-center text-gray-400 italic dark:text-gray-500">Banner is currently disabled</div>
+@if (!$enabled)
+    <div class="text-center text-gray-400 dark:text-gray-500 py-4 italic">
+        Banner is currently disabled
+    </div>
 @else
     <div class="relative px-4 py-3 text-center text-sm font-medium rounded-lg border-2 {{ $variant->bgClass() }} {{ $variant->textClass() }} {{ $variant->borderClass() }}">
         <span>{{ $text }}</span>
-        <span class="absolute top-1/2 right-3 -translate-y-1/2 text-lg leading-none opacity-50">&times;</span>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 text-lg leading-none">&times;</span>
     </div>
 @endif

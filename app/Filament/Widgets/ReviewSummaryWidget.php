@@ -6,7 +6,6 @@ use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Engagement\Review;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Arr;
 
 class ReviewSummaryWidget extends Widget
 {
@@ -42,7 +41,6 @@ class ReviewSummaryWidget extends Widget
                 ->pluck('count', 'rating')
                 ->toArray();
 
-            $counts = array_map(static fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0), $counts);
             $total = array_sum($counts);
             $distribution = [];
 

@@ -15,8 +15,8 @@ class MessageController extends Controller
     {
         $message = $sendMessage(
             order: $order,
-            senderName: $request->string('sender_name')->toString(),
-            message: $request->string('message')->toString(),
+            senderName: $request->validated('sender_name'),
+            message: $request->validated('message'),
         );
 
         return ApiResponse::success($message, 'Message sent successfully.');

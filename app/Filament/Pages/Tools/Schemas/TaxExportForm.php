@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 
 class TaxExportForm
 {
@@ -72,12 +73,9 @@ class TaxExportForm
     /** @return array<int, string> */
     protected static function getAvailableYears(): array
     {
-        $orderYears = Order::query()->get(['created_at'])
-            ->flatMap(fn (Order $order): array => $order->created_at === null ? [] : [$order->created_at->year]);
-        $expenseYears = Expense::query()->get(['date'])
-            ->flatMap(fn (Expense $expense): array => $expense->date === null ? [] : [$expense->date->year]);
-        $incomeYears = Income::query()->get(['date'])
-            ->flatMap(fn (Income $income): array => $income->date === null ? [] : [$income->date->year]);
+        $orderYears = Order::query()->pluck('created_at')->map(fn (Carbon $d) => $d->year);
+        $expenseYears = Expense::query()->pluck('date')->map(fn (Carbon $d) => $d->year);
+        $incomeYears = Income::query()->pluck('date')->map(fn (Carbon $d) => $d->year);
 
         $allYears = $orderYears->merge($expenseYears)->merge($incomeYears)
             ->unique()->sort()->reverse()->values();

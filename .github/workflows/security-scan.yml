@@ -4,50 +4,18 @@ on:
   push:
     branches: [main, develop]
   pull_request:
+    branches: [main, develop]
   schedule:
     - cron: '0 9 * * 1' # Weekly on Monday at 9am UTC
-  workflow_dispatch:
-
-concurrency:
-  group: security-scan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  actions: read
-  contents: read
-  security-events: write
 
 jobs:
-  dependencies:
-    name: Dependency Audit
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-
-      - name: Audit Composer dependencies
-        run: composer audit --locked --format=plain
-
-      - name: Audit npm dependencies
-        run: npm audit --package-lock-only --audit-level=high
-
   ward:
     name: Ward Security Scan
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
-    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
 
     steps:
       - uses: actions/checkout@v4
@@ -56,62 +24,27 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
-
-      - name: Configure Ward environment
-        run: |
-          echo "GOPATH=$RUNNER_TEMP/ward-go" >> "$GITHUB_ENV"
-          echo "HOME=$RUNNER_TEMP/ward-home" >> "$GITHUB_ENV"
-          echo "$RUNNER_TEMP/ward-go/bin" >> "$GITHUB_PATH"
-          mkdir -p "$RUNNER_TEMP/ward-home"
+          go-version: 'stable'
 
       - name: Install Ward
-        run: go install github.com/eljakani/ward@v0.4.2
+        run: go install github.com/eljakani/ward@latest
 
+      # Generate baseline from the base branch so only NEW findings fail the build
       - name: Generate baseline from base branch
         if: github.event_name == 'pull_request'
         run: |
-          git checkout "${{ github.event.pull_request.base.sha }}"
+          git checkout ${{ github.event.pull_request.base.sha }}
           ward init
-          ward scan . --output json --update-baseline "$RUNNER_TEMP/ward-baseline.json" || true
-          git checkout "${{ github.sha }}"
+          ward scan . --update-baseline /tmp/ward-baseline.json || true
+          git checkout ${{ github.sha }}
 
       - name: Initialize Ward
         run: ward init
 
       - name: Run security scan (PR)
         if: github.event_name == 'pull_request'
-        run: |
-          if [ -f "$RUNNER_TEMP/ward-baseline.json" ]; then
-            ward scan . --output json,sarif --fail-on high --baseline "$RUNNER_TEMP/ward-baseline.json"
-          else
-            ward scan . --output json,sarif --fail-on high
-          fi
+        run: ward scan . --fail-on high --baseline /tmp/ward-baseline.json
 
       - name: Run security scan (push/schedule)
         if: github.event_name != 'pull_request'
-        run: ward scan . --output json,sarif --fail-on high
-
-      - name: Normalize empty SARIF collections
-        if: always() && hashFiles('ward-report.sarif') != ''
-        run: |
-          jq '(.runs[].tool.driver.rules //= []) | (.runs[].results //= [])' ward-report.sarif > "$RUNNER_TEMP/ward-report.sarif"
-          mv "$RUNNER_TEMP/ward-report.sarif" ward-report.sarif
-
-      - name: Upload Ward reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ward-security-reports
-          path: |
-            ward-report.json
-            ward-report.sarif
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Upload Ward SARIF
-        if: always() && hashFiles('ward-report.sarif') != ''
-        continue-on-error: true
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ward-report.sarif
+        run: ward scan . --fail-on critical

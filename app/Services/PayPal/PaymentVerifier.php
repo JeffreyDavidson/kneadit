@@ -27,9 +27,7 @@ class PaymentVerifier
             ])->get("{$baseUrl}/v2/invoicing/invoices/{$invoiceId}");
 
             if ($response->successful()) {
-                $status = $response->json('status');
-
-                return is_string($status) ? $status : null;
+                return $response->json('status');
             }
 
             Log::error('Failed to get PayPal invoice status', [

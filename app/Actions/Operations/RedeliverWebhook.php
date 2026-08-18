@@ -20,6 +20,6 @@ class RedeliverWebhook
     {
         $payload = $delivery->payload['data'] ?? [];
 
-        $this->webhookService->dispatch($delivery->event, is_array($payload) ? $payload : []);
+        $this->webhookService->dispatch($delivery->event, $payload);
     }
 }

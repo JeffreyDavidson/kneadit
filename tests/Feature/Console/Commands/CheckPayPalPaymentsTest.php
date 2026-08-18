@@ -2,7 +2,6 @@
 
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
-use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -21,9 +20,10 @@ test('command exits early when paypal is not configured', function () {
 test('command skips tenants without paypal configured', function () {
     config(['services.paypal.client_id' => 'test-client-id']);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->resolves(function ($tenant, $callback) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturnUsing(function ($tenant, $callback) {
             // Simulate settings('paypal_client_id') returning null
             return null;
         });
@@ -49,9 +49,10 @@ test('command handles tenant processing exceptions gracefully', function () {
         'email' => 'error@test.com',
     ]);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->throws(new Exception('Database connection failed'));
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andThrow(new Exception('Database connection failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -95,9 +96,10 @@ test('command processes tenant with unpaid paypal orders', function () {
         'store_name' => 'PayPal Bakery',
     ]);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->resolves(function ($tenant, $callback) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturnUsing(function ($tenant, $callback) {
             return $callback();
         });
 

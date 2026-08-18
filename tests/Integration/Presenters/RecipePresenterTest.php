@@ -5,7 +5,7 @@ use App\Models\Inventory\Recipe;
 use App\Presenters\RecipePresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

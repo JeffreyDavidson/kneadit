@@ -8,10 +8,7 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\assertDatabaseHas;
-
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -106,7 +103,7 @@ test('dispatchForRecipient creates coupon and dispatches event when coupon enabl
     Event::assertDispatched(function (CustomerBirthday $event) {
         return $event->coupon !== null;
     });
-    assertDatabaseHas('coupons', [
+    $this->assertDatabaseHas('coupons', [
         'percentage' => 15,
     ]);
 });
@@ -135,5 +132,5 @@ test('dispatchForRecipient dispatches event without coupon when coupon disabled'
     Event::assertDispatched(function (CustomerBirthday $event) {
         return $event->coupon === null;
     });
-    assertDatabaseCount('coupons', 0);
+    $this->assertDatabaseCount('coupons', 0);
 });

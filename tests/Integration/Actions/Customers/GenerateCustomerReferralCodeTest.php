@@ -4,7 +4,7 @@ use App\Actions\Customers\GenerateCustomerReferralCode;
 use App\Models\Customers\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

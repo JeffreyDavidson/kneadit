@@ -1,36 +1,30 @@
 <?php
 
 use App\Filament\Pages\Tools\QrCodeGenerator;
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Stancl\Tenancy\Contracts\Tenant as TenantContract;
-use Stancl\Tenancy\Database\Models\Domain;
+use Livewire\Livewire;
+use Stancl\Tenancy\Contracts\Tenant;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
 
-    $fakeTenant = new Tenant;
-    $fakeTenant->forceFill([
-        'id' => 'test-bakery',
-        'plan' => App\Enums\Platform\SubscriptionTier::Pro,
-    ]);
-    $fakeTenant->setRelation('domains', new Collection([
-        new Domain(['domain' => 'test-bakery.getkneadit.test']),
-    ]));
+    $fakeTenant = Mockery::mock(Tenant::class)->shouldIgnoreMissing();
+    $fakeTenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
+    $fakeTenant->shouldReceive('getTenantKeyName')->andReturn('id');
+    $fakeTenant->domains = collect([(object) ['domain' => 'test-bakery.getkneadit.test']]);
+    $fakeTenant->id = 'test-bakery';
+    $fakeTenant->plan = App\Enums\Platform\SubscriptionTier::Pro;
 
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize($fakeTenant);
-    app()->instance(TenantContract::class, $fakeTenant);
-    Feature::define('growth-features', fn () => true);
+    app()->instance(Tenant::class, $fakeTenant);
+    Feature::define('pro-features', fn () => true);
 });
 
 test('qr code generator page can render', function () {
-    livewire(QrCodeGenerator::class)
+    Livewire::test(QrCodeGenerator::class)
         ->assertOk();
 });

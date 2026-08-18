@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\Context;
  */
 final class ActorContext
 {
-    private const string KEY_ID = 'actor_id';
+    private const KEY_ID = 'actor_id';
 
-    private const string KEY_NAME = 'actor_name';
+    private const KEY_NAME = 'actor_name';
 
-    public const string SYSTEM_NAME = 'System';
+    public const SYSTEM_NAME = 'System';
 
     public static function id(): ?int
     {

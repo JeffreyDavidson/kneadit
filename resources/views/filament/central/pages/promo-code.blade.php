@@ -1,49 +1,29 @@
 <x-filament-panels::page>
     <div class="mb-6">
-        <p class="text-cinnamon m-0 text-sm">
-            Create a Stripe coupon + promotion code in one shot. Hand the code to a baker for them to redeem at
-            checkout.
-        </p>
+        <p class="text-cinnamon text-sm m-0">Create a Stripe coupon + promotion code in one shot. Hand the code to a baker for them to redeem at checkout.</p>
     </div>
 
     @if ($result)
-        <x-central.card class="mb-6 border-emerald-500/25 bg-emerald-500/5">
-            <div class="flex flex-wrap items-start gap-4">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/15">
-                    <x-heroicon-o-check-circle class="h-5 w-5 text-emerald-400" />
+        <x-central.card class="mb-6 bg-emerald-500/5 border-emerald-500/25">
+            <div class="flex items-start gap-4 flex-wrap">
+                <div class="shrink-0 w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
+                    <x-heroicon-o-check-circle class="w-5 h-5 text-emerald-400" />
                 </div>
-                <div class="min-w-[260px] flex-1">
+                <div class="flex-1 min-w-[260px]">
                     <x-central.eyebrow class="mb-1">Promo code created</x-central.eyebrow>
-                    <div class="mb-2 text-[1rem] font-bold text-white">
-                        Hand this code to the baker — they type it at Stripe Checkout.
-                    </div>
-                    <div class="grid grid-cols-1 gap-3 text-[0.8rem] md:grid-cols-3">
+                    <div class="text-white font-bold text-[1rem] mb-2">Hand this code to the baker — they type it at Stripe Checkout.</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[0.8rem]">
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
-                                Code
-                            </div>
-                            <div
-                                class="font-mono text-[1rem] font-bold text-emerald-400"
-                                x-data
-                                x-init="$el.addEventListener('click', () => navigator.clipboard.writeText('{{ $result->code }}'))"
-                                title="Click to copy"
-                            >
-                                {{ $result->code }}
-                            </div>
+                            <div class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-1">Code</div>
+                            <div class="text-emerald-400 font-mono font-bold text-[1rem]" x-data x-init="$el.addEventListener('click', () => navigator.clipboard.writeText('{{ $result->code }}'))" title="Click to copy">{{ $result->code }}</div>
                         </div>
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
-                                Coupon ID
-                            </div>
+                            <div class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-1">Coupon ID</div>
                             <div class="text-parchment font-mono text-[0.75rem] break-all">{{ $result->couponId }}</div>
                         </div>
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
-                                Promotion Code ID
-                            </div>
-                            <div class="text-parchment font-mono text-[0.75rem] break-all">
-                                {{ $result->promotionCodeId }}
-                            </div>
+                            <div class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold mb-1">Promotion Code ID</div>
+                            <div class="text-parchment font-mono text-[0.75rem] break-all">{{ $result->promotionCodeId }}</div>
                         </div>
                     </div>
                 </div>
@@ -56,7 +36,7 @@
 
         <div class="mt-6 flex items-center justify-end gap-2">
             <x-central.button type="submit" class="gap-1.5">
-                <x-heroicon-o-sparkles class="h-3.5 w-3.5" />
+                <x-heroicon-o-sparkles class="w-3.5 h-3.5" />
                 Generate Promo Code
             </x-central.button>
         </div>
@@ -65,7 +45,7 @@
     {{-- ============== HISTORY ============== --}}
     @php $codes = $this->getRecentCodes(); @endphp
     <div class="mt-8">
-        <div class="mb-3 flex items-center justify-between">
+        <div class="flex items-center justify-between mb-3">
             <x-central.eyebrow>Recent Promo Codes</x-central.eyebrow>
             @if ($codes->isNotEmpty())
                 <span class="text-cinnamon text-[0.7rem]">Last {{ $codes->count() }} created</span>
@@ -74,9 +54,9 @@
 
         @if ($codes->isEmpty())
             <x-central.card padding="py-12 px-6" class="text-center">
-                <x-heroicon-o-ticket class="text-cinnamon/40 mx-auto mb-3 block h-10 w-10" />
-                <div class="font-semibold text-white">No promo codes yet</div>
-                <div class="text-cinnamon mt-1 text-[0.85rem]">Generated codes will appear here for reference.</div>
+                <x-heroicon-o-ticket class="w-10 h-10 text-cinnamon/40 mx-auto mb-3 block" />
+                <div class="text-white font-semibold">No promo codes yet</div>
+                <div class="text-cinnamon text-[0.85rem] mt-1">Generated codes will appear here for reference.</div>
             </x-central.card>
         @else
             <x-central.card padding="p-0" class="overflow-hidden">
@@ -108,13 +88,13 @@
                             @endphp
                             <x-central.tr>
                                 <x-central.td>
-                                    <span class="text-honey font-mono font-bold">{{ $code->code }}</span>
+                                    <span class="font-mono font-bold text-honey">{{ $code->code }}</span>
                                 </x-central.td>
                                 <x-central.td tone="white">{{ $discountText }}</x-central.td>
                                 <x-central.td>{{ $durationText }}</x-central.td>
                                 <x-central.td>
                                     @if ($code->tenant_id)
-                                        <span class="text-parchment font-mono text-[0.8rem]">{{ $code->tenant_id }}</span>
+                                        <span class="text-parchment text-[0.8rem] font-mono">{{ $code->tenant_id }}</span>
                                     @else
                                         <span class="text-cinnamon/60">—</span>
                                     @endif
@@ -129,7 +109,7 @@
                                         ])>
                                             {{ $code->expires_at->format('M j, Y') }}
                                             @if ($isExpired)
-                                                <span class="ml-1 text-[0.65rem] font-bold tracking-[0.08em] uppercase">Expired</span>
+                                                <span class="text-[0.65rem] uppercase tracking-[0.08em] font-bold ml-1">Expired</span>
                                             @endif
                                         </span>
                                     @else
@@ -137,9 +117,7 @@
                                     @endif
                                 </x-central.td>
                                 <x-central.td>
-                                    <div class="text-parchment text-[0.8rem]">
-                                        {{ $code->created_at?->format('M j, Y') ?? '—' }}
-                                    </div>
+                                    <div class="text-parchment text-[0.8rem]">{{ $code->created_at?->format('M j, Y') ?? '—' }}</div>
                                     @if ($code->createdBy)
                                         <div class="text-cinnamon text-[0.7rem]">by {{ $code->createdBy->name }}</div>
                                     @endif

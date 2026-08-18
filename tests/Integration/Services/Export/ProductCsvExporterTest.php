@@ -4,7 +4,7 @@ use App\Models\Inventory\Product;
 use App\Services\Export\ProductCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

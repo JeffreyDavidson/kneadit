@@ -17,11 +17,11 @@ final readonly class PolicySettings
     {
         return new self(
             showOnStorefront: settings('show_policies_on_storefront', '0') === '1',
-            cancellation: SettingValue::string(settings('cancellation_policy')),
-            deposit: SettingValue::string(settings('deposit_policy')),
-            refund: SettingValue::string(settings('refund_policy')),
-            pickup: SettingValue::string(settings('pickup_policy')),
-            additionalTerms: SettingValue::string(settings('additional_terms')),
+            cancellation: (string) settings('cancellation_policy', ''),
+            deposit: (string) settings('deposit_policy', ''),
+            refund: (string) settings('refund_policy', ''),
+            pickup: (string) settings('pickup_policy', ''),
+            additionalTerms: (string) settings('additional_terms', ''),
         );
     }
 }

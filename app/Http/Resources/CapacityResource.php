@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @property array{date: string, available: bool, remaining: int, max: int} $resource */
 class CapacityResource extends JsonApiResource
 {
     /**

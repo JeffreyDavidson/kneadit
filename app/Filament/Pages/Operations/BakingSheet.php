@@ -3,7 +3,6 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Filament\Concerns\RequiresManagerRole;
-use App\Models\Orders\OrderItem;
 use App\Queries\Orders\BakingSheetQuery;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -50,12 +49,12 @@ class BakingSheet extends Page
 
     /**
      * Recompute on every render rather than storing as Livewire state.
-     * The query result should not become Livewire state because state
-     * serialization can mangle the aggregate attributes on each OrderItem — the
+     * The query returns a Collection of stdClass rows (raw DB selectRaw)
+     * which Livewire's state serialization mangles on round-trip — the
      * Print action's dispatch caused the re-rendered HTML to show the
      * empty state because the Collection deserialised broken.
      *
-     * @return Collection<int, OrderItem>
+     * @return Collection<int, object>
      */
     #[Computed]
     public function bakingItems(): Collection

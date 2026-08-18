@@ -6,9 +6,9 @@ use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Support\Enums\FontWeight;
 
 class PlatformSettingsTable
 {

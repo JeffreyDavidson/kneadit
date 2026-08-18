@@ -5,7 +5,7 @@ use App\Models\Engagement\Survey;
 use App\Models\Engagement\SurveyResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

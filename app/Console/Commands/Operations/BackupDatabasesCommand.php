@@ -5,7 +5,6 @@ namespace App\Console\Commands\Operations;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -26,8 +25,8 @@ class BackupDatabasesCommand extends Command
         $this->info("Backing up to: {$backupPath}");
 
         // 1. Backup central database
-        $centralDb = Config::string('database.connections.sqlite.database');
-        if ($centralDb !== '' && file_exists($centralDb)) {
+        $centralDb = config('database.connections.sqlite.database');
+        if ($centralDb && file_exists($centralDb)) {
             $dest = "{$backupPath}/central.sqlite";
             copy($centralDb, $dest);
             $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
@@ -36,7 +35,7 @@ class BackupDatabasesCommand extends Command
         }
 
         // 2. Backup all tenant databases
-        $tenantDbDir = Config::string('tenancy.tenant_db_path', database_path());
+        $tenantDbDir = config('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir)) {
             $tenantFiles = glob("{$tenantDbDir}/*.sqlite") ?: [];
             $count = 0;

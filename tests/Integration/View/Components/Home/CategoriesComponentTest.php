@@ -4,7 +4,7 @@ use App\Models\Inventory\Category;
 use App\View\Components\Home\Categories;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

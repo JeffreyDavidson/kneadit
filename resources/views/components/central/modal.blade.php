@@ -28,7 +28,7 @@
     x-transition:leave-end="opacity-0"
     @keydown.escape.window="open = false"
     @click.self="open = false"
-    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+    class="fixed inset-0 z-[9999] flex items-center justify-center px-4 bg-black/70 backdrop-blur-sm"
 >
     <div
         x-show="open"

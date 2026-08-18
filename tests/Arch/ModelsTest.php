@@ -21,20 +21,11 @@ test('models must not declare resolveRouteBinding or getRouteKeyName', function 
     );
 
     foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo) {
-            continue;
-        }
-
         if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $contents = file_get_contents($file->getPathname());
-
-        if ($contents === false) {
-            throw new RuntimeException("Unable to read {$file->getPathname()}.");
-        }
-
         $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
 
         if (preg_match('/function\s+resolveRouteBinding\s*\(/', $contents)) {

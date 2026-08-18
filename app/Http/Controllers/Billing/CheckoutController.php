@@ -6,7 +6,6 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use App\Models\Staff\User;
 use Illuminate\Container\Attributes\CurrentUser;
-use Illuminate\Support\Facades\Config;
 use Laravel\Cashier\Checkout;
 
 class CheckoutController extends Controller
@@ -16,12 +15,12 @@ class CheckoutController extends Controller
         $tier = SubscriptionTier::tryFrom($plan);
         abort_unless($tier !== null, 404, 'Plan not found.');
 
-        $priceId = Config::string("kneadit.stripe_prices.{$tier->value}");
-        abort_unless($priceId !== '', 404, 'Plan not found.');
+        $priceId = config("kneadit.stripe_prices.{$tier->value}");
+        abort_unless($priceId, 404, 'Plan not found.');
 
         return $user
             ->newSubscription('default', $priceId)
-            ->trialDays(Config::integer('kneadit.trial_days', 30))
+            ->trialDays(config('kneadit.trial_days', 30))
             ->allowPromotionCodes()
             ->checkout([
                 'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}',

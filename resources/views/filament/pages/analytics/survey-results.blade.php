@@ -1,12 +1,9 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         <div class="flex items-end gap-4">
-            <div class="max-w-sm flex-1">
-                <label class="mb-1 block text-sm font-medium">Select Survey</label>
-                <select
-                    wire:model.live="surveyId"
-                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900"
-                >
+            <div class="flex-1 max-w-sm">
+                <label class="block text-sm font-medium mb-1">Select Survey</label>
+                <select wire:model.live="surveyId" class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
                     <option value="">-- Choose a survey --</option>
                     @foreach ($surveys as $id => $title)
                         <option value="{{ $id }}">{{ $title }}</option>
@@ -15,10 +12,7 @@
             </div>
 
             @if ($survey)
-                <button
-                    wire:click="exportCsv"
-                    class="fi-btn fi-btn-size-md fi-color-primary bg-primary-600 hover:bg-primary-500 inline-flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold text-white"
-                >
+                <button wire:click="exportCsv" class="fi-btn fi-btn-size-md fi-color-primary inline-flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold bg-primary-600 text-white hover:bg-primary-500">
                     Export CSV
                 </button>
             @endif
@@ -37,29 +31,23 @@
             @else
                 <div class="space-y-6">
                     @foreach ($questions as $index => $question)
-                        <div class="rounded-xl border bg-white p-5 shadow-sm dark:bg-gray-800">
-                            <h4 class="mb-3 text-lg font-semibold">{{ $index + 1 }}. {{ $question['question'] }}</h4>
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-5">
+                            <h4 class="font-semibold text-lg mb-3">{{ $index + 1 }}. {{ $question['question'] }}</h4>
 
                             @if ($question['type'] === 'rating')
                                 @php
-                                    $ratings = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter()->map(fn ($v) => (int) $v);
+                                    $ratings = $responses->pluck('answers')->map(fn($a) => $a[$index] ?? null)->filter()->map(fn($v) => (int)$v);
                                     $avg = $ratings->count() ? round($ratings->avg(), 1) : 0;
-                                    $distribution = collect(range(1, 5))->mapWithKeys(fn ($r) => [$r => $ratings->filter(fn ($v) => $v === $r)->count()]);
+                                    $distribution = collect(range(1, 5))->mapWithKeys(fn($r) => [$r => $ratings->filter(fn($v) => $v === $r)->count()]);
                                     $maxCount = max($distribution->max(), 1);
                                 @endphp
-                                <p class="mb-3 text-2xl font-bold">
-                                    {{ $avg }} / 5
-                                    <span class="text-sm font-normal text-gray-500">({{ $ratings->count() }} ratings)</span>
-                                </p>
+                                <p class="text-2xl font-bold mb-3">{{ $avg }} / 5 <span class="text-sm font-normal text-gray-500">({{ $ratings->count() }} ratings)</span></p>
                                 <div class="space-y-1">
                                     @foreach ($distribution->reverse() as $star => $count)
                                         <div class="flex items-center gap-2 text-sm">
                                             <span class="w-8 text-right">{{ $star }}/5</span>
-                                            <div class="h-4 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                                                <div
-                                                    class="h-full rounded-full bg-amber-500 transition-all"
-                                                    style="width: {{ ($count / $maxCount) * 100 }}%"
-                                                ></div>
+                                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+                                                <div class="bg-amber-500 h-full rounded-full transition-all" style="width: {{ ($count / $maxCount) * 100 }}%"></div>
                                             </div>
                                             <span class="w-8 text-gray-500">{{ $count }}</span>
                                         </div>
@@ -68,7 +56,7 @@
 
                             @elseif ($question['type'] === 'multiple_choice')
                                 @php
-                                    $choices = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter();
+                                    $choices = $responses->pluck('answers')->map(fn($a) => $a[$index] ?? null)->filter();
                                     $total = $choices->count() ?: 1;
                                     $breakdown = $choices->countBy()->sortDesc();
                                 @endphp
@@ -76,26 +64,21 @@
                                     @foreach ($breakdown as $option => $count)
                                         <div class="flex items-center gap-2 text-sm">
                                             <span class="w-40 truncate">{{ $option }}</span>
-                                            <div class="h-4 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                                                <div
-                                                    class="h-full rounded-full bg-blue-500 transition-all"
-                                                    style="width: {{ ($count / $total) * 100 }}%"
-                                                ></div>
+                                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+                                                <div class="bg-blue-500 h-full rounded-full transition-all" style="width: {{ ($count / $total) * 100 }}%"></div>
                                             </div>
-                                            <span class="w-20 text-right text-gray-500">{{ round(($count / $total) * 100) }}% ({{ $count }})</span>
+                                            <span class="w-20 text-gray-500 text-right">{{ round(($count / $total) * 100) }}% ({{ $count }})</span>
                                         </div>
                                     @endforeach
                                 </div>
 
                             @elseif ($question['type'] === 'text')
                                 @php
-                                    $texts = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter();
+                                    $texts = $responses->pluck('answers')->map(fn($a) => $a[$index] ?? null)->filter();
                                 @endphp
-                                <div class="max-h-64 space-y-2 overflow-y-auto">
+                                <div class="max-h-64 overflow-y-auto space-y-2">
                                     @foreach ($texts as $text)
-                                        <div class="rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-900">
-                                            {{ $text }}
-                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 text-sm">{{ $text }}</div>
                                     @endforeach
                                 </div>
                             @endif

@@ -13,9 +13,9 @@ use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\ContactMessage;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
-use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Filament\Support\Icons\Heroicon;
 
 /**
  * Surfaces the few operational urgencies a baker should act on right

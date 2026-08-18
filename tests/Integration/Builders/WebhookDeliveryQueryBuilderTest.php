@@ -4,7 +4,7 @@ use App\Builders\Operations\WebhookDeliveryQueryBuilder;
 use App\Models\Operations\WebhookDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

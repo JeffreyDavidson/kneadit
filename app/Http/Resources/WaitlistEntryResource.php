@@ -6,11 +6,7 @@ use App\Models\Customers\WaitlistEntry;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/**
- * @property WaitlistEntry $resource
- *
- * @mixin WaitlistEntry
- */
+/** @mixin WaitlistEntry */
 class WaitlistEntryResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
@@ -20,7 +16,7 @@ class WaitlistEntryResource extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string) $this->resource->id;
+        return (string) $this->resource->getKey();
     }
 
     public function toType(Request $request): string
@@ -34,7 +30,7 @@ class WaitlistEntryResource extends JsonApiResource
         return [
             'customer_name' => $this->resource->customer_name,
             'customer_email' => $this->resource->customer_email,
-            'requested_date' => $this->resource->requested_date->toDateString(),
+            'requested_date' => $this->resource->requested_date?->toDateString(),
             'status' => $this->resource->status->value,
         ];
     }

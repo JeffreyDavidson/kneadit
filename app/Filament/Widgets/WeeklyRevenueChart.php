@@ -7,8 +7,8 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Financial\Expense;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
+use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Arr;
 
 class WeeklyRevenueChart extends ChartWidget
 {
@@ -34,6 +34,8 @@ class WeeklyRevenueChart extends ChartWidget
 
         return $this->cached($cacheKey, [300, 600], function (): array {
             $range = DateRange::thisWeek();
+            $period = CarbonPeriod::create($range->start, $range->end);
+
             $revenueByDay = collect(RevenueQuery::dailyBreakdown($range));
             $expensesByDay = $this->expensesByDay($range);
 
@@ -41,7 +43,7 @@ class WeeklyRevenueChart extends ChartWidget
             $revenue = [];
             $expenses = [];
 
-            for ($date = $range->start->copy(); $date->lte($range->end); $date->addDay()) {
+            foreach ($period as $date) {
                 $key = $date->format('Y-m-d');
                 $labels[] = $date->format('D');
                 $revenue[] = round((float) ($revenueByDay[$key] ?? 0), 2);
@@ -61,8 +63,9 @@ class WeeklyRevenueChart extends ChartWidget
                     $range->end->copy()->subWeek(),
                 );
                 $lastRevenueByDay = collect(RevenueQuery::dailyBreakdown($lastRange));
+                $lastPeriod = CarbonPeriod::create($lastRange->start, $lastRange->end);
                 $lastRevenue = [];
-                for ($date = $lastRange->start->copy(); $date->lte($lastRange->end); $date->addDay()) {
+                foreach ($lastPeriod as $date) {
                     $lastRevenue[] = round((float) ($lastRevenueByDay[$date->format('Y-m-d')] ?? 0), 2);
                 }
                 $datasets[] = [
@@ -79,21 +82,11 @@ class WeeklyRevenueChart extends ChartWidget
     /** @return \Illuminate\Support\Collection<string, float> */
     private function expensesByDay(DateRange $range): \Illuminate\Support\Collection
     {
-        $values = Expense::query()
+        return Expense::query()
             ->whereBetween('date', $range->toArray())
             ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
-
-        $expenses = [];
-
-        foreach ($values as $day => $total) {
-            if (is_string($day)) {
-                $expenses[$day] = Arr::float(['total' => $total], 'total', 0.0);
-            }
-        }
-
-        return collect($expenses);
     }
 
     protected function cachePrefix(): string

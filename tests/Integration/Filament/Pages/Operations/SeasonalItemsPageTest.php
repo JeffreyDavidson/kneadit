@@ -61,12 +61,10 @@ test('add seasonal item resets form fields', function () {
 
     test()->page->addSeasonalItem();
 
-    $state = get_object_vars(test()->page);
-
-    expect($state['product_id'])->toBeNull()
-        ->and($state['available_from'])->toBeNull()
-        ->and($state['available_until'])->toBeNull()
-        ->and($state['notes'])->toBeNull();
+    expect(test()->page->product_id)->toBeNull()
+        ->and(test()->page->available_from)->toBeNull()
+        ->and(test()->page->available_until)->toBeNull()
+        ->and(test()->page->notes)->toBeNull();
 });
 
 test('delete seasonal item removes record', function () {

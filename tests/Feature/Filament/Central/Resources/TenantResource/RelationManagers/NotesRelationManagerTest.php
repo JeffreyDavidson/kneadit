@@ -6,6 +6,7 @@ use App\Models\Platform\Tenant;
 use App\Models\Platform\TenantNote;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -25,13 +26,12 @@ test('relation manager lists notes attached to the tenant', function () {
             'author' => 'Admin',
         ]));
 
-    $component = livewire(NotesRelationManager::class, [
+    Livewire::test(NotesRelationManager::class, [
         'ownerRecord' => $owner,
         'pageClass' => ViewTenant::class,
-    ]);
-
-    $component->assertSuccessful();
-    $component->assertCanSeeTableRecords($notes);
+    ])
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords($notes);
 });
 
 test('relation manager renders for a tenant with no notes', function () {
@@ -39,7 +39,7 @@ test('relation manager renders for a tenant with no notes', function () {
     /** @var Tenant $owner */
     $owner = Tenant::query()->find('note-tenant-empty');
 
-    livewire(NotesRelationManager::class, [
+    Livewire::test(NotesRelationManager::class, [
         'ownerRecord' => $owner,
         'pageClass' => ViewTenant::class,
     ])

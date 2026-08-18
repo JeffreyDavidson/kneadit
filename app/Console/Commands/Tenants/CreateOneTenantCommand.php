@@ -10,7 +10,6 @@ use Illuminate\Console\Attributes\Hidden;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 #[Signature('tenant:create-one {id : Tenant subdomain/id} {name : Owner name} {email : Owner email} {store_name : Bakery name} {brand_primary : Primary brand color} {brand_secondary : Secondary brand color}')]
@@ -29,7 +28,7 @@ class CreateOneTenantCommand extends Command
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
             'plan' => SubscriptionTier::Pro,
-            'trial_ends_at' => now()->addDays(Config::integer('kneadit.trial_days', 30)),
+            'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => $this->argument('store_name'),
             'brand_color_primary' => $this->argument('brand_primary'),
             'brand_color_secondary' => $this->argument('brand_secondary'),

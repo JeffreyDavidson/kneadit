@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import './themes/biscotto.css';
 
 @source '../views/**/*.blade.php';
 

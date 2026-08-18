@@ -11,7 +11,7 @@
     };
 @endphp
 
-<div class="bg-brand-50 border-brand-300/20 rounded-xl border p-4 text-center">
+<div class="rounded-xl p-4 text-center bg-brand-50 border border-brand-300/20">
     <div class="text-[1.5rem] font-bold {{ $valueClass }}">{{ $value }}</div>
-    <div class="text-cinnamon mt-1 text-[0.75rem] tracking-wide uppercase">{{ $label }}</div>
+    <div class="text-[0.75rem] mt-1 uppercase tracking-wide text-cinnamon">{{ $label }}</div>
 </div>

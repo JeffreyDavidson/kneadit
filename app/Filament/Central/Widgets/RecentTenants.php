@@ -5,11 +5,11 @@ namespace App\Filament\Central\Widgets;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
 use Filament\Actions\Action;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Filament\Support\Enums\FontWeight;
 
 class RecentTenants extends TableWidget
 {

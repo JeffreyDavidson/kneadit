@@ -9,13 +9,11 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use function Pest\Laravel\actingAs;
-
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    actingAs(User::factory()->owner()->create());
+    $this->actingAs(User::factory()->owner()->create());
 });
 
 test('creates order with customer and items', function () {

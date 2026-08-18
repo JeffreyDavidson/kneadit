@@ -9,7 +9,7 @@ use App\Reports\Inventory\ProductReport;
 use App\ValueObjects\DateRange;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

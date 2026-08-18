@@ -14,11 +14,13 @@
                                 {{ substr($dayEnum->getLabel(), 0, 3) }}
                             </div>
                             @if ($isOpen)
-                                <div class="mt-1 text-xs text-green-600 dark:text-green-500">
-                                    {{ $day['open_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['open_time'])->format('g:ia') : '' }} - {{ $day['close_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['close_time'])->format('g:ia') : '' }}
+                                <div class="text-xs text-green-600 dark:text-green-500 mt-1">
+                                    {{ $day['open_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['open_time'])->format('g:ia') : '' }}
+                                    -
+                                    {{ $day['close_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['close_time'])->format('g:ia') : '' }}
                                 </div>
                             @else
-                                <div class="mt-1 text-xs text-gray-400">Closed</div>
+                                <div class="text-xs text-gray-400 mt-1">Closed</div>
                             @endif
                         </div>
                     @endforeach

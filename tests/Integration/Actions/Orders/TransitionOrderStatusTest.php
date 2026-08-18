@@ -26,7 +26,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -128,8 +128,12 @@ test('critical effect failure rolls back the status transition', function () {
 
     $order = Order::factory()->confirmed()->create();
 
-    expect(fn () => resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking))
-        ->toThrow(RuntimeException::class, 'Inventory deduction failed');
+    try {
+        resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking);
+        expect(false)->toBeTrue('Expected exception to be thrown');
+    } catch (RuntimeException $e) {
+        expect($e->getMessage())->toBe('Inventory deduction failed');
+    }
 
     expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
 });

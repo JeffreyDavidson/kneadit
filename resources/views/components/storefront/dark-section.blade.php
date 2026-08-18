@@ -6,13 +6,15 @@
     'showRadial' => true,
 ])
 
-<section @if ($id) id="{{ $id }}" @endif {{ $attributes->class(["relative overflow-hidden bg-warm-900 {$padding}"]) }}>
+<section
+    @if ($id) id="{{ $id }}" @endif
+    {{ $attributes->class(["relative overflow-hidden bg-warm-900 {$padding}"]) }}
+>
     @if ($showRadial)
-        <div
-            class="absolute inset-0"
-            style="background: radial-gradient(ellipse at {{ $radialPosition }}, rgba(212,146,12,{{ $radialOpacity }}), transparent 60%);"
-        ></div>
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at {{ $radialPosition }}, rgba(212,146,12,{{ $radialOpacity }}), transparent 60%);"></div>
     @endif
 
-    <div class="relative z-10">{{ $slot }}</div>
+    <div class="relative z-10">
+        {{ $slot }}
+    </div>
 </section>

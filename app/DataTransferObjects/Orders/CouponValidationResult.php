@@ -6,7 +6,7 @@ use App\Models\Financial\Coupon;
 
 final readonly class CouponValidationResult
 {
-    private const string DEFAULT_ERROR = 'Invalid coupon';
+    private const DEFAULT_ERROR = 'Invalid coupon';
 
     public function __construct(
         public bool $valid,

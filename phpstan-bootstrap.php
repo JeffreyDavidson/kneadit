@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Platform\Tenant;
+use App\Models\Tenant;
 
 // PHPStan type overrides for global helpers
 

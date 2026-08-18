@@ -7,7 +7,6 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\OrderItem;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class BakingSheetWidget extends Widget
@@ -40,7 +39,7 @@ class BakingSheetWidget extends Widget
             ->exists();
     }
 
-    /** @return array<int, array{product_id: int, name: string, quantity: int}> */
+    /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {
         return OrderItem::query()
@@ -59,10 +58,10 @@ class BakingSheetWidget extends Widget
             ->groupBy('order_items.product_id', 'products.name')
             ->orderByDesc('total_quantity')
             ->get()
-            ->map(fn (OrderItem $item): array => [
-                'product_id' => (int) $item->product_id,
-                'name' => is_string($item->getAttribute('product_name')) ? $item->getAttribute('product_name') : 'Unknown Product',
-                'quantity' => Arr::integer($item->getAttributes(), 'total_quantity', 0),
+            ->map(fn (mixed $item): array => [
+                'product_id' => $item->product_id,
+                'name' => $item->product_name,
+                'quantity' => (int) $item->total_quantity,
             ])
             ->all();
     }

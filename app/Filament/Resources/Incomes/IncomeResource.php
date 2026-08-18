@@ -64,6 +64,6 @@ class IncomeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) cache()->remember('navigation-badge:incomes:count', 60, fn (): int => static::getModel()::query()->count());
+        return (string) static::getModel()::query()->count();
     }
 }

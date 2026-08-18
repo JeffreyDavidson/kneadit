@@ -4,8 +4,9 @@ use App\Filament\Pages\Tools\RecipeCostCalculator;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -14,9 +15,8 @@ beforeEach(function () {
 });
 
 test('recipe cost calculator can render and calculate', function () {
-    $component = livewire(RecipeCostCalculator::class);
-
-    $component->assertOk();
-    $component->call('refreshAnalysis');
-    $component->assertOk();
+    Livewire::test(RecipeCostCalculator::class)
+        ->assertOk()
+        ->call('refreshAnalysis')
+        ->assertOk();
 });

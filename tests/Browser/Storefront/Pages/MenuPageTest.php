@@ -6,4 +6,4 @@ test('menu page renders without JS errors and shows the page marker', function (
     visit("{$storefrontUrl}/menu")
         ->assertVisible('[data-test="page-menu"]')
         ->assertNoJavaScriptErrors();
-})->group('launch-smoke');
+});

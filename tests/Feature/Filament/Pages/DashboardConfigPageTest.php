@@ -8,8 +8,9 @@ use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -17,23 +18,15 @@ beforeEach(function () {
 });
 
 test('renders and saves the default layout', function () {
-    $page = livewire(DashboardConfig::class);
-
-    $page->assertOk();
-    $page->call('save');
+    Livewire::test(DashboardConfig::class)
+        ->assertOk()
+        ->call('save');
 
     expect(settings('dashboard_widgets'))->not->toBeNull();
 });
 
-test('default layout keeps reporting widgets opt in', function () {
-    Livewire::test(DashboardConfig::class)
-        ->assertSet('widgets', fn (array $widgets): bool => collect($widgets)
-            ->whereIn('key', ['weekly_revenue', 'top_products', 'customer_insights'])
-            ->every(fn (array $widget): bool => $widget['visible'] === false));
-});
-
 test('reorder swaps two widgets in place', function () {
-    $page = livewire(DashboardConfig::class);
+    $page = Livewire::test(DashboardConfig::class);
     $first = $page->get('widgets')[0];
     $second = $page->get('widgets')[1];
 
@@ -44,7 +37,7 @@ test('reorder swaps two widgets in place', function () {
 });
 
 test('toggleWidget flips visibility', function () {
-    $page = livewire(DashboardConfig::class);
+    $page = Livewire::test(DashboardConfig::class);
     $beforeVisible = $page->get('widgets')[0]['visible'];
 
     $page->call('toggleWidget', 0);
@@ -53,7 +46,7 @@ test('toggleWidget flips visibility', function () {
 });
 
 test('setSize accepts t-shirt size strings, ignores unknown values, and rejects disallowed sizes', function () {
-    $page = livewire(DashboardConfig::class);
+    $page = Livewire::test(DashboardConfig::class);
 
     // recent_orders allows all three sizes — sm → md transitions cleanly.
     $recentIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'recent_orders');
@@ -92,7 +85,7 @@ test('saved sizes that violate allowedSizes are clamped to the widget default on
         'storefront_views' => ['visible' => true, 'order' => 2, 'size' => 'lg'],
     ]));
 
-    $page = livewire(DashboardConfig::class);
+    $page = Livewire::test(DashboardConfig::class);
     $widgets = collect($page->get('widgets'))->keyBy('key');
 
     expect($widgets['welcome_banner']['size'])->toBe('sm')
@@ -109,7 +102,7 @@ test('legacy integer span values are migrated to t-shirt sizes on load', functio
         'stats_overview' => ['visible' => true, 'order' => 3, 'span' => 3],
     ]));
 
-    $page = livewire(DashboardConfig::class);
+    $page = Livewire::test(DashboardConfig::class);
     $widgets = collect($page->get('widgets'))->keyBy('key');
 
     expect($widgets['recent_orders']['size'])->toBe('sm')

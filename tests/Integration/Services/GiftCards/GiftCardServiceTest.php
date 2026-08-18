@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

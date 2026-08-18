@@ -4,7 +4,7 @@ use App\Http\Requests\Storefront\Account\RegisterCustomerRequest;
 use App\Models\Customers\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

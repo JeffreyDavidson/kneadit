@@ -51,22 +51,10 @@
                 'sample_heading' => 'Fresh Sourdough',
                 'sample_text' => 'Baked daily with love',
             ],
-            'biscotto' => [
-                'name' => 'Biscotto',
-                'desc' => 'Warm sourdough-inspired styling with rich brown tones and editorial typography',
-                'bg' => '#f5e6d0',
-                'text' => '#3d2314',
-                'accent' => '#d4a574',
-                'heading_font' => "'Playfair Display', serif",
-                'body_font' => "'Inter', sans-serif",
-                'radius' => '18px',
-                'sample_heading' => 'Fresh Sourdough',
-                'sample_text' => 'With love and flour dust',
-            ],
         ];
     @endphp
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @foreach ($themes as $key => $theme)
             <div
                 class="relative rounded-xl border-2 overflow-hidden transition-all duration-200 cursor-pointer hover:shadow-lg {{ $currentTheme === $key ? 'border-amber-500 ring-2 ring-amber-300 shadow-lg' : 'border-gray-200 dark:border-gray-700' }}"
@@ -74,8 +62,8 @@
             >
                 {{-- Active badge --}}
                 @if ($currentTheme === $key)
-                    <div class="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-xs font-bold text-white">
-                        <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <div class="absolute top-3 right-3 z-10 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                         Active
                     </div>
                 @endif
@@ -83,40 +71,28 @@
                 {{-- Preview area --}}
                 <div class="p-6" style="background: {{ $theme['bg'] }};">
                     {{-- Mini nav bar --}}
-                    <div
-                        class="mb-4 flex items-center gap-2 rounded-full px-3 py-1.5"
-                        style="background: {{ $theme['text'] }}; opacity: 0.9;"
-                    >
+                    <div class="rounded-full px-3 py-1.5 mb-4 flex items-center gap-2" style="background: {{ $theme['text'] }}; opacity: 0.9;">
                         <span class="text-xs font-medium" style="color: {{ $theme['accent'] }};">Bakery</span>
                         <span class="text-xs" style="color: {{ $theme['bg'] }}; opacity: 0.7;">Menu</span>
                         <span class="text-xs" style="color: {{ $theme['bg'] }}; opacity: 0.7;">Order</span>
                     </div>
 
                     {{-- Sample content --}}
-                    <h3
-                        class="mb-1 text-2xl"
-                        style="font-family: {{ $theme['heading_font'] }}; color: {{ $theme['text'] }};"
-                    >
+                    <h3 class="text-2xl mb-1" style="font-family: {{ $theme['heading_font'] }}; color: {{ $theme['text'] }};">
                         {{ $theme['sample_heading'] }}
                     </h3>
-                    <p
-                        class="mb-3 text-sm"
-                        style="font-family: {{ $theme['body_font'] }}; color: {{ $theme['text'] }}; opacity: 0.7;"
-                    >
+                    <p class="text-sm mb-3" style="font-family: {{ $theme['body_font'] }}; color: {{ $theme['text'] }}; opacity: 0.7;">
                         {{ $theme['sample_text'] }}
                     </p>
 
                     {{-- Sample button --}}
-                    <div
-                        class="inline-block px-4 py-1.5 text-xs font-semibold text-white"
-                        style="background: {{ $theme['accent'] }}; border-radius: {{ $theme['radius'] }};"
-                    >
+                    <div class="inline-block px-4 py-1.5 text-xs font-semibold text-white" style="background: {{ $theme['accent'] }}; border-radius: {{ $theme['radius'] }};">
                         Order Now
                     </div>
                 </div>
 
                 {{-- Info --}}
-                <div class="border-t border-gray-100 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
                     <h4 class="font-semibold text-gray-900 dark:text-white">{{ $theme['name'] }}</h4>
                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ $theme['desc'] }}</p>
                 </div>

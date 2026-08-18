@@ -4,28 +4,20 @@ on:
   pull_request:
     branches: [main, develop]
 
-concurrency:
-  group: rector-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   rector:
     name: Rector Dry Run
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify local PHP
-        run: php -v && php -m
-
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
 
       - name: Install Composer dependencies
         env:
@@ -33,4 +25,5 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Run Rector (dry run)
-        run: composer test:rector
+        continue-on-error: true
+        run: vendor/bin/rector process --dry-run

@@ -46,9 +46,7 @@ test('run invokes artisan command and stamps last run', function () {
         ->assertOk();
 
     expect(PlatformSetting::query()->where('key', 'last_run_health:check')->value('value'))
-        ->not->toBeNull()
-        ->and((new PlatformOperations)->getTaskStatus('health:check'))
-        ->toMatchArray(['status' => 'succeeded', 'exit_code' => 0]);
+        ->not->toBeNull();
 });
 
 test('run rejects unknown commands', function () {

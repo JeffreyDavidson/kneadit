@@ -7,14 +7,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
 test('it dispatches order.created webhook with order data', function () {
     Http::fake();
 
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->create();

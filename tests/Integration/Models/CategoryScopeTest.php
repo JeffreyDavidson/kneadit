@@ -6,7 +6,7 @@ use App\Models\Inventory\ProductImage;
 use App\Models\Inventory\SeasonalItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

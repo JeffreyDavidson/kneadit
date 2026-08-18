@@ -6,7 +6,7 @@ use App\Models\Staff\User;
 use App\Presenters\LoyaltyRewardPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

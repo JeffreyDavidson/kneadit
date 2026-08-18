@@ -14,10 +14,7 @@ class ApplyCouponController extends Controller
 {
     public function __invoke(ApplyDiscountRequest $request, CouponService $couponService): JsonResponse
     {
-        $result = $couponService->validate(
-            $request->string('code')->toString(),
-            $request->float('subtotal'),
-        );
+        $result = $couponService->validate($request->validated('code'), (float) $request->validated('subtotal'));
 
         if (! $result->valid) {
             throw ValidationException::withMessages([

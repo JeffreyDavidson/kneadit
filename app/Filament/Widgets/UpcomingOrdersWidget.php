@@ -50,15 +50,11 @@ class UpcomingOrdersWidget extends Widget
 
             $grouped = [];
             foreach ($orders as $order) {
-                $deliveryDate = $order->delivery_date;
-                if ($deliveryDate === null) {
-                    continue;
-                }
-                $date = $deliveryDate->format('Y-m-d');
+                $date = $order->delivery_date?->format('Y-m-d');
                 $label = match (true) {
-                    $deliveryDate->isToday() => 'Today',
-                    $deliveryDate->isTomorrow() => 'Tomorrow',
-                    default => $deliveryDate->format('l, M j'),
+                    $order->delivery_date?->isToday() => 'Today',
+                    $order->delivery_date?->isTomorrow() => 'Tomorrow',
+                    default => $order->delivery_date?->format('l, M j'),
                 };
 
                 $grouped[$date] ??= ['label' => $label, 'orders' => []];
@@ -87,7 +83,7 @@ class UpcomingOrdersWidget extends Widget
         return match ($this->size()) {
             WidgetSize::Small => 3,   // next 3 days (matches WidgetMeta description, preserves original behavior)
             WidgetSize::Medium => 5,
-            WidgetSize::Large, WidgetSize::ExtraLarge => 7,   // full week
+            WidgetSize::Large => 7,   // full week
         };
     }
 }

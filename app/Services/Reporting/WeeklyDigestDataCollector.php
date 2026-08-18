@@ -10,7 +10,6 @@ use App\Queries\Customers\AtRiskCustomersQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
@@ -47,7 +46,7 @@ class WeeklyDigestDataCollector
                 ->limit(5)
                 ->with('product')
                 ->get(),
-            'atRiskCustomers' => AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
+            'atRiskCustomers' => AtRiskCustomersQuery::get(config('analytics.at_risk_threshold_days', 30), 5)
                 ->map(fn (Customer $customer) => [
                     'name' => $customer->name,
                     'days_since_last_order' => CustomerPresenter::for($customer)->daysSinceLastOrder(),

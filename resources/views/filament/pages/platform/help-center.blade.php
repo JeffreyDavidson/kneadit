@@ -13,48 +13,15 @@
     @endphp
 
     <style @cspnonce>
-        .kb-grid {
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 20px !important;
-        }
-        .kb-popular-grid {
-            display: grid !important;
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 12px !important;
-        }
-        .kb-card {
-            background: #fff;
-            border: 1px solid rgba(212, 165, 116, 0.15);
-            border-radius: 12px;
-            padding: 28px 24px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .kb-card:hover {
-            border-color: #d4920c;
-            box-shadow: 0 8px 24px rgba(212, 146, 12, 0.08);
-            transform: translateY(-2px);
-        }
-        .kb-article-card {
-            background: #fff;
-            border: 1px solid rgba(212, 165, 116, 0.15);
-            border-radius: 10px;
-            padding: 16px 20px;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .kb-article-card:hover {
-            border-color: #d4920c;
-            background: #fffcf7;
-        }
+        .kb-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; }
+        .kb-popular-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+        .kb-card { background: #fff; border: 1px solid rgba(212,165,116,0.15); border-radius: 12px; padding: 28px 24px; cursor: pointer; transition: all 0.2s; }
+        .kb-card:hover { border-color: #d4920c; box-shadow: 0 8px 24px rgba(212,146,12,0.08); transform: translateY(-2px); }
+        .kb-article-card { background: #fff; border: 1px solid rgba(212,165,116,0.15); border-radius: 10px; padding: 16px 20px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px; }
+        .kb-article-card:hover { border-color: #d4920c; background: #fffcf7; }
     </style>
 
-    <div
-        x-data="{
+    <div x-data="{
         search: '',
         openTopic: null,
         topics: {{ Js::from($topics) }},
@@ -62,7 +29,7 @@
         // On mount, find the matching topic index and open it.
         init() {
             const path = @js($this->articlePath);
-            if (! path) return;
+            if (!path) return;
             const [topicSlug] = path.split('/');
             const idx = this.topics.findIndex(t => t.slug === topicSlug);
             if (idx >= 0) this.openTopic = idx;
@@ -72,7 +39,7 @@
             });
         },
         get filteredTopics() {
-            if (! this.search.trim()) return this.topics;
+            if (!this.search.trim()) return this.topics;
             const q = this.search.toLowerCase();
             return this.topics.map(topic => ({
                 ...topic,
@@ -81,58 +48,48 @@
                 )
             })).filter(t => t.articles.length > 0);
         }
-    }"
-    >
+    }">
+
         {{-- Hero Search (Intercom/Stripe style) --}}
-        <div class="from-brand-900 via-brand-700 to-brand-600 relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br px-12 py-14 text-center">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,white_1px,transparent_1px),radial-gradient(circle_at_80%_20%,white_1px,transparent_1px)] bg-[length:60px_60px] opacity-[0.04]"></div>
+        <div class="bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 rounded-2xl px-12 py-14 mb-10 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_20%_50%,white_1px,transparent_1px),radial-gradient(circle_at_80%_20%,white_1px,transparent_1px)] bg-[length:60px_60px]"></div>
             <div class="relative z-10">
-                <h2 class="m-0 mb-1.5 text-3xl font-extrabold tracking-tight text-white">How can we help?</h2>
-                <p class="m-0 mb-7 text-[0.9rem] text-white/55">Search our knowledge base or browse topics below</p>
-                <div class="relative mx-auto max-w-[520px]">
-                    <x-heroicon-o-magnifying-glass class="text-brand-500 pointer-events-none absolute top-[15px] left-4 h-5 w-5" />
-                    <input
-                        x-model="search"
-                        @input="openTopic = null"
-                        type="text"
-                        placeholder="Search for articles..."
-                        class="text-brand-900 w-full rounded-xl border-0 bg-white py-[15px] pr-5 pl-12 text-[0.95rem] shadow-xl outline-none"
-                    />
+                <h2 class="text-white text-3xl font-extrabold m-0 mb-1.5 tracking-tight">How can we help?</h2>
+                <p class="text-white/55 m-0 mb-7 text-[0.9rem]">Search our knowledge base or browse topics below</p>
+                <div class="relative max-w-[520px] mx-auto">
+                    <x-heroicon-o-magnifying-glass class="w-5 h-5 absolute left-4 top-[15px] text-brand-500 pointer-events-none" />
+                    <input x-model="search" @input="openTopic = null" type="text" placeholder="Search for articles..."
+                        class="w-full pl-12 pr-5 py-[15px] rounded-xl border-0 bg-white text-[0.95rem] text-brand-900 outline-none shadow-xl" />
                 </div>
             </div>
         </div>
 
         {{-- Search Results --}}
         <div x-show="search.trim() !== ''" x-cloak>
-            <p class="text-brand-500 m-0 mb-4 text-[0.8rem] font-semibold tracking-wider uppercase">Search Results</p>
+            <p class="text-[0.8rem] text-brand-500 m-0 mb-4 font-semibold uppercase tracking-wider">Search Results</p>
             <template x-for="(topic, ti) in filteredTopics" :key="ti">
                 <div class="mb-5">
-                    <p
-                        class="text-brand-600 m-0 mb-2 text-xs font-bold tracking-wider uppercase"
-                        x-text="topic.title"
-                    ></p>
+                    <p class="text-xs text-brand-600 font-bold m-0 mb-2 uppercase tracking-wider" x-text="topic.title"></p>
                     <template x-for="(article, ai) in topic.articles" :key="ai">
-                        <div class="border-brand-200/40 hover:border-honey mb-2 rounded-lg border bg-white px-5 py-4 transition-colors">
-                            <h4
-                                class="text-brand-900 m-0 mb-1.5 text-[0.9rem] font-semibold"
-                                x-text="article.title"
-                            ></h4>
-                            <div class="text-brand-700 text-[0.8rem] leading-relaxed" x-html="article.content"></div>
+                        <div class="bg-white border border-brand-200/40 rounded-lg px-5 py-4 mb-2 transition-colors hover:border-honey">
+                            <h4 class="font-semibold text-brand-900 m-0 mb-1.5 text-[0.9rem]" x-text="article.title"></h4>
+                            <div class="text-[0.8rem] text-brand-700 leading-relaxed" x-html="article.content"></div>
                         </div>
                     </template>
                 </div>
             </template>
-            <div x-show="filteredTopics.length === 0" class="text-brand-500 py-10 text-center">
+            <div x-show="filteredTopics.length === 0" class="text-center py-10 text-brand-500">
                 <p class="m-0 font-semibold">No results found</p>
-                <p class="m-0 mt-1.5 text-[0.85rem]">Try different keywords</p>
+                <p class="mt-1.5 m-0 text-[0.85rem]">Try different keywords</p>
             </div>
         </div>
 
         {{-- Main Content (no search) --}}
         <div x-show="search.trim() === '' && openTopic === null">
+
             {{-- Popular Articles (Slack style) --}}
             <div class="mb-9">
-                <h3 class="text-brand-500 m-0 mb-3.5 text-xs font-bold tracking-wider uppercase">Popular Articles</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-brand-500 m-0 mb-3.5">Popular Articles</h3>
                 <div class="kb-popular-grid">
                     @foreach ($popularArticles as $pa)
                         @php
@@ -141,23 +98,20 @@
                             $colorClass = $topicMeta ? 'bg-' . $topicMeta['color'] : 'bg-brand-600';
                             $idx = collect($topics)->search(fn ($t) => $t['slug'] === $topicSlug);
                         @endphp
-                        <div
-                            class="kb-article-card"
-                            @click="search = ''; openTopic = {{ (int) $idx }}; $nextTick(() => { const t = document.getElementById('article-{{ str_replace('/', '-', $pa['slug']) }}'); if (t) t.scrollIntoView({behavior:'smooth',block:'start'}); })"
-                        >
+                        <div class="kb-article-card" @click="search = ''; openTopic = {{ (int) $idx }}; $nextTick(() => { const t = document.getElementById('article-{{ str_replace('/', '-', $pa['slug']) }}'); if (t) t.scrollIntoView({behavior:'smooth',block:'start'}); })">
                             <div class="w-2 h-2 rounded-full flex-shrink-0 {{ $colorClass }}"></div>
                             <div>
-                                <p class="text-brand-900 m-0 text-sm font-semibold">{{ $pa['title'] }}</p>
-                                <p class="text-brand-500 m-0 mt-0.5 text-xs">{{ $pa['topic'] }}</p>
+                                <p class="m-0 text-sm font-semibold text-brand-900">{{ $pa['title'] }}</p>
+                                <p class="mt-0.5 m-0 text-xs text-brand-500">{{ $pa['topic'] }}</p>
                             </div>
-                            <x-heroicon-o-chevron-right class="text-brand-400 ml-auto h-4 w-4 flex-shrink-0" />
+                            <x-heroicon-o-chevron-right class="w-4 h-4 text-brand-400 ml-auto flex-shrink-0" />
                         </div>
                     @endforeach
                 </div>
             </div>
 
             {{-- Category Grid (Intercom style) --}}
-            <h3 class="text-brand-500 m-0 mb-3.5 text-xs font-bold tracking-wider uppercase">Browse by Topic</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-500 m-0 mb-3.5">Browse by Topic</h3>
             <div class="kb-grid">
                 @foreach ($topics as $i => $topic)
                     @php $c = $cls($topic); @endphp
@@ -165,22 +119,17 @@
                         <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4 {{ $c['tile'] }}">
                             <x-filament::icon :icon="$topic['icon']" class="w-6 h-6 {{ $c['text'] }}" />
                         </div>
-                        <h3 class="text-brand-900 m-0 mb-1 text-base font-bold">{{ $topic['title'] }}</h3>
-                        <p class="text-brand-500 m-0 mb-3 text-[0.8rem]">{{ count($topic['articles']) }} articles</p>
-                        <ul class="m-0 list-none p-0">
+                        <h3 class="m-0 mb-1 text-base font-bold text-brand-900">{{ $topic['title'] }}</h3>
+                        <p class="m-0 mb-3 text-[0.8rem] text-brand-500">{{ count($topic['articles']) }} articles</p>
+                        <ul class="list-none p-0 m-0">
                             @foreach (array_slice($topic['articles'], 0, 2) as $article)
-                                <li class="text-brand-700 flex items-center gap-1.5 py-1 text-[0.8rem]">
-                                    <x-heroicon-o-chevron-right
-                                        class="text-brand-400 h-3 w-3 flex-shrink-0"
-                                        stroke-width="2"
-                                    />
+                                <li class="text-[0.8rem] text-brand-700 py-1 flex items-center gap-1.5">
+                                    <x-heroicon-o-chevron-right class="w-3 h-3 text-brand-400 flex-shrink-0" stroke-width="2" />
                                     {{ $article['title'] }}
                                 </li>
                             @endforeach
                             @if (count($topic['articles']) > 2)
-                                <li class="text-honey py-1 text-xs font-semibold">
-                                    + {{ count($topic['articles']) - 2 }} more
-                                </li>
+                                <li class="text-xs text-honey py-1 font-semibold">+ {{ count($topic['articles']) - 2 }} more</li>
                             @endif
                         </ul>
                     </div>
@@ -190,12 +139,10 @@
 
         {{-- Expanded Topic (Notion style — clean article list) --}}
         <div x-show="openTopic !== null && search.trim() === ''" x-cloak>
-            <div class="border-brand-200/30 mb-7 flex items-center gap-3.5 border-b pb-5">
-                <button
-                    @click="openTopic = null"
-                    class="border-brand-200/40 hover:bg-brand-200/10 inline-flex h-[34px] w-[34px] flex-shrink-0 cursor-pointer items-center justify-center rounded-lg border bg-transparent transition-colors"
-                >
-                    <x-heroicon-o-arrow-left class="text-brand-600 h-4 w-4" stroke-width="2" />
+            <div class="flex items-center gap-3.5 mb-7 pb-5 border-b border-brand-200/30">
+                <button @click="openTopic = null"
+                    class="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg bg-transparent border border-brand-200/40 cursor-pointer transition-colors hover:bg-brand-200/10 flex-shrink-0">
+                    <x-heroicon-o-arrow-left class="w-4 h-4 text-brand-600" stroke-width="2" />
                 </button>
                 @foreach ($topics as $i => $topic)
                     @php $c = $cls($topic); @endphp
@@ -204,8 +151,8 @@
                             <x-filament::icon :icon="$topic['icon']" class="w-5 h-5 {{ $c['text'] }}" />
                         </div>
                         <div>
-                            <h3 class="text-brand-900 m-0 text-[1.15rem] font-bold">{{ $topic['title'] }}</h3>
-                            <p class="text-brand-500 m-0 mt-0.5 text-xs">{{ count($topic['articles']) }} articles</p>
+                            <h3 class="m-0 text-[1.15rem] font-bold text-brand-900">{{ $topic['title'] }}</h3>
+                            <p class="mt-0.5 m-0 text-xs text-brand-500">{{ count($topic['articles']) }} articles</p>
                         </div>
                     </div>
                 @endforeach
@@ -214,16 +161,9 @@
             @foreach ($topics as $i => $topic)
                 <div x-show="openTopic === {{ $i }}">
                     @foreach ($topic['articles'] as $j => $article)
-                        <div
-                            id="article-{{ $topic['slug'] }}-{{ $article['slug'] }}"
-                            class="border-brand-200/30 hover:border-brand-200/70 mb-3 rounded-lg border bg-white px-7 py-6 transition-colors"
-                        >
-                            <h4 class="text-brand-900 m-0 mb-2.5 text-[0.95rem] font-semibold">
-                                {{ $article['title'] }}
-                            </h4>
-                            <div class="prose prose-sm text-brand-700 max-w-none text-[0.85rem] leading-loose">
-                                {!! $article['content'] !!}
-                            </div>
+                        <div id="article-{{ $topic['slug'] }}-{{ $article['slug'] }}" class="bg-white border border-brand-200/30 rounded-lg px-7 py-6 mb-3 transition-colors hover:border-brand-200/70">
+                            <h4 class="font-semibold text-brand-900 m-0 mb-2.5 text-[0.95rem]">{{ $article['title'] }}</h4>
+                            <div class="prose prose-sm max-w-none text-[0.85rem] text-brand-700 leading-loose">{!! $article['content'] !!}</div>
                         </div>
                     @endforeach
                 </div>
@@ -231,16 +171,14 @@
         </div>
 
         {{-- Contact Footer --}}
-        <div class="border-brand-200/30 mt-10 flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-[#fffcf7] p-8">
+        <div class="mt-10 p-8 rounded-xl bg-[#fffcf7] border border-brand-200/30 flex items-center justify-between flex-wrap gap-4">
             <div>
-                <h3 class="text-brand-900 m-0 mb-1 text-base font-bold">Can't find what you need?</h3>
-                <p class="text-brand-700 m-0 text-[0.85rem]">Our team responds within 24 hours.</p>
+                <h3 class="m-0 mb-1 text-base font-bold text-brand-900">Can't find what you need?</h3>
+                <p class="m-0 text-brand-700 text-[0.85rem]">Our team responds within 24 hours.</p>
             </div>
-            <a
-                href="mailto:support@getkneadit.app"
-                class="bg-brand-900 hover:bg-brand-700 inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white no-underline transition-colors"
-            >
-                <x-heroicon-o-envelope class="h-[18px] w-[18px]" />
+            <a href="mailto:support@getkneadit.app"
+                class="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-700 text-white font-semibold no-underline px-6 py-2.5 rounded-xl text-sm transition-colors">
+                <x-heroicon-o-envelope class="w-[18px] h-[18px]" />
                 Contact Support
             </a>
         </div>

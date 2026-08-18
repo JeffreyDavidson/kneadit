@@ -22,22 +22,14 @@ class TenantComparison extends Page
 
     public string $activeTab = 'compare';
 
-    /** @var array<int, string> */
+    /** @var array<string, mixed> */
     public array $selectedTenants = [];
 
     public function mount(): void
     {
         $ids = request()->query('tenants', []);
         if (is_array($ids)) {
-            $tenantIds = [];
-
-            foreach ($ids as $id) {
-                if (is_string($id) && $id !== '') {
-                    $tenantIds[] = $id;
-                }
-            }
-
-            $this->selectedTenants = array_slice($tenantIds, 0, 3);
+            $this->selectedTenants = array_slice(array_filter($ids), 0, 3);
         }
     }
 
@@ -50,7 +42,10 @@ class TenantComparison extends Page
     /** @return array<int, array<string, mixed>> */
     public function getComparisonData(): array
     {
-        return TenantComparisonQuery::comparison($this->selectedTenants);
+        /** @var array<int, string> $tenantIds */
+        $tenantIds = array_values(array_map('strval', $this->selectedTenants));
+
+        return TenantComparisonQuery::comparison($tenantIds);
     }
 
     /** @return array<int, array<string, mixed>> */

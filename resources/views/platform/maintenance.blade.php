@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maintenance - KneadIt</title>
-    <link rel="stylesheet" href="{{ asset('css/maintenance.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/maintenance.css') }}">
 </head>
 <body>
     <div class="container">
@@ -14,7 +14,7 @@
         <p class="message">
             {{ $message ?? 'We are currently performing scheduled maintenance. We\'ll be back shortly!' }}
         </p>
-        @if (! empty($scheduled_end))
+        @if (!empty($scheduled_end))
             <div class="scheduled-end">
                 ⏰ Expected back: {{ \Carbon\Carbon::parse($scheduled_end)->format('M j, Y \a\t g:i A') }}
             </div>

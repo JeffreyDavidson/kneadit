@@ -4,7 +4,7 @@ use App\Models\Orders\Order;
 use App\Services\Delivery\DeliveryRouteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

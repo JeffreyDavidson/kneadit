@@ -75,5 +75,5 @@ test('cookie consent links to privacy policy', function () {
 test('cookie consent hidden by default', function () {
     $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
-    expect($layout)->toMatch('/id="cookieConsent"[^>]*class="[^"]*\bhidden\b/');
+    expect($layout)->toMatch('/id="cookieConsent"[^>]*class="hidden /');
 });

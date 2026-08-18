@@ -5,7 +5,6 @@ namespace App\Queries\Platform;
 use App\Models\Platform\FeatureUsageLog;
 use App\Models\Platform\Tenant;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
@@ -18,24 +17,20 @@ class FeatureUsageQuery
 
     public static function mostUsedFeature(): ?string
     {
-        $feature = FeatureUsageLog::query()->select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderByDesc('total')
             ->value('feature');
-
-        return is_string($feature) ? $feature : null;
     }
 
     public static function leastUsedFeature(): ?string
     {
-        $feature = FeatureUsageLog::query()->select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderBy('total')
             ->value('feature');
-
-        return is_string($feature) ? $feature : null;
     }
 
     public static function totalInteractionsThisMonth(): int
@@ -59,7 +54,7 @@ class FeatureUsageQuery
         return (int) FeatureUsageLog::query()->where('feature', $feature)->sum('usage_count');
     }
 
-    /** @return Collection<int, array{feature: string, total: int, percent: float}> */
+    /** @return Collection<int, mixed> */
     public static function featureUsageBars(): Collection
     {
         $data = FeatureUsageLog::query()->select('feature')
@@ -68,51 +63,37 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $max = Arr::integer(['total' => $data->max('total')], 'total', 1);
+        $max = $data->max('total') ?: 1;
 
-        return $data->map(function (FeatureUsageLog $row) use ($max): array {
-            $total = Arr::integer($row->getAttributes(), 'total', 0);
-
-            return [
-                'feature' => $row->feature,
-                'total' => $total,
-                'percent' => round(($total / max($max, 1)) * 100),
-            ];
-        });
+        return $data->map(fn (FeatureUsageLog $row) => [
+            'feature' => $row->feature,
+            'total' => $row->total,
+            'percent' => round(($row->total / $max) * 100),
+        ]);
     }
 
     /** @return array<string, mixed> */
     public static function heatmapData(): array
     {
-        $days = collect(range(6, 0))->map(fn (int $daysAgo): Carbon => Date::today()->subDays($daysAgo));
+        $days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $days->push(Date::today()->subDays($i));
+        }
 
-        $features = FeatureUsageLog::query()
-            ->distinct()
-            ->pluck('feature')
-            ->map(fn (mixed $feature): string => is_string($feature) ? $feature : '')
-            ->filter()
-            ->sort()
-            ->values();
+        $features = FeatureUsageLog::query()->distinct()->pluck('feature')->sort()->values();
 
-        $logs = FeatureUsageLog::query()->whereBetween('date', [
-            Date::today()->subDays(6)->toDateString(),
-            Date::today()->toDateString(),
-        ])
+        $logs = FeatureUsageLog::query()->whereBetween('date', [$days->first()->toDateString(), $days->last()->toDateString()])
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxCount = Arr::integer(['count' => $logs->max(
-            fn (Collection $group): mixed => $group->sum('usage_count'),
-        )], 'count', 1);
+        $maxCount = $logs->max(fn (Collection $group) => $group->sum('usage_count')) ?: 1;
 
         $rows = [];
         foreach ($features as $feature) {
             $cells = [];
             foreach ($days as $day) {
                 $key = $feature . '|' . $day->toDateString();
-                $count = isset($logs[$key])
-                    ? Arr::integer(['count' => $logs[$key]->sum('usage_count')], 'count', 0)
-                    : 0;
+                $count = isset($logs[$key]) ? $logs[$key]->sum('usage_count') : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [
                     'date' => $day->format('M d'),
@@ -132,7 +113,7 @@ class FeatureUsageQuery
         ];
     }
 
-    /** @return Collection<int, array{tenant_id: string, name: string, total: int}> */
+    /** @return Collection<int, mixed> */
     public static function featureTenantBreakdown(string $feature): Collection
     {
         $rows = FeatureUsageLog::query()->select('tenant_id')
@@ -154,9 +135,7 @@ class FeatureUsageQuery
         return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames) {
             return [
                 'tenant_id' => $row->tenant_id,
-                'name' => is_string($tenantNames[$row->tenant_id] ?? null)
-                    ? $tenantNames[$row->tenant_id]
-                    : (is_string($fallbackNames[$row->tenant_id] ?? null) ? $fallbackNames[$row->tenant_id] : $row->tenant_id),
+                'name' => $tenantNames[$row->tenant_id] ?? $fallbackNames[$row->tenant_id] ?? $row->tenant_id,
                 'total' => (int) $row->total,
             ];
         });

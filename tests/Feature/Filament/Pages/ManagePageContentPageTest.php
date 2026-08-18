@@ -4,8 +4,9 @@ use App\Filament\Pages\Settings\ManagePageContent;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -13,10 +14,9 @@ beforeEach(function () {
 });
 
 test('manage page content renders and saves', function () {
-    $component = livewire(ManagePageContent::class);
-
-    $component->assertOk();
-    $component->call('save');
+    Livewire::test(ManagePageContent::class)
+        ->assertOk()
+        ->call('save');
 });
 
 test('reset to saved action restores the last saved page content', function () {
@@ -24,7 +24,7 @@ test('reset to saved action restores the last saved page content', function () {
         'menu' => ['hero_title' => 'Saved Menu Title'],
     ]));
 
-    livewire(ManagePageContent::class)
+    Livewire::test(ManagePageContent::class)
         ->set('pageContent.menu.hero_title', 'Unsaved edit')
         ->callAction('resetToSaved')
         ->assertSet('pageContent.menu.hero_title', 'Saved Menu Title');

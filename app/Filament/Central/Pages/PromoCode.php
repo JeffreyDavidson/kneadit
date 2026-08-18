@@ -18,7 +18,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Stripe\Exception\ApiErrorException;
@@ -168,12 +167,12 @@ class PromoCode extends Page implements HasForms
 
         try {
             $isPercent = ($state['discount_type'] ?? 'percent') === 'percent';
-            $value = Arr::has($state, 'discount_value') ? Arr::integer($state, 'discount_value') : null;
-            $duration = Arr::string($state, 'duration', 'once');
-            $durationInMonths = Arr::has($state, 'duration_in_months') ? Arr::integer($state, 'duration_in_months') : null;
-            $maxRedemptions = Arr::integer($state, 'max_redemptions', 1);
+            $value = isset($state['discount_value']) ? (int) $state['discount_value'] : null;
+            $duration = $state['duration'] ?? 'once';
+            $durationInMonths = isset($state['duration_in_months']) ? (int) $state['duration_in_months'] : null;
+            $maxRedemptions = (int) ($state['max_redemptions'] ?? 1);
             $expiresInDays = isset($state['expires_in_days']) && $state['expires_in_days'] !== ''
-                ? Arr::integer($state, 'expires_in_days')
+                ? (int) $state['expires_in_days']
                 : null;
 
             $this->result = $action(
@@ -181,11 +180,11 @@ class PromoCode extends Page implements HasForms
                 amountOffCents: ! $isPercent && $value !== null ? $value * 100 : null,
                 duration: $duration,
                 durationInMonths: $durationInMonths,
-                code: Arr::has($state, 'code') ? Arr::string($state, 'code') : null,
+                code: $state['code'] ?: null,
                 maxRedemptions: $maxRedemptions,
                 expiresInDays: $expiresInDays,
-                tenantId: Arr::has($state, 'tenant_id') ? Arr::string($state, 'tenant_id') : null,
-                name: Arr::has($state, 'name') ? Arr::string($state, 'name') : null,
+                tenantId: $state['tenant_id'] ?: null,
+                name: $state['name'] ?: null,
             );
 
             PlatformPromoCode::query()->create([

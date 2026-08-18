@@ -7,7 +7,6 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 class CustomerVerifyEmailNotification extends Notification
@@ -24,7 +23,7 @@ class CustomerVerifyEmailNotification extends Notification
     {
         $url = URL::temporarySignedRoute(
             'account.email.verify',
-            now()->addMinutes(Config::integer('auth.verification.expire', 60)),
+            now()->addMinutes(config('auth.verification.expire', 60)),
             [
                 'id' => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),

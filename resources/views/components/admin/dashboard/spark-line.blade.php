@@ -19,7 +19,7 @@
     }
 
     $polyPoints = implode(' ', $points);
-    $areaPoints = $points === [] ? '' : "0,{$height} " . $polyPoints . " {$viewWidth},{$height}";
+    $areaPoints = $points === [] ? '' : "0,{$height} ".$polyPoints." {$viewWidth},{$height}";
 @endphp
 
 <svg
@@ -28,7 +28,7 @@
     height="{{ $height }}"
     viewBox="0 0 {{ $viewWidth }} {{ $height }}"
     preserveAspectRatio="none"
-    style="display: block"
+    style="display: block;"
 >
     @if (count($points) > 1)
         @if ($fill)
