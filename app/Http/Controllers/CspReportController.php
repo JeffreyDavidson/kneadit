@@ -40,7 +40,9 @@ class CspReportController extends Controller
     private function safeContext(mixed $report): array
     {
         if (! is_array($report)) {
-            return ['malformed' => true];
+            return [
+                'malformed' => true,
+            ];
         }
 
         return collect(Arr::only($report, Config::array('csp.report_fields')))
