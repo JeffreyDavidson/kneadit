@@ -82,6 +82,11 @@ pest()->extend(TestCase::class)
     ->afterEach($cleanupTenantFiles)
     ->in('Feature', 'Integration', 'Unit', 'Browser');
 
+pest()->tia()
+    ->always()
+    ->locally()
+    ->filtered();
+
 /*
 |--------------------------------------------------------------------------
 | Tenant Test Helpers
