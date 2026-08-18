@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use UnitEnum;
 
+/** @phpstan-type OnboardingRecord array{id: string, name: string, subdomain: string, owner: string, email: string, plan: string, created_at: \Illuminate\Support\Carbon|null, days_since_signup: int, checks: array<string, bool>, completed: int, total: int} */
 class OnboardingTracker extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
@@ -41,41 +42,23 @@ class OnboardingTracker extends Page
         return 'Monitor which bakers have completed their setup.';
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, OnboardingRecord> */
     public function getTenantOnboardingData(): Collection
     {
         $tenants = Tenant::query()->latest()->get();
 
-        $data = $tenants->map(function (Tenant $tenant) {
-            $checks = $this->getOnboardingChecks($tenant);
-            $completed = collect($checks)->filter(fn (bool $v) => $v)->count();
-
-            return [
-                'id' => $tenant->id,
-                'name' => $tenant->store_name ?? $tenant->name,
-                'subdomain' => $tenant->id,
-                'owner' => $tenant->name,
-                'email' => $tenant->email,
-                'plan' => $tenant->plan->value ?? 'trial',
-                'created_at' => $tenant->created_at,
-                'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
-                'checks' => $checks,
-                'completed' => $completed,
-                'total' => TenantOnboardingMetrics::TOTAL_CHECKS,
-            ];
-        });
+        $data = $tenants->map(fn (Tenant $tenant): array => $this->tenantOnboardingRecord($tenant));
 
         if ($this->filterStatus === 'needs_attention') {
-            $data = $data->filter(fn (array $t) => $t['completed'] < 6);
+            $data = $data->filter(fn (array $tenant): bool => $this->matchesStatus($tenant, 'needs_attention'));
         } elseif ($this->filterStatus === 'fully_onboarded') {
-            $data = $data->filter(fn (array $t) => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS);
+            $data = $data->filter(fn (array $tenant): bool => $this->matchesStatus($tenant, 'fully_onboarded'));
         } elseif ($this->filterStatus === 'stuck') {
-            // Stuck = signed up >= 7 days ago but not fully onboarded
-            $data = $data->filter(fn (array $t) => $t['days_since_signup'] >= 7 && $t['completed'] < TenantOnboardingMetrics::TOTAL_CHECKS);
+            $data = $data->filter(fn (array $tenant): bool => $this->matchesStatus($tenant, 'stuck'));
         }
 
         if ($this->filterPlan !== 'all') {
-            $data = $data->filter(fn (array $t) => $t['plan'] === $this->filterPlan);
+            $data = $data->filter(fn (array $tenant): bool => $this->matchesPlan($tenant));
         }
 
         $data = match ($this->sort) {
@@ -86,6 +69,59 @@ class OnboardingTracker extends Page
         };
 
         return $data->values();
+    }
+
+    /**
+     * @return array{
+     *     id: string,
+     *     name: string,
+     *     subdomain: string,
+     *     owner: string,
+     *     email: string,
+     *     plan: string,
+     *     created_at: \Illuminate\Support\Carbon|null,
+     *     days_since_signup: int,
+     *     checks: array<string, bool>,
+     *     completed: int,
+     *     total: int
+     * }
+     */
+    private function tenantOnboardingRecord(Tenant $tenant): array
+    {
+        $checks = $this->getOnboardingChecks($tenant);
+
+        return [
+            'id' => $tenant->id,
+            'name' => $tenant->store_name ?? $tenant->name,
+            'subdomain' => $tenant->id,
+            'owner' => $tenant->name,
+            'email' => $tenant->email,
+            'plan' => $tenant->plan->value ?? 'trial',
+            'created_at' => $tenant->created_at,
+            'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
+            'checks' => $checks,
+            'completed' => collect($checks)->filter(fn (bool $value): bool => $value)->count(),
+            'total' => TenantOnboardingMetrics::TOTAL_CHECKS,
+        ];
+    }
+
+    /**
+     * @param OnboardingRecord $tenant
+     */
+    private function matchesStatus(array $tenant, string $status): bool
+    {
+        return match ($status) {
+            'needs_attention' => $tenant['completed'] < 6,
+            'fully_onboarded' => $tenant['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS,
+            'stuck' => $tenant['days_since_signup'] >= 7 && $tenant['completed'] < TenantOnboardingMetrics::TOTAL_CHECKS,
+            default => true,
+        };
+    }
+
+    /** @param OnboardingRecord $tenant */
+    private function matchesPlan(array $tenant): bool
+    {
+        return $tenant['plan'] === $this->filterPlan;
     }
 
     public function resetFilters(): void
