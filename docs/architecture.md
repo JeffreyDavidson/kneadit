@@ -11,7 +11,7 @@ Both surfaces share application code. The request host and tenancy middleware de
 
 ## Data and tenancy boundaries
 
-The central connection is named `central`. It contains the platform tenant and domain records plus central concerns such as platform settings and subscription state. Every bakery has a separate SQLite database. `config/tenancy.php` uses `TenantSQLiteDatabaseManager`, with files rooted at `TENANT_DB_PATH` or `database_path()` when the variable is unset.
+The central connection is named `central`. It contains the platform tenant and domain records plus central concerns such as platform settings and subscription state. Every bakery has a separate SQLite database. `config/tenancy.php` uses `TenantSQLiteDatabaseManager`, with files rooted at `TENANT_DB_PATH` or `database_path()` when the variable is unset. `TenantDatabasePath` rejects path separators/traversal, and the manager refuses symlinks before connecting.
 
 Tenancy bootstraps three Laravel facilities:
 
@@ -69,6 +69,7 @@ Models, actions, services, enums, builders, queries, policies, factories, and te
 - **Financial:** income, expenses, coupons, gift cards, refunds, reporting, tax export, Stripe, and PayPal.
 - **Operations and staff:** schedules, blocked dates, holidays, capacity, check-ins, staff invitations and roles, activity logs, and webhook delivery.
 - **Analytics:** page and product-impression records use a keyed, pseudonymous visitor identifier. Raw network/device identifiers are not persisted, recording failures are reported without breaking storefront responses, and scheduled tenant-wide retention bounds stored history.
+- **Storage:** tenant-aware public assets remain on the `public` disk. Sensitive CSV imports use a dedicated private disk that is neither directly served nor shared across tenant storage roots; all configured disks fail loudly on storage errors.
 
 ## Order lifecycle
 

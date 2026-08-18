@@ -8,16 +8,14 @@ use Illuminate\Support\Str;
 
 class ProductCsvUploadResolver
 {
-    private const string DIRECTORY = 'csv-imports';
-
     public function resolve(string $path): ?UploadedFile
     {
         if (! $this->isExpectedPath($path)) {
             return null;
         }
 
-        $disk = Storage::disk('local');
-        $importRoot = realpath($disk->path(self::DIRECTORY));
+        $disk = Storage::disk('imports');
+        $importRoot = realpath($disk->path(''));
         $resolvedPath = realpath($disk->path($path));
 
         if ($importRoot === false || $resolvedPath === false) {
@@ -38,7 +36,7 @@ class ProductCsvUploadResolver
 
     private function isExpectedPath(string $path): bool
     {
-        if (! Str::startsWith($path, self::DIRECTORY . '/')) {
+        if ($path !== basename($path)) {
             return false;
         }
 
@@ -46,8 +44,6 @@ class ProductCsvUploadResolver
             return false;
         }
 
-        return collect(explode('/', $path))->doesntContain(
-            fn (string $segment): bool => in_array($segment, ['', '.', '..'], true) || str_contains($segment, '\\'),
-        );
+        return $path !== '' && ! str_contains($path, '\\');
     }
 }
