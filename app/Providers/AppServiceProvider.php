@@ -14,6 +14,7 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
@@ -25,6 +26,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -67,7 +69,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Centralized Stripe client so Stripe-using actions can be tested with
         // a mocked binding rather than instantiating the client themselves.
-        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(config('cashier.secret')));
+        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(
+            Config::string('cashier.secret', ''),
+        ));
 
         foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
             $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
@@ -106,9 +110,15 @@ class AppServiceProvider extends ServiceProvider
         // raw `throttle:5,1` / `throttle:10,1` everywhere makes route
         // files readable and lets the browser-test bypass live in one
         // place rather than as a dedicated middleware subclass.
-        $key = fn (\Illuminate\Http\Request $request): string => $request->user()?->getAuthIdentifier() !== null
-            ? (string) $request->user()->getAuthIdentifier()
-            : (string) $request->ip();
+        $key = function (\Illuminate\Http\Request $request): string {
+            $identifier = $request->user()?->getAuthIdentifier();
+
+            if (is_string($identifier) || is_int($identifier)) {
+                return (string) $identifier;
+            }
+
+            return $request->ip() ?? 'unknown';
+        };
 
         $bypass = fn (\Illuminate\Http\Request $request): bool => $request->getHost() === 'browser-test.kneadit.test';
 
@@ -142,8 +152,8 @@ class AppServiceProvider extends ServiceProvider
             ? Limit::none()
             : Limit::perMinute(60)->by($key($request)));
 
-        Feature::define('growth-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Growth) ?? false);
-        Feature::define('pro-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Pro) ?? false);
+        Feature::define('growth-features', fn (): bool => $this->tenantMeetsRequirement(SubscriptionTier::Growth));
+        Feature::define('pro-features', fn (): bool => $this->tenantMeetsRequirement(SubscriptionTier::Pro));
 
         FilamentView::registerRenderHook(
             'panels::body.end',
@@ -155,5 +165,12 @@ class AppServiceProvider extends ServiceProvider
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomainOrSubdomain::class,
         ]);
+    }
+
+    private function tenantMeetsRequirement(SubscriptionTier $required): bool
+    {
+        $tenant = tenancy()->tenant;
+
+        return $tenant instanceof Tenant && $tenant->plan->meetsRequirement($required);
     }
 }
