@@ -28,10 +28,13 @@ class CapacityLimitsTable
                 TextColumn::make('day_label')
                     ->label('Day / Date')
                     ->sortable(
-                        query: fn (Builder $query, string $direction) => $query
-                            ->orderByRaw($direction === 'desc'
-                                ? 'COALESCE(specific_date, day_of_week) desc'
-                                : 'COALESCE(specific_date, day_of_week) asc'),
+                        query: function (Builder $query, string $direction): Builder {
+                            $sortDirection = $direction === 'desc' ? 'desc' : 'asc';
+
+                            return $query
+                                ->orderBy('specific_date', $sortDirection)
+                                ->orderBy('day_of_week', $sortDirection);
+                        },
                     )
                     ->getStateUsing(function (CapacityLimit $record) {
                         if ($record->specific_date) {

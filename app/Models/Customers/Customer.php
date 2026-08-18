@@ -44,11 +44,16 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $loyalty_points_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
+ * @property-read string $customer_email Populated by ReorderReminders::getCustomers()
+ * @property-read string $customer_name Populated by ReorderReminders::getCustomers()
+ * @property int $days_since Populated by ReorderReminders::getCustomers()
  * @property-read string|null $last_order_date Populated by Customer::query()->withOrderMetrics()
  * @property-read string|null $last_order_at Populated by LoyaltyAnalytics::getLapsedCustomers()
  * @property-read float|null $orders_sum_total Populated by Customer::query()->withOrderMetrics()
  * @property-read float|null $total_spend
  * @property-read int|null $order_count Populated by withCount('orders as order_count')
+ * @property-read int|null $total_orders Populated by ReorderReminders::getCustomers()
+ * @property-read float|null $total_spent Populated by ReorderReminders::getCustomers()
  * @property-read int|null $balance Populated by TopLoyaltyCustomersQuery::get()
  * @property Carbon|null $birthday
  *

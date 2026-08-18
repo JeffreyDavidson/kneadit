@@ -3,6 +3,7 @@
 use App\Events\Platform\HealthCheckFailed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -116,7 +117,7 @@ test('health check detects non-writable storage logs', function () {
     Http::fake(['*' => Http::response('OK', 200)]);
 
     // Point storage to a non-existent directory
-    $nonExistentDir = sys_get_temp_dir() . '/kneadit_nonexistent_' . getmypid() . '_' . mt_rand();
+    $nonExistentDir = sys_get_temp_dir() . '/kneadit_nonexistent_' . getmypid() . '_' . Str::random();
     $this->app->useStoragePath($nonExistentDir);
 
     $this->artisan('health:check')
