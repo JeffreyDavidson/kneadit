@@ -2,6 +2,8 @@
 
 namespace App\DataTransferObjects\GiftCards;
 
+use DateTimeInterface;
+
 final readonly class CreateGiftCardData
 {
     public function __construct(
@@ -11,7 +13,7 @@ final readonly class CreateGiftCardData
         public ?string $recipientName = null,
         public ?string $recipientEmail = null,
         public ?string $message = null,
-        public ?string $expiresAt = null,
+        public DateTimeInterface|string|null $expiresAt = null,
     ) {}
 
     /**
@@ -26,7 +28,7 @@ final readonly class CreateGiftCardData
             recipientName: self::nullableStringValue($data['recipient_name'] ?? null, 'recipient_name'),
             recipientEmail: self::nullableStringValue($data['recipient_email'] ?? null, 'recipient_email'),
             message: self::nullableStringValue($data['message'] ?? null, 'message'),
-            expiresAt: self::nullableStringValue($data['expires_at'] ?? null, 'expires_at'),
+            expiresAt: self::nullableDateValue($data['expires_at'] ?? null),
         );
     }
 
@@ -46,6 +48,15 @@ final readonly class CreateGiftCardData
         }
 
         return self::stringValue($value, $key);
+    }
+
+    private static function nullableDateValue(mixed $value): DateTimeInterface|string|null
+    {
+        if ($value === null || is_string($value) || $value instanceof DateTimeInterface) {
+            return $value;
+        }
+
+        throw new \UnexpectedValueException('Expected expires_at to be a date string or DateTimeInterface.');
     }
 
     private static function floatValue(mixed $value, string $key): float
