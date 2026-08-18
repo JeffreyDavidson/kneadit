@@ -74,6 +74,20 @@ test('get tenant onboarding data detects default brand color', function () {
     expect($data->first()['checks']['brand_customized'])->toBeFalse();
 });
 
+test('get onboarding data reads tenant content checks from central metrics', function () {
+    Tenant::factory()->create([
+        'onboarding_products_count' => 2,
+        'onboarding_categories_count' => 1,
+        'onboarding_orders_count' => 0,
+    ]);
+
+    $checks = test()->page->getTenantOnboardingData()->first()['checks'];
+
+    expect($checks['has_products'])->toBeTrue()
+        ->and($checks['has_categories'])->toBeTrue()
+        ->and($checks['has_orders'])->toBeFalse();
+});
+
 test('total checks is always 7', function () {
     Tenant::factory()->create();
 

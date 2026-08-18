@@ -35,6 +35,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
+| Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
 | Every 30 minutes | `health:check` | Application health checks |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
@@ -65,6 +66,7 @@ Central schema changes use the normal migration command. Tenant schema changes b
 ```bash
 php artisan migrate --force
 php artisan tenants:migrate --force
+php artisan tenants:sync-onboarding-metrics
 ```
 
 Tenant provisioning runs tenant migrations automatically. Existing tenant migrations are forward-only history and must not be edited after merge.

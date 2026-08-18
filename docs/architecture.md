@@ -108,6 +108,8 @@ Settings are database-backed key/value records with separate tenant and platform
 
 Controllers should receive the typed `TenantSettings` DTO when rendering storefront data. Write paths use the relevant action plus `SettingsManager`. Tenancy transitions flush the manager cache, preventing values from one bakery surviving into another tenant context.
 
+Central onboarding screens read denormalized product, category, and order counts from the tenant record instead of opening every tenant database during a web request. `tenants:sync-onboarding-metrics` reconciles those counts every fifteen minutes and should be run once immediately after deploying its central migration.
+
 ## Frontend
 
 Blade, Livewire, Alpine.js, Filament, and Tailwind CSS make up the UI. Vite builds separate central/application, storefront, tenant Filament, and central Filament entry points defined in `vite.config.js`. Inline scripts and styles use the request-scoped CSP nonce directive.
