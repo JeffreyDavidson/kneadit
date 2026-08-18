@@ -38,7 +38,7 @@ class GalleryController extends Controller
                 ->paginate(18),
             'products' => Product::query()->active()->orderBy('name')->get(['id', 'name', 'image']),
             'content' => settingsPageContent('gallery'),
-            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }
