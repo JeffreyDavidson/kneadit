@@ -2,14 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
-use App\Models\Engagement\PageView;
-use App\Models\Orders\Order;
-use App\Queries\Financial\RevenueQuery;
+use App\Queries\Dashboard\StatsOverviewQuery;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
 class StatsOverview extends Widget
@@ -70,45 +66,7 @@ class StatsOverview extends Widget
     /** @return array<string, mixed> */
     private function loadData(): array
     {
-        $today = Date::today();
-        $weekStart = Date::now()->startOfWeek();
-        $weekEnd = Date::now()->endOfWeek();
-        $lastWeekStart = $weekStart->copy()->subWeek();
-        $lastWeekEnd = $weekEnd->copy()->subWeek();
-
-        $ordersChart = [];
-        $revenueChart = [];
-        $viewsChart = [];
-        $pendingCreatedChart = [];
-
-        for ($i = 6; $i >= 0; $i--) {
-            $d = $today->copy()->subDays($i);
-            $startOfDay = $d->copy()->startOfDay();
-            $endOfDay = $d->copy()->endOfDay();
-
-            $ordersChart[] = Order::query()->whereDate('delivery_date', $d)->count();
-            $revenueChart[] = (int) RevenueQuery::total([$d->toDateString(), $d->toDateString()]);
-            $viewsChart[] = PageView::query()->whereNull('product_id')
-                ->whereBetween('created_at', [$startOfDay, $endOfDay])
-                ->count();
-            $pendingCreatedChart[] = Order::query()
-                ->where('status', OrderStatus::Pending)
-                ->whereBetween('created_at', [$startOfDay, $endOfDay])
-                ->count();
-        }
-
-        return [
-            'todaysOrders' => $ordersChart[6] ?? 0,
-            'ordersChart' => $ordersChart,
-            'weekAvgOrders' => array_sum($ordersChart) / 7,
-            'pendingOrders' => Order::query()->where('status', OrderStatus::Pending)->count(),
-            'pendingChart' => $pendingCreatedChart,
-            'thisWeekRevenue' => RevenueQuery::total([$weekStart->toDateString(), $weekEnd->toDateString()]),
-            'lastWeekRevenue' => RevenueQuery::total([$lastWeekStart->toDateString(), $lastWeekEnd->toDateString()]),
-            'revenueChart' => $revenueChart,
-            'viewsToday' => $viewsChart[6] ?? 0,
-            'viewsChart' => $viewsChart,
-        ];
+        return resolve(StatsOverviewQuery::class)->get();
     }
 
     private function percentChange(float $current, float $baseline): int
