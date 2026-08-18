@@ -68,7 +68,8 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $max = Arr::integer(['total' => $data->max('total')], 'total', 1);
+        $maximumTotal = $data->max('total');
+        $max = is_numeric($maximumTotal) ? (int) $maximumTotal : 1;
 
         return $data->map(function (FeatureUsageLog $row) use ($max): array {
             $total = Arr::integer($row->getAttributes(), 'total', 0);
@@ -101,9 +102,10 @@ class FeatureUsageQuery
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxCount = Arr::integer(['count' => $logs->max(
+        $maximumCount = $logs->max(
             fn (Collection $group): mixed => $group->sum('usage_count'),
-        )], 'count', 1);
+        );
+        $maxCount = is_numeric($maximumCount) ? (int) $maximumCount : 1;
 
         $rows = [];
         foreach ($features as $feature) {

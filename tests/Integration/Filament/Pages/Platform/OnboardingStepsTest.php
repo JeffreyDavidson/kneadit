@@ -12,11 +12,19 @@ use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 
 beforeEach(function () {
-    setUpTenantTest();
+    setUpCentralTest();
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize(new Tenant([
+        'id' => 'onboarding-steps-test',
+        'name' => 'Onboarding Steps Test Owner',
+        'email' => 'owner@onboarding-steps.test',
+        'store_name' => 'Onboarding Steps Test Bakery',
+    ]));
 });
 
 // --- CompleteStep ---

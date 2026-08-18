@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Billing;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use App\Models\Staff\User;
 use Exception;
@@ -14,8 +15,11 @@ class SwapPlanController extends Controller
 {
     public function __invoke(#[CurrentUser] User $user, string $plan): RedirectResponse
     {
-        $priceId = Config::string("kneadit.stripe_prices.{$plan}");
-        abort_unless($priceId !== '', 404, 'Plan not found.');
+        $tier = SubscriptionTier::tryFrom($plan);
+        abort_unless($tier !== null, 404, 'Plan not found.');
+
+        $priceId = Config::get("kneadit.stripe_prices.{$tier->value}");
+        abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
         try {
             $user->subscription('default')?->swap($priceId);
