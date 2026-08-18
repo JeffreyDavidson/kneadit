@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

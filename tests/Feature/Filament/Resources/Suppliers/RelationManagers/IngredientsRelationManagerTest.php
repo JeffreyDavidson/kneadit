@@ -7,8 +7,9 @@ use App\Models\Inventory\Supplier;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -24,19 +25,18 @@ test('relation manager lists ingredients attached to the supplier', function () 
         ['unit_price' => 1.50],
     );
 
-    $component = livewire(IngredientsRelationManager::class, [
+    Livewire::test(IngredientsRelationManager::class, [
         'ownerRecord' => $supplier,
         'pageClass' => ListSuppliers::class,
-    ]);
-
-    $component->assertSuccessful();
-    $component->assertCanSeeTableRecords($ingredients);
+    ])
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords($ingredients);
 });
 
 test('relation manager renders for a supplier with no ingredients', function () {
     $supplier = Supplier::factory()->create();
 
-    livewire(IngredientsRelationManager::class, [
+    Livewire::test(IngredientsRelationManager::class, [
         'ownerRecord' => $supplier,
         'pageClass' => ListSuppliers::class,
     ])

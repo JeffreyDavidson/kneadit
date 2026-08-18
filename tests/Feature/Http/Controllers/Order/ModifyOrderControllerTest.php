@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\withoutMiddleware;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

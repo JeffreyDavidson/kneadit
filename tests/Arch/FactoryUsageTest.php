@@ -68,10 +68,6 @@ test('test files should not use direct Model::create() for models with factories
     $violations = [];
 
     foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo) {
-            continue;
-        }
-
         if ($file->getExtension() !== 'php') {
             continue;
         }
@@ -81,12 +77,7 @@ test('test files should not use direct Model::create() for models with factories
         }
 
         $content = file_get_contents($file->getPathname());
-
-        if ($content === false) {
-            throw new RuntimeException("Unable to read {$file->getPathname()}.");
-        }
-
-        $relative = str_replace($testsDir . DIRECTORY_SEPARATOR, '', $file->getPathname());
+        $relative = str_replace(realpath($testsDir) . DIRECTORY_SEPARATOR, '', $file->getPathname());
 
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $content, $matches)) {

@@ -5,7 +5,7 @@ use App\Enums\Customers\WaitlistStatus;
 use App\Models\Customers\WaitlistEntry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

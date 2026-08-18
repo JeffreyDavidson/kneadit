@@ -12,7 +12,7 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

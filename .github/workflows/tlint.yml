@@ -1,4 +1,4 @@
-name: Laravel/Blade Lint
+name: TLint
 
 on:
   push:
@@ -6,42 +6,25 @@ on:
   pull_request:
     branches: [main, develop]
 
-concurrency:
-  group: laravel-blade-lint-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   tlint:
     name: Laravel/Blade Lint
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          node-version: 22
-          cache: npm
-
-      - name: Verify local PHP
-        run: php -v && php -m
-
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
 
       - name: Install Composer dependencies
         env:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist
 
-      - name: Install Blade formatter dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-
-      - name: Run Pint
-        run: vendor/bin/pint --test
+      - name: Run TLint
+        run: vendor/bin/tlint lint

@@ -1,12 +1,10 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Toggle --}}
-        <div class="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+        <div class="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm dark:bg-gray-800">
             <div>
                 <h3 class="text-lg font-semibold">{{ $this->programName }} Program</h3>
-                <p class="text-sm text-gray-500">
-                    {{ $this->loyaltyEnabled ? 'Customers earn points on every delivered order' : 'Program is currently disabled' }}
-                </p>
+                <p class="text-sm text-gray-500">{{ $this->loyaltyEnabled ? 'Customers earn points on every delivered order' : 'Program is currently disabled' }}</p>
             </div>
             <button
                 wire:click="toggleLoyalty"
@@ -17,76 +15,74 @@
         </div>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-4 bg-white rounded-xl shadow-sm dark:bg-gray-800">
                 <p class="text-sm text-gray-500">Total Points Issued</p>
                 <p class="text-2xl font-bold">{{ number_format($this->totalPointsIssued) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+            <div class="p-4 bg-white rounded-xl shadow-sm dark:bg-gray-800">
                 <p class="text-sm text-gray-500">Total Points Redeemed</p>
                 <p class="text-2xl font-bold">{{ number_format($this->totalPointsRedeemed) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+            <div class="p-4 bg-white rounded-xl shadow-sm dark:bg-gray-800">
                 <p class="text-sm text-gray-500">Active Members</p>
                 <p class="text-2xl font-bold">{{ number_format($this->activeMembers) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+            <div class="p-4 bg-white rounded-xl shadow-sm dark:bg-gray-800">
                 <p class="text-sm text-gray-500">Available Rewards</p>
                 <p class="text-2xl font-bold">{{ $this->availableRewardsCount }}</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {{-- Top Customers --}}
-            <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-gray-800">
-                <div class="border-b p-4 dark:border-gray-700">
+            <div class="bg-white rounded-xl shadow-sm dark:bg-gray-800 overflow-hidden">
+                <div class="p-4 border-b dark:border-gray-700">
                     <h3 class="text-lg font-semibold">Top Customers by Points</h3>
                 </div>
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="p-3 text-left">Customer</th>
-                            <th class="p-3 text-right">Earned</th>
-                            <th class="p-3 text-right">Balance</th>
+                            <th class="text-left p-3">Customer</th>
+                            <th class="text-right p-3">Earned</th>
+                            <th class="text-right p-3">Balance</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($this->topCustomers as $customer)
-                            <tr class="border-t dark:border-gray-700">
-                                <td class="p-3">{{ $customer->name }}</td>
-                                <td class="p-3 text-right">{{ number_format($customer->total_earned) }}</td>
-                                <td class="p-3 text-right font-semibold">{{ number_format($customer->balance) }}</td>
-                            </tr>
+                        <tr class="border-t dark:border-gray-700">
+                            <td class="p-3">{{ $customer->name }}</td>
+                            <td class="p-3 text-right">{{ number_format($customer->total_earned) }}</td>
+                            <td class="p-3 text-right font-semibold">{{ number_format($customer->balance) }}</td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="3" class="p-4 text-center text-gray-500">No loyalty activity yet</td>
-                            </tr>
+                        <tr><td colspan="3" class="p-4 text-center text-gray-500">No loyalty activity yet</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
             {{-- Recent Activity --}}
-            <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-gray-800">
-                <div class="border-b p-4 dark:border-gray-700">
+            <div class="bg-white rounded-xl shadow-sm dark:bg-gray-800 overflow-hidden">
+                <div class="p-4 border-b dark:border-gray-700">
                     <h3 class="text-lg font-semibold">Recent Activity</h3>
                 </div>
-                <div class="max-h-96 divide-y overflow-y-auto dark:divide-gray-700">
+                <div class="divide-y dark:divide-gray-700 max-h-96 overflow-y-auto">
                     @forelse ($this->recentActivity as $activity)
-                        <div class="flex items-center justify-between p-3">
-                            <div>
-                                <p class="font-medium">{{ $activity->customer?->name ?? 'Unknown' }}</p>
-                                <p class="text-sm text-gray-500">{{ $activity->description }}</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-semibold {{ $activity->type === 'earned' ? 'text-green-600' : ($activity->type === 'redeemed' ? 'text-red-600' : 'text-yellow-600') }}">
-                                    {{ $activity->type === 'redeemed' ? '-' : '+' }}{{ number_format($activity->points) }}
-                                </span>
-                                <p class="text-xs text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
-                            </div>
+                    <div class="p-3 flex items-center justify-between">
+                        <div>
+                            <p class="font-medium">{{ $activity->customer?->name ?? 'Unknown' }}</p>
+                            <p class="text-sm text-gray-500">{{ $activity->description }}</p>
                         </div>
+                        <div class="text-right">
+                            <span class="font-semibold {{ $activity->type === 'earned' ? 'text-green-600' : ($activity->type === 'redeemed' ? 'text-red-600' : 'text-yellow-600') }}">
+                                {{ $activity->type === 'redeemed' ? '-' : '+' }}{{ number_format($activity->points) }}
+                            </span>
+                            <p class="text-xs text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
                     @empty
-                        <div class="p-4 text-center text-gray-500">No activity yet</div>
+                    <div class="p-4 text-center text-gray-500">No activity yet</div>
                     @endforelse
                 </div>
             </div>

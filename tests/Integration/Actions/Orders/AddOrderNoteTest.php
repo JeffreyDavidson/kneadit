@@ -4,7 +4,7 @@ use App\Actions\Orders\AddOrderNote;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

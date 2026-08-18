@@ -19,8 +19,8 @@ class Reviews extends Component
     /** @param array<string, mixed> $config */
     public function __construct(public array $config = [])
     {
-        $count = is_int($config['count'] ?? null) ? $config['count'] : 3;
-        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'Kind Words';
+        $count = $config['count'] ?? 3;
+        $this->title = $config['title'] ?? 'Kind Words';
         $this->reviews = Review::query()
             ->approved()
             ->latest()

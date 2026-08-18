@@ -23,7 +23,7 @@ test('it sends notification email to the platform admin', function () {
 
     $user = User::factory()->create(['name' => 'Jane Baker', 'email' => 'jane@example.com']);
     createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
-    $tenant = Tenant::query()->findOrFail('janes-bakery');
+    $tenant = Tenant::query()->find('janes-bakery');
 
     $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
 
@@ -41,7 +41,7 @@ test('failed method logs a warning with tenant id and error message', function (
 
     $user = User::factory()->create();
     createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
-    $tenant = Tenant::query()->findOrFail('janes-bakery');
+    $tenant = Tenant::query()->find('janes-bakery');
 
     $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
 

@@ -111,33 +111,25 @@ class ActivityLogPage extends Page
     /** @return array<string, string> */
     public function getActionOptions(): array
     {
-        $options = [];
-
-        foreach (ActivityLog::query()->distinct()->pluck('action') as $action) {
-            if ($action instanceof ActivityAction) {
-                $options[$action->value] = $action->getLabel();
-            }
-        }
-
-        asort($options);
-
-        return $options;
+        return ActivityLog::query()
+            ->distinct()
+            ->pluck('action')
+            ->filter()
+            ->mapWithKeys(fn (ActivityAction $a): array => [$a->value => $a->getLabel()])
+            ->sort()
+            ->all();
     }
 
     /** @return array<string, string> */
     public function getModelTypeOptions(): array
     {
-        $options = [];
-
-        foreach (ActivityLog::query()->distinct()->pluck('model_type') as $modelType) {
-            if (is_string($modelType) && $modelType !== '') {
-                $options[$modelType] = class_basename($modelType);
-            }
-        }
-
-        asort($options);
-
-        return $options;
+        return ActivityLog::query()
+            ->distinct()
+            ->pluck('model_type')
+            ->filter()
+            ->mapWithKeys(fn (string $t): array => [$t => class_basename($t)])
+            ->sort()
+            ->all();
     }
 
     public function toggleExpanded(int $id): void

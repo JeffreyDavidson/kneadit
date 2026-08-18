@@ -6,4 +6,4 @@ test('contact page renders without JS errors and shows the page marker', functio
     visit("{$storefrontUrl}/contact")
         ->assertVisible('[data-test="page-contact-show"]')
         ->assertNoJavaScriptErrors();
-})->group('launch-smoke');
+});

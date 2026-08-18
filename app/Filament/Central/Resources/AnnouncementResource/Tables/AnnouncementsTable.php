@@ -22,7 +22,7 @@ class AnnouncementsTable
                     ->badge(),
                 TextColumn::make('target_plans')
                     ->label('Target')
-                    ->formatStateUsing(fn (mixed $state): string => self::formatTargetPlans($state))
+                    ->formatStateUsing(fn (mixed $state) => empty($state) ? 'All Plans' : (is_array($state) ? implode(', ', $state) : 'All Plans'))
                     ->badge(),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
@@ -49,22 +49,5 @@ class AnnouncementsTable
             ->toolbarActions([
                 AuthorizedDeleteBulkAction::make(),
             ]);
-    }
-
-    private static function formatTargetPlans(mixed $state): string
-    {
-        if (! is_array($state)) {
-            return 'All Plans';
-        }
-
-        $plans = [];
-
-        foreach ($state as $plan) {
-            if (is_string($plan) && $plan !== '') {
-                $plans[] = $plan;
-            }
-        }
-
-        return $plans === [] ? 'All Plans' : implode(', ', $plans);
     }
 }

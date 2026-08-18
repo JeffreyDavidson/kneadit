@@ -6,4 +6,4 @@ test('order page renders without JS errors and shows the page marker', function 
     visit("{$storefrontUrl}/order")
         ->assertVisible('[data-test="page-order-create"]')
         ->assertNoJavaScriptErrors();
-})->group('launch-smoke');
+});

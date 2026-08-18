@@ -14,7 +14,7 @@
             @if ($icon)
                 <span class="stat-card-icon">
                     @if (is_string($icon) && str_starts_with($icon, 'heroicon-'))
-                        <x-filament::icon :icon="$icon" class="h-4 w-4" />
+                        <x-filament::icon :icon="$icon" class="w-4 h-4" />
                     @else
                         {{ $icon }}
                     @endif

@@ -15,26 +15,22 @@
 @endphp
 
 <div>
-    <div class="mb-2 flex items-center justify-between">
-        <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Live preview</span>
+    <div class="flex items-center justify-between mb-2">
+        <span class="text-cinnamon text-[0.7rem] uppercase tracking-[0.08em] font-semibold">Live preview</span>
         <span class="text-cinnamon text-[0.7rem]">How bakers will see it</span>
     </div>
 
     <div style="background-color: {{ $palette['bg'] }}; border-left: 4px solid {{ $palette['border'] }}; border-radius: 8px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;">
         <div style="flex-shrink: 0; color: {{ $palette['iconColor'] }}; margin-top: 2px;">
-            <x-dynamic-component :component="$palette['icon']" style="width: 20px; height: 20px" />
+            <x-dynamic-component :component="$palette['icon']" style="width: 20px; height: 20px;" />
         </div>
-        <div style="flex: 1; min-width: 0">
-            <div style="color: {{ $palette['text'] }}; font-weight: 700; font-size: 14px; margin-bottom: 4px;">
-                {{ $title }}
-            </div>
-            <div style="color: {{ $palette['text'] }}; font-size: 13px; line-height: 1.5; opacity: 0.85;">
-                {!! clean($body) !!}
-            </div>
+        <div style="flex: 1; min-width: 0;">
+            <div style="color: {{ $palette['text'] }}; font-weight: 700; font-size: 14px; margin-bottom: 4px;">{{ $title }}</div>
+            <div style="color: {{ $palette['text'] }}; font-size: 13px; line-height: 1.5; opacity: 0.85;">{!! clean($body) !!}</div>
         </div>
         @if ($isDismissable)
             <div style="color: {{ $palette['text'] }}; opacity: 0.5; flex-shrink: 0; margin-top: 2px;">
-                <x-heroicon-o-x-mark style="width: 16px; height: 16px" />
+                <x-heroicon-o-x-mark style="width: 16px; height: 16px;" />
             </div>
         @endif
     </div>

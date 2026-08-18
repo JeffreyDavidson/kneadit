@@ -15,4 +15,4 @@ test('admin dashboard renders all widgets cleanly', function () use ($storefront
     authenticatedVisit("{$storefrontUrl}/admin")
         ->assertSee('Dashboard')
         ->assertNoJavaScriptErrors();
-})->group('launch-smoke');
+});

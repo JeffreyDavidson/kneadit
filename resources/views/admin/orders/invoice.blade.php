@@ -12,18 +12,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice — {{ $order->order_number }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('css/invoice.css') }}" />
-    <style @cspnonce>
-        :root {
-            --brand: {{ $brand }};
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
+    <style @cspnonce>:root { --brand: {{ $brand }}; }</style>
 </head>
 <body>
     {{-- Print toolbar (hidden on print) --}}
@@ -44,7 +40,7 @@
         <header class="invoice__header">
             <div class="invoice__brand">
                 @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $settings->store->name }}" class="invoice__logo" />
+                    <img src="{{ $logoUrl }}" alt="{{ $settings->store->name }}" class="invoice__logo">
                 @endif
                 <h1 class="invoice__store">{{ $settings->store->name }}</h1>
                 @if ($tagline)
@@ -88,9 +84,7 @@
                 <div class="details__heading">Order Details</div>
                 <div class="details__row">
                     <dt>Status</dt>
-                    <dd>
-                        <span class="status status--{{ $order->status->value }}">{{ $order->status->getLabel() }}</span>
-                    </dd>
+                    <dd><span class="status status--{{ $order->status->value }}">{{ $order->status->getLabel() }}</span></dd>
                 </div>
                 <div class="details__row">
                     <dt>Order date</dt>
@@ -162,19 +156,13 @@
                 @if ($order->discount_amount->isPositive())
                     <div class="totals__row totals__row--credit">
                         <dt>Discount</dt>
-                        <dd>
-                            −
-                            @money($order->discount_amount)
-                        </dd>
+                        <dd>−@money($order->discount_amount)</dd>
                     </div>
                 @endif
                 @if ($order->gift_card_amount->isPositive())
                     <div class="totals__row totals__row--credit">
                         <dt>Gift card</dt>
-                        <dd>
-                            −
-                            @money($order->gift_card_amount)
-                        </dd>
+                        <dd>−@money($order->gift_card_amount)</dd>
                     </div>
                 @endif
                 @if ($order->tip_amount->isPositive())
@@ -199,9 +187,7 @@
             <p class="footer__line">Generated {{ now()->format('F j, Y \a\t g:i A') }}</p>
             @if ($settings->store->email || $settings->store->phone)
                 <p class="footer__line">
-                    Questions? {{ $settings->store->email }}
-                    @if ($settings->store->email && $settings->store->phone) · @endif
-                    {{ $settings->store->phone }}
+                    Questions? {{ $settings->store->email }}@if ($settings->store->email && $settings->store->phone) · @endif{{ $settings->store->phone }}
                 </p>
             @endif
         </footer>

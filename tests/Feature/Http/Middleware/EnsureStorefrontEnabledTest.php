@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Models\Platform\Tenant;
 use Illuminate\Http\Request;
 
 test('middleware passes when no tenant context', function () {
@@ -14,13 +13,12 @@ test('middleware passes when no tenant context', function () {
 });
 
 test('redirects to external website when storefront disabled and external url set', function () {
-    $tenant = new Tenant([
-        'id' => 'external-bakery',
-        'storefront_enabled' => false,
-        'external_website' => 'https://mybakery.com',
-    ]);
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize($tenant);
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant->storefront_enabled = false;
+    $tenant->external_website = 'https://mybakery.com';
+
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $middleware = new EnsureStorefrontEnabled;
     $request = Request::create('/');
@@ -32,12 +30,12 @@ test('redirects to external website when storefront disabled and external url se
 });
 
 test('disabled storefront view receives storeName from TenantSettings', function () {
-    $tenant = new Tenant([
-        'id' => 'disabled-bakery',
-        'storefront_enabled' => false,
-    ]);
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize($tenant);
+    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
+    $tenant->storefront_enabled = false;
+    $tenant->external_website = null;
+
+    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    app()->bind('currentTenant', fn () => $tenant);
 
     $settings = makeTenantSettings(store: makeStoreInfo(['name' => 'Mock Bakery']));
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);

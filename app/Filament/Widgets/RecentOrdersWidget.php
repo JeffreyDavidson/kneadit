@@ -5,10 +5,10 @@ namespace App\Filament\Widgets;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Orders\Order;
 use Filament\Actions\Action;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Filament\Support\Enums\FontWeight;
 
 class RecentOrdersWidget extends TableWidget
 {

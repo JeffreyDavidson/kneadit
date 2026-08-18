@@ -40,6 +40,5 @@
         <env name="NIGHTWATCH_ENABLED" value="false"/>
         <env name="LOG_CHANNEL" value="null"/>
         <env name="LOG_STACK" value="null"/>
-        <env name="STRIPE_SECRET" value="ci-placeholder-stripe-secret"/>
     </php>
 </phpunit>

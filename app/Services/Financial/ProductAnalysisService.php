@@ -63,8 +63,8 @@ class ProductAnalysisService
         $productsWithCosts = $productsWithCostData->count();
         $averageMargin = $productsWithCostData->whereNotNull('margin_percentage')->avg('margin_percentage');
 
-        $totalRevenue = $productsWithCostData->sum(fn (array $product): float => $product['price']);
-        $totalCosts = $productsWithCostData->sum(fn (array $product): float => $product['cost']);
+        $totalRevenue = $productsWithCostData->sum('price');
+        $totalCosts = $productsWithCostData->sum('cost');
         $totalProfit = $totalRevenue - $totalCosts;
         $overallMargin = $totalRevenue > 0 ? (($totalProfit / $totalRevenue) * 100) : 0;
 

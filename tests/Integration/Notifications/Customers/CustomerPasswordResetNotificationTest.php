@@ -4,7 +4,7 @@ use App\Models\Customers\Customer;
 use App\Notifications\Customers\CustomerPasswordResetNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

@@ -4,7 +4,7 @@ use App\Models\Operations\BlockedDate;
 use App\Services\Scheduling\AvailabilityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

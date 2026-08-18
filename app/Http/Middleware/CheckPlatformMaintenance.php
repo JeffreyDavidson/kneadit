@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\DataTransferObjects\Settings\SettingValue;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,10 +23,7 @@ class CheckPlatformMaintenance
             return $next($request);
         }
 
-        $affectedServices = array_values(array_filter(
-            SettingValue::decodedList(platformSettings('affected_services')),
-            is_string(...),
-        ));
+        $affectedServices = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
 
         $currentService = $this->detectService($request);
 
@@ -35,9 +31,8 @@ class CheckPlatformMaintenance
             return $next($request);
         }
 
-        $message = SettingValue::nullableString(platformSettings('maintenance_message'))
-            ?? 'We are currently performing scheduled maintenance.';
-        $scheduledEnd = SettingValue::nullableString(platformSettings('maintenance_scheduled_end'));
+        $message = platformSettings('maintenance_message', 'We are currently performing scheduled maintenance.');
+        $scheduledEnd = platformSettings('maintenance_scheduled_end');
 
         return response()
             ->view('platform.maintenance', [

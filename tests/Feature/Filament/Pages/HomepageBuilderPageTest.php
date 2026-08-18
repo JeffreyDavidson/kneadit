@@ -4,8 +4,9 @@ use App\Filament\Pages\Settings\HomepageBuilder;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -13,10 +14,9 @@ beforeEach(function () {
 });
 
 test('homepage builder renders and saves', function () {
-    $component = livewire(HomepageBuilder::class);
-
-    $component->assertOk();
-    $component->call('save');
+    Livewire::test(HomepageBuilder::class)
+        ->assertOk()
+        ->call('save');
 
     expect(settings('homepage_sections'))->not->toBeNull();
 });
@@ -26,7 +26,7 @@ test('reset to defaults action restores defaults', function () {
         'hero_tagline' => 'Custom tagline that should get overwritten',
     ]);
 
-    livewire(HomepageBuilder::class)
+    Livewire::test(HomepageBuilder::class)
         ->callAction('resetToDefaults');
 
     expect(settings('hero_tagline'))->toBe('Where every bite tells a story');

@@ -5,7 +5,7 @@ use App\Models\Engagement\Review;
 use App\View\Components\Home\Hero;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -102,8 +102,7 @@ test('owner can bulk-delete selected suppliers via the AuthorizedDeleteBulkActio
     $doomed = Supplier::factory()->count(2)->create();
 
     Livewire::test(ListSuppliers::class)
-        ->selectTableRecords($doomed)
-        ->callAction(TestAction::make('delete')->table()->bulk());
+        ->callTableBulkAction('delete', $doomed);
 
     expect(Supplier::query()->count())->toBe(1)
         ->and(Supplier::query()->find($kept->id))->not->toBeNull()

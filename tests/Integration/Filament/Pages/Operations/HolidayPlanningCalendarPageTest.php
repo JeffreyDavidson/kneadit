@@ -4,7 +4,7 @@ use App\Filament\Pages\Operations\HolidayPlanningCalendar;
 use App\Models\Operations\Holiday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

@@ -105,11 +105,11 @@ class Messages extends Page
             return null;
         }
 
-        $count = cache()->remember("navigation-badge:platform-messages:{$tenant->id}:unread-admin", 60, fn (): int => PlatformMessage::query()->where('tenant_id', $tenant->id)
+        $count = PlatformMessage::query()->where('tenant_id', $tenant->id)
             ->fromAdmin()
             ->topLevel()
             ->unread()
-            ->count());
+            ->count();
 
         return $count > 0 ? (string) $count : null;
     }

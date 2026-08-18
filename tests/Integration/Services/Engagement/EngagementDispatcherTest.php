@@ -4,18 +4,16 @@ use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
 use App\Models\Customers\Customer;
 use App\Services\Engagement\EngagementDispatcher;
-use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
-use JMac\Testing\Double;
 
-function makeFakeTenantSettings(): TenantSettings
+function makeFakeTenantSettings(): App\Services\Settings\TenantSettings
 {
     return makeTenantSettings();
 }
 
 test('dispatches engagement to recipients across tenants', function () {
-    $customer = new Customer;
+    $customer = Mockery::mock(Customer::class)->shouldIgnoreMissing();
     $customer->name = 'Jane Doe';
     $customer->email = 'jane@example.com';
 
@@ -27,14 +25,15 @@ test('dispatches engagement to recipients across tenants', function () {
 
     $settings = makeFakeTenantSettings();
 
-    $engagement = Double::for(CustomerEngagement::class);
-    $engagement->allows('isEnabled')->with($settings)->returns(true);
-    $engagement->allows('findRecipients')->with($settings)->returns(collect([$recipient]));
-    $engagement->expects('dispatchForRecipient')->with($recipient, $settings);
+    $engagement = Mockery::mock(CustomerEngagement::class);
+    $engagement->shouldReceive('isEnabled')->with($settings)->andReturnTrue();
+    $engagement->shouldReceive('findRecipients')->with($settings)->andReturn(collect([$recipient]));
+    $engagement->shouldReceive('dispatchForRecipient')->with($recipient, $settings)->once();
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('forEachTenant')
-        ->resolves(function (callable $callback, ?callable $onError) use ($settings) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('forEachTenant')
+        ->once()
+        ->andReturnUsing(function (callable $callback, ?callable $onError) use ($settings) {
             $tenant = new App\Models\Platform\Tenant;
             $tenant->id = 'test-bakery';
 
@@ -45,9 +44,9 @@ test('dispatches engagement to recipients across tenants', function () {
             return 0;
         });
 
-    $output = Double::for(Command::class);
-    $output->allows('info')->returns($output);
-    $output->allows('error')->returns($output);
+    $output = Mockery::mock(Command::class);
+    $output->shouldReceive('info')->andReturnSelf();
+    $output->shouldReceive('error')->andReturnSelf();
 
     $dispatcher = new EngagementDispatcher($tenancyManager);
     $failures = $dispatcher->dispatch($engagement, $output);
@@ -58,13 +57,14 @@ test('dispatches engagement to recipients across tenants', function () {
 test('skips disabled engagements', function () {
     $settings = makeFakeTenantSettings();
 
-    $engagement = Double::for(CustomerEngagement::class);
-    $engagement->allows('isEnabled')->with($settings)->returns(false);
-    $engagement->expects('findRecipients')->never();
+    $engagement = Mockery::mock(CustomerEngagement::class);
+    $engagement->shouldReceive('isEnabled')->with($settings)->andReturnFalse();
+    $engagement->shouldNotReceive('findRecipients');
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('forEachTenant')
-        ->resolves(function (callable $callback) use ($settings) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('forEachTenant')
+        ->once()
+        ->andReturnUsing(function (callable $callback) use ($settings) {
             $tenant = new App\Models\Platform\Tenant;
             $tenant->id = 'test-bakery';
 
@@ -73,8 +73,8 @@ test('skips disabled engagements', function () {
             return 0;
         });
 
-    $output = Double::for(Command::class);
-    $output->allows('info')->returns($output);
+    $output = Mockery::mock(Command::class);
+    $output->shouldReceive('info')->andReturnSelf();
 
     $dispatcher = new EngagementDispatcher($tenancyManager);
     $failures = $dispatcher->dispatch($engagement, $output);
@@ -85,14 +85,15 @@ test('skips disabled engagements', function () {
 test('skips when no recipients found', function () {
     $settings = makeFakeTenantSettings();
 
-    $engagement = Double::for(CustomerEngagement::class);
-    $engagement->allows('isEnabled')->returns(true);
-    $engagement->allows('findRecipients')->returns(collect());
-    $engagement->expects('dispatchForRecipient')->never();
+    $engagement = Mockery::mock(CustomerEngagement::class);
+    $engagement->shouldReceive('isEnabled')->andReturnTrue();
+    $engagement->shouldReceive('findRecipients')->andReturn(collect());
+    $engagement->shouldNotReceive('dispatchForRecipient');
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('forEachTenant')
-        ->resolves(function (callable $callback) use ($settings) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('forEachTenant')
+        ->once()
+        ->andReturnUsing(function (callable $callback) use ($settings) {
             $tenant = new App\Models\Platform\Tenant;
             $tenant->id = 'test-bakery';
 
@@ -101,8 +102,8 @@ test('skips when no recipients found', function () {
             return 0;
         });
 
-    $output = Double::for(Command::class);
-    $output->expects('info')->never();
+    $output = Mockery::mock(Command::class);
+    $output->shouldReceive('info')->never();
 
     $dispatcher = new EngagementDispatcher($tenancyManager);
     $failures = $dispatcher->dispatch($engagement, $output);
@@ -111,7 +112,7 @@ test('skips when no recipients found', function () {
 });
 
 test('handles recipient dispatch failure gracefully', function () {
-    $customer = new Customer;
+    $customer = Mockery::mock(Customer::class)->shouldIgnoreMissing();
     $customer->name = 'Jane Doe';
     $customer->email = 'jane@example.com';
 
@@ -123,15 +124,16 @@ test('handles recipient dispatch failure gracefully', function () {
 
     $settings = makeFakeTenantSettings();
 
-    $engagement = Double::for(CustomerEngagement::class);
-    $engagement->allows('isEnabled')->returns(true);
-    $engagement->allows('findRecipients')->returns(collect([$recipient]));
-    $engagement->allows('dispatchForRecipient')
-        ->throws(new RuntimeException('Mail server down'));
+    $engagement = Mockery::mock(CustomerEngagement::class);
+    $engagement->shouldReceive('isEnabled')->andReturnTrue();
+    $engagement->shouldReceive('findRecipients')->andReturn(collect([$recipient]));
+    $engagement->shouldReceive('dispatchForRecipient')
+        ->andThrow(new RuntimeException('Mail server down'));
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('forEachTenant')
-        ->resolves(function (callable $callback) use ($settings) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('forEachTenant')
+        ->once()
+        ->andReturnUsing(function (callable $callback) use ($settings) {
             $tenant = new App\Models\Platform\Tenant;
             $tenant->id = 'test-bakery';
 
@@ -140,8 +142,8 @@ test('handles recipient dispatch failure gracefully', function () {
             return 0;
         });
 
-    $output = Double::for(Command::class);
-    $output->expects('error');
+    $output = Mockery::mock(Command::class);
+    $output->shouldReceive('error')->once();
 
     $dispatcher = new EngagementDispatcher($tenancyManager);
     $failures = $dispatcher->dispatch($engagement, $output);
@@ -150,11 +152,12 @@ test('handles recipient dispatch failure gracefully', function () {
 });
 
 test('calls error callback when tenant processing fails', function () {
-    $engagement = Double::for(CustomerEngagement::class);
+    $engagement = Mockery::mock(CustomerEngagement::class);
 
-    $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('forEachTenant')
-        ->resolves(function (callable $callback, ?callable $onError) {
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('forEachTenant')
+        ->once()
+        ->andReturnUsing(function (callable $callback, ?callable $onError) {
             $tenant = new App\Models\Platform\Tenant;
             $tenant->id = 'failing-bakery';
 
@@ -163,8 +166,8 @@ test('calls error callback when tenant processing fails', function () {
             return 1;
         });
 
-    $output = Double::for(Command::class);
-    $output->expects('error');
+    $output = Mockery::mock(Command::class);
+    $output->shouldReceive('error')->once();
 
     $dispatcher = new EngagementDispatcher($tenancyManager);
     $failures = $dispatcher->dispatch($engagement, $output);

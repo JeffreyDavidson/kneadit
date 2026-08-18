@@ -6,7 +6,7 @@ use App\Models\Orders\CartItem;
 use App\Services\Carts\CartManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

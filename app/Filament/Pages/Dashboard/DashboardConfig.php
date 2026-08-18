@@ -10,12 +10,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 
-/**
- * @phpstan-type SavedWidgetSettings array{visible: bool, order: int, size?: string, span?: int}
- * @phpstan-type SavedDashboardConfig array<string, SavedWidgetSettings>
- * @phpstan-type WidgetDetails array{name: string, description: string, icon: \BackedEnum|string, defaultSize: WidgetSize}
- * @phpstan-type ConfigurableWidget array{key: string, visible: bool, size: string, name: string, description: string, icon: \BackedEnum|string}
- */
 class DashboardConfig extends Page
 {
     use RequiresManagerRole;
@@ -34,7 +28,7 @@ class DashboardConfig extends Page
 
     protected string $view = 'filament.pages.dashboard.dashboard-config';
 
-    /** @var list<ConfigurableWidget> */
+    /** @var array<int, mixed> */
     public array $widgets = [];
 
     public bool $showPreview = false;
@@ -47,41 +41,37 @@ class DashboardConfig extends Page
     protected function loadWidgets(): void
     {
         $widgetMeta = WidgetMeta::all();
-        $config = $this->getSavedDashboardConfig();
+        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
+        $config = $saved ? json_decode($saved, true) : null;
 
-        if ($config === null || $config === []) {
+        if (! $config) {
             $config = $this->getDefaults();
         }
 
-        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
+        uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {
-            $meta = $this->normalizeWidgetDetails($widgetMeta[$key] ?? null);
-
-            if ($meta === null) {
+            if (! isset($widgetMeta[$key])) {
                 continue;
             }
-
             $this->widgets[] = [
                 'key' => $key,
-                'visible' => $settings['visible'],
-                'size' => $this->resolveSize($key, $settings, $meta),
-                'name' => $meta['name'],
-                'description' => $meta['description'],
-                'icon' => $meta['icon'],
+                'visible' => $settings['visible'] ?? true,
+                'size' => $this->resolveSize($key, $settings, $widgetMeta[$key]),
+                'name' => $widgetMeta[$key]['name'],
+                'description' => $widgetMeta[$key]['description'],
+                'icon' => $widgetMeta[$key]['icon'],
             ];
         }
 
         // Add any missing widgets
-        foreach ($widgetMeta as $key => $rawMeta) {
-            $meta = $this->normalizeWidgetDetails($rawMeta);
-
-            if ($meta !== null && ! collect($this->widgets)->contains('key', $key)) {
+        foreach ($widgetMeta as $key => $meta) {
+            if (! collect($this->widgets)->where('key', $key)->count()) {
                 $this->widgets[] = [
                     'key' => $key,
                     'visible' => true,
-                    'size' => $meta['defaultSize']->value,
+                    'size' => ($meta['defaultSize'] ?? WidgetSize::Small)->value,
                     'name' => $meta['name'],
                     'description' => $meta['description'],
                     'icon' => $meta['icon'],
@@ -94,30 +84,26 @@ class DashboardConfig extends Page
      * Resolve the size for a widget from its saved settings, with a
      * fall-back chain that handles legacy integer span values from
      * older saved configs AND clamps disallowed sizes to the widget's
-     * default (a saved 'xl' for welcome_banner, e.g., gets clamped
-     * to 'sm' since allowedSizes doesn't include xl).
+     * default (a saved 'sm' for welcome_banner, e.g., gets clamped
+     * to 'lg' since allowedSizes won't include sm anymore).
      *
-     * @param SavedWidgetSettings $settings
-     * @param WidgetDetails $meta
+     * @param array<string, mixed> $settings
+     * @param array<string, mixed> $meta
      */
     private function resolveSize(string $key, array $settings, array $meta): string
     {
         $resolved = match (true) {
-            isset($settings['size']) && WidgetSize::tryFrom($settings['size']) !== null => WidgetSize::tryFrom($settings['size']),
+            isset($settings['size']) && WidgetSize::tryFrom((string) $settings['size']) !== null => WidgetSize::tryFrom((string) $settings['size']),
 
-            isset($settings['span']) => WidgetSize::fromLegacySpan($settings['span']),
+            isset($settings['span']) => WidgetSize::fromLegacySpan((int) $settings['span']),
 
-            default => $meta['defaultSize'],
+            default => $meta['defaultSize'] ?? WidgetSize::Small,
         };
 
         $allowed = WidgetMeta::allowedSizesFor($key);
 
         if (! in_array($resolved, $allowed, true)) {
-            $resolved = $meta['defaultSize'];
-
-            if (! in_array($resolved, $allowed, true)) {
-                $resolved = $allowed[0] ?? WidgetSize::Small;
-            }
+            $resolved = $meta['defaultSize'] ?? $allowed[0] ?? WidgetSize::Small;
         }
 
         return $resolved->value;
@@ -165,7 +151,7 @@ class DashboardConfig extends Page
             $config[$widget['key']] = [
                 'visible' => $widget['visible'],
                 'order' => $i + 1,
-                'size' => $widget['size'],
+                'size' => $widget['size'] ?? WidgetSize::Small->value,
             ];
         }
 
@@ -192,86 +178,15 @@ class DashboardConfig extends Page
             ->send();
     }
 
-    /** @return SavedDashboardConfig */
+    /** @return array<string, mixed> */
     protected function getDefaults(): array
     {
         $defaults = [];
         $i = 1;
         foreach (WidgetMeta::all() as $key => $meta) {
-            $defaults[$key] = ['visible' => ! WidgetMeta::isDefaultHidden($key), 'order' => $i++];
+            $defaults[$key] = ['visible' => true, 'order' => $i++];
         }
 
         return $defaults;
-    }
-
-    /** @return SavedDashboardConfig|null */
-    private function getSavedDashboardConfig(): ?array
-    {
-        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
-
-        if (! is_string($saved) || $saved === '') {
-            return null;
-        }
-
-        $decoded = json_decode($saved, true);
-
-        if (! is_array($decoded)) {
-            return null;
-        }
-
-        $config = [];
-
-        foreach ($decoded as $key => $settings) {
-            if (! is_string($key)) {
-                continue;
-            }
-            if (! is_array($settings)) {
-                continue;
-            }
-            $normalized = [
-                'visible' => is_bool($settings['visible'] ?? null) ? $settings['visible'] : true,
-                'order' => is_int($settings['order'] ?? null) ? $settings['order'] : 99,
-            ];
-
-            if (is_string($settings['size'] ?? null)) {
-                $normalized['size'] = $settings['size'];
-            }
-
-            if (is_int($settings['span'] ?? null)) {
-                $normalized['span'] = $settings['span'];
-            }
-
-            $config[$key] = $normalized;
-        }
-
-        return $config;
-    }
-
-    /** @return WidgetDetails|null */
-    private function normalizeWidgetDetails(mixed $meta): ?array
-    {
-        if (! is_array($meta)) {
-            return null;
-        }
-
-        $name = $meta['name'] ?? null;
-        $description = $meta['description'] ?? null;
-        $icon = $meta['icon'] ?? null;
-        $defaultSize = $meta['defaultSize'] ?? null;
-
-        if (
-            ! is_string($name)
-            || ! is_string($description)
-            || (! is_string($icon) && ! $icon instanceof \BackedEnum)
-        ) {
-            return null;
-        }
-
-        return [
-            'name' => $name,
-            'description' => $description,
-            'icon' => $icon,
-            'defaultSize' => $defaultSize instanceof WidgetSize ? $defaultSize : WidgetSize::Small,
-        ];
     }
 }

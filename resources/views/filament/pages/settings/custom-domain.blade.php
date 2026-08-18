@@ -1,10 +1,12 @@
 <x-filament-panels::page>
     <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-        <div class="fi-section-content p-6">{{ $this->content }}</div>
+        <div class="fi-section-content p-6">
+            {{ $this->content }}
+        </div>
     </div>
 
     <form wire:submit="save">
-        <div class="fi-form-actions">
+            <div class="fi-form-actions">
             <x-filament::actions :actions="$this->getCachedFormActions()" />
         </div>
     </form>

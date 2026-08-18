@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\withoutMiddleware;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

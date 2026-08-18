@@ -5,7 +5,7 @@ use App\Models\Orders\Order;
 use App\Services\Orders\OrderAccessGuard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

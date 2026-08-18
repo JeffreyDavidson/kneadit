@@ -7,7 +7,7 @@ use App\Pipes\Orders\MarkCartConverted;
 use App\Pipes\Orders\OrderPipelineData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

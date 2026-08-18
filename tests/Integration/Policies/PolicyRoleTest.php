@@ -3,31 +3,14 @@
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
-
-function policyViewAny(string $policyClass, User $user): bool
-{
-    $policy = new $policyClass;
-
-    if (! method_exists($policy, 'viewAny')) {
-        throw new LogicException("Policy {$policyClass} does not define viewAny.");
-    }
-
-    $result = $policy->viewAny($user);
-
-    if (! is_bool($result)) {
-        throw new LogicException("Policy {$policyClass}::viewAny did not return a boolean.");
-    }
-
-    return $result;
-}
 
 test('manager policies deny staff users viewAny', function (string $policyClass) {
     $staff = User::factory()->staff()->create();
 
-    expect(policyViewAny($policyClass, $staff))->toBeFalse();
+    expect((new $policyClass)->viewAny($staff))->toBeFalse();
 })->with([
     'BlockedDatePolicy' => [App\Policies\Operations\BlockedDatePolicy::class],
     'CapacityLimitPolicy' => [App\Policies\Operations\CapacityLimitPolicy::class],
@@ -46,7 +29,7 @@ test('manager policies deny staff users viewAny', function (string $policyClass)
 test('manager policies allow manager users viewAny', function (string $policyClass) {
     $manager = User::factory()->manager()->create();
 
-    expect(policyViewAny($policyClass, $manager))->toBeTrue();
+    expect((new $policyClass)->viewAny($manager))->toBeTrue();
 })->with([
     'BlockedDatePolicy' => [App\Policies\Operations\BlockedDatePolicy::class],
     'CapacityLimitPolicy' => [App\Policies\Operations\CapacityLimitPolicy::class],
@@ -65,7 +48,7 @@ test('manager policies allow manager users viewAny', function (string $policyCla
 test('staff-level policies allow staff users viewAny', function (string $policyClass) {
     $staff = User::factory()->staff()->create();
 
-    expect(policyViewAny($policyClass, $staff))->toBeTrue();
+    expect((new $policyClass)->viewAny($staff))->toBeTrue();
 })->with([
     'OrderPolicy' => [App\Policies\Orders\OrderPolicy::class],
     'ProductPolicy' => [App\Policies\Inventory\ProductPolicy::class],

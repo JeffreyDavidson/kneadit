@@ -95,15 +95,11 @@ class AdminPanelProvider extends PanelProvider
                 // Resolve the active preset; default to 'honey' which produces
                 // the same hex values as the previous hardcoded fallback so
                 // tenants without a saved theme are visually identical.
-                $theme = rescue(
+                $theme = (string) rescue(
                     fn () => resolve(SettingsManager::class)->get('admin_theme', 'honey'),
                     'honey',
                     false,
                 );
-
-                if (! is_string($theme)) {
-                    $theme = 'honey';
-                }
 
                 if (! array_key_exists($theme, PanelThemes::AVAILABLE)) {
                     $theme = 'honey';

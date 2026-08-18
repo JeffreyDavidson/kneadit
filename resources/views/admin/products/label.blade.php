@@ -6,16 +6,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Label — {{ $product->name }}</title>
     <style @cspnonce>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
             --ink: #1c1410;
@@ -24,8 +18,7 @@
             --paper: #ffffff;
         }
 
-        html,
-        body {
+        html, body {
             background: #f4ede0;
             color: var(--ink);
             font-family: 'Georgia', 'Times New Roman', serif;
@@ -60,9 +53,7 @@
             text-decoration: none;
         }
         .toolbar button:hover,
-        .toolbar a:hover {
-            background: #faf4e8;
-        }
+        .toolbar a:hover { background: #faf4e8; }
 
         .label {
             width: 6.5in;
@@ -165,22 +156,10 @@
         }
 
         @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .toolbar {
-                display: none;
-            }
-            .label {
-                box-shadow: none;
-                border: 0;
-                padding: 0.5in;
-            }
-            @page {
-                size: letter;
-                margin: 0.5in;
-            }
+            body { background: white; padding: 0; }
+            .toolbar { display: none; }
+            .label { box-shadow: none; border: 0; padding: 0.5in; }
+            @page { size: letter; margin: 0.5in; }
         }
     </style>
 </head>
@@ -202,17 +181,20 @@
 
         <div class="section-heading">Ingredients</div>
         @if (count($label->ingredientNames()) > 0)
-            <p class="ingredients">{{ implode(', ', $label->ingredientNames()) }}.</p>
+            <p class="ingredients">
+                {{ implode(', ', $label->ingredientNames()) }}.
+            </p>
         @else
             <p class="no-data">No recipe on file for this product. Add ingredients in the Recipes section.</p>
         @endif
 
         @if ($label->allergenStatement())
-            <div class="allergen-statement">{{ $label->allergenStatement() }}</div>
+            <div class="allergen-statement">
+                {{ $label->allergenStatement() }}
+            </div>
         @elseif (count($label->ingredientNames()) > 0)
             <p class="no-data">
-                No allergens tagged on this recipe's ingredients. Tag your pantry ingredients with their allergens to
-                auto-generate a disclosure.
+                No allergens tagged on this recipe's ingredients. Tag your pantry ingredients with their allergens to auto-generate a disclosure.
             </p>
         @endif
 
@@ -230,8 +212,8 @@
         </div>
 
         <div class="disclaimer">
-            Made in a home kitchen that is not subject to state inspection. Follow the food safety requirements of the
-            cottage food laws in your state when selling or distributing.
+            Made in a home kitchen that is not subject to state inspection. Follow the food safety
+            requirements of the cottage food laws in your state when selling or distributing.
         </div>
     </div>
 </body>

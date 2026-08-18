@@ -12,40 +12,33 @@
 
 <x-filament-widgets::widget>
     <x-central.card class="{{ $tone['bg'] }} {{ $tone['border'] }}">
-        <div class="flex flex-wrap items-center gap-5">
+        <div class="flex items-center gap-5 flex-wrap">
             <div class="w-11 h-11 rounded-xl {{ $tone['iconBg'] }} border flex items-center justify-center shrink-0">
                 <x-heroicon-o-clipboard-document-check class="w-5 h-5 {{ $tone['icon'] }}" />
             </div>
 
-            <div class="min-w-60 shrink-0">
+            <div class="shrink-0 min-w-60">
                 <x-central.eyebrow class="mb-1.5">Onboarding Progress</x-central.eyebrow>
-                <div class="text-[1.05rem] leading-tight font-bold text-white">
-                    {{ $stats['onboarded'] }} <span class="text-cinnamon font-normal">of</span> {{ $stats['total'] }}
-                    <span class="text-cinnamon font-normal">bakeries fully onboarded</span>
+                <div class="text-white font-bold text-[1.05rem] leading-tight">
+                    {{ $stats['onboarded'] }} <span class="text-cinnamon font-normal">of</span> {{ $stats['total'] }} <span class="text-cinnamon font-normal">bakeries fully onboarded</span>
                 </div>
                 @if ($stuck > 0)
-                    <div class="text-cinnamon mt-1.5 text-[0.8rem]">
+                    <div class="text-cinnamon text-[0.8rem] mt-1.5">
                         {{ $stuck }} {{ \Illuminate\Support\Str::plural('bakery', $stuck) }} still working through setup
                     </div>
                 @endif
             </div>
 
-            <div class="flex min-w-65 flex-1 items-center gap-3">
-                <div class="bg-espresso h-2 flex-1 overflow-hidden rounded-full">
-                    <div
-                        class="from-honey to-golden h-full rounded-full bg-linear-to-r transition-all"
-                        style="width: {{ $stats['percentage'] }}%;"
-                    ></div>
+            <div class="flex items-center gap-3 flex-1 min-w-65">
+                <div class="bg-espresso rounded-full h-2 overflow-hidden flex-1">
+                    <div class="h-full rounded-full bg-linear-to-r from-honey to-golden transition-all" style="width: {{ $stats['percentage'] }}%;"></div>
                 </div>
                 <span class="{{ $tone['icon'] }} text-[0.85rem] font-bold tabular-nums shrink-0">{{ $stats['percentage'] }}%</span>
             </div>
 
-            <a
-                href="{{ $trackerUrl }}"
-                class="bg-honey/10 text-honey border-honey/25 hover:bg-honey hover:text-warm-black inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[0.75rem] font-semibold no-underline transition-colors"
-            >
+            <a href="{{ $trackerUrl }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-honey/10 text-honey border border-honey/25 hover:bg-honey hover:text-warm-black transition-colors no-underline shrink-0">
                 Open Tracker
-                <x-heroicon-o-arrow-right class="h-3.5 w-3.5" />
+                <x-heroicon-o-arrow-right class="w-3.5 h-3.5" />
             </a>
         </div>
     </x-central.card>

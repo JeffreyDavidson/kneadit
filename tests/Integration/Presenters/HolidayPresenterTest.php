@@ -4,7 +4,7 @@ use App\Models\Operations\Holiday;
 use App\Presenters\HolidayPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -11,7 +11,6 @@ use App\Filament\Pages\Platform\OnboardingSteps\DeliveryStep;
 use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
-use App\Models\Platform\Setting;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use Database\Seeders\Customers\CustomerSeeder;
@@ -135,7 +134,7 @@ class TenantFactory extends Factory
                 WelcomeStep::save(OnboardingFixtures::welcome($tenant));
                 BrandingStep::save(OnboardingFixtures::branding());
 
-                Setting::query()
+                \App\Models\Platform\Setting::query()
                     ->where('key', 'onboarding_completed_at')
                     ->delete();
             });

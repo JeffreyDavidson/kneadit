@@ -13,7 +13,7 @@ concurrency:
 jobs:
   back-merge:
     name: Merge main into develop
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
 
     permissions:
       contents: write

@@ -2,7 +2,6 @@
 
 namespace App\Events\Platform;
 
-use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -14,7 +13,7 @@ class WeeklyDigestRequested implements ShouldDispatchAfterCommit
 
     /**
      * @param array<string, mixed> $stats
-     * @param Collection<int, OrderItem> $topProducts
+     * @param Collection<int, mixed> $topProducts
      * @param Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers
      */
     public function __construct(

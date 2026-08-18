@@ -8,7 +8,7 @@ use App\Models\Orders\OrderItem;
 use App\Services\Analytics\ProductTrendsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

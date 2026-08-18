@@ -10,7 +10,6 @@ enum StorefrontTheme: string implements HasLabel
     case Modern = 'modern';
     case Rustic = 'rustic';
     case Elegant = 'elegant';
-    case Biscotto = 'biscotto';
 
     public function getLabel(): string
     {

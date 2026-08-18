@@ -69,7 +69,7 @@ test('returns null when API throws exception', function () {
     ]);
 
     Http::fake([
-        'api-m.sandbox.paypal.com/v1/oauth2/token' => fn () => throw new Exception('Connection refused'),
+        'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(fn () => throw new Exception('Connection refused')),
     ]);
 
     $manager = resolve(TokenManager::class);

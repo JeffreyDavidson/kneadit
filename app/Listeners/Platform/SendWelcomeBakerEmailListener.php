@@ -7,7 +7,6 @@ use App\Events\Platform\TenantOnboarded;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\WelcomeBakerMail;
 use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Support\Facades\Config;
 
 class SendWelcomeBakerEmailListener extends SendEmailListener
 {
@@ -25,7 +24,7 @@ class SendWelcomeBakerEmailListener extends SendEmailListener
             storeName: $event->tenant->store_name ?? $event->tenant->name,
             adminUrl: $event->adminUrl,
             plan: SubscriptionTier::Starter->value,
-            trialEndsAt: now()->addDays(Config::integer('kneadit.trial_days', 30))->format('F j, Y'),
+            trialEndsAt: now()->addDays(config('kneadit.trial_days', 30))->format('F j, Y'),
         );
     }
 

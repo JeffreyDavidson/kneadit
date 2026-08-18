@@ -5,7 +5,7 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Queries\Loyalty\TopLoyaltyCustomersQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

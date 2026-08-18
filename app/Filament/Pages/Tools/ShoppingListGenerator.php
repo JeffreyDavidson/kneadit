@@ -10,7 +10,6 @@ use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Laravel\Pennant\Feature;
 
 class ShoppingListGenerator extends Page
@@ -42,7 +41,7 @@ class ShoppingListGenerator extends Page
 
     public string $endDate = '';
 
-    /** @var Collection<int, array{name: string, quantity: float, unit: string, in_stock: float|null, stock_unit: string|null, needs_purchase: bool, deficit: float}> */
+    /** @var Collection<int, mixed> */
     public Collection $shoppingList;
 
     /** @var array<int, bool> */
@@ -51,7 +50,7 @@ class ShoppingListGenerator extends Page
     public function mount(): void
     {
         $this->startDate = now()->format('Y-m-d');
-        $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
+        $this->endDate = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
         $this->shoppingList = collect();
     }
 

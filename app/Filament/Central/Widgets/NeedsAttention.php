@@ -7,8 +7,8 @@ use App\Filament\Central\Resources\SupportTicketResource;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
-use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
+use Filament\Support\Icons\Heroicon;
 
 class NeedsAttention extends Widget
 {

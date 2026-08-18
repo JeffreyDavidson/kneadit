@@ -12,7 +12,7 @@ use Stripe\Exception\InvalidRequestException;
 use Stripe\Service\RefundService;
 use Stripe\StripeClient;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

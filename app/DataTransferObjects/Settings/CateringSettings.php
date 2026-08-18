@@ -19,10 +19,10 @@ final readonly class CateringSettings
     {
         return new self(
             enabled: settings('catering_enabled', '0') === '1',
-            minimumGuests: SettingValue::string(settings('catering_minimum_guests'), '10'),
-            leadTimeDays: SettingValue::string(settings('catering_lead_time_days'), '14'),
+            minimumGuests: (string) settings('catering_minimum_guests', '10'),
+            leadTimeDays: (string) settings('catering_lead_time_days', '14'),
             eventTypes: self::resolveEventTypes(),
-            depositPercent: SettingValue::int(settings('catering_deposit_percent'), 25),
+            depositPercent: (int) settings('catering_deposit_percent', '25'),
         );
     }
 
@@ -35,7 +35,7 @@ final readonly class CateringSettings
             return CateringEventType::defaultLabels();
         }
 
-        $decoded = json_decode(SettingValue::string($stored), true);
+        $decoded = json_decode((string) $stored, true);
         if (! is_array($decoded) || $decoded === []) {
             return CateringEventType::defaultLabels();
         }

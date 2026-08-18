@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 test('tracks GET requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
-    $tracker->expects('track');
+    $tracker = Mockery::mock(PageViewTracker::class);
+    $tracker->shouldReceive('track')->once();
 
     $middleware = new TrackPageView($tracker);
     $request = Request::create('/storefront', 'GET');
@@ -16,7 +16,7 @@ test('tracks GET requests', function () {
 });
 
 test('skips POST requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
+    $tracker = Mockery::mock(PageViewTracker::class);
     $tracker->shouldNotReceive('track');
 
     $middleware = new TrackPageView($tracker);
@@ -26,7 +26,7 @@ test('skips POST requests', function () {
 });
 
 test('skips ajax requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
+    $tracker = Mockery::mock(PageViewTracker::class);
     $tracker->shouldNotReceive('track');
 
     $middleware = new TrackPageView($tracker);

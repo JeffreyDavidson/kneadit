@@ -5,7 +5,7 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

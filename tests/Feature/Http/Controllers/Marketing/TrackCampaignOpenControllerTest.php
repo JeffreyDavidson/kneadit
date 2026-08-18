@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 use function Pest\Laravel\withoutMiddleware;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

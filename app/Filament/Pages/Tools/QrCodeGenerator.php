@@ -5,7 +5,6 @@ namespace App\Filament\Pages\Tools;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Platform\Tenant;
 use App\Services\Content\QrCodeService;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
@@ -119,36 +118,42 @@ class QrCodeGenerator extends Page
 
     public function generateQrCode(): void
     {
-        $options = $this->options();
+        $page = $this->data['page'] ?? '';
+        $size = (int) ($this->data['size'] ?? 300);
+        $color = $this->data['color'] ?? '#3E2723';
+        $format = $this->data['format'] ?? 'svg';
 
-        $this->currentUrl = $this->buildUrl($options['page']);
+        $this->currentUrl = $this->buildUrl($page);
 
         $service = resolve(QrCodeService::class);
 
-        $this->qrCodeSvg = $options['format'] === 'png'
-            ? base64_encode($service->generatePng($this->currentUrl, $options['size'], $options['color']))
-            : $service->generateSvg($this->currentUrl, $options['size'], $options['color']);
+        $this->qrCodeSvg = $format === 'png'
+            ? base64_encode($service->generatePng($this->currentUrl, $size, $color))
+            : $service->generateSvg($this->currentUrl, $size, $color);
     }
 
     public function downloadQrCode(): StreamedResponse
     {
-        $options = $this->options();
+        $page = $this->data['page'] ?? '';
+        $size = (int) ($this->data['size'] ?? 300);
+        $color = $this->data['color'] ?? '#3E2723';
+        $format = $this->data['format'] ?? 'svg';
 
-        $url = $this->buildUrl($options['page']);
+        $url = $this->buildUrl($page);
 
         $service = resolve(QrCodeService::class);
 
-        if ($options['format'] === 'png') {
-            $content = $service->generatePng($url, $options['size'], $options['color']);
-            $filename = 'qr-code.' . ($options['page'] ?: 'home') . '.png';
+        if ($format === 'png') {
+            $content = $service->generatePng($url, $size, $color);
+            $filename = 'qr-code.' . ($page ?: 'home') . '.png';
 
             return Response::streamDownload(fn () => print ($content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
         }
 
-        $content = $service->generateSvg($url, $options['size'], $options['color']);
-        $filename = 'qr-code.' . ($options['page'] ?: 'home') . '.svg';
+        $content = $service->generateSvg($url, $size, $color);
+        $filename = 'qr-code.' . ($page ?: 'home') . '.svg';
 
         return Response::streamDownload(fn () => print ($content), $filename, [
             'Content-Type' => 'image/svg+xml',
@@ -157,37 +162,8 @@ class QrCodeGenerator extends Page
 
     private function buildUrl(string $page): string
     {
-        $tenant = tenant();
-
-        if (! $tenant instanceof Tenant) {
-            throw new \LogicException('A tenant must be initialized to generate a QR code.');
-        }
-
-        $domain = $tenant->domains->first();
-
-        if ($domain === null) {
-            throw new \LogicException('The tenant must have a domain to generate a QR code.');
-        }
-
-        $baseUrl = 'http://' . $domain->domain;
+        $baseUrl = 'http://' . tenant()->domains->first()->domain;
 
         return $baseUrl . ($page ? "/{$page}" : '');
-    }
-
-    /** @return array{page: string, size: int, color: string, format: 'png'|'svg'} */
-    private function options(): array
-    {
-        $data = $this->form->getState();
-        $page = $data['page'] ?? null;
-        $size = filter_var($data['size'] ?? null, FILTER_VALIDATE_INT);
-        $color = $data['color'] ?? null;
-        $format = $data['format'] ?? null;
-
-        return [
-            'page' => is_string($page) && in_array($page, ['', 'menu', 'order', 'contact'], true) ? $page : '',
-            'size' => is_int($size) && in_array($size, [200, 300, 500], true) ? $size : 300,
-            'color' => is_string($color) && preg_match('/^#[0-9a-f]{6}$/i', $color) === 1 ? $color : '#3E2723',
-            'format' => $format === 'png' ? 'png' : 'svg',
-        ];
     }
 }

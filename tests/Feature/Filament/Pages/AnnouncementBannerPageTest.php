@@ -5,17 +5,15 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-use function Pest\Laravel\actingAs;
-
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('staff cannot access announcement banner page', function () {
-    actingAs(User::factory()->staff()->create());
+    $this->actingAs(User::factory()->staff()->create());
 
     expect(AnnouncementBanner::canAccess())->toBeFalse();
 });

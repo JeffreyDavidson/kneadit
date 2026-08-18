@@ -7,4 +7,5 @@
     $logoUrl = rescue(fn () => $settings?->storeLogoUrl(), null, false) ?? asset('images/logo-transparent.png');
 @endphp
 
-<img src="{{ $logoUrl }}" alt="{{ $storeName }}" class="h-9 w-auto" />
+<img src="{{ $logoUrl }}" alt="{{ $storeName }}" class="h-9 w-auto">
+

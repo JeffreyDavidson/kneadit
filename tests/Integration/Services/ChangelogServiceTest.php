@@ -4,10 +4,7 @@ use App\Services\Platform\ChangelogService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-beforeEach(function () {
-    setUpCentralTest();
-    Cache::flush();
-});
+beforeEach(fn () => setUpCentralTest());
 
 test('returns entries from GitHub releases API', function () {
     Http::fake([
@@ -68,7 +65,7 @@ test('filters out draft releases', function () {
 
 test('falls back to config when GitHub API throws exception', function () {
     Http::fake([
-        'api.github.com/*' => fn () => throw new RuntimeException('Connection refused'),
+        'api.github.com/*' => Http::response(fn () => throw new RuntimeException('Connection refused')),
     ]);
 
     config(['changelog' => [

@@ -17,8 +17,8 @@ class ContactFormMail extends BaseMailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            replyTo: [$this->senderEmail],
             subject: "KneadIt Contact: {$this->senderName}",
+            replyTo: [$this->senderEmail],
         );
     }
 

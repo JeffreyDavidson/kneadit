@@ -6,7 +6,7 @@ use App\Models\Orders\Order;
 use App\Services\Scheduling\PickupSlotResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

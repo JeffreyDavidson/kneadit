@@ -3,7 +3,7 @@
 use App\Http\Requests\Api\IndexFavoritesRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

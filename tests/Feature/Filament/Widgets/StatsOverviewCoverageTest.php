@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

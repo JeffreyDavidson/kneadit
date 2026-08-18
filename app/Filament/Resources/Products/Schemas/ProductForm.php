@@ -74,7 +74,7 @@ class ProductForm
                     ->defaultItems(0)
                     ->addActionLabel('Add Image')
                     ->columns(1)
-                    ->itemLabel(fn (array $state): string => empty($state['path']) ? 'New Image' : 'Product Image')
+                    ->itemLabel(fn (array $state): string => ! empty($state['path']) ? 'Product Image' : 'New Image')
                     ->components([
                         FileUpload::make('path')
                             ->label('Image')

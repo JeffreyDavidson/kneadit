@@ -15,8 +15,7 @@ class TrackingController extends Controller
 {
     public function store(TrackOrderRequest $request, TenantSettings $settings): View
     {
-        $email = $request->string('email')->toString();
-        $orders = Order::query()->forCustomerEmail($email)->get();
+        $orders = Order::query()->forCustomerEmail($request->email)->get();
         $trackableStatuses = OrderStatus::trackableStatuses();
 
         // Successful email lookup proves ownership of every returned order
@@ -26,7 +25,7 @@ class TrackingController extends Controller
         return view('storefront.order-tracking', [
             'settings' => $settings,
             'orders' => $orders,
-            'email' => $email,
+            'email' => $request->email,
             'content' => settingsPageContent('order_tracking'),
             'trackableStatuses' => $trackableStatuses,
             'trackedOrders' => $orders->map(fn (Order $o) => OrderTrackingPresenter::for($o)),

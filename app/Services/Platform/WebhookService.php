@@ -4,17 +4,14 @@ namespace App\Services\Platform;
 
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Models\Operations\WebhookDelivery;
-use App\Rules\SafeWebhookUrl;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Uri;
 
 class WebhookService
 {
     public function __construct(
         private WebhookSettings $webhooks,
-        private SafeWebhookUrl $safeWebhookUrl,
     ) {}
 
     /**
@@ -34,14 +31,6 @@ class WebhookService
         $url = $this->webhooks->url;
 
         if ($url === null) {
-            return;
-        }
-
-        $publicAddress = $this->safeWebhookUrl->publicAddressFor($url);
-
-        if ($publicAddress === null) {
-            Log::warning("Webhook dispatch blocked for {$event}: destination is not a public HTTPS URL.");
-
             return;
         }
 
@@ -68,10 +57,6 @@ class WebhookService
             $response = Http::connectTimeout(3)
                 ->timeout(5)
                 ->retry(2, 100, throw: false)
-                ->withOptions([
-                    'allow_redirects' => false,
-                    'curl' => [CURLOPT_RESOLVE => [$this->curlResolveEntry($url, $publicAddress)]],
-                ])
                 ->withHeaders([
                     'Content-Type' => 'application/json',
                     'X-KneadIt-Event' => $event,
@@ -106,16 +91,6 @@ class WebhookService
             'succeeded' => $response->successful(),
             'responded_at' => now(),
         ]);
-    }
-
-    private function curlResolveEntry(string $url, string $publicAddress): string
-    {
-        $uri = Uri::of($url);
-        $host = $uri->host();
-        $port = $uri->port() ?? 443;
-        $address = str_contains($publicAddress, ':') ? "[{$publicAddress}]" : $publicAddress;
-
-        return "{$host}:{$port}:{$address}";
     }
 
     private function recordError(WebhookDelivery $delivery, \Throwable $e): void

@@ -33,13 +33,13 @@ class BirthdayWidget extends Widget
         return Customer::query()->whereNotNull('birthday')->exists();
     }
 
-    /** @return Collection<int, object{customer_name: string, birthday_date: non-falsy-string, days_until: int<0, 30>, is_today: bool}&stdClass> */
+    /** @return Collection<int, stdClass> */
     public function getUpcomingBirthdays(): Collection
     {
         $limit = match ($this->size()) {
             WidgetSize::Small => 3,
             WidgetSize::Medium => 5,
-            WidgetSize::Large, WidgetSize::ExtraLarge => 10,
+            WidgetSize::Large => 10,
         };
 
         // Cache plain arrays of denormalized fields, not Customer models / stdClass

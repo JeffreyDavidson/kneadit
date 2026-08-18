@@ -1,26 +1,17 @@
 <?php
 
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
     Feature::define('growth-features', fn () => true);
-
-    $tenant = new Tenant;
-    $tenant->forceFill([
-        'id' => 'admin-page-test',
-        'plan' => App\Enums\Platform\SubscriptionTier::Starter,
-    ]);
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize($tenant);
 });
 
 dataset('adminPages', [

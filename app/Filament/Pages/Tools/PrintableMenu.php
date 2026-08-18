@@ -6,7 +6,6 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Category;
-use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -45,7 +44,7 @@ class PrintableMenu extends Page
 
     public string $menuLayout = 'elegant';
 
-    /** @return Collection<int, Category> */
+    /** @return Collection<int, mixed> */
     public function getCategories(): Collection
     {
         return Category::query()->active()
@@ -76,19 +75,7 @@ class PrintableMenu extends Page
 
     public function getStorefrontUrl(): string
     {
-        $tenant = tenant();
-
-        if (! $tenant instanceof Tenant) {
-            throw new \LogicException('A tenant must be initialized to generate a printable menu.');
-        }
-
-        $domain = $tenant->domains->first();
-
-        if ($domain === null) {
-            throw new \LogicException('The tenant must have a domain to generate a printable menu.');
-        }
-
-        return 'http://' . $domain->domain;
+        return 'http://' . tenant()->domains->first()->domain;
     }
 
     public function getQrCode(): string

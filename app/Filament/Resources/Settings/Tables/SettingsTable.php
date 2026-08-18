@@ -24,10 +24,6 @@ class SettingsTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
-                        if (! is_string($state)) {
-                            return null;
-                        }
-
                         if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }

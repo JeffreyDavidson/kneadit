@@ -11,7 +11,7 @@ use App\Models\Inventory\SeasonalItem;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();

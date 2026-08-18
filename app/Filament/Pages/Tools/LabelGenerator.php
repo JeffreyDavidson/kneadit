@@ -51,9 +51,7 @@ class LabelGenerator extends Page
 
     public function mount(): void
     {
-        $storedShelfLife = resolve(SettingsManager::class)->get('default_shelf_life_days', '3');
-        $shelfLifeDays = filter_var($storedShelfLife, FILTER_VALIDATE_INT);
-        $shelfLifeDays = is_int($shelfLifeDays) ? $shelfLifeDays : 3;
+        $shelfLifeDays = (int) resolve(SettingsManager::class)->get('default_shelf_life_days', '3');
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 

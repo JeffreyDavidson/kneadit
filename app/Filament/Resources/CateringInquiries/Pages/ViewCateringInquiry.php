@@ -25,8 +25,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\ValidatedInput;
 
 /**
  * @property-read CateringInquiry $record
@@ -168,13 +166,10 @@ class ViewCateringInquiry extends ViewRecord
                     ]),
             ])
             ->action(function (array $data): void {
-                $rows = $this->quoteItemRows($data['items'] ?? []);
+                $rows = $data['items'] ?? [];
 
                 $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = array_values(array_filter(
-                    array_column($rows, 'id'),
-                    fn (?int $id): bool => $id !== null,
-                ));
+                $submittedIds = collect($rows)->pluck('id')->filter()->map(fn (mixed $id): int => (int) $id)->all();
 
                 foreach ($existing as $id => $item) {
                     if (! in_array($id, $submittedIds, true)) {
@@ -185,20 +180,16 @@ class ViewCateringInquiry extends ViewRecord
                 foreach (array_values($rows) as $sortOrder => $row) {
                     $payload = [
                         'name' => $row['name'],
-                        'quantity' => $row['quantity'],
+                        'quantity' => (int) $row['quantity'],
                         'unit_price' => $row['unit_price'],
-                        'special_instructions' => $row['special_instructions'],
+                        'special_instructions' => $row['special_instructions'] ?: null,
                         'sort_order' => $sortOrder,
                     ];
 
-                    if ($row['id'] !== null) {
-                        $existingItem = $existing->get($row['id']);
+                    if (! empty($row['id']) && $existing->has((int) $row['id'])) {
+                        $existing[(int) $row['id']]->update($payload);
 
-                        if ($existingItem instanceof CateringInquiryItem) {
-                            $existingItem->update($payload);
-
-                            continue;
-                        }
+                        continue;
                     }
 
                     $this->record->items()->create($payload);
@@ -343,41 +334,5 @@ class ViewCateringInquiry extends ViewRecord
 
                 Notification::make()->title('Notes updated.')->success()->send();
             });
-    }
-
-    /** @return array<int, array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
-    private function quoteItemRows(mixed $value): array
-    {
-        $items = Validator::make(['items' => $value], [
-            'items' => ['required', 'array'],
-            'items.*' => ['required', 'array'],
-            'items.*.id' => ['nullable', 'numeric', 'multiple_of:1', 'min:1'],
-            'items.*.name' => ['required', 'string'],
-            'items.*.quantity' => ['required', 'numeric', 'multiple_of:1', 'min:1'],
-            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
-            'items.*.special_instructions' => ['nullable', 'string'],
-        ])->safe()->array('items');
-
-        $rows = [];
-
-        foreach ($items as $row) {
-            if (! is_array($row)) {
-                throw new \LogicException('Validated quote item must be an array.');
-            }
-
-            $item = new ValidatedInput($row);
-
-            $rows[] = [
-                'id' => $item->filled('id') ? $item->integer('id') : null,
-                'name' => $item->string('name')->toString(),
-                'quantity' => $item->integer('quantity'),
-                'unit_price' => $item->float('unit_price'),
-                'special_instructions' => $item->filled('special_instructions')
-                    ? $item->string('special_instructions')->toString()
-                    : null,
-            ];
-        }
-
-        return $rows;
     }
 }

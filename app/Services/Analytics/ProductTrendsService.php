@@ -27,26 +27,13 @@ class ProductTrendsService
     /** @return array<int, int> */
     private function getProductCounts(DateRange $range): array
     {
-        $counts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
+        return OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->whereBetween('orders.created_at', $range->toArray())
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')
             ->pluck('total_qty', 'product_id')
             ->toArray();
-
-        $normalized = [];
-
-        foreach ($counts as $productId => $quantity) {
-            $validProductId = filter_var($productId, FILTER_VALIDATE_INT);
-            $validQuantity = filter_var($quantity, FILTER_VALIDATE_INT);
-
-            if ($validProductId !== false && $validQuantity !== false) {
-                $normalized[$validProductId] = $validQuantity;
-            }
-        }
-
-        return $normalized;
     }
 
     /**

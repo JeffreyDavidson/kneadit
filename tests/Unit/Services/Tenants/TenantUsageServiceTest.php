@@ -7,7 +7,7 @@ use App\Services\Tenants\TenantUsageService;
 beforeEach(fn () => setUpCentralTest());
 
 test('getNextPlan returns correct upgrade path', function (string $current, ?SubscriptionTier $expected) {
-    $service = new TenantUsageService(Tests\Support\TypedMock::make(TenancyManager::class));
+    $service = new TenantUsageService(Mockery::mock(TenancyManager::class));
 
     expect($service->getNextPlan($current))->toBe($expected);
 })->with([
@@ -31,21 +31,17 @@ test('getTenantUsageData returns tenants approaching limits', function () {
         'store_name' => 'High Usage Bakery',
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [9, 18]]); // 90% products, 90% orders
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andReturn([9, 18]); // 90% products, 90% orders
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
-    $usage = $result->first();
-
-    if ($usage === null) {
-        throw new RuntimeException('Expected usage data for the tenant.');
-    }
 
     expect($result)->toHaveCount(1)
-        ->and($usage['product_percent'])->toBe(90.0)
-        ->and($usage['order_percent'])->toBe(90.0)
-        ->and($usage['approaching_limit'])->toBeTrue();
+        ->and($result->first()['product_percent'])->toBe(90.0)
+        ->and($result->first()['order_percent'])->toBe(90.0)
+        ->and($result->first()['approaching_limit'])->toBeTrue();
 });
 
 test('getTenantUsageData skips pro tenants', function () {
@@ -56,7 +52,7 @@ test('getTenantUsageData skips pro tenants', function () {
         'plan' => SubscriptionTier::Pro,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
+    $tenancyManager = Mockery::mock(TenancyManager::class);
     // Should never be called for pro tenants
     $tenancyManager->shouldNotReceive('withinTenant');
 
@@ -78,8 +74,9 @@ test('getTenantUsageData skips tenants below 80 percent usage', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [5, 5]]); // 5% usage
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andReturn([5, 5]); // 5% usage
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -95,10 +92,9 @@ test('getTenantUsageData handles exception gracefully', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows([
-        'withinTenant' => fn () => throw new RuntimeException('DB error'),
-    ]);
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andThrow(new RuntimeException('DB error'));
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -118,18 +114,14 @@ test('getTenantUsageData marks at_limit when at 100 percent', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [10, 20]]); // 100% usage
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andReturn([10, 20]); // 100% usage
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
-    $usage = $result->first();
-
-    if ($usage === null) {
-        throw new RuntimeException('Expected usage data for the tenant.');
-    }
 
     expect($result)->toHaveCount(1)
-        ->and($usage['at_limit'])->toBeTrue()
-        ->and($usage['approaching_limit'])->toBeFalse();
+        ->and($result->first()['at_limit'])->toBeTrue()
+        ->and($result->first()['approaching_limit'])->toBeFalse();
 });

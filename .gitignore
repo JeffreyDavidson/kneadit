@@ -17,9 +17,7 @@
 /_plans
 /_tasks
 /tasks
-/docs/*
-!/docs/architecture.md
-!/docs/operations.md
+/docs
 /auth.json
 /node_modules
 /public/build

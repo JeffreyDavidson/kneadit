@@ -6,7 +6,7 @@ use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

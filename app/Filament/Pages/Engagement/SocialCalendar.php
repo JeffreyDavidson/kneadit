@@ -43,10 +43,10 @@ class SocialCalendar extends Page
 
     public ?string $selectedDate = null;
 
-    /** @var array<string, list<array<string, mixed>>> */
+    /** @var array<string, mixed> */
     public array $posts = [];
 
-    /** @var list<array<string, mixed>> */
+    /** @var array<string, mixed> */
     public array $selectedDayPosts = [];
 
     public function mount(): void
@@ -69,17 +69,13 @@ class SocialCalendar extends Page
 
         $this->posts = [];
         foreach ($posts as $post) {
-            $scheduledFor = $post->scheduled_for;
-            if ($scheduledFor === null) {
-                continue;
-            }
-            $day = $scheduledFor->format('Y-m-d');
+            $day = $post->scheduled_for?->format('Y-m-d');
             $this->posts[$day][] = [
                 'id' => $post->id,
                 'platform' => $post->platform,
                 'caption' => Str::limit($post->caption, 60),
                 'status' => $post->status,
-                'time' => $scheduledFor->format('g:i A'),
+                'time' => $post->scheduled_for?->format('g:i A'),
                 'product' => $post->product?->name,
             ];
         }

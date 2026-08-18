@@ -8,14 +8,9 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Production\PrepScheduleService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
-/**
- * @phpstan-import-type WeeklyOrders from PrepScheduleService
- * @phpstan-import-type PrepSchedule from PrepScheduleService
- */
 class WeeklyPrepPlanner extends Page
 {
     use RequiresManagerRole;
@@ -43,13 +38,13 @@ class WeeklyPrepPlanner extends Page
 
     public ?string $selectedWeekStart = null;
 
-    /** @var WeeklyOrders */
+    /** @var Collection<int, mixed> */
     public Collection $weeklyOrders;
 
-    /** @var PrepSchedule */
+    /** @var Collection<int, mixed> */
     public Collection $prepSchedule;
 
-    /** @var list<Carbon> */
+    /** @var array<int|string, mixed> */
     public array $weekDays = [];
 
     public function mount(): void
@@ -79,13 +74,13 @@ class WeeklyPrepPlanner extends Page
         $this->prepSchedule = $data['prepSchedule'];
     }
 
-    /** @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}> */
+    /** @return Collection<int, mixed> */
     public function getProductSummary(): Collection
     {
         return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders);
     }
 
-    /** @return Collection<string, Collection<int, array{time: string, task: string, duration: int, order: string, delivery_time: string}>> */
+    /** @return Collection<int, mixed> */
     public function getTimelineView(): Collection
     {
         return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule);
@@ -96,7 +91,7 @@ class WeeklyPrepPlanner extends Page
         return resolve(PrepScheduleService::class)->getTotalPrepHours($this->prepSchedule);
     }
 
-    /** @return array{total_orders: int, total_items: int, total_revenue: float, total_prep_hours: float} */
+    /** @return array<string, mixed> */
     public function getWeekSummary(): array
     {
         return resolve(PrepScheduleService::class)->getWeekSummary($this->weeklyOrders, $this->prepSchedule);

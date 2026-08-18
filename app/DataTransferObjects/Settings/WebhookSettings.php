@@ -12,8 +12,8 @@ final readonly class WebhookSettings
     public static function resolve(): self
     {
         return new self(
-            url: SettingValue::nullableString(settings('webhook_url')),
-            secret: SettingValue::string(settings('webhook_secret')),
+            url: settings('webhook_url') ?: null,
+            secret: (string) settings('webhook_secret', ''),
         );
     }
 

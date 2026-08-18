@@ -137,7 +137,6 @@ class StaffManagement extends Page
             ->size('sm')
             ->slideOver()
             ->modalHeading(function (array $arguments): string {
-                /** @var User $user */
                 $user = User::query()->findOrFail($arguments['user']);
 
                 return "Change role for {$user->name}";
@@ -145,7 +144,6 @@ class StaffManagement extends Page
             ->modalDescription('Promoting to Owner gives full billing and team access. Demotions take effect immediately.')
             ->modalSubmitActionLabel('Update role')
             ->fillForm(function (array $arguments): array {
-                /** @var User $user */
                 $user = User::query()->findOrFail($arguments['user']);
 
                 return ['role' => $user->role->value];
@@ -197,7 +195,6 @@ class StaffManagement extends Page
             ->size('sm')
             ->requiresConfirmation()
             ->modalHeading(function (array $arguments): string {
-                /** @var User $user */
                 $user = User::query()->findOrFail($arguments['user']);
 
                 return "Remove {$user->name}?";

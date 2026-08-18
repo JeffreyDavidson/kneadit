@@ -35,17 +35,14 @@ class LogsActivityObserver
         }
 
         try {
-            $modelKey = $model->getKey();
-            $modelKey = is_scalar($modelKey) ? (string) $modelKey : 'unknown';
-
             ActivityLog::query()->create([
                 'user_id' => ActorContext::id(),
                 'user_name' => ActorContext::name(),
                 'action' => $action,
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
-                'description' => class_basename($model) . " #{$modelKey} was {$action->value}",
-                'properties' => empty($changes) ? null : ['changes' => $changes],
+                'description' => class_basename($model) . " #{$model->getKey()} was {$action->value}",
+                'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable $e) {

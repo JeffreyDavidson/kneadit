@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\actingAs;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -91,7 +91,7 @@ test('records the authenticated user name when a user is logged in', function ()
 });
 
 test('falls back to System when no user is authenticated (regression: null-safe)', function () {
-    $logger = Log::spy();
+    Log::spy();
 
     $customer = Customer::factory()->create();
 
@@ -104,7 +104,7 @@ test('falls back to System when no user is authenticated (regression: null-safe)
         ->and($log->user_name)->toBe('System')
         ->and($log->user_id)->toBeNull();
 
-    $logger->shouldNotHaveReceived('warning');
+    Log::shouldNotHaveReceived('warning');
 });
 
 test('reads actor from context when set explicitly (simulates queue propagation)', function () {

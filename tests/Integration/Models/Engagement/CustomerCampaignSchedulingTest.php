@@ -4,7 +4,7 @@ use App\Enums\Marketing\CustomerCampaignStatus;
 use App\Models\Engagement\CustomerCampaign;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

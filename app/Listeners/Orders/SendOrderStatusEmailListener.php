@@ -11,10 +11,19 @@ use Illuminate\Contracts\Mail\Mailable;
 
 class SendOrderStatusEmailListener extends SendEmailListener
 {
+    /** @var array<int, OrderStatus> */
+    private const EMAILABLE_STATUSES = [
+        OrderStatus::Confirmed,
+        OrderStatus::Baking,
+        OrderStatus::Ready,
+        OrderStatus::Delivered,
+        OrderStatus::Cancelled,
+    ];
+
     protected function getRecipient(object $event): ?string
     {
         /** @var OrderStatusChanged $event */
-        if (! $this->isEmailableStatus($event->to)) {
+        if (! in_array($event->to, self::EMAILABLE_STATUSES, true)) {
             return null;
         }
 
@@ -43,17 +52,5 @@ class SendOrderStatusEmailListener extends SendEmailListener
             'order' => $event->order->order_number,
             'transition' => "{$event->from->value} -> {$event->to->value}",
         ];
-    }
-
-    private function isEmailableStatus(OrderStatus $status): bool
-    {
-        return match ($status) {
-            OrderStatus::Confirmed,
-            OrderStatus::Baking,
-            OrderStatus::Ready,
-            OrderStatus::Delivered,
-            OrderStatus::Cancelled => true,
-            default => false,
-        };
     }
 }

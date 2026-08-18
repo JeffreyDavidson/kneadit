@@ -4,7 +4,7 @@ use App\Actions\GiftCards\RedeemGiftCard;
 use App\Models\Financial\GiftCard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

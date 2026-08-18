@@ -6,11 +6,7 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/**
- * @property TenantSettings $resource
- *
- * @mixin TenantSettings
- */
+/** @mixin TenantSettings */
 class StoreInfoResource extends JsonApiResource
 {
     public function toId(Request $request): string

@@ -31,8 +31,7 @@ class GoalTrackerWidget extends Widget
         $this->editingType = $type;
         $key = $type === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
         $default = $type === 'monthly' ? '5000' : '50000';
-        $goal = resolve(SettingsManager::class)->get($key, $default);
-        $this->editingGoal = is_scalar($goal) ? (string) $goal : $default;
+        $this->editingGoal = resolve(SettingsManager::class)->get($key, $default);
         $this->showEditModal = true;
     }
 
@@ -52,8 +51,7 @@ class GoalTrackerWidget extends Widget
     public function getMonthlyDataProperty(): array
     {
         return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
-            $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
-            $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
+            $goal = (float) resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $range = DateRange::thisMonth();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
@@ -76,8 +74,7 @@ class GoalTrackerWidget extends Widget
     public function getYearlyDataProperty(): array
     {
         return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
-            $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
-            $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
+            $goal = (float) resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $range = DateRange::thisYear();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).

@@ -3,7 +3,7 @@
 use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-pest()->use(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
