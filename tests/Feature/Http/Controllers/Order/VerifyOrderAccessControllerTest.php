@@ -2,6 +2,8 @@
 
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Models\Platform\Setting;
+use App\Services\Settings\SettingsManager;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -16,7 +18,21 @@ test('show renders the verification form', function () {
     $response->assertOk()
         ->assertViewIs('storefront.order-verify')
         ->assertViewHas('order')
-        ->assertViewHas('settings');
+        ->assertViewHas('settings')
+        ->assertViewHas('storefrontTheme');
+});
+
+test('biscotto order verification uses the themed follow-up presentation', function () {
+    Setting::factory()->create(['key' => 'storefront_theme', 'value' => 'biscotto']);
+    resolve(SettingsManager::class)->flushCache();
+    $order = Order::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.verify.show', ['order' => $order->order_number], false));
+
+    $response->assertOk()
+        ->assertSee('biscotto-order-verify', false)
+        ->assertSee('Verify your email');
 });
 
 test('store grants access and redirects when email matches', function () {
