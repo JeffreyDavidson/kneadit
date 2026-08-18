@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 test('it dispatches order.cancelled webhook with order data', function () {
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();

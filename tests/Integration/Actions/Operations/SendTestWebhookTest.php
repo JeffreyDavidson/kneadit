@@ -9,7 +9,7 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 });
 
