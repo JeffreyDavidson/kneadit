@@ -100,12 +100,20 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 
         $argv = $_SERVER['argv'] ?? [];
 
-        return implode(' ', array_slice($argv, 1)) ?: null;
+        if (! is_array($argv)) {
+            return null;
+        }
+
+        $arguments = array_values(array_filter(array_slice($argv, 1), is_string(...)));
+
+        return implode(' ', $arguments) ?: null;
     }
 
     private function currentTestClass(): ?string
     {
-        if (! defined('PHPUNIT_COMPOSER_INSTALL') && ! str_contains($_SERVER['SCRIPT_NAME'] ?? '', 'pest')) {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+
+        if (! defined('PHPUNIT_COMPOSER_INSTALL') && (! is_string($scriptName) || ! str_contains($scriptName, 'pest'))) {
             return null;
         }
 
