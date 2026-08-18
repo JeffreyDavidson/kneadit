@@ -102,6 +102,7 @@ Settings are database-backed key/value records with separate tenant and platform
 - `SettingsManager` reads tenant `Setting` records in the current tenant database.
 - `PlatformSettingsManager` reads central platform settings.
 - `AbstractSettingsManager` memoizes primitive values in memory for the current manager instance and provides transactional bulk writes.
+- `TenantSettingCipher` transparently encrypts PayPal credentials and webhook signing secrets before persistence; tenant migrations encrypt legacy plaintext values without changing settings consumers.
 - `TenantSettings` is a read-only composite DTO of typed settings groups such as store, branding, orders, payments, catering, loyalty, policies, homepage, webhooks, gift cards, and inventory.
 - `TenantSettingsDefaults` supplies defaults used when provisioning or resolving unset values.
 

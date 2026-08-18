@@ -6,6 +6,10 @@ use App\Models\Platform\Setting;
 
 class SettingsManager extends AbstractSettingsManager
 {
+    public function __construct(
+        private TenantSettingCipher $cipher,
+    ) {}
+
     protected function cacheKey(): string
     {
         return tenant() ? tenant()->getTenantKey() : 'central';
@@ -29,5 +33,15 @@ class SettingsManager extends AbstractSettingsManager
         $content = json_decode($this->get('page_content', '{}'), true);
 
         return $content[$page] ?? [];
+    }
+
+    protected function valueForStorage(string $key, mixed $value): mixed
+    {
+        return $this->cipher->encrypt($key, $value);
+    }
+
+    protected function valueFromStorage(string $key, mixed $value): mixed
+    {
+        return $this->cipher->decrypt($key, $value);
     }
 }
