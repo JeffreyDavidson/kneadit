@@ -6,12 +6,15 @@ use App\Events\Platform\HealthCheckFailed;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\HealthAlertMail;
 use Illuminate\Contracts\Mail\Mailable;
+use Illuminate\Support\Facades\Config;
 
 class SendHealthCheckAlertListener extends SendEmailListener
 {
     protected function getRecipient(object $event): ?string
     {
-        return config('mail.platform_notify');
+        $recipient = Config::get('mail.platform_notify');
+
+        return is_string($recipient) ? $recipient : null;
     }
 
     protected function getMailable(object $event): Mailable

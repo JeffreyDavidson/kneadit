@@ -5,11 +5,11 @@ use App\Services\Platform\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 });
 
@@ -22,7 +22,7 @@ test('successful dispatch records a succeeded delivery row', function () {
 
     expect($delivery)
         ->event->toBe('order.created')
-        ->url->toBe('https://hooks.example.com/test')
+        ->url->toBe('https://8.8.8.8/test')
         ->status_code->toBe(200)
         ->response_body->toBe('ok')
         ->succeeded->toBeTrue()

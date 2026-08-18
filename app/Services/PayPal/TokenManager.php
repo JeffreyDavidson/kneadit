@@ -18,9 +18,9 @@ class TokenManager
 
     public function __construct(SettingsManager $settings)
     {
-        $this->clientId = $settings->get('paypal_client_id') ?: config('services.paypal.client_id');
-        $this->clientSecret = $settings->get('paypal_client_secret') ?: config('services.paypal.client_secret');
-        $this->baseUrl = config('services.paypal.sandbox', true)
+        $this->clientId = $this->credential($settings->get('paypal_client_id'), config('services.paypal.client_id'));
+        $this->clientSecret = $this->credential($settings->get('paypal_client_secret'), config('services.paypal.client_secret'));
+        $this->baseUrl = config('services.paypal.sandbox', true) === true
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
     }
@@ -31,16 +31,26 @@ class TokenManager
             return $this->accessToken;
         }
 
+        if ($this->clientId === null || $this->clientSecret === null) {
+            return null;
+        }
+
         try {
             $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)
                 ->asForm()
-                ->withBasicAuth((string) $this->clientId, (string) $this->clientSecret)
+                ->withBasicAuth($this->clientId, $this->clientSecret)
                 ->post("{$this->baseUrl}/v1/oauth2/token", [
                     'grant_type' => 'client_credentials',
                 ]);
 
             if ($response->successful()) {
-                $this->accessToken = $response->json('access_token');
+                $accessToken = $response->json('access_token');
+
+                if (! is_string($accessToken) || $accessToken === '') {
+                    return null;
+                }
+
+                $this->accessToken = $accessToken;
 
                 return $this->accessToken;
             }
@@ -69,5 +79,14 @@ class TokenManager
     public function isConfigured(): bool
     {
         return ! empty($this->clientId) && ! empty($this->clientSecret);
+    }
+
+    private function credential(mixed $tenantValue, mixed $configuredValue): ?string
+    {
+        if (is_string($tenantValue) && $tenantValue !== '') {
+            return $tenantValue;
+        }
+
+        return is_string($configuredValue) && $configuredValue !== '' ? $configuredValue : null;
     }
 }

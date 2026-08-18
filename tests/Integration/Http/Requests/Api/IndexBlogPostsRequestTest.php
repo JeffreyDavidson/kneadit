@@ -4,7 +4,7 @@ use App\Enums\Content\BlogPostCategory;
 use App\Http\Requests\Api\IndexBlogPostsRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -4,6 +4,7 @@ namespace App\Builders\Customers;
 
 use App\Models\Engagement\Review;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 /** @extends Builder<Review> */
 class ReviewQueryBuilder extends Builder
@@ -72,7 +73,7 @@ class ReviewQueryBuilder extends Builder
 
         $breakdown = [];
         for ($star = 5; $star >= 1; $star--) {
-            $breakdown[$star] = (int) ($results[$star] ?? 0);
+            $breakdown[$star] = Arr::integer($results->all(), $star, 0);
         }
 
         return $breakdown;

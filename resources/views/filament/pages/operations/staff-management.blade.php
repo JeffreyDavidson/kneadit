@@ -26,9 +26,11 @@
     @if ($invitations->count() > 0)
         <x-filament::section>
             <x-slot name="heading">Pending Invitations</x-slot>
-            <x-slot name="description">{{ $invitations->count() }} {{ Str::plural('invitation', $invitations->count()) }} awaiting acceptance.</x-slot>
+            <x-slot name="description">
+                {{ $invitations->count() }} {{ Str::plural('invitation', $invitations->count()) }} awaiting acceptance.
+            </x-slot>
 
-            <ul role="list" class="divide-y divide-brand-700/40">
+            <ul role="list" class="divide-brand-700/40 divide-y">
                 @foreach ($invitations as $invitation)
                     @php
                         $invitationRole = $invitation->role instanceof UserRole
@@ -42,7 +44,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="truncate font-medium text-white">{{ $invitation->email }}</p>
-                                <p class="mt-1 truncate text-sm text-brand-400">
+                                <p class="text-brand-400 mt-1 truncate text-sm">
                                     Expires {{ $invitation->expires_at->diffForHumans() }}
                                 </p>
                             </div>
@@ -62,18 +64,20 @@
     {{-- Team Members --}}
     <x-filament::section>
         <x-slot name="heading">Team Members</x-slot>
-        <x-slot name="description">{{ $members->count() }} active {{ Str::plural('member', $members->count()) }}.</x-slot>
+        <x-slot name="description">
+            {{ $members->count() }} active {{ Str::plural('member', $members->count()) }}.
+        </x-slot>
 
-        <ul role="list" class="divide-y divide-brand-700/40">
+        <ul role="list" class="divide-brand-700/40 divide-y">
             @foreach ($members as $member)
                 <li class="flex items-center justify-between gap-4 py-3">
                     <div class="flex min-w-0 items-center gap-4">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-brand-200">
+                        <div class="bg-brand-700 text-brand-200 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
                             {{ $initials($member->name) }}
                         </div>
                         <div class="min-w-0">
                             <p class="truncate font-medium text-white">{{ $member->name }}</p>
-                            <p class="mt-1 truncate text-sm text-brand-400">
+                            <p class="text-brand-400 mt-1 truncate text-sm">
                                 {{ $member->email }} · Joined {{ $member->created_at->format('M j, Y') }}
                             </p>
                         </div>
@@ -81,7 +85,8 @@
 
                     <div class="flex shrink-0 items-center gap-3">
                         <x-filament::badge :color="$roleColor($member->role)">
-                            {{ $member->role->getLabel() }}@if ($member->id === $currentUserId) · You @endif
+                            {{ $member->role->getLabel() }}
+                            @if ($member->id === $currentUserId) · You @endif
                         </x-filament::badge>
 
                         @if ($member->id !== $currentUserId)

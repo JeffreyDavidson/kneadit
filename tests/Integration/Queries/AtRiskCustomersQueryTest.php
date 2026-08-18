@@ -5,7 +5,7 @@ use App\Models\Orders\Order;
 use App\Queries\Customers\AtRiskCustomersQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

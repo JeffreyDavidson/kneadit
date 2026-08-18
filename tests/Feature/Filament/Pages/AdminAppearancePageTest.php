@@ -4,9 +4,8 @@ use App\Filament\Pages\Settings\AdminAppearance;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -14,13 +13,14 @@ beforeEach(function () {
 });
 
 test('admin appearance page renders for manager', function () {
-    Livewire::test(AdminAppearance::class)
-        ->assertOk()
-        ->assertSet('current', 'honey');
+    $component = livewire(AdminAppearance::class);
+
+    $component->assertOk();
+    $component->assertSet('current', 'honey');
 });
 
 test('selecting a valid theme persists it and redirects', function () {
-    Livewire::test(AdminAppearance::class)
+    livewire(AdminAppearance::class)
         ->call('selectTheme', 'slate')
         ->assertSet('current', 'slate')
         ->assertRedirect();
@@ -31,7 +31,7 @@ test('selecting a valid theme persists it and redirects', function () {
 test('selecting an unknown theme is ignored', function () {
     resolve(SettingsManager::class)->set('admin_theme', 'honey');
 
-    Livewire::test(AdminAppearance::class)
+    livewire(AdminAppearance::class)
         ->call('selectTheme', 'not-a-real-theme')
         ->assertSet('current', 'honey');
 

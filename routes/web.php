@@ -110,9 +110,9 @@ Route::post('contact-us', ContactController::class)
 // Public bakery directory
 Route::get('directory', DirectoryController::class)->name('directory');
 
-// CSP violation report receiver. Browsers POST here when the Report-Only
-// CSP fires; payloads are logged for review. CSRF is excluded — browsers
-// don't include the token on policy-violation reports.
+// CSP violation report receiver. Browsers POST here when either CSP mode
+// reports a violation. CSRF is excluded because policy reports do not include
+// an application token; the route remains rate limited to constrain intake.
 Route::post('csp-report', CspReportController::class)
     ->middleware(['web', 'throttle:frequent-poll'])
     ->withoutMiddleware(Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)

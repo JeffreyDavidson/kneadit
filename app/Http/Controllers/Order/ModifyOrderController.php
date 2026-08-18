@@ -16,9 +16,9 @@ class ModifyOrderController extends Controller
         try {
             $modifyOrder(
                 $order,
-                $request->validated('items'),
-                $request->validated('tip_amount') !== null
-                    ? (float) $request->validated('tip_amount')
+                $this->items($request->array('items')),
+                $request->filled('tip_amount')
+                    ? $request->float('tip_amount')
                     : null,
             );
         } catch (OrderNotModifiableException $e) {
@@ -27,5 +27,32 @@ class ModifyOrderController extends Controller
 
         return to_route('order.confirmation', $order)
             ->with('success', 'Your order was updated.');
+    }
+
+    /**
+     * @param array<int, mixed> $items
+     * @return array<int, array{order_item_id: int, quantity: int}>
+     */
+    private function items(array $items): array
+    {
+        $normalized = [];
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $orderItemId = $item['order_item_id'] ?? null;
+            $quantity = $item['quantity'] ?? null;
+
+            if (is_int($orderItemId) && is_int($quantity)) {
+                $normalized[] = [
+                    'order_item_id' => $orderItemId,
+                    'quantity' => $quantity,
+                ];
+            }
+        }
+
+        return $normalized;
     }
 }

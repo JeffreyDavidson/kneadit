@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     {{-- KPI Row --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         @foreach ($this->getKpis() as $kpi)
             @php
                 $trendClass = match ($kpi['trend']) {
@@ -12,24 +12,24 @@
             @endphp
             <x-central.card padding="p-5">
                 <x-central.eyebrow>{{ $kpi['label'] }}</x-central.eyebrow>
-                <div class="text-white font-bold text-[2rem] leading-none mt-2 mb-2">{{ $kpi['value'] }}</div>
+                <div class="mt-2 mb-2 text-[2rem] leading-none font-bold text-white">{{ $kpi['value'] }}</div>
                 <div class="text-[0.75rem] font-medium {{ $trendClass }}">{{ $kpi['hint'] }}</div>
             </x-central.card>
         @endforeach
     </div>
 
     {{-- Signups Chart + Tenant Status --}}
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 mb-6">
+    <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
         <x-central.card title="Signups Over Last 12 Months">
             <div class="relative h-[280px]">
                 <canvas id="signupsChart"></canvas>
             </div>
         </x-central.card>
         <x-central.card title="Tenant Lifecycle">
-            <div class="relative h-[200px] mb-4">
+            <div class="relative mb-4 h-[200px]">
                 <canvas id="statusChart"></canvas>
             </div>
-            <div class="space-y-2 mt-4">
+            <div class="mt-4 space-y-2">
                 @foreach ($this->getTenantStatus() as $label => $count)
                     @php
                         $color = match ($label) {
@@ -44,7 +44,7 @@
                             <span class="w-2.5 h-2.5 rounded-full {{ $color }}"></span>
                             <span class="text-parchment">{{ $label }}</span>
                         </div>
-                        <span class="text-white font-bold">{{ $count }}</span>
+                        <span class="font-bold text-white">{{ $count }}</span>
                     </div>
                 @endforeach
             </div>
@@ -53,7 +53,7 @@
 
     {{-- Plan Distribution --}}
     <x-central.card title="Plan Distribution">
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 items-center">
+        <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.5fr]">
             <div class="relative h-[240px]">
                 <canvas id="planChart"></canvas>
             </div>
@@ -74,16 +74,17 @@
                         $color = $planColors[strtolower((string) $plan)] ?? 'bg-cinnamon';
                     @endphp
                     <div>
-                        <div class="flex items-center justify-between mb-1.5">
+                        <div class="mb-1.5 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full {{ $color }}"></span>
-                                <span class="text-white text-[0.85rem] font-semibold capitalize">{{ $plan }}</span>
+                                <span class="text-[0.85rem] font-semibold text-white capitalize">{{ $plan }}</span>
                             </div>
                             <div class="text-cinnamon text-[0.8rem]">
-                                <span class="text-white font-bold">{{ $count }}</span> <span class="text-cinnamon">({{ $pct }}%)</span>
+                                <span class="font-bold text-white">{{ $count }}</span>
+                                <span class="text-cinnamon">({{ $pct }}%)</span>
                             </div>
                         </div>
-                        <div class="h-1.5 rounded-full bg-espresso overflow-hidden">
+                        <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
                             <div class="{{ $color }} h-full rounded-full" style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
@@ -119,15 +120,17 @@
             new Chart(signupsEl, {
                 type: 'bar',
                 data: {
-                    labels: signups.map(s => s.label),
-                    datasets: [{
-                        label: 'Signups',
-                        data: signups.map(s => s.count),
-                        backgroundColor: signups.map((_, i) => i === currentMonthIdx ? honey : 'rgba(212,146,12,0.35)'),
-                        hoverBackgroundColor: honey,
-                        borderRadius: 6,
-                        borderSkipped: false,
-                    }]
+                    labels: signups.map((s) => s.label),
+                    datasets: [
+                        {
+                            label: 'Signups',
+                            data: signups.map((s) => s.count),
+                            backgroundColor: signups.map((_, i) => (i === currentMonthIdx ? honey : 'rgba(212,146,12,0.35)')),
+                            hoverBackgroundColor: honey,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
@@ -142,7 +145,7 @@
                             titleColor: '#faf0d6',
                             bodyColor: '#ffffff',
                             displayColors: false,
-                        }
+                        },
                     },
                     scales: {
                         y: {
@@ -153,9 +156,9 @@
                         x: {
                             ticks: { color: '#8b6844' },
                             grid: { display: false },
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             });
 
             const plans = @json($this->getPlanDistribution());
@@ -164,14 +167,16 @@
             new Chart(planEl, {
                 type: 'doughnut',
                 data: {
-                    labels: planLabels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
-                    datasets: [{
-                        data: Object.values(plans),
-                        backgroundColor: planLabels.map(l => planColorMap[l.toLowerCase()] ?? cinnamon),
-                        borderColor: '#1c1410',
-                        borderWidth: 3,
-                        hoverOffset: 8,
-                    }]
+                    labels: planLabels.map((l) => l.charAt(0).toUpperCase() + l.slice(1)),
+                    datasets: [
+                        {
+                            data: Object.values(plans),
+                            backgroundColor: planLabels.map((l) => planColorMap[l.toLowerCase()] ?? cinnamon),
+                            borderColor: '#1c1410',
+                            borderWidth: 3,
+                            hoverOffset: 8,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
@@ -189,27 +194,29 @@
                                     const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
                                     const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
                                     return `${ctx.label}: ${ctx.parsed} (${pct}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             const status = @json($this->getTenantStatus());
             const statusLabels = Object.keys(status);
-            const statusColorMap = { 'Active': emerald, 'On trial': honey, 'Trial expired': red };
+            const statusColorMap = { Active: emerald, 'On trial': honey, 'Trial expired': red };
             new Chart(statusEl, {
                 type: 'doughnut',
                 data: {
                     labels: statusLabels,
-                    datasets: [{
-                        data: Object.values(status),
-                        backgroundColor: statusLabels.map(l => statusColorMap[l] ?? cinnamon),
-                        borderColor: '#1c1410',
-                        borderWidth: 3,
-                        hoverOffset: 6,
-                    }]
+                    datasets: [
+                        {
+                            data: Object.values(status),
+                            backgroundColor: statusLabels.map((l) => statusColorMap[l] ?? cinnamon),
+                            borderColor: '#1c1410',
+                            borderWidth: 3,
+                            hoverOffset: 6,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
@@ -223,9 +230,9 @@
                             borderWidth: 1,
                             padding: 10,
                             displayColors: false,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             });
         }
 
@@ -245,27 +252,29 @@
         function tryInitCharts() {
             const el = document.getElementById('signupsChart');
             if (!el) return;
-            loadChartJs().then(() => {
-                initAnalyticsCharts();
-                // After SPA navigation Filament's grid hasn't finished reflowing
-                // when Chart.js samples the canvas parent, so the chart keeps a
-                // stale width and overflows the viewport. Watch each chart's
-                // parent and resize whenever the actual width changes.
-                if (typeof ResizeObserver !== 'undefined') {
-                    Object.values(Chart.instances).forEach((instance) => {
-                        const parent = instance.canvas.parentElement;
-                        if (!parent) return;
-                        // Guard the callback: Livewire SPA navigation can detach
-                        // the canvas before the observer fires, and Chart.js
-                        // resize() then dereferences a null parentElement.
-                        new ResizeObserver(() => {
-                            if (instance.canvas?.parentElement) {
-                                instance.resize();
-                            }
-                        }).observe(parent);
-                    });
-                }
-            }).catch((err) => console.error(err));
+            loadChartJs()
+                .then(() => {
+                    initAnalyticsCharts();
+                    // After SPA navigation Filament's grid hasn't finished reflowing
+                    // when Chart.js samples the canvas parent, so the chart keeps a
+                    // stale width and overflows the viewport. Watch each chart's
+                    // parent and resize whenever the actual width changes.
+                    if (typeof ResizeObserver !== 'undefined') {
+                        Object.values(Chart.instances).forEach((instance) => {
+                            const parent = instance.canvas.parentElement;
+                            if (!parent) return;
+                            // Guard the callback: Livewire SPA navigation can detach
+                            // the canvas before the observer fires, and Chart.js
+                            // resize() then dereferences a null parentElement.
+                            new ResizeObserver(() => {
+                                if (instance.canvas?.parentElement) {
+                                    instance.resize();
+                                }
+                            }).observe(parent);
+                        });
+                    }
+                })
+                .catch((err) => console.error(err));
         }
 
         if (document.readyState === 'complete' || document.readyState === 'interactive') {

@@ -10,6 +10,4 @@
     };
 @endphp
 
-<span class="inline-block px-2 py-0.5 rounded-md text-[0.7rem] font-semibold {{ $variantClass }}">
-    {{ $label }}
-</span>
+<span class="inline-block px-2 py-0.5 rounded-md text-[0.7rem] font-semibold {{ $variantClass }}"> {{ $label }} </span>

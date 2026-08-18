@@ -135,8 +135,10 @@ class QuickOrderForm
                                     ->disabled()
                                     ->dehydrated(false)
                                     ->formatStateUsing(function (Get $get) {
-                                        $quantity = (float) $get('quantity');
-                                        $price = (float) $get('unit_price');
+                                        $quantity = filter_var($get('quantity'), FILTER_VALIDATE_FLOAT);
+                                        $price = filter_var($get('unit_price'), FILTER_VALIDATE_FLOAT);
+                                        $quantity = is_float($quantity) ? $quantity : 0.0;
+                                        $price = is_float($price) ? $price : 0.0;
 
                                         return Number::currency($quantity * $price);
                                     }),

@@ -50,6 +50,7 @@ use App\Listeners\Orders\SendOrderModifiedEmailListener;
 use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Listeners\Orders\SendOrderStatusEmailListener;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
+use App\Listeners\Platform\RecordScheduledTaskStatusListener;
 use App\Listeners\Platform\SendHealthCheckAlertListener;
 use App\Listeners\Platform\SendPaymentFailedAlertListener;
 use App\Listeners\Platform\SendPaymentFailedEmailListener;
@@ -59,6 +60,9 @@ use App\Listeners\Platform\SendTrialExpiredEmailListener;
 use App\Listeners\Platform\SendTrialReminderEmailListener;
 use App\Listeners\Platform\SendWeeklyDigestEmailListener;
 use App\Listeners\Platform\SendWelcomeBakerEmailListener;
+use Illuminate\Console\Events\ScheduledTaskFailed;
+use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -72,6 +76,15 @@ class EventServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, list<class-string>> */
     protected array $listen = [
+        ScheduledTaskStarting::class => [
+            RecordScheduledTaskStatusListener::class,
+        ],
+        ScheduledTaskFinished::class => [
+            RecordScheduledTaskStatusListener::class,
+        ],
+        ScheduledTaskFailed::class => [
+            RecordScheduledTaskStatusListener::class,
+        ],
         ContactMessageReceived::class => [
             NotifyBakerOfContactMessageListener::class,
         ],

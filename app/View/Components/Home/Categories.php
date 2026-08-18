@@ -17,7 +17,7 @@ class Categories extends Component
     /** @param array<string, mixed> $config */
     public function __construct(public array $config = [])
     {
-        $this->title = $config['title'] ?? 'What We Bake';
+        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'What We Bake';
         $this->categories = Category::query()
             ->where('is_active', true)
             ->withCount('products')

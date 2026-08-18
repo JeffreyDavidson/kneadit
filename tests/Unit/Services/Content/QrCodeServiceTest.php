@@ -9,6 +9,10 @@ test('generateSvg returns html string', function () {
 });
 
 test('generatePng returns binary string', function () {
+    if (! class_exists(Imagick::class)) {
+        $this->markTestSkipped('PNG QR rendering requires the Imagick PHP extension.');
+    }
+
     $png = resolve(QrCodeService::class)->generatePng('https://example.com', 200, '#000000');
 
     expect($png)->toBeString()->not->toBeEmpty();

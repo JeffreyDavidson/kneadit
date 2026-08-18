@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Services\Platform\ScheduledTaskMonitor;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -95,9 +96,15 @@ class PlatformOperations extends Page
 
     public function getLastRun(string $key): ?string
     {
-        $value = platformSettings('last_run_' . $key);
+        $value = $this->getTaskStatus($key)['finished_at'] ?? platformSettings('last_run_' . $key);
 
-        return $value ?: null;
+        return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    /** @return array<string, mixed> */
+    public function getTaskStatus(string $key): array
+    {
+        return resolve(ScheduledTaskMonitor::class)->status($key);
     }
 
     public function run(string $key): void
@@ -111,10 +118,13 @@ class PlatformOperations extends Page
         }
 
         try {
+            $startedAt = microtime(true);
+            resolve(ScheduledTaskMonitor::class)->started($key);
             $exit = Artisan::call($key);
             $output = trim(Artisan::output());
 
             platformSettings(['last_run_' . $key => now()->toIso8601String()]);
+            resolve(ScheduledTaskMonitor::class)->succeeded($key, microtime(true) - $startedAt, $exit);
 
             if ($exit === 0) {
                 Notification::make()
@@ -130,6 +140,7 @@ class PlatformOperations extends Page
                     ->send();
             }
         } catch (Throwable $e) {
+            resolve(ScheduledTaskMonitor::class)->failed($key, $e);
             Notification::make()
                 ->title("Failed to run {$key}")
                 ->body($e->getMessage())

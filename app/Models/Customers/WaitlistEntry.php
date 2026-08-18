@@ -7,6 +7,7 @@ use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\WaitlistStatus;
 use App\Models\Inventory\Product;
+use Carbon\Carbon;
 use Database\Factories\Customers\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property WaitlistStatus $status
+ * @property Carbon $requested_date
  * @property-read Product|null $product
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)

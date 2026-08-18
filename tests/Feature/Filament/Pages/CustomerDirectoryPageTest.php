@@ -6,9 +6,8 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -19,7 +18,7 @@ beforeEach(function () {
 test('customer directory renders with customer data', function () {
     Customer::factory()->count(3)->create();
 
-    Livewire::test(CustomerDirectory::class)
+    livewire(CustomerDirectory::class)
         ->assertOk()
         ->assertSee('Customer');
 });
@@ -29,7 +28,7 @@ test('total_spent formats raw aggregate cents as dollars', function () {
     Order::factory()->for($customer)->create(['total' => 60]);
     Order::factory()->for($customer)->create(['total' => 40]);
 
-    $row = Livewire::test(CustomerDirectory::class)
+    $row = livewire(CustomerDirectory::class)
         ->instance()
         ->getCustomers()
         ->firstWhere('name', 'Alice');

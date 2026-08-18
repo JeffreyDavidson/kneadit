@@ -22,42 +22,49 @@
     <x-central.card class="mb-6">
         <x-central.eyebrow class="mb-2">Central Panel Theme</x-central.eyebrow>
         <p class="text-cinnamon text-[0.85rem] leading-relaxed">
-            Pick a palette for the platform admin. Affects sidebar, surfaces, tables, and accents.
-            Tenant-facing pages and emails are unaffected.
+            Pick a palette for the platform admin. Affects sidebar, surfaces, tables, and accents. Tenant-facing pages
+            and emails are unaffected.
         </p>
     </x-central.card>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
         @foreach ($themes as $key => $theme)
             @php $isActive = $current === $key; @endphp
-            <button type="button" wire:click="selectTheme('{{ $key }}')"
+            <button
+                type="button"
+                wire:click="selectTheme('{{ $key }}')"
                 class="text-left rounded-xl border-2 p-5 transition-all cursor-pointer
-                    {{ $isActive
+                    {{
+                        $isActive
                         ? 'border-honey bg-honey/8 shadow-[0_8px_28px_rgba(212,146,12,0.15)]'
-                        : 'border-honey/12 bg-warm-black hover:border-honey/30' }}">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="text-white text-[1.1rem] font-bold">{{ $theme['label'] }}</div>
+                        : 'border-honey/12 bg-warm-black hover:border-honey/30'
+                    }}"
+            >
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="text-[1.1rem] font-bold text-white">{{ $theme['label'] }}</div>
                     @if ($isActive)
-                        <div class="inline-flex items-center gap-1.5 bg-honey/15 text-honey text-[0.65rem] font-bold uppercase tracking-[0.1em] border border-honey/25 rounded-full px-2.5 py-1">
-                            <x-heroicon-s-check-circle class="w-3.5 h-3.5" />
+                        <div class="bg-honey/15 text-honey border-honey/25 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] uppercase">
+                            <x-heroicon-s-check-circle class="h-3.5 w-3.5" />
                             Active
                         </div>
                     @endif
                 </div>
 
-                <div class="flex gap-1.5 mb-4">
+                <div class="mb-4 flex gap-1.5">
                     @foreach ($theme['swatches'] as $swatch)
-                        <div class="flex-1 h-10 rounded-md border border-white/5"
-                            style="background: {{ $swatch }};"></div>
+                        <div
+                            class="h-10 flex-1 rounded-md border border-white/5"
+                            style="background: {{ $swatch }};"
+                        ></div>
                     @endforeach
                 </div>
 
                 <div class="text-cinnamon text-[0.8rem] leading-snug">{{ $theme['tagline'] }}</div>
 
                 @if (! $isActive)
-                    <div class="mt-4 inline-flex items-center gap-1 text-honey text-[0.8rem] font-semibold">
+                    <div class="text-honey mt-4 inline-flex items-center gap-1 text-[0.8rem] font-semibold">
                         Apply theme
-                        <x-heroicon-o-arrow-right class="w-3.5 h-3.5" />
+                        <x-heroicon-o-arrow-right class="h-3.5 w-3.5" />
                     </div>
                 @endif
             </button>

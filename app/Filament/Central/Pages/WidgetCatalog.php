@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -51,18 +52,24 @@ class WidgetCatalog extends Page
         $catalog = [];
 
         foreach (WidgetMeta::all() as $key => $meta) {
+            $defaultSize = $meta['defaultSize'] ?? WidgetSize::Small;
+
+            if (! $defaultSize instanceof WidgetSize) {
+                throw new \UnexpectedValueException("Widget {$key} has an invalid default size.");
+            }
+
             $entry = [
                 'key' => $key,
                 'name' => $meta['name'],
                 'description' => $meta['description'],
                 'icon' => $meta['icon'],
-                'size' => ($meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small)->value,
+                'size' => $defaultSize->value,
                 'visible' => true,
             ];
 
             if ($this->showAllSizes) {
                 $entry['allowedSizes'] = array_map(
-                    fn (\App\Enums\Filament\WidgetSize $s): string => $s->value,
+                    fn (WidgetSize $s): string => $s->value,
                     WidgetMeta::allowedSizesFor($key),
                 );
             }

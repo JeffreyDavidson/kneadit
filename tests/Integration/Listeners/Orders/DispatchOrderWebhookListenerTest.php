@@ -9,7 +9,7 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 test('dispatches webhook with transition payload', function () {
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();

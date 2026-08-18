@@ -54,19 +54,29 @@ class SurveyResults extends Page
             $questions = $survey->questions;
             $headers = ['Response #', 'Customer Name', 'Customer Email', 'Date'];
             foreach ($questions as $q) {
-                $headers[] = $q['question'];
+                $headers[] = $this->csvValue($q['question']);
             }
             fputcsv($handle, $headers);
 
             foreach ($survey->responses as $i => $response) {
-                $row = [$i + 1, $response->customer_name, $response->customer_email, $response->created_at?->format('Y-m-d H:i')];
+                $row = [
+                    $i + 1,
+                    $this->csvValue($response->customer_name),
+                    $this->csvValue($response->customer_email),
+                    $response->created_at?->format('Y-m-d H:i'),
+                ];
                 foreach ($questions as $qi => $q) {
-                    $row[] = $response->answers[$qi] ?? '';
+                    $row[] = $this->csvValue($response->answers[$qi] ?? '');
                 }
                 fputcsv($handle, $row);
             }
             fclose($handle);
         }, "survey-{$survey->id}-results.csv");
+    }
+
+    private function csvValue(mixed $value): bool|float|int|string|null
+    {
+        return is_scalar($value) || $value === null ? $value : '';
     }
 
     protected function getViewData(): array

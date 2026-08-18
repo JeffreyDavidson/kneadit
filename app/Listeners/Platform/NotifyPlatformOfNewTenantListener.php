@@ -7,12 +7,15 @@ use App\Events\Platform\TenantOnboarded;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
 use Illuminate\Contracts\Mail\Mailable;
+use Illuminate\Support\Facades\Config;
 
 class NotifyPlatformOfNewTenantListener extends SendEmailListener
 {
     protected function getRecipient(object $event): ?string
     {
-        return config('mail.platform_notify');
+        $recipient = Config::get('mail.platform_notify');
+
+        return is_string($recipient) ? $recipient : null;
     }
 
     protected function getMailable(object $event): Mailable

@@ -51,7 +51,10 @@ class ProcessTrialExpirations
             }
 
             $user = $this->reader->userFor($tenant);
-            if (! $user || $user->subscribed('default')) {
+            if (! $user) {
+                continue;
+            }
+            if ($user->subscribed('default')) {
                 continue;
             }
 

@@ -4,27 +4,34 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+
+concurrency:
+  group: phpstan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyse:
     name: Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          tools: composer:v2
-          coverage: none
+      - name: Verify local PHP
+        run: php -v && php -m
+
+      - name: Install Composer
+        run: |
+          mkdir -p "$RUNNER_TEMP/composer-bin"
+          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
+          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
+          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/composer-bin/composer" --version
 
       - name: Install Composer dependencies
         env:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+      - name: Run application and Pest PHPStan
+        run: composer test:types

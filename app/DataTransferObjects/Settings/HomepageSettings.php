@@ -22,10 +22,10 @@ final readonly class HomepageSettings
     public static function resolve(): self
     {
         return new self(
-            socialMediaLinks: (array) json_decode((string) settings('social_media_links', '{}'), true),
-            operatingHours: (array) json_decode((string) settings('operating_hours', '{}'), true),
-            faqItems: (array) json_decode((string) settings('faq_items', '[]'), true),
-            sections: (array) json_decode((string) settings('homepage_sections', '{}'), true),
+            socialMediaLinks: self::resolveSocialMediaLinks(),
+            operatingHours: SettingValue::decodedMap(settings('operating_hours')),
+            faqItems: self::resolveFaqItems(),
+            sections: self::resolveSections(),
         );
     }
 
@@ -33,7 +33,44 @@ final readonly class HomepageSettings
     public function visibleSections(): Collection
     {
         return collect($this->sections)
-            ->filter(fn (array $s) => $s['visible'] ?? true)
+            ->filter(fn (array $section): bool => ($section['visible'] ?? true) !== false)
             ->sortBy('order');
+    }
+
+    /** @return array<string, string> */
+    private static function resolveSocialMediaLinks(): array
+    {
+        return array_filter(
+            SettingValue::decodedMap(settings('social_media_links')),
+            fn (mixed $url): bool => is_string($url),
+        );
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private static function resolveFaqItems(): array
+    {
+        $items = [];
+
+        foreach (SettingValue::decodedList(settings('faq_items')) as $item) {
+            if (is_array($item)) {
+                $items[] = SettingValue::map($item);
+            }
+        }
+
+        return $items;
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    private static function resolveSections(): array
+    {
+        $sections = [];
+
+        foreach (SettingValue::decodedMap(settings('homepage_sections')) as $key => $section) {
+            if (is_array($section)) {
+                $sections[$key] = SettingValue::map($section);
+            }
+        }
+
+        return $sections;
     }
 }

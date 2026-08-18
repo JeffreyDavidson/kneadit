@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages\Dashboard;
 
+use App\Enums\Filament\WidgetSize;
+use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Filament\Widgets\AtRiskCustomersWidget;
 use App\Filament\Widgets\BakingSheetWidget;
 use App\Filament\Widgets\BirthdayWidget;
 use App\Filament\Widgets\CapacityTodayWidget;
 use App\Filament\Widgets\CateringPipelineWidget;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Filament\Widgets\CouponUsageWidget;
 use App\Filament\Widgets\CustomerInsightsWidget;
 use App\Filament\Widgets\GiftCardBalanceWidget;
@@ -33,8 +36,14 @@ use App\Filament\Widgets\WeeklyRevenueChart;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Services\Settings\SettingsManager;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 
+/**
+ * @phpstan-type SavedWidgetSettings array{visible: bool, order: int, size?: string}
+ * @phpstan-type SavedDashboardConfig array<string, SavedWidgetSettings>
+ */
 class Dashboard extends BaseDashboard
 {
     protected static ?string $navigationLabel = 'Dashboard';
@@ -54,7 +63,7 @@ class Dashboard extends BaseDashboard
         return 'Dashboard';
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<string, class-string<Widget>> */
     protected function getWidgetRegistry(): array
     {
         return [
@@ -91,32 +100,33 @@ class Dashboard extends BaseDashboard
         ];
     }
 
+    /** @return array<class-string<Widget>|WidgetConfiguration> */
     public function getWidgets(): array
     {
         $registry = $this->getWidgetRegistry();
 
-        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
-        $config = $saved ? json_decode($saved, true) : null;
+        $config = $this->getSavedDashboardConfig();
 
         // No saved layout yet → render every registered widget in default order
         // at its widget-meta default size. The DashboardConfig page
         // (Settings → Dashboard Configuration) is where bakers customize this.
         // Skip widgets flagged defaultHidden so reporting-flavoured tiles
         // don't crowd a fresh ops dashboard.
-        if (! $config) {
+        if ($config === null || $config === []) {
             return collect($registry)
-                ->reject(fn (string $class, string $key): bool => \App\Filament\Shared\Dashboard\WidgetMeta::isDefaultHidden($key))
+                ->reject(fn (string $class, string $key): bool => WidgetMeta::isDefaultHidden($key))
                 ->map(fn (string $class, string $key) => $this->wrapWithSize($class, $key, null))
                 ->values()
                 ->all();
         }
 
         // Sort by saved order, drop hidden widgets, drop unknown keys.
-        uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
+        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
 
+        /** @var array<int, class-string<Widget>|WidgetConfiguration> $widgets */
         $widgets = [];
         foreach ($config as $key => $settings) {
-            if (! ($settings['visible'] ?? true)) {
+            if (! $settings['visible']) {
                 continue;
             }
             if (! isset($registry[$key])) {
@@ -136,7 +146,7 @@ class Dashboard extends BaseDashboard
             if (array_key_exists($key, $config)) {
                 continue;
             }
-            if (\App\Filament\Shared\Dashboard\WidgetMeta::isDefaultHidden($key)) {
+            if (WidgetMeta::isDefaultHidden($key)) {
                 continue;
             }
             $widgets[] = $this->wrapWithSize($class, $key, null);
@@ -151,22 +161,68 @@ class Dashboard extends BaseDashboard
      * Widgets that don't use the HasDashboardSize trait pass through
      * untouched.
      *
-     * @param class-string<\Filament\Widgets\Widget> $class
+     * @param class-string<Widget> $class
+     * @return class-string<Widget>|WidgetConfiguration
      */
-    private function wrapWithSize(string $class, string $key, ?string $savedSize): string|\Filament\Widgets\WidgetConfiguration
+    private function wrapWithSize(string $class, string $key, ?string $savedSize): string|WidgetConfiguration
     {
-        if (! in_array(\App\Filament\Widgets\Concerns\HasDashboardSize::class, class_uses_recursive($class), true)) {
+        if (! in_array(HasDashboardSize::class, class_uses_recursive($class), true)) {
             return $class;
         }
 
-        $allowed = \App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor($key);
-        $resolved = \App\Enums\Filament\WidgetSize::tryFrom((string) $savedSize);
+        $allowed = WidgetMeta::allowedSizesFor($key);
+        $resolved = $savedSize === null ? null : WidgetSize::tryFrom($savedSize);
 
         if ($resolved === null || ! in_array($resolved, $allowed, true)) {
-            $meta = \App\Filament\Shared\Dashboard\WidgetMeta::get($key);
-            $resolved = $meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small;
+            $resolved = $this->getDefaultSize($key);
         }
 
         return $class::make(['dashboardSize' => $resolved->value]);
+    }
+
+    /** @return SavedDashboardConfig|null */
+    private function getSavedDashboardConfig(): ?array
+    {
+        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
+
+        if (! is_string($saved) || $saved === '') {
+            return null;
+        }
+
+        $decoded = json_decode($saved, true);
+
+        if (! is_array($decoded)) {
+            return null;
+        }
+
+        $config = [];
+
+        foreach ($decoded as $key => $settings) {
+            if (! is_string($key)) {
+                continue;
+            }
+            if (! is_array($settings)) {
+                continue;
+            }
+            $normalized = [
+                'visible' => is_bool($settings['visible'] ?? null) ? $settings['visible'] : true,
+                'order' => is_int($settings['order'] ?? null) ? $settings['order'] : 99,
+            ];
+
+            if (is_string($settings['size'] ?? null)) {
+                $normalized['size'] = $settings['size'];
+            }
+
+            $config[$key] = $normalized;
+        }
+
+        return $config;
+    }
+
+    private function getDefaultSize(string $key): WidgetSize
+    {
+        $defaultSize = WidgetMeta::get($key)['defaultSize'] ?? null;
+
+        return $defaultSize instanceof WidgetSize ? $defaultSize : WidgetSize::Small;
     }
 }

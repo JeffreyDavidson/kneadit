@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Audit\ActorContext;
 use Closure;
@@ -36,7 +37,9 @@ class SetActorContext
                     ]);
                 }
 
-                if ($tenant = tenant()) {
+                $tenant = tenancy()->tenant;
+
+                if ($tenant instanceof Tenant) {
                     $scope->setTag('tenant_id', (string) $tenant->getTenantKey());
                 }
             });

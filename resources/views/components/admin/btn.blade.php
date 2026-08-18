@@ -24,7 +24,8 @@
             @else
                 <span>{{ $icon }}</span>
             @endif
-        @endif{{ $slot }}
+        @endif
+        {{ $slot }}
     </a>
 @else
     <button type="{{ $type }}" {{ $attributes->class([$classes]) }}>
@@ -34,6 +35,7 @@
             @else
                 <span>{{ $icon }}</span>
             @endif
-        @endif{{ $slot }}
+        @endif
+        {{ $slot }}
     </button>
 @endif

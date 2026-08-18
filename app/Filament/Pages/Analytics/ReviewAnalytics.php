@@ -59,13 +59,13 @@ class ReviewAnalytics extends Page
         return $this->service()->getMonthlyTrend();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array{id: int, name: string, reviews_count: ?int, average_rating: float|0}> */
     public function getTopReviewedProducts(): Collection
     {
         return $this->service()->getTopReviewedProducts();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
     public function getRecentReviews(): Collection
     {
         return $this->service()->getRecentReviews();

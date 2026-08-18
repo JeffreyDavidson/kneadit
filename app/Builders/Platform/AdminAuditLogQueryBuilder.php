@@ -4,6 +4,7 @@ namespace App\Builders\Platform;
 
 use App\Models\Platform\AdminAuditLog;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Config;
 
 /** @extends Builder<AdminAuditLog> */
 class AdminAuditLogQueryBuilder extends Builder
@@ -28,7 +29,7 @@ class AdminAuditLogQueryBuilder extends Builder
 
     public function recent(): static
     {
-        $this->where('created_at', '>=', now()->subDays(config('analytics.recent_days', 30)));
+        $this->where('created_at', '>=', now()->subDays(Config::integer('analytics.recent_days', 30)));
 
         return $this;
     }

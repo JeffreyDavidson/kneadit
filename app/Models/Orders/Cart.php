@@ -24,9 +24,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $converted_at
  * @property-read Collection<int, CartItem> $items
  *
- * @method static CartQueryBuilder|Cart newModelQuery()
- * @method static CartQueryBuilder|Cart newQuery()
- * @method static CartQueryBuilder|Cart query()
+ * @method static CartQueryBuilder newModelQuery()
+ * @method static CartQueryBuilder newQuery()
+ * @method static CartQueryBuilder query()
  *
  * @mixin \Eloquent
  */

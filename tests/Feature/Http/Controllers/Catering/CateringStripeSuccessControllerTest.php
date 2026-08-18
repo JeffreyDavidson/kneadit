@@ -7,7 +7,7 @@ use Mockery\MockInterface;
 
 use function Pest\Laravel\withoutMiddleware;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

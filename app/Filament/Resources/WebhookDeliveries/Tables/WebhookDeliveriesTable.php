@@ -31,7 +31,7 @@ class WebhookDeliveriesTable
                     ->label('When')
                     ->dateTime()
                     ->since()
-                    ->tooltip(fn (WebhookDelivery $record): ?string => $record->dispatched_at?->format('M j, Y g:i:s A'))
+                    ->tooltip(fn (WebhookDelivery $record): string => $record->dispatched_at->format('M j, Y g:i:s A'))
                     ->sortable(),
 
                 TextColumn::make('event')

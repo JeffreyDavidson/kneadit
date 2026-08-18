@@ -18,9 +18,9 @@ use Illuminate\Support\Str;
  */
 class CartManager
 {
-    private const COOKIE_NAME = 'cart_token';
+    private const string COOKIE_NAME = 'cart_token';
 
-    private const COOKIE_TTL_MINUTES = 60 * 24 * 30; // 30 days
+    private const int COOKIE_TTL_MINUTES = 60 * 24 * 30; // 30 days
 
     public function current(): ?Cart
     {

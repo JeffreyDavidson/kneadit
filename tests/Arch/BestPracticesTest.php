@@ -53,11 +53,20 @@ test('associative arrays in controllers should be multiline', function () {
     );
 
     foreach ($iterator as $file) {
+        if (! $file instanceof SplFileInfo) {
+            continue;
+        }
+
         if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $content = file_get_contents($file->getPathname());
+
+        if ($content === false) {
+            throw new RuntimeException("Unable to read {$file->getPathname()}.");
+        }
+
         $lines = explode("\n", $content);
         $relative = str_replace(dirname(__DIR__, 2) . '/app' . DIRECTORY_SEPARATOR, '', $file->getPathname());
 
@@ -100,25 +109,36 @@ test('associative arrays in controllers should be multiline', function () {
 });
 
 test('model static calls in controllers must use explicit query()', function () {
-    $controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'))
-        ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
+    $controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php') ?: [])
+        ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php') ?: [])
         ->reject(fn ($file) => str_ends_with($file, 'Controller.php') && basename($file) === 'Controller.php');
 
-    $modelClasses = collect(
-        new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
-        ),
-    )
-        ->filter(fn ($file) => $file->getExtension() === 'php')
-        ->reject(fn ($file) => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
-        ->map(fn ($file) => $file->getBasename('.php'))
-        ->values()
-        ->all();
+    $modelClasses = [];
+    $modelIterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+    );
+
+    foreach ($modelIterator as $file) {
+        if (! $file instanceof SplFileInfo || $file->getExtension() !== 'php') {
+            continue;
+        }
+
+        if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR)) {
+            continue;
+        }
+
+        $modelClasses[] = $file->getBasename('.php');
+    }
 
     $violations = [];
 
     foreach ($controllerFiles as $file) {
         $contents = file_get_contents($file);
+
+        if ($contents === false) {
+            throw new RuntimeException("Unable to read {$file}.");
+        }
+
         $shortName = basename($file);
 
         foreach ($modelClasses as $model) {
@@ -148,14 +168,24 @@ arch('mail classes should not call settings() directly')
 arch('all listeners should extend QueuedListener')
     ->expect('App\Listeners')
     ->toExtend(App\Listeners\QueuedListener::class)
-    ->ignoring(App\Listeners\QueuedListener::class);
+    ->ignoring([
+        App\Listeners\QueuedListener::class,
+        // Scheduler lifecycle events contain process-local task objects and
+        // must be recorded synchronously rather than serialized to a queue.
+        App\Listeners\Platform\RecordScheduledTaskStatusListener::class,
+    ]);
 
 test('all listeners have retry configuration', function () {
-    $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php');
+    $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php') ?: [];
     $violations = [];
 
     foreach ($listenerFiles as $file) {
         $contents = file_get_contents($file);
+
+        if ($contents === false) {
+            throw new RuntimeException("Unable to read {$file}.");
+        }
+
         $name = basename($file, '.php');
 
         if ($name === 'QueuedListener') {
@@ -178,24 +208,20 @@ test('all listeners have retry configuration', function () {
 });
 
 test('all models have factories', function () {
-    $modelFiles = collect(
-        new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
-        ),
-    )
-        ->filter(fn ($file) => $file->getExtension() === 'php')
-        ->reject(fn ($file) => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
-        ->map(fn ($file) => $file->getBasename('.php'))
+    $modelFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+    )))
+        ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
+        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))
         ->reject(fn ($name) => in_array($name, ['ImpersonationToken', 'Tenant']))
         ->values();
 
-    $factoryFiles = collect(
-        new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../../database/factories', FilesystemIterator::SKIP_DOTS),
-        ),
-    )
-        ->filter(fn ($file) => $file->getExtension() === 'php')
-        ->map(fn ($file) => str_replace('Factory', '', $file->getBasename('.php')))
+    $factoryFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__ . '/../../database/factories', FilesystemIterator::SKIP_DOTS),
+    )))
+        ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
+        ->map(fn (SplFileInfo $file): string => str_replace('Factory', '', $file->getBasename('.php')))
         ->values()
         ->all();
 

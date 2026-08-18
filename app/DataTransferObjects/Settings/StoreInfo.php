@@ -20,14 +20,14 @@ final readonly class StoreInfo
     public static function resolve(): self
     {
         return new self(
-            name: (string) settings('store_name', 'Our Bakery'),
-            email: settings('store_email'),
-            phone: settings('store_phone'),
-            address: settings('store_address'),
-            website: settings('store_website'),
-            photo: settings('store_photo'),
-            logo: settings('store_logo'),
-            tagline: settings('store_tagline'),
+            name: SettingValue::string(settings('store_name'), 'Our Bakery'),
+            email: SettingValue::nullableString(settings('store_email')),
+            phone: SettingValue::nullableString(settings('store_phone')),
+            address: SettingValue::nullableString(settings('store_address')),
+            website: SettingValue::nullableString(settings('store_website')),
+            photo: SettingValue::nullableString(settings('store_photo')),
+            logo: SettingValue::nullableString(settings('store_logo')),
+            tagline: SettingValue::nullableString(settings('store_tagline')),
         );
     }
 

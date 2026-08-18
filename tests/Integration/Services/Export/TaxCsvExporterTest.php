@@ -9,11 +9,23 @@ use App\Models\Orders\OrderItem;
 use App\Services\Financial\TaxCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
 });
+
+/** @return resource */
+function taxCsvMemoryStream()
+{
+    $handle = fopen('php://memory', 'r+');
+
+    if ($handle === false) {
+        throw new RuntimeException('Unable to open an in-memory CSV stream.');
+    }
+
+    return $handle;
+}
 
 test('writeOrdersCsv includes header row and order data', function () {
     $order = Order::factory()->paid()->create([
@@ -26,7 +38,7 @@ test('writeOrdersCsv includes header row and order data', function () {
         'quantity' => 2,
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeOrdersCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -46,7 +58,7 @@ test('writeOrdersCsv excludes orders outside date range', function () {
         'total' => 75.00,
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeOrdersCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -73,7 +85,7 @@ test('writeExpensesCsv maps categories to IRS Schedule C lines', function () {
         'business_percentage' => 100,
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeExpensesCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -94,7 +106,7 @@ test('writeIncomeCsv includes income rows', function () {
         'description' => 'Saturday market sales',
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeIncomeCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -115,7 +127,7 @@ test('writeIncomeCsv excludes income outside date range', function () {
         'description' => 'Old income',
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeIncomeCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -149,7 +161,7 @@ test('writeSummaryCsv calculates correct totals', function () {
         'business_percentage' => 100,
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeSummaryCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);
@@ -178,7 +190,7 @@ test('writeSummaryCsv includes net profit calculation', function () {
         'business_percentage' => 50,
     ]);
 
-    $handle = fopen('php://memory', 'r+');
+    $handle = taxCsvMemoryStream();
     resolve(TaxCsvExporter::class)->writeSummaryCsv($handle, '2025-01-01', '2025-12-31');
 
     rewind($handle);

@@ -5,7 +5,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-uses(RefreshDatabase::class);
+use function Pest\Laravel\actingAs;
+
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -36,7 +38,7 @@ test('passes through for auth routes', function () {
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/auth/login');
@@ -53,7 +55,7 @@ test('passes through when already on onboarding page', function () {
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/onboarding');
@@ -69,7 +71,7 @@ test('passes through for livewire update requests', function () {
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/livewire/update');
@@ -85,7 +87,7 @@ test('passes through for livewire hashed paths', function () {
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/livewire-abc123');
@@ -102,7 +104,7 @@ test('passes through when onboarding is complete', function () {
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $settings = makeTenantSettings(
         onboarding: new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: now()->toDateTimeString()),
@@ -124,7 +126,7 @@ test('passes through gracefully when TenantSettings throws exception', function 
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     app()->bind(App\Services\Settings\TenantSettings::class, function () {
         throw new RuntimeException('Settings unavailable');
@@ -139,12 +141,12 @@ test('passes through gracefully when TenantSettings throws exception', function 
 });
 
 test('redirects to onboarding when onboardingCompletedAt is null using TenantSettings', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
-    app()->bind('currentTenant', fn () => $tenant);
+    $tenant = new App\Models\Platform\Tenant(['id' => 'onboarding-bakery']);
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
 
     $user = App\Models\Staff\User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $settings = makeTenantSettings(
         onboarding: new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: null),
