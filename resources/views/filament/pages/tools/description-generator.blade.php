@@ -2,27 +2,41 @@
     <div class="space-y-6">
         {{-- Input Form --}}
         <x-filament::section heading="Product Details">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Product</label>
-                    <select wire:model.live="selectedProductId" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                    <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Select Product</label>
+                    <select
+                        wire:model.live="selectedProductId"
+                        class="w-full rounded-lg border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
                         <option value="">— Manual entry —</option>
                         @foreach ($this->products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->category?->name ?? 'Uncategorized' }})</option>
+                            <option value="{{ $product->id }}">
+                                {{ $product->name }} ({{ $product->category?->name ?? 'Uncategorized' }})
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Or Type Product Name</label>
-                    <input type="text" wire:model="manualProductName" placeholder="e.g. Chocolate Croissant" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm" @if ($selectedProductId) disabled @endif>
+                    <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Or Type Product Name</label>
+                    <input
+                        type="text"
+                        wire:model="manualProductName"
+                        placeholder="e.g. Chocolate Croissant"
+                        class="w-full rounded-lg border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        @if ($selectedProductId) disabled @endif
+                    />
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
-                    <select wire:model="tone" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                    <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Tone</label>
+                    <select
+                        wire:model="tone"
+                        class="w-full rounded-lg border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
                         <option value="professional">Professional</option>
                         <option value="casual">Casual</option>
                         <option value="playful">Playful</option>
@@ -32,8 +46,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Length</label>
-                    <select wire:model="length" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                    <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Length</label>
+                    <select
+                        wire:model="length"
+                        class="w-full rounded-lg border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
                         <option value="short">Short (1 sentence)</option>
                         <option value="medium">Medium (2-3 sentences)</option>
                         <option value="long">Long (paragraph)</option>
@@ -53,10 +70,10 @@
             <x-filament::section heading="Generated Descriptions">
                 <div class="space-y-4">
                     @foreach ($descriptions as $index => $description)
-                        <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
                             <div class="flex items-start justify-between gap-4">
-                                <p class="text-gray-800 dark:text-gray-200 flex-1">{{ $description }}</p>
-                                <div class="flex gap-2 shrink-0">
+                                <p class="flex-1 text-gray-800 dark:text-gray-200">{{ $description }}</p>
+                                <div class="flex shrink-0 gap-2">
                                     <x-filament::button
                                         size="sm"
                                         color="gray"

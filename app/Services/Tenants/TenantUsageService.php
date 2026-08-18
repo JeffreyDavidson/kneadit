@@ -22,7 +22,7 @@ class TenantUsageService
         foreach (Tenant::all() as $tenant) {
             $tier = $tenant->plan ?? SubscriptionTier::Starter;
             $plan = $tier->value;
-            $limits = config('kneadit.plans.' . $plan . '.limits', config('kneadit.plans.starter.limits'));
+            $limits = $this->limitsForPlan($plan);
 
             if ($tier === SubscriptionTier::Pro) {
                 continue;
@@ -57,7 +57,7 @@ class TenantUsageService
                         'order_limit' => $orderLimit,
                         'order_percent' => min($orderPercent, 100),
                         'at_limit' => $productPercent >= 100 || $orderPercent >= 100,
-                        'approaching_limit' => ! ($productPercent >= 100 || $orderPercent >= 100),
+                        'approaching_limit' => $productPercent < 100 && $orderPercent < 100,
                     ]);
                 }
             } catch (\Throwable) {
@@ -77,5 +77,23 @@ class TenantUsageService
             SubscriptionTier::Growth => SubscriptionTier::Pro,
             default => null,
         };
+    }
+
+    /** @return array{products: ?int, orders_per_month: ?int} */
+    private function limitsForPlan(string $plan): array
+    {
+        $limits = config("kneadit.plans.{$plan}.limits");
+
+        if (! is_array($limits)) {
+            return ['products' => null, 'orders_per_month' => null];
+        }
+
+        $products = $limits['products'] ?? null;
+        $ordersPerMonth = $limits['orders_per_month'] ?? null;
+
+        return [
+            'products' => is_int($products) ? $products : null,
+            'orders_per_month' => is_int($ordersPerMonth) ? $ordersPerMonth : null,
+        ];
     }
 }

@@ -25,12 +25,17 @@ abstract class AbstractSettingsManager
 
     public function set(string $key, mixed $value): void
     {
-        $this->modelClass()::query()->updateOrCreate(['key' => $key], ['value' => $value]);
+        $storedValue = $this->valueForStorage($key, $value);
+
+        $this->modelClass()::query()->updateOrCreate(
+            ['key' => $key],
+            ['value' => $storedValue],
+        );
 
         $cacheKey = $this->cacheKey();
 
         if (isset($this->cache[$cacheKey])) {
-            $this->cache[$cacheKey][$key] = $value;
+            $this->cache[$cacheKey][$key] = $this->valueFromStorage($key, $storedValue);
         }
     }
 
@@ -52,11 +57,28 @@ abstract class AbstractSettingsManager
             return;
         }
 
-        $this->cache[$cacheKey] = $this->modelClass()::query()->pluck('value', 'key')->all();
+        $stored = $this->modelClass()::query()->pluck('value', 'key')->all();
+        $settings = [];
+
+        foreach ($stored as $key => $value) {
+            $settings[$key] = $this->valueFromStorage($key, $value);
+        }
+
+        $this->cache[$cacheKey] = $settings;
     }
 
     public function flushCache(): void
     {
         $this->cache = [];
+    }
+
+    protected function valueForStorage(string $key, mixed $value): mixed
+    {
+        return $value;
+    }
+
+    protected function valueFromStorage(string $key, mixed $value): mixed
+    {
+        return $value;
     }
 }

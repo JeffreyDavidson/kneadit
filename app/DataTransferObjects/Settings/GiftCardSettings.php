@@ -17,9 +17,9 @@ final readonly class GiftCardSettings
         return new self(
             presetAmounts: array_map(
                 'intval',
-                array_filter(explode(',', (string) settings('gift_card_preset_amounts', '10,25,50,100'))),
+                array_filter(explode(',', SettingValue::string(settings('gift_card_preset_amounts'), '10,25,50,100'))),
             ),
-            defaultAmount: (int) settings('gift_card_default_amount', '25'),
+            defaultAmount: SettingValue::int(settings('gift_card_default_amount'), 25),
         );
     }
 }

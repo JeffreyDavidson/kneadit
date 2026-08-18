@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Rule;
@@ -23,6 +24,9 @@ class ViewTenant extends ViewRecord
     protected static string $resource = TenantResource::class;
 
     protected string $view = 'filament.central.pages.view-tenant';
+
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
 
     protected function getHeaderActions(): array
     {
@@ -38,12 +42,7 @@ class ViewTenant extends ViewRecord
                 ->label('Visit Storefront')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->color('info')
-                ->url(fn () => sprintf(
-                    '%s://%s.%s',
-                    parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https',
-                    $this->record->id,
-                    parse_url(config('app.url'), PHP_URL_HOST) ?: 'getkneadit.app',
-                ))
+                ->url(fn (): string => $this->storefrontUrl())
                 ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];
@@ -105,9 +104,6 @@ class ViewTenant extends ViewRecord
         return [];
     }
 
-    #[Rule(['required', 'min:3'])]
-    public string $noteBody = '';
-
     public function addNote(): void
     {
         $this->validate(['noteBody' => ['required', 'min:3']]);
@@ -139,5 +135,24 @@ class ViewTenant extends ViewRecord
             ->title('Note deleted')
             ->success()
             ->send();
+    }
+
+    private function storefrontUrl(): string
+    {
+        $appUrl = Config::string('app.url');
+
+        $host = parse_url($appUrl, PHP_URL_HOST);
+        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
+
+        if (! is_string($host) || $host === '') {
+            throw new \UnexpectedValueException('The application URL must contain a host.');
+        }
+
+        return sprintf(
+            '%s://%s.%s',
+            is_string($scheme) && $scheme !== '' ? $scheme : 'https',
+            $this->record->id,
+            $host,
+        );
     }
 }

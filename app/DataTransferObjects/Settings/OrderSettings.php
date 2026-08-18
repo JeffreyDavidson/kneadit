@@ -27,21 +27,35 @@ final readonly class OrderSettings
     public static function resolve(): self
     {
         return new self(
-            leadTimeHours: (int) settings('order_lead_time_hours', '24'),
+            leadTimeHours: SettingValue::int(settings('order_lead_time_hours'), 24),
             deliveryEnabled: settings('delivery_enabled', '1') === '1',
-            freeDeliveryMinimum: (string) settings('free_delivery_minimum', '50'),
-            minimumPickupOrderAmount: (string) settings('minimum_pickup_order_amount', '0'),
-            minimumDeliveryOrderAmount: (string) settings('minimum_delivery_order_amount', '0'),
-            deliveryFeeTiers: (array) json_decode((string) settings('delivery_fee_tiers', '[]'), true),
-            defaultDailyCapacity: (int) settings('default_daily_capacity', '20'),
-            modificationWindowMinutes: (int) settings('order_modification_window_minutes', '0'),
+            freeDeliveryMinimum: SettingValue::string(settings('free_delivery_minimum'), '50'),
+            minimumPickupOrderAmount: SettingValue::string(settings('minimum_pickup_order_amount'), '0'),
+            minimumDeliveryOrderAmount: SettingValue::string(settings('minimum_delivery_order_amount'), '0'),
+            deliveryFeeTiers: self::resolveDeliveryFeeTiers(),
+            defaultDailyCapacity: SettingValue::int(settings('default_daily_capacity'), 20),
+            modificationWindowMinutes: SettingValue::int(settings('order_modification_window_minutes'), 0),
             pickupSlotsEnabled: settings('pickup_slots_enabled', '0') === '1',
-            pickupSlotIntervalMinutes: (int) settings('pickup_slot_interval_minutes', '30'),
-            pickupSlotMaxPerWindow: (int) settings('pickup_slot_max_per_window', '3'),
+            pickupSlotIntervalMinutes: SettingValue::int(settings('pickup_slot_interval_minutes'), 30),
+            pickupSlotMaxPerWindow: SettingValue::int(settings('pickup_slot_max_per_window'), 3),
             sitewideSaleEnabled: settings('sitewide_sale_enabled', '0') === '1',
-            sitewideSalePercent: (int) settings('sitewide_sale_percent', '0'),
-            sitewideSaleLabel: (string) settings('sitewide_sale_label', 'Sale'),
+            sitewideSalePercent: SettingValue::int(settings('sitewide_sale_percent'), 0),
+            sitewideSaleLabel: SettingValue::string(settings('sitewide_sale_label'), 'Sale'),
         );
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private static function resolveDeliveryFeeTiers(): array
+    {
+        $tiers = [];
+
+        foreach (SettingValue::decodedList(settings('delivery_fee_tiers')) as $tier) {
+            if (is_array($tier)) {
+                $tiers[] = SettingValue::map($tier);
+            }
+        }
+
+        return $tiers;
     }
 
     public function leadTimeDays(): int

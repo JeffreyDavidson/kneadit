@@ -22,8 +22,8 @@ final class BrandingStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $tenant = tenant();
-        $existingLogo = resolve(SettingsManager::class)->get('store_logo') ?: $tenant?->store_logo;
+        $tenant = self::tenant();
+        $existingLogo = resolve(SettingsManager::class)->get('store_logo') ?: $tenant->store_logo;
 
         return [
             'color_primary' => $tenant->brand_color_primary ?? '#6b4c3b',
@@ -69,22 +69,18 @@ final class BrandingStep extends OnboardingStep
             'brand_color_secondary' => $data['color_secondary'],
         ];
 
-        $tenant = tenant();
-        if ($tenant) {
-            $tenant->brand_color_primary = $data['color_primary'];
-            $tenant->brand_color_secondary = $data['color_secondary'];
+        $tenant = self::tenant();
+        $tenant->brand_color_primary = is_string($data['color_primary'] ?? null) ? $data['color_primary'] : '#6b4c3b';
+        $tenant->brand_color_secondary = is_string($data['color_secondary'] ?? null) ? $data['color_secondary'] : '#d4a574';
 
-            /** @var array<int, string>|string|null $storeLogo */
-            $storeLogo = $data['store_logo'] ?? null;
-            $logoPath = ! empty($storeLogo)
-                ? (is_array($storeLogo) ? ($storeLogo[0] ?? null) : $storeLogo)
-                : null;
+        $storeLogo = $data['store_logo'] ?? null;
+        $logoPath = is_array($storeLogo) ? collect($storeLogo)->first(is_string(...)) : $storeLogo;
+        $logoPath = is_string($logoPath) && $logoPath !== '' ? $logoPath : null;
 
-            $settings['store_logo'] = $logoPath;
-            $tenant->store_logo = $logoPath;
+        $settings['store_logo'] = $logoPath;
+        $tenant->store_logo = $logoPath;
 
-            $tenant->save();
-        }
+        $tenant->save();
 
         resolve(SettingsManager::class)->setMany($settings);
     }

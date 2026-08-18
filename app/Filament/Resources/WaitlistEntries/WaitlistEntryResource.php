@@ -72,6 +72,8 @@ class WaitlistEntryResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) WaitlistEntry::query()->waiting()->count() ?: null;
+        $count = cache()->remember('navigation-badge:waitlist-entries:waiting', 60, fn (): int => WaitlistEntry::query()->waiting()->count());
+
+        return $count > 0 ? (string) $count : null;
     }
 }

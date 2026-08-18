@@ -3,9 +3,8 @@
 use App\Filament\Pages\Operations\BakingSheet;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
@@ -13,8 +12,9 @@ beforeEach(function () {
 });
 
 test('baking sheet loads for selected date', function () {
-    Livewire::test(BakingSheet::class)
-        ->assertOk()
-        ->set('selectedDate', now()->format('Y-m-d'))
-        ->assertOk();
+    $component = livewire(BakingSheet::class);
+
+    $component->assertOk();
+    $component->set('selectedDate', now()->format('Y-m-d'));
+    $component->assertOk();
 });

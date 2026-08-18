@@ -20,15 +20,23 @@ test('no MySQL-only SQL functions in application code', function () {
     );
 
     foreach ($iterator as $file) {
+        if (! $file instanceof SplFileInfo) {
+            continue;
+        }
+
         if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $content = file_get_contents($file->getPathname());
 
+        if ($content === false) {
+            throw new RuntimeException("Unable to read {$file->getPathname()}.");
+        }
+
         foreach ($mysqlFunctions as $fn) {
             if (str_contains($content, $fn)) {
-                $relative = str_replace(realpath($appDir) . '/', '', $file->getPathname());
+                $relative = str_replace($appDir . '/', '', $file->getPathname());
                 $violations[] = "{$relative} uses MySQL-only function: {$fn}";
             }
         }

@@ -113,7 +113,7 @@ test('toggle expanded sets id', function () {
 });
 
 test('toggle expanded unsets when same id', function () {
-    test()->page->expandedId = 5;
+    test()->page->toggleExpanded(5);
     test()->page->toggleExpanded(5);
     expect(test()->page->expandedId)->toBeNull();
 });
@@ -128,12 +128,14 @@ test('reset filters clears all filters', function () {
 
     test()->page->resetFilters();
 
-    expect(test()->page->filterAction)->toBeNull()
-        ->and(test()->page->filterModelType)->toBeNull()
-        ->and(test()->page->filterUser)->toBeNull()
-        ->and(test()->page->filterDateFrom)->toBeNull()
-        ->and(test()->page->filterDateTo)->toBeNull()
-        ->and(test()->page->page)->toBe(1);
+    $state = get_object_vars(test()->page);
+
+    expect($state['filterAction'])->toBeNull()
+        ->and($state['filterModelType'])->toBeNull()
+        ->and($state['filterUser'])->toBeNull()
+        ->and($state['filterDateFrom'])->toBeNull()
+        ->and($state['filterDateTo'])->toBeNull()
+        ->and($state['page'])->toBe(1);
 });
 
 test('previous page decrements but not below 1', function () {

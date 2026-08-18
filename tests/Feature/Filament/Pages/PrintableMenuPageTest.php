@@ -1,32 +1,36 @@
 <?php
 
 use App\Filament\Pages\Tools\PrintableMenu;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
-use Stancl\Tenancy\Contracts\Tenant;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
+use Stancl\Tenancy\Database\Models\Domain;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
 
-    $fakeTenant = Mockery::mock(Tenant::class)->shouldIgnoreMissing();
-    $fakeTenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
-    $fakeTenant->shouldReceive('getTenantKeyName')->andReturn('id');
-    $fakeTenant->domains = collect([(object) ['domain' => 'test-bakery.getkneadit.test']]);
-    $fakeTenant->custom_domain = null;
-    $fakeTenant->plan = 'pro';
-    $fakeTenant->store_name = 'Test Bakery';
-    $fakeTenant->id = 'test-bakery';
+    $fakeTenant = new Tenant;
+    $fakeTenant->forceFill([
+        'id' => 'test-bakery',
+        'custom_domain' => null,
+        'plan' => 'pro',
+        'store_name' => 'Test Bakery',
+    ]);
+    $fakeTenant->setRelation('domains', new Collection([
+        new Domain(['domain' => 'test-bakery.getkneadit.test']),
+    ]));
 
-    app()->instance(Tenant::class, $fakeTenant);
+    app()->instance(TenantContract::class, $fakeTenant);
     Feature::define('pro-features', fn () => true);
     Feature::define('growth-features', fn () => true);
 });
 
 test('printable menu page can render', function () {
-    Livewire::test(PrintableMenu::class)
+    livewire(PrintableMenu::class)
         ->assertOk();
 });

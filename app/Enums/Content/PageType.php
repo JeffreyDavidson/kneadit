@@ -11,6 +11,7 @@ enum PageType: string implements HasLabel
     case About = 'about';
     case Reviews = 'reviews';
     case Order = 'order';
+    case OrderConfirmation = 'order_confirmation';
     case Track = 'track';
     case Contact = 'contact';
 

@@ -1,28 +1,28 @@
 <?php
 
 use App\Filament\Pages\Settings\CustomDomain;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
-use Stancl\Tenancy\Contracts\Tenant;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
 
-    $fakeTenant = Mockery::mock(Tenant::class)->shouldIgnoreMissing();
-    $fakeTenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
-    $fakeTenant->shouldReceive('getTenantKeyName')->andReturn('id');
-    $fakeTenant->id = 'test-bakery';
-    $fakeTenant->plan = 'pro';
-    $fakeTenant->custom_domain = null;
+    $fakeTenant = new Tenant;
+    $fakeTenant->forceFill([
+        'id' => 'test-bakery',
+        'plan' => 'pro',
+        'custom_domain' => null,
+    ]);
 
-    app()->instance(Tenant::class, $fakeTenant);
+    app()->instance(TenantContract::class, $fakeTenant);
 });
 
 test('custom domain page can render', function () {
-    Livewire::test(CustomDomain::class)
+    livewire(CustomDomain::class)
         ->assertOk();
 });

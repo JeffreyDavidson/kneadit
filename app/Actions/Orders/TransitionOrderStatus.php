@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 class TransitionOrderStatus
 {
     /** @var array<string, array<string>> */
-    private const TRANSITIONS = [
+    private const array TRANSITIONS = [
         OrderStatus::Pending->value => [OrderStatus::Confirmed->value, OrderStatus::Cancelled->value],
         OrderStatus::Confirmed->value => [OrderStatus::Baking->value, OrderStatus::Cancelled->value],
         OrderStatus::Baking->value => [OrderStatus::Ready->value, OrderStatus::Cancelled->value],

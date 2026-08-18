@@ -4,7 +4,7 @@
     $sparklineHeight = $isXl ? 48 : 36;
 @endphp
 
-<div class="col-span-full dashboard-stats-grid">
+<div class="dashboard-stats-grid col-span-full">
     @foreach ($cards as $card)
         <x-admin.dashboard.stat-card
             :label="$card['label']"

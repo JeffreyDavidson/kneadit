@@ -23,7 +23,7 @@ class ActivityLogsTable
                     ->label('When')
                     ->dateTime()
                     ->since()
-                    ->tooltip(fn (ActivityLog $record): ?string => $record->created_at?->format('M j, Y g:i A'))
+                    ->tooltip(fn (ActivityLog $record): string => $record->created_at->format('M j, Y g:i A'))
                     ->sortable(),
 
                 TextColumn::make('action')
@@ -64,7 +64,13 @@ class ActivityLogsTable
                         ->distinct()
                         ->orderBy('model_type')
                         ->pluck('model_type')
-                        ->mapWithKeys(fn (string $fqcn): array => [$fqcn => class_basename($fqcn)])
+                        ->mapWithKeys(function (mixed $fqcn): array {
+                            if (! is_string($fqcn)) {
+                                throw new \UnexpectedValueException('Activity model types must be strings.');
+                            }
+
+                            return [$fqcn => class_basename($fqcn)];
+                        })
                         ->all()),
 
                 Filter::make('created_at')

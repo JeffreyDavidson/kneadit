@@ -43,7 +43,7 @@ test('previous month decrements month', function () {
 
 test('previous month resets selection', function () {
     test()->page->mount();
-    test()->page->selectedDate = '2026-04-15';
+    test()->page->selectDay('2026-04-15');
 
     test()->page->previousMonth();
 
@@ -68,7 +68,7 @@ test('next month increments month', function () {
 
 test('next month resets selection', function () {
     test()->page->mount();
-    test()->page->selectedDate = '2026-04-15';
+    test()->page->selectDay('2026-04-15');
 
     test()->page->nextMonth();
 

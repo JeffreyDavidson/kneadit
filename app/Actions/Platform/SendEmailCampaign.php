@@ -44,7 +44,15 @@ class SendEmailCampaign
         return Customer::query()
             ->whereNotNull('email')
             ->distinct()
-            ->pluck('email');
+            ->pluck('email')
+            ->map(function (mixed $email): string {
+                if (! is_string($email)) {
+                    throw new \UnexpectedValueException('Expected a customer email address to be a string.');
+                }
+
+                return $email;
+            })
+            ->values();
     }
 
     /** @return Collection<int, string> */

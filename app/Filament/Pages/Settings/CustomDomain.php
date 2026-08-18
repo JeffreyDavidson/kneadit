@@ -7,6 +7,7 @@ use App\Actions\Platform\RemoveCustomDomain;
 use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Models\Platform\Tenant;
 use App\Services\Platform\CustomDomainService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -44,7 +45,7 @@ class CustomDomain extends Page
 
     public function mount(): void
     {
-        $this->custom_domain = tenant()->custom_domain ?? '';
+        $this->custom_domain = $this->currentTenant()->custom_domain ?? '';
         if ($this->custom_domain) {
             $this->refreshDnsStatus();
         }
@@ -69,9 +70,10 @@ class CustomDomain extends Page
     public function save(): void
     {
         $domainService = resolve(CustomDomainService::class);
-        $plan = tenant()->plan;
+        $tenant = $this->currentTenant();
+        $plan = $tenant->plan;
 
-        if (! $plan?->meetsRequirement(SubscriptionTier::Growth)) {
+        if (! $plan->meetsRequirement(SubscriptionTier::Growth)) {
             Notification::make()
                 ->title('Custom domains are available on Growth and Pro plans')
                 ->warning()
@@ -83,7 +85,7 @@ class CustomDomain extends Page
         $domain = trim((string) $this->custom_domain);
 
         if (empty($domain)) {
-            resolve(RemoveCustomDomain::class)(tenant());
+            resolve(RemoveCustomDomain::class)($tenant);
             $this->dns_status = null;
             $this->ssl_status = null;
 
@@ -104,7 +106,7 @@ class CustomDomain extends Page
             return;
         }
 
-        resolve(AddCustomDomain::class)(tenant(), $domain);
+        resolve(AddCustomDomain::class)($tenant, $domain);
         $this->refreshDnsStatus();
 
         $serverIp = $domainService->serverIp();
@@ -197,5 +199,16 @@ class CustomDomain extends Page
                 ->color('gray')
                 ->action('verifyDns'),
         ];
+    }
+
+    private function currentTenant(): Tenant
+    {
+        $tenant = tenant();
+
+        if (! $tenant instanceof Tenant) {
+            throw new \LogicException('A tenant must be initialized to manage a custom domain.');
+        }
+
+        return $tenant;
     }
 }

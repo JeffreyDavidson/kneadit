@@ -4,7 +4,7 @@ use App\Models\Customers\CustomerPhoto;
 use App\View\Components\Home\Gallery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -12,8 +12,14 @@
         };
     @endphp
 
-    <div class="max-w-[1200px] mx-auto">
-        <x-admin.nav-controls :label="$this->monthLabel" prevClick="previousMonth" nextClick="nextMonth" prevLabel="← Previous" nextLabel="Next →" />
+    <div class="mx-auto max-w-[1200px]">
+        <x-admin.nav-controls
+            :label="$this->monthLabel"
+            prevClick="previousMonth"
+            nextClick="nextMonth"
+            prevLabel="← Previous"
+            nextLabel="Next →"
+        />
 
         @forelse ($this->trendsData as $group)
             <x-admin.card :title="$group['category']">
@@ -41,7 +47,11 @@
                 </x-admin.data-table>
             </x-admin.card>
         @empty
-            <x-admin.empty-state icon="heroicon-o-chart-bar-square" title="No order data found for this period" subtitle="Try navigating to a different month." />
+            <x-admin.empty-state
+                icon="heroicon-o-chart-bar-square"
+                title="No order data found for this period"
+                subtitle="Try navigating to a different month."
+            />
         @endforelse
     </div>
 </x-filament-panels::page>

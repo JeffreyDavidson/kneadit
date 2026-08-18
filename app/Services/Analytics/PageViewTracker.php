@@ -7,6 +7,7 @@ use App\Actions\Analytics\RecordProductImpressions;
 use App\Enums\Content\PageType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Exceptions;
 
 class PageViewTracker
 {
@@ -17,7 +18,7 @@ class PageViewTracker
         'storefront.about' => PageType::About,
         'storefront.reviews' => PageType::Reviews,
         'order.create' => PageType::Order,
-        'order.confirmation' => PageType::Order,
+        'order.confirmation' => PageType::OrderConfirmation,
         'order.track' => PageType::Track,
         'contact.show' => PageType::Contact,
     ];
@@ -25,6 +26,7 @@ class PageViewTracker
     public function __construct(
         protected RecordPageView $recordPageView,
         protected RecordProductImpressions $recordProductImpressions,
+        protected VisitorIdentifier $visitorIdentifier,
     ) {}
 
     public function detectPage(?string $routeName, string $path): ?string
@@ -58,9 +60,7 @@ class PageViewTracker
 
         $data = [
             'page' => $page,
-            'session_id' => $request->session()->getId(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
+            'session_id' => $this->visitorIdentifier->fromSessionId($request->session()->getId()),
         ];
 
         try {
@@ -69,8 +69,8 @@ class PageViewTracker
             if ($this->shouldTrackProductImpressions($request, $page)) {
                 ($this->recordProductImpressions)($data);
             }
-        } catch (\Exception) {
-            // Silently fail if page_views table doesn't exist yet
+        } catch (\Throwable $exception) {
+            Exceptions::report($exception);
         }
     }
 
@@ -78,7 +78,7 @@ class PageViewTracker
     {
         $trackedAt = $request->session()->get($key);
 
-        return $trackedAt && now()->diffInMinutes(Date::parse($trackedAt)) < 60;
+        return is_string($trackedAt) && now()->diffInMinutes(Date::parse($trackedAt)) < 60;
     }
 
     protected function shouldTrackProductImpressions(Request $request, string $page): bool

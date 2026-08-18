@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Password;
 
 use function Pest\Laravel\withoutMiddleware;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -1,59 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KneadIt
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+KneadIt is a multi-tenant SaaS application for independent bakeries. It provides each bakery with a public storefront and a Filament administration panel for orders, products, customers, operations, marketing, and reporting. The central application handles registration, onboarding, subscriptions, platform administration, and public marketing content.
 
-## About Laravel
+KneadIt runs on PHP 8.4, Laravel 13, Filament 5, Livewire 4, Tailwind CSS 4, Vite 7, Pest 4, and `stancl/tenancy` 3.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Local setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Prerequisites:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.4 with the extensions required by Laravel and SQLite
+- Composer
+- Node.js and npm
+- A local domain that resolves `kneadit.test` and `*.kneadit.test` to the application (Laravel Herd supplies this on the primary development machine)
 
-## Learning Laravel
+Install the application:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+composer run setup
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The setup script installs PHP and JavaScript dependencies, creates `.env`, generates an application key, runs central migrations, and builds frontend assets. Review `.env` before using integrations. The default local configuration uses SQLite, the database queue, log mail, and no live Sentry or payment credentials.
 
-## Laravel Sponsors
+Start the application, queue listener, log viewer, and Vite development server:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer run dev
+```
 
-### Premium Partners
+The central application is expected at `http://kneadit.test`. Tenant storefronts use subdomains such as `http://example-bakery.kneadit.test`.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Common commands
 
-## Contributing
+```bash
+composer test              # Unit, integration, feature, and architecture tests
+php artisan test           # All suites, including Browser
+composer run lint          # Pint on changed PHP files
+composer run analyse       # Application and Pest PHPStan configurations
+composer run types         # 100% Pest type-coverage requirement
+composer run filacheck     # Filament conventions
+composer run test:rector   # Rector dry run
+composer run check         # Full PHP quality suite
+npm run build              # Production frontend build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Browser tests require a running local application, seeded browser fixtures, and Playwright. See [Testing](docs/operations.md#browser-tests).
 
-## Code of Conduct
+## Architecture
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The central database owns platform users, tenants, domains, subscriptions, and platform administration data. Each tenant has a separate SQLite database under `TENANT_DB_PATH` (the project database directory by default). Tenant identification occurs from the request domain before sessions and authentication use the database.
 
-## Security Vulnerabilities
+Important entry points:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `routes/web.php` — central marketing, authentication, onboarding, and shared root routing
+- `routes/billing.php` — SaaS subscription checkout and Stripe webhooks
+- `routes/tenant.php` — tenant storefront, administration support, API, Stripe Connect, and invitations
+- `app/Actions` — single-purpose write operations
+- `app/Queries` and `app/Builders` — reusable read behavior
+- `app/Services/Settings` — tenant and platform settings access
+- `app/Filament` — tenant administration
+- `app/Filament/Central` — platform administration
 
-## License
+See [Architecture](docs/architecture.md) for request flow, domain boundaries, order/payment behavior, and settings design. See [Operations](docs/operations.md) for queues, scheduling, deployment, testing, security, and monitoring.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Development rules
+
+Project conventions are documented in `CLAUDE.md` and any applicable repository agent skills. In particular:
+
+- Keep write logic in invokable action classes.
+- Keep tenant data access inside an initialized tenancy context.
+- Store money as integer cents and use the existing money casts/value objects.
+- Use policies and gates for authorization.
+- Add or update tests for behavioral changes.
+- Never commit credentials, `.env` contents, or temporary debugging code.
+
+## Deployment model
+
+The repository uses `develop` for staging and `main` for production. Production is deployed to Laravel Forge; merging or pushing to `main` is therefore a release action, not a routine verification step. Deployment requirements and the release checklist are in [Operations](docs/operations.md#deployment-and-release).

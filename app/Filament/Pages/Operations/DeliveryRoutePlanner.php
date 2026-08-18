@@ -12,6 +12,10 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
+/**
+ * @phpstan-type DistanceTier array{tier: string, color: string, estimated_minutes: int}
+ * @phpstan-type DeliveryOrder array{id: int, order_number: string, customer_name: string, delivery_address: ?string, delivery_time: non-falsy-string, total: float, distance_tier: DistanceTier}
+ */
 class DeliveryRoutePlanner extends Page
 {
     use RequiresManagerRole;
@@ -39,7 +43,7 @@ class DeliveryRoutePlanner extends Page
 
     public ?string $selectedDate = null;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, DeliveryOrder> */
     public Collection $deliveryOrders;
 
     public ?string $storeAddress = null;

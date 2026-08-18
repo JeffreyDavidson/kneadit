@@ -23,45 +23,60 @@
         ];
     @endphp
 
-    <div class="rounded-xl border border-brand-200 bg-brand-50 px-5 py-4 mb-6">
-        <p class="text-sm leading-relaxed" style="color: var(--brand-700);">
-            Pick a palette for your bakery's admin panel. Affects the sidebar, surfaces, tables, and accents.
-            Your storefront and emails are unaffected — those have their own theme settings.
+    <div class="border-brand-200 bg-brand-50 mb-6 rounded-xl border px-5 py-4">
+        <p class="text-sm leading-relaxed" style="color: var(--brand-700)">
+            Pick a palette for your bakery's admin panel. Affects the sidebar, surfaces, tables, and accents. Your
+            storefront and emails are unaffected — those have their own theme settings.
         </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
         @foreach ($themes as $key => $theme)
             @php $isActive = $current === $key; @endphp
-            <button type="button" wire:click="selectTheme('{{ $key }}')"
+            <button
+                type="button"
+                wire:click="selectTheme('{{ $key }}')"
                 @class([
                     'text-left rounded-xl border-2 p-5 transition-all cursor-pointer bg-white',
                     'border-brand-300 shadow-[0_8px_28px_rgba(212,165,116,0.18)]' => $isActive,
                     'border-brand-100 hover:border-brand-300/40' => ! $isActive,
-                ])>
-                <div class="flex items-center justify-between mb-4">
-                    <div class="text-[1.1rem] font-bold" style="color: var(--brand-900);">{{ $theme['label'] }}</div>
+                ])
+            >
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="text-[1.1rem] font-bold" style="color: var(--brand-900)">{{ $theme['label'] }}</div>
                     @if ($isActive)
-                        <div class="inline-flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-[0.1em] rounded-full px-2.5 py-1"
-                             style="background: rgba(212,165,116,0.15); color: var(--brand-700); border: 1px solid rgba(212,165,116,0.3);">
-                            <x-heroicon-s-check-circle class="w-3.5 h-3.5" />
+                        <div
+                            class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] uppercase"
+                            style="
+                                background: rgba(212, 165, 116, 0.15);
+                                color: var(--brand-700);
+                                border: 1px solid rgba(212, 165, 116, 0.3);
+                            "
+                        >
+                            <x-heroicon-s-check-circle class="h-3.5 w-3.5" />
                             Active
                         </div>
                     @endif
                 </div>
 
-                <div class="flex gap-1.5 mb-4">
+                <div class="mb-4 flex gap-1.5">
                     @foreach ($theme['swatches'] as $swatch)
-                        <div class="flex-1 h-10 rounded-md border" style="background: {{ $swatch }}; border-color: rgba(0,0,0,0.06);"></div>
+                        <div
+                            class="h-10 flex-1 rounded-md border"
+                            style="background: {{ $swatch }}; border-color: rgba(0,0,0,0.06);"
+                        ></div>
                     @endforeach
                 </div>
 
-                <div class="text-[0.8rem] leading-snug" style="color: var(--brand-600);">{{ $theme['tagline'] }}</div>
+                <div class="text-[0.8rem] leading-snug" style="color: var(--brand-600)">{{ $theme['tagline'] }}</div>
 
                 @if (! $isActive)
-                    <div class="mt-4 inline-flex items-center gap-1 text-[0.8rem] font-semibold" style="color: var(--brand-700);">
+                    <div
+                        class="mt-4 inline-flex items-center gap-1 text-[0.8rem] font-semibold"
+                        style="color: var(--brand-700)"
+                    >
                         Apply theme
-                        <x-heroicon-o-arrow-right class="w-3.5 h-3.5" />
+                        <x-heroicon-o-arrow-right class="h-3.5 w-3.5" />
                     </div>
                 @endif
             </button>

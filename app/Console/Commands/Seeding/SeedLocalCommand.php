@@ -14,6 +14,8 @@ use Faker\Factory as Faker;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 
@@ -43,6 +45,9 @@ class SeedLocalCommand extends Command
         ['#e8a045', '#231914'],
         ['#9c6326', '#1a0f08'],
     ];
+
+    /** @var list<string> */
+    private const array STORE_TYPES = ['Bakery', 'Bakehouse', 'Sweets', 'Kitchen', 'Crust', 'Crumbs', 'Bakes', 'Patisserie'];
 
     public function handle(): int
     {
@@ -158,7 +163,7 @@ class SeedLocalCommand extends Command
      */
     private function generateTenantSpec(\Faker\Generator $faker, int $index): array
     {
-        $storeName = ucfirst($faker->word) . ' ' . $faker->randomElement(['Bakery', 'Bakehouse', 'Sweets', 'Kitchen', 'Crust', 'Crumbs', 'Bakes', 'Patisserie']);
+        $storeName = ucfirst($faker->word) . ' ' . self::STORE_TYPES[array_rand(self::STORE_TYPES)];
         $id = Str::slug($storeName) . '-' . ($index + 1);
         $palette = self::PALETTES[array_rand(self::PALETTES)];
 
@@ -176,20 +181,21 @@ class SeedLocalCommand extends Command
     {
         $createdAt = $faker->dateTimeBetween('-6 months', 'now');
 
-        $plan = $faker->randomElement([
+        $plans = [
             SubscriptionTier::Starter,
             SubscriptionTier::Starter,
             SubscriptionTier::Growth,
             SubscriptionTier::Growth,
             SubscriptionTier::Pro,
-        ]);
+        ];
+        $plan = $plans[array_rand($plans)];
 
         $isActive = $faker->boolean(85);
         $freeForever = $faker->boolean(5);
 
-        $trialDays = config('kneadit.trial_days', 30);
+        $trialDays = Config::integer('kneadit.trial_days', 30);
         $trialEndsAt = $faker->boolean(60)
-            ? \Illuminate\Support\Carbon::instance($createdAt)->addDays($trialDays)
+            ? Carbon::instance($createdAt)->addDays($trialDays)
             : null;
 
         $tenant->update([

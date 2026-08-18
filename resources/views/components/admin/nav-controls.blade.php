@@ -1,14 +1,24 @@
 @props(['label' => '', 'prevClick' => null, 'nextClick' => null, 'prevLabel' => '←', 'nextLabel' => '→'])
 
-<div class="flex items-center justify-between mb-4">
+<div class="mb-4 flex items-center justify-between">
     @if ($prevClick)
-        <button wire:click="{{ $prevClick }}" class="cursor-pointer rounded-lg px-3 py-1.5 text-[0.8rem] text-brand-700 bg-brand-50 border border-brand-300/30">{{ $prevLabel }}</button>
+        <button
+            wire:click="{{ $prevClick }}"
+            class="text-brand-700 bg-brand-50 border-brand-300/30 cursor-pointer rounded-lg border px-3 py-1.5 text-[0.8rem]"
+        >
+            {{ $prevLabel }}
+        </button>
     @else
         <div></div>
     @endif
-    <span class="font-semibold text-brand-900 text-[0.95rem]">{{ $label }}</span>
+    <span class="text-brand-900 text-[0.95rem] font-semibold">{{ $label }}</span>
     @if ($nextClick)
-        <button wire:click="{{ $nextClick }}" class="cursor-pointer rounded-lg px-3 py-1.5 text-[0.8rem] text-brand-700 bg-brand-50 border border-brand-300/30">{{ $nextLabel }}</button>
+        <button
+            wire:click="{{ $nextClick }}"
+            class="text-brand-700 bg-brand-50 border-brand-300/30 cursor-pointer rounded-lg border px-3 py-1.5 text-[0.8rem]"
+        >
+            {{ $nextLabel }}
+        </button>
     @else
         <div></div>
     @endif

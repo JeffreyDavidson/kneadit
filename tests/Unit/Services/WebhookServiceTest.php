@@ -20,7 +20,7 @@ test('dispatch does nothing without webhook url', function () {
 test('dispatch sends to configured url', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     resolve(WebhookService::class)->dispatch('order.created', ['order_number' => 'ORD-001']);
@@ -31,7 +31,7 @@ test('dispatch sends to configured url', function () {
 test('dispatch includes event header', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     resolve(WebhookService::class)->dispatch('order.updated', ['status' => OrderStatus::Delivered]);
@@ -44,7 +44,7 @@ test('dispatch includes event header', function () {
 test('dispatch includes signature header', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'my-secret']);
 
     resolve(WebhookService::class)->dispatch('order.created', ['test' => true]);
@@ -57,7 +57,7 @@ test('dispatch includes signature header', function () {
 test('dispatch body contains event and data', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     resolve(WebhookService::class)->dispatch('order.created', ['order_number' => 'ORD-001']);
@@ -65,8 +65,15 @@ test('dispatch body contains event and data', function () {
     Http::assertSent(function ($request) {
         $body = json_decode($request->body(), true);
 
+        if (! is_array($body)) {
+            return false;
+        }
+
+        $data = $body['data'] ?? null;
+
         return $body['event'] === 'order.created'
-            && $body['data']['order_number'] === 'ORD-001'
+            && is_array($data)
+            && ($data['order_number'] ?? null) === 'ORD-001'
             && isset($body['timestamp']);
     });
 });
@@ -74,7 +81,7 @@ test('dispatch body contains event and data', function () {
 test('dispatch handles failed request gracefully', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('error', 500)]);
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     // Should not throw
@@ -86,7 +93,18 @@ test('dispatch handles failed request gracefully', function () {
 test('dispatch does nothing when url is set but secret is missing', function () {
     Http::preventStrayRequests();
     Http::fake();
-    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_url' => 'https://8.8.8.8/test']);
+
+    resolve(WebhookService::class)->dispatch('order.created', ['test' => true]);
+
+    Http::assertNothingSent();
+});
+
+test('dispatch blocks private network destinations', function () {
+    Http::preventStrayRequests();
+    Http::fake();
+    settings(['webhook_url' => 'https://127.0.0.1/test']);
+    settings(['webhook_secret' => 'test-secret']);
 
     resolve(WebhookService::class)->dispatch('order.created', ['test' => true]);
 
