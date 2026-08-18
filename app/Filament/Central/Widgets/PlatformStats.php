@@ -42,9 +42,9 @@ class PlatformStats extends StatsOverviewWidget
             for ($i = 5; $i >= 0; $i--) {
                 $monthEnd = now()->subMonths($i)->endOfMonth();
                 $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
-                $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan->priceInDollars());
-                $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
-                $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
+                $mrrChart[] = (float) $activeInMonth->sum(fn (Tenant $t) => $t->plan->priceInDollars());
+                $bakeryChart[] = (float) $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
+                $trialChart[] = (float) $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
             }
 
             $sixDaysAgo = now()->subDays(5)->startOfDay();
@@ -57,7 +57,7 @@ class PlatformStats extends StatsOverviewWidget
             $ticketChart = [];
             for ($i = 5; $i >= 0; $i--) {
                 $day = now()->subDays($i)->format('Y-m-d');
-                $ticketChart[] = (int) ($ticketCounts[$day] ?? 0);
+                $ticketChart[] = (float) ($ticketCounts[$day] ?? 0);
             }
 
             return [
