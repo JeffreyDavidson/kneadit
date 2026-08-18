@@ -4,7 +4,7 @@ namespace App\Reports\Inventory;
 
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
-use App\Support\DatabaseValue;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class InventoryReport
@@ -12,7 +12,7 @@ class InventoryReport
     /** @return array<string, mixed> */
     public function generate(): array
     {
-        $usageWindowDays = DatabaseValue::int(config('analytics.inventory_usage_window_days'), 30);
+        $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
 
         $usageData = DB::table('recipe_ingredients')
             ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
@@ -25,7 +25,7 @@ class InventoryReport
             ->pluck('total_usage', 'ingredient_id');
 
         $ingredients = Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays) {
-            $usageLast30 = DatabaseValue::float($usageData[$i->id] ?? null);
+            $usageLast30 = (float) ($usageData[$i->id] ?? 0);
             $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 

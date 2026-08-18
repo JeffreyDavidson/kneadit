@@ -4,7 +4,6 @@ namespace App\Queries\Platform;
 
 use App\Models\Platform\FeatureUsageLog;
 use App\Models\Platform\Tenant;
-use App\Support\DatabaseValue;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -18,20 +17,24 @@ class FeatureUsageQuery
 
     public static function mostUsedFeature(): ?string
     {
-        return DatabaseValue::nullableString(FeatureUsageLog::query()->select('feature')
+        $feature = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderByDesc('total')
-            ->value('feature'));
+            ->value('feature');
+
+        return is_string($feature) ? $feature : null;
     }
 
     public static function leastUsedFeature(): ?string
     {
-        return DatabaseValue::nullableString(FeatureUsageLog::query()->select('feature')
+        $feature = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderBy('total')
-            ->value('feature'));
+            ->value('feature');
+
+        return is_string($feature) ? $feature : null;
     }
 
     public static function totalInteractionsThisMonth(): int
@@ -64,12 +67,12 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $max = DatabaseValue::int($data->max('total'), 1);
+        $max = (int) ($data->max('total') ?? 1);
 
         return $data->map(fn (FeatureUsageLog $row) => [
             'feature' => $row->feature,
-            'total' => DatabaseValue::int($row->total),
-            'percent' => round((DatabaseValue::int($row->total) / max($max, 1)) * 100),
+            'total' => (int) $row->total,
+            'percent' => round(((int) $row->total / max($max, 1)) * 100),
         ]);
     }
 
@@ -93,16 +96,16 @@ class FeatureUsageQuery
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxCount = DatabaseValue::int($logs->max(
-            fn (Collection $group): int => DatabaseValue::int($group->sum('usage_count')),
-        ), 1);
+        $maxCount = (int) ($logs->max(
+            fn (Collection $group): int => (int) $group->sum('usage_count'),
+        ) ?? 1);
 
         $rows = [];
         foreach ($features as $feature) {
             $cells = [];
             foreach ($days as $day) {
                 $key = $feature . '|' . $day->toDateString();
-                $count = isset($logs[$key]) ? DatabaseValue::int($logs[$key]->sum('usage_count')) : 0;
+                $count = isset($logs[$key]) ? (int) $logs[$key]->sum('usage_count') : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [
                     'date' => $day->format('M d'),
@@ -144,10 +147,10 @@ class FeatureUsageQuery
         return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames) {
             return [
                 'tenant_id' => $row->tenant_id,
-                'name' => DatabaseValue::nullableString($tenantNames[$row->tenant_id] ?? null)
-                    ?? DatabaseValue::nullableString($fallbackNames[$row->tenant_id] ?? null)
-                    ?? $row->tenant_id,
-                'total' => DatabaseValue::int($row->total),
+                'name' => is_string($tenantNames[$row->tenant_id] ?? null)
+                    ? $tenantNames[$row->tenant_id]
+                    : (is_string($fallbackNames[$row->tenant_id] ?? null) ? $fallbackNames[$row->tenant_id] : $row->tenant_id),
+                'total' => (int) $row->total,
             ];
         });
     }

@@ -4,7 +4,6 @@ namespace App\Queries\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
-use App\Support\DatabaseValue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -118,7 +117,7 @@ class TenantAnalyticsQuery
             return $plan->value;
         }
 
-        return DatabaseValue::nullableString($plan) ?? 'N/A';
+        return is_string($plan) ? $plan : 'N/A';
     }
 
     /**
