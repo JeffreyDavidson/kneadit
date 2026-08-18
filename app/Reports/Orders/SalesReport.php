@@ -37,7 +37,14 @@ class SalesReport
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->map(fn (Order $row) => ['date' => $row->getAttribute('date'), 'revenue' => (int) $row->getAttribute('revenue_cents') / 100])
+            ->map(function (Order $row): array {
+                $date = $row->getAttribute('date');
+
+                return [
+                    'date' => is_string($date) ? $date : '',
+                    'revenue' => (int) $row->getAttribute('revenue_cents') / 100,
+                ];
+            })
             ->all();
 
         return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];

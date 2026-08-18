@@ -5,6 +5,7 @@ namespace App\Queries\Customers;
 use App\Builders\Orders\OrderQueryBuilder;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Number;
 
 class CustomerDirectoryStatsQuery
@@ -24,7 +25,7 @@ class CustomerDirectoryStatsQuery
             )
             ->value('avg_ltv') / 100;
 
-        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
+        $atRiskDays = Config::integer('analytics.at_risk_threshold_days', 30);
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);
 
         $topCustomer = Customer::query()
