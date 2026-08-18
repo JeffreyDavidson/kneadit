@@ -8,6 +8,7 @@ use App\Models\Customers\Customer;
 use App\Services\Customers\RfmClassifier;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 /**
  * Classifies customers into RFM segments (Recency, Frequency, Monetary).
@@ -65,10 +66,10 @@ class RfmReport
             }
 
             $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
-            $frequency = (int) $customer->getAttribute('frequency');
+            $frequency = Arr::integer($customer->getAttributes(), 'frequency', 0);
             // monetary_cents is a raw SUM() which bypasses the money cast
             // (see 2026_04_22_201500_convert_orders_money_columns_to_cents).
-            $monetary = (int) $customer->getAttribute('monetary_cents') / 100;
+            $monetary = Arr::integer($customer->getAttributes(), 'monetary_cents', 0) / 100;
 
             $segment = $this->classifier->classify($recencyDays, $frequency, $monetary);
             $counts[$segment->value]++;

@@ -6,6 +6,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
 use App\Queries\Financial\RevenueQuery;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -74,7 +75,7 @@ class StatsOverviewQuery
             ->selectRaw('DATE(delivery_date) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => (int) $count)
+            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
             ->all();
     }
 
@@ -88,7 +89,7 @@ class StatsOverviewQuery
             ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => (int) $count)
+            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
             ->all();
     }
 
@@ -102,7 +103,7 @@ class StatsOverviewQuery
             ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => (int) $count)
+            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
             ->all();
     }
 

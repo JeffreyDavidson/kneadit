@@ -7,6 +7,7 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\OrderItem;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class BakingSheetWidget extends Widget
@@ -61,7 +62,7 @@ class BakingSheetWidget extends Widget
             ->map(fn (OrderItem $item): array => [
                 'product_id' => (int) $item->product_id,
                 'name' => is_string($item->getAttribute('product_name')) ? $item->getAttribute('product_name') : 'Unknown Product',
-                'quantity' => (int) $item->getAttribute('total_quantity'),
+                'quantity' => Arr::integer($item->getAttributes(), 'total_quantity', 0),
             ])
             ->all();
     }

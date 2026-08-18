@@ -4,6 +4,7 @@ namespace App\Reports\Inventory;
 
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,7 @@ class InventoryReport
             ->pluck('total_usage', 'ingredient_id');
 
         $ingredients = Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays) {
-            $usageLast30 = (float) ($usageData[$i->id] ?? 0);
+            $usageLast30 = Arr::float($usageData->all(), $i->id, 0.0);
             $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 

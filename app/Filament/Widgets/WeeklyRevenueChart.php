@@ -8,6 +8,7 @@ use App\Models\Financial\Expense;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Arr;
 
 class WeeklyRevenueChart extends ChartWidget
 {
@@ -88,7 +89,7 @@ class WeeklyRevenueChart extends ChartWidget
 
         foreach ($values as $day => $total) {
             if (is_string($day)) {
-                $expenses[$day] = (float) $total;
+                $expenses[$day] = Arr::float(['total' => $total], 'total', 0.0);
             }
         }
 

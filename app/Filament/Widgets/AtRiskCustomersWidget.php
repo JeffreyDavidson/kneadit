@@ -8,6 +8,7 @@ use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
 use DateTimeInterface;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 
@@ -44,12 +45,14 @@ class AtRiskCustomersWidget extends Widget
                     ? Carbon::parse($lastOrderDate)->diffForHumans()
                     : 'Never';
 
+                $attributes = $customer->getAttributes();
+
                 return [
                     'id' => $customer->id,
                     'name' => $customer->name,
                     'last_order' => $lastOrder,
-                    'days_inactive' => (int) $customer->getAttribute('days_since_last_order'),
-                    'lifetime_value' => '$' . number_format((float) $customer->getAttribute('lifetime_value'), 0),
+                    'days_inactive' => Arr::integer($attributes, 'days_since_last_order', 0),
+                    'lifetime_value' => '$' . number_format(Arr::float($attributes, 'lifetime_value', 0.0), 0),
                 ];
             })
             ->all();
