@@ -8,7 +8,7 @@ beforeEach(fn () => setUpCentralTest());
 test('log creates record', function () {
     $log = resolve(LogAuditEntry::class)('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
 
-    $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->firstOrFail();
+    $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->first();
     expect($found)->not->toBeNull()->and($found->description)->toBe('Suspended tenant')->and($found->target_type)->toBe('tenant')->and($found->target_id)->toBe('tenant-1')->and($found->metadata)->toBe(['reason' => 'abuse']);
 });
 

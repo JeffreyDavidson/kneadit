@@ -93,7 +93,7 @@ test('WeeklyDigest has correct subject with store name', function () {
     $mail = new App\Mail\Platform\WeeklyDigestMail(
         stats: [],
         topProducts: App\Models\Orders\OrderItem::query()->whereKey([])->get(),
-        atRiskCustomers: collect(),
+        atRiskCustomers: Customer::query()->whereKey([])->get(),
         upcomingCount: 0,
         storeName: 'Test Bakery',
         adminUrl: 'https://test.kneadit.test/admin',

@@ -35,7 +35,7 @@ test('slug is updated when title changes', function () {
 
     $post->update(['title' => 'Updated Title']);
 
-    expect($post->refresh()->slug)->toBe('updated-title');
+    expect($post->fresh()->slug)->toBe('updated-title');
 });
 
 test('duplicate slugs are made unique', function () {
@@ -54,11 +54,11 @@ test('published at can be set', function () {
 test('is published is cast to boolean', function () {
     $post = BlogPost::factory()->published()->create();
 
-    expect($post->refresh()->is_published)->toBeBool();
+    expect($post->fresh()->is_published)->toBeBool();
 });
 
 test('published at is cast to datetime', function () {
     $post = BlogPost::factory()->published()->create();
 
-    expect($post->refresh()->published_at)->toBeInstanceOf(Carbon::class);
+    expect($post->fresh()->published_at)->toBeInstanceOf(Carbon::class);
 });

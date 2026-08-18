@@ -15,7 +15,7 @@ test('newThisWeek returns customers created this week', function () {
     $results = Customer::query()->newThisWeek()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($thisWeek->id);
+        ->and($results->first()->id)->toBe($thisWeek->id);
 });
 
 test('atRisk returns customers with orders but none recent', function () {
@@ -29,7 +29,7 @@ test('atRisk returns customers with orders but none recent', function () {
     $results = Customer::query()->atRisk(30)->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($atRisk->id);
+        ->and($results->first()->id)->toBe($atRisk->id);
 });
 
 test('forEmail filters customers by email', function () {
@@ -39,7 +39,7 @@ test('forEmail filters customers by email', function () {
     $results = Customer::query()->forEmail('alice@example.com')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($target->id);
+        ->and($results->first()->id)->toBe($target->id);
 });
 
 test('forReferralCode filters customers by referral code', function () {
@@ -49,5 +49,5 @@ test('forReferralCode filters customers by referral code', function () {
     $results = Customer::query()->forReferralCode('ALICE-7')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($target->id);
+        ->and($results->first()->id)->toBe($target->id);
 });

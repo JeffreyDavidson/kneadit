@@ -3,6 +3,8 @@
 use App\Actions\Stripe\CreateStripePromotionCode;
 use App\DataTransferObjects\Stripe\StripePromotionCodeResult;
 
+use function Pest\Laravel\artisan;
+
 class FakeCreateStripePromotionCode extends CreateStripePromotionCode
 {
     public int $invocations = 0;
@@ -40,7 +42,7 @@ test('invokes the action with parsed options and prints the resulting code', fun
 
     app()->instance(CreateStripePromotionCode::class, $action);
 
-    pendingArtisan('platform:create-promo', [
+    artisan('platform:create-promo', [
         '--tenant' => 'vip-baker',
         '--percent' => '100',
         '--duration' => 'repeating',
@@ -64,7 +66,7 @@ test('reports invalid-argument errors with exit code 1', function () {
 
     app()->instance(CreateStripePromotionCode::class, $action);
 
-    pendingArtisan('platform:create-promo')
+    artisan('platform:create-promo')
         ->expectsOutputToContain('Either percentOff or amountOffCents is required')
         ->assertFailed();
 

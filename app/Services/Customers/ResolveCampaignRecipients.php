@@ -5,7 +5,6 @@ namespace App\Services\Customers;
 use App\Enums\Customers\RfmSegment;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -51,19 +50,13 @@ class ResolveCampaignRecipients
 
         return $rows->filter(function (Customer $customer) use ($segment, $now): bool {
             $lastOrderAt = $customer->getAttribute('last_order_at');
-            if (! is_string($lastOrderAt) && ! $lastOrderAt instanceof DateTimeInterface) {
+            if ($lastOrderAt === null) {
                 return false;
             }
 
-            $recencyDays = $now->copy()->diffInDays($lastOrderAt, true);
-            $frequency = filter_var($customer->getAttribute('frequency'), FILTER_VALIDATE_INT);
-            $monetaryCents = filter_var($customer->getAttribute('monetary_cents'), FILTER_VALIDATE_INT);
-
-            if ($frequency === false || $monetaryCents === false) {
-                return false;
-            }
-
-            $monetary = $monetaryCents / 100;
+            $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
+            $frequency = (int) $customer->getAttribute('frequency');
+            $monetary = (float) ((int) ($customer->getAttribute('monetary_cents') ?? 0) / 100);
 
             return $this->classifier->classify($recencyDays, $frequency, $monetary) === $segment;
         })->values();

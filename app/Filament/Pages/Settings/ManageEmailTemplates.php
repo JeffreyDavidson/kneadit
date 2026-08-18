@@ -49,15 +49,10 @@ class ManageEmailTemplates extends Page
      */
     public function getTemplateData(): array
     {
-        $customized = [];
-
-        foreach (EmailTemplate::query()->pluck('email_type') as $type) {
-            if ($type instanceof EmailTemplateType) {
-                $customized[] = $type->value;
-            } elseif (is_string($type)) {
-                $customized[] = $type;
-            }
-        }
+        $customized = EmailTemplate::query()
+            ->pluck('email_type')
+            ->map(fn (EmailTemplateType $type) => $type->value)
+            ->all();
 
         return collect(EmailTemplateType::cases())
             ->map(fn (EmailTemplateType $type) => [

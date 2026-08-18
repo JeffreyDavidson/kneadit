@@ -34,7 +34,7 @@ test('can create a blocked date via slide-over', function () {
         ->assertHasNoFormErrors();
 
     expect(BlockedDate::query()->count())->toBe(1)
-        ->and(BlockedDate::query()->firstOrFail()->reason)->toBe('Holiday');
+        ->and(BlockedDate::query()->first()->reason)->toBe('Holiday');
 });
 
 test('can edit a blocked date via table action', function () {
@@ -48,7 +48,7 @@ test('can edit a blocked date via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($blockedDate->refresh()->reason)->toBe('Vacation');
+    expect($blockedDate->fresh()->reason)->toBe('Vacation');
 });
 
 test('create blocked date validates date is required', function () {

@@ -14,7 +14,7 @@ test('platform admin can impersonate a tenant', function () {
     $tenant = Tenant::factory()->create();
 
     $action = Mockery::mock(CreateImpersonationToken::class);
-    mockExpectation($action, '__invoke')
+    $action->shouldReceive('__invoke')
         ->once()
         ->andReturn('https://test-bakery.kneadit.test/impersonate/token123');
 

@@ -12,7 +12,7 @@ class CheckGiftCardBalanceController extends Controller
 {
     public function __invoke(CheckGiftCardBalanceRequest $request, GiftCardService $service): JsonResponse
     {
-        $card = $service->checkBalance($request->string('code')->toString());
+        $card = $service->checkBalance($request->code);
 
         if (! $card) {
             return ApiResponse::error('Gift card not found.', 404);

@@ -9,7 +9,6 @@ use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\StripeCheckoutService;
-use Illuminate\Support\ViewErrorBag;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -30,11 +29,11 @@ test('successful order creation redirects to confirmation', function () {
     $order = Order::factory()->create();
 
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')->once()->andReturn($order);
+    $createOrder->shouldReceive('__invoke')->once()->andReturn($order);
     app()->instance(CreateOrder::class, $createOrder);
 
     $stripeService = Mockery::mock(StripeCheckoutService::class);
-    mockExpectation($stripeService, 'redirectToCheckout')->once()->andReturnNull();
+    $stripeService->shouldReceive('redirectToCheckout')->once()->andReturnNull();
     app()->instance(StripeCheckoutService::class, $stripeService);
 
     $product = Product::factory()->create();
@@ -56,7 +55,7 @@ test('successful order creation redirects to confirmation', function () {
 
 test('returns error when date is fully booked', function () {
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')->once()->andReturnNull();
+    $createOrder->shouldReceive('__invoke')->once()->andReturnNull();
     app()->instance(CreateOrder::class, $createOrder);
 
     $product = Product::factory()->create();
@@ -80,11 +79,11 @@ test('redirects to stripe checkout when payment url is returned', function () {
     $order = Order::factory()->create();
 
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')->once()->andReturn($order);
+    $createOrder->shouldReceive('__invoke')->once()->andReturn($order);
     app()->instance(CreateOrder::class, $createOrder);
 
     $stripeService = Mockery::mock(StripeCheckoutService::class);
-    mockExpectation($stripeService, 'redirectToCheckout')
+    $stripeService->shouldReceive('redirectToCheckout')
         ->once()
         ->andReturn('https://checkout.stripe.com/pay/cs_test_abc123');
     app()->instance(StripeCheckoutService::class, $stripeService);
@@ -120,7 +119,7 @@ test('validation fails when required fields are missing', function () {
 
 test('returns error when order subtotal is below minimum', function () {
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')
+    $createOrder->shouldReceive('__invoke')
         ->once()
         ->andThrow(new MinimumOrderAmountNotMetException(
             deliveryType: 'pickup',
@@ -145,11 +144,7 @@ test('returns error when order subtotal is below minimum', function () {
     $response->assertRedirect()
         ->assertSessionHasErrors(['items']);
 
-    $errors = session()->get('errors');
-
-    throw_unless($errors instanceof ViewErrorBag, UnexpectedValueException::class, 'Expected validation errors in the session.');
-
-    expect($errors->first('items'))->toContain('Minimum pickup order is $15.00');
+    expect(session('errors')->first('items'))->toContain('Minimum pickup order is $15.00');
 });
 
 test('success flash message can be customized via page content', function () {
@@ -164,11 +159,11 @@ test('success flash message can be customized via page content', function () {
     $order = Order::factory()->create();
 
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')->once()->andReturn($order);
+    $createOrder->shouldReceive('__invoke')->once()->andReturn($order);
     app()->instance(CreateOrder::class, $createOrder);
 
     $stripeService = Mockery::mock(StripeCheckoutService::class);
-    mockExpectation($stripeService, 'redirectToCheckout')->once()->andReturnNull();
+    $stripeService->shouldReceive('redirectToCheckout')->once()->andReturnNull();
     app()->instance(StripeCheckoutService::class, $stripeService);
 
     $product = Product::factory()->create();
@@ -198,7 +193,7 @@ test('fully booked error message can be customized via page content', function (
     resolve(SettingsManager::class)->flushCache();
 
     $createOrder = Mockery::mock(CreateOrder::class);
-    mockExpectation($createOrder, '__invoke')->once()->andReturnNull();
+    $createOrder->shouldReceive('__invoke')->once()->andReturnNull();
     app()->instance(CreateOrder::class, $createOrder);
 
     $product = Product::factory()->create();

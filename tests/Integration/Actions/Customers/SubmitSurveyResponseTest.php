@@ -22,5 +22,5 @@ test('creates survey response and increments count', function () {
     expect($response)->toBeInstanceOf(SurveyResponse::class)
         ->and($response->survey_id)->toBe($survey->id)
         ->and($response->customer_name)->toBe('Alice')
-        ->and($survey->refresh()->responses_count)->toBe(1);
+        ->and($survey->fresh()->responses_count)->toBe(1);
 });

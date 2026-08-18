@@ -1,20 +1,21 @@
 <?php
 
 use App\Services\Tenants\TenancyManager;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('paypal check-payments command runs successfully with no tenants', function () {
-    expect(Artisan::call('paypal:check-payments'))->toBe(0);
+    $this->artisan('paypal:check-payments')
+        ->assertSuccessful();
 });
 
 test('command exits early when paypal is not configured', function () {
     config(['services.paypal.client_id' => null]);
 
-    expect(Artisan::call('paypal:check-payments'))->toBe(0);
+    $this->artisan('paypal:check-payments')
+        ->assertSuccessful();
 });
 
 test('command skips tenants without paypal configured', function () {
@@ -22,7 +23,7 @@ test('command skips tenants without paypal configured', function () {
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->resolves(function (...$arguments) {
+        ->resolves(function ($tenant, $callback) {
             // Simulate settings('paypal_client_id') returning null
             return null;
         });
@@ -35,7 +36,8 @@ test('command skips tenants without paypal configured', function () {
         'email' => 'nopaypal@test.com',
     ]);
 
-    expect(Artisan::call('paypal:check-payments'))->toBe(0);
+    $this->artisan('paypal:check-payments')
+        ->assertSuccessful();
 });
 
 test('command handles tenant processing exceptions gracefully', function () {
@@ -59,8 +61,9 @@ test('command handles tenant processing exceptions gracefully', function () {
             return str_contains($message, 'PayPal check failed');
         });
 
-    expect(Artisan::call('paypal:check-payments'))->toBe(0)
-        ->and(Artisan::output())->toContain('Error processing');
+    $this->artisan('paypal:check-payments')
+        ->expectsOutputToContain('Error processing')
+        ->assertSuccessful();
 });
 
 test('command source uses TenancyManager for tenant context', function () {
@@ -94,11 +97,7 @@ test('command processes tenant with unpaid paypal orders', function () {
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->resolves(function (...$arguments) {
-            $callback = $arguments[1] ?? null;
-
-            throw_unless(is_callable($callback), RuntimeException::class, 'Expected a tenant callback.');
-
+        ->resolves(function ($tenant, $callback) {
             return $callback();
         });
 
@@ -106,7 +105,8 @@ test('command processes tenant with unpaid paypal orders', function () {
 
     // Since this runs within a tenant context and we haven't set up tenant tables,
     // it will skip due to settings('paypal_client_id') returning null
-    expect(Artisan::call('paypal:check-payments'))->toBe(0);
+    $this->artisan('paypal:check-payments')
+        ->assertSuccessful();
 });
 
 test('command source resolves PaymentVerifier per tenant', function () {

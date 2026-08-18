@@ -8,16 +8,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
-/**
- * @phpstan-type DistanceTier array{tier: string, color: string, estimated_minutes: int}
- * @phpstan-type DeliveryOrder array{id: int, order_number: string, customer_name: string, delivery_address: ?string, delivery_time: non-falsy-string, total: float, distance_tier: DistanceTier}
- */
 class DeliveryRouteService
 {
     /**
      * Load delivery orders for a given date.
      *
-     * @return Collection<int, DeliveryOrder>
+     * @return Collection<int, mixed>
      */
     public function loadOrders(string $date): Collection
     {
@@ -43,7 +39,7 @@ class DeliveryRouteService
     /**
      * Estimate distance tier based on address keywords.
      *
-     * @return DistanceTier
+     * @return array<string, mixed>
      */
     public function calculateDistanceTier(string $deliveryAddress): array
     {
@@ -65,21 +61,21 @@ class DeliveryRouteService
     /**
      * Calculate route statistics from loaded orders.
      *
-     * @param Collection<int, DeliveryOrder> $deliveryOrders
-     * @return array{total_orders: int, total_revenue: float, estimated_total_time: int, average_distance_time: float}
+     * @param Collection<int, mixed> $deliveryOrders
+     * @return array<string, mixed>
      */
     public function getRouteStats(Collection $deliveryOrders): array
     {
         $totalOrders = $deliveryOrders->count();
-        $totalRevenue = $deliveryOrders->sum(fn (array $order): float => $order['total']);
-        $averageDistance = $deliveryOrders->avg(function (array $order): int {
+        $totalRevenue = $deliveryOrders->sum('total');
+        $averageDistance = $deliveryOrders->avg(function (array $order) {
             return $order['distance_tier']['estimated_minutes'];
         });
 
         return [
             'total_orders' => $totalOrders,
             'total_revenue' => $totalRevenue,
-            'estimated_total_time' => $deliveryOrders->sum(function (array $order): int {
+            'estimated_total_time' => $deliveryOrders->sum(function (array $order) {
                 return $order['distance_tier']['estimated_minutes'];
             }),
             'average_distance_time' => round($averageDistance ?? 0, 1),

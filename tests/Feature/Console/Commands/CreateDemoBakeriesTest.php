@@ -15,7 +15,7 @@ test('bakeries command creates five bakeries via subprocess', function () {
         '*' => Process::result(output: 'OK'),
     ]);
 
-    pendingArtisan('tenant:bakeries')
+    $this->artisan('tenant:bakeries')
         ->expectsOutputToContain('Sweet Dreams Bakery')
         ->expectsOutputToContain('Honeycomb Bakes')
         ->expectsOutputToContain('Flour Power Kitchen')
@@ -36,7 +36,7 @@ test('bakeries command skips existing tenants', function () {
         'store_name' => 'Sweet Dreams Bakery',
     ]);
 
-    pendingArtisan('tenant:bakeries')
+    $this->artisan('tenant:bakeries')
         ->expectsOutputToContain('already exists')
         ->assertSuccessful();
 
@@ -55,7 +55,7 @@ test('bakeries command with fresh flag deletes existing tenants first', function
         'store_name' => 'Sweet Dreams Bakery',
     ]);
 
-    pendingArtisan('tenant:bakeries', ['--fresh' => true])
+    $this->artisan('tenant:bakeries', ['--fresh' => true])
         ->expectsOutputToContain('Deleting')
         ->assertSuccessful();
 
@@ -67,7 +67,7 @@ test('bakeries command handles failed subprocess', function () {
         '*' => Process::result(exitCode: 1, errorOutput: 'Database error'),
     ]);
 
-    pendingArtisan('tenant:bakeries')
+    $this->artisan('tenant:bakeries')
         ->expectsOutputToContain('Failed')
         ->assertSuccessful();
 });
@@ -77,7 +77,7 @@ test('bakeries command outputs hosts file instructions', function () {
         '*' => Process::result(output: 'OK'),
     ]);
 
-    pendingArtisan('tenant:bakeries')
+    $this->artisan('tenant:bakeries')
         ->expectsOutputToContain('/etc/hosts')
         ->expectsOutputToContain('sweetdreams.kneadit.test')
         ->assertSuccessful();

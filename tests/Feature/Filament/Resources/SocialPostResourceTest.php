@@ -52,7 +52,7 @@ test('can edit a social post via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($post->refresh()->caption)->toBe('Updated caption for our bakery');
+    expect($post->fresh()->caption)->toBe('Updated caption for our bakery');
 });
 
 test('can create a social post via slide-over', function () {

@@ -16,5 +16,5 @@ test('it updates a waitlist entry status', function () {
 
     resolve(UpdateWaitlistEntryStatus::class)($entry, WaitlistStatus::Notified);
 
-    expect($entry->refresh()->status)->toBe(WaitlistStatus::Notified);
+    expect($entry->fresh()->status)->toBe(WaitlistStatus::Notified);
 });

@@ -50,8 +50,8 @@ test('byCategory groups expenses and sums amounts by category', function () {
 
     expect($results)->toHaveCount(2);
 
-    $ingredients = $results->sole('category', ExpenseCategory::Ingredients);
-    $marketing = $results->sole('category', ExpenseCategory::Marketing);
+    $ingredients = $results->firstWhere('category', ExpenseCategory::Ingredients);
+    $marketing = $results->firstWhere('category', ExpenseCategory::Marketing);
 
     // total_amount = SUM(expenses.amount); column is bigint cents (migration
     // 2026_04_22_230000), so the aggregate returns cents.

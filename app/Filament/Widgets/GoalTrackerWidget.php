@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
-use App\Support\DatabaseValue;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
 
@@ -32,7 +31,7 @@ class GoalTrackerWidget extends Widget
         $this->editingType = $type;
         $key = $type === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
         $default = $type === 'monthly' ? '5000' : '50000';
-        $this->editingGoal = DatabaseValue::nullableString(resolve(SettingsManager::class)->get($key, $default)) ?? $default;
+        $this->editingGoal = resolve(SettingsManager::class)->get($key, $default);
         $this->showEditModal = true;
     }
 
@@ -52,13 +51,13 @@ class GoalTrackerWidget extends Widget
     public function getMonthlyDataProperty(): array
     {
         return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
-            $goal = DatabaseValue::float(resolve(SettingsManager::class)->get('monthly_revenue_goal'), 5000);
+            $goal = (float) resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $range = DateRange::thisMonth();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = DatabaseValue::int(Order::query()->whereBetween('created_at', $range->toArray())
+            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
                 ->active()
-                ->sum('total')) / 100;
+                ->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
@@ -75,13 +74,13 @@ class GoalTrackerWidget extends Widget
     public function getYearlyDataProperty(): array
     {
         return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
-            $goal = DatabaseValue::float(resolve(SettingsManager::class)->get('yearly_revenue_goal'), 50000);
+            $goal = (float) resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $range = DateRange::thisYear();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = DatabaseValue::int(Order::query()->whereBetween('created_at', $range->toArray())
+            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
                 ->active()
-                ->sum('total')) / 100;
+                ->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 

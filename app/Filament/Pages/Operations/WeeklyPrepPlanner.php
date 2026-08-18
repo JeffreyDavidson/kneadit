@@ -5,20 +5,12 @@ namespace App\Filament\Pages\Operations;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Orders\Order;
 use App\Services\Production\PrepScheduleService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
-/**
- * @phpstan-type WeeklyOrders Collection<string, EloquentCollection<int, Order>>
- * @phpstan-type PrepTask array{date: string, order_number: string, customer_name: string, product_name: string, recipe_name: string, quantity: int, prep_time_minutes: int, delivery_time: string, prep_start_time: string, prep_start_datetime: Carbon}
- * @phpstan-type PrepSchedule Collection<string, Collection<int, PrepTask>>
- */
 class WeeklyPrepPlanner extends Page
 {
     use RequiresManagerRole;
@@ -46,10 +38,10 @@ class WeeklyPrepPlanner extends Page
 
     public ?string $selectedWeekStart = null;
 
-    /** @var WeeklyOrders */
+    /** @var Collection<int, mixed> */
     public Collection $weeklyOrders;
 
-    /** @var PrepSchedule */
+    /** @var Collection<int, mixed> */
     public Collection $prepSchedule;
 
     /** @var array<int|string, mixed> */
@@ -82,13 +74,13 @@ class WeeklyPrepPlanner extends Page
         $this->prepSchedule = $data['prepSchedule'];
     }
 
-    /** @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}> */
+    /** @return Collection<int, mixed> */
     public function getProductSummary(): Collection
     {
         return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders);
     }
 
-    /** @return Collection<string, Collection<int, array{time: string, task: string, duration: int, order: string, delivery_time: string}>> */
+    /** @return Collection<int, mixed> */
     public function getTimelineView(): Collection
     {
         return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule);

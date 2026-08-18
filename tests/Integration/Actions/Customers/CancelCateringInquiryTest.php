@@ -13,15 +13,6 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-function cateringInquiryNotes(?string $notes): string
-{
-    if ($notes === null) {
-        test()->fail('Expected the catering inquiry to have notes.');
-    }
-
-    return $notes;
-}
-
 test('transitions inquiry to cancelled', function () {
     Event::fake();
 
@@ -29,7 +20,7 @@ test('transitions inquiry to cancelled', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled);
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled);
     Event::assertNotDispatched(CateringQuoteRequested::class);
 });
 
@@ -41,7 +32,7 @@ test('prepends a stamped reason to notes when provided', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry, 'Customer chose another vendor');
 
-    $notes = cateringInquiryNotes($inquiry->refresh()->notes);
+    $notes = $inquiry->fresh()->notes;
     expect($notes)->toContain('Cancelled: Customer chose another vendor')
         ->and($notes)->toContain('Existing internal note.')
         ->and(str_starts_with($notes, '['))->toBeTrue();
@@ -55,7 +46,7 @@ test('ignores blank reasons', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry, '   ');
 
-    expect($inquiry->refresh()->notes)->toBe('Existing.');
+    expect($inquiry->fresh()->notes)->toBe('Existing.');
 });
 
 test('cascades cancellation to a linked order in a cancellable state', function () {
@@ -64,8 +55,8 @@ test('cascades cancellation to a linked order in a cancellable state', function 
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled)
-        ->and($order->refresh()->status)->toBe(OrderStatus::Cancelled);
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('leaves the order alone when it is in a non-cancellable terminal state', function () {
@@ -74,6 +65,6 @@ test('leaves the order alone when it is in a non-cancellable terminal state', fu
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled)
-        ->and($order->refresh()->status)->toBe(OrderStatus::Delivered);
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Delivered);
 });

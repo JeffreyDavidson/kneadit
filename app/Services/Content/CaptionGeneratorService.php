@@ -20,7 +20,7 @@ class CaptionGeneratorService
         $captions = [];
 
         for ($i = 0; $i < $count; $i++) {
-            $hook = $this->randomString($hooks);
+            $hook = Arr::random($hooks);
             $body = $this->buildBody($product, $tone);
             $selectedHashtags = Arr::random($hashtags, min(random_int(8, 15), count($hashtags)));
 
@@ -140,18 +140,17 @@ class CaptionGeneratorService
             'weekend relaxation',
         ];
 
-        $template = $this->randomString($templates);
-
-        return Str::of($template)->replace(
+        return (string) Str::replace(
             ['{adjective}', '{product}', '{ingredient_focus}', '{call_to_action}', '{occasion}'],
             [
-                $this->randomString($toneWords[$tone] ?? $toneWords['warm']),
+                Arr::random($toneWords[$tone] ?? $toneWords['warm']),
                 Str::lower($product->name),
-                $this->randomString($ingredients),
-                $this->randomString($callToActions),
-                $this->randomString($occasions),
+                Arr::random($ingredients),
+                Arr::random($callToActions),
+                Arr::random($occasions),
             ],
-        )->toString();
+            (string) Arr::random($templates),
+        );
     }
 
     /** @return array<int, string> */
@@ -179,11 +178,5 @@ class CaptionGeneratorService
         ];
 
         return array_merge($base, $categoryMap[Str::lower($category)] ?? [], $general);
-    }
-
-    /** @param array<int, string> $values */
-    private function randomString(array $values): string
-    {
-        return collect($values)->random();
     }
 }

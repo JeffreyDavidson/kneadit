@@ -14,7 +14,7 @@ test('forToken filters carts by cart_token', function () {
     $results = Cart::query()->forToken('token-a')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($target->id);
+        ->and($results->first()->id)->toBe($target->id);
 });
 
 test('notConverted excludes carts that have been converted', function () {
@@ -24,5 +24,5 @@ test('notConverted excludes carts that have been converted', function () {
     $results = Cart::query()->notConverted()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($open->id);
+        ->and($results->first()->id)->toBe($open->id);
 });

@@ -10,11 +10,11 @@ beforeEach(fn () => setUpTenantTest());
 test('price is cast to Money value object', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 
-    expect($product->refresh()->price?->dollars())->toBe(10.00);
+    expect($product->fresh()->price->dollars())->toBe(10.00);
 });
 
 test('cost can be null', function () {
     $product = Product::factory()->create(['price' => 10.00, 'cost' => null]);
 
-    expect($product->refresh()->cost)->toBeNull();
+    expect($product->fresh()->cost)->toBeNull();
 });

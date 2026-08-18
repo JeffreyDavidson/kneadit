@@ -7,12 +7,9 @@ beforeEach(function () {
 });
 
 test('page class has required methods', function () {
-    expect(BakeryInsights::class)->toHaveMethods([
-        'getTenantHealthData',
-        'getAlerts',
-        'getTenantUsageData',
-        'getHealthSummaryStats',
-    ]);
+    $page = new BakeryInsights;
+
+    expect(method_exists($page, 'getTenantHealthData'))->toBeTrue()->and(method_exists($page, 'getAlerts'))->toBeTrue()->and(method_exists($page, 'getTenantUsageData'))->toBeTrue()->and(method_exists($page, 'getHealthSummaryStats'))->toBeTrue();
 });
 
 test('health summary returns expected keys', function () {

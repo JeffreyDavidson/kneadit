@@ -13,7 +13,6 @@ beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('central'));
 });
 
-/** @param array<string, mixed> $overrides */
 function createTestTenant(string $id = 'test-bakery', array $overrides = []): object
 {
     $defaults = [
@@ -36,7 +35,7 @@ function createTestTenant(string $id = 'test-bakery', array $overrides = []): ob
         DB::table('tenants')->insert($data);
     }
 
-    return DB::table('tenants')->where('id', $id)->firstOrFail();
+    return DB::table('tenants')->where('id', $id)->first();
 }
 
 test('can list tenants in the table', function () {
@@ -93,7 +92,7 @@ test('resource returns global search result details', function () {
         'email' => 'detail@test.com',
     ]);
 
-    $tenant = App\Models\Platform\Tenant::query()->findOrFail('detail-bakery');
+    $tenant = App\Models\Platform\Tenant::query()->find('detail-bakery');
     $details = TenantResource::getGlobalSearchResultDetails($tenant);
 
     expect($details)

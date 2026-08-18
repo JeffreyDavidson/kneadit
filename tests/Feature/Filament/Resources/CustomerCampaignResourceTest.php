@@ -33,5 +33,5 @@ test('owner can edit a draft customer campaign via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($campaign->refresh()->name)->toBe('Updated campaign name');
+    expect($campaign->fresh()->name)->toBe('Updated campaign name');
 });

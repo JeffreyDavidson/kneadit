@@ -15,7 +15,7 @@ class ImportLegacyBakeryCommand extends Command
 {
     public function handle(ImportLegacyBakeryData $import, ImportLegacyBakeryAssets $importAssets): int
     {
-        $path = realpath($this->argument('file'));
+        $path = realpath((string) $this->argument('file'));
 
         if ($path === false || ! is_file($path)) {
             $this->error('The import file does not exist.');
@@ -43,7 +43,7 @@ class ImportLegacyBakeryCommand extends Command
             return self::SUCCESS;
         }
 
-        $tenant = Tenant::query()->find($this->argument('tenant'));
+        $tenant = Tenant::query()->find((string) $this->argument('tenant'));
 
         if (! $tenant) {
             $this->error('The target tenant does not exist.');
@@ -60,7 +60,7 @@ class ImportLegacyBakeryCommand extends Command
         }
 
         try {
-            $assetImport = $importAssets($data, $assetDirectory, $tenant->id);
+            $assetImport = $importAssets($data, $assetDirectory, (string) $tenant->getKey());
             $data = $assetImport['data'];
         } catch (\InvalidArgumentException $exception) {
             $this->error($exception->getMessage());

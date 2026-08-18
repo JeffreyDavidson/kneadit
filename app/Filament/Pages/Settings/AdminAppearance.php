@@ -31,12 +31,11 @@ class AdminAppearance extends Page
 
     public function mount(): void
     {
-        $stored = rescue(
+        $value = (string) rescue(
             fn () => resolve(SettingsManager::class)->get('admin_theme', 'honey'),
             'honey',
             false,
         );
-        $value = is_string($stored) ? $stored : 'honey';
 
         $this->current = array_key_exists($value, PanelThemes::AVAILABLE) ? $value : 'honey';
     }

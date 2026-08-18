@@ -2,13 +2,11 @@
 
 namespace App\Services\Platform;
 
-use Illuminate\Support\Facades\Config;
-
 class CustomDomainService
 {
     public function serverIp(): string
     {
-        return Config::string('services.forge.server_ip');
+        return config('services.forge.server_ip');
     }
 
     public function isValidFormat(string $domain): bool

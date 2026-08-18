@@ -29,8 +29,8 @@ class OrderStatusMail extends BaseMailable
 
         return new Envelope(
             from: $this->bakerFrom(),
-            cc: $this->pickupContactCc(),
             replyTo: array_filter([$this->bakerReplyTo()]),
+            cc: $this->pickupContactCc(),
             subject: $resolved['subject'] ?? $this->resolveDefaultSubject(),
         );
     }

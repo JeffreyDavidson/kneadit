@@ -55,5 +55,5 @@ test('deductForOrder deducts ingredient stock', function () {
 
     resolve(InventoryManager::class)->deductForOrder($order);
 
-    expect($flour->refresh()->current_stock)->toBe('98.50');
+    expect($flour->fresh()->current_stock)->toBe('98.50');
 });

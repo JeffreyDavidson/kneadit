@@ -21,9 +21,9 @@ class FeaturedProducts extends Component
     /** @param array<string, mixed> $config */
     public function __construct(public array $config = [])
     {
-        $this->count = is_int($config['count'] ?? null) ? $config['count'] : 6;
-        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'Our Favorites';
-        $this->subtitle = is_string($config['subtitle'] ?? null) ? $config['subtitle'] : 'Freshly made with love';
+        $this->count = $config['count'] ?? 6;
+        $this->title = $config['title'] ?? 'Our Favorites';
+        $this->subtitle = $config['subtitle'] ?? 'Freshly made with love';
         $this->featuredProducts = Product::query()
             ->active()
             ->with('category')

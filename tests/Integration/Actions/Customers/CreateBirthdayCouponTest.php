@@ -4,42 +4,13 @@ use App\Actions\Customers\CreateBirthdayCoupon;
 use App\Enums\Financial\CouponType;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
-use App\ValueObjects\Percentage;
-use Illuminate\Support\Carbon;
 
 beforeEach(fn () => setUpTenantTest());
-
-function createdBirthdayCoupon(?Coupon $coupon): Coupon
-{
-    if ($coupon === null) {
-        test()->fail('Expected a birthday coupon to be created.');
-    }
-
-    return $coupon;
-}
-
-function birthdayCouponPercentage(?Percentage $percentage): Percentage
-{
-    if ($percentage === null) {
-        test()->fail('Expected the birthday coupon to have a percentage.');
-    }
-
-    return $percentage;
-}
-
-function birthdayCouponExpiration(?Carbon $expiration): Carbon
-{
-    if ($expiration === null) {
-        test()->fail('Expected the birthday coupon to have an expiration date.');
-    }
-
-    return $expiration;
-}
 
 test('creates birthday coupon for customer', function () {
     $customer = Customer::factory()->create();
 
-    $coupon = createdBirthdayCoupon(resolve(CreateBirthdayCoupon::class)($customer, 15));
+    $coupon = resolve(CreateBirthdayCoupon::class)($customer, 15);
 
     expect($coupon)
         ->toBeInstanceOf(Coupon::class)
@@ -48,7 +19,7 @@ test('creates birthday coupon for customer', function () {
         ->max_uses->toBe(1)
         ->used_count->toBe(0)
         ->is_active->toBeTrue()
-        ->and(birthdayCouponPercentage($coupon->percentage)->value())->toBe(15.0);
+        ->and($coupon->percentage->value())->toBe(15.0);
 });
 
 test('returns null when discount percent is zero', function () {
@@ -70,8 +41,8 @@ test('returns null when discount percent is negative', function () {
 test('returns existing coupon on retry (idempotent)', function () {
     $customer = Customer::factory()->create();
 
-    $first = createdBirthdayCoupon(resolve(CreateBirthdayCoupon::class)($customer, 15));
-    $second = createdBirthdayCoupon(resolve(CreateBirthdayCoupon::class)($customer, 20));
+    $first = resolve(CreateBirthdayCoupon::class)($customer, 15);
+    $second = resolve(CreateBirthdayCoupon::class)($customer, 20);
 
     expect($first->id)->toBe($second->id)
         ->and(Coupon::query()->count())->toBe(1);
@@ -80,8 +51,8 @@ test('returns existing coupon on retry (idempotent)', function () {
 test('uses custom valid days', function () {
     $customer = Customer::factory()->create();
 
-    $coupon = createdBirthdayCoupon(resolve(CreateBirthdayCoupon::class)($customer, 10, 14));
+    $coupon = resolve(CreateBirthdayCoupon::class)($customer, 10, 14);
 
-    expect(birthdayCouponExpiration($coupon->expires_at)->toDateString())
+    expect($coupon->expires_at->toDateString())
         ->toBe(now()->addDays(14)->toDateString());
 });

@@ -37,5 +37,5 @@ test('it returns only active tenants with storefronts enabled', function () {
     $bakeries = ActiveBakeriesQuery::get();
 
     expect($bakeries)->toHaveCount(1)
-        ->and($bakeries->firstOrFail()['name'])->toBe('Sweet Treats');
+        ->and($bakeries->first()['name'])->toBe('Sweet Treats');
 });

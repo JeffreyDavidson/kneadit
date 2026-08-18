@@ -56,12 +56,12 @@ test('can edit an expense via table action', function () {
             'description' => 'Updated expense',
             'amount' => $expense->amount->dollars(),
             'category' => $expense->category->value,
-            'date' => '2026-03-26',
+            'date' => $expense->date->format('Y-m-d'),
             'business_percentage' => 100,
         ])
         ->assertHasNoFormErrors();
 
-    expect($expense->refresh()->description)->toBe('Updated expense');
+    expect($expense->fresh()->description)->toBe('Updated expense');
 });
 
 test('create expense validates required fields', function (array $data, array $errors) {

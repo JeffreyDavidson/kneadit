@@ -102,7 +102,7 @@ test('pauses expired storefronts and dispatches TrialExpired', function () {
 
     resolve(ProcessTrialExpirations::class)();
 
-    $tenant = DB::table('tenants')->where('id', 'expired-bakery')->firstOrFail();
+    $tenant = DB::table('tenants')->where('id', 'expired-bakery')->first();
 
     expect($tenant->storefront_enabled)->toBeFalsy();
     Event::assertDispatched(fn (TrialExpired $event): bool => $event->tenantId === 'expired-bakery');
@@ -141,7 +141,7 @@ test('pauses storefront even when tenant has no user, but skips TrialExpired eve
 
     resolve(ProcessTrialExpirations::class)();
 
-    $tenant = DB::table('tenants')->where('id', 'expired-no-user')->firstOrFail();
+    $tenant = DB::table('tenants')->where('id', 'expired-no-user')->first();
 
     expect($tenant->storefront_enabled)->toBeFalsy();
     Event::assertNotDispatched(TrialExpired::class);

@@ -1,11 +1,9 @@
 <?php
 
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
-use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 pest()->use(RefreshDatabase::class);
 
@@ -14,14 +12,6 @@ beforeEach(function () {
     test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
     Feature::define('growth-features', fn () => true);
-
-    $tenant = new Tenant;
-    $tenant->forceFill([
-        'id' => 'test-bakery',
-        'plan' => App\Enums\Platform\SubscriptionTier::Pro,
-    ]);
-
-    app()->instance(TenantContract::class, $tenant);
 });
 
 dataset('adminPages', [

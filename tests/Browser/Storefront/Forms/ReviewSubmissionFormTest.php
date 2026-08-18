@@ -1,10 +1,9 @@
 <?php
 
 use Database\Seeders\BrowserTestFixtureSeeder;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
-$storefrontUrl = Config::string('browser-testing.storefront_url');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 $orderNumber = BrowserTestFixtureSeeder::REVIEW_ORDER_NUMBER;
 
 // Full happy-path review submission isn't tested here — each submission creates

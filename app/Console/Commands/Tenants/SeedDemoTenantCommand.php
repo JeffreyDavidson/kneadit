@@ -7,7 +7,6 @@ use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 
 #[Signature('tenants:seed-demo {--fresh : Drop and recreate if the demo tenant already exists}')]
 #[Description("Provision a 'demo' tenant seeded with the onboarded() factory state — used by the central WidgetCatalog page for design preview")]
@@ -49,8 +48,8 @@ class SeedDemoTenantCommand extends Command
         // it is for *.kneadit.test) it falls through to subdomain identification
         // and looks up `domain = '<bare-subdomain>'`, NOT the full hostname.
         // Matches the pattern in CreateOneTenantCommand used by kneadit:seed-local.
-        $centralDomains = Config::array('tenancy.central_domains', []);
-        $centralDomain = is_string($centralDomains[0] ?? null) ? $centralDomains[0] : '';
+        $centralDomains = config('tenancy.central_domains');
+        $centralDomain = is_array($centralDomains) ? (string) ($centralDomains[0] ?? '') : '';
         $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain]);
         $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID]);
 

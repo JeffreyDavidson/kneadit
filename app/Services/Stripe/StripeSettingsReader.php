@@ -32,9 +32,9 @@ class StripeSettingsReader
         }
 
         $methods = $this->settings->get('payment_methods');
-        $methods = is_string($methods) ? json_decode($methods, true) : [];
+        $methods = $methods ? json_decode($methods, true) : [];
 
-        if (! is_array($methods) || ! in_array('stripe', $methods, true)) {
+        if (! in_array('stripe', $methods)) {
             return $this->isEnabled = false;
         }
 
@@ -52,8 +52,6 @@ class StripeSettingsReader
 
         $this->connectIdLoaded = true;
 
-        $connectId = $this->settings->get('stripe_connect_id');
-
-        return $this->connectIdCache = is_string($connectId) && $connectId !== '' ? $connectId : null;
+        return $this->connectIdCache = $this->settings->get('stripe_connect_id');
     }
 }

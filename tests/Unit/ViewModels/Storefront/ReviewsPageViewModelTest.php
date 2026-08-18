@@ -1,35 +1,21 @@
 <?php
 
-use App\Models\Engagement\Review;
 use App\ViewModels\Storefront\ReviewsPageViewModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-/**
- * @param list<int> $ratings
- * @return LengthAwarePaginator<int, Review>
- */
 function makeReviewCollection(array $ratings): LengthAwarePaginator
 {
-    $items = collect($ratings)->map(function (int $rating): Review {
-        $review = new Review;
-        $review->rating = $rating;
-
-        return $review;
-    });
+    $items = collect($ratings)->map(fn (int $rating) => (object) ['rating' => $rating]);
 
     return new LengthAwarePaginator($items, count($ratings), 12);
 }
 
-/** @return object{avg_rating: float, total_count: int} */
 function makeStats(float $avgRating, int $totalCount): object
 {
     return (object) ['avg_rating' => $avgRating, 'total_count' => $totalCount];
 }
 
-/**
- * @param list<int> $ratings
- * @return array<int, int>
- */
+/** @return array<int, int> */
 function makeStarCounts(array $ratings): array
 {
     $counts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];

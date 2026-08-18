@@ -27,7 +27,7 @@ class RfmClassifier
 
     public const int LOYAL_SPEND_DOLLARS = 200;
 
-    public function classify(float $recencyDays, int $frequency, float $monetary): RfmSegment
+    public function classify(int $recencyDays, int $frequency, float $monetary): RfmSegment
     {
         if ($recencyDays < self::RECENT_DAYS && $frequency >= self::FREQUENT_ORDERS && $monetary >= self::BIG_SPEND_DOLLARS) {
             return RfmSegment::Champions;

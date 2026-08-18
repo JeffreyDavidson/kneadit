@@ -15,7 +15,7 @@ test('changes staff member role', function () {
 
     resolve(ChangeStaffRole::class)($staff->id, UserRole::Manager, $owner->id);
 
-    expect($staff->refresh()->role)->toBe(UserRole::Manager);
+    expect($staff->fresh()->role)->toBe(UserRole::Manager);
 });
 
 test('prevents changing own role', function () {

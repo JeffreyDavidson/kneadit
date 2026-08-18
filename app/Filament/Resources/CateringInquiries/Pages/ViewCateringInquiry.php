@@ -166,13 +166,13 @@ class ViewCateringInquiry extends ViewRecord
                     ]),
             ])
             ->action(function (array $data): void {
-                $rows = $this->quoteItemRows($data['items'] ?? []);
+                $rows = is_array($data['items'] ?? null) ? $data['items'] : [];
 
                 $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = array_values(array_filter(
-                    array_column($rows, 'id'),
-                    fn (?int $id): bool => $id !== null,
-                ));
+                $submittedIds = array_values(array_filter(array_map(
+                    fn (mixed $row): ?int => is_array($row) && ! empty($row['id']) ? (int) $row['id'] : null,
+                    $rows,
+                )));
 
                 foreach ($existing as $id => $item) {
                     if (! in_array($id, $submittedIds, true)) {
@@ -183,14 +183,14 @@ class ViewCateringInquiry extends ViewRecord
                 foreach (array_values($rows) as $sortOrder => $row) {
                     $payload = [
                         'name' => $row['name'],
-                        'quantity' => $row['quantity'],
+                        'quantity' => (int) $row['quantity'],
                         'unit_price' => $row['unit_price'],
-                        'special_instructions' => $row['special_instructions'],
+                        'special_instructions' => $row['special_instructions'] ?: null,
                         'sort_order' => $sortOrder,
                     ];
 
-                    if ($row['id'] !== null) {
-                        $existingItem = $existing->get($row['id']);
+                    if (! empty($row['id'])) {
+                        $existingItem = $existing->get((int) $row['id']);
 
                         if ($existingItem instanceof CateringInquiryItem) {
                             $existingItem->update($payload);
@@ -341,73 +341,5 @@ class ViewCateringInquiry extends ViewRecord
 
                 Notification::make()->title('Notes updated.')->success()->send();
             });
-    }
-
-    /** @return array<int, array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
-    private function quoteItemRows(mixed $value): array
-    {
-        if (! is_array($value)) {
-            throw new \UnexpectedValueException('Quote items must be an array.');
-        }
-
-        $rows = [];
-
-        foreach (array_values($value) as $index => $row) {
-            if (! is_array($row)) {
-                throw new \UnexpectedValueException("Quote item {$index} must be an array.");
-            }
-
-            $rows[] = [
-                'id' => isset($row['id']) ? $this->integerValue($row['id'], "items.{$index}.id") : null,
-                'name' => $this->stringValue($row['name'] ?? null, "items.{$index}.name"),
-                'quantity' => $this->integerValue($row['quantity'] ?? null, "items.{$index}.quantity"),
-                'unit_price' => $this->floatValue($row['unit_price'] ?? null, "items.{$index}.unit_price"),
-                'special_instructions' => $this->nullableStringValue($row['special_instructions'] ?? null, "items.{$index}.special_instructions"),
-            ];
-        }
-
-        return $rows;
-    }
-
-    private function stringValue(mixed $value, string $key): string
-    {
-        if (! is_string($value)) {
-            throw new \UnexpectedValueException("{$key} must be a string.");
-        }
-
-        return $value;
-    }
-
-    private function nullableStringValue(mixed $value, string $key): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return $this->stringValue($value, $key);
-    }
-
-    private function integerValue(mixed $value, string $key): int
-    {
-        $integer = filter_var($value, FILTER_VALIDATE_INT);
-
-        if ($integer === false) {
-            throw new \UnexpectedValueException("{$key} must be an integer.");
-        }
-
-        return $integer;
-    }
-
-    private function floatValue(mixed $value, string $key): float
-    {
-        if (is_float($value) || is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || ! is_numeric($value)) {
-            throw new \UnexpectedValueException("{$key} must be numeric.");
-        }
-
-        return (float) $value;
     }
 }

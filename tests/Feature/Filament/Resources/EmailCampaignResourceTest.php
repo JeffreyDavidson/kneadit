@@ -55,7 +55,7 @@ test('can edit an email campaign via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($campaign->refresh()->subject)->toBe('Updated Subject Line');
+    expect($campaign->fresh()->subject)->toBe('Updated Subject Line');
 });
 
 test('can render email campaign table columns', function (string $column) {

@@ -18,7 +18,7 @@ beforeEach(function () {
 test('creating a model logs activity', function () {
     $product = Product::factory()->create();
 
-    $log = ActivityLog::query()->where('model_type', Product::class)->where('action', 'created')->firstOrFail();
+    $log = ActivityLog::query()->where('model_type', Product::class)->where('action', 'created')->first();
 
     expect($log)->not->toBeNull()
         ->and($log->model_id)->toBe($product->id)
@@ -33,8 +33,8 @@ test('updating a model logs activity with changes', function () {
     $log = ActivityLog::query()
         ->where('model_type', Product::class)
         ->where('action', 'updated')
-        ->firstOrFail();
-    $properties = $log->getAttribute('properties');
+        ->first();
 
-    expect(data_get($properties, 'changes.name'))->toBe('New Name');
+    expect($log)->not->toBeNull()
+        ->and($log->properties['changes']['name'])->toBe('New Name');
 });

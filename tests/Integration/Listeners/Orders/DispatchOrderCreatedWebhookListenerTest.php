@@ -14,7 +14,7 @@ beforeEach(fn () => setUpTenantTest());
 test('it dispatches order.created webhook with order data', function () {
     Http::fake();
 
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 
     $order = Order::factory()->create();
@@ -26,11 +26,7 @@ test('it dispatches order.created webhook with order data', function () {
     $listener->handle($event);
 
     Http::assertSent(function ($request) use ($order) {
-        $body = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-        if (! is_array($body) || ! is_array($body['data'] ?? null)) {
-            return false;
-        }
+        $body = json_decode($request->body(), true);
 
         return $request->hasHeader('X-KneadIt-Event', 'order.created')
             && $body['event'] === 'order.created'

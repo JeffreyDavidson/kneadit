@@ -72,5 +72,5 @@ test('social post belongs to product', function () {
         'caption' => 'Our famous sourdough',
     ]);
 
-    expect($post->product?->id)->toBe($product->id);
+    expect($post->product->id)->toBe($product->id);
 });

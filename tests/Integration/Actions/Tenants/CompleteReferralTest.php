@@ -44,7 +44,6 @@ it('does nothing when referral code is not found', function () {
     expect(Referral::query()->where('referral_code', 'NONEXISTENT')->exists())->toBeFalse();
 });
 
-/** @param list<string> $ids */
 function seedReferralTenants(array $ids): void
 {
     foreach ($ids as $id) {
@@ -74,7 +73,7 @@ it('does nothing when the referral code is null', function () {
         email: 'test@test.com',
     );
 
-    expect($referral->refresh()->status)->toBe(ReferralStatus::Pending);
+    expect($referral->fresh()->status)->toBe(ReferralStatus::Pending);
 });
 
 it('does not touch a referral that is already completed', function () {
@@ -92,7 +91,7 @@ it('does not touch a referral that is already completed', function () {
         email: 'new@test.com',
     );
 
-    expect($referral->refresh())
+    expect($referral->fresh())
         ->status->toBe(ReferralStatus::Completed)
         ->referred_tenant_id->toBe('previous-bakery')
         ->referred_email->toBe('previous@test.com');
@@ -113,7 +112,7 @@ it('does not touch a pending referral whose referred_tenant_id is already set', 
         email: 'new@test.com',
     );
 
-    expect($referral->refresh())
+    expect($referral->fresh())
         ->status->toBe(ReferralStatus::Pending)
         ->referred_tenant_id->toBe('previous-bakery')
         ->referred_email->toBe('previous@test.com');

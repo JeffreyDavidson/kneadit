@@ -15,8 +15,8 @@ test('first image is set as primary on save', function () {
         'sort_order' => 1,
     ]);
 
-    expect($image->refresh()->is_primary)->toBeTrue()
-        ->and($product->refresh()->image)->toBe('products/test.jpg');
+    expect($image->fresh()->is_primary)->toBeTrue()
+        ->and($product->fresh()->image)->toBe('products/test.jpg');
 });
 
 test('syncs primary when only image is deleted', function () {
@@ -28,7 +28,7 @@ test('syncs primary when only image is deleted', function () {
     ]);
 
     // Confirm it's primary
-    expect($image->refresh()->is_primary)->toBeTrue();
+    expect($image->fresh()->is_primary)->toBeTrue();
 
     // Now add a second image, then delete the first
     $second = ProductImage::factory()->recycle($product)->create([
@@ -38,8 +38,8 @@ test('syncs primary when only image is deleted', function () {
 
     $image->delete();
 
-    expect($second->refresh()->is_primary)->toBeTrue()
-        ->and($product->refresh()->image)->toBe('products/second.jpg');
+    expect($second->fresh()->is_primary)->toBeTrue()
+        ->and($product->fresh()->image)->toBe('products/second.jpg');
 });
 
 test('lowest sort order image becomes primary when new image added', function () {
@@ -55,7 +55,7 @@ test('lowest sort order image becomes primary when new image added', function ()
         'sort_order' => 1,
     ]);
 
-    expect($second->refresh()->is_primary)->toBeTrue()
-        ->and($first->refresh()->is_primary)->toBeFalse()
-        ->and($product->refresh()->image)->toBe('products/second.jpg');
+    expect($second->fresh()->is_primary)->toBeTrue()
+        ->and($first->fresh()->is_primary)->toBeFalse()
+        ->and($product->fresh()->image)->toBe('products/second.jpg');
 });

@@ -14,7 +14,7 @@ test('generates and persists a referral code on a customer that has none', funct
     $code = resolve(GenerateCustomerReferralCode::class)($customer);
 
     expect($code)->toMatch('/^[A-Z0-9]{8}$/')
-        ->and($customer->refresh()->referral_code)->toBe($code);
+        ->and($customer->fresh()->referral_code)->toBe($code);
 });
 
 test('returns the existing code without regenerating', function () {
@@ -28,5 +28,5 @@ test('returns the existing code without regenerating', function () {
 test('observer auto-generates a code for newly-created customers', function () {
     $customer = Customer::factory()->create(['referral_code' => null]);
 
-    expect($customer->refresh()->referral_code)->toMatch('/^[A-Z0-9]{8}$/');
+    expect($customer->fresh()->referral_code)->toMatch('/^[A-Z0-9]{8}$/');
 });

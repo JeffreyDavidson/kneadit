@@ -32,3 +32,9 @@ test('referral tracking with invalid code still redirects', function () {
 
     $response->assertRedirect('/register');
 });
+
+test('onboarding wires referral completion', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Auth/CompleteOnboardingController.php'));
+
+    expect($source)->toContain('referralCode')->toContain('CompleteReferral');
+});

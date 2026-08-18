@@ -4,25 +4,10 @@ use App\Services\PayPal\PaymentVerifier;
 use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
 
-function paymentVerifierTokenManager(?string $accessToken): TokenManager
-{
-    return new class($accessToken) extends TokenManager {
-        public function __construct(private ?string $accessToken) {}
-
-        public function getAccessToken(): ?string
-        {
-            return $this->accessToken;
-        }
-
-        public function getBaseUrl(): string
-        {
-            return 'https://api-m.sandbox.paypal.com';
-        }
-    };
-}
-
 test('it returns invoice status on success', function () {
-    $tokenManager = paymentVerifierTokenManager('test-token');
+    $tokenManager = Mockery::mock(TokenManager::class);
+    $tokenManager->shouldReceive('getAccessToken')->once()->andReturn('test-token');
+    $tokenManager->shouldReceive('getBaseUrl')->once()->andReturn('https://api-m.sandbox.paypal.com');
 
     Http::fake([
         'api-m.sandbox.paypal.com/v2/invoicing/invoices/INV-001' => Http::response([
@@ -36,7 +21,8 @@ test('it returns invoice status on success', function () {
 });
 
 test('it returns null when access token is unavailable', function () {
-    $tokenManager = paymentVerifierTokenManager(null);
+    $tokenManager = Mockery::mock(TokenManager::class);
+    $tokenManager->shouldReceive('getAccessToken')->once()->andReturnNull();
 
     $verifier = new PaymentVerifier($tokenManager);
 
@@ -44,7 +30,9 @@ test('it returns null when access token is unavailable', function () {
 });
 
 test('it returns null on api failure', function () {
-    $tokenManager = paymentVerifierTokenManager('test-token');
+    $tokenManager = Mockery::mock(TokenManager::class);
+    $tokenManager->shouldReceive('getAccessToken')->once()->andReturn('test-token');
+    $tokenManager->shouldReceive('getBaseUrl')->once()->andReturn('https://api-m.sandbox.paypal.com');
 
     Http::fake([
         'api-m.sandbox.paypal.com/v2/invoicing/invoices/INV-002' => Http::response([

@@ -8,12 +8,14 @@ arch('view models must not use the DB facade')
 
 test('view models must not call Model::query() statically', function () {
     $viewModelsDir = dirname(__DIR__, 2) . '/app/ViewModels';
-    $modelClasses = collect(iterator_to_array(new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/app/Models', FilesystemIterator::SKIP_DOTS),
-    )))
-        ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
-        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
-        ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))
+    $modelClasses = collect(
+        new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/app/Models', FilesystemIterator::SKIP_DOTS),
+        ),
+    )
+        ->filter(fn ($file) => $file->getExtension() === 'php')
+        ->reject(fn ($file) => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->map(fn ($file) => $file->getBasename('.php'))
         ->values()
         ->all();
 
@@ -30,19 +32,11 @@ test('view models must not call Model::query() statically', function () {
     );
 
     foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo) {
-            continue;
-        }
-
         if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $contents = file_get_contents($file->getPathname());
-
-        if ($contents === false) {
-            throw new RuntimeException("Unable to read {$file->getPathname()}.");
-        }
         $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
 
         foreach ($modelClasses as $model) {

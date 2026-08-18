@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-
-$centralUrl = Config::string('browser-testing.central_url');
+$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
 
 // Filament's login page is rendered by the framework, so we don't own the markup
 // and can't add data-test attributes. Selectors here key off input type and

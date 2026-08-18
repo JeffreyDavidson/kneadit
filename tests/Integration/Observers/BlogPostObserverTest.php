@@ -15,7 +15,7 @@ test('slug updates when title changes', function () {
 
     $post->update(['title' => 'Updated Title']);
 
-    expect($post->refresh()->slug)->toBe('updated-title');
+    expect($post->fresh()->slug)->toBe('updated-title');
 });
 
 test('slug is unique when updating title to match existing post', function () {
@@ -24,7 +24,7 @@ test('slug is unique when updating title to match existing post', function () {
 
     $post->update(['title' => 'Taken Title']);
 
-    expect($post->refresh()->slug)->toBe('taken-title-2');
+    expect($post->fresh()->slug)->toBe('taken-title-2');
 });
 
 test('slug does not change when updating non-title fields', function () {
@@ -32,7 +32,7 @@ test('slug does not change when updating non-title fields', function () {
 
     $post->update(['excerpt' => 'Updated excerpt']);
 
-    expect($post->refresh()->slug)->toBe('my-post');
+    expect($post->fresh()->slug)->toBe('my-post');
 });
 
 test('slug keeps same value when title update produces same slug', function () {
@@ -40,5 +40,5 @@ test('slug keeps same value when title update produces same slug', function () {
 
     $post->update(['title' => 'My Post Updated']);
 
-    expect($post->refresh()->slug)->toBe('my-post-updated');
+    expect($post->fresh()->slug)->toBe('my-post-updated');
 });

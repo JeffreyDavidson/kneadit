@@ -6,8 +6,6 @@ use App\Enums\Customers\RfmSegment;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Services\Customers\RfmClassifier;
-use App\Support\DatabaseValue;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -61,15 +59,15 @@ class RfmReport
 
         foreach ($rows as $customer) {
             $lastOrderAt = $customer->getAttribute('last_order_at');
-            if (! is_string($lastOrderAt) && ! $lastOrderAt instanceof DateTimeInterface) {
+            if ($lastOrderAt === null) {
                 continue;
             }
 
             $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
-            $frequency = DatabaseValue::int($customer->getAttribute('frequency'));
+            $frequency = (int) $customer->getAttribute('frequency');
             // monetary_cents is a raw SUM() which bypasses the money cast
             // (see 2026_04_22_201500_convert_orders_money_columns_to_cents).
-            $monetary = DatabaseValue::int($customer->getAttribute('monetary_cents')) / 100;
+            $monetary = (float) ((int) ($customer->getAttribute('monetary_cents') ?? 0) / 100);
 
             $segment = $this->classifier->classify($recencyDays, $frequency, $monetary);
             $counts[$segment->value]++;

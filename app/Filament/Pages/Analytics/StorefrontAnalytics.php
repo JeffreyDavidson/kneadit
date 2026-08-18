@@ -5,13 +5,11 @@ namespace App\Filament\Pages\Analytics;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Engagement\PageView;
 use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Laravel\Pennant\Feature;
 
 class StorefrontAnalytics extends Page
@@ -43,7 +41,7 @@ class StorefrontAnalytics extends Page
 
     public function mount(): void
     {
-        $this->period = request()->string('period', 'week')->toString();
+        $this->period = request()->query('period', 'week');
     }
 
     public function getTotalViews(): int
@@ -66,19 +64,19 @@ class StorefrontAnalytics extends Page
         return $this->query()->conversionRate();
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, mixed> */
     public function getPageViewsChart(): Collection
     {
         return $this->query()->pageViewsByPage();
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, mixed> */
     public function getDailyTrend(): Collection
     {
-        return $this->query()->dailyTrend(Config::integer('analytics.trend_days', 30));
+        return $this->query()->dailyTrend((int) config('analytics.trend_days', 30));
     }
 
-    /** @return Collection<int, object{name: string, views: int}&\stdClass> */
+    /** @return Collection<int, mixed> */
     public function getTopProducts(): Collection
     {
         return $this->query()->topProducts();

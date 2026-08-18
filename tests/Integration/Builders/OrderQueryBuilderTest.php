@@ -18,7 +18,7 @@ test('paid scope returns only paid orders', function () {
     $results = Order::query()->paid()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->payment_status)->toBe(PaymentStatus::Paid);
+        ->and($results->first()->payment_status)->toBe(PaymentStatus::Paid);
 });
 
 test('unpaid scope returns only unpaid orders', function () {
@@ -28,7 +28,7 @@ test('unpaid scope returns only unpaid orders', function () {
     $results = Order::query()->unpaid()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->payment_status)->toBe(PaymentStatus::Unpaid);
+        ->and($results->first()->payment_status)->toBe(PaymentStatus::Unpaid);
 });
 
 test('pending scope returns only pending orders', function () {
@@ -38,7 +38,7 @@ test('pending scope returns only pending orders', function () {
     $results = Order::query()->pending()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->status)->toBe(OrderStatus::Pending);
+        ->and($results->first()->status)->toBe(OrderStatus::Pending);
 });
 
 test('ready scope returns only ready orders', function () {
@@ -48,7 +48,7 @@ test('ready scope returns only ready orders', function () {
     $results = Order::query()->ready()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->status)->toBe(OrderStatus::Ready);
+        ->and($results->first()->status)->toBe(OrderStatus::Ready);
 });
 
 test('active scope excludes cancelled orders', function () {
@@ -68,7 +68,7 @@ test('byStatus filters orders by given status', function () {
     $results = Order::query()->byStatus(OrderStatus::Baking)->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->status)->toBe(OrderStatus::Baking);
+        ->and($results->first()->status)->toBe(OrderStatus::Baking);
 });
 
 test('paidInYear returns paid orders within the given year', function () {
@@ -135,8 +135,8 @@ test('forDeliveryOnDate returns orders with delivery address and active statuses
     $results = Order::query()->forDeliveryOnDate($date)->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->relationLoaded('customer'))->toBeTrue()
-        ->and($results->firstOrFail()->relationLoaded('orderItems'))->toBeTrue();
+        ->and($results->first()->relationLoaded('customer'))->toBeTrue()
+        ->and($results->first()->relationLoaded('orderItems'))->toBeTrue();
 });
 
 test('forCustomerEmail returns orders for the matching customer email', function () {
@@ -149,6 +149,6 @@ test('forCustomerEmail returns orders for the matching customer email', function
     $results = Order::query()->forCustomerEmail('baker@example.com')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->relationLoaded('customer'))->toBeTrue()
-        ->and($results->firstOrFail()->relationLoaded('orderItems'))->toBeTrue();
+        ->and($results->first()->relationLoaded('customer'))->toBeTrue()
+        ->and($results->first()->relationLoaded('orderItems'))->toBeTrue();
 });

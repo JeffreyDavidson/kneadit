@@ -21,11 +21,6 @@ class PruneWebhookDeliveriesCommand extends Command
 
         $failures = $tenancy->forEachTenant(function (Tenant $tenant) use ($cutoff, &$totalDeleted): void {
             $deleted = WebhookDelivery::where('dispatched_at', '<', $cutoff)->delete();
-
-            if (! is_int($deleted)) {
-                return;
-            }
-
             $totalDeleted += $deleted;
 
             if ($deleted > 0) {

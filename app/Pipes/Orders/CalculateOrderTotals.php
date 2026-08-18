@@ -4,9 +4,7 @@ namespace App\Pipes\Orders;
 
 use App\Enums\Orders\DeliveryType;
 use App\Models\Inventory\Product;
-use App\Support\DatabaseValue;
 use Closure;
-use Illuminate\Support\Arr;
 
 class CalculateOrderTotals
 {
@@ -17,10 +15,7 @@ class CalculateOrderTotals
 
         foreach ($payload->data->items as $item) {
             $product = $products->get($item['product_id']);
-            if (! $product) {
-                continue;
-            }
-            if (! $product->is_active) {
+            if (! $product || ! $product->is_active) {
                 continue;
             }
 
@@ -43,8 +38,7 @@ class CalculateOrderTotals
 
         if ($payload->data->deliveryType === DeliveryType::Delivery->value) {
             $fees = config('kneadit.delivery_fees', []);
-            $fee = is_array($fees) ? Arr::get($fees, $payload->data->deliveryTier) : null;
-            $payload->deliveryFee = DatabaseValue::float($fee);
+            $payload->deliveryFee = $fees[$payload->data->deliveryTier] ?? 0;
         }
 
         $payload->tipAmount = max(0.0, $payload->data->tipAmount);

@@ -16,7 +16,6 @@ class PurchaseGiftCardController extends Controller
 
         $message = settingsPageContent('gift_cards')['flash_purchased']
             ?? 'Gift card purchased successfully.';
-        $message = is_string($message) ? $message : 'Gift card purchased successfully.';
 
         return ApiResponse::success([
             'code' => $card->code,

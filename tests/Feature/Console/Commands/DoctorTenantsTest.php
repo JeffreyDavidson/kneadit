@@ -25,7 +25,7 @@ test('tenants:doctor reports clean when no tenants and no files exist', function
     app()->useDatabasePath($isolated);
 
     try {
-        pendingArtisan('tenants:doctor')
+        test()->artisan('tenants:doctor')
             ->expectsOutputToContain('Healthy:        0')
             ->expectsOutputToContain('Orphan rows:    0')
             ->expectsOutputToContain('Orphan files:   0')

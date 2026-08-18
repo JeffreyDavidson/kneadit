@@ -10,12 +10,10 @@ beforeEach(function () {
 
 test('billing portal redirects authenticated user to stripe portal', function () {
     $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
-    mockExpectation($user, 'redirectToBillingPortal')
+    $user->shouldReceive('redirectToBillingPortal')
         ->once()
         ->with(route('filament.admin.pages.dashboard'))
         ->andReturn(new RedirectResponse('https://billing.stripe.com/session/test'));
-
-    throw_unless($user instanceof User, UnexpectedValueException::class, 'Expected a mocked billing user.');
 
     $this->actingAs($user)
         ->get(route('billing.portal'))

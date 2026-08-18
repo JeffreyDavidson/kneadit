@@ -11,19 +11,11 @@ test('Unit tests must not use RefreshDatabase', function () {
     );
 
     foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo) {
-            continue;
-        }
-
         if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $contents = file_get_contents($file->getPathname());
-
-        if ($contents === false) {
-            throw new RuntimeException("Unable to read {$file->getPathname()}.");
-        }
 
         if (str_contains($contents, 'Illuminate\Foundation\Testing\RefreshDatabase')) {
             $violations[] = str_replace(dirname(__DIR__) . '/', '', $file->getPathname());

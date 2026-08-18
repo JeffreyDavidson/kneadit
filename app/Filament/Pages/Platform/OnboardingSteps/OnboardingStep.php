@@ -3,7 +3,6 @@
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
-use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Filament\Schemas\Components\Wizard\Step;
 
@@ -28,15 +27,4 @@ abstract class OnboardingStep
      * @param array<string, mixed> $data
      */
     abstract public static function save(array $data): void;
-
-    protected static function tenant(): Tenant
-    {
-        $tenant = tenant();
-
-        if (! $tenant instanceof Tenant) {
-            throw new \LogicException('A tenant must be initialized during onboarding.');
-        }
-
-        return $tenant;
-    }
 }

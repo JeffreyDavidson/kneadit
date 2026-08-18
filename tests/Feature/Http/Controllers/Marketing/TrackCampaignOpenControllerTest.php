@@ -18,9 +18,7 @@ test('stamps opened_at when the pixel is hit and returns a GIF', function () {
 
     $response->assertOk();
     $response->assertHeader('Content-Type', 'image/gif');
-    $log->refresh();
-
-    expect($log->opened_at)->not->toBeNull();
+    expect($log->fresh()->opened_at)->not->toBeNull();
 });
 
 test('subsequent hits do not overwrite opened_at (first-hit wins)', function () {
@@ -29,16 +27,11 @@ test('subsequent hits do not overwrite opened_at (first-hit wins)', function () 
         'tracking_token' => $token,
         'opened_at' => now()->subHour(),
     ]);
-    $log->refresh();
-    $original = $log->opened_at;
-
-    throw_unless($original instanceof DateTimeInterface, UnexpectedValueException::class, 'Expected the campaign open timestamp.');
+    $original = $log->fresh()->opened_at;
 
     withoutMiddleware(tenantMiddleware())->get("/track/email-open/{$token}.gif");
 
-    $log->refresh();
-
-    expect($log->opened_at?->toIso8601String())->toBe($original->format(DATE_ATOM));
+    expect($log->fresh()->opened_at?->toIso8601String())->toBe($original->toIso8601String());
 });
 
 test('returns the GIF even when the token is unknown', function () {

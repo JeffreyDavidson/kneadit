@@ -28,7 +28,7 @@ test('inSeason returns products without seasonal items', function () {
     $results = Product::query()->inSeason()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($product->id);
+        ->and($results->first()->id)->toBe($product->id);
 });
 
 test('inSeason returns products with current seasonal items', function () {
@@ -38,7 +38,7 @@ test('inSeason returns products with current seasonal items', function () {
     $results = Product::query()->inSeason()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($product->id);
+        ->and($results->first()->id)->toBe($product->id);
 });
 
 test('inSeason excludes products with only expired seasonal items', function () {

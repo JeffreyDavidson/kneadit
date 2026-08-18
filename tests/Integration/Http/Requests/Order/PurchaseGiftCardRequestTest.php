@@ -75,7 +75,6 @@ test('valid purchase with optional recipient passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-/** @return array<string, mixed> */
 function validPurchaseGiftCardData(): array
 {
     return [

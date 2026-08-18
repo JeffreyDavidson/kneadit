@@ -3,7 +3,6 @@
 namespace App\Actions\Content;
 
 use App\Models\Inventory\Product;
-use App\Models\Platform\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -17,25 +16,15 @@ class GenerateSocialCaption
 
     public function __invoke(Product $product): string
     {
-        $tenant = tenant();
-
-        if (! $tenant instanceof Tenant) {
-            throw new \UnexpectedValueException('A tenant is required to generate a social caption.');
-        }
-
-        $storeName = $tenant->store_name ?? $tenant->name;
+        $storeName = tenant()->store_name ?? tenant()->name ?? 'Our Bakery';
         $storeHashtag = Str::replace(' ', '', ucwords($storeName));
 
         $template = Arr::random(self::TEMPLATES);
 
-        if (! is_string($template)) {
-            throw new \UnexpectedValueException('The social caption template must be a string.');
-        }
-
-        return Str::replace(
+        return (string) Str::replace(
             ['{product}', '{price}', '{store_hashtag}'],
             [$product->name, $product->price?->formatted() ?? '', $storeHashtag],
-            $template,
+            (string) $template,
         );
     }
 }

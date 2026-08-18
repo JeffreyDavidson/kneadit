@@ -18,26 +18,26 @@ test('customer note belongs to customer', function () {
     $user = User::factory()->create();
     $note = CustomerNote::factory()->recycle($customer)->recycle($user)->create();
 
-    expect($note->customer?->id)->toBe($customer->id);
+    expect($note->customer->id)->toBe($customer->id);
 });
 
 test('customer profile belongs to customer', function () {
     $customer = Customer::factory()->create();
     $profile = CustomerProfile::factory()->recycle($customer)->create();
 
-    expect($profile->customer?->id)->toBe($customer->id);
+    expect($profile->customer->id)->toBe($customer->id);
 });
 
 test('stock adjustment belongs to ingredient', function () {
     $ingredient = Ingredient::factory()->create();
     $adjustment = StockAdjustment::factory()->recycle($ingredient)->create();
 
-    expect($adjustment->ingredient?->id)->toBe($ingredient->id);
+    expect($adjustment->ingredient->id)->toBe($ingredient->id);
 });
 
 test('customer reminder belongs to customer', function () {
     $customer = Customer::factory()->create();
     $reminder = CustomerReminder::factory()->recycle($customer)->create();
 
-    expect($reminder->customer?->id)->toBe($customer->id);
+    expect($reminder->customer->id)->toBe($customer->id);
 });

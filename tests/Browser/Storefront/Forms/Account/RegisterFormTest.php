@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-
-$storefrontUrl = Config::string('browser-testing.storefront_url');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 
 test('register form blocks empty submit via HTML5 required', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/account/register")

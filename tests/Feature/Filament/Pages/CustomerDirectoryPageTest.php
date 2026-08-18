@@ -31,7 +31,7 @@ test('total_spent formats raw aggregate cents as dollars', function () {
     $row = livewire(CustomerDirectory::class)
         ->instance()
         ->getCustomers()
-        ->firstOrFail(fn (array $customer): bool => $customer['name'] === 'Alice');
+        ->firstWhere('name', 'Alice');
 
     expect($row['total_spent'])->toBe('$100.00');
 });

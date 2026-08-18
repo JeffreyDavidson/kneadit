@@ -15,5 +15,5 @@ test('stripe cancel sets payment status to unpaid and redirects', function () {
 
     $response->assertRedirect();
 
-    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid);
+    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Unpaid);
 });

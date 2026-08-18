@@ -58,7 +58,7 @@ test('can edit an income via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($income->refresh()->description)->toBe('Updated income');
+    expect($income->fresh()->description)->toBe('Updated income');
 });
 
 test('create income validates required fields', function (array $data, array $errors) {

@@ -17,12 +17,7 @@ test('it schedules an email campaign', function () {
     resolve(ScheduleEmailCampaign::class)($campaign, $scheduledAt);
 
     $campaign->refresh();
-    $persistedSchedule = $campaign->scheduled_at;
-
-    if ($persistedSchedule === null) {
-        throw new RuntimeException('Expected the campaign to be scheduled.');
-    }
 
     expect($campaign->status)->toBe(EmailCampaignStatus::Scheduled)
-        ->and($persistedSchedule->toDateTimeString())->toBe($scheduledAt->toDateTimeString());
+        ->and($campaign->scheduled_at->toDateTimeString())->toBe($scheduledAt->toDateTimeString());
 });

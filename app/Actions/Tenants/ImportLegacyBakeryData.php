@@ -60,7 +60,7 @@ class ImportLegacyBakeryData
         foreach ($coupons as $coupon) {
             $type = $coupon['type'] === 'fixed_amount' ? 'fixed' : $coupon['type'];
             DB::table('coupons')->updateOrInsert(
-                ['code' => Str::upper($this->stringValue($coupon['code']))],
+                ['code' => Str::upper((string) $coupon['code'])],
                 [
                     'type' => $type,
                     'fixed_amount' => $type === 'fixed' ? $this->cents($coupon['value']) : null,
@@ -75,7 +75,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $coupon['updated_at'] ?? now(),
                 ],
             );
-            $ids[$this->integerValue($coupon['id'])] = $this->integerValue(DB::table('coupons')->where('code', Str::upper($this->stringValue($coupon['code'])))->value('id'));
+            $ids[(int) $coupon['id']] = (int) DB::table('coupons')->where('code', Str::upper((string) $coupon['code']))->value('id');
         }
 
         return $ids;
@@ -89,7 +89,7 @@ class ImportLegacyBakeryData
         $ids = [];
 
         foreach ($categories as $category) {
-            $slug = Str::slug($this->stringValue($category['name']));
+            $slug = Str::slug((string) $category['name']);
             DB::table('categories')->updateOrInsert(
                 ['slug' => $slug],
                 [
@@ -101,7 +101,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $category['updated_at'] ?? now(),
                 ],
             );
-            $ids[$this->integerValue($category['id'])] = $this->integerValue(DB::table('categories')->where('slug', $slug)->value('id'));
+            $ids[(int) $category['id']] = (int) DB::table('categories')->where('slug', $slug)->value('id');
         }
 
         return $ids;
@@ -116,7 +116,7 @@ class ImportLegacyBakeryData
         $ids = [];
 
         foreach ($products as $product) {
-            $slug = Str::slug($this->stringValue($product['name']));
+            $slug = Str::slug((string) $product['name']);
             DB::table('products')->updateOrInsert(
                 ['slug' => $slug],
                 [
@@ -124,7 +124,7 @@ class ImportLegacyBakeryData
                     'description' => $product['description'] ?? null,
                     'price' => $this->cents($product['price'] ?? 0),
                     'cost' => isset($product['cost']) ? $this->cents($product['cost']) : null,
-                    'category_id' => $categoryIds[$this->integerValue($product['category_id'])],
+                    'category_id' => $categoryIds[(int) $product['category_id']],
                     'is_active' => $product['is_available'] ?? $product['is_active'] ?? true,
                     'is_featured' => $product['is_featured'] ?? false,
                     'image' => $product['image'] ?? null,
@@ -132,7 +132,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $product['updated_at'] ?? now(),
                 ],
             );
-            $ids[$this->integerValue($product['id'])] = $this->integerValue(DB::table('products')->where('slug', $slug)->value('id'));
+            $ids[(int) $product['id']] = (int) DB::table('products')->where('slug', $slug)->value('id');
         }
 
         return $ids;
@@ -146,7 +146,7 @@ class ImportLegacyBakeryData
         $ids = [];
 
         foreach ($orders as $order) {
-            $email = Str::lower(trim($this->stringValue($order['customer_email'])));
+            $email = Str::lower(trim((string) $order['customer_email']));
             DB::table('customers')->updateOrInsert(
                 ['email' => $email],
                 [
@@ -158,7 +158,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $order['updated_at'] ?? now(),
                 ],
             );
-            $ids[$email] = $this->integerValue(DB::table('customers')->where('email', $email)->value('id'));
+            $ids[$email] = (int) DB::table('customers')->where('email', $email)->value('id');
         }
 
         return $ids;
@@ -174,12 +174,12 @@ class ImportLegacyBakeryData
         $ids = [];
 
         foreach ($orders as $order) {
-            $email = Str::lower(trim($this->stringValue($order['customer_email'])));
+            $email = Str::lower(trim((string) $order['customer_email']));
             DB::table('orders')->updateOrInsert(
                 ['order_number' => $order['order_number']],
                 [
                     'customer_id' => $customerIds[$email],
-                    'coupon_id' => isset($order['coupon_id']) ? ($couponIds[$this->integerValue($order['coupon_id'])] ?? null) : null,
+                    'coupon_id' => isset($order['coupon_id']) ? ($couponIds[(int) $order['coupon_id']] ?? null) : null,
                     'status' => $order['status'] ?? 'pending',
                     'payment_status' => $order['payment_status'] ?? 'unpaid',
                     'payment_method' => $order['payment_method'] ?: 'other',
@@ -199,7 +199,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $order['updated_at'] ?? now(),
                 ],
             );
-            $ids[$this->integerValue($order['id'])] = $this->integerValue(DB::table('orders')->where('order_number', $order['order_number'])->value('id'));
+            $ids[(int) $order['id']] = (int) DB::table('orders')->where('order_number', $order['order_number'])->value('id');
         }
 
         return $ids;
@@ -215,9 +215,9 @@ class ImportLegacyBakeryData
 
         foreach ($items as $item) {
             DB::table('order_items')->insert([
-                'order_id' => $orderIds[$this->integerValue($item['order_id'])],
+                'order_id' => $orderIds[(int) $item['order_id']],
                 'name' => $item['product_name'],
-                'product_id' => $productIds[$this->integerValue($item['product_id'])] ?? null,
+                'product_id' => $productIds[(int) $item['product_id']] ?? null,
                 'quantity' => $item['quantity'],
                 'unit_price' => $this->cents($item['unit_price'] ?? 0),
                 'special_instructions' => isset($item['selections']) ? json_encode($item['selections'], JSON_THROW_ON_ERROR) : null,
@@ -233,12 +233,12 @@ class ImportLegacyBakeryData
     private function importReviews(array $reviews, array $productIds): void
     {
         foreach ($reviews as $review) {
-            $email = $review['email'] ?: 'legacy-review-' . $this->stringValue($review['id']) . '@migration.invalid';
+            $email = $review['email'] ?: "legacy-review-{$review['id']}@migration.invalid";
             DB::table('reviews')->updateOrInsert(
                 ['customer_email' => $email, 'comment' => $review['body']],
                 [
                     'customer_name' => $review['name'],
-                    'product_id' => isset($review['product_id']) ? ($productIds[$this->integerValue($review['product_id'])] ?? null) : null,
+                    'product_id' => isset($review['product_id']) ? ($productIds[(int) $review['product_id']] ?? null) : null,
                     'rating' => $review['rating'],
                     'is_approved' => ($review['status'] ?? null) === 'approved',
                     'is_featured' => $review['is_featured'] ?? false,
@@ -261,23 +261,23 @@ class ImportLegacyBakeryData
             $recipeIngredients = array_values(array_map(
                 fn (array $ingredient): array => [
                     'name' => $ingredient['name'],
-                    'quantity' => $this->floatValue($ingredient['quantity']),
+                    'quantity' => (float) $ingredient['quantity'],
                     'unit' => $ingredient['unit'],
-                    'cost' => $this->floatValue($ingredient['cost_per_unit'] ?? 0),
+                    'cost' => (float) ($ingredient['cost_per_unit'] ?? 0),
                 ],
-                array_filter($ingredients, fn (array $ingredient): bool => $this->integerValue($ingredient['recipe_id']) === $this->integerValue($recipe['id'])),
+                array_filter($ingredients, fn (array $ingredient): bool => (int) $ingredient['recipe_id'] === (int) $recipe['id']),
             ));
-            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => $this->integerValue($stage['recipe_id']) === $this->integerValue($recipe['id'])));
+            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => (int) $stage['recipe_id'] === (int) $recipe['id']));
             usort($recipeStages, fn (array $first, array $second): int => ($first['sort_order'] ?? 0) <=> ($second['sort_order'] ?? 0));
             $instructions = collect($recipeStages)
-                ->map(fn (array $stage): string => $this->stringValue($stage['name']) . "\n" . $this->stringValue($stage['instructions']))
+                ->map(fn (array $stage): string => "{$stage['name']}\n{$stage['instructions']}")
                 ->implode("\n\n");
             $cost = collect($recipeIngredients)->sum(fn (array $ingredient): float => $ingredient['quantity'] * $ingredient['cost']);
 
             DB::table('recipes')->updateOrInsert(
                 ['name' => $recipe['name']],
                 [
-                    'product_id' => isset($recipe['product_id']) ? ($productIds[$this->integerValue($recipe['product_id'])] ?? null) : null,
+                    'product_id' => isset($recipe['product_id']) ? ($productIds[(int) $recipe['product_id']] ?? null) : null,
                     'ingredients' => json_encode($recipeIngredients, JSON_THROW_ON_ERROR),
                     'instructions' => $instructions ?: ($recipe['description'] ?? ''),
                     'prep_time_minutes' => $recipe['prep_time_minutes'] ?? 0,
@@ -296,7 +296,7 @@ class ImportLegacyBakeryData
     private function importFinancials(array $expenses, array $incomes): void
     {
         foreach ($expenses as $expense) {
-            $businessPercentage = $this->integerValue($expense['business_percentage'] ?? 100);
+            $businessPercentage = (int) ($expense['business_percentage'] ?? 100);
             DB::table('expenses')->updateOrInsert(
                 ['description' => $expense['description'], 'date' => $expense['date']],
                 [
@@ -305,7 +305,7 @@ class ImportLegacyBakeryData
                     'receipt_image' => $expense['receipt'] ?? null,
                     'notes' => $expense['notes'] ?? null,
                     'business_percentage' => $businessPercentage,
-                    'deductible_amount' => $this->cents($this->floatValue($expense['amount']) * $businessPercentage / 100),
+                    'deductible_amount' => $this->cents((float) $expense['amount'] * $businessPercentage / 100),
                     'created_at' => $expense['created_at'] ?? now(),
                     'updated_at' => $expense['updated_at'] ?? now(),
                 ],
@@ -335,10 +335,10 @@ class ImportLegacyBakeryData
         foreach ($capacityLimits as $capacityLimit) {
             $dayOfWeek = $capacityLimit['day_of_week'] ?? null;
             $specificDate = $capacityLimit['specific_date'] ?? null;
-            $date = $specificDate ?? now()->startOfWeek()->addDays($this->integerValue($dayOfWeek))->toDateString();
+            $date = $specificDate ?? now()->startOfWeek()->addDays((int) $dayOfWeek)->toDateString();
 
             DB::table('capacity_limits')->updateOrInsert(
-                $specificDate ? ['specific_date' => $specificDate] : ['day_of_week' => $this->stringValue($dayOfWeek)],
+                $specificDate ? ['specific_date' => $specificDate] : ['day_of_week' => (string) $dayOfWeek],
                 [
                     'date' => $date,
                     'max_orders' => $capacityLimit['max_orders'],
@@ -399,7 +399,7 @@ class ImportLegacyBakeryData
                 [
                     'customer_name' => $entry['customer_name'],
                     'customer_phone' => $entry['customer_phone'] ?? null,
-                    'product_id' => isset($entry['product_id']) ? ($productIds[$this->integerValue($entry['product_id'])] ?? null) : null,
+                    'product_id' => isset($entry['product_id']) ? ($productIds[(int) $entry['product_id']] ?? null) : null,
                     'notes' => $notes ?: null,
                     'status' => $entry['status'] ?? 'waiting',
                     'created_at' => $entry['created_at'] ?? now(),
@@ -409,14 +409,12 @@ class ImportLegacyBakeryData
         }
 
         foreach ($favorites as $favorite) {
-            $productId = $this->integerValue($favorite['product_id']);
-
-            if (! isset($productIds[$productId])) {
+            if (! isset($productIds[(int) $favorite['product_id']])) {
                 continue;
             }
 
             DB::table('customer_favorites')->updateOrInsert(
-                ['customer_email' => Str::lower($this->stringValue($favorite['customer_email'])), 'product_id' => $productIds[$productId]],
+                ['customer_email' => Str::lower((string) $favorite['customer_email']), 'product_id' => $productIds[(int) $favorite['product_id']]],
                 ['created_at' => $favorite['created_at'] ?? now(), 'updated_at' => $favorite['updated_at'] ?? now()],
             );
         }
@@ -435,19 +433,18 @@ class ImportLegacyBakeryData
         ];
 
         foreach ($settings as $setting) {
-            $legacyKey = $this->stringValue($setting['key']);
-            $key = $keyMap[$legacyKey] ?? $legacyKey;
+            $key = $keyMap[$setting['key']] ?? $setting['key'];
             $value = $this->normalizeSettingValue($key, $setting['value']);
             DB::table('settings')->updateOrInsert(
                 ['key' => $key],
                 ['value' => $value, 'updated_at' => now(), 'created_at' => $setting['created_at'] ?? now()],
             );
 
-            if ($legacyKey === 'default_prep_time_hours') {
+            if ($setting['key'] === 'default_prep_time_hours') {
                 $this->upsertSetting('minimum_order_lead_hours', $value);
             }
 
-            if ($legacyKey === 'minimum_order_amount') {
+            if ($setting['key'] === 'minimum_order_amount') {
                 $this->upsertSetting('minimum_delivery_order_amount', $value);
             }
         }
@@ -514,41 +511,6 @@ class ImportLegacyBakeryData
 
     private function cents(mixed $dollars): int
     {
-        return (int) round($this->floatValue($dollars) * 100);
-    }
-
-    private function stringValue(mixed $value): string
-    {
-        if (! is_string($value) && ! is_int($value) && ! is_float($value)) {
-            throw new \UnexpectedValueException('Expected a string-compatible legacy value.');
-        }
-
-        return (string) $value;
-    }
-
-    private function integerValue(mixed $value): int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
-            throw new \UnexpectedValueException('Expected an integer-compatible legacy value.');
-        }
-
-        return (int) $value;
-    }
-
-    private function floatValue(mixed $value): float
-    {
-        if (is_float($value) || is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || ! is_numeric($value)) {
-            throw new \UnexpectedValueException('Expected a numeric legacy value.');
-        }
-
-        return (float) $value;
+        return (int) round((float) $dollars * 100);
     }
 }

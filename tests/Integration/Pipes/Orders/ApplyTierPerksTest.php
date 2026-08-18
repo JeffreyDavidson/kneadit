@@ -33,23 +33,11 @@ function makePerksPayload(?Customer $customer, float $deliveryFee = 5.0): OrderP
     return $payload;
 }
 
-function continueTierPerksPipeline(OrderPipelineData $payload): OrderPipelineData
-{
-    return $payload;
-}
-
-function tierPerksPipelineResult(mixed $result): OrderPipelineData
-{
-    throw_unless($result instanceof OrderPipelineData, RuntimeException::class, 'Expected order pipeline data.');
-
-    return $result;
-}
-
 test('zeros out delivery fee for a Gold customer', function () {
     $customer = Customer::factory()->create();
     LoyaltyPoint::factory()->earned(2000)->for($customer)->create();
 
-    $result = tierPerksPipelineResult(resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), continueTierPerksPipeline(...)));
+    $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(0.0)
         ->and($result->total)->toBe(30.0);
@@ -58,14 +46,14 @@ test('zeros out delivery fee for a Gold customer', function () {
 test('leaves the fee untouched for a Bronze customer', function () {
     $customer = Customer::factory()->create();
 
-    $result = tierPerksPipelineResult(resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), continueTierPerksPipeline(...)));
+    $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(5.0)
         ->and($result->total)->toBe(35.0);
 });
 
 test('skips when payload has no customer (defensive)', function () {
-    $result = tierPerksPipelineResult(resolve(ApplyTierPerks::class)->handle(makePerksPayload(null), continueTierPerksPipeline(...)));
+    $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload(null), fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(5.0);
 });
@@ -75,7 +63,7 @@ test('respects the global tierPerksEnabled toggle', function () {
     $customer = Customer::factory()->create();
     LoyaltyPoint::factory()->earned(2000)->for($customer)->create();
 
-    $result = tierPerksPipelineResult(resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), continueTierPerksPipeline(...)));
+    $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
     expect($result->deliveryFee)->toBe(5.0);
 });

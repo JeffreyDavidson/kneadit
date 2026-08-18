@@ -9,7 +9,7 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    settings(['webhook_url' => 'https://8.8.8.8/test']);
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'test-secret']);
 });
 
@@ -30,8 +30,8 @@ test('redeliver re-fires the webhook with the original payload data', function (
     Http::assertSent(function ($request) {
         $body = json_decode($request->body(), true);
 
-        return data_get($body, 'event') === 'order.created'
-            && data_get($body, 'data.order_number') === 'ORD-XYZ';
+        return $body['event'] === 'order.created'
+            && $body['data']['order_number'] === 'ORD-XYZ';
     });
 
     expect(WebhookDelivery::count())->toBe(2);

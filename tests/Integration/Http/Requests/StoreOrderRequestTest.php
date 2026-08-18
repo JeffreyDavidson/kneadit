@@ -54,7 +54,6 @@ test('store order request rejects delivery date too soon', function () {
         ->and($validator->errors()->has('delivery_date'))->toBeTrue();
 });
 
-/** @return array<string, mixed> */
 function validOrderData(): array
 {
     return [

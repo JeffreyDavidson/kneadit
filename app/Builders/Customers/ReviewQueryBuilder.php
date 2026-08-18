@@ -3,7 +3,6 @@
 namespace App\Builders\Customers;
 
 use App\Models\Engagement\Review;
-use App\Support\DatabaseValue;
 use Illuminate\Database\Eloquent\Builder;
 
 /** @extends Builder<Review> */
@@ -73,7 +72,7 @@ class ReviewQueryBuilder extends Builder
 
         $breakdown = [];
         for ($star = 5; $star >= 1; $star--) {
-            $breakdown[$star] = DatabaseValue::int($results[$star] ?? null);
+            $breakdown[$star] = (int) ($results[$star] ?? 0);
         }
 
         return $breakdown;

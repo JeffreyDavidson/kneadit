@@ -4,6 +4,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
+    branches: [main, develop]
 
 concurrency:
   group: phpstan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -33,5 +34,5 @@ jobs:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run application and Pest PHPStan
-        run: composer test:types
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G

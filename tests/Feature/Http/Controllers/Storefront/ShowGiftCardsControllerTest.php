@@ -8,7 +8,6 @@ beforeEach(function () {
     setUpTenantTest();
 });
 
-/** @param array<string, mixed> $overrides */
 function makeGiftCard(array $overrides = []): GiftCard
 {
     return GiftCard::factory()->create(array_merge([
@@ -90,5 +89,5 @@ test('gift card has transactions relationship', function () {
             'notes' => 'Initial purchase',
         ]);
 
-    expect($card->transactions)->toHaveCount(1)->and($card->transactions->firstOrFail()->amount->dollars())->toBe(50.00);
+    expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount->dollars())->toBe(50.00);
 });

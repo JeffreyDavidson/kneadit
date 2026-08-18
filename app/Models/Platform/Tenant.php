@@ -33,10 +33,6 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int $onboarding_products_count
- * @property int $onboarding_categories_count
- * @property int $onboarding_orders_count
- * @property Carbon|null $onboarding_metrics_synced_at
  * @property array<array-key, mixed>|null $data
  * @property string|null $custom_domain
  * @property-read Collection<int, Domain> $domains
@@ -87,10 +83,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'is_active',
             'custom_domain',
             'last_login_at',
-            'onboarding_products_count',
-            'onboarding_categories_count',
-            'onboarding_orders_count',
-            'onboarding_metrics_synced_at',
         ];
     }
 
@@ -103,10 +95,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
-            'onboarding_products_count' => 'integer',
-            'onboarding_categories_count' => 'integer',
-            'onboarding_orders_count' => 'integer',
-            'onboarding_metrics_synced_at' => 'datetime',
         ];
     }
 

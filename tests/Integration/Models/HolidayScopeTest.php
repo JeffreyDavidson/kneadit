@@ -14,5 +14,5 @@ test('upcoming scope returns only future holidays', function () {
     $results = Holiday::query()->upcoming()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($future->id);
+        ->and($results->first()->id)->toBe($future->id);
 });

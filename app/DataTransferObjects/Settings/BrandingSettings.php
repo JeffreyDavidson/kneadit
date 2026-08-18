@@ -31,19 +31,19 @@ final readonly class BrandingSettings
     public static function resolve(): self
     {
         return new self(
-            brandColorPrimary: SettingValue::string(tenant('brand_color_primary'), self::DEFAULT_BRAND_COLOR),
-            storefrontTheme: SettingValue::string(settings('storefront_theme'), 'classic'),
-            businessTagline: SettingValue::nullableString(settings('business_tagline')),
-            aboutUsText: SettingValue::nullableString(settings('about_us_text')),
-            heroImage: SettingValue::nullableString(settings('hero_image')),
-            heroStyle: SettingValue::string(settings('hero_style'), 'split'),
-            heroTagline: SettingValue::nullableString(settings('hero_tagline')),
-            heroPrimaryCtaText: SettingValue::string(settings('hero_primary_cta_text'), 'Order Now'),
-            heroSecondaryCtaText: SettingValue::string(settings('hero_secondary_cta_text'), 'Browse Menu'),
-            allergyDisclaimer: SettingValue::nullableString(settings('allergy_disclaimer')),
-            cateringHeroImage: SettingValue::nullableString(settings('catering_hero_image')),
-            loyaltyHeroImage: SettingValue::nullableString(settings('loyalty_hero_image')),
-            giftCardsHeroImage: SettingValue::nullableString(settings('gift_cards_hero_image')),
+            brandColorPrimary: (string) (tenant()->brand_color_primary ?? self::DEFAULT_BRAND_COLOR),
+            storefrontTheme: (string) settings('storefront_theme', 'classic'),
+            businessTagline: settings('business_tagline'),
+            aboutUsText: settings('about_us_text'),
+            heroImage: settings('hero_image'),
+            heroStyle: (string) settings('hero_style', 'split'),
+            heroTagline: settings('hero_tagline'),
+            heroPrimaryCtaText: (string) settings('hero_primary_cta_text', 'Order Now'),
+            heroSecondaryCtaText: (string) settings('hero_secondary_cta_text', 'Browse Menu'),
+            allergyDisclaimer: settings('allergy_disclaimer'),
+            cateringHeroImage: settings('catering_hero_image'),
+            loyaltyHeroImage: settings('loyalty_hero_image'),
+            giftCardsHeroImage: settings('gift_cards_hero_image'),
         );
     }
 

@@ -14,5 +14,5 @@ test('waiting scope returns only entries with waiting status', function () {
     $results = WaitlistEntry::query()->waiting()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->firstOrFail()->id)->toBe($waiting->id);
+        ->and($results->first()->id)->toBe($waiting->id);
 });

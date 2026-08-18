@@ -34,8 +34,7 @@ test('getTemplateData marks customized templates correctly', function () {
     ]);
 
     $data = test()->page->getTemplateData();
-    $orderPlaced = array_find($data, fn (array $template): bool => $template['type'] === 'order_placed');
-    throw_unless(is_array($orderPlaced), UnexpectedValueException::class, 'Expected the order placed template.');
+    $orderPlaced = collect($data)->firstWhere('type', 'order_placed');
 
     expect($orderPlaced['status'])->toBe('Customized');
 });

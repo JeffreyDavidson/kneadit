@@ -21,7 +21,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
@@ -29,7 +28,7 @@ class CustomersTable
 {
     public static function configure(Table $table): Table
     {
-        $atRiskDays = self::atRiskDays();
+        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
 
         return $table
             ->modifyQueryUsing(fn (CustomerQueryBuilder $query) => $query->withOrderMetrics())
@@ -55,10 +54,6 @@ class CustomersTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
-                        if (! is_string($state)) {
-                            return null;
-                        }
-
                         if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
@@ -72,7 +67,9 @@ class CustomersTable
                     ->badge()
                     ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
                     ->icon(fn (Customer $record): ?Heroicon => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? Heroicon::OutlinedCake : null)
-                    ->formatStateUsing(fn (mixed $state, Customer $record): string => self::birthdayLabel($state, $record))
+                    ->formatStateUsing(fn (mixed $state, Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday)
+                        ? 'Today!'
+                        : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -175,23 +172,5 @@ class CustomersTable
             ->defaultSort('name')
             ->emptyStateHeading('No customers yet')
             ->emptyStateDescription('Customers will appear here once they place their first order.');
-    }
-
-    private static function atRiskDays(): int
-    {
-        return Config::integer('analytics.at_risk_threshold_days', 30);
-    }
-
-    private static function birthdayLabel(mixed $state, Customer $customer): string
-    {
-        if (resolve(BirthdayCalculator::class)->isToday($customer->birthday)) {
-            return 'Today!';
-        }
-
-        if (! is_string($state) && ! $state instanceof \DateTimeInterface) {
-            return '—';
-        }
-
-        return Date::parse($state)->format('M j');
     }
 }

@@ -12,10 +12,6 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-/**
- * @phpstan-type HomepageSection array{visible: bool, order: int, ...<string, mixed>}
- * @phpstan-type SectionMeta array{label: string, description: string}
- */
 class HomepageBuilder extends Page
 {
     use RequiresManagerRole;
@@ -32,7 +28,7 @@ class HomepageBuilder extends Page
 
     protected string $view = 'filament.pages.settings.homepage-builder';
 
-    /** @var array<string, HomepageSection> */
+    /** @var array<string, mixed> */
     public array $sections = [];
 
     public ?string $hero_tagline = null;
@@ -41,7 +37,7 @@ class HomepageBuilder extends Page
 
     public string $hero_secondary_cta_text = '';
 
-    /** @var array<string, SectionMeta> */
+    /** @var array<string, mixed> */
     protected array $sectionMeta = [
         'hero' => ['label' => 'Hero Banner', 'description' => 'Full-screen welcome banner with store name and tagline'],
         'about' => ['label' => 'About Section', 'description' => 'Brief about text for your bakery'],
@@ -68,7 +64,7 @@ class HomepageBuilder extends Page
         $this->hero_secondary_cta_text = $branding->heroSecondaryCtaText;
     }
 
-    /** @return array<string, HomepageSection> */
+    /** @return array<string, mixed> */
     protected function getDefaults(): array
     {
         return [
@@ -92,10 +88,7 @@ class HomepageBuilder extends Page
         // Merge saved with defaults to ensure all sections exist
         $this->sections = [];
         foreach ($defaults as $key => $default) {
-            $section = array_merge($default, $saved[$key] ?? []);
-            $section['visible'] = is_bool($section['visible'] ?? null) ? $section['visible'] : $default['visible'];
-            $section['order'] = is_int($section['order'] ?? null) ? $section['order'] : $default['order'];
-            $this->sections[$key] = $section;
+            $this->sections[$key] = array_merge($default, $saved[$key] ?? []);
         }
     }
 
@@ -106,64 +99,36 @@ class HomepageBuilder extends Page
 
     public function toggleVisibility(string $key): void
     {
-        if (! isset($this->sections[$key])) {
-            return;
-        }
-
-        $this->sections[$key]['visible'] = ! $this->sections[$key]['visible'];
+        $this->sections[$key]['visible'] = ! ($this->sections[$key]['visible'] ?? true);
     }
 
     public function moveUp(string $key): void
     {
-        $sorted = array_keys($this->getSortedSections());
+        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->all();
         $index = array_search($key, $sorted);
-
-        if (is_int($index) && $index > 0) {
+        if ($index > 0) {
             $swapKey = $sorted[$index - 1];
-            $this->swapSectionOrder($key, $swapKey);
+            $tempOrder = $this->sections[$key]['order'];
+            $this->sections[$key]['order'] = $this->sections[$swapKey]['order'];
+            $this->sections[$swapKey]['order'] = $tempOrder;
         }
     }
 
     public function moveDown(string $key): void
     {
-        $sorted = array_keys($this->getSortedSections());
+        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->all();
         $index = array_search($key, $sorted);
-
-        if (is_int($index) && $index < count($sorted) - 1) {
+        if ($index < count($sorted) - 1) {
             $swapKey = $sorted[$index + 1];
-            $this->swapSectionOrder($key, $swapKey);
+            $tempOrder = $this->sections[$key]['order'];
+            $this->sections[$key]['order'] = $this->sections[$swapKey]['order'];
+            $this->sections[$swapKey]['order'] = $tempOrder;
         }
     }
 
     public function updateSectionField(string $key, string $field, mixed $value): void
     {
-        if (! isset($this->sections[$key])) {
-            return;
-        }
-
-        if ($field === 'count') {
-            $count = filter_var($value, FILTER_VALIDATE_INT);
-
-            if (is_int($count)) {
-                $this->sections[$key]['count'] = $count;
-            }
-
-            return;
-        }
-
-        if (! is_string($value)) {
-            return;
-        }
-
-        match ($field) {
-            'title' => $this->sections[$key]['title'] = $value,
-            'subtitle' => $this->sections[$key]['subtitle'] = $value,
-            'heading' => $this->sections[$key]['heading'] = $value,
-            'subtext' => $this->sections[$key]['subtext'] = $value,
-            'button_text' => $this->sections[$key]['button_text'] = $value,
-            'button_link' => $this->sections[$key]['button_link'] = $value,
-            default => null,
-        };
+        $this->sections[$key][$field] = $value;
     }
 
     public function save(): void
@@ -222,35 +187,17 @@ class HomepageBuilder extends Page
             ->send();
     }
 
-    /** @return array<string, HomepageSection> */
+    /** @return array<string, mixed> */
     public function getSortedSections(): array
     {
-        $sections = $this->sections;
-        uasort($sections, fn (array $first, array $second): int => $first['order'] <=> $second['order']);
-
-        return $sections;
+        return collect($this->sections)
+            ->sortBy('order')
+            ->toArray();
     }
 
-    /** @return SectionMeta */
+    /** @return array<string, mixed> */
     public function getSectionMeta(string $key): array
     {
         return $this->sectionMeta[$key] ?? ['label' => ucfirst($key), 'description' => ''];
-    }
-
-    private function swapSectionOrder(string $firstKey, string $secondKey): void
-    {
-        $first = $this->sections[$firstKey] ?? null;
-        $second = $this->sections[$secondKey] ?? null;
-
-        if ($first === null || $second === null) {
-            return;
-        }
-
-        $firstOrder = $first['order'];
-        $first['order'] = $second['order'];
-        $second['order'] = $firstOrder;
-
-        $this->sections[$firstKey] = $first;
-        $this->sections[$secondKey] = $second;
     }
 }

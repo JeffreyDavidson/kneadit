@@ -18,7 +18,7 @@ test('created by relationship returns the user who created the note', function (
         ->recycle($user)
         ->create();
 
-    expect($note->createdBy?->id)->toBe($user->id);
+    expect($note->createdBy->id)->toBe($user->id);
 });
 
 test('customer and created by are fillable', function () {

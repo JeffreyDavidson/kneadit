@@ -38,6 +38,6 @@ test('it returns expired view for expired invitation', function () {
     $middleware = new ResolveInvitation;
     $response = $middleware->handle($request, fn () => new Illuminate\Http\Response('should not reach'));
 
-    expect($response->getStatusCode())->toBe(200)
+    expect($response->status())->toBe(200)
         ->and($response->getContent())->toContain('expired');
 });

@@ -8,24 +8,6 @@ beforeEach(function () {
     setUpTenantTest();
 });
 
-/** @return array<array-key, mixed> */
-function decodedLegacySetting(string $key): array
-{
-    $stored = DB::table('settings')->where('key', $key)->value('value');
-
-    if (! is_string($stored)) {
-        throw new RuntimeException("Expected {$key} to be stored as JSON.");
-    }
-
-    $decoded = json_decode($stored, true, flags: JSON_THROW_ON_ERROR);
-
-    if (! is_array($decoded)) {
-        throw new RuntimeException("Expected {$key} to contain a JSON array.");
-    }
-
-    return $decoded;
-}
-
 it('imports a legacy catalog and order history idempotently while converting dollars to cents', function () {
     $data = [
         'categories' => [['id' => 10, 'name' => 'Breads', 'description' => 'Fresh bread', 'sort_order' => 1]],
@@ -107,13 +89,13 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->assertDatabaseHas('settings', ['key' => 'storefront_theme', 'value' => 'biscotto'])
         ->assertDatabaseHas('settings', ['key' => 'admin_theme', 'value' => 'honey']);
 
-    $deliveryFeeTiers = decodedLegacySetting('delivery_fee_tiers');
-    $operatingHours = decodedLegacySetting('operating_hours');
+    $deliveryFeeTiers = json_decode((string) DB::table('settings')->where('key', 'delivery_fee_tiers')->value('value'), true);
+    $operatingHours = json_decode((string) DB::table('settings')->where('key', 'operating_hours')->value('value'), true);
 
     expect($deliveryFeeTiers)->toHaveCount(3)
-        ->and(data_get($deliveryFeeTiers, 0))->toMatchArray(['min_distance' => 0, 'max_distance' => 5, 'fee' => '5.00'])
-        ->and(data_get($operatingHours, 'monday'))->toBe(['open' => '07:00', 'close' => '18:00'])
-        ->and(data_get($operatingHours, 'sunday'))->toBe([]);
+        ->and($deliveryFeeTiers[0])->toMatchArray(['min_distance' => 0, 'max_distance' => 5, 'fee' => '5.00'])
+        ->and($operatingHours['monday'])->toBe(['open' => '07:00', 'close' => '18:00'])
+        ->and($operatingHours['sunday'])->toBe([]);
 });
 
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {

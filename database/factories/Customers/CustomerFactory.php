@@ -5,7 +5,6 @@ namespace Database\Factories\Customers;
 use App\Models\Customers\Customer;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Customer>
@@ -53,9 +52,9 @@ class CustomerFactory extends Factory
     /**
      * Customer has a login password set.
      */
-    public function withPassword(?string $password = null): static
+    public function withPassword(string $password = 'password123'): static
     {
-        return $this->state(fn (array $attributes) => ['password' => $password ?? Str::password()]);
+        return $this->state(fn (array $attributes) => ['password' => $password]);
     }
 
     /**

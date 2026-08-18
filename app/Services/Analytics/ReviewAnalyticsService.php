@@ -47,7 +47,6 @@ class ReviewAnalyticsService
 
         for ($i = 5; $i >= 1; $i--) {
             $count = $distribution[$i] ?? 0;
-            $count = is_int($count) ? $count : 0;
             $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
 
             $ratingStats[] = [
@@ -94,7 +93,7 @@ class ReviewAnalyticsService
         return $trend;
     }
 
-    /** @return Collection<int, array{id: int, name: string, reviews_count: ?int, average_rating: float|0}> */
+    /** @return Collection<int, mixed> */
     public function getTopReviewedProducts(): Collection
     {
         return Product::query()
@@ -112,7 +111,7 @@ class ReviewAnalyticsService
             ]);
     }
 
-    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
+    /** @return Collection<int, mixed> */
     public function getRecentReviews(): Collection
     {
         return Review::with('product')->latest()

@@ -15,8 +15,8 @@ class StoreReviewController extends Controller
     {
         $createReview(
             order: $order,
-            rating: $request->integer('rating'),
-            comment: $request->filled('comment') ? $request->string('comment')->toString() : null,
+            rating: (int) $request->validated('rating'),
+            comment: $request->validated('comment'),
             photo: $request->file('photo'),
         );
 

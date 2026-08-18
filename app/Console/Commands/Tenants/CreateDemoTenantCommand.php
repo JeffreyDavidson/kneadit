@@ -10,7 +10,6 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 
 #[Signature('tenant:demo {--fresh : Drop and recreate the demo tenant}')]
 #[Description('Create a demo tenant for local testing')]
@@ -50,7 +49,7 @@ class CreateDemoTenantCommand extends Command
             'name' => 'Demo Baker',
             'email' => 'demo@getkneadit.app',
             'plan' => SubscriptionTier::Pro,
-            'trial_ends_at' => now()->addDays(Config::integer('kneadit.trial_days', 30)),
+            'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => 'Sweet Dreams Bakery',
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',

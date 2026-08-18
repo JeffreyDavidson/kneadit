@@ -33,7 +33,7 @@ test('open day stores all fields correctly', function () {
         ],
     ]);
 
-    $record = BusinessSchedule::query()->where('day_of_week', 1)->firstOrFail();
+    $record = BusinessSchedule::query()->where('day_of_week', 1)->first();
 
     expect($record)
         ->is_open->toBeTrue()
@@ -54,7 +54,7 @@ test('closed day nullifies time fields despite having values in input', function
         ],
     ]);
 
-    $record = BusinessSchedule::query()->where('day_of_week', 0)->firstOrFail();
+    $record = BusinessSchedule::query()->where('day_of_week', 0)->first();
 
     expect($record)
         ->is_open->toBeFalse()
@@ -75,7 +75,7 @@ test('updates existing schedule without creating duplicates', function () {
 
     expect(BusinessSchedule::query()->where('day_of_week', 1)->count())->toBe(1);
 
-    $record = BusinessSchedule::query()->where('day_of_week', 1)->firstOrFail();
+    $record = BusinessSchedule::query()->where('day_of_week', 1)->first();
 
     expect($record)
         ->open_time->toBe('10:00')
@@ -94,7 +94,7 @@ test('handles null optional fields', function () {
         ],
     ]);
 
-    $record = BusinessSchedule::query()->where('day_of_week', 3)->firstOrFail();
+    $record = BusinessSchedule::query()->where('day_of_week', 3)->first();
 
     expect($record)
         ->is_open->toBeTrue()

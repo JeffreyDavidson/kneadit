@@ -10,7 +10,7 @@ beforeEach(fn () => setUpTenantTest());
 test('forDay returns the schedule for the given day', function () {
     BusinessSchedule::factory()->create(['day_of_week' => 1, 'is_open' => true]);
 
-    $schedule = BusinessSchedule::query()->forDay(1)->firstOrFail();
+    $schedule = BusinessSchedule::query()->forDay(1)->first();
 
     expect($schedule)->not->toBeNull()->and($schedule->day_of_week)->toBe(1);
 });

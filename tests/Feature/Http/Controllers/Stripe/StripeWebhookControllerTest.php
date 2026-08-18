@@ -106,19 +106,16 @@ test('subscription update webhook persists the subscription and syncs the tenant
         'stripe_price' => 'price_growth_webhook',
         'stripe_status' => 'active',
     ]);
-    $tenant->refresh();
-
-    expect($tenant->plan)->toBe(SubscriptionTier::Growth);
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
 })->group('launch-critical');
 
 test('SyncSubscriptionPlan updates tenant plan from stripe price id', function () {
-    $stripePrices = ['starter' => 'price_starter_id', 'growth' => 'price_growth_id'];
-    config(['kneadit.stripe_prices' => $stripePrices]);
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id', 'growth' => 'price_growth_id']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_sync_test']);
     $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
-    $priceMap = array_flip($stripePrices);
+    $priceMap = array_flip(config('kneadit.stripe_prices'));
 
     resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
@@ -126,14 +123,11 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
         priceMap: $priceMap,
     );
 
-    $tenant->refresh();
-
-    expect($tenant->plan)->toBe(SubscriptionTier::Growth);
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
 });
 
 test('SyncSubscriptionPlan does nothing for unknown price id', function () {
-    $stripePrices = ['starter' => 'price_starter_id'];
-    config(['kneadit.stripe_prices' => $stripePrices]);
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_unknown_price']);
     $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
@@ -141,12 +135,10 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
     resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
         stripePriceId: 'price_nonexistent',
-        priceMap: array_flip($stripePrices),
+        priceMap: array_flip(config('kneadit.stripe_prices')),
     );
 
-    $tenant->refresh();
-
-    expect($tenant->plan)->toBe(SubscriptionTier::Starter);
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Starter);
 });
 
 test('handleCustomerSubscriptionDeleted calls parent and logs', function () {

@@ -51,20 +51,7 @@ class ManagePageContent extends Page
 
     protected function loadFromSettings(): void
     {
-        $stored = resolve(SettingsManager::class)->get('page_content', '{}');
-        $decoded = is_string($stored) ? json_decode($stored, true) : null;
-
-        if (! is_array($decoded) || array_is_list($decoded)) {
-            $this->pageContent = [];
-
-            return;
-        }
-
-        $this->pageContent = array_filter(
-            $decoded,
-            fn (mixed $value, int|string $key): bool => is_string($key),
-            ARRAY_FILTER_USE_BOTH,
-        );
+        $this->pageContent = json_decode(resolve(SettingsManager::class)->get('page_content', '{}'), true) ?: [];
     }
 
     protected function getHeaderActions(): array

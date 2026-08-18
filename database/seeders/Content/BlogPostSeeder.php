@@ -407,7 +407,7 @@ HTML,
 <li>Link to your order page in bio</li>
 <li>Use "Link in bio" in captions when showing products</li>
 <li>Add order page link to Stories with the link sticker</li>
-<li>Respond to DMs quickly, but redirect customers to your ordering workflow (DM orders get messy)</li>
+<li>Respond to DMs quickly, but redirect to your order system (DM orders get messy)</li>
 </ul>
 <p>Having a proper online storefront (like the one KneadIt provides) makes you look professional and eliminates the back-and-forth of DM ordering.</p>
 HTML,

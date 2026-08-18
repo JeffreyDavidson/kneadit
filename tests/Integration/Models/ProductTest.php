@@ -22,7 +22,7 @@ test('product belongs to category', function () {
     $category = Category::factory()->create(['name' => 'Cakes']);
     $product = Product::factory()->for($category)->create(['name' => 'Chocolate Cake']);
 
-    expect($product->category)->toBeInstanceOf(Category::class)->and($product->category?->name)->toBe('Cakes');
+    expect($product->category)->toBeInstanceOf(Category::class)->and($product->category->name)->toBe('Cakes');
 });
 
 test('product has recipes relationship', function () {

@@ -69,7 +69,7 @@ test('message is saved with correct sender type', function () {
             'sender_email' => 'cust@example.com',
         ]);
 
-    $msg = OrderMessage::query()->firstOrFail();
+    $msg = OrderMessage::query()->first();
     expect($msg->sender_type)->toBe(SenderType::Customer);
 });
 

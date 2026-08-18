@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use App\Services\Tenants\TenantHealthService;
 
@@ -33,16 +32,18 @@ it('calculates health scores for tenants', function () {
         'brand_color_primary' => '#ff0000',
     ]);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class, [
-        'withinTenant' => [
-            'days_since_login' => 1,
-            'total_orders' => 50,
-            'total_products' => 20,
-            'has_products' => true,
-            'has_categories' => true,
-            'has_orders' => true,
-        ],
-    ]);
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andReturnUsing(function ($tenant, $callback) {
+            return [
+                'days_since_login' => 1,
+                'total_orders' => 50,
+                'total_products' => 20,
+                'has_products' => true,
+                'has_categories' => true,
+                'has_orders' => true,
+            ];
+        });
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -50,8 +51,8 @@ it('calculates health scores for tenants', function () {
     $data = $service->getTenantHealthData();
 
     expect($data)->toHaveCount(1)
-        ->and(data_get($data->first(), 'name'))->toBe('Health Bakery')
-        ->and(data_get($data->first(), 'health_score'))->toBeGreaterThan(0);
+        ->and($data->first()['name'])->toBe('Health Bakery')
+        ->and($data->first()['health_score'])->toBeGreaterThan(0);
 });
 
 it('handles tenant context failure gracefully', function () {
@@ -61,12 +62,9 @@ it('handles tenant context failure gracefully', function () {
         'email' => 'error@test.com',
     ]);
 
-    $tenancyManager = new class extends TenancyManager {
-        public function withinTenant(Tenant $tenant, callable $callback): mixed
-        {
-            throw new RuntimeException('DB connection failed');
-        }
-    };
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andThrow(new RuntimeException('DB connection failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -75,7 +73,7 @@ it('handles tenant context failure gracefully', function () {
 
     // Should still have tenant but with zero scores
     expect($data)->toHaveCount(1)
-        ->and(data_get($data->first(), 'health_score'))->toBeGreaterThanOrEqual(0);
+        ->and($data->first()['health_score'])->toBeGreaterThanOrEqual(0);
 });
 
 it('returns zero summary stats when no tenants', function () {
@@ -90,11 +88,12 @@ it('returns zero summary stats when no tenants', function () {
 });
 
 it('gets last login for a tenant', function () {
-    $tenant = Tenant::factory()->create();
+    $tenant = App\Models\Platform\Tenant::factory()->create();
 
-    $tenancyManager = Mockery::mock(TenancyManager::class, [
-        'withinTenant' => '2026-04-01 10:00:00',
-    ]);
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturn('2026-04-01 10:00:00');
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -105,14 +104,11 @@ it('gets last login for a tenant', function () {
 });
 
 it('returns null for last login when tenant context fails', function () {
-    $tenant = Tenant::factory()->create();
+    $tenant = App\Models\Platform\Tenant::factory()->create();
 
-    $tenancyManager = new class extends TenancyManager {
-        public function withinTenant(Tenant $tenant, callable $callback): mixed
-        {
-            throw new RuntimeException('DB error');
-        }
-    };
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andThrow(new RuntimeException('DB error'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -123,11 +119,12 @@ it('returns null for last login when tenant context fails', function () {
 });
 
 it('gets recent order count for a tenant', function () {
-    $tenant = Tenant::factory()->create();
+    $tenant = App\Models\Platform\Tenant::factory()->create();
 
-    $tenancyManager = Mockery::mock(TenancyManager::class, [
-        'withinTenant' => 15,
-    ]);
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturn(15);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -138,14 +135,11 @@ it('gets recent order count for a tenant', function () {
 });
 
 it('returns zero order count when tenant context fails', function () {
-    $tenant = Tenant::factory()->create();
+    $tenant = App\Models\Platform\Tenant::factory()->create();
 
-    $tenancyManager = new class extends TenancyManager {
-        public function withinTenant(Tenant $tenant, callable $callback): mixed
-        {
-            throw new RuntimeException('DB error');
-        }
-    };
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->andThrow(new RuntimeException('DB error'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 

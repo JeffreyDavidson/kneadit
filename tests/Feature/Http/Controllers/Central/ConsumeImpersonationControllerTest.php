@@ -31,23 +31,17 @@ test('consume impersonation logs in user and redirects to admin', function () {
     $request = impersonationRequest('/impersonate/valid-token-123');
 
     $action = Mockery::mock(ConsumeImpersonationToken::class);
-    mockExpectation($action, '__invoke')
+    $action->shouldReceive('__invoke')
         ->once()
         ->with('valid-token-123', '10.0.0.1')
         ->andReturn($user);
 
-    throw_unless($action instanceof ConsumeImpersonationToken, UnexpectedValueException::class, 'Expected a mocked impersonation action.');
-
     $controller = new ConsumeImpersonationController;
     $response = $controller('valid-token-123', $request, $action);
 
-    $authenticatedUser = auth()->user();
-
-    throw_unless($authenticatedUser instanceof User, UnexpectedValueException::class, 'Expected the impersonated user to be authenticated.');
-
     expect($response)->toBeInstanceOf(RedirectResponse::class)
         ->and($response->getTargetUrl())->toContain('/admin')
-        ->and($authenticatedUser->id)->toBe($user->id);
+        ->and(auth()->user()->id)->toBe($user->id);
 });
 
 test('consume impersonation flushes prior session data', function () {
@@ -61,9 +55,7 @@ test('consume impersonation flushes prior session data', function () {
     $request->session()->put('login_web_xyz', 999);
 
     $action = Mockery::mock(ConsumeImpersonationToken::class);
-    mockExpectation($action, '__invoke')->once()->andReturn($user);
-
-    throw_unless($action instanceof ConsumeImpersonationToken, UnexpectedValueException::class, 'Expected a mocked impersonation action.');
+    $action->shouldReceive('__invoke')->once()->andReturn($user);
 
     (new ConsumeImpersonationController)('valid-token-123', $request, $action);
 
@@ -75,13 +67,11 @@ test('consume impersonation aborts for invalid token', function () {
     $request = impersonationRequest('/impersonate/bad-token');
 
     $action = Mockery::mock(ConsumeImpersonationToken::class);
-    mockExpectation($action, '__invoke')
+    $action->shouldReceive('__invoke')
         ->once()
         ->andThrow(
             new Symfony\Component\HttpKernel\Exception\HttpException(403, 'Invalid or expired impersonation token.'),
         );
-
-    throw_unless($action instanceof ConsumeImpersonationToken, UnexpectedValueException::class, 'Expected a mocked impersonation action.');
 
     $controller = new ConsumeImpersonationController;
 

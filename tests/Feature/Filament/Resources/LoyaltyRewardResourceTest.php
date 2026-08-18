@@ -49,11 +49,11 @@ test('can edit a loyalty reward via table action', function () {
             'name' => 'Updated Reward',
             'points_required' => $reward->points_required,
             'reward_type' => $reward->reward_type->value,
-            'discount_percentage' => 10,
+            'discount_percentage' => $reward->discount_percentage->value(),
         ])
         ->assertHasNoFormErrors();
 
-    expect($reward->refresh()->name)->toBe('Updated Reward');
+    expect($reward->fresh()->name)->toBe('Updated Reward');
 });
 
 test('create loyalty reward validates required fields', function (array $data, array $errors) {

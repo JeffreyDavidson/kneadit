@@ -4,7 +4,6 @@ namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Pages\Operations\WebhooksDocs;
 use App\Filament\Pages\Settings\ManageSettings;
-use App\Rules\SafeWebhookUrl;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -37,13 +36,12 @@ class IntegrationsSection
                 TextInput::make('webhook_url')
                     ->label('Webhook URL')
                     ->url()
-                    ->rule(resolve(SafeWebhookUrl::class))
                     ->placeholder('https://hooks.zapier.com/...')
                     ->helperText(new HtmlString(
                         'We POST a JSON body when these events fire: <code>order.created</code>, <code>order.updated</code>, '
                         . '<code>order.cancelled</code>, <code>order.delivered</code>. '
                         . 'Each request includes <code>X-KneadIt-Signature</code> (HMAC-SHA256 of the body, signed with the secret below). '
-                        . 'The destination must be a public HTTPS endpoint.',
+                        . 'HTTPS strongly recommended.',
                     ))
                     ->columnSpanFull(),
 

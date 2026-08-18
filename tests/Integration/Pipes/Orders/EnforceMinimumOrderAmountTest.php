@@ -30,13 +30,7 @@ function runMinimumPipe(float $subtotal, string $deliveryType, string $pickupMin
 
     $pipe = new EnforceMinimumOrderAmount(makeSettingsForMinimumPipeTest($pickupMin, $deliveryMin));
 
-    $result = $pipe->handle($payload, fn ($p) => $p);
-
-    if (! $result instanceof OrderPipelineData) {
-        throw new RuntimeException('Expected the minimum-order pipe to return its payload.');
-    }
-
-    return $result;
+    return $pipe->handle($payload, fn ($p) => $p);
 }
 
 test('passes through when minimum is zero', function () {

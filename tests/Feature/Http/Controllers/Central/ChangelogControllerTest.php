@@ -33,8 +33,6 @@ test('changelog displays entry titles', function () {
 test('changelog config has entries', function () {
     $entries = config('changelog');
 
-    throw_unless(is_array($entries), UnexpectedValueException::class, 'Expected changelog entries.');
-
     expect($entries)->not->toBeEmpty()->and($entries[0])->toHaveKeys(['date', 'version', 'title', 'items']);
 });
 

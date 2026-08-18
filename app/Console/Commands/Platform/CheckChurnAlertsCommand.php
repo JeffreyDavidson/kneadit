@@ -17,16 +17,11 @@ class CheckChurnAlertsCommand extends Command
         $alerts = $churnAlertService->getAlerts();
 
         foreach ($alerts as $alert) {
-            $typeLabel = $this->stringValue($alert['type_label'] ?? null);
-            $name = $this->stringValue($alert['name'] ?? null);
-            $description = $this->stringValue($alert['description'] ?? null);
-            $tenantId = $this->stringValue($alert['tenant_id'] ?? null);
-
             resolve(LogAuditEntry::class)(
                 action: 'churn_alert',
-                description: "{$typeLabel}: {$name} — {$description}",
+                description: "{$alert['type_label']}: {$alert['name']} — {$alert['description']}",
                 targetType: 'tenant',
-                targetId: $tenantId,
+                targetId: (string) $alert['tenant_id'],
                 metadata: ['type' => $alert['type'], 'severity' => $alert['severity']],
             );
         }
@@ -34,10 +29,5 @@ class CheckChurnAlertsCommand extends Command
         $this->info("Churn check complete. {$alerts->count()} alert(s) logged.");
 
         return self::SUCCESS;
-    }
-
-    private function stringValue(mixed $value): string
-    {
-        return is_string($value) || is_int($value) ? "{$value}" : '';
     }
 }

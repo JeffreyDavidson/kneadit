@@ -4,17 +4,6 @@ use App\Actions\Tenants\SaveTenantSettings;
 
 beforeEach(fn () => setUpTenantTest());
 
-function savedTenantSetting(string $key): string
-{
-    $value = settings($key);
-
-    if (! is_string($value)) {
-        throw new RuntimeException("Expected {$key} to be a string.");
-    }
-
-    return $value;
-}
-
 test('saves store information settings', function () {
     $data = [
         'store_name' => 'Test Bakery',
@@ -174,7 +163,7 @@ test('saves catering event types as a json array', function () {
 
     resolve(SaveTenantSettings::class)($data);
 
-    expect(json_decode(savedTenantSetting('catering_event_types'), true, flags: JSON_THROW_ON_ERROR))
+    expect(json_decode(settings('catering_event_types'), true))
         ->toBe(['Kids Party', 'School Function']);
 });
 
@@ -235,7 +224,7 @@ test('auto-generates webhook secret when url is set without one', function () {
     resolve(SaveTenantSettings::class)($data);
 
     expect(settings('webhook_url'))->toBe('https://hooks.example.com/test')
-        ->and(strlen(savedTenantSetting('webhook_secret')))->toBe(40);
+        ->and(strlen((string) settings('webhook_secret')))->toBe(40);
 });
 
 test('preserves an explicitly provided secret instead of generating one', function () {
@@ -298,7 +287,7 @@ test('saves order journey steps as JSON', function () {
 
     resolve(SaveTenantSettings::class)($data);
 
-    expect(json_decode(savedTenantSetting('order_journey_steps'), true, flags: JSON_THROW_ON_ERROR))->toEqual($steps);
+    expect(json_decode(settings('order_journey_steps'), true))->toEqual($steps);
 });
 
 test('persists per-status email toggles as 1/0 strings', function () {
@@ -370,5 +359,5 @@ test('persists gift card preset amounts and default amount', function () {
     resolve(SaveTenantSettings::class)($data);
 
     expect(settings('gift_card_preset_amounts'))->toBe('15,30,75,150')
-        ->and(filter_var(settings('gift_card_default_amount'), FILTER_VALIDATE_INT))->toBe(50);
+        ->and((int) settings('gift_card_default_amount'))->toBe(50);
 });

@@ -82,5 +82,5 @@ test('loyalty points belong to customer', function () {
 
     $point = LoyaltyPoint::factory()->for($customer)->earned(100)->create(['description' => 'Order']);
 
-    expect($point->customer()->firstOrFail()->id)->toBe($customer->id);
+    expect($point->customer->id)->toBe($customer->id);
 });
