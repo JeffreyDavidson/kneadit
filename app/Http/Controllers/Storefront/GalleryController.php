@@ -36,8 +36,9 @@ class GalleryController extends Controller
                 ->orderByDesc('is_featured')
                 ->latest()
                 ->paginate(18),
-            'products' => Product::query()->active()->orderBy('name')->get(['id', 'name']),
+            'products' => Product::query()->active()->orderBy('name')->get(['id', 'name', 'image']),
             'content' => settingsPageContent('gallery'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }

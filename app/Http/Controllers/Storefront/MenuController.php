@@ -38,6 +38,7 @@ class MenuController extends Controller
             'content' => $content,
             'heroEyebrow' => $heroEyebrow,
             'ctaDesc' => $ctaDesc,
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }

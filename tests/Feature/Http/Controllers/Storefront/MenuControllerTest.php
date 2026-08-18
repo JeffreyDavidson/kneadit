@@ -15,7 +15,8 @@ test('menu controller passes settings and content to view', function () {
         ->assertViewHas('settings')
         ->assertViewHas('content')
         ->assertViewHas('heroEyebrow')
-        ->assertViewHas('ctaDesc');
+        ->assertViewHas('ctaDesc')
+        ->assertViewHas('storefrontTheme');
 });
 
 test('menu page loads successfully', function () {
@@ -23,6 +24,18 @@ test('menu page loads successfully', function () {
         ->get(route('storefront.menu', [], false));
 
     $response->assertOk();
+});
+
+test('biscotto theme renders the parchment menu presentation', function () {
+    settings(['storefront_theme' => 'biscotto']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.menu', [], false));
+
+    $response->assertOk()
+        ->assertSee('biscotto-menu-hero', false)
+        ->assertSee('biscotto-parchment', false)
+        ->assertSee('biscotto-menu-order', false);
 });
 
 test('menu page shows store name from settings', function () {

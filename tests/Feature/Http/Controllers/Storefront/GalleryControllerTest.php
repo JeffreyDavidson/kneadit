@@ -16,7 +16,20 @@ test('gallery controller passes settings, photos, products, and content to view'
         ->assertViewHas('settings')
         ->assertViewHas('photos')
         ->assertViewHas('products')
-        ->assertViewHas('content');
+        ->assertViewHas('content')
+        ->assertViewHas('storefrontTheme');
+});
+
+test('biscotto theme renders its bakery gallery presentation', function () {
+    settings(['storefront_theme' => 'biscotto']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.gallery', [], false));
+
+    $response->assertOk()
+        ->assertSee('biscotto-gallery-hero', false)
+        ->assertSee('biscotto-gallery-stage', false)
+        ->assertSee('Fresh from the Oven');
 });
 
 test('can submit a gallery photo', function () {
