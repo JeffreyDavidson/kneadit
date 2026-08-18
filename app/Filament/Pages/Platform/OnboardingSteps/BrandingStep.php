@@ -76,9 +76,9 @@ final class BrandingStep extends OnboardingStep
 
             /** @var array<int, string>|string|null $storeLogo */
             $storeLogo = $data['store_logo'] ?? null;
-            $logoPath = ! empty($storeLogo)
-                ? (is_array($storeLogo) ? ($storeLogo[0] ?? null) : $storeLogo)
-                : null;
+            $logoPath = empty($storeLogo)
+                ? (null)
+                : (is_array($storeLogo) ? $storeLogo[0] ?? null : $storeLogo);
 
             $settings['store_logo'] = $logoPath;
             $tenant->store_logo = $logoPath;
