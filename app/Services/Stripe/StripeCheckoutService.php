@@ -7,6 +7,7 @@ use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -19,8 +20,7 @@ class StripeCheckoutService
         private StripeSessionPayloadBuilder $payloadBuilder,
         private StripeSettingsReader $settings,
     ) {
-        $secret = config('cashier.secret', '');
-        $this->stripe = new StripeClient(is_string($secret) ? $secret : '');
+        $this->stripe = new StripeClient(Config::string('cashier.secret', ''));
     }
 
     public function redirectToCheckout(Order $order): ?string
@@ -152,8 +152,6 @@ class StripeCheckoutService
 
     private function currency(): string
     {
-        $currency = config('cashier.currency', 'usd');
-
-        return is_string($currency) ? $currency : 'usd';
+        return Config::string('cashier.currency', 'usd');
     }
 }

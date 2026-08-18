@@ -5,6 +5,7 @@ namespace App\Services\Stripe;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Platform\Tenant;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -154,8 +155,6 @@ class CateringDepositCheckoutService
 
     private function configString(string $key, string $default = ''): string
     {
-        $value = config($key, $default);
-
-        return is_string($value) ? $value : $default;
+        return Config::string($key, $default);
     }
 }
