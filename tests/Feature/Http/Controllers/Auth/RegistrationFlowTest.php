@@ -175,7 +175,7 @@ test('onboarding does not require external website for kneadit', function () {
             'storefront_choice' => 'kneadit',
         ]);
 
-    expect(array_keys(session('errors')?->toArray() ?? []))->not->toContain('external_website');
+    $response->assertSessionDoesntHaveErrors('external_website');
 });
 
 test('guest cannot access onboarding', function () {
