@@ -1,12 +1,19 @@
 <?php
 
+use App\Http\Controllers\Storefront\HomeController;
+use Illuminate\Support\Facades\Route;
+
 use function Pest\Laravel\withoutMiddleware;
 
-beforeEach(fn () => setUpTenantTest());
+beforeEach(function () {
+    setUpTenantTest();
+
+    Route::get('/storefront-home-test', HomeController::class);
+});
 
 test('storefront home page renders', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/');
+        ->get('/storefront-home-test');
 
     $response->assertOk();
 });
@@ -19,7 +26,7 @@ test('biscotto storefront theme renders its branded navigation and hero', functi
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/');
+        ->get('/storefront-home-test');
 
     $response->assertOk()
         ->assertSee('biscotto-nav', false)
