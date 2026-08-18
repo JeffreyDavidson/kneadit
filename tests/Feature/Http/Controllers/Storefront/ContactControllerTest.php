@@ -14,7 +14,26 @@ test('contact controller passes settings and content to view', function () {
 
     $response->assertOk()
         ->assertViewHas('settings')
-        ->assertViewHas('content');
+        ->assertViewHas('content')
+        ->assertViewHas('storefrontTheme');
+});
+
+test('biscotto contact page uses the themed contact and faq presentation', function () {
+    Setting::factory()->create(['key' => 'storefront_theme', 'value' => 'biscotto']);
+    Setting::factory()->create([
+        'key' => 'faq_items',
+        'value' => json_encode([['question' => 'How do I order?', 'answer' => 'Order from the menu.']]),
+    ]);
+    resolve(SettingsManager::class)->flushCache();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('contact.show', [], false));
+
+    $response->assertOk()
+        ->assertSee('biscotto-contact-hero', false)
+        ->assertSee('Frequently Asked')
+        ->assertSee('How do I order?')
+        ->assertSee('data-test="contact-form"', false);
 });
 
 test('show returns the contact view with tenant settings', function () {
