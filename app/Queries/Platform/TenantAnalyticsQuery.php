@@ -67,8 +67,9 @@ class TenantAnalyticsQuery
     {
         $signups = static::signupsByMonth();
         $growth = [];
+        $counter = count($signups);
 
-        for ($i = 1; $i < count($signups); $i++) {
+        for ($i = 1; $i < $counter; $i++) {
             $prev = $signups[$i - 1]['count'];
             $curr = $signups[$i]['count'];
             $rate = $prev > 0 ? round((($curr - $prev) / $prev) * 100, 1) : 0;

@@ -57,7 +57,7 @@ class TenantUsageService
                         'order_limit' => $orderLimit,
                         'order_percent' => min($orderPercent, 100),
                         'at_limit' => $productPercent >= 100 || $orderPercent >= 100,
-                        'approaching_limit' => ! ($productPercent >= 100 || $orderPercent >= 100),
+                        'approaching_limit' => $productPercent < 100 && $orderPercent < 100,
                     ]);
                 }
             } catch (\Throwable) {

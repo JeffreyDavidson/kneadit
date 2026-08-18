@@ -24,6 +24,22 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Verify local PHP
+        run: php -v && php -m
+
+      - name: Install Composer
+        run: |
+          mkdir -p "$RUNNER_TEMP/composer-bin"
+          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
+          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
+          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/composer-bin/composer" --version
+
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        run: composer install --no-interaction --prefer-dist
+
       - name: Install Node dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
