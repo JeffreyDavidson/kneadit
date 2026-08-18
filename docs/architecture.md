@@ -68,6 +68,7 @@ Models, actions, services, enums, builders, queries, policies, factories, and te
 - **Customers and engagement:** customer profiles, favorites, notes, referrals, loyalty, campaigns, surveys, reviews, reminders, contact messages, and catering inquiries.
 - **Financial:** income, expenses, coupons, gift cards, refunds, reporting, tax export, Stripe, and PayPal.
 - **Operations and staff:** schedules, blocked dates, holidays, capacity, check-ins, staff invitations and roles, activity logs, and webhook delivery.
+- **Analytics:** page and product-impression records use a keyed, pseudonymous visitor identifier. Raw network/device identifiers are not persisted, recording failures are reported without breaking storefront responses, and scheduled tenant-wide retention bounds stored history.
 
 ## Order lifecycle
 
