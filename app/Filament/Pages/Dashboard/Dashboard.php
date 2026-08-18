@@ -198,10 +198,12 @@ class Dashboard extends BaseDashboard
         $config = [];
 
         foreach ($decoded as $key => $settings) {
-            if (! is_string($key) || ! is_array($settings)) {
+            if (! is_string($key)) {
                 continue;
             }
-
+            if (! is_array($settings)) {
+                continue;
+            }
             $normalized = [
                 'visible' => is_bool($settings['visible'] ?? null) ? $settings['visible'] : true,
                 'order' => is_int($settings['order'] ?? null) ? $settings['order'] : 99,
