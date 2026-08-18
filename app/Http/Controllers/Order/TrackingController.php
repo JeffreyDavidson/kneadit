@@ -25,7 +25,7 @@ class TrackingController extends Controller
 
         return view('storefront.order-tracking', [
             'settings' => $settings,
-            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
             'orders' => $orders,
             'email' => $email,
             'content' => settingsPageContent('order_tracking'),
@@ -38,7 +38,7 @@ class TrackingController extends Controller
     {
         return view('storefront.order-tracking', [
             'settings' => $settings,
-            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
             'content' => settingsPageContent('order_tracking'),
         ]);
     }
