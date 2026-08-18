@@ -26,6 +26,7 @@ class ContactController extends Controller
         return view('storefront.contact', [
             'settings' => $settings,
             'content' => settingsPageContent('contact'),
+            'storefrontTheme' => (string) settings('storefront_theme', 'classic'),
         ]);
     }
 }
