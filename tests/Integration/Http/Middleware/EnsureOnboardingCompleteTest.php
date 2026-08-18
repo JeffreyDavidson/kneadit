@@ -141,9 +141,9 @@ test('passes through gracefully when TenantSettings throws exception', function 
 });
 
 test('redirects to onboarding when onboardingCompletedAt is null using TenantSettings', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
-    app()->bind('currentTenant', fn () => $tenant);
+    $tenant = new App\Models\Platform\Tenant(['id' => 'onboarding-bakery']);
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
 
     $user = App\Models\Staff\User::factory()->create();
     actingAs($user);
