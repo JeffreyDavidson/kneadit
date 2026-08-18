@@ -31,10 +31,13 @@ class CouponUsageWidget extends Widget
     {
         // Cache the id, not the model. Cache stores hydrate as __PHP_Incomplete_Class
         // because config(cache.serializable_classes) is false. Same shape as #302.
-        $id = $this->cached('most_used_id', [300, 600], fn (): ?int => Coupon::query()
-            ->where('used_count', '>', 0)
-            ->orderByDesc('used_count')
-            ->value('id'));
+        $id = $this->cached('most_used_id', [300, 600], function (): ?int {
+            $id = Coupon::query()->where('used_count', '>', 0)
+                ->orderByDesc('used_count')
+                ->value('id');
+
+            return is_numeric($id) ? (int) $id : null;
+        });
 
         return $id ? Coupon::query()->whereKey($id)->first() : null;
     }

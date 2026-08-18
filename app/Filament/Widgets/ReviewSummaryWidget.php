@@ -41,6 +41,7 @@ class ReviewSummaryWidget extends Widget
                 ->pluck('count', 'rating')
                 ->toArray();
 
+            $counts = array_map(static fn (mixed $count): int => (int) $count, $counts);
             $total = array_sum($counts);
             $distribution = [];
 
