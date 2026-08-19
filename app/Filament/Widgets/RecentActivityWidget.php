@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Filament\WidgetSize;
+use App\Filament\Resources\ActivityLogs\ActivityLogResource;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Operations\ActivityLog;
 use Filament\Widgets\Widget;
@@ -36,7 +37,7 @@ class RecentActivityWidget extends Widget
 
     public function getViewAllUrl(): string
     {
-        return route('filament.admin.resources.activity-logs.index');
+        return ActivityLogResource::getUrl('index');
     }
 
     private function rowLimit(): int

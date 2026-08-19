@@ -5,7 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
-use App\Models\Orders\Order;
+use App\Queries\Orders\UpcomingOrdersQuery;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 
@@ -26,55 +26,17 @@ class UpcomingOrdersWidget extends Widget
      */
     public static function canView(): bool
     {
-        return Order::query()
-            ->active()
-            ->whereBetween('delivery_date', [Date::today(), Date::today()->copy()->addDays(7)])
-            ->exists();
+        return resolve(UpcomingOrdersQuery::class)->hasWithinDays(7);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, array{label: string, orders: list<array{id: int, number: string, customer: string, items: int, total: string, time: string, status: \App\Enums\Orders\OrderStatus}>}>
+     */
     public function getUpcomingOrders(): array
     {
         $daysAhead = $this->daysAhead();
 
-        return $this->cached("upcoming_{$daysAhead}_" . Date::today()->toDateString(), [600, 1200], function () use ($daysAhead): array {
-            $today = Date::today();
-            $endDate = $today->copy()->addDays($daysAhead);
-
-            $orders = Order::with('customer')->withCount('orderItems')
-                ->active()
-                ->whereBetween('delivery_date', [$today, $endDate])
-                ->oldest('delivery_date')
-                ->orderBy('delivery_time')
-                ->get();
-
-            $grouped = [];
-            foreach ($orders as $order) {
-                $deliveryDate = $order->delivery_date;
-                if ($deliveryDate === null) {
-                    continue;
-                }
-                $date = $deliveryDate->format('Y-m-d');
-                $label = match (true) {
-                    $deliveryDate->isToday() => 'Today',
-                    $deliveryDate->isTomorrow() => 'Tomorrow',
-                    default => $deliveryDate->format('l, M j'),
-                };
-
-                $grouped[$date] ??= ['label' => $label, 'orders' => []];
-                $grouped[$date]['orders'][] = [
-                    'id' => $order->id,
-                    'number' => $order->order_number,
-                    'customer' => $order->customer->name ?? 'Walk-in',
-                    'items' => $order->order_items_count,
-                    'total' => $order->total->formatted(),
-                    'time' => $order->delivery_time?->format('g:i A') ?? '',
-                    'status' => $order->status,
-                ];
-            }
-
-            return $grouped;
-        });
+        return $this->cached("upcoming_{$daysAhead}_" . Date::today()->toDateString(), [600, 1200], fn (): array => resolve(UpcomingOrdersQuery::class)->get($daysAhead));
     }
 
     protected function cachePrefix(): string

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
@@ -56,7 +57,7 @@ class TodaysOrdersWidget extends Widget
 
     public function getViewAllUrl(): string
     {
-        return route('filament.admin.resources.orders.index');
+        return OrderResource::getUrl('index');
     }
 
     protected function cachePrefix(): string
