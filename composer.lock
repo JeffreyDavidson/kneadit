@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca9d0fd3be42e274aea370936f045b7a",
+    "content-hash": "d56d21b336139dcf9e876674fc4b0e9a",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -11565,16 +11565,16 @@
         },
         {
             "name": "jasonmccreary/double",
-            "version": "v0.3.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasonmccreary/double.git",
-                "reference": "204006bd9fce4e6c1f69991c07b3bdc633764538"
+                "reference": "a55b0fb744fc2e85821f1f8f65e29a34fbee5f0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasonmccreary/double/zipball/204006bd9fce4e6c1f69991c07b3bdc633764538",
-                "reference": "204006bd9fce4e6c1f69991c07b3bdc633764538",
+                "url": "https://api.github.com/repos/jasonmccreary/double/zipball/a55b0fb744fc2e85821f1f8f65e29a34fbee5f0a",
+                "reference": "a55b0fb744fc2e85821f1f8f65e29a34fbee5f0a",
                 "shasum": ""
             },
             "require": {
@@ -11610,9 +11610,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jasonmccreary/double/issues",
-                "source": "https://github.com/jasonmccreary/double/tree/v0.3.0"
+                "source": "https://github.com/jasonmccreary/double/tree/v0.6.0"
             },
-            "time": "2026-08-05T23:16:48+00:00"
+            "time": "2026-08-14T18:51:36+00:00"
         },
         {
             "name": "kelunik/certificate",
