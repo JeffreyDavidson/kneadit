@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 test('track page renders without JS errors and shows the page marker', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/track")

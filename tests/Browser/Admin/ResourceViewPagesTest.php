@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 // Smoke tests for admin resource view (detail) pages. Uses fixture IDs
 // captured by prepare-admin-session.py — no DB access needed from the test.
