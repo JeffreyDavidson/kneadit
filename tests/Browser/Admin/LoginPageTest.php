@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 // Filament's login page is rendered by the framework, so we don't own the markup
 // and can't add data-test attributes. Selectors here key off input type and

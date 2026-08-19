@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 test('login form blocks empty submit via HTML5 required', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/account/login")

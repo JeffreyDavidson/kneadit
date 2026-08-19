@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 test('forgot password form submits successfully and shows the status message', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/account/forgot-password")

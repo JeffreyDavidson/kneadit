@@ -2,7 +2,7 @@
 
 use Database\Seeders\BrowserTestFixtureSeeder;
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
+$storefrontUrl = Illuminate\Support\Facades\Config::string('browser-testing.storefront_url');
 
 // End-to-end login flow using the seeded admin user. Confirms the credentials
 // are valid, the session cookie is set, Filament's panel middleware accepts
