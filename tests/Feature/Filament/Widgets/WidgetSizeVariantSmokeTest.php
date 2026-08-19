@@ -19,7 +19,7 @@ dataset('widgetsAtAllSizes', function (): array {
     $cases = [];
     foreach (WidgetMeta::all() as $key => $meta) {
         foreach (WidgetMeta::allowedSizesFor($key) as $size) {
-            $cases["{$key} @ {$size->value}"] = [$meta['class'], $size->value];
+            $cases["{$key} @ {$size->value}"] = [$meta->class, $size->value];
         }
     }
 
