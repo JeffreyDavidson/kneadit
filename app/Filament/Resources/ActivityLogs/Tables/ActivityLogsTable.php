@@ -106,6 +106,7 @@ class ActivityLogsTable
                     ->schema([
                         Select::make('user_name')
                             ->options(fn (): array => ActivityLog::query()
+                                ->whereNotNull('user_name')
                                 ->distinct()
                                 ->orderBy('user_name')
                                 ->pluck('user_name', 'user_name')
@@ -114,12 +115,12 @@ class ActivityLogsTable
                             ->searchable(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        $name = Arr::string($data, 'user_name', '');
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
 
                         return $query->when($name !== '', fn (Builder $q) => $q->where('user_name', $name));
                     })
                     ->indicateUsing(function (array $data): array {
-                        $name = Arr::string($data, 'user_name', '');
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
 
                         return $name !== ''
                             ? [Indicator::make("Actor: {$name}")->removeField('user_name')]
