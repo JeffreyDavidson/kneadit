@@ -9,10 +9,7 @@ pest()->use(RefreshDatabase::class);
 
 function ingredientQuery(): IngredientQueryBuilder
 {
-    $query = Ingredient::query();
-    throw_unless($query instanceof IngredientQueryBuilder, RuntimeException::class, 'Expected the custom ingredient builder.');
-
-    return $query;
+    return Ingredient::query();
 }
 
 beforeEach(fn () => setUpTenantTest());

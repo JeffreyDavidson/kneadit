@@ -9,10 +9,7 @@ pest()->use(RefreshDatabase::class);
 
 function customerCampaignQuery(): CustomerCampaignQueryBuilder
 {
-    $query = CustomerCampaign::query();
-    throw_unless($query instanceof CustomerCampaignQueryBuilder, RuntimeException::class, 'Expected the custom campaign builder.');
-
-    return $query;
+    return CustomerCampaign::query();
 }
 
 beforeEach(fn () => setUpTenantTest());

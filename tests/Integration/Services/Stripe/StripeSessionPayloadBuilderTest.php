@@ -13,7 +13,6 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     config(['cashier.currency' => 'usd']);
-    test()->builder = new StripeSessionPayloadBuilder;
 });
 
 test('lineItems builds one entry per order item with cents amounts', function () {
@@ -25,7 +24,7 @@ test('lineItems builds one entry per order item with cents amounts', function ()
         'special_instructions' => 'Sliced',
     ]);
 
-    $items = test()->builder->lineItems($order->refresh());
+    $items = (new StripeSessionPayloadBuilder)->lineItems($order->refresh());
 
     expect($items)->toHaveCount(1)
         ->and($items[0]['quantity'])->toBe(2)
@@ -43,7 +42,7 @@ test('lineItems appends a delivery fee entry when delivery_fee is positive', fun
         'unit_price' => Money::fromDollars(10.00),
     ]);
 
-    $items = test()->builder->lineItems($order->refresh());
+    $items = (new StripeSessionPayloadBuilder)->lineItems($order->refresh());
 
     expect($items)->toHaveCount(2)
         ->and($items[1]['price_data']['product_data']['name'])->toBe('Delivery Fee')
@@ -58,7 +57,7 @@ test('lineItems omits delivery fee when zero', function () {
         'unit_price' => Money::fromDollars(10.00),
     ]);
 
-    expect(test()->builder->lineItems($order->refresh()))->toHaveCount(1);
+    expect((new StripeSessionPayloadBuilder)->lineItems($order->refresh()))->toHaveCount(1);
 });
 
 test('build assembles full session params with metadata', function () {
@@ -71,7 +70,7 @@ test('build assembles full session params with metadata', function () {
         'unit_price' => Money::fromDollars(15.00),
     ]);
 
-    $params = test()->builder->build($order->refresh(), 'tenant-abc', 'https://success', 'https://cancel');
+    $params = (new StripeSessionPayloadBuilder)->build($order->refresh(), 'tenant-abc', 'https://success', 'https://cancel');
 
     expect($params)
         ->mode->toBe('payment')
@@ -93,7 +92,7 @@ test('build includes discounts key when discounts array is provided', function (
         'unit_price' => Money::fromDollars(10.00),
     ]);
 
-    $params = test()->builder->build(
+    $params = (new StripeSessionPayloadBuilder)->build(
         $order->refresh(),
         'tenant-abc',
         'https://success',
