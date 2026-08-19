@@ -2,20 +2,15 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Customers\CateringInquiryStatus;
-use App\Enums\Orders\OrderStatus;
+use App\DataTransferObjects\Dashboard\NeedsAttentionCounts;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Filament\Resources\ContactMessages\ContactMessageResource;
 use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
-use App\Models\Customers\CateringInquiry;
-use App\Models\Customers\ContactMessage;
-use App\Models\Inventory\Ingredient;
-use App\Models\Orders\Order;
+use App\Queries\Dashboard\NeedsAttentionQuery;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
  * Surfaces the few operational urgencies a baker should act on right
@@ -35,29 +30,23 @@ class NeedsAttentionWidget extends Widget
 
     public static function canView(): bool
     {
-        return Order::query()->where('status', OrderStatus::Pending)->exists()
-            || ContactMessage::query()->where('is_read', false)->exists()
-            || CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()
-            || Ingredient::query()
-                ->where(function (Builder $q): void {
-                    $q->where('current_stock', '<=', 0)
-                        ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-                })
-                ->exists();
+        return resolve(NeedsAttentionQuery::class)->get()->hasItems();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getItems(): array
     {
-        return $this->cached('items', [60, 120], fn (): array => $this->buildItems());
+        return $this->cached('items', [60, 120], fn (): array => $this->buildItems(
+            resolve(NeedsAttentionQuery::class)->get(),
+        ));
     }
 
     /** @return array<int, array<string, mixed>> */
-    private function buildItems(): array
+    private function buildItems(NeedsAttentionCounts $counts): array
     {
         $items = [];
 
-        $pending = Order::query()->where('status', OrderStatus::Pending)->count();
+        $pending = $counts->pendingOrders;
         if ($pending > 0) {
             $items[] = [
                 'severity' => $pending > 5 ? 'critical' : 'warning',
@@ -69,7 +58,7 @@ class NeedsAttentionWidget extends Widget
             ];
         }
 
-        $unreadMessages = ContactMessage::query()->where('is_read', false)->count();
+        $unreadMessages = $counts->unreadMessages;
         if ($unreadMessages > 0) {
             $items[] = [
                 'severity' => 'warning',
@@ -81,7 +70,7 @@ class NeedsAttentionWidget extends Widget
             ];
         }
 
-        $newInquiries = CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->count();
+        $newInquiries = $counts->newInquiries;
         if ($newInquiries > 0) {
             $items[] = [
                 'severity' => 'warning',
@@ -93,12 +82,7 @@ class NeedsAttentionWidget extends Widget
             ];
         }
 
-        $lowStock = Ingredient::query()
-            ->where(function (Builder $q): void {
-                $q->where('current_stock', '<=', 0)
-                    ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-            })
-            ->count();
+        $lowStock = $counts->lowStockIngredients;
         if ($lowStock > 0) {
             $items[] = [
                 'severity' => 'info',

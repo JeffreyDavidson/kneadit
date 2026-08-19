@@ -2,13 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
-use App\Models\Customers\Customer;
-use App\Models\Orders\Order;
+use App\Queries\Customers\CustomerInsightsQuery;
 use Filament\Widgets\Widget;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\Date;
 
 class CustomerInsightsWidget extends Widget
@@ -24,21 +21,12 @@ class CustomerInsightsWidget extends Widget
     {
         $weekKey = Date::now()->startOfWeek()->format('Y-W');
 
-        return $this->cached("new_{$weekKey}", [900, 1800], fn (): int => Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count());
+        return $this->cached("new_{$weekKey}", [900, 1800], fn (): int => $this->query()->newCustomersThisWeek());
     }
 
     public function getRepeatCustomerRate(): float
     {
-        return $this->cached('repeat', [3600, 7200], function (): float {
-            $totalWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]))->count();
-            if ($totalWithOrders === 0) {
-                return 0;
-            }
-
-            $repeat = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]), '>=', 2)->count();
-
-            return round(($repeat / $totalWithOrders) * 100, 1);
-        });
+        return $this->cached('repeat', [3600, 7200], fn (): float => $this->query()->repeatCustomerRate());
     }
 
     /** @return array<string, mixed> */
@@ -46,26 +34,16 @@ class CustomerInsightsWidget extends Widget
     {
         $monthKey = now()->format('Y-m');
 
-        return $this->cached("aov_{$monthKey}", [900, 1800], function (): array {
-            $thisMonth = (float) Order::query()->active()
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->avg('total');
-
-            $lastMonth = (float) Order::query()->active()
-                ->whereMonth('created_at', now()->subMonth()->month)
-                ->whereYear('created_at', now()->subMonth()->year)
-                ->avg('total');
-
-            return [
-                'value' => round($thisMonth, 2),
-                'trend' => $thisMonth >= $lastMonth ? 'up' : 'down',
-            ];
-        });
+        return $this->cached("aov_{$monthKey}", [900, 1800], fn (): array => $this->query()->averageOrderValue());
     }
 
     protected function cachePrefix(): string
     {
         return 'customer_insights';
+    }
+
+    private function query(): CustomerInsightsQuery
+    {
+        return resolve(CustomerInsightsQuery::class);
     }
 }
