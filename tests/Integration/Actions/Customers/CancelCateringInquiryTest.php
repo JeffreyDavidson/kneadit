@@ -20,7 +20,7 @@ test('transitions inquiry to cancelled', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled);
     Event::assertNotDispatched(CateringQuoteRequested::class);
 });
 
@@ -32,7 +32,7 @@ test('prepends a stamped reason to notes when provided', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry, 'Customer chose another vendor');
 
-    $notes = $inquiry->fresh()->notes;
+    $notes = $inquiry->refresh()->notes;
     expect($notes)->toContain('Cancelled: Customer chose another vendor')
         ->and($notes)->toContain('Existing internal note.')
         ->and(str_starts_with($notes, '['))->toBeTrue();
@@ -46,7 +46,7 @@ test('ignores blank reasons', function () {
 
     resolve(CancelCateringInquiry::class)($inquiry, '   ');
 
-    expect($inquiry->fresh()->notes)->toBe('Existing.');
+    expect($inquiry->refresh()->notes)->toBe('Existing.');
 });
 
 test('cascades cancellation to a linked order in a cancellable state', function () {
@@ -55,8 +55,8 @@ test('cascades cancellation to a linked order in a cancellable state', function 
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
-        ->and($order->fresh()->status)->toBe(OrderStatus::Cancelled);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->refresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('leaves the order alone when it is in a non-cancellable terminal state', function () {
@@ -65,6 +65,6 @@ test('leaves the order alone when it is in a non-cancellable terminal state', fu
 
     resolve(CancelCateringInquiry::class)($inquiry);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Cancelled)
-        ->and($order->fresh()->status)->toBe(OrderStatus::Delivered);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Cancelled)
+        ->and($order->refresh()->status)->toBe(OrderStatus::Delivered);
 });

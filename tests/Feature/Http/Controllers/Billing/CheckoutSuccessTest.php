@@ -48,7 +48,7 @@ test('checkout success controller looks up user by stripe_id', function () {
     $source = file_get_contents(app_path('Actions/Stripe/ReauthenticateFromCheckoutSession.php'));
 
     expect($source)
-        ->toContain("User::query()->where('stripe_id', \$checkoutSession->customer)->first()");
+        ->toContain("User::query()->where('stripe_id', \$checkoutSession->customer)->firstOrFail()");
 });
 
 test('checkout success always redirects to onboarding', function () {

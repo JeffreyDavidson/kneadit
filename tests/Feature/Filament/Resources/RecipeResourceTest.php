@@ -50,7 +50,7 @@ test('can edit a recipe via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($recipe->fresh()->name)->toBe('Updated Recipe');
+    expect($recipe->refresh()->name)->toBe('Updated Recipe');
 });
 
 test('can create a recipe with ingredients', function () {
@@ -75,7 +75,7 @@ test('can create a recipe with ingredients', function () {
     $component->callMountedAction()
         ->assertHasNoFormErrors();
 
-    $recipe = Recipe::query()->first();
+    $recipe = Recipe::query()->firstOrFail();
     expect($recipe)
         ->name->toBe('Sourdough Bread')
         ->prep_time_minutes->toBe(120)

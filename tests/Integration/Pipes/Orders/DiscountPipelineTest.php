@@ -49,7 +49,7 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
 
     expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
 
-    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->firstOrFail();
     expect($transaction)
         ->coupon_id->toBe($coupon->id)
         ->type->toBe(CouponTransactionType::Usage)
@@ -152,6 +152,6 @@ test('percentage coupon creates transaction with calculated amount', function ()
     expect($order->discount_amount->dollars())->toBe(10.00);
     expect($order->total->dollars())->toBe(30.00);
 
-    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->firstOrFail();
     expect($transaction->amount->dollars())->toBe(10.00);
 });

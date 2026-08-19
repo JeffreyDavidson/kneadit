@@ -14,7 +14,7 @@ test('updates tenant plan from stripe price id', function () {
         ['price_growth' => 'growth', 'price_pro' => 'pro']
     );
 
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
+    $tenant = DB::table('tenants')->where('id', 'test-bakery')->firstOrFail();
     expect($tenant->plan)->toBe('growth');
 });
 
@@ -27,7 +27,7 @@ test('does not update for unknown price id', function () {
         ['price_growth' => 'growth']
     );
 
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
+    $tenant = DB::table('tenants')->where('id', 'test-bakery')->firstOrFail();
     expect($tenant->plan)->toBe('starter');
 });
 

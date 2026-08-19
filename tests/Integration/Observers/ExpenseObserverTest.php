@@ -24,5 +24,5 @@ test('expense deductible amount recalculates on update', function () {
 
     $expense->update(['business_percentage' => 100]);
 
-    expect($expense->fresh()->deductible_amount->dollars())->toBe(200.00);
+    expect($expense->refresh()->deductible_amount->dollars())->toBe(200.00);
 });

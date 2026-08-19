@@ -12,8 +12,7 @@ beforeEach(function () {
 });
 
 test('can render the view tenant page', function () {
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
-    if (! $tenant) {
+    if (! DB::table('tenants')->where('id', 'test-bakery')->exists()) {
         DB::table('tenants')->insert([
             'id' => 'test-bakery',
             'name' => 'Test Baker',
@@ -96,7 +95,7 @@ test('viewing an unread message marks it as read', function () {
     livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
-    $message = DB::table('platform_messages')->where('id', $messageId)->first();
+    $message = DB::table('platform_messages')->where('id', $messageId)->firstOrFail();
     expect($message->is_read)->toBeTruthy();
 });
 
@@ -114,7 +113,7 @@ test('can add reply to support ticket', function () {
         ->set('replyBody', 'We are looking into this.')
         ->call('addReply');
 
-    $reply = DB::table('support_replies')->where('ticket_id', $ticketId)->first();
+    $reply = DB::table('support_replies')->where('ticket_id', $ticketId)->firstOrFail();
     expect($reply)
         ->not->toBeNull()
         ->and($reply->body)->toBe('We are looking into this.');
@@ -133,7 +132,7 @@ test('can update support ticket status', function () {
     livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'in_progress');
 
-    $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
+    $ticket = DB::table('support_tickets')->where('id', $ticketId)->firstOrFail();
     expect($ticket->status)->toBe('in_progress');
 });
 
@@ -150,13 +149,12 @@ test('resolving ticket sets resolved_at timestamp', function () {
     livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'resolved');
 
-    $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
+    $ticket = DB::table('support_tickets')->where('id', $ticketId)->firstOrFail();
     expect($ticket->status)->toBe('resolved');
 });
 
 test('tenant view page returns tenant stats', function () {
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
-    if (! $tenant) {
+    if (! DB::table('tenants')->where('id', 'test-bakery')->exists()) {
         DB::table('tenants')->insert([
             'id' => 'test-bakery',
             'name' => 'Test Baker',

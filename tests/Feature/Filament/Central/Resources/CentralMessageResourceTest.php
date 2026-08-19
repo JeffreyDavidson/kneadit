@@ -28,6 +28,7 @@ function ensureMessageTenant(): void
     }
 }
 
+/** @param array<string, mixed> $overrides */
 function createTestMessage(array $overrides = []): int
 {
     ensureMessageTenant();
@@ -132,7 +133,7 @@ test('can send reply from view message page', function () {
 
     $reply = DB::table('platform_messages')
         ->where('parent_id', $messageId)
-        ->first();
+        ->firstOrFail();
 
     expect($reply)
         ->not->toBeNull()
@@ -150,6 +151,6 @@ test('viewing an unread message marks it as read', function () {
     livewire(ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
-    $message = DB::table('platform_messages')->where('id', $messageId)->first();
+    $message = DB::table('platform_messages')->where('id', $messageId)->firstOrFail();
     expect($message->is_read)->toBeTruthy();
 });

@@ -10,7 +10,7 @@ test('can create a platform setting', function () {
         'value' => 'KneadIt',
     ]);
 
-    $found = PlatformSetting::query()->where('key', 'site_name')->first();
+    $found = PlatformSetting::query()->where('key', 'site_name')->firstOrFail();
 
     expect($found)->not->toBeNull()
         ->and($found->value)->toBe('KneadIt');

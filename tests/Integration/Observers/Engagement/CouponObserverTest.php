@@ -18,7 +18,7 @@ test('saving uppercases the coupon code on update', function () {
 
     $coupon->update(['code' => 'updated-code']);
 
-    expect($coupon->fresh()->code)->toBe('UPDATED-CODE');
+    expect($coupon->refresh()->code)->toBe('UPDATED-CODE');
 });
 
 test('saving preserves already uppercased codes', function () {

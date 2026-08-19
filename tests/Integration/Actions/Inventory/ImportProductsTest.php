@@ -43,7 +43,7 @@ test('it updates existing products on reimport', function () {
 
     expect($result['created'])->toBe(0)
         ->and($result['updated'])->toBe(1)
-        ->and(Product::query()->where('name', 'Sourdough Loaf')->first()->price->dollars())->toBe(9.00);
+        ->and(Product::query()->where('name', 'Sourdough Loaf')->firstOrFail()->price->dollars())->toBe(9.00);
 });
 
 test('it skips rows with row-level errors from parser', function () {
@@ -93,7 +93,7 @@ test('it includes cost when provided in csv', function () {
     expect($result['created'])->toBe(1)
         ->and($result['errors'])->toBeEmpty();
 
-    $product = Product::query()->where('name', 'Sourdough Loaf')->first();
+    $product = Product::query()->where('name', 'Sourdough Loaf')->firstOrFail();
     expect($product->cost->dollars())->toBe(3.50);
 });
 

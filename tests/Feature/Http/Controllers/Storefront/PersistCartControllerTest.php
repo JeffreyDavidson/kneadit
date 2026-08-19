@@ -26,11 +26,11 @@ test('persists items + email and returns the cart token', function () {
     expect($response->json('data.cart_token'))->toBeString()->not->toBeEmpty()
         ->and($response->json('data.item_count'))->toBe(1);
 
-    $cart = Cart::query()->latest('id')->first();
+    $cart = Cart::query()->latest('id')->firstOrFail();
     expect($cart->customer_email)->toBe('alice@example.com')
         ->and($cart->customer_name)->toBe('Alice')
-        ->and($cart->items()->first()->product_id)->toBe($product->id)
-        ->and($cart->items()->first()->quantity)->toBe(2);
+        ->and($cart->items()->firstOrFail()->product_id)->toBe($product->id)
+        ->and($cart->items()->firstOrFail()->quantity)->toBe(2);
 });
 
 test('creates a new cart on first post and returns a token', function () {

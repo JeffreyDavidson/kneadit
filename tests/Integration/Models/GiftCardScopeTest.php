@@ -15,5 +15,5 @@ test('usable scope returns active non-expired cards with balance', function () {
     $results = GiftCard::query()->usable()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($usable->id);
+        ->and($results->firstOrFail()->id)->toBe($usable->id);
 });

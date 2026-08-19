@@ -39,7 +39,7 @@ test('order has items relationship', function () {
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2, 'unit_price' => 5.00]);
 
     expect($order->refresh()->orderItems)->toHaveCount(1)
-        ->and($order->orderItems->first()->quantity)->toBe(2);
+        ->and($order->orderItems->firstOrFail()->quantity)->toBe(2);
 });
 
 test('order has messages relationship', function () {
@@ -75,7 +75,7 @@ test('order status transitions', function (OrderStatus $status) {
 
     $order->update(['status' => $status]);
 
-    expect($order->fresh()->status)->toBe($status);
+    expect($order->refresh()->status)->toBe($status);
 })->with([
     'confirmed' => [OrderStatus::Confirmed],
     'baking' => [OrderStatus::Baking],
@@ -88,7 +88,7 @@ test('order can be cancelled', function () {
     $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
     $order->update(['status' => OrderStatus::Cancelled]);
 
-    expect($order->fresh()->status)->toBe(OrderStatus::Cancelled);
+    expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('order belongs to user', function () {

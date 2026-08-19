@@ -65,7 +65,7 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
         ->and($refund->reason)->toBe('Customer requested refund')
         ->and($refund->user_id)->toBe($user->id);
 
-    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Refunded);
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Refunded);
 });
 
 test('throws StripeRefundFailedException when the Stripe API errors', function () {
@@ -92,5 +92,5 @@ test('throws StripeRefundFailedException when the Stripe API errors', function (
 
     // No Refund row written, payment_status unchanged.
     expect(Refund::query()->count())->toBe(0)
-        ->and($order->fresh()->payment_status)->toBe(PaymentStatus::Paid);
+        ->and($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
 });

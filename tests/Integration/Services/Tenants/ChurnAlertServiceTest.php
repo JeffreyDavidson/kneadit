@@ -191,7 +191,7 @@ test('critical alerts are sorted before warnings', function () {
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     if ($alerts->count() >= 2) {
-        expect($alerts->first()?->severity)->toBe(ChurnSeverity::Critical);
+        expect($alerts->firstOrFail()?->severity)->toBe(ChurnSeverity::Critical);
     } else {
         expect(true)->toBeTrue();
     }

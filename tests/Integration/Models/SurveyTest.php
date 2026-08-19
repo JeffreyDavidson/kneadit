@@ -35,7 +35,7 @@ test('survey has responses relationship', function () {
 
     SurveyResponse::factory()->for($survey)->create();
 
-    expect($survey->fresh()->responses)->toHaveCount(1);
+    expect($survey->refresh()->responses)->toHaveCount(1);
 });
 
 test('is active is cast to boolean', function () {

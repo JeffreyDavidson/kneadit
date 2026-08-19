@@ -106,7 +106,7 @@ test('subscription update webhook persists the subscription and syncs the tenant
         'stripe_price' => 'price_growth_webhook',
         'stripe_status' => 'active',
     ]);
-    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
+    expect($tenant->refresh()->plan)->toBe(SubscriptionTier::Growth);
 })->group('launch-critical');
 
 test('SyncSubscriptionPlan updates tenant plan from stripe price id', function () {
@@ -123,7 +123,7 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
         priceMap: $priceMap,
     );
 
-    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
+    expect($tenant->refresh()->plan)->toBe(SubscriptionTier::Growth);
 });
 
 test('SyncSubscriptionPlan does nothing for unknown price id', function () {
@@ -138,7 +138,7 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
         priceMap: array_flip(config('kneadit.stripe_prices')),
     );
 
-    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Starter);
+    expect($tenant->refresh()->plan)->toBe(SubscriptionTier::Starter);
 });
 
 test('handleCustomerSubscriptionDeleted calls parent and logs', function () {

@@ -50,7 +50,7 @@ test('can edit a holiday via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($holiday->fresh()->name)->toBe('Updated Holiday');
+    expect($holiday->refresh()->name)->toBe('Updated Holiday');
 });
 
 test('can render holiday table columns', function (string $column) {

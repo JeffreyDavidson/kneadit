@@ -113,7 +113,7 @@ test('get calendar days includes color class', function () {
     testFixture('page', OrderCalendar::class)->mount();
     $days = testFixture('page', OrderCalendar::class)->getCalendarDays();
 
-    expect($days->first()['colorClass'])->toBeString();
+    expect($days->firstOrFail()['colorClass'])->toBeString();
 });
 
 test('get current month name returns formatted string', function () {

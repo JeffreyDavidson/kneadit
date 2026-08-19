@@ -41,7 +41,7 @@ test('can edit a gallery photo via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($photo->fresh()->title)->toBe('Updated Photo Title');
+    expect($photo->refresh()->title)->toBe('Updated Photo Title');
 });
 
 test('can search gallery photos by title', function () {

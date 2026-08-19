@@ -37,7 +37,7 @@ test('sitemap queries only published posts', function () {
     $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
     expect($posts)->toHaveCount(1)
-        ->and($posts->first()->id)->toBe($published->id);
+        ->and($posts->firstOrFail()->id)->toBe($published->id);
 });
 
 test('sitemap includes all published posts ordered by published_at desc', function () {
@@ -51,7 +51,7 @@ test('sitemap includes all published posts ordered by published_at desc', functi
     $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
     expect($posts)->toHaveCount(2)
-        ->and($posts->first()->id)->toBe($newer->id)
+        ->and($posts->firstOrFail()->id)->toBe($newer->id)
         ->and($posts->last()->id)->toBe($older->id);
 });
 

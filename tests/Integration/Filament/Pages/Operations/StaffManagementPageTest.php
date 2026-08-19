@@ -22,7 +22,7 @@ test('get team members returns users sorted by role', function () {
     $members = testFixture('page', StaffManagement::class)->getTeamMembers();
 
     expect($members)->toHaveCount(3)
-        ->and($members->first()->role)->toBe(UserRole::Owner);
+        ->and($members->firstOrFail()->role)->toBe(UserRole::Owner);
 });
 
 test('get pending invitations returns only valid unexpired invitations', function () {
@@ -45,5 +45,5 @@ test('get pending invitations returns only valid unexpired invitations', functio
     $invitations = testFixture('page', StaffManagement::class)->getPendingInvitations();
 
     expect($invitations)->toHaveCount(1)
-        ->and($invitations->first()->email)->toBe('valid@test.com');
+        ->and($invitations->firstOrFail()->email)->toBe('valid@test.com');
 });

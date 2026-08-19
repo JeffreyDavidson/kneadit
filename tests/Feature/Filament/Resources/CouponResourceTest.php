@@ -60,7 +60,7 @@ test('can edit a coupon via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($coupon->fresh()->code)->toBe('UPDATED01');
+    expect($coupon->refresh()->code)->toBe('UPDATED01');
 });
 
 test('can search coupons by code', function () {

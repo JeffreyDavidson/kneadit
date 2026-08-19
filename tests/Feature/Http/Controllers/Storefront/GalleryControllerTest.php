@@ -46,5 +46,5 @@ test('can submit a gallery photo', function () {
     $response->assertRedirect();
 
     expect(CustomerPhoto::query()->count())->toBe(1)
-        ->and(CustomerPhoto::query()->first()->customer_name)->toBe('Jane Doe');
+        ->and(CustomerPhoto::query()->firstOrFail()->customer_name)->toBe('Jane Doe');
 });

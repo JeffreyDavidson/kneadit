@@ -13,5 +13,5 @@ test('it features a review', function () {
 
     resolve(FeatureReview::class)($review);
 
-    expect($review->fresh()->is_featured)->toBeTrue();
+    expect($review->refresh()->is_featured)->toBeTrue();
 });

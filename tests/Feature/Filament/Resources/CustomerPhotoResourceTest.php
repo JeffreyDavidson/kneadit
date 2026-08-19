@@ -46,7 +46,7 @@ test('can create a customer photo via header action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect(CustomerPhoto::query()->first())
+    expect(CustomerPhoto::query()->firstOrFail())
         ->customer_name->toBe('Alice Baker')
         ->customer_email->toBe('alice@example.com')
         ->caption->toBe('My birthday cake!')
@@ -81,7 +81,7 @@ test('can edit a customer photo via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($photo->fresh())
+    expect($photo->refresh())
         ->customer_name->toBe('Updated Name')
         ->caption->toBe('Updated caption')
         ->is_featured->toBeTrue();

@@ -65,5 +65,5 @@ test('apply increments used count', function () {
 
     resolve(App\Actions\Financial\ApplyCoupon::class)($coupon);
 
-    expect($coupon->fresh()->used_count)->toBe(1);
+    expect($coupon->refresh()->used_count)->toBe(1);
 });

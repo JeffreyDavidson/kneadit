@@ -65,7 +65,7 @@ test('dashboard surfaces favorites scoped to the customer\'s email', function ()
         ->get(route('account.dashboard', [], false))
         ->assertOk()
         ->assertViewHas('favorites', fn ($favorites) => $favorites->count() === 1
-            && $favorites->first()->customer_email === 'alice@example.com');
+            && $favorites->firstOrFail()->customer_email === 'alice@example.com');
 });
 
 test('referralShareUrl is null when the referral program is disabled', function () {

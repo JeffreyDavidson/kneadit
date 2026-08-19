@@ -48,7 +48,7 @@ test('add seasonal item creates record', function () {
     testFixture('page', SeasonalItems::class)->addSeasonalItem();
 
     expect(SeasonalItem::query()->count())->toBe(1)
-        ->and(SeasonalItem::query()->first()->notes)->toBe('Summer special');
+        ->and(SeasonalItem::query()->firstOrFail()->notes)->toBe('Summer special');
 });
 
 test('add seasonal item resets form fields', function () {

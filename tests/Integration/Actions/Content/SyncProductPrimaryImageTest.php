@@ -41,7 +41,7 @@ test('it promotes next image when primary is deleted', function () {
 
     $remaining = ProductImage::query()
         ->where('product_id', $product->id)
-        ->first();
+        ->firstOrFail();
 
     expect($remaining->is_primary)->toBeTrue();
 });
@@ -56,5 +56,5 @@ test('it syncs product image column with primary image path', function () {
 
     resolve(SyncProductPrimaryImage::class)($product->id);
 
-    expect($product->fresh()->image)->toBe('images/first.jpg');
+    expect($product->refresh()->image)->toBe('images/first.jpg');
 });

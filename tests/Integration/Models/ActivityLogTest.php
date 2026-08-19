@@ -16,7 +16,7 @@ beforeEach(function () {
 test('creating a product logs created activity', function () {
     $product = Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
-    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
+    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->firstOrFail();
 
     expect($log)->not->toBeNull()->and($log->description)->toContain('created');
 });
@@ -26,7 +26,7 @@ test('updating a product logs updated activity', function () {
 
     $product->update(['price' => 6.00]);
 
-    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'updated')->first();
+    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'updated')->firstOrFail();
 
     expect($log)->not->toBeNull();
 });
@@ -37,7 +37,7 @@ test('deleting a product logs deleted activity', function () {
 
     $product->delete();
 
-    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $productId)->where('action', 'deleted')->first();
+    $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $productId)->where('action', 'deleted')->firstOrFail();
 
     expect($log)->not->toBeNull();
 });
@@ -47,7 +47,7 @@ test('activity log stores user name', function () {
 
     Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
-    $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
+    $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->firstOrFail();
 
     expect($log->user_name)->toBe('Baker Bob');
 });
@@ -57,7 +57,7 @@ test('changes are captured in properties', function () {
 
     $product->update(['price' => 7.50]);
 
-    $log = ActivityLog::query()->where('action', 'updated')->where('model_type', Product::class)->where('model_id', $product->id)->first();
+    $log = ActivityLog::query()->where('action', 'updated')->where('model_type', Product::class)->where('model_id', $product->id)->firstOrFail();
 
     expect($log->properties)->not->toBeNull()->toHaveKey('changes');
 });
@@ -65,7 +65,7 @@ test('changes are captured in properties', function () {
 test('system user name when not authenticated', function () {
     Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
-    $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
+    $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->firstOrFail();
 
     expect($log->user_name)->toBe('System');
 });

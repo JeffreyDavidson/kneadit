@@ -62,7 +62,7 @@ test('can edit a review via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($review->fresh()->customer_name)->toBe('Updated Reviewer');
+    expect($review->refresh()->customer_name)->toBe('Updated Reviewer');
 });
 
 test('can filter reviews by approval status', function () {

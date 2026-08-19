@@ -62,7 +62,7 @@ test('can edit a customer via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($customer->fresh()->name)->toBe('Updated Name');
+    expect($customer->refresh()->name)->toBe('Updated Name');
 });
 
 test('can search customers by name', function () {
@@ -138,5 +138,5 @@ test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkActio
 
     expect(Customer::query()->count())->toBe(1)
         ->and(Customer::query()->find($kept->id))->not->toBeNull()
-        ->and(Customer::query()->find($doomed->first()->id))->toBeNull();
+        ->and(Customer::query()->find($doomed->firstOrFail()->id))->toBeNull();
 });

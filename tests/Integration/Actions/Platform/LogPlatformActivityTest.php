@@ -14,6 +14,6 @@ test('it creates a platform activity record', function () {
         ['plan' => SubscriptionTier::Pro->value],
     );
 
-    $found = PlatformActivity::query()->where('event', 'tenant.created')->first();
+    $found = PlatformActivity::query()->where('event', 'tenant.created')->firstOrFail();
     expect($found)->not->toBeNull()->and($found->tenant_id)->toBe('tenant-1')->and($found->description)->toBe('A new tenant was created')->and($found->metadata)->toBe(['plan' => SubscriptionTier::Pro->value]);
 });

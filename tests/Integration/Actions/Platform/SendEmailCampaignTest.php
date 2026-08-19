@@ -38,9 +38,9 @@ test('sends campaign to all customers across active tenants', function () {
     resolve(SendEmailCampaign::class)($campaign);
 
     Mail::assertQueued(CustomerBlastMail::class, 3);
-    expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent)
-        ->and($campaign->fresh()->recipient_count)->toBe(3)
-        ->and($campaign->fresh()->sent_at)->not->toBeNull();
+    expect($campaign->refresh()->status)->toBe(EmailCampaignStatus::Sent)
+        ->and($campaign->refresh()->recipient_count)->toBe(3)
+        ->and($campaign->refresh()->sent_at)->not->toBeNull();
 });
 
 test('only targets tenants matching starter segment', function () {
@@ -138,5 +138,5 @@ test('deduplicates emails across tenants', function () {
     resolve(SendEmailCampaign::class)($campaign);
 
     Mail::assertQueued(CustomerBlastMail::class, 1);
-    expect($campaign->fresh()->recipient_count)->toBe(1);
+    expect($campaign->refresh()->recipient_count)->toBe(1);
 });
