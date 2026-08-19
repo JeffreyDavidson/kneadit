@@ -19,10 +19,10 @@ test('widget definitions use standard sizes when none are constrained', function
 });
 
 test('widget metadata exposes typed definitions', function () {
-    $definition = WidgetMeta::get('welcome_banner');
+    $definition = WidgetMeta::all()['welcome_banner'];
 
     expect($definition)->toBeInstanceOf(WidgetDefinition::class)
-        ->and($definition?->class)->toBe(WelcomeBannerWidget::class)
+        ->and($definition->class)->toBe(WelcomeBannerWidget::class)
         ->and(WidgetMeta::classFor('welcome_banner'))->toBe(WelcomeBannerWidget::class)
         ->and(WidgetMeta::has('welcome_banner'))->toBeTrue()
         ->and(WidgetMeta::has('missing_widget'))->toBeFalse()
