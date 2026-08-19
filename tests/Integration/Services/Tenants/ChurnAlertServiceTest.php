@@ -56,7 +56,7 @@ test('returns trial expiring alert when trial ends soon with low setup', functio
 
     expect($alerts)->toHaveCount(2)
         ->and($alerts->firstWhere('type', ChurnAlertType::TrialExpiring))->not->toBeNull()
-        ->and($alerts->firstWhere('type', ChurnAlertType::TrialExpiring)?->severity)->toBe(ChurnSeverity::Critical);
+        ->and($alerts->firstWhere('type', ChurnAlertType::TrialExpiring)->severity)->toBe(ChurnSeverity::Critical);
 });
 
 test('does not alert for trial with good setup progress', function () {
@@ -119,7 +119,7 @@ test('returns no orders alert for established tenant with no recent orders', fun
     $noOrders = $alerts->firstWhere('type', ChurnAlertType::NoOrders);
 
     expect($noOrders)->not->toBeNull()
-        ->and($noOrders?->severity)->toBe(ChurnSeverity::Warning);
+        ->and($noOrders->severity)->toBe(ChurnSeverity::Warning);
 });
 
 test('does not alert for no orders on new tenants', function () {
@@ -155,8 +155,8 @@ test('returns low health alert when health score is below 40', function () {
     $lowHealth = $alerts->firstWhere('type', ChurnAlertType::LowHealth);
 
     expect($lowHealth)->not->toBeNull()
-        ->and($lowHealth?->severity)->toBe(ChurnSeverity::Critical)
-        ->and($lowHealth?->description)->toContain('20/100');
+        ->and($lowHealth->severity)->toBe(ChurnSeverity::Critical)
+        ->and($lowHealth->description)->toContain('20/100');
 });
 
 test('does not alert for healthy tenants', function () {
@@ -191,7 +191,7 @@ test('critical alerts are sorted before warnings', function () {
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     if ($alerts->count() >= 2) {
-        expect($alerts->firstOrFail()?->severity)->toBe(ChurnSeverity::Critical);
+        expect($alerts->firstOrFail()->severity)->toBe(ChurnSeverity::Critical);
     } else {
         expect(true)->toBeTrue();
     }
