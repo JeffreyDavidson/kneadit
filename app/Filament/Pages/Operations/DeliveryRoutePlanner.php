@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Operations;
 
+use App\DataTransferObjects\Delivery\DeliveryStop;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -12,10 +13,6 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
-/**
- * @phpstan-type DistanceTier array{tier: string, color: string, estimated_minutes: int}
- * @phpstan-type DeliveryOrder array{id: int, order_number: string, customer_name: string, delivery_address: ?string, delivery_time: non-falsy-string, total: float, distance_tier: DistanceTier}
- */
 class DeliveryRoutePlanner extends Page
 {
     use RequiresManagerRole;
@@ -43,8 +40,16 @@ class DeliveryRoutePlanner extends Page
 
     public ?string $selectedDate = null;
 
-    /** @var Collection<int, DeliveryOrder> */
+    /** @var Collection<int, array{id: int, order_number: string, customer_name: string, delivery_address: ?string, delivery_time: string, total: float, distance_tier: array{tier: string, color: string, estimated_minutes: int}}> */
     public Collection $deliveryOrders;
+
+    /** @var array{total_orders: int, total_revenue: float, estimated_total_time: int, average_distance_time: float} */
+    public array $routeStats = [
+        'total_orders' => 0,
+        'total_revenue' => 0.0,
+        'estimated_total_time' => 0,
+        'average_distance_time' => 0.0,
+    ];
 
     public ?string $storeAddress = null;
 
@@ -64,11 +69,22 @@ class DeliveryRoutePlanner extends Page
     {
         if (! $this->selectedDate) {
             $this->deliveryOrders = new Collection;
+            $this->routeStats = [
+                'total_orders' => 0,
+                'total_revenue' => 0.0,
+                'estimated_total_time' => 0,
+                'average_distance_time' => 0.0,
+            ];
 
             return;
         }
 
-        $this->deliveryOrders = resolve(DeliveryRouteService::class)->loadOrders($this->selectedDate);
+        $service = resolve(DeliveryRouteService::class);
+        $stops = $service->loadOrders($this->selectedDate);
+
+        $this->deliveryOrders = $stops
+            ->map(fn (DeliveryStop $stop): array => $stop->toArray());
+        $this->routeStats = $service->getRouteStats($stops)->toArray();
     }
 
     public function printRoute(): void
@@ -79,6 +95,6 @@ class DeliveryRoutePlanner extends Page
     /** @return array<string, mixed> */
     public function getRouteStats(): array
     {
-        return resolve(DeliveryRouteService::class)->getRouteStats($this->deliveryOrders);
+        return $this->routeStats;
     }
 }

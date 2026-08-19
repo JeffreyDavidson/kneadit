@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Delivery\DeliveryStop;
 use App\Models\Orders\Order;
 use App\Services\Delivery\DeliveryRouteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,28 +14,25 @@ beforeEach(function () {
 test('it calculates close distance tier for downtown addresses', function () {
     $result = resolve(DeliveryRouteService::class)->calculateDistanceTier('123 Downtown Ave');
 
-    expect($result)
-        ->tier->toBe('Close')
-        ->color->toBe('success')
-        ->estimated_minutes->toBe(10);
+    expect($result->label())->toBe('Close')
+        ->and($result->color())->toBe('success')
+        ->and($result->estimatedMinutes())->toBe(10);
 });
 
 test('it calculates close distance tier for center addresses', function () {
     $result = resolve(DeliveryRouteService::class)->calculateDistanceTier('55 Center Blvd');
 
-    expect($result)
-        ->tier->toBe('Close')
-        ->color->toBe('success')
-        ->estimated_minutes->toBe(10);
+    expect($result->label())->toBe('Close')
+        ->and($result->color())->toBe('success')
+        ->and($result->estimatedMinutes())->toBe(10);
 });
 
 test('it calculates medium distance tier for directional addresses', function (string $address) {
     $result = resolve(DeliveryRouteService::class)->calculateDistanceTier($address);
 
-    expect($result)
-        ->tier->toBe('Medium')
-        ->color->toBe('warning')
-        ->estimated_minutes->toBe(20);
+    expect($result->label())->toBe('Medium')
+        ->and($result->color())->toBe('warning')
+        ->and($result->estimatedMinutes())->toBe(20);
 })->with([
     '500 West Oak Dr',
     '100 East Elm St',
@@ -45,10 +43,9 @@ test('it calculates medium distance tier for directional addresses', function (s
 test('it calculates far distance tier for unrecognized addresses', function () {
     $result = resolve(DeliveryRouteService::class)->calculateDistanceTier('1234 Unknown Rd');
 
-    expect($result)
-        ->tier->toBe('Far')
-        ->color->toBe('danger')
-        ->estimated_minutes->toBe(35);
+    expect($result->label())->toBe('Far')
+        ->and($result->color())->toBe('danger')
+        ->and($result->estimatedMinutes())->toBe(35);
 });
 
 test('it loads orders with delivery addresses for a date', function () {
@@ -70,7 +67,8 @@ test('it loads orders with delivery addresses for a date', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(1)
-        ->first()->delivery_address->toBe('123 Main St');
+        ->and($result->first())->toBeInstanceOf(DeliveryStop::class)
+        ->deliveryAddress->toBe('123 Main St');
 });
 
 test('it excludes orders with empty string delivery address', function () {
@@ -87,45 +85,35 @@ test('it excludes orders with empty string delivery address', function () {
 });
 
 test('it returns route stats from delivery orders', function () {
+    $service = resolve(DeliveryRouteService::class);
     $orders = collect([
-        [
-            'id' => 1,
-            'total' => 50.00,
-            'distance_tier' => ['tier' => 'Close', 'color' => 'success', 'estimated_minutes' => 10],
-        ],
-        [
-            'id' => 2,
-            'total' => 30.00,
-            'distance_tier' => ['tier' => 'Far', 'color' => 'danger', 'estimated_minutes' => 35],
-        ],
+        new DeliveryStop(1, '1', 'One', 'Downtown', '10:00', 50.00, $service->calculateDistanceTier('Downtown')),
+        new DeliveryStop(2, '2', 'Two', 'Unknown', '11:00', 30.00, $service->calculateDistanceTier('Unknown')),
     ]);
 
-    $stats = resolve(DeliveryRouteService::class)->getRouteStats($orders);
+    $stats = $service->getRouteStats($orders);
 
-    expect($stats)
-        ->total_orders->toBe(2)
-        ->total_revenue->toBe(80.0)
-        ->estimated_total_time->toBe(45)
-        ->average_distance_time->toBe(22.5);
+    expect($stats->totalOrders)->toBe(2)
+        ->and($stats->totalRevenue)->toBe(80.0)
+        ->and($stats->estimatedTotalTime)->toBe(45)
+        ->and($stats->averageDistanceTime)->toBe(22.5);
 });
 
 test('it returns route stats for empty collection', function () {
     $stats = resolve(DeliveryRouteService::class)->getRouteStats(collect());
 
-    expect($stats)
-        ->total_orders->toBe(0)
-        ->total_revenue->toBe(0)
-        ->estimated_total_time->toBe(0)
-        ->average_distance_time->toBe(0.0);
+    expect($stats->totalOrders)->toBe(0)
+        ->and($stats->totalRevenue)->toBe(0.0)
+        ->and($stats->estimatedTotalTime)->toBe(0)
+        ->and($stats->averageDistanceTime)->toBe(0.0);
 });
 
 test('it calculates close distance tier for main st addresses', function () {
     $result = resolve(DeliveryRouteService::class)->calculateDistanceTier('456 Main St Suite 200');
 
-    expect($result)
-        ->tier->toBe('Close')
-        ->color->toBe('success')
-        ->estimated_minutes->toBe(10);
+    expect($result->label())->toBe('Close')
+        ->and($result->color())->toBe('success')
+        ->and($result->estimatedMinutes())->toBe(10);
 });
 
 test('it loads orders sorted by delivery time', function () {
@@ -148,7 +136,7 @@ test('it loads orders sorted by delivery time', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(2)
-        ->and($result->first()['delivery_time'])->toBe('10:00');
+        ->and($result->first()?->deliveryTime)->toBe('10:00');
 });
 
 test('it handles order with null delivery time', function () {
@@ -163,5 +151,5 @@ test('it handles order with null delivery time', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(1)
-        ->and($result->first()['delivery_time'])->toBe('Not specified');
+        ->and($result->first()?->deliveryTime)->toBe('Not specified');
 });

@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Customers;
 
 use App\Actions\Marketing\SendCustomerCampaign;
-use App\Enums\Marketing\CustomerCampaignStatus;
 use App\Models\Engagement\CustomerCampaign;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
@@ -20,11 +19,7 @@ class SendScheduledCampaignsCommand extends Command
     {
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings): void {
-                $due = CustomerCampaign::query()
-                    ->where('status', CustomerCampaignStatus::Scheduled)
-                    ->whereNotNull('scheduled_at')
-                    ->where('scheduled_at', '<=', now())
-                    ->get();
+                $due = CustomerCampaign::query()->due()->get();
 
                 if ($due->isEmpty()) {
                     return;

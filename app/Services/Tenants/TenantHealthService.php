@@ -3,20 +3,21 @@
 namespace App\Services\Tenants;
 
 use App\DataTransferObjects\Settings\BrandingSettings;
+use App\DataTransferObjects\Tenants\TenantHealthData;
+use App\DataTransferObjects\Tenants\TenantHealthSummary;
 use App\Models\Platform\Tenant;
 use App\ValueObjects\TenantHealthScore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-/** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
 class TenantHealthService
 {
     public function __construct(
         protected TenancyManager $tenancyManager,
     ) {}
 
-    /** @return Collection<int, HealthData> */
+    /** @return Collection<int, TenantHealthData> */
     public function getTenantHealthData(): Collection
     {
         $results = [];
@@ -24,21 +25,21 @@ class TenantHealthService
         foreach (Tenant::query()->lazy() as $tenant) {
             $healthScore = $this->calculateHealthScore($tenant);
 
-            $results[] = [
-                'id' => $tenant->id,
-                'name' => $tenant->store_name ?? $tenant->name,
-                'owner' => $tenant->name,
-                'email' => $tenant->email,
-                'plan' => $tenant->plan->value ?? 'trial',
-                'health_score' => $healthScore->score,
-                'login_score' => $healthScore->loginScore,
-                'order_score' => $healthScore->orderScore,
-                'product_score' => $healthScore->productScore,
-                'setup_score' => $healthScore->setupScore,
-            ];
+            $results[] = new TenantHealthData(
+                tenantId: $tenant->id,
+                name: $tenant->store_name ?? $tenant->name,
+                owner: $tenant->name,
+                email: $tenant->email,
+                plan: $tenant->plan->value ?? 'trial',
+                healthScore: $healthScore->score,
+                loginScore: $healthScore->loginScore,
+                orderScore: $healthScore->orderScore,
+                productScore: $healthScore->productScore,
+                setupScore: $healthScore->setupScore,
+            );
         }
 
-        return collect($results)->sortBy('health_score')->values();
+        return collect($results)->sortBy('healthScore')->values();
     }
 
     public function calculateHealthScore(Tenant $tenant): TenantHealthScore
@@ -87,18 +88,17 @@ class TenantHealthService
         }
     }
 
-    /** @return array{average: float|int, healthy: int, at_risk: int, critical: int, total: int} */
-    public function getHealthSummaryStats(): array
+    public function getHealthSummaryStats(): TenantHealthSummary
     {
         $data = $this->getTenantHealthData();
 
-        return [
-            'average' => $data->count() > 0 ? round($data->avg('health_score') ?? 0) : 0,
-            'healthy' => $data->filter(fn (array $t) => $t['health_score'] > 70)->count(),
-            'at_risk' => $data->filter(fn (array $t) => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count(),
-            'critical' => $data->filter(fn (array $t) => $t['health_score'] < 40)->count(),
-            'total' => $data->count(),
-        ];
+        return new TenantHealthSummary(
+            average: $data->isNotEmpty() ? round($data->avg('healthScore') ?? 0) : 0,
+            healthy: $data->filter(fn (TenantHealthData $tenant) => $tenant->healthScore > 70)->count(),
+            atRisk: $data->filter(fn (TenantHealthData $tenant) => $tenant->healthScore >= 40 && $tenant->healthScore <= 70)->count(),
+            critical: $data->filter(fn (TenantHealthData $tenant) => $tenant->healthScore < 40)->count(),
+            total: $data->count(),
+        );
     }
 
     /**

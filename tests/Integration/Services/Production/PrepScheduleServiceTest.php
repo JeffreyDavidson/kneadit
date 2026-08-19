@@ -18,7 +18,7 @@ test('loadWeeklyData returns 7 weekDays', function () {
 
     $result = resolve(PrepScheduleService::class)->loadWeeklyData($monday);
 
-    expect($result['weekDays'])->toHaveCount(7);
+    expect($result->weekDays)->toHaveCount(7);
 });
 
 test('loadWeeklyData groups orders by delivery date', function () {
@@ -42,10 +42,10 @@ test('loadWeeklyData groups orders by delivery date', function () {
 
     $result = resolve(PrepScheduleService::class)->loadWeeklyData($monday);
 
-    expect($result['weeklyOrders'])
+    expect($result->weeklyOrders)
         ->toHaveCount(2)
-        ->and($result['weeklyOrders'][$monday])->toHaveCount(2)
-        ->and($result['weeklyOrders'][$tuesday])->toHaveCount(1);
+        ->and($result->weeklyOrders[$monday])->toHaveCount(2)
+        ->and($result->weeklyOrders[$tuesday])->toHaveCount(1);
 });
 
 test('generatePrepSchedule creates tasks for items with recipes', function () {
@@ -69,7 +69,7 @@ test('generatePrepSchedule creates tasks for items with recipes', function () {
 
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
-    $prepSchedule = $data['prepSchedule'];
+    $prepSchedule = $data->prepSchedule;
 
     expect($prepSchedule)->toHaveCount(1)
         ->and($prepSchedule[$monday])->toHaveCount(1)
@@ -97,7 +97,7 @@ test('generatePrepSchedule skips items without recipes', function () {
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
 
-    expect($data['prepSchedule'])->toBeEmpty();
+    expect($data->prepSchedule)->toBeEmpty();
 });
 
 test('getProductSummary aggregates quantities across orders', function () {
@@ -126,7 +126,7 @@ test('getProductSummary aggregates quantities across orders', function () {
 
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
-    $summary = $service->getProductSummary($data['weeklyOrders']);
+    $summary = $service->getProductSummary($data->weeklyOrders);
 
     expect($summary[$product->name])
         ->total_quantity->toBe(8)
@@ -166,7 +166,7 @@ test('getTotalPrepHours calculates total from prep schedule', function () {
 
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
-    $totalHours = $service->getTotalPrepHours($data['prepSchedule']);
+    $totalHours = $service->getTotalPrepHours($data->prepSchedule);
 
     expect($totalHours)->toBe(2.5);
 });
@@ -192,7 +192,7 @@ test('getTimelineView formats prep tasks for display', function () {
 
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
-    $timeline = $service->getTimelineView($data['prepSchedule']);
+    $timeline = $service->getTimelineView($data->prepSchedule);
 
     expect($timeline)->toHaveCount(1)
         ->and($timeline[$monday]->first())
@@ -219,7 +219,7 @@ test('getWeekSummary calculates totals from orders', function () {
 
     $service = resolve(PrepScheduleService::class);
     $data = $service->loadWeeklyData($monday);
-    $summary = $service->getWeekSummary($data['weeklyOrders'], $data['prepSchedule']);
+    $summary = $service->getWeekSummary($data->weeklyOrders, $data->prepSchedule);
 
     expect($summary)
         ->total_orders->toBe(1)

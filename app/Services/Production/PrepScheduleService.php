@@ -2,8 +2,10 @@
 
 namespace App\Services\Production;
 
+use App\DataTransferObjects\Production\WeeklyPrepPlan;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Queries\Production\WeeklyProductionOrdersQuery;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -18,10 +20,8 @@ class PrepScheduleService
 {
     /**
      * Load orders for the given week and generate day list.
-     *
-     * @return array{weeklyOrders: WeeklyOrders, weekDays: list<Carbon>, prepSchedule: PrepSchedule}
      */
-    public function loadWeeklyData(string $weekStart): array
+    public function loadWeeklyData(string $weekStart): WeeklyPrepPlan
     {
         $startDate = Date::parse($weekStart);
         $endDate = $startDate->copy()->endOfWeek();
@@ -31,11 +31,7 @@ class PrepScheduleService
             $weekDays[] = $startDate->copy()->addDays($i);
         }
 
-        $weeklyOrders = collect(Order::with(['customer', 'orderItems.product.recipes'])
-            ->whereBetween('delivery_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->oldest('delivery_date')
-            ->orderBy('delivery_time')
-            ->get()
+        $weeklyOrders = collect(WeeklyProductionOrdersQuery::between($startDate, $endDate)
             ->groupBy(function (Order $order) {
                 return Date::parse($order->delivery_date)->format('Y-m-d');
             })
@@ -43,11 +39,7 @@ class PrepScheduleService
 
         $prepSchedule = $this->generatePrepSchedule($weeklyOrders);
 
-        return [
-            'weeklyOrders' => $weeklyOrders,
-            'weekDays' => $weekDays,
-            'prepSchedule' => $prepSchedule,
-        ];
+        return new WeeklyPrepPlan($weeklyOrders, $weekDays, $prepSchedule);
     }
 
     /**

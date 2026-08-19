@@ -26,9 +26,8 @@ class SendStaffInvitation
             throw StaffInvitationException::alreadyTeamMember($email);
         }
 
-        $existing = StaffInvitation::query()->where('email', $email)
-            ->whereNull('accepted_at')
-            ->where('expires_at', '>', now())
+        $existing = StaffInvitation::query()->pendingAndUnexpired()
+            ->where('email', $email)
             ->exists();
 
         if ($existing) {

@@ -14,7 +14,7 @@ test('forToken filters carts by cart_token', function () {
     $results = Cart::query()->forToken('token-a')->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($target->id);
+        ->and($results->sole()->id)->toBe($target->id);
 });
 
 test('notConverted excludes carts that have been converted', function () {
@@ -24,5 +24,18 @@ test('notConverted excludes carts that have been converted', function () {
     $results = Cart::query()->notConverted()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($open->id);
+        ->and($results->sole()->id)->toBe($open->id);
+});
+
+test('abandonedBefore returns only recoverable carts older than the cutoff', function () {
+    $abandoned = Cart::factory()->withEmail()->abandoned(24)->create();
+    Cart::factory()->withEmail()->abandoned(1)->create();
+    Cart::factory()->abandoned(24)->create();
+    Cart::factory()->withEmail()->abandoned(24)->converted()->create();
+    Cart::factory()->withEmail()->abandoned(24)->create(['recovery_sent_at' => now()]);
+
+    $carts = Cart::query()->abandonedBefore(now()->subHours(12))->get();
+
+    expect($carts)->toHaveCount(1)
+        ->and($carts->first()?->is($abandoned))->toBeTrue();
 });

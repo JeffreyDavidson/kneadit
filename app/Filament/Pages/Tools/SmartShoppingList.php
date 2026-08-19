@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Tools;
 
+use App\DataTransferObjects\Inventory\SupplierShoppingList;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -47,7 +48,7 @@ class SmartShoppingList extends Page
 
     public bool $includeUpcoming = false;
 
-    /** @var Collection<int|string, array<string, mixed>> */
+    /** @var Collection<int|string, array{supplier: array{id: ?int, name: string, email: ?string, phone: ?string}, items: array<int, array{ingredient_id: int, name: string, unit: string, current_stock: float, needed: float, unit_price: float, subtotal: float, sku: ?string, minimum_order: ?float, lead_time_days: ?int}>, total: float}> */
     public Collection $supplierGroups;
 
     public function mount(): void
@@ -60,11 +61,13 @@ class SmartShoppingList extends Page
 
     public function generateList(): void
     {
-        $this->supplierGroups = new Collection(resolve(ShoppingListService::class)->generate(
-            includeUpcoming: $this->includeUpcoming,
-            startDate: $this->startDate,
-            endDate: $this->endDate,
-        ));
+        $this->supplierGroups = resolve(ShoppingListService::class)
+            ->generate(
+                includeUpcoming: $this->includeUpcoming,
+                startDate: $this->startDate,
+                endDate: $this->endDate,
+            )
+            ->map(fn (SupplierShoppingList $group): array => $group->toArray());
     }
 
     public function toggleUpcoming(): void
@@ -75,9 +78,15 @@ class SmartShoppingList extends Page
 
     public function sendPurchaseOrder(int $supplierId): void
     {
-        $group = $this->purchaseOrderGroup($this->supplierGroups->get($supplierId));
+        $group = resolve(ShoppingListService::class)
+            ->generate(
+                includeUpcoming: $this->includeUpcoming,
+                startDate: $this->startDate,
+                endDate: $this->endDate,
+            )
+            ->get($supplierId);
 
-        if ($group === null) {
+        if (! $group instanceof SupplierShoppingList || ! $group->canRequestPurchaseOrder()) {
             Notification::make()
                 ->title('No email address')
                 ->body('This supplier does not have an email address configured.')
@@ -89,28 +98,18 @@ class SmartShoppingList extends Page
 
         $storeName = resolve(TenantSettings::class)->store->name;
 
-        $leadTimeDays = 3;
-
-        foreach ($group['items'] as $item) {
-            $leadTime = filter_var($item['lead_time_days'] ?? null, FILTER_VALIDATE_INT);
-
-            if (is_int($leadTime)) {
-                $leadTimeDays = max($leadTimeDays, $leadTime);
-            }
-        }
-
         event(new PurchaseOrderRequested(
-            supplierEmail: $group['supplier']['email'],
-            supplierName: $group['supplier']['name'],
+            supplierEmail: $group->supplier->email ?? throw new \LogicException('Supplier email is required.'),
+            supplierName: $group->supplier->name,
             storeName: $storeName,
-            items: $group['items'],
-            total: $group['total'],
-            requestedDate: now()->addDays($leadTimeDays)->format('Y-m-d'),
+            items: $group->items->map(fn ($item): array => $item->toArray())->all(),
+            total: $group->total(),
+            requestedDate: now()->addDays($group->maximumLeadTimeDays())->format('Y-m-d'),
         ));
 
         Notification::make()
             ->title('Purchase order sent!')
-            ->body("Email sent to {$group['supplier']['email']}")
+            ->body("Email sent to {$group->supplier->email}")
             ->success()
             ->send();
     }
@@ -122,55 +121,6 @@ class SmartShoppingList extends Page
                 ->label('Refresh')
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(fn () => $this->generateList()),
-        ];
-    }
-
-    /**
-     * @return array{supplier: array{name: string, email: string}, items: list<array<string, mixed>>, total: float}|null
-     */
-    private function purchaseOrderGroup(mixed $value): ?array
-    {
-        if (! is_array($value)) {
-            return null;
-        }
-
-        $supplier = $value['supplier'] ?? null;
-        $rawItems = $value['items'] ?? null;
-        $total = $value['total'] ?? null;
-
-        if (! is_array($supplier) || ! is_array($rawItems) || ! is_numeric($total)) {
-            return null;
-        }
-
-        $name = $supplier['name'] ?? null;
-        $email = $supplier['email'] ?? null;
-
-        if (! is_string($name) || ! is_string($email) || $email === '') {
-            return null;
-        }
-
-        $items = [];
-
-        foreach ($rawItems as $rawItem) {
-            if (! is_array($rawItem)) {
-                continue;
-            }
-
-            $item = [];
-
-            foreach ($rawItem as $key => $itemValue) {
-                if (is_string($key)) {
-                    $item[$key] = $itemValue;
-                }
-            }
-
-            $items[] = $item;
-        }
-
-        return [
-            'supplier' => ['name' => $name, 'email' => $email],
-            'items' => $items,
-            'total' => floatval($total),
         ];
     }
 }
