@@ -36,7 +36,7 @@ dataset('adminWidgets', [
     'SeasonalItemsWidget' => [App\Filament\Widgets\SeasonalItemsWidget::class],
     'StorefrontViewsWidget' => [App\Filament\Widgets\StorefrontViewsWidget::class],
     'UpcomingHolidayWidget' => [App\Filament\Widgets\UpcomingHolidayWidget::class],
-    'WeeklyRevenueChart' => [App\Filament\Widgets\WeeklyRevenueChart::class],
+    'WeeklyRevenueChartWidget' => [App\Filament\Widgets\WeeklyRevenueChartWidget::class],
     'BakingSheetWidget' => [App\Filament\Widgets\BakingSheetWidget::class],
     'CateringPipelineWidget' => [App\Filament\Widgets\CateringPipelineWidget::class],
     'CouponUsageWidget' => [App\Filament\Widgets\CouponUsageWidget::class],
