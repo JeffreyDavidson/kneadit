@@ -2,6 +2,7 @@
 
 use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 
@@ -74,6 +75,7 @@ test('credential migration encrypts legacy values without double encryption', fu
     Setting::factory()->create(['key' => 'paypal_client_secret', 'value' => 'legacy-paypal-secret']);
 
     $migration = require database_path('migrations/tenant/2026_08_17_000000_encrypt_sensitive_tenant_settings.php');
+    throw_unless($migration instanceof Migration, RuntimeException::class, 'Expected a migration instance.');
     $migration->up();
 
     $stored = Setting::query()->where('key', 'paypal_client_secret')->value('value');
