@@ -3,7 +3,7 @@
 beforeEach(fn () => setUpCentralTest());
 
 test('customers:backfill-referral-codes runs successfully with no tenants', function () {
-    $this->artisan('customers:backfill-referral-codes')
+    pendingArtisan('customers:backfill-referral-codes')
         ->expectsOutputToContain('Total customers updated: 0')
         ->assertSuccessful();
 });

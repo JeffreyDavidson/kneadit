@@ -3,7 +3,7 @@
 beforeEach(fn () => setUpCentralTest());
 
 test('campaigns:send-scheduled runs successfully with no tenants', function () {
-    $this->artisan('campaigns:send-scheduled')->assertSuccessful();
+    pendingArtisan('campaigns:send-scheduled')->assertSuccessful();
 });
 
 test('command source uses TenancyManager + filters Scheduled campaigns', function () {

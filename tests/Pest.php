@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Testing\PendingCommand;
 use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
@@ -148,6 +149,18 @@ function testString(string $name): string
     }
 
     return $value;
+}
+
+/** @param array<string, mixed> $parameters */
+function pendingArtisan(string $command, array $parameters = []): PendingCommand
+{
+    $pendingCommand = test()->artisan($command, $parameters);
+
+    if (! $pendingCommand instanceof PendingCommand) {
+        throw new UnexpectedValueException("Artisan command [{$command}] did not return a pending command.");
+    }
+
+    return $pendingCommand;
 }
 
 /** @return list<class-string> */
