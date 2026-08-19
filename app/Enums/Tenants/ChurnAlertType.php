@@ -2,14 +2,16 @@
 
 namespace App\Enums\Tenants;
 
-enum ChurnAlertType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ChurnAlertType: string implements HasLabel
 {
     case TrialExpiring = 'trial_expiring';
     case NoLogin = 'no_login';
     case NoOrders = 'no_orders';
     case LowHealth = 'low_health';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::TrialExpiring => 'Trial Expiring',

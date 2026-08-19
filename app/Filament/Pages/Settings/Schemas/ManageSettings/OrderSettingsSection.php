@@ -3,12 +3,14 @@
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Forms\Components\MoneyInput;
+use App\ValueObjects\Money;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 
 class OrderSettingsSection
 {
@@ -62,9 +64,18 @@ class OrderSettingsSection
                             ->placeholder('Local delivery (0-5 miles)')
                             ->helperText('Shown to customers at checkout. Optional.'),
                     ])
-                    ->itemLabel(fn (array $state): ?string => isset($state['min_distance'], $state['max_distance'], $state['fee'])
-                        ? Arr::string($state, 'min_distance') . '–' . Arr::string($state, 'max_distance') . ' mi · $' . Arr::string($state, 'fee')
-                        : null),
+                    ->itemLabel(function (array $state): ?string {
+                        $minimum = Arr::get($state, 'min_distance');
+                        $maximum = Arr::get($state, 'max_distance');
+                        $fee = Arr::get($state, 'fee');
+
+                        if (! is_numeric($minimum) || ! is_numeric($maximum) || ! is_numeric($fee)) {
+                            return null;
+                        }
+
+                        return Number::format((float) $minimum) . '–' . Number::format((float) $maximum)
+                            . ' mi · ' . Money::fromDollars($fee)->formatted();
+                    }),
 
                 Grid::make(2)
                     ->schema([

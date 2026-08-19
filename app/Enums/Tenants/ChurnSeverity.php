@@ -2,10 +2,20 @@
 
 namespace App\Enums\Tenants;
 
-enum ChurnSeverity: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ChurnSeverity: string implements HasLabel
 {
     case Warning = 'warning';
     case Critical = 'critical';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Warning => 'Warning',
+            self::Critical => 'Critical',
+        };
+    }
 
     public function priority(): int
     {
