@@ -37,7 +37,7 @@ test('create-one tenant command source creates domains and seeds data', function
     $source = file_get_contents(app_path('Console/Commands/Tenants/CreateOneTenantCommand.php'));
 
     expect($source)
-        ->toContain('domains()->create')
+        ->toContain('Domain::query()->create')
         ->toContain('tenants:migrate')
         ->toContain('db:seed');
 });

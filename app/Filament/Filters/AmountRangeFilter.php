@@ -22,8 +22,8 @@ class AmountRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
-            $minimum = Arr::float($data, 'min_amount', 0.0);
-            $maximum = Arr::float($data, 'max_amount', 0.0);
+            $minimum = filled($data['min_amount'] ?? null) ? Arr::float($data, 'min_amount') : 0.0;
+            $maximum = filled($data['max_amount'] ?? null) ? Arr::float($data, 'max_amount') : 0.0;
 
             return $query
                 ->when(
@@ -38,8 +38,8 @@ class AmountRangeFilter extends Filter
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            $minimum = Arr::float($data, 'min_amount', 0.0);
-            $maximum = Arr::float($data, 'max_amount', 0.0);
+            $minimum = filled($data['min_amount'] ?? null) ? Arr::float($data, 'min_amount') : 0.0;
+            $maximum = filled($data['max_amount'] ?? null) ? Arr::float($data, 'max_amount') : 0.0;
             if ($minimum > 0) {
                 $indicators[] = 'Min: $' . $minimum;
             }
