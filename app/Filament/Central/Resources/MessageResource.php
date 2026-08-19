@@ -32,7 +32,7 @@ class MessageResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = cache()->remember('navigation-badge:central-messages:unread-tenant', 60, fn (): int => PlatformMessage::topLevel()->fromTenant()->unread()->count());
+        $count = PlatformMessage::topLevel()->fromTenant()->unread()->count();
 
         return $count > 0 ? (string) $count : null;
     }
