@@ -99,6 +99,7 @@ test('updateContact treats empty strings as null', function () {
 test('touch refreshes last_activity_at', function () {
     $cart = Cart::factory()->abandoned(48)->create();
     $previousActivity = $cart->last_activity_at;
+    throw_unless($previousActivity !== null, RuntimeException::class, 'Expected an activity timestamp.');
 
     resolve(CartManager::class)->touch($cart);
 
