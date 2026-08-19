@@ -27,11 +27,11 @@ test('subsequent hits do not overwrite opened_at (first-hit wins)', function () 
         'tracking_token' => $token,
         'opened_at' => now()->subHour(),
     ]);
-    $original = $log->refresh()->opened_at;
+    $original = $log->refresh()->opened_at ?? throw new LogicException('Expected opened timestamp.');
 
     withoutMiddleware(tenantMiddleware())->get("/track/email-open/{$token}.gif");
 
-    expect($log->refresh()->opened_at?->toIso8601String())->toBe($original->toIso8601String());
+    expect($log->refresh()->opened_at->toIso8601String())->toBe($original->toIso8601String());
 });
 
 test('returns the GIF even when the token is unknown', function () {

@@ -9,6 +9,7 @@ use App\Filament\Resources\Recipes\RecipeResource;
 use App\Filament\Resources\Reviews\ReviewResource;
 use App\Filament\Resources\SocialPosts\SocialPostResource;
 use App\Models\Staff\User;
+use Filament\Resources\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
@@ -30,12 +31,18 @@ dataset('proFeatureResources', [
 
 test('pro-feature resource can be accessed when feature is active', function (string $resourceClass) {
     Feature::define('pro-features', fn () => true);
+    if (! is_subclass_of($resourceClass, Resource::class)) {
+        throw new LogicException("{$resourceClass} is not a Filament resource.");
+    }
 
     expect($resourceClass::canAccess())->toBeTrue();
 })->with('proFeatureResources');
 
 test('pro-feature resource cannot be accessed when feature is inactive', function (string $resourceClass) {
     Feature::define('pro-features', fn () => false);
+    if (! is_subclass_of($resourceClass, Resource::class)) {
+        throw new LogicException("{$resourceClass} is not a Filament resource.");
+    }
 
     expect($resourceClass::canAccess())->toBeFalse();
 })->with('proFeatureResources');
@@ -51,12 +58,18 @@ dataset('growthFeatureResources', [
 
 test('growth-feature resource can be accessed when feature is active', function (string $resourceClass) {
     Feature::define('growth-features', fn () => true);
+    if (! is_subclass_of($resourceClass, Resource::class)) {
+        throw new LogicException("{$resourceClass} is not a Filament resource.");
+    }
 
     expect($resourceClass::canAccess())->toBeTrue();
 })->with('growthFeatureResources');
 
 test('growth-feature resource cannot be accessed when feature is inactive', function (string $resourceClass) {
     Feature::define('growth-features', fn () => false);
+    if (! is_subclass_of($resourceClass, Resource::class)) {
+        throw new LogicException("{$resourceClass} is not a Filament resource.");
+    }
 
     expect($resourceClass::canAccess())->toBeFalse();
 })->with('growthFeatureResources');

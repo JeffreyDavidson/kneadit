@@ -2,6 +2,7 @@
 
 use App\Models\Customers\Customer;
 use App\Notifications\Customers\CustomerPasswordResetNotification;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -37,7 +38,11 @@ test('forgot-password still reports success for unknown emails to avoid leaking 
 test('reset-password updates the customer password and redirects to login', function () {
     $customer = Customer::factory()->withPassword('old-password-1')->create(['email' => 'jane@example.com']);
 
-    $token = Password::broker('customers')->createToken($customer);
+    $broker = Password::broker('customers');
+    if (! $broker instanceof PasswordBroker) {
+        throw new LogicException('Expected Laravel password broker.');
+    }
+    $token = $broker->createToken($customer);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('account.password.update', [], false), [
@@ -50,7 +55,7 @@ test('reset-password updates the customer password and redirects to login', func
     $response->assertRedirect(route('account.login.show', [], false))
         ->assertSessionHas('status');
 
-    expect(Hash::check('new-password-1', $customer->refresh()->password))->toBeTrue();
+    expect(Hash::check('new-password-1', $customer->refresh()->getAuthPassword()))->toBeTrue();
 });
 
 test('reset-password rejects an invalid token', function () {

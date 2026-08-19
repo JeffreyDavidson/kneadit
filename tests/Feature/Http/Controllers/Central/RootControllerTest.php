@@ -5,6 +5,7 @@ use App\Http\Controllers\Storefront\HomeController;
 use App\Models\Platform\Tenant;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -49,7 +50,12 @@ test('the web middleware initializes tenant context before root dispatch', funct
         'id' => 'rootroute',
         'storefront_enabled' => true,
     ]);
-    $tenant->domains()->create(['domain' => 'rootroute']);
+    DB::table('domains')->insert([
+        'domain' => 'rootroute',
+        'tenant_id' => $tenant->id,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     get('http://rootroute.kneadit.test/')
         ->assertOk()

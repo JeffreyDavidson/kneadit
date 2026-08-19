@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Models\Inventory\Recipe;
 use App\Models\Staff\User;
@@ -63,7 +64,7 @@ test('can create a recipe with ingredients', function () {
         ]);
 
     // Get the default ingredient item key and fill it
-    $state = $component->get('mountedActions.0.data.ingredients');
+    $state = SettingValue::map($component->get('mountedActions.0.data.ingredients'));
     $keys = array_keys($state);
     $component->fillForm([
         'ingredients' => [

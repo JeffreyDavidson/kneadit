@@ -35,8 +35,6 @@ test('list shows active and revoked grants', function () {
         'plan' => 'pro',
         'is_active' => true,
     ]);
-    $tenant->domains()->create(['domain' => 'comped-bakery']);
-
     FreeForeverGrant::factory()->for($tenant)->create([
         'granted_by_user_id' => null,
         'granted_at' => now()->subDays(3),

@@ -49,7 +49,7 @@ test('can edit a loyalty reward via table action', function () {
             'name' => 'Updated Reward',
             'points_required' => $reward->points_required,
             'reward_type' => $reward->reward_type->value,
-            'discount_percentage' => $reward->discount_percentage->value(),
+            'discount_percentage' => $reward->discount_percentage?->value() ?? 0,
         ])
         ->assertHasNoFormErrors();
 

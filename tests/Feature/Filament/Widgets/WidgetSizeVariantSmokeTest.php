@@ -17,9 +17,14 @@ beforeEach(function () {
 
 dataset('widgetsAtAllSizes', function (): array {
     $cases = [];
-    foreach (WidgetMeta::all() as $key => $meta) {
+    foreach (array_keys(WidgetMeta::all()) as $key) {
+        $class = WidgetMeta::classFor($key);
+        if ($class === null) {
+            throw new LogicException("Missing widget class for {$key}.");
+        }
+
         foreach (WidgetMeta::allowedSizesFor($key) as $size) {
-            $cases["{$key} @ {$size->value}"] = [$meta->class, $size->value];
+            $cases["{$key} @ {$size->value}"] = [$class, $size->value];
         }
     }
 

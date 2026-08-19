@@ -43,7 +43,7 @@ test('modify endpoint updates order and queues confirmation email', function () 
         ->withSession(verifiedOrdersSession([testFixture('order', Order::class)]))
         ->post(route('order.modify', testFixture('order', Order::class)), [
             'items' => [
-                ['order_item_id' => test()->item->id, 'quantity' => 4],
+                ['order_item_id' => testFixture('item', OrderItem::class)->id, 'quantity' => 4],
             ],
             'tip_amount' => 2.50,
         ]);
@@ -75,7 +75,7 @@ test('modify endpoint returns session error when window has expired', function (
         ->withSession(verifiedOrdersSession([testFixture('order', Order::class)]))
         ->post(route('order.modify', testFixture('order', Order::class)), [
             'items' => [
-                ['order_item_id' => test()->item->id, 'quantity' => 4],
+                ['order_item_id' => testFixture('item', OrderItem::class)->id, 'quantity' => 4],
             ],
         ]);
 

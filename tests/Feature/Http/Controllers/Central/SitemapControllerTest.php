@@ -3,6 +3,7 @@
 use App\Http\Controllers\Central\SitemapController;
 use App\Models\Content\BlogPost;
 use Illuminate\Support\Facades\View;
+use Illuminate\View\View as IlluminateView;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -15,7 +16,7 @@ test('sitemap returns response with xml content type', function () {
     $tmpView = sys_get_temp_dir() . '/sitemap-stub.php';
     file_put_contents($tmpView, '<urlset></urlset>');
 
-    View::composer('platform.sitemap', function ($view) use ($tmpView) {
+    View::composer('platform.sitemap', function (IlluminateView $view) use ($tmpView): void {
         $view->setPath($tmpView);
     });
 
@@ -25,7 +26,9 @@ test('sitemap returns response with xml content type', function () {
     expect($response->headers->get('content-type'))->toContain('text/xml')
         ->and($response->getStatusCode())->toBe(200);
 
-    @unlink($tmpView);
+    if (is_file($tmpView)) {
+        unlink($tmpView);
+    }
 });
 
 test('sitemap queries only published posts', function () {
@@ -52,7 +55,7 @@ test('sitemap includes all published posts ordered by published_at desc', functi
 
     expect($posts)->toHaveCount(2)
         ->and($posts->firstOrFail()->id)->toBe($newer->id)
-        ->and($posts->last()->id)->toBe($older->id);
+        ->and($posts->reverse()->firstOrFail()->id)->toBe($older->id);
 });
 
 test('sitemap returns empty post list when no published posts exist', function () {

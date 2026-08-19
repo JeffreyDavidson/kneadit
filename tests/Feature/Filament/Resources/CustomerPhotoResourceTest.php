@@ -46,11 +46,13 @@ test('can create a customer photo via header action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect(CustomerPhoto::query()->firstOrFail())
+    $photo = CustomerPhoto::query()->firstOrFail();
+
+    expect($photo)
         ->customer_name->toBe('Alice Baker')
         ->customer_email->toBe('alice@example.com')
-        ->caption->toBe('My birthday cake!')
-        ->photo_path->not->toBeNull();
+        ->caption->toBe('My birthday cake!');
+    expect($photo->photo_path)->not->toBeNull();
 });
 
 test('create customer photo validates required fields', function (array $data, array $errors) {

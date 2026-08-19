@@ -8,6 +8,7 @@ beforeEach(function () {
     setUpTenantTest();
 });
 
+/** @param array<string, mixed> $overrides */
 function makeGiftCard(array $overrides = []): GiftCard
 {
     return GiftCard::factory()->create(array_merge([

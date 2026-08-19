@@ -27,11 +27,12 @@ test('API rejects a waitlist submission missing required fields with 422', funct
 
     $response->assertStatus(422);
 
-    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
-    expect($pointers)->toContain(
+    foreach ([
         '/data/attributes/customer_name',
         '/data/attributes/customer_email',
         '/data/attributes/customer_phone',
         '/data/attributes/requested_date',
-    );
+    ] as $pointer) {
+        $response->assertJsonFragment(['pointer' => $pointer]);
+    }
 });

@@ -1,10 +1,13 @@
 <?php
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Filament\Pages\Settings\ManageSettings;
 use App\Models\Operations\WebhookDelivery;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -55,7 +58,7 @@ test('delivery fee tiers round-trip as structured rows through save and reload',
         ])
         ->call('save');
 
-    $stored = json_decode(settings('delivery_fee_tiers'), true);
+    $stored = SettingValue::mapList(settings('delivery_fee_tiers'));
     expect($stored)->toHaveCount(1)
         ->and($stored[0]['max_distance'])->toBe(8)
         ->and($stored[0]['fee'])->toBe(4);
@@ -67,9 +70,11 @@ test('regenerateWebhookSecret writes a fresh 40-char secret and updates the page
     $component = Livewire::test(ManageSettings::class)
         ->call('regenerateWebhookSecret');
 
-    expect(strlen($component->get('webhook_secret')))->toBe(40)
-        ->and($component->get('webhook_secret'))->not->toBe('old-secret-value')
-        ->and(settings('webhook_secret'))->toBe($component->get('webhook_secret'));
+    $secret = SettingValue::string($component->get('webhook_secret'));
+
+    expect(Str::length($secret))->toBe(40)
+        ->and($secret)->not->toBe('old-secret-value')
+        ->and(settings('webhook_secret'))->toBe($secret);
 });
 
 test('sendTestWebhook persists current settings then dispatches a synthetic order.created', function () {
@@ -80,10 +85,9 @@ test('sendTestWebhook persists current settings then dispatches a synthetic orde
         ->set('webhook_secret', 'test-secret')
         ->call('sendTestWebhook');
 
-    Http::assertSent(function ($request) {
-        $body = json_decode($request->body(), true);
-
-        return $body['event'] === 'order.created' && ($body['data']['test'] ?? false) === true;
+    Http::assertSent(function (Request $request): bool {
+        return data_get($request->data(), 'event') === 'order.created'
+            && data_get($request->data(), 'data.test') === true;
     });
 
     expect(WebhookDelivery::sole()->event)->toBe('order.created');
@@ -100,7 +104,7 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
 
     $reflection = new ReflectionMethod($page, 'toSettingsArray');
     $reflection->setAccessible(true);
-    $sentKeys = array_keys($reflection->invoke($page));
+    $sentKeys = array_keys(SettingValue::map($reflection->invoke($page)));
 
     Livewire::test(ManageSettings::class)->call('save');
 

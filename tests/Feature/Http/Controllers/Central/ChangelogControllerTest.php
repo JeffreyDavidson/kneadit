@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 
 use function Pest\Laravel\get;
@@ -31,7 +32,7 @@ test('changelog displays entry titles', function () {
 });
 
 test('changelog config has entries', function () {
-    $entries = config('changelog');
+    $entries = Config::array('changelog');
 
     expect($entries)->not->toBeEmpty()->and($entries[0])->toHaveKeys(['date', 'version', 'title', 'items']);
 });

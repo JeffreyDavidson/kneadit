@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Models\Engagement\Survey;
 use App\Models\Staff\User;
@@ -59,7 +60,7 @@ test('can create a survey with questions repeater', function () {
             'is_active' => true,
         ]);
 
-    $state = $component->get('mountedActions.0.data.questions');
+    $state = SettingValue::map($component->get('mountedActions.0.data.questions'));
     $keys = array_keys($state);
     $component->fillForm([
         'questions' => [

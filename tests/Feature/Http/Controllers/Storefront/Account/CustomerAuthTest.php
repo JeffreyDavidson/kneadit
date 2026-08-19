@@ -25,7 +25,7 @@ test('register creates a customer, hashes the password, and sends them to verify
     $customer = Customer::query()->where('email', 'jane@example.com')->firstOrFail();
 
     expect($customer->name)->toBe('Jane Doe')
-        ->and(Hash::check('password123', $customer->password))->toBeTrue()
+        ->and(Hash::check('password123', $customer->getAuthPassword()))->toBeTrue()
         ->and(auth('customer')->id())->toBe($customer->id)
         ->and($customer->email_verified_at)->toBeNull();
 });

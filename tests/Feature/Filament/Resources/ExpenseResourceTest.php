@@ -56,7 +56,7 @@ test('can edit an expense via table action', function () {
             'description' => 'Updated expense',
             'amount' => $expense->amount->dollars(),
             'category' => $expense->category->value,
-            'date' => $expense->date->format('Y-m-d'),
+            'date' => $expense->date?->format('Y-m-d') ?? '',
             'business_percentage' => 100,
         ])
         ->assertHasNoFormErrors();

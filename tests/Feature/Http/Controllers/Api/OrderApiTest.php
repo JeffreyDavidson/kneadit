@@ -37,14 +37,15 @@ test('API rejects an order with missing required fields with 422', function () {
 
     $response->assertStatus(422);
 
-    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
-    expect($pointers)->toContain(
+    foreach ([
         '/data/attributes/customer_name',
         '/data/attributes/customer_email',
         '/data/attributes/items',
         '/data/attributes/delivery_date',
         '/data/attributes/delivery_type',
-    );
+    ] as $pointer) {
+        $response->assertJsonFragment(['pointer' => $pointer]);
+    }
 });
 
 test('API rejects an order with a non-existent product_id', function () {
