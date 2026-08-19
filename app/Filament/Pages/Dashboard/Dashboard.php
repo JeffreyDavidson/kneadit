@@ -33,7 +33,7 @@ use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\TopProductsWidget;
 use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Filament\Widgets\UpcomingOrdersWidget;
-use App\Filament\Widgets\WeeklyRevenueChart;
+use App\Filament\Widgets\WeeklyRevenueChartWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Services\Settings\SettingsManager;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -73,7 +73,7 @@ class Dashboard extends BaseDashboard
             'order_funnel' => OrderFunnelWidget::class,
             'capacity_today' => CapacityTodayWidget::class,
             'revenue_chart' => RevenueChartWidget::class,
-            'weekly_revenue' => WeeklyRevenueChart::class,
+            'weekly_revenue' => WeeklyRevenueChartWidget::class,
             'needs_attention' => NeedsAttentionWidget::class,
             'top_products' => TopProductsWidget::class,
             'customer_insights' => CustomerInsightsWidget::class,
