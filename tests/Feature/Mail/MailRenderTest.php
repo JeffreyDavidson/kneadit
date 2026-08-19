@@ -6,6 +6,7 @@ use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use Illuminate\Mail\Mailable;
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -27,11 +28,18 @@ test('WelcomeBakerMail renders', function () {
         ->toBeString()->not->toBeEmpty();
 });
 
+/** @param class-string<Mailable> $mailClass */
 test('order-based mail classes render without errors', function (string $mailClass) {
     $order = Order::factory()->create();
     $order->load('customer', 'orderItems.product');
 
-    $html = (new $mailClass($order))->render();
+    $mail = new $mailClass($order);
+
+    if (! $mail instanceof Mailable) {
+        throw new UnexpectedValueException("{$mailClass} must be a mailable.");
+    }
+
+    $html = $mail->render();
 
     expect($html)->toBeString()->not->toBeEmpty();
 })->with([

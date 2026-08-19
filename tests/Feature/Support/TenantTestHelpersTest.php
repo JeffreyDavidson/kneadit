@@ -4,6 +4,7 @@ use App\Mail\Platform\NewSubscriberNotificationMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,7 @@ test('tenant admin helper creates and authenticates an owner in tenant storage',
 
     expect($admin)->toBeInstanceOf(User::class)
         ->and($admin->email)->toBe('admin@example.com')
-        ->and(auth()->user()->is($admin))->toBeTrue();
+        ->and(auth()->id())->toBe($admin->id);
 
     expect(User::query()->whereKey($admin->id)->where('email', 'admin@example.com')->exists())->toBeTrue();
 });
@@ -56,7 +57,7 @@ test('onboarding notification helper asserts queued welcome and platform subscri
     queueTenantOnboardingNotifications($admin, $tenant, 'https://queued-bakery.kneadit.test/admin');
 
     assertNotificationQueued(WelcomeBakerMail::class, fn (WelcomeBakerMail $mail) => $mail->hasTo('queue@example.com'));
-    assertNotificationQueued(NewSubscriberNotificationMail::class, fn (NewSubscriberNotificationMail $mail) => $mail->hasTo(config('mail.platform_notify')));
+    assertNotificationQueued(NewSubscriberNotificationMail::class, fn (NewSubscriberNotificationMail $mail) => $mail->hasTo(Config::string('mail.platform_notify')));
 });
 
 test('visitor registration helper creates the user tenant domain and onboarding notifications', function () {
