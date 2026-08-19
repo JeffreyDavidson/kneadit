@@ -109,6 +109,7 @@ class ActivityLogsTable
                                 ->distinct()
                                 ->orderBy('user_name')
                                 ->pluck('user_name', 'user_name')
+                                ->filter(fn (mixed $value): bool => is_string($value) && $value !== '')
                                 ->all())
                             ->searchable(),
                     ])

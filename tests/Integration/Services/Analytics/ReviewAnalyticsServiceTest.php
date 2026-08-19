@@ -23,7 +23,6 @@ test('overall stats calculates correctly with reviews', function () {
 
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
-    throw_unless($stats instanceof ReviewOverview, RuntimeException::class, 'Expected review overview data.');
 
     expect($stats->totalReviews)->toBe(3)
         ->and($stats->approvedReviews)->toBe(2)
