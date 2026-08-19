@@ -7,6 +7,7 @@ use App\Models\Inventory\Product;
 use App\Support\ProfitMargin;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class ProductReport
@@ -28,10 +29,10 @@ class ProductReport
                     'name' => $p->name,
                     'price' => $price,
                     'cost' => $cost,
-                    'units_sold' => (int) ($p->units_sold ?? 0),
+                    'units_sold' => Arr::integer(['value' => $p->units_sold ?? 0], 'value', 0),
                     // unit_price is bigint cents (migration 2026_04_22_201500), so
                     // SUM(quantity * unit_price) is in cents — divide back to dollars.
-                    'revenue' => (float) ((int) ($p->revenue ?? 0) / 100),
+                    'revenue' => Arr::integer(['value' => $p->revenue ?? 0], 'value', 0) / 100,
                     'margin' => $margin,
                 ];
             })

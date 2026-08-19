@@ -10,29 +10,29 @@ beforeEach(function () {
 });
 
 test('active tab defaults to compare', function () {
-    expect(test()->page->activeTab)->toBe('compare');
+    expect(testFixture('page', TenantComparison::class)->activeTab)->toBe('compare');
 });
 
 test('selected tenants defaults to empty', function () {
-    expect(test()->page->selectedTenants)->toBeEmpty();
+    expect(testFixture('page', TenantComparison::class)->selectedTenants)->toBeEmpty();
 });
 
 test('get all tenants returns empty when no tenants', function () {
-    expect(test()->page->getAllTenants())->toBeEmpty();
+    expect(testFixture('page', TenantComparison::class)->getAllTenants())->toBeEmpty();
 });
 
 test('get all tenants returns tenants ordered by store name', function () {
     Tenant::factory()->create(['store_name' => 'Zebra Bakery']);
     Tenant::factory()->create(['store_name' => 'Alpha Bakery']);
 
-    $tenants = test()->page->getAllTenants();
+    $tenants = testFixture('page', TenantComparison::class)->getAllTenants();
 
     expect($tenants)->toHaveCount(2)
         ->and(array_values($tenants)[0])->toBe('Alpha Bakery');
 });
 
 test('get comparison data returns empty when no tenants selected', function () {
-    expect(test()->page->getComparisonData())->toBeEmpty();
+    expect(testFixture('page', TenantComparison::class)->getComparisonData())->toBeEmpty();
 });
 
 test('get comparison data returns data for selected tenants', function () {
@@ -42,8 +42,8 @@ test('get comparison data returns data for selected tenants', function () {
         'brand_color_primary' => '#ff0000',
     ]);
 
-    test()->page->selectedTenants = [$tenant->id];
-    $data = test()->page->getComparisonData();
+    testFixture('page', TenantComparison::class)->selectedTenants = [$tenant->id];
+    $data = testFixture('page', TenantComparison::class)->getComparisonData();
 
     expect($data)->toHaveCount(1)
         ->and($data[0])->toHaveKeys(['id', 'name', 'plan', 'total_orders', 'days_since_signup', 'setup_completed', 'health_score']);
@@ -122,18 +122,18 @@ test('calculate health score capped at 100', function () {
 test('get leaderboard data returns all tenants', function () {
     Tenant::factory()->count(3)->create();
 
-    $data = test()->page->getLeaderboardData();
+    $data = testFixture('page', TenantComparison::class)->getLeaderboardData();
 
     expect($data)->toHaveCount(3);
 });
 
 test('get leaderboard summary stats', function () {
-    expect(test()->page->getLeaderboardSummaryStats())
+    expect(testFixture('page', TenantComparison::class)->getLeaderboardSummaryStats())
         ->toHaveKeys(['total_orders', 'total_bakeries', 'active_bakeries', 'avg_orders_active']);
 });
 
 test('get leaderboard summary stats with no tenants', function () {
-    $stats = test()->page->getLeaderboardSummaryStats();
+    $stats = testFixture('page', TenantComparison::class)->getLeaderboardSummaryStats();
 
     expect($stats['total_orders'])->toBe(0)
         ->and($stats['total_bakeries'])->toBe(0)

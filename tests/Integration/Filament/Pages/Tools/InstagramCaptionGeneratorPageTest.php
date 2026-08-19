@@ -10,17 +10,17 @@ beforeEach(function () {
 });
 
 test('data defaults to empty array', function () {
-    expect(test()->page->data)->toBeEmpty();
+    expect(testFixture('page', InstagramCaptionGenerator::class)->data)->toBeEmpty();
 });
 
 test('captions defaults to empty array', function () {
-    expect(test()->page->captions)->toBeEmpty();
+    expect(testFixture('page', InstagramCaptionGenerator::class)->captions)->toBeEmpty();
 });
 
 test('generate captions validates required fields', function () {
-    test()->page->data = [];
+    testFixture('page', InstagramCaptionGenerator::class)->data = [];
 
-    expect(fn () => test()->page->generateCaptions())
+    expect(fn () => testFixture('page', InstagramCaptionGenerator::class)->generateCaptions())
         ->toThrow(Illuminate\Validation\ValidationException::class);
 });
 
@@ -32,15 +32,15 @@ test('generate captions produces three variations', function () {
         'is_active' => true,
     ]);
 
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => $product->id,
         'style' => 'playful',
         'tone' => 'warm',
     ];
 
-    test()->page->generateCaptions();
+    testFixture('page', InstagramCaptionGenerator::class)->generateCaptions();
 
-    expect(test()->page->captions)->toHaveCount(3);
+    expect(testFixture('page', InstagramCaptionGenerator::class)->captions)->toHaveCount(3);
 });
 
 test('each caption has text and variation number', function () {
@@ -51,15 +51,15 @@ test('each caption has text and variation number', function () {
         'is_active' => true,
     ]);
 
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => $product->id,
         'style' => 'professional',
         'tone' => 'elegant',
     ];
 
-    test()->page->generateCaptions();
+    testFixture('page', InstagramCaptionGenerator::class)->generateCaptions();
 
-    foreach (test()->page->captions as $i => $caption) {
+    foreach (testFixture('page', InstagramCaptionGenerator::class)->captions as $i => $caption) {
         expect($caption)->toHaveKeys(['text', 'variation'])
             ->and($caption['variation'])->toBe($i + 1)
             ->and($caption['text'])->toBeString()->not->toBeEmpty();
@@ -74,15 +74,15 @@ test('generate captions with different styles', function (string $style) {
         'is_active' => true,
     ]);
 
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => $product->id,
         'style' => $style,
         'tone' => 'casual',
     ];
 
-    test()->page->generateCaptions();
+    testFixture('page', InstagramCaptionGenerator::class)->generateCaptions();
 
-    expect(test()->page->captions)->toHaveCount(3);
+    expect(testFixture('page', InstagramCaptionGenerator::class)->captions)->toHaveCount(3);
 })->with(['playful', 'professional', 'seasonal', 'storytelling']);
 
 test('generate captions with different tones', function (string $tone) {
@@ -93,15 +93,15 @@ test('generate captions with different tones', function (string $tone) {
         'is_active' => true,
     ]);
 
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => $product->id,
         'style' => 'playful',
         'tone' => $tone,
     ];
 
-    test()->page->generateCaptions();
+    testFixture('page', InstagramCaptionGenerator::class)->generateCaptions();
 
-    expect(test()->page->captions)->toHaveCount(3);
+    expect(testFixture('page', InstagramCaptionGenerator::class)->captions)->toHaveCount(3);
 })->with(['warm', 'excited', 'casual', 'elegant']);
 
 test('captions include hashtags', function () {
@@ -112,24 +112,24 @@ test('captions include hashtags', function () {
         'is_active' => true,
     ]);
 
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => $product->id,
         'style' => 'playful',
         'tone' => 'warm',
     ];
 
-    test()->page->generateCaptions();
+    testFixture('page', InstagramCaptionGenerator::class)->generateCaptions();
 
-    expect(test()->page->captions[0]['text'])->toContain('#');
+    expect(testFixture('page', InstagramCaptionGenerator::class)->captions[0]['text'])->toContain('#');
 });
 
 test('generate captions with nonexistent product does nothing', function () {
-    test()->page->data = [
+    testFixture('page', InstagramCaptionGenerator::class)->data = [
         'product_id' => 99999,
         'style' => 'playful',
         'tone' => 'warm',
     ];
 
-    expect(fn () => test()->page->generateCaptions())
+    expect(fn () => testFixture('page', InstagramCaptionGenerator::class)->generateCaptions())
         ->toThrow(Illuminate\Validation\ValidationException::class);
 });

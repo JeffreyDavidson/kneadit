@@ -9,13 +9,13 @@ beforeEach(function () {
 });
 
 test('get onboarding stats returns expected keys', function () {
-    $stats = test()->widget->getOnboardingStats();
+    $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
     expect($stats)->toHaveKeys(['onboarded', 'total', 'percentage']);
 });
 
 test('get onboarding stats with no tenants returns zeros', function () {
-    $stats = test()->widget->getOnboardingStats();
+    $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
     expect($stats['onboarded'])->toBe(0)
         ->and($stats['total'])->toBe(0)
@@ -25,7 +25,7 @@ test('get onboarding stats with no tenants returns zeros', function () {
 test('get onboarding stats counts tenants', function () {
     Tenant::factory()->count(3)->create();
 
-    $stats = test()->widget->getOnboardingStats();
+    $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
     expect($stats['total'])->toBe(3);
 });
@@ -34,7 +34,7 @@ test('count completed checks store name', function () {
     $tenant = Tenant::factory()->create(['store_name' => 'My Bakery']);
 
     $method = new ReflectionMethod(OnboardingProgress::class, 'countCompleted');
-    $count = $method->invoke(test()->widget, $tenant);
+    $count = $method->invoke(testFixture('widget', OnboardingProgress::class), $tenant);
 
     expect($count)->toBeGreaterThanOrEqual(1);
 });
@@ -48,7 +48,7 @@ test('count completed checks store logo', function () {
     ]);
 
     $method = new ReflectionMethod(OnboardingProgress::class, 'countCompleted');
-    $count = $method->invoke(test()->widget, $tenant);
+    $count = $method->invoke(testFixture('widget', OnboardingProgress::class), $tenant);
 
     expect($count)->toBe(1);
 });
@@ -62,7 +62,7 @@ test('count completed checks storefront enabled', function () {
     ]);
 
     $method = new ReflectionMethod(OnboardingProgress::class, 'countCompleted');
-    $count = $method->invoke(test()->widget, $tenant);
+    $count = $method->invoke(testFixture('widget', OnboardingProgress::class), $tenant);
 
     expect($count)->toBe(1);
 });
@@ -76,7 +76,7 @@ test('count completed checks brand color customized', function () {
     ]);
 
     $method = new ReflectionMethod(OnboardingProgress::class, 'countCompleted');
-    $count = $method->invoke(test()->widget, $tenant);
+    $count = $method->invoke(testFixture('widget', OnboardingProgress::class), $tenant);
 
     expect($count)->toBe(1);
 });
@@ -90,7 +90,7 @@ test('count completed does not count default brand color', function () {
     ]);
 
     $method = new ReflectionMethod(OnboardingProgress::class, 'countCompleted');
-    $count = $method->invoke(test()->widget, $tenant);
+    $count = $method->invoke(testFixture('widget', OnboardingProgress::class), $tenant);
 
     expect($count)->toBe(0);
 });
@@ -103,7 +103,7 @@ test('percentage calculation is correct', function () {
         'brand_color_primary' => '#d4920c',
     ]);
 
-    $stats = test()->widget->getOnboardingStats();
+    $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
     expect($stats['percentage'])->toEqual(0);
 });
@@ -119,7 +119,7 @@ test('fully onboarded count uses central metrics', function () {
         'onboarding_orders_count' => 1,
     ]);
 
-    $stats = test()->widget->getOnboardingStats();
+    $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
     expect($stats['onboarded'])->toBe(1)
         ->and($stats['percentage'])->toBe(100.0);

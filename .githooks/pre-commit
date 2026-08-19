@@ -34,10 +34,10 @@ fi
 echo "PHP lint passed"
 
 # 2. Pint (code style)
-if ! vendor/bin/pint --dirty --test --format=txt; then
+if ! vendor/bin/pint --dirty --blade --test --format=txt; then
     echo ""
     echo "Commit blocked: Pint found formatting issues."
-    echo "Run 'vendor/bin/pint --dirty' to fix them."
+    echo "Run 'vendor/bin/pint --dirty --blade' to fix them."
     exit 1
 fi
 

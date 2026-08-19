@@ -5,14 +5,17 @@ use App\Http\Controllers\Stripe\StripeConnectController;
 use Illuminate\Http\RedirectResponse;
 
 test('stripe connect controller redirects to onboarding url', function () {
-    $action = Mockery::mock(InitiateStripeConnect::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->with(
-            Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=refresh')),
-            Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=complete')),
-        )
-        ->andReturn('https://connect.stripe.com/setup/test123');
+    $action = new class extends InitiateStripeConnect {
+        public function __construct() {}
+
+        public function __invoke(string $refreshUrl, string $returnUrl): string
+        {
+            expect($refreshUrl)->toContain('stripe_connect=refresh')
+                ->and($returnUrl)->toContain('stripe_connect=complete');
+
+            return 'https://connect.stripe.com/setup/test123';
+        }
+    };
 
     $controller = new StripeConnectController;
     $response = $controller($action);
@@ -22,22 +25,25 @@ test('stripe connect controller redirects to onboarding url', function () {
 });
 
 test('stripe connect controller passes correct refresh and return urls', function () {
-    $capturedRefresh = null;
-    $capturedReturn = null;
+    $action = new class extends InitiateStripeConnect {
+        public ?string $capturedRefresh = null;
 
-    $action = Mockery::mock(InitiateStripeConnect::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->andReturnUsing(function (string $refreshUrl, string $returnUrl) use (&$capturedRefresh, &$capturedReturn) {
-            $capturedRefresh = $refreshUrl;
-            $capturedReturn = $returnUrl;
+        public ?string $capturedReturn = null;
+
+        public function __construct() {}
+
+        public function __invoke(string $refreshUrl, string $returnUrl): string
+        {
+            $this->capturedRefresh = $refreshUrl;
+            $this->capturedReturn = $returnUrl;
 
             return 'https://connect.stripe.com/test';
-        });
+        }
+    };
 
     $controller = new StripeConnectController;
     $controller($action);
 
-    expect($capturedRefresh)->toContain('/admin/onboarding?stripe_connect=refresh')
-        ->and($capturedReturn)->toContain('/admin/onboarding?stripe_connect=complete');
+    expect($action->capturedRefresh)->toContain('/admin/onboarding?stripe_connect=refresh')
+        ->and($action->capturedReturn)->toContain('/admin/onboarding?stripe_connect=complete');
 });

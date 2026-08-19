@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureStorefrontEnabled
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         $tenant = tenancy()->tenant;

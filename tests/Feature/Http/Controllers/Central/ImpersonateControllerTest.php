@@ -13,10 +13,10 @@ test('platform admin can impersonate a tenant', function () {
     $user = User::factory()->platformAdmin()->create();
     $tenant = Tenant::factory()->create();
 
-    $action = Mockery::mock(CreateImpersonationToken::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->andReturn('https://test-bakery.kneadit.test/impersonate/token123');
+    $action = JMac\Testing\Double::for(CreateImpersonationToken::class);
+    $action->expects('__invoke')
+
+        ->returns('https://test-bakery.kneadit.test/impersonate/token123');
 
     app()->instance(CreateImpersonationToken::class, $action);
 

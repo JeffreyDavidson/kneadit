@@ -13,7 +13,7 @@ test('get activities returns collection', function () {
     PlatformActivity::factory()->create(['event' => 'tenant_created', 'description' => 'New tenant']);
     PlatformActivity::factory()->create(['event' => 'plan_changed', 'description' => 'Plan upgraded']);
 
-    $result = test()->page->getActivities();
+    $result = testFixture('page', Activity::class)->getActivities();
 
     expect($result)->toHaveCount(2);
 });
@@ -41,19 +41,19 @@ test('get action category', function () {
 });
 
 test('audit trail filter properties exist', function () {
-    expect(test()->page->filterAction)->toBeEmpty()->and(test()->page->filterSearch)->toBeEmpty()->and(test()->page->filterDateFrom)->toBeEmpty()->and(test()->page->filterDateTo)->toBeEmpty()->and(test()->page->page)->toBe(1)->and(test()->page->perPage)->toBe(20);
+    expect(testFixture('page', Activity::class)->filterAction)->toBeEmpty()->and(testFixture('page', Activity::class)->filterSearch)->toBeEmpty()->and(testFixture('page', Activity::class)->filterDateFrom)->toBeEmpty()->and(testFixture('page', Activity::class)->filterDateTo)->toBeEmpty()->and(testFixture('page', Activity::class)->page)->toBe(1)->and(testFixture('page', Activity::class)->perPage)->toBe(20);
 });
 
 test('active tab defaults to platform', function () {
-    expect(test()->page->activeTab)->toBe('platform');
+    expect(testFixture('page', Activity::class)->activeTab)->toBe('platform');
 });
 
 test('reset filters', function () {
-    test()->page->filterAction = 'created_tenant';
-    test()->page->filterSearch = 'test';
-    test()->page->page = 3;
+    testFixture('page', Activity::class)->filterAction = 'created_tenant';
+    testFixture('page', Activity::class)->filterSearch = 'test';
+    testFixture('page', Activity::class)->page = 3;
 
-    test()->page->resetFilters();
+    testFixture('page', Activity::class)->resetFilters();
 
-    expect(test()->page->filterAction)->toBeEmpty()->and(test()->page->filterSearch)->toBeEmpty()->and(test()->page->page)->toBe(1);
+    expect(testFixture('page', Activity::class)->filterAction)->toBeEmpty()->and(testFixture('page', Activity::class)->filterSearch)->toBeEmpty()->and(testFixture('page', Activity::class)->page)->toBe(1);
 });

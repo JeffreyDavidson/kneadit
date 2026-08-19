@@ -12,14 +12,14 @@ beforeEach(function () {
 });
 
 test('get title returns team management', function () {
-    expect(test()->page->getTitle())->toBe('Team Management');
+    expect(testFixture('page', StaffManagement::class)->getTitle())->toBe('Team Management');
 });
 
 test('get team members returns users sorted by role', function () {
     User::factory()->manager()->create();
     User::factory()->staff()->create();
 
-    $members = test()->page->getTeamMembers();
+    $members = testFixture('page', StaffManagement::class)->getTeamMembers();
 
     expect($members)->toHaveCount(3)
         ->and($members->first()->role)->toBe(UserRole::Owner);
@@ -42,7 +42,7 @@ test('get pending invitations returns only valid unexpired invitations', functio
         'expires_at' => now()->addDay(),
     ]);
 
-    $invitations = test()->page->getPendingInvitations();
+    $invitations = testFixture('page', StaffManagement::class)->getPendingInvitations();
 
     expect($invitations)->toHaveCount(1)
         ->and($invitations->first()->email)->toBe('valid@test.com');

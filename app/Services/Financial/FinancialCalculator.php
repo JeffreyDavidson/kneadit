@@ -69,29 +69,29 @@ class FinancialCalculator
             ->groupBy(fn (Expense $e) => (int) $e->date?->month)
             ->map(fn (Collection $group) => $group->sum(fn (Expense $e) => $e->amount->dollars()));
 
-        $breakdown = collect();
+        $breakdown = [];
 
         for ($month = 1; $month <= 12; $month++) {
             $totalMonthRevenue = ($orderRevenueByMonth[$month] ?? 0.0) + ($incomeByMonth[$month] ?? 0.0);
             $monthExpenses = $expensesByMonth[$month] ?? 0.0;
 
-            $breakdown->push(new MonthlyFinancials(
+            $breakdown[] = new MonthlyFinancials(
                 month: $month,
                 monthName: date('F', (int) mktime(0, 0, 0, $month, 1)),
                 revenue: $totalMonthRevenue,
                 expenses: $monthExpenses,
                 net: $totalMonthRevenue - $monthExpenses,
-            ));
+            );
         }
 
-        return $breakdown;
+        return collect($breakdown);
     }
 
     /** @return Collection<int, array{category: string, amount: float, percentage: float}> */
     private function expenseBreakdown(int $year, float $totalExpenses): Collection
     {
         if ($totalExpenses == 0) {
-            return collect();
+            return new Collection;
         }
 
         // total_amount comes from SUM(expenses.amount) which is bigint cents.

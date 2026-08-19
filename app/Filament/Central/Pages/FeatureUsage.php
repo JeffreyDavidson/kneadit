@@ -75,7 +75,7 @@ class FeatureUsage extends Page
     public function getFeatureTenantBreakdown(): Collection
     {
         if (! $this->selectedFeature) {
-            return collect();
+            return new Collection;
         }
 
         return FeatureUsageQuery::featureTenantBreakdown($this->selectedFeature);

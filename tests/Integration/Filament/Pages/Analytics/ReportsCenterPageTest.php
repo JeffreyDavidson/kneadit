@@ -8,73 +8,73 @@ beforeEach(function () {
 });
 
 test('active report defaults to empty', function () {
-    expect(test()->page->activeReport)->toBeEmpty();
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBeEmpty();
 });
 
 test('report data defaults to empty array', function () {
-    expect(test()->page->reportData)->toBeEmpty();
+    expect(testFixture('page', ReportsCenter::class)->reportData)->toBeEmpty();
 });
 
 test('mount sets start date to first of month', function () {
-    test()->page->mount();
+    testFixture('page', ReportsCenter::class)->mount();
 
-    expect(test()->page->startDate)->toBe(now()->startOfMonth()->format('Y-m-d'));
+    expect(testFixture('page', ReportsCenter::class)->startDate)->toBe(now()->startOfMonth()->format('Y-m-d'));
 });
 
 test('mount sets end date to today', function () {
-    test()->page->mount();
+    testFixture('page', ReportsCenter::class)->mount();
 
-    expect(test()->page->endDate)->toBe(now()->format('Y-m-d'));
+    expect(testFixture('page', ReportsCenter::class)->endDate)->toBe(now()->format('Y-m-d'));
 });
 
 test('mount sets selected year to current year', function () {
-    test()->page->mount();
+    testFixture('page', ReportsCenter::class)->mount();
 
-    expect(test()->page->selectedYear)->toBe(now()->year);
+    expect(testFixture('page', ReportsCenter::class)->selectedYear)->toBe(now()->year);
 });
 
 test('generate report sets active report type', function () {
-    test()->page->mount();
-    test()->page->generateReport('sales');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('sales');
 
-    expect(test()->page->activeReport)->toBe('sales');
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBe('sales');
 });
 
 test('generate report with inventory type', function () {
-    test()->page->mount();
-    test()->page->generateReport('inventory');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('inventory');
 
-    expect(test()->page->activeReport)->toBe('inventory')
-        ->and(test()->page->reportData)->toBeArray();
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBe('inventory')
+        ->and(testFixture('page', ReportsCenter::class)->reportData)->toBeArray();
 });
 
 test('generate report with unknown type returns empty', function () {
-    test()->page->mount();
-    test()->page->generateReport('unknown_type');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('unknown_type');
 
-    expect(test()->page->reportData)->toBeEmpty();
+    expect(testFixture('page', ReportsCenter::class)->reportData)->toBeEmpty();
 });
 
 test('generate report with customers type', function () {
-    test()->page->mount();
-    test()->page->generateReport('customers');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('customers');
 
-    expect(test()->page->activeReport)->toBe('customers')
-        ->and(test()->page->reportData)->toBeArray();
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBe('customers')
+        ->and(testFixture('page', ReportsCenter::class)->reportData)->toBeArray();
 });
 
 test('generate report with products type', function () {
-    test()->page->mount();
-    test()->page->generateReport('products');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('products');
 
-    expect(test()->page->activeReport)->toBe('products')
-        ->and(test()->page->reportData)->toBeArray();
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBe('products')
+        ->and(testFixture('page', ReportsCenter::class)->reportData)->toBeArray();
 });
 
 test('generate report with financial type', function () {
-    test()->page->mount();
-    test()->page->generateReport('financial');
+    testFixture('page', ReportsCenter::class)->mount();
+    testFixture('page', ReportsCenter::class)->generateReport('financial');
 
-    expect(test()->page->activeReport)->toBe('financial')
-        ->and(test()->page->reportData)->toBeArray();
+    expect(testFixture('page', ReportsCenter::class)->activeReport)->toBe('financial')
+        ->and(testFixture('page', ReportsCenter::class)->reportData)->toBeArray();
 });

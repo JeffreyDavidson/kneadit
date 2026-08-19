@@ -21,6 +21,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
@@ -159,8 +160,8 @@ class CustomersTable
 
                             $sent = resolve(SendBulkCustomerMessage::class)(
                                 $customers,
-                                messageSubject: $data['subject'],
-                                body: $data['body'],
+                                messageSubject: Arr::string($data, 'subject'),
+                                body: Arr::string($data, 'body'),
                             );
 
                             Notification::make()

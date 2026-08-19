@@ -9,13 +9,13 @@ beforeEach(function () {
 });
 
 test('get upcoming birthdays returns empty when no customers', function () {
-    expect(test()->widget->getUpcomingBirthdays())->toBeEmpty();
+    expect(testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays())->toBeEmpty();
 });
 
 test('get upcoming birthdays returns empty when no birthdays set', function () {
     Customer::factory()->create(['birthday' => null]);
 
-    expect(test()->widget->getUpcomingBirthdays())->toBeEmpty();
+    expect(testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays())->toBeEmpty();
 });
 
 test('get upcoming birthdays includes customer with upcoming birthday', function () {
@@ -26,7 +26,7 @@ test('get upcoming birthdays includes customer with upcoming birthday', function
         'birthday' => $birthdayDate->subYears(25),
     ]);
 
-    $birthdays = test()->widget->getUpcomingBirthdays();
+    $birthdays = testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays();
 
     expect($birthdays)->toHaveCount(1)
         ->and($birthdays->first()->customer_name)->toBe('Birthday Customer');
@@ -38,13 +38,13 @@ test('get upcoming birthdays excludes customers beyond 30 days', function () {
         'birthday' => $birthdayDate->subYears(30),
     ]);
 
-    $birthdays = test()->widget->getUpcomingBirthdays();
+    $birthdays = testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays();
 
     expect($birthdays)->toBeEmpty();
 });
 
 test('get upcoming birthdays limited to 5 results at medium size', function () {
-    test()->widget->dashboardSize = 'md';
+    testFixture('widget', BirthdayWidget::class)->dashboardSize = 'md';
 
     for ($i = 1; $i <= 8; $i++) {
         Customer::factory()->create([
@@ -52,7 +52,7 @@ test('get upcoming birthdays limited to 5 results at medium size', function () {
         ]);
     }
 
-    $birthdays = test()->widget->getUpcomingBirthdays();
+    $birthdays = testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays();
 
     expect($birthdays)->toHaveCount(5);
 });
@@ -67,7 +67,7 @@ test('get upcoming birthdays sorted by days until', function () {
         'birthday' => now()->addDays(2)->subYears(25),
     ]);
 
-    $birthdays = test()->widget->getUpcomingBirthdays();
+    $birthdays = testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays();
 
     expect($birthdays)->toHaveCount(2)
         ->and($birthdays->first()->customer_name)->toBe('Sooner')

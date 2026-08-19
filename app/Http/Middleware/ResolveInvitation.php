@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResolveInvitation
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         $invitation = StaffInvitation::query()

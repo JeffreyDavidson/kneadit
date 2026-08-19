@@ -24,8 +24,8 @@ beforeEach(function () {
 
 test('points awarded when order delivered', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -34,7 +34,7 @@ test('points awarded when order delivered', function () {
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
     assertDatabaseHas('loyalty_points', [
-        'customer_id' => test()->customer->id,
+        'customer_id' => testFixture('customer', Customer::class)->id,
         'order_id' => $order->id,
         'type' => 'earned',
     ]);
@@ -42,8 +42,8 @@ test('points awarded when order delivered', function () {
 
 test('points calculated correctly', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -60,8 +60,8 @@ test('points not awarded when loyalty disabled', function () {
     settings(['loyalty_enabled' => '0']);
 
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -74,8 +74,8 @@ test('points not awarded when loyalty disabled', function () {
 
 test('points not double awarded', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -90,17 +90,17 @@ test('points not double awarded', function () {
 });
 
 test('total points calculated correctly', function () {
-    LoyaltyPoint::factory()->earned(100)->for(test()->customer)->create();
-    LoyaltyPoint::factory()->earned(50)->for(test()->customer)->create();
-    LoyaltyPoint::factory()->redeemed(30)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(100)->for(testFixture('customer', Customer::class))->create();
+    LoyaltyPoint::factory()->earned(50)->for(testFixture('customer', Customer::class))->create();
+    LoyaltyPoint::factory()->redeemed(30)->for(testFixture('customer', Customer::class))->create();
 
-    expect(resolve(CustomerIntelligence::class)->metrics(test()->customer)->totalPoints)->toBe(120); // 100 + 50 - 30
+    expect(resolve(CustomerIntelligence::class)->metrics(testFixture('customer', Customer::class))->totalPoints)->toBe(120); // 100 + 50 - 30
 });
 
 test('lifetime points only counts earned', function () {
-    LoyaltyPoint::factory()->earned(100)->for(test()->customer)->create();
-    LoyaltyPoint::factory()->earned(50)->for(test()->customer)->create();
-    LoyaltyPoint::factory()->redeemed(30)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(100)->for(testFixture('customer', Customer::class))->create();
+    LoyaltyPoint::factory()->earned(50)->for(testFixture('customer', Customer::class))->create();
+    LoyaltyPoint::factory()->redeemed(30)->for(testFixture('customer', Customer::class))->create();
 
-    expect(resolve(CustomerIntelligence::class)->metrics(test()->customer)->lifetimePointsEarned)->toBe(150);
+    expect(resolve(CustomerIntelligence::class)->metrics(testFixture('customer', Customer::class))->lifetimePointsEarned)->toBe(150);
 });

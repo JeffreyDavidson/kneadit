@@ -23,6 +23,7 @@ use function Sentry\configureScope;
  */
 class SetActorContext
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
@@ -40,7 +41,7 @@ class SetActorContext
                 $tenant = tenancy()->tenant;
 
                 if ($tenant instanceof Tenant) {
-                    $scope->setTag('tenant_id', (string) $tenant->getTenantKey());
+                    $scope->setTag('tenant_id', $tenant->id);
                 }
             });
         }

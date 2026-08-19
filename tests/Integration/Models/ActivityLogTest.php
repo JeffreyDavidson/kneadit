@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 test('creating a product logs created activity', function () {
-    $product = Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    $product = Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
 
@@ -22,7 +22,7 @@ test('creating a product logs created activity', function () {
 });
 
 test('updating a product logs updated activity', function () {
-    $product = Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    $product = Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
     $product->update(['price' => 6.00]);
 
@@ -32,7 +32,7 @@ test('updating a product logs updated activity', function () {
 });
 
 test('deleting a product logs deleted activity', function () {
-    $product = Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    $product = Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
     $productId = $product->id;
 
     $product->delete();
@@ -43,9 +43,9 @@ test('deleting a product logs deleted activity', function () {
 });
 
 test('activity log stores user name', function () {
-    actingAs(test()->user);
+    actingAs(testFixture('user', User::class));
 
-    Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 
@@ -53,7 +53,7 @@ test('activity log stores user name', function () {
 });
 
 test('changes are captured in properties', function () {
-    $product = Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    $product = Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
     $product->update(['price' => 7.50]);
 
@@ -63,7 +63,7 @@ test('changes are captured in properties', function () {
 });
 
 test('system user name when not authenticated', function () {
-    Product::factory()->for(test()->category)->create(['name' => 'Sourdough']);
+    Product::factory()->for(testFixture('category', Category::class))->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 

@@ -8,19 +8,19 @@ beforeEach(function () {
 });
 
 test('active tab defaults to health', function () {
-    expect(test()->page->activeTab)->toBe('health');
+    expect(testFixture('page', BakeryInsights::class)->activeTab)->toBe('health');
 });
 
 test('extended trials is empty array', function () {
-    expect(test()->page->extendedTrials)->toBeArray()->toBeEmpty();
+    expect(testFixture('page', BakeryInsights::class)->extendedTrials)->toBeArray()->toBeEmpty();
 });
 
 test('sent nudges is empty array', function () {
-    expect(test()->page->sentNudges)->toBeArray()->toBeEmpty();
+    expect(testFixture('page', BakeryInsights::class)->sentNudges)->toBeArray()->toBeEmpty();
 });
 
 test('get next plan', function () {
-    expect(test()->page->getNextPlan('starter'))->toBe('Growth')->and(test()->page->getNextPlan('growth'))->toBe('Pro')->and(test()->page->getNextPlan('pro'))->toBeNull();
+    expect(testFixture('page', BakeryInsights::class)->getNextPlan('starter'))->toBe('Growth')->and(testFixture('page', BakeryInsights::class)->getNextPlan('growth'))->toBe('Pro')->and(testFixture('page', BakeryInsights::class)->getNextPlan('pro'))->toBeNull();
 });
 
 test('plan limits constant exists', function () {
@@ -28,13 +28,13 @@ test('plan limits constant exists', function () {
 });
 
 test('get health summary stats returns expected keys', function () {
-    $result = test()->page->getHealthSummaryStats();
+    $result = testFixture('page', BakeryInsights::class)->getHealthSummaryStats();
 
     expect($result)->toHaveKeys(['average', 'healthy', 'at_risk', 'critical', 'total']);
 });
 
 test('get health summary stats with no tenants', function () {
-    $result = test()->page->getHealthSummaryStats();
+    $result = testFixture('page', BakeryInsights::class)->getHealthSummaryStats();
     expect($result)->toMatchArray(['average' => 0, 'total' => 0]);
 });
 

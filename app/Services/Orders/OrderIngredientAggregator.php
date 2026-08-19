@@ -3,6 +3,7 @@
 namespace App\Services\Orders;
 
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use Illuminate\Support\Collection;
@@ -40,20 +41,24 @@ class OrderIngredientAggregator
      */
     private function aggregateIngredients(Collection $orderItems): Collection
     {
-        $aggregated = collect();
+        $aggregated = [];
 
         foreach ($orderItems as $orderItem) {
             $product = $orderItem->product;
             $quantity = $orderItem->quantity;
 
-            foreach (($product->recipes ?? collect()) as $recipe) {
+            if (! $product instanceof Product) {
+                continue;
+            }
+
+            foreach ($product->recipes as $recipe) {
                 if (! $recipe->ingredients) {
                     continue;
                 }
 
                 foreach ($recipe->ingredients as $ingredient) {
                     $name = $ingredient['name'] ?? '';
-                    $ingredientQuantity = $ingredient['quantity'] ?? 0;
+                    $ingredientQuantity = $ingredient['quantity'] ?? 0.0;
                     $unit = $ingredient['unit'] ?? '';
 
                     if (! $name) {
@@ -63,7 +68,7 @@ class OrderIngredientAggregator
                     $key = "{$name}|{$unit}";
                     $totalQuantity = $ingredientQuantity * $quantity;
 
-                    if ($aggregated->has($key)) {
+                    if (array_key_exists($key, $aggregated)) {
                         $aggregated[$key]['quantity'] += $totalQuantity;
                     } else {
                         $aggregated[$key] = [
@@ -76,7 +81,7 @@ class OrderIngredientAggregator
             }
         }
 
-        return $aggregated;
+        return collect($aggregated);
     }
 
     /**

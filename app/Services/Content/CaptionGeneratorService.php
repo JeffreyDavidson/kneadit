@@ -25,7 +25,7 @@ class CaptionGeneratorService
             $selectedHashtags = Arr::random($hashtags, min(random_int(8, 15), count($hashtags)));
 
             $captions[] = [
-                'text' => $hook . "\n\n" . $body . "\n\n" . implode(' ', $selectedHashtags),
+                'text' => $hook . "\n\n" . $body . "\n\n" . implode(' ', array_values(array_filter($selectedHashtags, is_string(...)))),
                 'variation' => $i + 1,
             ];
         }

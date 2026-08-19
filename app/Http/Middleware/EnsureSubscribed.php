@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSubscribed
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next, ?string $plan = null): Response
     {
         $user = $request->user();

@@ -8,41 +8,41 @@ beforeEach(function () {
 });
 
 test('mount sets selected date to today', function () {
-    test()->page->mount();
+    testFixture('page', DeliveryRoutePlanner::class)->mount();
 
-    expect(test()->page->selectedDate)->toBe(now()->format('Y-m-d'));
+    expect(testFixture('page', DeliveryRoutePlanner::class)->selectedDate)->toBe(now()->format('Y-m-d'));
 });
 
 test('mount loads store address', function () {
-    test()->page->mount();
+    testFixture('page', DeliveryRoutePlanner::class)->mount();
 
-    expect(test()->page->storeAddress)->toBeString();
+    expect(testFixture('page', DeliveryRoutePlanner::class)->storeAddress)->toBeString();
 });
 
 test('mount loads orders', function () {
-    test()->page->mount();
+    testFixture('page', DeliveryRoutePlanner::class)->mount();
 
-    expect(test()->page->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', DeliveryRoutePlanner::class)->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('load orders with null date sets empty collection', function () {
-    test()->page->selectedDate = null;
+    testFixture('page', DeliveryRoutePlanner::class)->selectedDate = null;
 
-    test()->page->loadOrders();
+    testFixture('page', DeliveryRoutePlanner::class)->loadOrders();
 
-    expect(test()->page->deliveryOrders)->toBeEmpty();
+    expect(testFixture('page', DeliveryRoutePlanner::class)->deliveryOrders)->toBeEmpty();
 });
 
 test('load orders with valid date populates collection', function () {
-    test()->page->selectedDate = now()->format('Y-m-d');
+    testFixture('page', DeliveryRoutePlanner::class)->selectedDate = now()->format('Y-m-d');
 
-    test()->page->loadOrders();
+    testFixture('page', DeliveryRoutePlanner::class)->loadOrders();
 
-    expect(test()->page->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', DeliveryRoutePlanner::class)->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get route stats returns array', function () {
-    test()->page->mount();
+    testFixture('page', DeliveryRoutePlanner::class)->mount();
 
-    expect(test()->page->getRouteStats())->toBeArray();
+    expect(testFixture('page', DeliveryRoutePlanner::class)->getRouteStats())->toBeArray();
 });

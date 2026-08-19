@@ -2,6 +2,7 @@
 
 namespace App\Queries\Platform;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
@@ -37,10 +38,12 @@ class TenantAnalyticsQuery
     /** @return array<string, mixed> */
     public static function planDistribution(): array
     {
-        return Tenant::query()->select('plan', DB::raw('count(*) as count'))
+        $plans = Tenant::query()->select('plan', DB::raw('count(*) as count'))
             ->groupBy('plan')
             ->pluck('count', 'plan')
-            ->toArray();
+            ->all();
+
+        return SettingValue::map($plans);
     }
 
     /** @return array<string, int> */

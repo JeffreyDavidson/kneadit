@@ -25,7 +25,7 @@ test('guardCapacity throws when date is at capacity', function () {
     settings(['default_daily_capacity' => '1']);
 
     Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create(['delivery_date' => $date, 'status' => OrderStatus::Confirmed]);
 
     resolve(InventoryManager::class)->guardCapacity($date);
@@ -46,7 +46,7 @@ test('deductForOrder deducts ingredient stock', function () {
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.5, 'unit' => 'kg']);
 
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create(['status' => OrderStatus::Baking]);
     OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 3,

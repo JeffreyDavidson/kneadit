@@ -21,6 +21,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 /**
  * @property-read Order $record
@@ -64,7 +65,7 @@ class ViewOrder extends ViewRecord
                 ])
                 ->action(function (array $data): void {
                     try {
-                        resolve(TransitionOrderStatus::class)($this->record, OrderStatus::from($data['status']));
+                        resolve(TransitionOrderStatus::class)($this->record, OrderStatus::from(Arr::string($data, 'status')));
                         Notification::make()->title('Order status updated successfully.')->success()->send();
                     } catch (InvalidOrderTransitionException $e) {
                         Notification::make()->title($e->getMessage())->danger()->send();
@@ -127,7 +128,7 @@ class ViewOrder extends ViewRecord
                     resolve(SendOrderMessage::class)(
                         order: $this->record,
                         senderName: $bakerName,
-                        message: $data['message'],
+                        message: Arr::string($data, 'message'),
                         senderType: SenderType::Baker,
                     );
 
@@ -146,7 +147,7 @@ class ViewOrder extends ViewRecord
                         ->rows(3),
                 ])
                 ->action(function (array $data): void {
-                    resolve(AddOrderNote::class)($this->record, $data['note']);
+                    resolve(AddOrderNote::class)($this->record, Arr::string($data, 'note'));
 
                     $this->record->refresh();
 

@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 test('can list reviews in the table', function () {
-    $reviews = Review::factory()->recycle(test()->product)->count(3)->create();
+    $reviews = Review::factory()->recycle(testFixture('product', Product::class))->count(3)->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanSeeTableRecords($reviews);
@@ -44,14 +44,14 @@ test('can create a review via slide-over', function () {
 });
 
 test('can render review table columns', function (string $column) {
-    Review::factory()->recycle(test()->product)->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);
 
 test('can edit a review via table action', function () {
-    $review = Review::factory()->recycle(test()->product)->create();
+    $review = Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     Livewire::test(ListReviews::class)
         ->callAction(TestAction::make('edit')->table($review), data: [
@@ -67,7 +67,7 @@ test('can edit a review via table action', function () {
 
 test('can filter reviews by approval status', function () {
     $approved = Review::factory()->approved()->create();
-    $pending = Review::factory()->recycle(test()->product)->create();
+    $pending = Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     Livewire::test(ListReviews::class)
         ->filterTable('is_approved', 1)
@@ -117,14 +117,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $review = Review::factory()->recycle(test()->product)->create(['customer_name' => 'Alice Baker']);
+    $review = Review::factory()->recycle(testFixture('product', Product::class))->create(['customer_name' => 'Alice Baker']);
 
     expect(App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultTitle($review))
         ->toBe('Review by Alice Baker');
 });
 
 test('resource returns global search result details', function () {
-    $review = Review::factory()->recycle(test()->product)->create(['rating' => 4]);
+    $review = Review::factory()->recycle(testFixture('product', Product::class))->create(['rating' => 4]);
 
     $details = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultDetails($review);
 

@@ -91,10 +91,10 @@ class ProductAnalysisService
     private function formatIngredients(?Recipe $recipe): Collection
     {
         if (! $recipe || ! $recipe->ingredients) {
-            return collect();
+            return new Collection;
         }
 
-        return collect($recipe->ingredients)->map(function (array $ingredient) {
+        return collect($recipe->ingredients)->map(function (array $ingredient): array {
             $cost = (float) ($ingredient['cost'] ?? 0);
             $quantity = (float) ($ingredient['quantity'] ?? 0);
 

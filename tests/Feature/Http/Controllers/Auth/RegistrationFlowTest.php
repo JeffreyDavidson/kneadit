@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 
 use function Pest\Laravel\actingAs;
@@ -124,10 +123,6 @@ test('onboarding page loads', function () {
 
 test('onboarding store creates tenant', function () {
     $user = User::factory()->create();
-
-    $this->mock(Tenant::class, function ($mock) {
-        $mock->shouldReceive('create')->andReturn(new Tenant);
-    });
 
     $response = actingAs($user)
         ->post(route('onboarding.store'), [

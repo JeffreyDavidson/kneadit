@@ -87,7 +87,7 @@ test('nextReward is null when all rewards are reachable', function () {
 });
 
 test('nextReward is null when no rewards exist', function () {
-    $vm = makeLoyaltyVm(['rewards' => collect()]);
+    $vm = makeLoyaltyVm(['rewards' => (new LoyaltyReward)->newCollection()]);
 
     expect($vm->nextReward)->toBeNull();
 });

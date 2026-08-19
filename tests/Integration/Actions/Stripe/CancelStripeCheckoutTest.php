@@ -15,8 +15,8 @@ beforeEach(function () {
 
 test('sets order payment status to unpaid', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create();
 
     resolve(CancelStripeCheckout::class)($order);

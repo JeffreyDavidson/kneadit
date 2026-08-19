@@ -15,6 +15,7 @@ use App\Enums\Operations\ActivityAction;
 use App\Enums\Orders\SenderType;
 use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Storefront\StorefrontTheme;
+use Filament\Support\Contracts\HasLabel;
 
 // ---------------------------------------------------------------------------
 // Simple HasLabel enums — every case returns a non-empty label
@@ -43,7 +44,7 @@ dataset('simple_label_enums', function () {
     }
 });
 
-test('every case has a non-empty label', function ($case) {
+test('every case has a non-empty label', function (HasLabel $case) {
     expect($case->getLabel())->toBeString()->not->toBeEmpty();
 })->with('simple_label_enums');
 

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property-read int|null $units_sold
  * @property-read float|null $revenue
+ * @property int $quantity
  * @property Money $unit_price
  *
  * @mixin \Eloquent

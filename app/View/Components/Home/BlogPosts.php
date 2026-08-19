@@ -32,7 +32,7 @@ class BlogPosts extends Component
                 ->take($count)
                 ->get();
         } catch (\Exception) {
-            $this->latestPosts = collect();
+            $this->latestPosts = (new BlogPost)->newCollection();
         }
     }
 

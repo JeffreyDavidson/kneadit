@@ -24,7 +24,7 @@ test('it dispatches order.cancelled webhook with order data', function () {
     settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     resolve(DispatchOrderCancelledWebhookListener::class)->handle(
         new OrderCancelled($order, OrderStatus::Baking),
@@ -41,7 +41,7 @@ test('it dispatches order.cancelled webhook with order data', function () {
 });
 
 test('it does not dispatch webhook when no webhook url is configured', function () {
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     resolve(DispatchOrderCancelledWebhookListener::class)->handle(
         new OrderCancelled($order, OrderStatus::Pending),
@@ -56,7 +56,7 @@ test('failed method logs a warning with order number and error message', functio
         ->with('Order cancelled webhook dispatch failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-CANCEL-001'
             && $context['error'] === 'Connection refused'));
 
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create(['order_number' => 'ORD-CANCEL-001']);
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create(['order_number' => 'ORD-CANCEL-001']);
     $event = new OrderCancelled($order, OrderStatus::Baking);
 
     resolve(DispatchOrderCancelledWebhookListener::class)->failed($event, new RuntimeException('Connection refused'));

@@ -20,6 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class IngredientsTable
 {
@@ -83,12 +84,13 @@ class IngredientsTable
                             ->maxLength(255),
                     ])
                     ->action(function (Ingredient $record, array $data) {
-                        $qty = (float) $data['quantity'];
-                        $type = StockAdjustmentType::from($data['type']);
+                        $qty = Arr::float($data, 'quantity');
+                        $type = StockAdjustmentType::from(Arr::string($data, 'type'));
+                        $notes = Arr::string($data, 'notes', '');
                         if (in_array($type, [StockAdjustmentType::Usage, StockAdjustmentType::Waste])) {
                             $qty = -$qty;
                         }
-                        resolve(AdjustIngredientStock::class)($record, $qty, $type, $data['notes'] ?? null);
+                        resolve(AdjustIngredientStock::class)($record, $qty, $type, $notes !== '' ? $notes : null);
                     }),
                 SlideOverEditAction::make(),
             ])
@@ -108,9 +110,11 @@ class IngredientsTable
                                 ->maxLength(255),
                         ])
                         ->action(function (Collection $records, array $data) {
+                            $quantity = Arr::float($data, 'quantity');
+                            $notes = Arr::string($data, 'notes', '');
                             /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
-                                resolve(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], StockAdjustmentType::Purchase, $data['notes'] ?? null);
+                                resolve(AdjustIngredientStock::class)($ingredient, $quantity, StockAdjustmentType::Purchase, $notes !== '' ? $notes : null);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),

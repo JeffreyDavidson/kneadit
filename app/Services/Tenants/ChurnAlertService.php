@@ -19,7 +19,7 @@ class ChurnAlertService
     {
         $tenants = Tenant::all();
         $healthData = $this->healthService->getTenantHealthData()->keyBy('id');
-        $alerts = collect();
+        $alerts = [];
 
         foreach ($tenants as $tenant) {
             $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
@@ -32,14 +32,14 @@ class ChurnAlertService
             $this->checkLowHealth($tenant, $healthScore, $daysSinceSignup, $alerts);
         }
 
-        return $alerts->sortByDesc(fn (array $a) => $a['severity'] === 'critical' ? 1 : 0)->values();
+        return collect($alerts)->sortByDesc(fn (array $alert): int => $alert['severity'] === 'critical' ? 1 : 0)->values();
     }
 
     /**
      * @param HealthData|null $health
-     * @param Collection<int, array<string, mixed>> $alerts
+     * @param array<int, array<string, mixed>> $alerts
      */
-    private function checkTrialExpiring(Tenant $tenant, ?array $health, int $daysSinceSignup, Collection $alerts): void
+    private function checkTrialExpiring(Tenant $tenant, ?array $health, int $daysSinceSignup, array &$alerts): void
     {
         if (! $tenant->trial_ends_at) {
             return;
@@ -55,7 +55,7 @@ class ChurnAlertService
             return;
         }
 
-        $alerts->push([
+        $alerts[] = [
             'tenant_id' => $tenant->id,
             'name' => $tenant->store_name ?? $tenant->name,
             'type' => 'trial_expiring',
@@ -63,11 +63,11 @@ class ChurnAlertService
             'description' => "Trial ends {$trialEnds->diffForHumans()} with less than 50% setup complete.",
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'critical',
-        ]);
+        ];
     }
 
-    /** @param Collection<int, array<string, mixed>> $alerts */
-    private function checkNoLogin(Tenant $tenant, int $daysSinceSignup, Collection $alerts): void
+    /** @param array<int, array<string, mixed>> $alerts */
+    private function checkNoLogin(Tenant $tenant, int $daysSinceSignup, array &$alerts): void
     {
         $lastLogin = $tenant->last_login_at;
         if (! $lastLogin) {
@@ -79,7 +79,7 @@ class ChurnAlertService
             return;
         }
 
-        $alerts->push([
+        $alerts[] = [
             'tenant_id' => $tenant->id,
             'name' => $tenant->store_name ?? $tenant->name,
             'type' => 'no_login',
@@ -87,11 +87,11 @@ class ChurnAlertService
             'description' => "No login activity in {$days} days.",
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'warning',
-        ]);
+        ];
     }
 
-    /** @param Collection<int, array<string, mixed>> $alerts */
-    private function checkNoOrders(Tenant $tenant, int $daysSinceSignup, Collection $alerts): void
+    /** @param array<int, array<string, mixed>> $alerts */
+    private function checkNoOrders(Tenant $tenant, int $daysSinceSignup, array &$alerts): void
     {
         if ($daysSinceSignup <= $this->configInt('monitoring.churn_min_tenant_age_days', 14)) {
             return;
@@ -103,7 +103,7 @@ class ChurnAlertService
             return;
         }
 
-        $alerts->push([
+        $alerts[] = [
             'tenant_id' => $tenant->id,
             'name' => $tenant->store_name ?? $tenant->name,
             'type' => 'no_orders',
@@ -111,17 +111,17 @@ class ChurnAlertService
             'description' => "Zero orders in the last {$days} days.",
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'warning',
-        ]);
+        ];
     }
 
-    /** @param Collection<int, array<string, mixed>> $alerts */
-    private function checkLowHealth(Tenant $tenant, int $healthScore, int $daysSinceSignup, Collection $alerts): void
+    /** @param array<int, array<string, mixed>> $alerts */
+    private function checkLowHealth(Tenant $tenant, int $healthScore, int $daysSinceSignup, array &$alerts): void
     {
         if ($healthScore >= $this->configInt('monitoring.churn_low_health_threshold', 40)) {
             return;
         }
 
-        $alerts->push([
+        $alerts[] = [
             'tenant_id' => $tenant->id,
             'name' => $tenant->store_name ?? $tenant->name,
             'type' => 'low_health',
@@ -129,7 +129,7 @@ class ChurnAlertService
             'description' => "Health score is {$healthScore}/100.",
             'days_since_signup' => $daysSinceSignup,
             'severity' => 'critical',
-        ]);
+        ];
     }
 
     private function configInt(string $key, int $default): int

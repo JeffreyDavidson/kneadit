@@ -10,42 +10,42 @@ beforeEach(function () {
 });
 
 test('product id defaults to null', function () {
-    expect(test()->page->product_id)->toBeNull();
+    expect(testFixture('page', SeasonalItems::class)->product_id)->toBeNull();
 });
 
 test('available from defaults to null', function () {
-    expect(test()->page->available_from)->toBeNull();
+    expect(testFixture('page', SeasonalItems::class)->available_from)->toBeNull();
 });
 
 test('available until defaults to null', function () {
-    expect(test()->page->available_until)->toBeNull();
+    expect(testFixture('page', SeasonalItems::class)->available_until)->toBeNull();
 });
 
 test('add seasonal item validates required fields', function () {
-    expect(fn () => test()->page->addSeasonalItem())
+    expect(fn () => testFixture('page', SeasonalItems::class)->addSeasonalItem())
         ->toThrow(Illuminate\Validation\ValidationException::class);
 });
 
 test('add seasonal item validates date order', function () {
     $product = Product::factory()->create();
 
-    test()->page->product_id = $product->id;
-    test()->page->available_from = '2026-06-01';
-    test()->page->available_until = '2026-05-01'; // before from
+    testFixture('page', SeasonalItems::class)->product_id = $product->id;
+    testFixture('page', SeasonalItems::class)->available_from = '2026-06-01';
+    testFixture('page', SeasonalItems::class)->available_until = '2026-05-01'; // before from
 
-    expect(fn () => test()->page->addSeasonalItem())
+    expect(fn () => testFixture('page', SeasonalItems::class)->addSeasonalItem())
         ->toThrow(Illuminate\Validation\ValidationException::class);
 });
 
 test('add seasonal item creates record', function () {
     $product = Product::factory()->create();
 
-    test()->page->product_id = $product->id;
-    test()->page->available_from = '2026-06-01';
-    test()->page->available_until = '2026-08-31';
-    test()->page->notes = 'Summer special';
+    testFixture('page', SeasonalItems::class)->product_id = $product->id;
+    testFixture('page', SeasonalItems::class)->available_from = '2026-06-01';
+    testFixture('page', SeasonalItems::class)->available_until = '2026-08-31';
+    testFixture('page', SeasonalItems::class)->notes = 'Summer special';
 
-    test()->page->addSeasonalItem();
+    testFixture('page', SeasonalItems::class)->addSeasonalItem();
 
     expect(SeasonalItem::query()->count())->toBe(1)
         ->and(SeasonalItem::query()->first()->notes)->toBe('Summer special');
@@ -54,14 +54,14 @@ test('add seasonal item creates record', function () {
 test('add seasonal item resets form fields', function () {
     $product = Product::factory()->create();
 
-    test()->page->product_id = $product->id;
-    test()->page->available_from = '2026-06-01';
-    test()->page->available_until = '2026-08-31';
-    test()->page->notes = 'Test';
+    testFixture('page', SeasonalItems::class)->product_id = $product->id;
+    testFixture('page', SeasonalItems::class)->available_from = '2026-06-01';
+    testFixture('page', SeasonalItems::class)->available_until = '2026-08-31';
+    testFixture('page', SeasonalItems::class)->notes = 'Test';
 
-    test()->page->addSeasonalItem();
+    testFixture('page', SeasonalItems::class)->addSeasonalItem();
 
-    $state = get_object_vars(test()->page);
+    $state = get_object_vars(testFixture('page', SeasonalItems::class));
 
     expect($state['product_id'])->toBeNull()
         ->and($state['available_from'])->toBeNull()
@@ -73,24 +73,24 @@ test('delete seasonal item removes record', function () {
     $product = Product::factory()->create();
     $item = SeasonalItem::factory()->for($product)->create();
 
-    test()->page->deleteSeasonalItem($item->id);
+    testFixture('page', SeasonalItems::class)->deleteSeasonalItem($item->id);
 
     expect(SeasonalItem::query()->count())->toBe(0);
 });
 
 test('delete nonexistent seasonal item throws exception', function () {
-    expect(fn () => test()->page->deleteSeasonalItem(99999))
+    expect(fn () => testFixture('page', SeasonalItems::class)->deleteSeasonalItem(99999))
         ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
 });
 
 test('current items property returns collection', function () {
-    expect(test()->page->getCurrentItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(testFixture('page', SeasonalItems::class)->getCurrentItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
 });
 
 test('upcoming items property returns collection', function () {
-    expect(test()->page->getUpcomingItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(testFixture('page', SeasonalItems::class)->getUpcomingItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
 });
 
 test('expired items property returns collection', function () {
-    expect(test()->page->getExpiredItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(testFixture('page', SeasonalItems::class)->getExpiredItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
 });

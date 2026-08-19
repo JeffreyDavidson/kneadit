@@ -14,8 +14,8 @@ beforeEach(function () {
 
 test('stores paypal invoice id on order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create();
 
     resolve(RecordPayPalInvoice::class)($order, 'INV2-XXXX-YYYY-ZZZZ');

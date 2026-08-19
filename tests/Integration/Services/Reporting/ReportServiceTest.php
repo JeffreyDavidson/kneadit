@@ -25,8 +25,8 @@ beforeEach(function () {
 function createPaidOrder(float $total, string $date): Order
 {
     return Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->delivered()
         ->create([
             'subtotal' => $total,
@@ -62,7 +62,7 @@ test('customer report returns data for date range', function () {
 });
 
 test('product performance report returns data for date range', function () {
-    Product::factory()->recycle(test()->category)->create(['name' => 'Sourdough', 'price' => 10.00]);
+    Product::factory()->recycle(testFixture('category', Category::class))->create(['name' => 'Sourdough', 'price' => 10.00]);
 
     $report = resolve(ProductReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 

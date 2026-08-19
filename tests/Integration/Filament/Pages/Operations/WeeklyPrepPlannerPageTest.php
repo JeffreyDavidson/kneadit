@@ -8,56 +8,56 @@ beforeEach(function () {
 });
 
 test('mount sets selected week start to start of current week', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->selectedWeekStart)->toBe(now()->startOfWeek()->format('Y-m-d'));
+    expect(testFixture('page', WeeklyPrepPlanner::class)->selectedWeekStart)->toBe(now()->startOfWeek()->format('Y-m-d'));
 });
 
 test('mount loads weekly data', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->prepSchedule)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->weekDays)->toBeArray();
+    expect(testFixture('page', WeeklyPrepPlanner::class)->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->and(testFixture('page', WeeklyPrepPlanner::class)->prepSchedule)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->and(testFixture('page', WeeklyPrepPlanner::class)->weekDays)->toBeArray();
 });
 
 test('load weekly data with null date sets empty collections', function () {
-    test()->page->selectedWeekStart = null;
+    testFixture('page', WeeklyPrepPlanner::class)->selectedWeekStart = null;
 
-    test()->page->loadWeeklyData();
+    testFixture('page', WeeklyPrepPlanner::class)->loadWeeklyData();
 
-    expect(test()->page->weeklyOrders)->toBeEmpty()
-        ->and(test()->page->prepSchedule)->toBeEmpty();
+    expect(testFixture('page', WeeklyPrepPlanner::class)->weeklyOrders)->toBeEmpty()
+        ->and(testFixture('page', WeeklyPrepPlanner::class)->prepSchedule)->toBeEmpty();
 });
 
 test('load weekly data with valid date populates data', function () {
-    test()->page->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
+    testFixture('page', WeeklyPrepPlanner::class)->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
 
-    test()->page->loadWeeklyData();
+    testFixture('page', WeeklyPrepPlanner::class)->loadWeeklyData();
 
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', WeeklyPrepPlanner::class)->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get product summary returns collection', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->getProductSummary())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', WeeklyPrepPlanner::class)->getProductSummary())->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get timeline view returns collection', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->getTimelineView())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', WeeklyPrepPlanner::class)->getTimelineView())->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get total prep hours returns float', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->getTotalPrepHours())->toBeFloat();
+    expect(testFixture('page', WeeklyPrepPlanner::class)->getTotalPrepHours())->toBeFloat();
 });
 
 test('get week summary returns array', function () {
-    test()->page->mount();
+    testFixture('page', WeeklyPrepPlanner::class)->mount();
 
-    expect(test()->page->getWeekSummary())->toBeArray();
+    expect(testFixture('page', WeeklyPrepPlanner::class)->getWeekSummary())->toBeArray();
 });

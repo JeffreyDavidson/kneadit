@@ -10,8 +10,8 @@ beforeEach(fn () => setUpTenantTest());
 test('redirects to order confirmation with success message', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
+    $mock = JMac\Testing\Double::for(StripeCheckoutService::class);
+    $mock->expects('handleCheckoutComplete')->never();
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -24,9 +24,9 @@ test('redirects to order confirmation with success message', function () {
 test('calls handleCheckoutComplete when session_id is present', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')
-        ->once()
+    $mock = JMac\Testing\Double::for(StripeCheckoutService::class);
+    $mock->expects('handleCheckoutComplete')
+
         ->with('cs_test_123');
     app()->instance(StripeCheckoutService::class, $mock);
 
@@ -40,8 +40,8 @@ test('calls handleCheckoutComplete when session_id is present', function () {
 test('does not call handleCheckoutComplete when session_id is absent', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
+    $mock = JMac\Testing\Double::for(StripeCheckoutService::class);
+    $mock->expects('handleCheckoutComplete')->never();
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
