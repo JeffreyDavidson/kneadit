@@ -128,7 +128,7 @@ test('targets tenants on trial for trial segment', function () {
 
 test('deduplicates emails across tenants', function () {
     Mail::fake();
-    mockTenancyManager();
+    mockTenancyManager(expectedCalls: 2);
 
     Tenant::factory()->starter()->count(2)->create();
     Customer::factory()->create(['email' => 'shared@example.com']);
