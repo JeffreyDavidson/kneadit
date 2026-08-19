@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Dashboard;
 
 use App\Enums\Filament\WidgetSize;
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Filament\Shared\Dashboard\WidgetDefinition;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Services\Settings\SettingsManager;
 use Filament\Notifications\Notification;
@@ -13,7 +14,6 @@ use Filament\Support\Icons\Heroicon;
 /**
  * @phpstan-type SavedWidgetSettings array{visible: bool, order: int, size?: string, span?: int}
  * @phpstan-type SavedDashboardConfig array<string, SavedWidgetSettings>
- * @phpstan-type WidgetDetails array{name: string, description: string, icon: \BackedEnum|string, defaultSize: WidgetSize}
  * @phpstan-type ConfigurableWidget array{key: string, visible: bool, size: string, name: string, description: string, icon: \BackedEnum|string}
  */
 class DashboardConfig extends Page
@@ -57,7 +57,7 @@ class DashboardConfig extends Page
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {
-            $meta = $this->normalizeWidgetDetails($widgetMeta[$key] ?? null);
+            $meta = $widgetMeta[$key] ?? null;
 
             if ($meta === null) {
                 continue;
@@ -67,24 +67,22 @@ class DashboardConfig extends Page
                 'key' => $key,
                 'visible' => $settings['visible'],
                 'size' => $this->resolveSize($key, $settings, $meta),
-                'name' => $meta['name'],
-                'description' => $meta['description'],
-                'icon' => $meta['icon'],
+                'name' => $meta->name,
+                'description' => $meta->description,
+                'icon' => $meta->icon,
             ];
         }
 
         // Add any missing widgets
-        foreach ($widgetMeta as $key => $rawMeta) {
-            $meta = $this->normalizeWidgetDetails($rawMeta);
-
-            if ($meta !== null && ! collect($this->widgets)->contains('key', $key)) {
+        foreach ($widgetMeta as $key => $meta) {
+            if (! collect($this->widgets)->contains('key', $key)) {
                 $this->widgets[] = [
                     'key' => $key,
                     'visible' => true,
-                    'size' => $meta['defaultSize']->value,
-                    'name' => $meta['name'],
-                    'description' => $meta['description'],
-                    'icon' => $meta['icon'],
+                    'size' => $meta->defaultSize->value,
+                    'name' => $meta->name,
+                    'description' => $meta->description,
+                    'icon' => $meta->icon,
                 ];
             }
         }
@@ -98,22 +96,21 @@ class DashboardConfig extends Page
      * to 'sm' since allowedSizes doesn't include xl).
      *
      * @param SavedWidgetSettings $settings
-     * @param WidgetDetails $meta
      */
-    private function resolveSize(string $key, array $settings, array $meta): string
+    private function resolveSize(string $key, array $settings, WidgetDefinition $meta): string
     {
         $resolved = match (true) {
             isset($settings['size']) && WidgetSize::tryFrom($settings['size']) !== null => WidgetSize::tryFrom($settings['size']),
 
             isset($settings['span']) => WidgetSize::fromLegacySpan($settings['span']),
 
-            default => $meta['defaultSize'],
+            default => $meta->defaultSize,
         };
 
         $allowed = WidgetMeta::allowedSizesFor($key);
 
         if (! in_array($resolved, $allowed, true)) {
-            $resolved = $meta['defaultSize'];
+            $resolved = $meta->defaultSize;
 
             if (! in_array($resolved, $allowed, true)) {
                 $resolved = $allowed[0] ?? WidgetSize::Small;
@@ -245,33 +242,5 @@ class DashboardConfig extends Page
         }
 
         return $config;
-    }
-
-    /** @return WidgetDetails|null */
-    private function normalizeWidgetDetails(mixed $meta): ?array
-    {
-        if (! is_array($meta)) {
-            return null;
-        }
-
-        $name = $meta['name'] ?? null;
-        $description = $meta['description'] ?? null;
-        $icon = $meta['icon'] ?? null;
-        $defaultSize = $meta['defaultSize'] ?? null;
-
-        if (
-            ! is_string($name)
-            || ! is_string($description)
-            || (! is_string($icon) && ! $icon instanceof \BackedEnum)
-        ) {
-            return null;
-        }
-
-        return [
-            'name' => $name,
-            'description' => $description,
-            'icon' => $icon,
-            'defaultSize' => $defaultSize instanceof WidgetSize ? $defaultSize : WidgetSize::Small,
-        ];
     }
 }

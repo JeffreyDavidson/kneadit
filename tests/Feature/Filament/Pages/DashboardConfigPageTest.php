@@ -7,7 +7,10 @@ use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
+use Livewire\Features\SupportTesting\Testable;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,6 +18,46 @@ beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
 });
+
+/**
+ * @param Testable<DashboardConfig> $page
+ * @return list<array{key: string, visible: bool, size: string}>
+ */
+function dashboardConfigWidgets(Testable $page): array
+{
+    $widgets = $page->get('widgets');
+
+    if (! is_array($widgets)) {
+        throw new UnexpectedValueException('Dashboard widgets must be an array.');
+    }
+
+    return array_values(array_map(function (mixed $widget): array {
+        if (! is_array($widget)) {
+            throw new UnexpectedValueException('Each dashboard widget must be an array.');
+        }
+
+        return [
+            'key' => Arr::string($widget, 'key'),
+            'visible' => Arr::boolean($widget, 'visible'),
+            'size' => Arr::string($widget, 'size'),
+        ];
+    }, $widgets));
+}
+
+/**
+ * @param Testable<DashboardConfig> $page
+ * @return array{key: string, visible: bool, size: string}
+ */
+function dashboardConfigWidget(Testable $page, string $key): array
+{
+    foreach (dashboardConfigWidgets($page) as $widget) {
+        if ($widget['key'] === $key) {
+            return $widget;
+        }
+    }
+
+    throw new UnexpectedValueException("The dashboard widget [{$key}] is missing.");
+}
 
 test('renders and saves the default layout', function () {
     $page = livewire(DashboardConfig::class);
@@ -34,41 +77,48 @@ test('default layout keeps reporting widgets opt in', function () {
 
 test('reorder swaps two widgets in place', function () {
     $page = livewire(DashboardConfig::class);
-    $first = $page->get('widgets')[0];
-    $second = $page->get('widgets')[1];
+    $first = dashboardConfigWidgets($page)[0];
+    $second = dashboardConfigWidgets($page)[1];
 
     $page->call('reorder', 0, 1);
 
-    expect($page->get('widgets')[0])->toBe($second)
-        ->and($page->get('widgets')[1])->toBe($first);
+    expect(dashboardConfigWidgets($page)[0])->toBe($second)
+        ->and(dashboardConfigWidgets($page)[1])->toBe($first);
 });
 
 test('toggleWidget flips visibility', function () {
     $page = livewire(DashboardConfig::class);
-    $beforeVisible = $page->get('widgets')[0]['visible'];
+    $beforeVisible = dashboardConfigWidgets($page)[0]['visible'];
 
     $page->call('toggleWidget', 0);
 
-    expect($page->get('widgets')[0]['visible'])->toBe(! $beforeVisible);
+    expect(dashboardConfigWidgets($page)[0]['visible'])->toBe(! $beforeVisible);
 });
 
 test('setSize accepts t-shirt size strings, ignores unknown values, and rejects disallowed sizes', function () {
     $page = livewire(DashboardConfig::class);
 
     // recent_orders allows all three sizes — sm → md transitions cleanly.
-    $recentIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'recent_orders');
+    $widgets = dashboardConfigWidgets($page);
+    $recentIndex = collect($widgets)->search(fn (array $widget): bool => $widget['key'] === 'recent_orders');
+    if ($recentIndex === false) {
+        throw new UnexpectedValueException('The recent orders widget is missing.');
+    }
     $page->call('setSize', $recentIndex, 'md');
-    expect($page->get('widgets')[$recentIndex]['size'])->toBe('md');
+    expect(dashboardConfigWidgets($page)[$recentIndex]['size'])->toBe('md');
 
     // welcome_banner is locked to large — sm should be rejected and the size unchanged.
-    $welcomeIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'welcome_banner');
-    $sizeBefore = $page->get('widgets')[$welcomeIndex]['size'];
+    $welcomeIndex = collect($widgets)->search(fn (array $widget): bool => $widget['key'] === 'welcome_banner');
+    if ($welcomeIndex === false) {
+        throw new UnexpectedValueException('The welcome banner widget is missing.');
+    }
+    $sizeBefore = dashboardConfigWidgets($page)[$welcomeIndex]['size'];
     $page->call('setSize', $welcomeIndex, 'sm');
-    expect($page->get('widgets')[$welcomeIndex]['size'])->toBe($sizeBefore);
+    expect(dashboardConfigWidgets($page)[$welcomeIndex]['size'])->toBe($sizeBefore);
 
     // Unknown size strings on an unrestricted widget fall back to small.
     $page->call('setSize', $recentIndex, 'bogus');
-    expect($page->get('widgets')[$recentIndex]['size'])->toBe('sm');
+    expect(dashboardConfigWidgets($page)[$recentIndex]['size'])->toBe('sm');
 });
 
 test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and standard sizes for unconstrained widgets', function () {
@@ -93,10 +143,8 @@ test('saved sizes that violate allowedSizes are clamped to the widget default on
     ]));
 
     $page = livewire(DashboardConfig::class);
-    $widgets = collect($page->get('widgets'))->keyBy('key');
-
-    expect($widgets['welcome_banner']['size'])->toBe('sm')
-        ->and($widgets['storefront_views']['size'])->toBe('sm');
+    expect(dashboardConfigWidget($page, 'welcome_banner')['size'])->toBe('sm')
+        ->and(dashboardConfigWidget($page, 'storefront_views')['size'])->toBe('sm');
 });
 
 test('legacy integer span values are migrated to t-shirt sizes on load', function () {
@@ -110,11 +158,9 @@ test('legacy integer span values are migrated to t-shirt sizes on load', functio
     ]));
 
     $page = livewire(DashboardConfig::class);
-    $widgets = collect($page->get('widgets'))->keyBy('key');
-
-    expect($widgets['recent_orders']['size'])->toBe('sm')
-        ->and($widgets['todays_orders']['size'])->toBe('md')
-        ->and($widgets['stats_overview']['size'])->toBe('lg');
+    expect(dashboardConfigWidget($page, 'recent_orders')['size'])->toBe('sm')
+        ->and(dashboardConfigWidget($page, 'todays_orders')['size'])->toBe('md')
+        ->and(dashboardConfigWidget($page, 'stats_overview')['size'])->toBe('lg');
 });
 
 test('Dashboard::getWidgets returns the full registry when no saved layout exists', function () {
@@ -136,7 +182,7 @@ test('Dashboard::getWidgets honors saved order and visibility', function () {
     // Widgets that use HasDashboardSize get wrapped in WidgetConfiguration so
     // their dashboardSize property gets piped through Livewire mount.
     $classes = collect($widgets)->map(
-        fn ($w) => is_string($w) ? $w : $w->widget,
+        fn (string|WidgetConfiguration $widget): string => is_string($widget) ? $widget : $widget->widget,
     )->all();
 
     // recent_orders is the only saved-visible widget, so it leads the list.
@@ -156,7 +202,11 @@ test('Dashboard::getWidgets pipes the saved size into widgets that use HasDashbo
 
     $widgets = (new Dashboard)->getWidgets();
 
-    expect($widgets[0])->toBeInstanceOf(Filament\Widgets\WidgetConfiguration::class)
-        ->and($widgets[0]->widget)->toBe(TodaysOrdersWidget::class)
-        ->and($widgets[0]->getProperties())->toBe(['dashboardSize' => 'lg']);
+    $widget = $widgets[0];
+    if (! $widget instanceof WidgetConfiguration) {
+        throw new UnexpectedValueException('The configured widget must carry dashboard properties.');
+    }
+
+    expect($widget->widget)->toBe(TodaysOrdersWidget::class)
+        ->and($widget->getProperties())->toBe(['dashboardSize' => 'lg']);
 });

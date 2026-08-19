@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Dashboard;
 
 use App\Enums\Filament\WidgetSize;
+use App\Filament\Shared\Dashboard\WidgetDefinition;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Filament\Widgets\AtRiskCustomersWidget;
 use App\Filament\Widgets\BakingSheetWidget;
@@ -221,8 +222,10 @@ class Dashboard extends BaseDashboard
 
     private function getDefaultSize(string $key): WidgetSize
     {
-        $defaultSize = WidgetMeta::get($key)['defaultSize'] ?? null;
+        $widget = WidgetMeta::get($key);
 
-        return $defaultSize instanceof WidgetSize ? $defaultSize : WidgetSize::Small;
+        return $widget instanceof WidgetDefinition
+            ? $widget->defaultSize
+            : WidgetSize::Small;
     }
 }
