@@ -5,6 +5,7 @@ namespace App\Builders\Customers;
 use App\Models\Engagement\Review;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 
 /** @extends Builder<Review> */
 class ReviewQueryBuilder extends Builder
@@ -55,9 +56,13 @@ class ReviewQueryBuilder extends Builder
             ->toBase()
             ->selectRaw('COALESCE(AVG(rating), 0) as avg_rating, COUNT(*) as total_count')
             ->first();
+        $average = $stats->avg_rating ?? 0;
+        $average = is_int($average) || is_float($average) || is_string($average)
+            ? Number::parseFloat((string) $average) ?: 0.0
+            : 0.0;
 
         return (object) [
-            'avg_rating' => Arr::float(['value' => $stats->avg_rating ?? 0], 'value', 0.0),
+            'avg_rating' => $average,
             'total_count' => Arr::integer(['value' => $stats->total_count ?? 0], 'value', 0),
         ];
     }
