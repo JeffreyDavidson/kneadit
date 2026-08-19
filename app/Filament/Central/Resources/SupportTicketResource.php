@@ -31,7 +31,11 @@ class SupportTicketResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = SupportTicket::query()->open()->count();
+        $count = cache()->remember(
+            'navigation-badge:central-support-tickets:open',
+            60,
+            fn (): int => SupportTicket::query()->open()->count(),
+        );
 
         return $count > 0 ? (string) $count : null;
     }

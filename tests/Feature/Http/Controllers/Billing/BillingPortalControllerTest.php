@@ -10,7 +10,7 @@ beforeEach(function () {
 });
 
 test('billing portal redirects authenticated user to stripe portal', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user = Double::for(User::factory()->owner()->create())->passthru(); // Test double delegates unconfigured model methods.
     $user->expects('redirectToBillingPortal')
         ->with(route('filament.admin.pages.dashboard'))
         ->returns(new RedirectResponse('https://billing.stripe.com/session/test'));

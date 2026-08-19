@@ -27,7 +27,7 @@ test('swap plan succeeds for valid plan with active subscription', function () {
         ->with('price_starter_test')
         ->returns($subscription);
 
-    $user = Double::for(User::factory()->owner()->make())->passthru();
+    $user = Double::for(User::factory()->owner()->make())->passthru(); // Test double delegates unconfigured model methods.
     $user->expects('subscription')
         ->with('default')
         ->returns($subscription);
@@ -46,7 +46,7 @@ test('swap plan shows error when stripe throws exception', function () {
     $subscription->expects('swap')
         ->throws(new Exception('Stripe API error'));
 
-    $user = Double::for(User::factory()->owner()->make())->passthru();
+    $user = Double::for(User::factory()->owner()->make())->passthru(); // Test double delegates unconfigured model methods.
     $user->expects('subscription')
         ->with('default')
         ->returns($subscription);
@@ -66,7 +66,7 @@ test('swap plan requires authentication', function () {
 test('swap plan handles null subscription gracefully', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
 
-    $user = Double::for(User::factory()->owner()->make())->passthru();
+    $user = Double::for(User::factory()->owner()->make())->passthru(); // Test double delegates unconfigured model methods.
     $user->expects('subscription')
         ->with('default')
         ->returns(null);
