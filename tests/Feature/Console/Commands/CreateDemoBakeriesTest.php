@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
 
 beforeEach(fn () => setUpCentralTest());
@@ -15,13 +16,17 @@ test('bakeries command creates five bakeries via subprocess', function () {
         '*' => Process::result(output: 'OK'),
     ]);
 
-    $this->artisan('tenant:bakeries')
+    pendingArtisan('tenant:bakeries')
         ->expectsOutputToContain('Sweet Dreams Bakery')
         ->expectsOutputToContain('Honeycomb Bakes')
         ->expectsOutputToContain('Flour Power Kitchen')
         ->assertSuccessful();
 
-    Process::assertRanTimes(fn ($process) => str_contains($process->command, 'tenant:create-one'), 5);
+    Process::assertRanTimes(
+        fn (PendingProcess $process): bool => is_string($process->command)
+            && str_contains($process->command, 'tenant:create-one'),
+        5,
+    );
 });
 
 test('bakeries command skips existing tenants', function () {
@@ -36,11 +41,15 @@ test('bakeries command skips existing tenants', function () {
         'store_name' => 'Sweet Dreams Bakery',
     ]);
 
-    $this->artisan('tenant:bakeries')
+    pendingArtisan('tenant:bakeries')
         ->expectsOutputToContain('already exists')
         ->assertSuccessful();
 
-    Process::assertRanTimes(fn ($process) => str_contains($process->command, 'tenant:create-one'), 4);
+    Process::assertRanTimes(
+        fn (PendingProcess $process): bool => is_string($process->command)
+            && str_contains($process->command, 'tenant:create-one'),
+        4,
+    );
 });
 
 test('bakeries command with fresh flag deletes existing tenants first', function () {
@@ -55,11 +64,15 @@ test('bakeries command with fresh flag deletes existing tenants first', function
         'store_name' => 'Sweet Dreams Bakery',
     ]);
 
-    $this->artisan('tenant:bakeries', ['--fresh' => true])
+    pendingArtisan('tenant:bakeries', ['--fresh' => true])
         ->expectsOutputToContain('Deleting')
         ->assertSuccessful();
 
-    Process::assertRanTimes(fn ($process) => str_contains($process->command, 'tenant:create-one'), 5);
+    Process::assertRanTimes(
+        fn (PendingProcess $process): bool => is_string($process->command)
+            && str_contains($process->command, 'tenant:create-one'),
+        5,
+    );
 });
 
 test('bakeries command handles failed subprocess', function () {
@@ -67,7 +80,7 @@ test('bakeries command handles failed subprocess', function () {
         '*' => Process::result(exitCode: 1, errorOutput: 'Database error'),
     ]);
 
-    $this->artisan('tenant:bakeries')
+    pendingArtisan('tenant:bakeries')
         ->expectsOutputToContain('Failed')
         ->assertSuccessful();
 });
@@ -77,7 +90,7 @@ test('bakeries command outputs hosts file instructions', function () {
         '*' => Process::result(output: 'OK'),
     ]);
 
-    $this->artisan('tenant:bakeries')
+    pendingArtisan('tenant:bakeries')
         ->expectsOutputToContain('/etc/hosts')
         ->expectsOutputToContain('sweetdreams.kneadit.test')
         ->assertSuccessful();

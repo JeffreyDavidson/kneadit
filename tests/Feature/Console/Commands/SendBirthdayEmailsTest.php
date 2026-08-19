@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 test('birthday emails command runs successfully with no tenants', function () {
     Mail::fake();
 
-    $this->artisan('birthday:send-emails')
+    pendingArtisan('birthday:send-emails')
         ->assertSuccessful();
 
     Mail::assertNothingSent();

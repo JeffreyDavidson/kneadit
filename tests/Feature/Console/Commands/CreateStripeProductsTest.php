@@ -10,8 +10,6 @@ use Stripe\Service\PriceService;
 use Stripe\Service\ProductService;
 use Stripe\StripeClient;
 
-use function Pest\Laravel\artisan;
-
 class FakeStripeProductsClient extends StripeClient
 {
     public function __construct(
@@ -30,9 +28,7 @@ function bindStripeProductsClient(ProductService $products, PriceService $prices
 
 function createStripeProductsCommand(): PendingCommand
 {
-    $command = artisan('stripe:create-products');
-
-    throw_unless($command instanceof PendingCommand, RuntimeException::class, 'Console output must be mocked.');
+    $command = pendingArtisan('stripe:create-products');
 
     return $command;
 }

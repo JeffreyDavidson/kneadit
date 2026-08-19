@@ -26,12 +26,12 @@ afterEach(function () {
 });
 
 test('backup command exists', function () {
-    $this->artisan('backup:databases')
+    pendingArtisan('backup:databases')
         ->assertSuccessful();
 });
 
 test('backup command accepts keep option', function () {
-    $this->artisan('backup:databases', ['--keep' => 3])
+    pendingArtisan('backup:databases', ['--keep' => 3])
         ->assertSuccessful();
 });
 
@@ -42,7 +42,7 @@ test('backup command class has correct signature', function () {
 });
 
 test('backup creates backup directory', function () {
-    $this->artisan('backup:databases');
+    pendingArtisan('backup:databases');
 
     $possibleDirs = [
         dirname(base_path()) . '/backups',
@@ -61,7 +61,7 @@ test('backup creates backup directory', function () {
 });
 
 test('backup outputs progress messages', function () {
-    $this->artisan('backup:databases')
+    pendingArtisan('backup:databases')
         ->expectsOutputToContain('Backing up to')
         ->expectsOutputToContain('Backup complete')
         ->assertSuccessful();
@@ -70,13 +70,15 @@ test('backup outputs progress messages', function () {
 test('backup logs completion', function () {
     Log::shouldReceive('info')
         ->once()
-        ->withArgs(function ($message, $context) {
-            return str_contains($message, 'Database backup completed')
+        ->withArgs(function (mixed $message, mixed $context): bool {
+            return is_string($message)
+                && is_array($context)
+                && str_contains($message, 'Database backup completed')
                 && isset($context['path'])
                 && isset($context['size']);
         });
 
-    $this->artisan('backup:databases')
+    pendingArtisan('backup:databases')
         ->assertSuccessful();
 });
 
@@ -89,7 +91,7 @@ test('backup default keep is 7 days', function () {
 });
 
 test('backup creates timestamped subdirectory', function () {
-    $this->artisan('backup:databases');
+    pendingArtisan('backup:databases');
 
     $possibleDirs = [
         dirname(base_path()) . '/backups',
@@ -116,12 +118,12 @@ test('backup creates timestamped subdirectory', function () {
 test('backup handles missing central database gracefully', function () {
     config(['database.connections.sqlite.database' => '/nonexistent/path/db.sqlite']);
 
-    $this->artisan('backup:databases')
+    pendingArtisan('backup:databases')
         ->expectsOutputToContain('Central DB not found')
         ->assertSuccessful();
 });
 
 test('backup reports tenant database count or missing directory', function () {
-    $this->artisan('backup:databases')
+    pendingArtisan('backup:databases')
         ->assertSuccessful();
 });

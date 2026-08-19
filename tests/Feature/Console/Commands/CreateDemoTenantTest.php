@@ -17,7 +17,7 @@ test('demo tenant warns when tenant already exists', function () {
         'email' => 'demo@getkneadit.app',
     ]);
 
-    $this->artisan('tenant:demo')
+    pendingArtisan('tenant:demo')
         ->expectsOutputToContain('already exists')
         ->assertSuccessful();
 });

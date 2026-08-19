@@ -22,7 +22,7 @@ beforeEach(function () {
 
     $tenantMigrationPath = database_path('migrations/tenant');
     if (is_dir($tenantMigrationPath)) {
-        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
+        pendingArtisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
 });
 
@@ -41,7 +41,7 @@ test('consume impersonation logs in user and redirects to admin', function () {
 
     expect($response)->toBeInstanceOf(RedirectResponse::class)
         ->and($response->getTargetUrl())->toContain('/admin')
-        ->and(auth()->user()->id)->toBe($user->id);
+        ->and(auth()->id())->toBe($user->id);
 });
 
 test('consume impersonation flushes prior session data', function () {

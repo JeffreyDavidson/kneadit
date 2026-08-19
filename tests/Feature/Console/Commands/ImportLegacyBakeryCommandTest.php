@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Storage;
 
 it('rejects a missing legacy export', function () {
-    $this->artisan('tenant:import-legacy-bakery', ['tenant' => 'bakery-on-biscotto', 'file' => '/missing/export.json'])
+    pendingArtisan('tenant:import-legacy-bakery', ['tenant' => 'bakery-on-biscotto', 'file' => '/missing/export.json'])
         ->expectsOutput('The import file does not exist.')
         ->assertFailed();
 });
@@ -16,7 +16,7 @@ it('summarizes a valid export without requiring a tenant during a dry run', func
         'products' => [['id' => 1, 'name' => 'Sourdough']],
     ], JSON_THROW_ON_ERROR));
 
-    $this->artisan('tenant:import-legacy-bakery', [
+    pendingArtisan('tenant:import-legacy-bakery', [
         'tenant' => 'bakery-on-biscotto',
         'file' => $path,
         '--dry-run' => true,
