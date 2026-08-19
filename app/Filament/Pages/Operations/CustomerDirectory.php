@@ -126,10 +126,10 @@ class CustomerDirectory extends Page
     public function getCustomerDetails(int $customerId): ?array
     {
         $customer = Customer::with([
-            'orders' => function (EloquentBuilder $query) {
+            'orders' => function (Relation $query) {
                 $query->latest();
             },
-            'customerNotes' => function (EloquentBuilder $query) {
+            'customerNotes' => function (Relation $query) {
                 $query->with('createdBy')->latest();
             },
         ])->find($customerId);
