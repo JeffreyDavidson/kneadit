@@ -56,7 +56,8 @@ test('get upcoming orders labels today correctly', function () {
     $todayKey = now()->format('Y-m-d');
 
     if (isset($orders[$todayKey])) {
-        expect($orders[$todayKey]['label'])->toBe('Today');
+        $today = $orders[$todayKey];
+        expect($today['label'])->toBe('Today');
     }
 });
 
@@ -67,6 +68,7 @@ test('get upcoming orders labels tomorrow correctly', function () {
     $tomorrowKey = now()->addDay()->format('Y-m-d');
 
     if (isset($orders[$tomorrowKey])) {
-        expect($orders[$tomorrowKey]['label'])->toBe('Tomorrow');
+        $tomorrow = $orders[$tomorrowKey];
+        expect($tomorrow['label'])->toBe('Tomorrow');
     }
 });

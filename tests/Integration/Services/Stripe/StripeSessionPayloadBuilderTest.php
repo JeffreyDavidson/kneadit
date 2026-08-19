@@ -30,7 +30,7 @@ test('lineItems builds one entry per order item with cents amounts', function ()
         ->and($items[0]['quantity'])->toBe(2)
         ->and($items[0]['price_data']['unit_amount'])->toBe(750)
         ->and($items[0]['price_data']['product_data']['name'])->toBe('Sourdough')
-        ->and($items[0]['price_data']['product_data']['description'])->toBe('Sliced');
+        ->and($items[0]['price_data']['product_data']['description'] ?? null)->toBe('Sliced');
 });
 
 test('lineItems appends a delivery fee entry when delivery_fee is positive', function () {
@@ -72,11 +72,10 @@ test('build assembles full session params with metadata', function () {
 
     $params = (new StripeSessionPayloadBuilder)->build($order->refresh(), 'tenant-abc', 'https://success', 'https://cancel');
 
-    expect($params)
-        ->mode->toBe('payment')
-        ->success_url->toBe('https://success')
-        ->cancel_url->toBe('https://cancel')
-        ->customer_email->toBe('baker@example.com')
+    expect($params['mode'])->toBe('payment')
+        ->and($params['success_url'])->toBe('https://success')
+        ->and($params['cancel_url'])->toBe('https://cancel')
+        ->and($params['customer_email'] ?? null)->toBe('baker@example.com')
         ->and($params['metadata'])->toHaveKey('order_number', 'ORD-001')
         ->toHaveKey('order_id', $order->id)
         ->toHaveKey('tenant_id', 'tenant-abc')
@@ -100,5 +99,5 @@ test('build includes discounts key when discounts array is provided', function (
         [['coupon' => 'coupon_123']],
     );
 
-    expect($params['discounts'])->toBe([['coupon' => 'coupon_123']]);
+    expect($params['discounts'] ?? null)->toBe([['coupon' => 'coupon_123']]);
 });
