@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Tenants\ChurnAlert;
 use App\DataTransferObjects\Tenants\TenantHealthData;
 use App\Enums\Tenants\ChurnAlertType;
 use App\Enums\Tenants\ChurnSeverity;
@@ -54,9 +55,12 @@ test('returns trial expiring alert when trial ends soon with low setup', functio
 
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
+    $trialExpiring = $alerts->firstOrFail(
+        fn (ChurnAlert $alert): bool => $alert->type === ChurnAlertType::TrialExpiring,
+    );
+
     expect($alerts)->toHaveCount(2)
-        ->and($alerts->firstWhere('type', ChurnAlertType::TrialExpiring))->not->toBeNull()
-        ->and($alerts->firstWhere('type', ChurnAlertType::TrialExpiring)->severity)->toBe(ChurnSeverity::Critical);
+        ->and($trialExpiring->severity)->toBe(ChurnSeverity::Critical);
 });
 
 test('does not alert for trial with good setup progress', function () {
@@ -116,10 +120,11 @@ test('returns no orders alert for established tenant with no recent orders', fun
     );
 
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
-    $noOrders = $alerts->firstWhere('type', ChurnAlertType::NoOrders);
+    $noOrders = $alerts->firstOrFail(
+        fn (ChurnAlert $alert): bool => $alert->type === ChurnAlertType::NoOrders,
+    );
 
-    expect($noOrders)->not->toBeNull()
-        ->and($noOrders->severity)->toBe(ChurnSeverity::Warning);
+    expect($noOrders->severity)->toBe(ChurnSeverity::Warning);
 });
 
 test('does not alert for no orders on new tenants', function () {
@@ -152,10 +157,11 @@ test('returns low health alert when health score is below 40', function () {
     );
 
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
-    $lowHealth = $alerts->firstWhere('type', ChurnAlertType::LowHealth);
+    $lowHealth = $alerts->firstOrFail(
+        fn (ChurnAlert $alert): bool => $alert->type === ChurnAlertType::LowHealth,
+    );
 
-    expect($lowHealth)->not->toBeNull()
-        ->and($lowHealth->severity)->toBe(ChurnSeverity::Critical)
+    expect($lowHealth->severity)->toBe(ChurnSeverity::Critical)
         ->and($lowHealth->description)->toContain('20/100');
 });
 

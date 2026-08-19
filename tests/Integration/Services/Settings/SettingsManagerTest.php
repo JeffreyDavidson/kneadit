@@ -76,7 +76,7 @@ test('credential migration encrypts legacy values without double encryption', fu
 
     $migration = require database_path('migrations/tenant/2026_08_17_000000_encrypt_sensitive_tenant_settings.php');
     throw_unless($migration instanceof Migration, RuntimeException::class, 'Expected a migration instance.');
-    $migration->up();
+    (new ReflectionMethod($migration, 'up'))->invoke($migration);
 
     $stored = Setting::query()->where('key', 'paypal_client_secret')->value('value');
 
@@ -84,7 +84,7 @@ test('credential migration encrypts legacy values without double encryption', fu
         throw new UnexpectedValueException('Expected an encrypted setting string.');
     }
 
-    $migration->up();
+    (new ReflectionMethod($migration, 'up'))->invoke($migration);
 
     expect(Crypt::decryptString($stored))->toBe('legacy-paypal-secret')
         ->and(Setting::query()->where('key', 'paypal_client_secret')->value('value'))->toBe($stored);
