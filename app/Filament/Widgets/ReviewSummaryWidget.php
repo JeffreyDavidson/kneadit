@@ -5,8 +5,8 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Engagement\Review;
+use App\Queries\Engagement\ReviewSummaryQuery;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Arr;
 
 class ReviewSummaryWidget extends Widget
 {
@@ -19,47 +19,32 @@ class ReviewSummaryWidget extends Widget
 
     public function getAverageRating(): float
     {
-        return $this->cached('avg', [3600, 7200], fn (): float => round((float) Review::query()->approved()->avg('rating'), 1));
+        return $this->cached('avg', [3600, 7200], fn (): float => $this->query()->averageRating());
     }
 
     public function getTotalReviews(): int
     {
-        return $this->cached('total', [3600, 7200], fn (): int => Review::query()->approved()->count());
+        return $this->cached('total', [3600, 7200], fn (): int => $this->query()->totalReviews());
     }
 
     public function getRecentReview(): ?Review
     {
-        return Review::query()->approved()->latest()->first();
+        return $this->query()->recentReview();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
-        return $this->cached('dist', [3600, 7200], function (): array {
-            $counts = Review::query()->approved()
-                ->selectRaw('rating, count(*) as count')
-                ->groupBy('rating')
-                ->pluck('count', 'rating')
-                ->toArray();
-
-            $counts = array_map(static fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0), $counts);
-            $total = array_sum($counts);
-            $distribution = [];
-
-            for ($i = 5; $i >= 1; $i--) {
-                $count = $counts[$i] ?? 0;
-                $distribution[$i] = [
-                    'count' => $count,
-                    'percentage' => $total > 0 ? round(($count / $total) * 100) : 0,
-                ];
-            }
-
-            return $distribution;
-        });
+        return $this->cached('dist', [3600, 7200], fn (): array => $this->query()->ratingDistribution());
     }
 
     protected function cachePrefix(): string
     {
         return 'review_summary';
+    }
+
+    private function query(): ReviewSummaryQuery
+    {
+        return resolve(ReviewSummaryQuery::class);
     }
 }

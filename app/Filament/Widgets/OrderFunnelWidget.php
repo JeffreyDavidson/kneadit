@@ -2,11 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
-use App\Models\Orders\Order;
-use App\ValueObjects\Money;
+use App\Queries\Orders\OrderFunnelQuery;
 use Filament\Widgets\Widget;
 
 class OrderFunnelWidget extends Widget
@@ -21,28 +19,7 @@ class OrderFunnelWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getStages(): array
     {
-        return $this->cached('main', [60, 120], function (): array {
-            // SUM(total) bypasses MoneyCentsCast and returns cents directly.
-            // See migrations under database/migrations/tenant/*_convert_*_money_columns_to_cents.php.
-            $aggregates = Order::query()
-                ->selectRaw('status, COUNT(*) as order_count, COALESCE(SUM(total), 0) as total_cents')
-                ->groupBy('status')
-                ->get()
-                ->keyBy('status');
-
-            return array_map(
-                function (OrderStatus $status) use ($aggregates): array {
-                    /** @var object{order_count: int|string, total_cents: int|string}|null $row */
-                    $row = $aggregates[$status->value] ?? null;
-
-                    return [
-                        ...$status->toFunnelStage((int) ($row->order_count ?? 0)),
-                        'total_formatted' => Money::fromCents((int) ($row->total_cents ?? 0))->formatted(),
-                    ];
-                },
-                OrderStatus::trackableStatuses(),
-            );
-        });
+        return $this->cached('main', [60, 120], fn (): array => resolve(OrderFunnelQuery::class)->get());
     }
 
     /**
