@@ -6,8 +6,8 @@ use App\Enums\Inventory\Allergen;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 /**
  * Formats a Product for a printable compliance label — ingredients ordered
@@ -41,7 +41,13 @@ final class ProductLabelPresenter
 
         /** @var list<string> $relational */
         $relational = $recipe->inventoryIngredients
-            ->sortByDesc(fn (Ingredient $i) => Arr::float(['value' => $i->pivot->quantity ?? 0], 'value', 0.0))
+            ->sortByDesc(function (Ingredient $ingredient): float {
+                $quantity = $ingredient->pivot->quantity ?? 0;
+
+                return is_int($quantity) || is_float($quantity) || is_string($quantity)
+                    ? Number::parseFloat((string) $quantity) ?: 0.0
+                    : 0.0;
+            })
             ->pluck('name')
             ->values()
             ->all();

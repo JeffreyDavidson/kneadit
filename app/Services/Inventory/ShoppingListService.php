@@ -7,8 +7,8 @@ use App\DataTransferObjects\Inventory\SupplierShoppingList;
 use App\DataTransferObjects\Inventory\SupplierSummary;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 class ShoppingListService
 {
@@ -40,7 +40,11 @@ class ShoppingListService
             foreach ($order->orderItems as $item) {
                 if ($item->product?->recipe) {
                     foreach ($item->product->recipe->inventoryIngredients as $ingredient) {
-                        $needed = Arr::float(['value' => $ingredient->pivot->quantity ?? 0], 'value', 0.0) * $item->quantity;
+                        $quantity = $ingredient->pivot->quantity ?? 0;
+                        $quantity = is_int($quantity) || is_float($quantity) || is_string($quantity)
+                            ? Number::parseFloat((string) $quantity) ?: 0.0
+                            : 0.0;
+                        $needed = $quantity * $item->quantity;
                         $needs[$ingredient->id] = ($needs[$ingredient->id] ?? 0) + $needed;
                     }
                 }
