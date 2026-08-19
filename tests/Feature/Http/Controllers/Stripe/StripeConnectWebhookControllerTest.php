@@ -32,7 +32,7 @@ test('webhook returns 500 when secret not configured', function () {
                 'metadata' => ['tenant_id' => 'nonexistent-tenant'],
             ],
         ],
-    ]);
+    ], JSON_THROW_ON_ERROR);
 
     $response = test()->call('POST', '/stripe/connect-webhook', [], [], [], [
         'CONTENT_TYPE' => 'application/json',
@@ -48,7 +48,7 @@ test('webhook returns 500 for unknown event type without secret', function () {
     $payload = json_encode([
         'type' => 'some.unknown.event',
         'data' => ['object' => ['id' => 'obj_123']],
-    ]);
+    ], JSON_THROW_ON_ERROR);
 
     $response = test()->call('POST', '/stripe/connect-webhook', [], [], [], [
         'CONTENT_TYPE' => 'application/json',

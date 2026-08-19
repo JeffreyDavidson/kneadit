@@ -20,6 +20,7 @@ beforeEach(function () {
     ));
 });
 
+/** @return array<string, mixed> */
 function validInquiryPayload(): array
 {
     return [

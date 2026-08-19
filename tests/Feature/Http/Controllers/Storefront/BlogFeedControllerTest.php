@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Content\TenantBlogPost;
+use Illuminate\Support\Collection;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -26,5 +27,5 @@ test('blog feed limits results to 20 most recent posts', function () {
         ->get(route('storefront.blog.feed', [], false));
 
     $response->assertOk()
-        ->assertViewHas('posts', fn ($posts) => $posts->count() === 20);
+        ->assertViewHas('posts', fn (Collection $posts): bool => $posts->count() === 20);
 });

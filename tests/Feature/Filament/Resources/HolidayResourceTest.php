@@ -46,7 +46,7 @@ test('can edit a holiday via table action', function () {
         ->callAction(TestAction::make('edit')->table($holiday), data: [
             'name' => 'Updated Holiday',
             'date' => $holiday->date->format('Y-m-d'),
-            'order_deadline' => $holiday->order_deadline->format('Y-m-d'),
+            'order_deadline' => $holiday->order_deadline?->format('Y-m-d'),
         ])
         ->assertHasNoFormErrors();
 

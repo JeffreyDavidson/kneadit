@@ -72,14 +72,15 @@ test('store review fails validation with missing fields', function () {
 
     $response->assertUnprocessable();
 
-    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
-    expect($pointers)->toContain(
+    foreach ([
         '/data/attributes/customer_name',
         '/data/attributes/customer_email',
         '/data/attributes/product_id',
         '/data/attributes/rating',
         '/data/attributes/comment',
-    );
+    ] as $pointer) {
+        $response->assertJsonFragment(['pointer' => $pointer]);
+    }
 });
 
 test('store review fails validation with invalid rating', function () {

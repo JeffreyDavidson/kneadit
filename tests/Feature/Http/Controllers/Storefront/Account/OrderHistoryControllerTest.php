@@ -2,6 +2,7 @@
 
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -25,7 +26,7 @@ test('shows the customer their own orders', function () {
         ->get('/account/orders');
 
     $response->assertOk();
-    $response->assertViewHas('orders', fn ($orders) => $orders->total() === 3);
+    $response->assertViewHas('orders', fn (LengthAwarePaginator $orders): bool => $orders->total() === 3);
 });
 
 test('does not leak orders belonging to another customer', function () {
@@ -39,7 +40,7 @@ test('does not leak orders belonging to another customer', function () {
         ->get('/account/orders');
 
     $response->assertOk();
-    $response->assertViewHas('orders', fn ($orders) => $orders->total() === 2);
+    $response->assertViewHas('orders', fn (LengthAwarePaginator $orders): bool => $orders->total() === 2);
 });
 
 test('paginates at 20 orders per page', function () {
@@ -51,5 +52,5 @@ test('paginates at 20 orders per page', function () {
         ->get('/account/orders');
 
     $response->assertOk();
-    $response->assertViewHas('orders', fn ($orders) => $orders->perPage() === 20 && $orders->total() === 25);
+    $response->assertViewHas('orders', fn (LengthAwarePaginator $orders): bool => $orders->perPage() === 20 && $orders->total() === 25);
 });

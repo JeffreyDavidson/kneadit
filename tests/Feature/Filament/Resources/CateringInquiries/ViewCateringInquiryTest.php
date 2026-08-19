@@ -114,7 +114,7 @@ test('confirm booking creates an order, transitions inquiry to Confirmed', funct
     $quoted->refresh();
     expect($quoted->status)->toBe(CateringInquiryStatus::Confirmed)
         ->and($quoted->order)->not->toBeNull()
-        ->and($quoted->order->status)->toBe(OrderStatus::Confirmed);
+        ->and($quoted->order()->firstOrFail()->status)->toBe(OrderStatus::Confirmed);
 });
 
 test('confirm booking is hidden once an order exists', function () {

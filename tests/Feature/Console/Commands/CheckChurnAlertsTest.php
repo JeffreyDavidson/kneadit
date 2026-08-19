@@ -30,7 +30,7 @@ test('trial expiring in 48h creates churn alert', function () {
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'expiring-bakery')
-        ->first();
+        ->firstOrFail();
 
     expect($log)->not->toBeNull('Expected a churn_alert audit log for expiring tenant')
         ->and($log->description)->toContain('Trial Expiring');
@@ -52,7 +52,7 @@ test('no login in 7+ days creates churn alert', function () {
 
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'no-login-bakery')
-        ->first();
+        ->firstOrFail();
 
     expect($log)->not->toBeNull();
 });
@@ -95,7 +95,7 @@ test('young tenants are not checked for zero orders', function () {
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'young-bakery')
         ->whereJsonContains('metadata->type', 'no_orders')
-        ->firstOrFail();
+        ->first();
 
     expect($log)->toBeNull();
 });
@@ -118,7 +118,7 @@ test('tenant with trial far in the future does not trigger trial alert', functio
     $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'healthy-bakery')
         ->whereJsonContains('metadata->type', 'trial_expiring')
-        ->firstOrFail();
+        ->first();
 
     expect($log)->toBeNull();
 });

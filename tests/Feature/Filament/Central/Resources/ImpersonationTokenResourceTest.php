@@ -36,8 +36,6 @@ test('list shows pending, consumed, and expired tokens', function () {
         'plan' => 'pro',
         'is_active' => true,
     ]);
-    $tenant->domains()->create(['domain' => 'audit-bakery']);
-
     ImpersonationToken::factory()->for($tenant)->create();
     ImpersonationToken::factory()->for($tenant)->consumed()->create();
     ImpersonationToken::factory()->for($tenant)->expired()->create();

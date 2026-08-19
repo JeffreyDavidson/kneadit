@@ -94,8 +94,8 @@ test('can create a gift card via header action', function () {
     $giftCard = GiftCard::query()->firstOrFail();
     expect($giftCard)
         ->purchaser_name->toBe('Jane Doe')
-        ->purchaser_email->toBe('jane@example.com')
-        ->code->not->toBeNull()
+        ->purchaser_email->toBe('jane@example.com');
+    expect($giftCard->code)->not->toBeNull()
         ->and($giftCard->initial_balance->dollars())->toBe(50.0);
 });
 
