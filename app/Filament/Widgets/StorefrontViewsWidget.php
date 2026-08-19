@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\Analytics\StorefrontAnalytics;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Queries\Analytics\StorefrontViewsQuery;
 use Filament\Widgets\Widget;
@@ -22,7 +23,7 @@ class StorefrontViewsWidget extends Widget
 
     public function getViewAllUrl(): string
     {
-        return '/admin/storefront-analytics';
+        return StorefrontAnalytics::getUrl();
     }
 
     protected function cachePrefix(): string

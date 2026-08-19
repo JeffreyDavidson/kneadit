@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Filament\WidgetSize;
+use App\Filament\Resources\Customers\CustomerResource;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
@@ -60,12 +61,12 @@ class AtRiskCustomersWidget extends Widget
 
     public function getViewAllUrl(): string
     {
-        return route('filament.admin.resources.customers.index');
+        return CustomerResource::getUrl('index');
     }
 
     public function getCustomerViewUrl(int $id): string
     {
-        return route('filament.admin.resources.customers.view', $id);
+        return CustomerResource::getUrl('view', ['record' => $id]);
     }
 
     private function rowLimit(): int

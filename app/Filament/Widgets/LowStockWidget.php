@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Inventory\StockStatus;
+use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\Ingredient;
 use Filament\Widgets\Widget;
@@ -49,7 +50,7 @@ class LowStockWidget extends Widget
 
     public function getViewAllUrl(): string
     {
-        return route('filament.admin.resources.ingredients.index');
+        return IngredientResource::getUrl('index');
     }
 
     private function statusColor(StockStatus $status): string

@@ -3,9 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
-use App\Models\Orders\Order;
+use App\Queries\Financial\GoalProgressQuery;
 use App\Services\Settings\SettingsManager;
-use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
 
 class GoalTrackerWidget extends Widget
@@ -48,52 +47,16 @@ class GoalTrackerWidget extends Widget
         $this->showEditModal = false;
     }
 
-    /** @return array<string, mixed> */
+    /** @return array{label: string, goal: float, revenue: float, percentage: float|int} */
     public function getMonthlyDataProperty(): array
     {
-        return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
-            $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
-            $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
-            $range = DateRange::thisMonth();
-
-            // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
-                ->active()
-                ->sum('total') / 100);
-
-            $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
-
-            return [
-                'label' => now()->format('F Y'),
-                'goal' => $goal,
-                'revenue' => $revenue,
-                'percentage' => $percentage,
-            ];
-        });
+        return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], fn (): array => resolve(GoalProgressQuery::class)->monthly());
     }
 
-    /** @return array<string, mixed> */
+    /** @return array{label: string, goal: float, revenue: float, percentage: float|int} */
     public function getYearlyDataProperty(): array
     {
-        return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
-            $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
-            $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
-            $range = DateRange::thisYear();
-
-            // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
-                ->active()
-                ->sum('total') / 100);
-
-            $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
-
-            return [
-                'label' => now()->format('Y'),
-                'goal' => $goal,
-                'revenue' => $revenue,
-                'percentage' => $percentage,
-            ];
-        });
+        return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], fn (): array => resolve(GoalProgressQuery::class)->yearly());
     }
 
     protected function cachePrefix(): string
