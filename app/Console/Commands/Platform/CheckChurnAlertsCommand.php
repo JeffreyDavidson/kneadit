@@ -19,7 +19,7 @@ class CheckChurnAlertsCommand extends Command
         foreach ($alerts as $alert) {
             resolve(LogAuditEntry::class)(
                 action: 'churn_alert',
-                description: "{$alert->type->label()}: {$alert->name} — {$alert->description}",
+                description: "{$alert->type->getLabel()}: {$alert->name} — {$alert->description}",
                 targetType: 'tenant',
                 targetId: $alert->tenantId,
                 metadata: ['type' => $alert->type->value, 'severity' => $alert->severity->value],

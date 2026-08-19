@@ -23,7 +23,7 @@ final readonly class ChurnAlert
             'tenant_id' => $this->tenantId,
             'name' => $this->name,
             'type' => $this->type->value,
-            'type_label' => $this->type->label(),
+            'type_label' => $this->type->getLabel(),
             'description' => $this->description,
             'days_since_signup' => $this->daysSinceSignup,
             'severity' => $this->severity->value,

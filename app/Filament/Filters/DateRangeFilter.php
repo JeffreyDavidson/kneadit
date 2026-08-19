@@ -22,8 +22,10 @@ class DateRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
-            $from = Arr::string($data, 'from', '');
-            $until = Arr::string($data, 'until', '');
+            $from = Arr::get($data, 'from');
+            $until = Arr::get($data, 'until');
+            $from = is_string($from) ? $from : '';
+            $until = is_string($until) ? $until : '';
 
             return $query
                 ->when(
@@ -38,8 +40,10 @@ class DateRangeFilter extends Filter
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            $from = Arr::string($data, 'from', '');
-            $until = Arr::string($data, 'until', '');
+            $from = Arr::get($data, 'from');
+            $until = Arr::get($data, 'until');
+            $from = is_string($from) ? $from : '';
+            $until = is_string($until) ? $until : '';
             if ($from !== '') {
                 $indicators[] = 'From ' . Date::parse($from)->toFormattedDateString();
             }
