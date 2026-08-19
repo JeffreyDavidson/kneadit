@@ -45,9 +45,10 @@ final class CustomerInsightsQuery
 
     private function averageForMonth(int $month, int $year): float
     {
+        // orders.total is stored as bigint cents; aggregates bypass MoneyCentsCast.
         return (float) Order::query()->active()
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
-            ->avg('total');
+            ->avg('total') / 100;
     }
 }

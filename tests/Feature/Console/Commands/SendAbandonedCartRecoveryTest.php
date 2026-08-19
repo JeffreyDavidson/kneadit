@@ -20,5 +20,5 @@ test('command source uses TenancyManager + abandonedCartRecoveryEnabled', functi
         ->toContain('forEachTenant')
         ->toContain('abandonedCartRecoveryEnabled')
         ->toContain('recovery_sent_at')
-        ->toContain('converted_at');
+        ->toContain('withRecoverableItems');
 });

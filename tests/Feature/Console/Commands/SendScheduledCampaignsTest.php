@@ -12,7 +12,6 @@ test('command source uses TenancyManager + filters Scheduled campaigns', functio
     expect($source)
         ->toContain('TenancyManager')
         ->toContain('forEachTenant')
-        ->toContain('CustomerCampaignStatus::Scheduled')
-        ->toContain('scheduled_at')
+        ->toContain('CustomerCampaign::query()->due()')
         ->toContain('SendCustomerCampaign');
 });

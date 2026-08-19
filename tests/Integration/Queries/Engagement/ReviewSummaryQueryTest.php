@@ -20,5 +20,5 @@ test('summarizes approved reviews only', function () {
         ->and($query->totalReviews())->toBe(2)
         ->and($query->recentReview()?->is($recent))->toBeTrue()
         ->and($distribution[5])->toBe(['count' => 1, 'percentage' => 50.0])
-        ->and($distribution[1])->toBe(['count' => 0, 'percentage' => 0]);
+        ->and($distribution[1])->toBe(['count' => 0, 'percentage' => 0.0]);
 });

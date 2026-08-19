@@ -80,8 +80,8 @@ class ActivityLogsTable
                         DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        $from = Arr::string($data, 'from', '');
-                        $until = Arr::string($data, 'until', '');
+                        $from = filled($data['from'] ?? null) ? Arr::string($data, 'from') : '';
+                        $until = filled($data['until'] ?? null) ? Arr::string($data, 'until') : '';
 
                         return $query
                             ->when($from !== '', fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
@@ -89,8 +89,8 @@ class ActivityLogsTable
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        $from = Arr::string($data, 'from', '');
-                        $until = Arr::string($data, 'until', '');
+                        $from = filled($data['from'] ?? null) ? Arr::string($data, 'from') : '';
+                        $until = filled($data['until'] ?? null) ? Arr::string($data, 'until') : '';
 
                         if ($from !== '') {
                             $indicators[] = Indicator::make("From {$from}")->removeField('from');

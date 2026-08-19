@@ -32,7 +32,7 @@ class ProductReport
                     'units_sold' => Arr::integer(['value' => $p->units_sold ?? 0], 'value', 0),
                     // unit_price is bigint cents (migration 2026_04_22_201500), so
                     // SUM(quantity * unit_price) is in cents — divide back to dollars.
-                    'revenue' => Arr::integer(['value' => $p->revenue ?? 0], 'value', 0) / 100,
+                    'revenue' => Arr::integer(['value' => $p->revenue ?? 0], 'value', 0) / 100.0,
                     'margin' => $margin,
                 ];
             })

@@ -142,7 +142,7 @@ test('returns error when order subtotal is below minimum', function () {
         ]);
 
     $response->assertRedirect()
-        ->assertSessionHasErrors(['items' => 'Minimum pickup order is $15.00']);
+        ->assertSessionHasErrors(['items' => 'Minimum pickup order is $15.00. Please add more items to continue.']);
 });
 
 test('success flash message can be customized via page content', function () {

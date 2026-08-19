@@ -10,8 +10,8 @@ pest()->use(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('returns every trackable stage with aggregated counts and totals', function () {
-    Order::factory()->pending()->count(2)->create(['total' => 1500]);
-    Order::factory()->confirmed()->create(['total' => 2500]);
+    Order::factory()->pending()->count(2)->create(['total' => 15.0]);
+    Order::factory()->confirmed()->create(['total' => 25.0]);
 
     $stages = resolve(OrderFunnelQuery::class)->get();
     $pending = collect($stages)->firstWhere('key', OrderStatus::Pending->value);
