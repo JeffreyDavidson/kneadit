@@ -2,11 +2,20 @@
 
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
+
+function inquiryQuotedAmount(CateringInquiry $inquiry): Money
+{
+    $amount = $inquiry->refresh()->quoted_amount;
+    throw_unless($amount instanceof Money, RuntimeException::class, 'Expected a quoted amount.');
+
+    return $amount;
+}
 
 test('creating an item recomputes the parent quoted_amount', function () {
     $inquiry = CateringInquiry::factory()->create(['quoted_amount' => 0]);
@@ -16,7 +25,7 @@ test('creating an item recomputes the parent quoted_amount', function () {
         'quantity' => 3,
     ]);
 
-    expect($inquiry->refresh()->quoted_amount->dollars())->toBe(300.00);
+    expect(inquiryQuotedAmount($inquiry)->dollars())->toBe(300.00);
 });
 
 test('updating an item recomputes the parent quoted_amount', function () {
@@ -28,7 +37,7 @@ test('updating an item recomputes the parent quoted_amount', function () {
 
     $item->update(['quantity' => 5]);
 
-    expect($inquiry->refresh()->quoted_amount->dollars())->toBe(250.00);
+    expect(inquiryQuotedAmount($inquiry)->dollars())->toBe(250.00);
 });
 
 test('deleting an item recomputes the parent quoted_amount', function () {
@@ -38,7 +47,7 @@ test('deleting an item recomputes the parent quoted_amount', function () {
 
     $delete->delete();
 
-    expect($inquiry->refresh()->quoted_amount->dollars())->toBe(100.00);
+    expect(inquiryQuotedAmount($inquiry)->dollars())->toBe(100.00);
 });
 
 test('removing the last item zeroes the parent quoted_amount', function () {
@@ -47,7 +56,7 @@ test('removing the last item zeroes the parent quoted_amount', function () {
 
     $only->delete();
 
-    expect($inquiry->refresh()->quoted_amount->dollars())->toBe(0.00);
+    expect(inquiryQuotedAmount($inquiry)->dollars())->toBe(0.00);
 });
 
 test('multiple items sum correctly', function () {
@@ -57,5 +66,5 @@ test('multiple items sum correctly', function () {
     CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create(['unit_price' => 25, 'quantity' => 4]); // 100
     CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create(['unit_price' => 200, 'quantity' => 1]); // 200
 
-    expect($inquiry->refresh()->quoted_amount->dollars())->toBe(400.00);
+    expect(inquiryQuotedAmount($inquiry)->dollars())->toBe(400.00);
 });

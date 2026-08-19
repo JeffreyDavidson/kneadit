@@ -44,8 +44,9 @@ test('updated selected recipe id loads recipe', function () {
     testFixture('page', PriceSuggestionTool::class)->selectedRecipeId = $recipe->id;
     testFixture('page', PriceSuggestionTool::class)->updatedSelectedRecipeId();
 
-    expect(testFixture('page', PriceSuggestionTool::class)->selectedRecipe)->not->toBeNull()
-        ->and(testFixture('page', PriceSuggestionTool::class)->selectedRecipe->id)->toBe($recipe->id);
+    $selected = testFixture('page', PriceSuggestionTool::class)->selectedRecipe;
+    throw_unless($selected instanceof Recipe, RuntimeException::class, 'Expected the selected recipe.');
+    expect($selected->id)->toBe($recipe->id);
 });
 
 test('updated selected recipe id clears when null', function () {

@@ -17,7 +17,7 @@ test('order message belongs to order', function () {
     $message = OrderMessage::factory()->recycle($order)->create();
 
     expect($message->order)->toBeInstanceOf(Order::class)
-        ->and($message->order->id)->toBe($order->id);
+        ->and($message->order?->id)->toBe($order->id);
 });
 
 test('sender_type cast resolves to SenderType enum for baker messages', function () {

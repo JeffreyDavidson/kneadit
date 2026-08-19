@@ -35,6 +35,7 @@ test('getTemplateData marks customized templates correctly', function () {
 
     $data = testFixture('page', ManageEmailTemplates::class)->getTemplateData();
     $orderPlaced = collect($data)->firstWhere('type', 'order_placed');
+    throw_unless(is_array($orderPlaced), RuntimeException::class, 'Expected order placed template.');
 
     expect($orderPlaced['status'])->toBe('Customized');
 });

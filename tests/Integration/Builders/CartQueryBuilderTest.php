@@ -1,9 +1,15 @@
 <?php
 
+use App\Builders\Orders\CartQueryBuilder;
 use App\Models\Orders\Cart;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
+
+function cartQuery(): CartQueryBuilder
+{
+    return Cart::query();
+}
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -34,8 +40,11 @@ test('abandonedBefore returns only recoverable carts older than the cutoff', fun
     Cart::factory()->withEmail()->abandoned(24)->converted()->create();
     Cart::factory()->withEmail()->abandoned(24)->create(['recovery_sent_at' => now()]);
 
-    $carts = Cart::query()->abandonedBefore(now()->subHours(12))->get();
+    $builder = cartQuery();
+    $query = (new ReflectionMethod($builder, 'abandonedBefore'))->invoke($builder, now()->subHours(12));
+    throw_unless($query instanceof CartQueryBuilder, RuntimeException::class, 'Expected the custom cart builder.');
+    $carts = $query->get();
 
     expect($carts)->toHaveCount(1)
-        ->and($carts->firstOrFail()?->is($abandoned))->toBeTrue();
+        ->and($carts->firstOrFail()->is($abandoned))->toBeTrue();
 });

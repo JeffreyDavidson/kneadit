@@ -40,8 +40,9 @@ test('updated selected recipe id loads recipe and refreshes analysis', function 
     testFixture('page', RecipeCostCalculator::class)->selectedRecipeId = $recipe->id;
     testFixture('page', RecipeCostCalculator::class)->updatedSelectedRecipeId();
 
-    expect(testFixture('page', RecipeCostCalculator::class)->selectedRecipe)->not->toBeNull()
-        ->and(testFixture('page', RecipeCostCalculator::class)->selectedRecipe->id)->toBe($recipe->id)
+    $selected = testFixture('page', RecipeCostCalculator::class)->selectedRecipe;
+    throw_unless($selected instanceof Recipe, RuntimeException::class, 'Expected the selected recipe.');
+    expect($selected->id)->toBe($recipe->id)
         ->and(testFixture('page', RecipeCostCalculator::class)->analysis)->not->toBeNull();
 });
 

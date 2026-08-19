@@ -25,6 +25,7 @@ use App\Services\Inventory\InventoryManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
 
@@ -120,9 +121,8 @@ test('does not dispatch OrderDelivered or OrderCancelled on other transitions', 
 });
 
 test('critical effect failure rolls back the status transition', function () {
-    $inventoryManager = Mockery::mock(InventoryManager::class);
-    $inventoryManager->shouldReceive('deductForOrder')
-        ->andThrow(new RuntimeException('Inventory deduction failed'));
+    $inventoryManager = Double::for(InventoryManager::class);
+    $inventoryManager->expects('deductForOrder')->throws(new RuntimeException('Inventory deduction failed'));
 
     app()->instance(InventoryManager::class, $inventoryManager);
 

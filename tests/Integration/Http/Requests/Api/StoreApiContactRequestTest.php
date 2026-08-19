@@ -40,6 +40,7 @@ test('valid contact passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
+/** @return array<string, mixed> */
 function validApiContactData(): array
 {
     return [

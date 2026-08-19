@@ -3,6 +3,7 @@
 use App\Actions\Operations\RedeliverWebhook;
 use App\Models\Operations\WebhookDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 pest()->use(RefreshDatabase::class);
@@ -27,11 +28,11 @@ test('redeliver re-fires the webhook with the original payload data', function (
 
     resolve(RedeliverWebhook::class)($original);
 
-    Http::assertSent(function ($request) {
+    Http::assertSent(function (Request $request): bool {
         $body = json_decode($request->body(), true);
 
-        return $body['event'] === 'order.created'
-            && $body['data']['order_number'] === 'ORD-XYZ';
+        return data_get($body, 'event') === 'order.created'
+            && data_get($body, 'data.order_number') === 'ORD-XYZ';
     });
 
     expect(WebhookDelivery::count())->toBe(2);

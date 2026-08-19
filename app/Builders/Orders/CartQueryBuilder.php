@@ -23,7 +23,7 @@ class CartQueryBuilder extends Builder
         return $this;
     }
 
-    public function abandonedBefore(Carbon $cutoff): static
+    public function abandonedBefore(Carbon $cutoff): self
     {
         $this->whereNotNull('customer_email')
             ->whereNull('recovery_sent_at')

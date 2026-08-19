@@ -73,6 +73,7 @@ it('rolls back the central tenant + domain row when tenant-DB seeding fails', fu
     // binding with one that explodes on setMany().
     app()->bind(SettingsManager::class, function () {
         return new class {
+            /** @param array<string, mixed> $settings */
             public function setMany(array $settings): void
             {
                 throw new RuntimeException('Simulated tenant DB seed failure');

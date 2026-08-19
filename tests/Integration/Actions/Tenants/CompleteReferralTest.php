@@ -44,6 +44,7 @@ it('does nothing when referral code is not found', function () {
     expect(Referral::query()->where('referral_code', 'NONEXISTENT')->exists())->toBeFalse();
 });
 
+/** @param list<string> $ids */
 function seedReferralTenants(array $ids): void
 {
     foreach ($ids as $id) {

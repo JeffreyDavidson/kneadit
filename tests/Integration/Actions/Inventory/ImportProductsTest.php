@@ -5,6 +5,7 @@ use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
 
@@ -28,7 +29,7 @@ test('it imports new products from csv', function () {
 
 test('it updates existing products on reimport', function () {
     $category = Category::factory()->create(['name' => 'Breads']);
-    Product::factory()->create([
+    Product::factory()->createOne([
         'name' => 'Sourdough Loaf',
         'price' => 7.00,
         'category_id' => $category->id,
@@ -43,12 +44,12 @@ test('it updates existing products on reimport', function () {
 
     expect($result['created'])->toBe(0)
         ->and($result['updated'])->toBe(1)
-        ->and(Product::query()->where('name', 'Sourdough Loaf')->firstOrFail()->price->dollars())->toBe(9.00);
+        ->and(Product::query()->where('name', 'Sourdough Loaf')->firstOrFail()->price?->dollars())->toBe(9.00);
 });
 
 test('it skips rows with row-level errors from parser', function () {
-    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
-    $exporter->shouldReceive('parseForPreview')->andReturn([
+    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter->allows('parseForPreview')->returns([
         'rows' => [
             [
                 'name' => '',
@@ -94,12 +95,14 @@ test('it includes cost when provided in csv', function () {
         ->and($result['errors'])->toBeEmpty();
 
     $product = Product::query()->where('name', 'Sourdough Loaf')->firstOrFail();
-    expect($product->cost->dollars())->toBe(3.50);
+    $cost = $product->cost;
+    throw_unless($cost instanceof App\ValueObjects\Money, RuntimeException::class, 'Expected a product cost.');
+    expect($cost->dollars())->toBe(3.50);
 });
 
 test('it catches throwable during product save and records error', function () {
-    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
-    $exporter->shouldReceive('parseForPreview')->andReturn([
+    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter->allows('parseForPreview')->returns([
         'rows' => [
             [
                 'name' => 'Test Product',

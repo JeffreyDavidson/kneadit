@@ -45,6 +45,7 @@ test('valid submission passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
+/** @return array<string, mixed> */
 function validGalleryPhotoData(): array
 {
     return [

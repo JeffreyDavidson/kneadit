@@ -21,8 +21,10 @@ test('get survey property returns survey when selected', function () {
 
     testFixture('page', SurveyResults::class)->surveyId = $survey->id;
 
-    expect(testFixture('page', SurveyResults::class)->getSurveyProperty())->not->toBeNull()
-        ->and(testFixture('page', SurveyResults::class)->getSurveyProperty()->title)->toBe('Customer Feedback');
+    $selected = testFixture('page', SurveyResults::class)->getSurveyProperty();
+    throw_unless($selected instanceof Survey, RuntimeException::class, 'Expected the selected survey.');
+
+    expect($selected->title)->toBe('Customer Feedback');
 });
 
 test('get survey property returns null for nonexistent id', function () {
@@ -37,14 +39,16 @@ test('get view data returns surveys list', function () {
 
     $method = new ReflectionMethod(SurveyResults::class, 'getViewData');
     $viewData = $method->invoke(testFixture('page', SurveyResults::class));
+    throw_unless(is_array($viewData), RuntimeException::class, 'Expected survey view data.');
 
     expect($viewData)->toHaveKey('surveys')
-        ->and($viewData['surveys'])->toHaveCount(2);
+        ->and($viewData['surveys'] ?? null)->toHaveCount(2);
 });
 
 test('get view data includes current survey as null when none selected', function () {
     $method = new ReflectionMethod(SurveyResults::class, 'getViewData');
     $viewData = $method->invoke(testFixture('page', SurveyResults::class));
+    throw_unless(is_array($viewData), RuntimeException::class, 'Expected survey view data.');
 
-    expect($viewData['survey'])->toBeNull();
+    expect($viewData['survey'] ?? null)->toBeNull();
 });

@@ -28,9 +28,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read Collection<int, Supplier> $suppliers
  * @property-read int|null $suppliers_count
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
+ * @method static IngredientQueryBuilder newModelQuery()
+ * @method static IngredientQueryBuilder newQuery()
+ * @method static IngredientQueryBuilder query()
  *
  * @property-read Pivot|null $pivot
  * @property \App\ValueObjects\Money|null $cost_per_unit

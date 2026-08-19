@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 test('returns zero when given an empty collection', function () {
-    $sent = resolve(SendBulkCustomerMessage::class)(collect(), 'x', 'y');
+    $sent = resolve(SendBulkCustomerMessage::class)(Customer::query()->whereKey([])->get(), 'x', 'y');
 
     expect($sent)->toBe(0);
     Mail::assertNothingQueued();
@@ -25,7 +25,7 @@ test('queues one mailable per customer with the given subject and body', functio
     $bob = Customer::factory()->create(['email' => 'bob@example.com', 'name' => 'Bob']);
 
     $sent = resolve(SendBulkCustomerMessage::class)(
-        collect([$alice, $bob]),
+        Customer::query()->whereKey([$alice->id, $bob->id])->get(),
         messageSubject: 'Heads up — pickup window changed',
         body: 'Your pickup is now between 3pm and 5pm tomorrow.',
     );

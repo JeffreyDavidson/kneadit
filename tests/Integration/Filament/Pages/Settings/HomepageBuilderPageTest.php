@@ -85,7 +85,9 @@ test('update section field sets value', function () {
 
     testFixture('page', HomepageBuilder::class)->updateSectionField('featured_products', 'title', 'Best Sellers');
 
-    expect(testFixture('page', HomepageBuilder::class)->sections['featured_products']['title'])->toBe('Best Sellers');
+    $section = testFixture('page', HomepageBuilder::class)->sections['featured_products'] ?? null;
+    throw_unless(is_array($section), RuntimeException::class, 'Expected featured products section.');
+    expect($section['title'] ?? null)->toBe('Best Sellers');
 });
 
 test('save persists sections to settings', function () {
@@ -93,7 +95,12 @@ test('save persists sections to settings', function () {
     testFixture('page', HomepageBuilder::class)->toggleVisibility('hero');
     testFixture('page', HomepageBuilder::class)->save();
 
-    $saved = json_decode(settings('homepage_sections'), true);
+    $savedSections = settings('homepage_sections');
+    throw_unless(is_string($savedSections), UnexpectedValueException::class, 'Expected saved homepage sections JSON.');
+
+    $saved = json_decode($savedSections, true);
+    throw_unless(is_array($saved), UnexpectedValueException::class, 'Expected decoded homepage sections.');
+    throw_unless(isset($saved['hero']) && is_array($saved['hero']), UnexpectedValueException::class, 'Expected saved hero section.');
 
     expect($saved['hero']['visible'])->toBeFalse();
 });

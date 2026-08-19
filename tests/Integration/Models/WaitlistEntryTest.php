@@ -16,7 +16,7 @@ test('product relationship returns the associated product', function () {
         'product_id' => $product->id,
     ]);
 
-    expect($entry->product->id)->toBe($product->id);
+    expect($entry->product?->id)->toBe($product->id);
 });
 
 test('status is cast to WaitlistStatus enum', function () {

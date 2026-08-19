@@ -5,6 +5,7 @@ use App\Enums\Customers\CateringInquiryStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -20,7 +21,10 @@ test('stamps deposit_amount + paid_at + reference', function () {
     resolve(RecordCateringDeposit::class)($inquiry, 250.00, 'CHK-1234');
 
     $inquiry->refresh();
-    expect($inquiry->deposit_amount->dollars())->toBe(250.00)
+    $depositAmount = $inquiry->deposit_amount;
+    throw_unless($depositAmount instanceof Money, RuntimeException::class, 'Expected a deposit amount.');
+
+    expect($depositAmount->dollars())->toBe(250.00)
         ->and($inquiry->deposit_paid_at)->not->toBeNull()
         ->and($inquiry->deposit_reference)->toBe('CHK-1234');
 });
@@ -66,7 +70,10 @@ test('clamps negative amount to 0', function () {
 
     resolve(RecordCateringDeposit::class)($inquiry, -50.00);
 
-    expect($inquiry->refresh()->deposit_amount->dollars())->toBe(0.00);
+    $depositAmount = $inquiry->refresh()->deposit_amount;
+    throw_unless($depositAmount instanceof Money, RuntimeException::class, 'Expected a deposit amount.');
+
+    expect($depositAmount->dollars())->toBe(0.00);
 });
 
 test('suggestedAmount returns the configured percent of the quote', function () {

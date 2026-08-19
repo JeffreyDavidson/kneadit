@@ -34,5 +34,5 @@ test('invitation belongs to inviter', function () {
         'invited_by' => $owner->id,
     ]);
 
-    expect($invitation->inviter->id)->toBe($owner->id);
+    expect($invitation->inviter()->firstOrFail()->id)->toBe($owner->id);
 });

@@ -14,6 +14,10 @@ test('validates a valid coupon', function () {
     $service = new CouponService;
     $result = $service->validate('save10', 50.00);
 
+    if ($result->coupon === null) {
+        throw new RuntimeException('Expected the validated coupon to be returned.');
+    }
+
     expect($result->valid)->toBeTrue()
         ->and($result->coupon->id)->toBe($coupon->id)
         ->and($result->error)->toBeNull();

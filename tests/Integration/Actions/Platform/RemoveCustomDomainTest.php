@@ -11,8 +11,8 @@ beforeEach(function () {
 });
 
 test('clears custom domain from tenant', function () {
-    $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com']);
-    $tenant->domains()->create(['domain' => 'old.example.com']);
+    $tenant = Tenant::factory()->createOne(['custom_domain' => 'old.example.com']);
+    Domain::query()->create(['domain' => 'old.example.com', 'tenant_id' => $tenant->id]);
 
     resolve(RemoveCustomDomain::class)($tenant);
 
@@ -20,8 +20,8 @@ test('clears custom domain from tenant', function () {
 });
 
 test('deletes domain record', function () {
-    $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com']);
-    $tenant->domains()->create(['domain' => 'old.example.com']);
+    $tenant = Tenant::factory()->createOne(['custom_domain' => 'old.example.com']);
+    Domain::query()->create(['domain' => 'old.example.com', 'tenant_id' => $tenant->id]);
 
     resolve(RemoveCustomDomain::class)($tenant);
 
@@ -29,7 +29,7 @@ test('deletes domain record', function () {
 });
 
 test('handles tenant with no custom domain', function () {
-    $tenant = Tenant::factory()->create(['custom_domain' => null]);
+    $tenant = Tenant::factory()->createOne(['custom_domain' => null]);
 
     resolve(RemoveCustomDomain::class)($tenant);
 

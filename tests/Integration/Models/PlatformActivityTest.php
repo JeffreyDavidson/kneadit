@@ -26,7 +26,7 @@ test('metadata is cast to array', function () {
     $activity = resolve(LogPlatformActivity::class)('test', 't1', 'desc', ['key' => 'value']);
     $activity->refresh();
 
-    expect($activity->metadata)->toBeArray()->and($activity->metadata['key'])->toBe('value');
+    expect($activity->metadata)->toBeArray()->and($activity->metadata['key'] ?? null)->toBe('value');
 });
 
 test('tenant relationship exists', function () {

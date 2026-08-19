@@ -56,7 +56,9 @@ test('get upcoming orders labels today correctly', function () {
     $todayKey = now()->format('Y-m-d');
 
     if (isset($orders[$todayKey])) {
-        expect($orders[$todayKey]['label'])->toBe('Today');
+        $today = $orders[$todayKey];
+        throw_unless(is_array($today), RuntimeException::class, 'Expected today order data.');
+        expect($today['label'] ?? null)->toBe('Today');
     }
 });
 
@@ -67,6 +69,8 @@ test('get upcoming orders labels tomorrow correctly', function () {
     $tomorrowKey = now()->addDay()->format('Y-m-d');
 
     if (isset($orders[$tomorrowKey])) {
-        expect($orders[$tomorrowKey]['label'])->toBe('Tomorrow');
+        $tomorrow = $orders[$tomorrowKey];
+        throw_unless(is_array($tomorrow), RuntimeException::class, 'Expected tomorrow order data.');
+        expect($tomorrow['label'] ?? null)->toBe('Tomorrow');
     }
 });
