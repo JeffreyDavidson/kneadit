@@ -56,11 +56,14 @@ jobs:
           npm run build
 
       - name: Refresh browser sessions
+        env:
+          BROWSER_TEST_CENTRAL_URL: http://kneadit.test
+          BROWSER_TEST_STOREFRONT_URL: http://browser-test.kneadit.test
         run: |
           rm -f tests/Browser/.admin-session.json
           rm -f tests/Browser/.central-admin-session.json
           rm -f tests/Browser/.admin-fixture-ids.json
-          python3 tests/Browser/Helpers/prepare-admin-session.py
+          node tests/Browser/Helpers/prepare-admin-session.mjs
 
       - name: Run launch browser smoke tests
         env:
