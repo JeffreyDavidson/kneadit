@@ -10,7 +10,13 @@ beforeEach(function () {
 });
 
 test('billing portal redirects authenticated user to stripe portal', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $realUser = User::factory()->owner()->create();
+    $user = Double::for(User::class);
+    $user->allows('getAuthIdentifier')->returns($realUser->getAuthIdentifier());
+    $user->allows('getAuthIdentifierName')->returns($realUser->getAuthIdentifierName());
+    $user->allows('getAuthPassword')->returns($realUser->getAuthPassword());
+    $user->allows('getAuthPasswordName')->returns($realUser->getAuthPasswordName());
+    $user->allows('getRememberToken')->returns($realUser->getRememberToken());
     $user->expects('redirectToBillingPortal')
         ->with(route('filament.admin.pages.dashboard'))
         ->returns(new RedirectResponse('https://billing.stripe.com/session/test'));
