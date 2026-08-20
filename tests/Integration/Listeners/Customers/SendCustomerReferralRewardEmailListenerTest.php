@@ -32,7 +32,7 @@ test('mints a single-use fixed coupon for the referrer and queues the reward ema
     $coupon = Coupon::query()->latest()->firstOrFail();
     expect($coupon->code)->toMatch('/^REF-[A-Z0-9]{6}$/')
         ->and($coupon->type)->toBe(CouponType::Fixed)
-        ->and($coupon->fixed_amount->dollars())->toBe(15.0)
+        ->and($coupon->fixed_amount?->dollars())->toBe(15.0)
         ->and($coupon->max_uses)->toBe(1)
         ->and($referral->refresh()->reward_coupon_id)->toBe($coupon->id);
 

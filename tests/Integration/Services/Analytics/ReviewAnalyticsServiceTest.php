@@ -11,7 +11,6 @@ beforeEach(fn () => setUpTenantTest());
 test('overall stats returns zero counts with no reviews', function () {
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
-
     expect($stats->totalReviews)->toBe(0)
         ->and($stats->approvedReviews)->toBe(0)
         ->and($stats->averageRating)->toBe(0.0);
@@ -24,6 +23,7 @@ test('overall stats calculates correctly with reviews', function () {
 
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
+    throw_unless($stats instanceof ReviewOverview, RuntimeException::class, 'Expected review overview data.');
 
     expect($stats->totalReviews)->toBe(3)
         ->and($stats->approvedReviews)->toBe(2)

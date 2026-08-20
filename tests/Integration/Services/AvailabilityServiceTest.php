@@ -24,7 +24,9 @@ test('blocked date shows as unavailable', function () {
     ]);
 
     $result = resolve(AvailabilityService::class)->getAvailability();
-    $tomorrow = collect($result)->firstWhere('date', now()->addDay()->toDateString());
+    $tomorrow = collect($result)->firstOrFail(
+        fn (array $day): bool => $day['date'] === now()->addDay()->toDateString(),
+    );
 
     expect($tomorrow['available'])->toBeFalse()
         ->and($tomorrow['remaining_capacity'])->toBe(0);

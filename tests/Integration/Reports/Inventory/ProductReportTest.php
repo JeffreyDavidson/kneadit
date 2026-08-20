@@ -13,6 +13,28 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
+/**
+ * @param array<string, mixed> $report
+ * @return array{units_sold: mixed, revenue: mixed, margin: mixed}
+ */
+function reportedProduct(array $report, string $name): array
+{
+    $products = data_get($report, 'products', []);
+    throw_unless(is_array($products), RuntimeException::class, 'Expected report products to be an array.');
+
+    foreach ($products as $product) {
+        if (is_array($product) && data_get($product, 'name') === $name) {
+            return [
+                'units_sold' => data_get($product, 'units_sold'),
+                'revenue' => data_get($product, 'revenue'),
+                'margin' => data_get($product, 'margin'),
+            ];
+        }
+    }
+
+    throw new RuntimeException("Product {$name} was not found in the report.");
+}
+
 test('generates product report for a date range', function () {
     $range = DateRange::forMonth(2026, 3);
     $report = new ProductReport;
@@ -47,10 +69,9 @@ test('calculates units sold, revenue, and margin for products', function () {
     $report = new ProductReport;
     $result = $report->generate($range);
 
-    $sourdough = collect($result['products'])->firstWhere('name', 'Sourdough');
+    $sourdough = reportedProduct($result, 'Sourdough');
 
-    expect($sourdough)->not->toBeNull()
-        ->and($sourdough['units_sold'])->toBe(5)
+    expect($sourdough['units_sold'])->toBe(5)
         ->and($sourdough['revenue'])->toBe(50.0)
         ->and($sourdough['margin'])->toBe(60.0);
 });
@@ -66,7 +87,7 @@ test('returns null margin when price or cost is zero', function () {
     $report = new ProductReport;
     $result = $report->generate($range);
 
-    $freeSample = collect($result['products'])->firstWhere('name', 'Free Sample');
+    $freeSample = reportedProduct($result, 'Free Sample');
 
     expect($freeSample['margin'])->toBeNull();
 });

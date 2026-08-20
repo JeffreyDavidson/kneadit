@@ -18,7 +18,7 @@ test('sendReminder dispatches TrialReminding with the tenant store name', functi
         'name' => 'Happy Bakery',
         'store_name' => 'Happy Bread Co',
     ]);
-    $tenant = Tenant::query()->find('happy-bakery');
+    $tenant = Tenant::query()->findOrFail('happy-bakery');
 
     $result = resolve(TrialExpirationNotifier::class)->sendReminder($user, $tenant, 7);
 
@@ -37,7 +37,7 @@ test('sendReminder falls back to tenant name when store_name is empty', function
         'name' => 'Baker McBakerson',
         'store_name' => null,
     ]);
-    $tenant = Tenant::query()->find('no-store-name');
+    $tenant = Tenant::query()->findOrFail('no-store-name');
 
     resolve(TrialExpirationNotifier::class)->sendReminder($user, $tenant, 3);
 
@@ -48,7 +48,7 @@ test('notifyExpired dispatches TrialExpired with tenant id', function () {
     Event::fake([TrialExpired::class]);
     $user = User::factory()->create();
     createTenant(['id' => 'expired-tenant']);
-    $tenant = Tenant::query()->find('expired-tenant');
+    $tenant = Tenant::query()->findOrFail('expired-tenant');
 
     resolve(TrialExpirationNotifier::class)->notifyExpired($user, $tenant);
 

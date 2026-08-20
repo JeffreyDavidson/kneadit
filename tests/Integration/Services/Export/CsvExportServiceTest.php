@@ -18,6 +18,10 @@ it('returns early for invalid type', function () {
     $service = new CsvExportService;
     $handle = fopen('php://temp', 'r+');
 
+    if ($handle === false) {
+        throw new RuntimeException('Unable to open the temporary CSV stream.');
+    }
+
     $service->writeTo($handle, 'nonexistent');
 
     rewind($handle);

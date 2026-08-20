@@ -14,6 +14,16 @@ use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use Illuminate\Mail\Mailables\Address;
+
+function bakerAddress(Address|string|null $address): Address
+{
+    if (! $address instanceof Address) {
+        throw new RuntimeException('Expected a structured mail address.');
+    }
+
+    return $address;
+}
 
 beforeEach(function () {
     setUpCentralTest();
@@ -33,14 +43,14 @@ test('order placed email has baker branded from', function () {
     $mail = new OrderPlacedMail(testFixture('order', Order::class));
     $envelope = $mail->envelope();
 
-    expect($envelope->from->name)->toContain('Sweet Treats via KneadIt');
+    expect(bakerAddress($envelope->from)->name)->toContain('Sweet Treats via KneadIt');
 });
 
 test('order placed email sends from platform domain', function () {
     $mail = new OrderPlacedMail(testFixture('order', Order::class));
     $envelope = $mail->envelope();
 
-    expect($envelope->from->address)->toBe(config('mail.from.address', 'hello@getkneadit.app'));
+    expect(bakerAddress($envelope->from)->address)->toBe(config('mail.from.address', 'hello@getkneadit.app'));
 });
 
 test('order placed email has reply to baker', function () {
@@ -64,7 +74,7 @@ test('from name defaults when no store name', function () {
     $mail = new OrderPlacedMail(testFixture('order', Order::class));
     $envelope = $mail->envelope();
 
-    expect($envelope->from->name)->toContain('Our Bakery via KneadIt');
+    expect(bakerAddress($envelope->from)->name)->toContain('Our Bakery via KneadIt');
 });
 
 test('order confirmed uses baker branded from', function () {
@@ -73,7 +83,7 @@ test('order confirmed uses baker branded from', function () {
     $mail = new OrderStatusMail(testFixture('order', Order::class), App\Enums\Orders\OrderStatus::Confirmed);
     $envelope = $mail->envelope();
 
-    expect($envelope->from->name)->toContain('Flour Power via KneadIt');
+    expect(bakerAddress($envelope->from)->name)->toContain('Flour Power via KneadIt');
 });
 
 test('all customer mailables use baker branded trait', function () {
