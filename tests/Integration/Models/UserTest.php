@@ -8,21 +8,24 @@ use Illuminate\Support\Facades\Gate;
 beforeEach(fn () => setUpCentralTest());
 
 test('can access central panel only as platform admin', function () {
-    $admin = User::factory()->platformAdmin()->create();
-    $owner = User::factory()->owner()->create();
+    $admin = User::factory()->platformAdmin()->createOne();
+    $owner = User::factory()->owner()->createOne();
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('central');
+    $panel = Panel::make()->id('central');
 
     expect($admin->canAccessPanel($panel))->toBeTrue()
         ->and($owner->canAccessPanel($panel))->toBeFalse();
 });
 
 test('can access non-central panel for any role', function (string $factoryState) {
-    $user = User::factory()->{$factoryState}()->create();
+    $user = match ($factoryState) {
+        'owner' => User::factory()->owner()->createOne(),
+        'manager' => User::factory()->manager()->createOne(),
+        'staff' => User::factory()->staff()->createOne(),
+        default => throw new InvalidArgumentException("Unknown factory state: {$factoryState}"),
+    };
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('app');
+    $panel = Panel::make()->id('app');
 
     expect($user->canAccessPanel($panel))->toBeTrue();
 })->with(['owner', 'manager', 'staff']);

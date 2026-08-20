@@ -28,7 +28,10 @@ test('ingredients pivot has unit price', function () {
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
     $pivot = $supplier->refresh()->ingredients->firstOrFail()->pivot;
-    expect($pivot->unit_price)->toBe(1.20);
+    throw_unless($pivot instanceof Illuminate\Database\Eloquent\Relations\Pivot, RuntimeException::class, 'Expected an ingredient pivot.');
+    $unitPrice = $pivot->getAttribute('unit_price');
+    throw_unless(is_numeric($unitPrice), RuntimeException::class, 'Expected a numeric unit price.');
+    expect((float) $unitPrice)->toBe(1.20);
 });
 
 test('is active is cast to boolean', function () {

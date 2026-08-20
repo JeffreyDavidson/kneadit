@@ -14,7 +14,7 @@ test('product relationship returns the associated product', function () {
         'product_id' => $product->id,
     ]);
 
-    expect($favorite->product->id)->toBe($product->id);
+    expect($favorite->product?->id)->toBe($product->id);
 });
 
 test('for customer scope filters by email', function () {

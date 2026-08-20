@@ -11,9 +11,9 @@ beforeEach(function () {
 });
 
 test('can create an email campaign log', function () {
-    $log = EmailCampaignLog::factory()->create([
+    $log = EmailCampaignLog::factory()->createOne([
         'email' => 'test@example.com',
-        'tenant_id' => test()->tenant->id,
+        'tenant_id' => 'test-bakery',
     ]);
 
     expect(EmailCampaignLog::query()->where('email', 'test@example.com')->firstOrFail())
@@ -21,9 +21,9 @@ test('can create an email campaign log', function () {
 });
 
 test('status is cast to EmailDeliveryStatus enum', function () {
-    $log = EmailCampaignLog::factory()->create([
+    $log = EmailCampaignLog::factory()->createOne([
         'status' => EmailDeliveryStatus::Sent,
-        'tenant_id' => test()->tenant->id,
+        'tenant_id' => 'test-bakery',
     ]);
 
     $log->refresh();
@@ -33,9 +33,9 @@ test('status is cast to EmailDeliveryStatus enum', function () {
 });
 
 test('sent at is cast to datetime', function () {
-    $log = EmailCampaignLog::factory()->create([
+    $log = EmailCampaignLog::factory()->createOne([
         'sent_at' => '2026-01-15 10:00:00',
-        'tenant_id' => test()->tenant->id,
+        'tenant_id' => 'test-bakery',
     ]);
 
     $log->refresh();
@@ -44,9 +44,9 @@ test('sent at is cast to datetime', function () {
 });
 
 test('opened at is cast to datetime', function () {
-    $log = EmailCampaignLog::factory()->create([
+    $log = EmailCampaignLog::factory()->createOne([
         'opened_at' => '2026-01-15 14:00:00',
-        'tenant_id' => test()->tenant->id,
+        'tenant_id' => 'test-bakery',
     ]);
 
     $log->refresh();
@@ -55,11 +55,12 @@ test('opened at is cast to datetime', function () {
 });
 
 test('campaign relationship returns the parent campaign', function () {
-    $campaign = EmailCampaign::factory()->create();
-    $log = EmailCampaignLog::factory()->create([
+    $campaign = EmailCampaign::factory()->createOne();
+    $log = EmailCampaignLog::factory()->createOne([
         'campaign_id' => $campaign->id,
-        'tenant_id' => test()->tenant->id,
+        'tenant_id' => 'test-bakery',
     ]);
 
-    expect($log->campaign->id)->toBe($campaign->id);
+    $parent = $log->campaign;
+    expect($parent->id)->toBe($campaign->id);
 });

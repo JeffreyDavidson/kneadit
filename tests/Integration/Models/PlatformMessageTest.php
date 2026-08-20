@@ -53,5 +53,5 @@ test('parent relationship', function () {
     $parent = PlatformMessage::factory()->create(['tenant_id' => 't1']);
     $reply = PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1', 'parent_id' => $parent->id]);
 
-    expect($reply->parent->id)->toBe($parent->id);
+    expect($reply->parent?->id)->toBe($parent->id);
 });

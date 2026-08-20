@@ -18,7 +18,7 @@ test('coupon transaction belongs to coupon', function () {
     $transaction = CouponTransaction::factory()->recycle($coupon)->create();
 
     expect($transaction->coupon)->toBeInstanceOf(Coupon::class)
-        ->and($transaction->coupon->id)->toBe($coupon->id);
+        ->and($transaction->coupon?->id)->toBe($coupon->id);
 });
 
 test('coupon transaction belongs to order', function () {
@@ -26,5 +26,5 @@ test('coupon transaction belongs to order', function () {
     $transaction = CouponTransaction::factory()->for($order)->create();
 
     expect($transaction->order)->toBeInstanceOf(Order::class)
-        ->and($transaction->order->id)->toBe($order->id);
+        ->and($transaction->order?->id)->toBe($order->id);
 });

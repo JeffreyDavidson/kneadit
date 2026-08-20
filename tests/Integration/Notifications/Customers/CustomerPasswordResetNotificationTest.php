@@ -24,7 +24,7 @@ test('body mentions the store name', function () {
 
     $message = (new CustomerPasswordResetNotification('reset-token'))->toMail($customer);
 
-    expect(implode("\n", $message->introLines))->toContain('Sweet Treats Bakery');
+    expect(collect($message->introLines)->implode("\n"))->toContain('Sweet Treats Bakery');
 });
 
 test('action button points at the password reset route with the token', function () {

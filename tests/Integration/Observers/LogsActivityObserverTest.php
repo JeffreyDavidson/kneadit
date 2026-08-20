@@ -23,8 +23,7 @@ test('writes an activity log entry when an observed model is created', function 
         ->where('action', ActivityAction::Created)
         ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->action)->toBe(ActivityAction::Created)
+    expect($log->action)->toBe(ActivityAction::Created)
         ->and($log->user_name)->toBe('System')
         ->and($log->description)->toBe("Customer #{$customer->id} was created");
 });
@@ -53,9 +52,12 @@ test('writes an activity log entry when an observed model is updated, with chang
         ->where('action', ActivityAction::Updated)
         ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->properties)->toHaveKey('changes')
-        ->and($log->properties['changes'])->toHaveKey('name');
+    $properties = $log->getAttribute('properties');
+    throw_unless(is_array($properties), RuntimeException::class, 'Expected activity properties to be an array.');
+    $changes = $properties['changes'] ?? null;
+    throw_unless(is_array($changes), RuntimeException::class, 'Expected activity changes to be an array.');
+
+    expect($changes)->toHaveKey('name');
 });
 
 test('writes an activity log entry when an observed model is deleted', function () {
@@ -100,8 +102,7 @@ test('falls back to System when no user is authenticated (regression: null-safe)
         ->where('model_id', $customer->id)
         ->firstOrFail();
 
-    expect($log)->not->toBeNull()
-        ->and($log->user_name)->toBe('System')
+    expect($log->user_name)->toBe('System')
         ->and($log->user_id)->toBeNull();
 
     $logger->shouldNotHaveReceived('warning');

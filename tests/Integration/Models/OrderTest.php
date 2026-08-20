@@ -22,14 +22,15 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     test()->user = User::factory()->owner()->create();
-    test()->customer = Customer::factory()->create();
+    test()->customer = Customer::factory()->createOne();
 });
 
 test('order has customer relationship', function () {
     $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
-    expect($order->customer)->toBeInstanceOf(Customer::class)
-        ->and($order->customer->id)->toBe(testFixture('customer', Customer::class)->id);
+    $customer = $order->customer;
+    throw_unless($customer instanceof Customer, RuntimeException::class, 'Expected a customer relation.');
+    expect($customer->id)->toBe(testFixture('customer', Customer::class)->id);
 });
 
 test('order has items relationship', function () {
@@ -125,7 +126,7 @@ test('order has survey responses relationship', function () {
 });
 
 test('order has coupon transactions relationship', function () {
-    $coupon = Coupon::factory()->create();
+    $coupon = Coupon::factory()->createOne();
     $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create([
         'coupon_id' => $coupon->id,
     ]);
@@ -158,16 +159,18 @@ test('order belongs to coupon', function () {
         'coupon_id' => $coupon->id,
     ]);
 
-    expect($order->coupon)->toBeInstanceOf(Coupon::class)
-        ->and($order->coupon->id)->toBe($coupon->id);
+    $orderCoupon = $order->coupon;
+    throw_unless($orderCoupon instanceof Coupon, RuntimeException::class, 'Expected a coupon relation.');
+    expect($orderCoupon->id)->toBe($coupon->id);
 });
 
 test('order belongs to gift card', function () {
-    $giftCard = GiftCard::factory()->create();
+    $giftCard = GiftCard::factory()->createOne();
     $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create([
         'gift_card_id' => $giftCard->id,
     ]);
 
-    expect($order->giftCard)->toBeInstanceOf(GiftCard::class)
-        ->and($order->giftCard->id)->toBe($giftCard->id);
+    $orderGiftCard = $order->giftCard;
+    throw_unless($orderGiftCard instanceof GiftCard, RuntimeException::class, 'Expected a gift card relation.');
+    expect($orderGiftCard->id)->toBe($giftCard->id);
 });

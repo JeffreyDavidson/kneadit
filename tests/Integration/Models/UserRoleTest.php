@@ -15,7 +15,12 @@ test('role is cast to UserRole enum', function () {
 });
 
 test('role meetsRequirement staff is true for all roles', function (string $roleMethod) {
-    $user = User::factory()->$roleMethod()->create();
+    $user = match ($roleMethod) {
+        'staff' => User::factory()->staff()->createOne(),
+        'manager' => User::factory()->manager()->createOne(),
+        'owner' => User::factory()->owner()->createOne(),
+        default => throw new InvalidArgumentException("Unknown role factory: {$roleMethod}"),
+    };
 
     expect($user->role->meetsRequirement(UserRole::Staff))->toBeTrue();
 })->with(['staff', 'manager', 'owner']);
@@ -27,7 +32,11 @@ test('role meetsRequirement manager is false for staff', function () {
 });
 
 test('role meetsRequirement manager is true for manager and owner', function (string $roleMethod) {
-    $user = User::factory()->$roleMethod()->create();
+    $user = match ($roleMethod) {
+        'manager' => User::factory()->manager()->createOne(),
+        'owner' => User::factory()->owner()->createOne(),
+        default => throw new InvalidArgumentException("Unknown role factory: {$roleMethod}"),
+    };
 
     expect($user->role->meetsRequirement(UserRole::Manager))->toBeTrue();
 })->with(['manager', 'owner']);
