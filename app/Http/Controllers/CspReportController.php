@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
@@ -45,7 +46,7 @@ class CspReportController extends Controller
             ];
         }
 
-        return collect(Arr::only($report, Config::array('csp.report_fields')))
+        return collect(SettingValue::map(Arr::only($report, Config::array('csp.report_fields'))))
             ->filter(fn (mixed $value): bool => is_scalar($value) || $value === null)
             ->map(fn (mixed $value): bool|int|string|null => is_string($value)
                 ? Str::limit($value, 2_048, '')

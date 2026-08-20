@@ -25,6 +25,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ValidatedInput;
 
@@ -61,7 +62,8 @@ class ViewCateringInquiry extends ViewRecord
                     ->rows(3),
             ])
             ->action(function (array $data): void {
-                resolve(CancelCateringInquiry::class)($this->record, $data['reason'] ?? null);
+                $reason = Arr::string($data, 'reason', '');
+                resolve(CancelCateringInquiry::class)($this->record, $reason !== '' ? $reason : null);
 
                 $this->record->refresh();
 
@@ -85,7 +87,11 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema(ContactFields::nameEmailPhone())
             ->action(function (array $data): void {
-                $this->record->update($data);
+                $this->record->update([
+                    'customer_name' => $data['customer_name'],
+                    'customer_email' => $data['customer_email'],
+                    'customer_phone' => $data['customer_phone'],
+                ]);
 
                 Notification::make()->title('Customer updated.')->success()->send();
             });
@@ -125,7 +131,15 @@ class ViewCateringInquiry extends ViewRecord
                 Textarea::make('venue_address')->rows(2),
             ])
             ->action(function (array $data): void {
-                $this->record->update($data);
+                $this->record->update([
+                    'event_type' => $data['event_type'],
+                    'event_date' => $data['event_date'],
+                    'guest_count' => $data['guest_count'],
+                    'budget' => $data['budget'],
+                    'details' => $data['details'],
+                    'dietary_requirements' => $data['dietary_requirements'],
+                    'venue_address' => $data['venue_address'],
+                ]);
 
                 Notification::make()->title('Event details updated.')->success()->send();
             });
@@ -310,10 +324,11 @@ class ViewCateringInquiry extends ViewRecord
                     ->maxLength(255),
             ])
             ->action(function (array $data): void {
+                $reference = Arr::string($data, 'reference', '');
                 resolve(RecordCateringDeposit::class)(
                     $this->record,
-                    (float) $data['amount'],
-                    $data['reference'] ?? null,
+                    Arr::float($data, 'amount'),
+                    $reference !== '' ? $reference : null,
                 );
 
                 $this->record->refresh();

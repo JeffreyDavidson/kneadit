@@ -2,6 +2,7 @@
 
 namespace App\Actions\Operations;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Models\Operations\WebhookDelivery;
 use App\Services\Platform\WebhookService;
 
@@ -20,6 +21,6 @@ class RedeliverWebhook
     {
         $payload = $delivery->payload['data'] ?? [];
 
-        $this->webhookService->dispatch($delivery->event, is_array($payload) ? $payload : []);
+        $this->webhookService->dispatch($delivery->event, SettingValue::map($payload));
     }
 }

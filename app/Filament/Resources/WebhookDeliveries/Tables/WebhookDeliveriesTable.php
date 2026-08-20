@@ -20,6 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class WebhookDeliveriesTable
 {
@@ -92,17 +93,22 @@ class WebhookDeliveriesTable
                         DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
+                        $from = Arr::string($data, 'from', '');
+                        $until = Arr::string($data, 'until', '');
+
                         return $query
-                            ->when($data['from'] ?? null, fn (Builder $q, string $date) => $q->whereDate('dispatched_at', '>=', $date))
-                            ->when($data['until'] ?? null, fn (Builder $q, string $date) => $q->whereDate('dispatched_at', '<=', $date));
+                            ->when($from !== '', fn (Builder $q) => $q->whereDate('dispatched_at', '>=', $from))
+                            ->when($until !== '', fn (Builder $q) => $q->whereDate('dispatched_at', '<=', $until));
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['from'] ?? null) {
-                            $indicators[] = Indicator::make("From {$data['from']}")->removeField('from');
+                        $from = Arr::string($data, 'from', '');
+                        $until = Arr::string($data, 'until', '');
+                        if ($from !== '') {
+                            $indicators[] = Indicator::make("From {$from}")->removeField('from');
                         }
-                        if ($data['until'] ?? null) {
-                            $indicators[] = Indicator::make("Until {$data['until']}")->removeField('until');
+                        if ($until !== '') {
+                            $indicators[] = Indicator::make("Until {$until}")->removeField('until');
                         }
 
                         return $indicators;

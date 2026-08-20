@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InitializeTenancyIfNeeded
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         // Skip if tenancy is already initialized

@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureOrderAccess
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         $order = $request->route('order');

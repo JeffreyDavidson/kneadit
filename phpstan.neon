@@ -1,7 +1,7 @@
 parameters:
     paths:
         - app/
-    level: 9
+    level: max
     bootstrapFiles:
         - bootstrap/app.php
         - phpstan-bootstrap.php

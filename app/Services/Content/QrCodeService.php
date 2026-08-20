@@ -39,7 +39,9 @@ class QrCodeService
         }
 
         if (is_object($value) && method_exists($value, '__toString')) {
-            return $value->__toString();
+            $string = $value->__toString();
+
+            return is_string($string) ? $string : '';
         }
 
         return is_string($value) ? $value : '';

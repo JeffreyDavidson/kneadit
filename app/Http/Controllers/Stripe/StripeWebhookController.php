@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use App\Queries\Platform\StripeCustomerLookupQuery;
@@ -122,7 +123,7 @@ class StripeWebhookController extends WebhookController
 
         $object = $data['object'] ?? null;
 
-        return is_array($object) ? $object : [];
+        return SettingValue::map($object);
     }
 
     private function stringValue(mixed $value): ?string

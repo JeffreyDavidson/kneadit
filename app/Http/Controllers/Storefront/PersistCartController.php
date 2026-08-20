@@ -29,7 +29,7 @@ class PersistCartController extends Controller
     }
 
     /**
-     * @param array<int, mixed> $items
+     * @param array<mixed> $items
      * @return array<int, array{product_id: int, quantity: int}>
      */
     private function items(array $items): array

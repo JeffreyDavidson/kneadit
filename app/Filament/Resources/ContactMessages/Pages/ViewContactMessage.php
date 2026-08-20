@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -64,8 +65,8 @@ class ViewContactMessage extends ViewRecord
                     Mail::to($this->record->email)->send(
                         new ContactMessageReplyMail(
                             contactMessage: $this->record,
-                            replyBody: $data['body'],
-                            replySubject: $data['subject'],
+                            replyBody: Arr::string($data, 'body'),
+                            replySubject: Arr::string($data, 'subject'),
                         ),
                     );
 

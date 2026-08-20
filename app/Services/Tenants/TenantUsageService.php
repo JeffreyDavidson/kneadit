@@ -14,10 +14,12 @@ class TenantUsageService
         protected TenancyManager $tenancyManager,
     ) {}
 
-    /** @return Collection<int, array<string, mixed>> */
+    /**
+     * @return Collection<int, array{tenant: Tenant, name: string, plan: mixed, plan_key: string, product_count: int, product_limit: int|null, product_percent: float|int, order_count: int, order_limit: int|null, order_percent: float|int, at_limit: bool, approaching_limit: bool}>
+     */
     public function getTenantUsageData(): Collection
     {
-        $results = collect();
+        $results = [];
 
         foreach (Tenant::all() as $tenant) {
             $tier = $tenant->plan ?? SubscriptionTier::Starter;
@@ -45,7 +47,7 @@ class TenantUsageService
                 $orderPercent = $orderLimit ? round(($orderCount / $orderLimit) * 100) : 0;
 
                 if ($productPercent >= 80 || $orderPercent >= 80) {
-                    $results->push([
+                    $results[] = [
                         'tenant' => $tenant,
                         'name' => $tenant->store_name ?? $tenant->name ?? $tenant->id,
                         'plan' => config('kneadit.plans.' . $plan . '.name', ucfirst($plan)),
@@ -58,14 +60,14 @@ class TenantUsageService
                         'order_percent' => min($orderPercent, 100),
                         'at_limit' => $productPercent >= 100 || $orderPercent >= 100,
                         'approaching_limit' => $productPercent < 100 && $orderPercent < 100,
-                    ]);
+                    ];
                 }
             } catch (\Throwable) {
                 continue;
             }
         }
 
-        return $results->sortByDesc(fn (array $t) => max($t['product_percent'], $t['order_percent']));
+        return collect($results)->sortByDesc(fn (array $tenant) => max($tenant['product_percent'], $tenant['order_percent']))->values();
     }
 
     public function getNextPlan(string $currentPlan): ?SubscriptionTier

@@ -84,7 +84,7 @@ class CateringDepositCheckoutService
                     ]],
                     'metadata' => [
                         'catering_inquiry_id' => (string) $inquiry->id,
-                        'tenant_id' => $tenant->getTenantKey(),
+                        'tenant_id' => $tenant->id,
                     ],
                 ],
                 ['stripe_account' => $connectId],

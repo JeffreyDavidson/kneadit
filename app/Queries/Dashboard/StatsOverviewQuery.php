@@ -75,7 +75,9 @@ class StatsOverviewQuery
             ->selectRaw('DATE(delivery_date) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
+            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
+                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
+            ])
             ->all();
     }
 
@@ -89,7 +91,9 @@ class StatsOverviewQuery
             ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
+            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
+                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
+            ])
             ->all();
     }
 
@@ -103,7 +107,9 @@ class StatsOverviewQuery
             ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
             ->groupBy('date')
             ->pluck('aggregate', 'date')
-            ->map(fn (mixed $count): int => Arr::integer(['count' => $count], 'count', 0))
+            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
+                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
+            ])
             ->all();
     }
 

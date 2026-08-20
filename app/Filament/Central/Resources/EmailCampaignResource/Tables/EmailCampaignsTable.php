@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 
 class EmailCampaignsTable
 {
@@ -76,7 +77,7 @@ class EmailCampaignsTable
                             ->label('Schedule At')
                             ->required(),
                     ])
-                    ->action(fn (EmailCampaign $record, array $data) => resolve(ScheduleEmailCampaign::class)($record, $data['scheduled_at']))
+                    ->action(fn (EmailCampaign $record, array $data) => resolve(ScheduleEmailCampaign::class)($record, Arr::string($data, 'scheduled_at')))
                     ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft),
             ])
             ->toolbarActions([

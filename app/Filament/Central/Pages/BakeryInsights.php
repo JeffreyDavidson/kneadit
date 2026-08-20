@@ -113,7 +113,9 @@ class BakeryInsights extends Page
 
     // ── Upgrade Triggers Tab Methods ──
 
-    /** @return Collection<int, array<string, mixed>> */
+    /**
+     * @return Collection<int, array{tenant: Tenant, name: string, plan: mixed, plan_key: string, product_count: int, product_limit: int|null, product_percent: float|int, order_count: int, order_limit: int|null, order_percent: float|int, at_limit: bool, approaching_limit: bool}>
+     */
     public function getTenantUsageData(): Collection
     {
         return resolve(TenantUsageService::class)->getTenantUsageData();

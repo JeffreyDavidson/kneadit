@@ -78,7 +78,7 @@
         ],
         "test": ["@php artisan config:clear --ansi", "@php artisan test --exclude-testsuite=Browser"],
         "test:coverage": "herd coverage vendor/bin/pest --coverage --compact -d memory_limit=1G",
-        "lint": "vendor/bin/pint --dirty --format agent",
+        "lint": "vendor/bin/pint --dirty --blade --format agent",
         "analyse": "@test:types",
         "filacheck": "vendor/bin/filacheck",
         "filacheck:fix": "vendor/bin/filacheck --fix",

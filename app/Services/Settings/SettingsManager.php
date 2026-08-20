@@ -2,6 +2,7 @@
 
 namespace App\Services\Settings;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Models\Platform\Setting;
 use App\Models\Platform\Tenant;
 
@@ -15,7 +16,7 @@ class SettingsManager extends AbstractSettingsManager
     {
         $tenant = tenant();
 
-        return $tenant instanceof Tenant ? $tenant->getTenantKey() : 'central';
+        return $tenant instanceof Tenant ? $tenant->id : 'central';
     }
 
     protected function modelClass(): string
@@ -37,7 +38,7 @@ class SettingsManager extends AbstractSettingsManager
         $content = $this->pageContentData();
         $pageContent = $content[$page] ?? null;
 
-        return is_array($pageContent) ? $pageContent : [];
+        return SettingValue::map($pageContent);
     }
 
     /** @return array<string, mixed> */
@@ -49,9 +50,7 @@ class SettingsManager extends AbstractSettingsManager
             return [];
         }
 
-        $content = json_decode($json, true);
-
-        return is_array($content) ? $content : [];
+        return SettingValue::decodedMap($json);
     }
 
     protected function valueForStorage(string $key, mixed $value): mixed

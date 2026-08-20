@@ -2,6 +2,7 @@
 
 namespace App\Services\Settings;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use Illuminate\Support\Facades\DB;
 
 abstract class AbstractSettingsManager
@@ -64,7 +65,7 @@ abstract class AbstractSettingsManager
             $settings[$key] = $this->valueFromStorage($key, $value);
         }
 
-        $this->cache[$cacheKey] = $settings;
+        $this->cache[$cacheKey] = SettingValue::map($settings);
     }
 
     public function flushCache(): void

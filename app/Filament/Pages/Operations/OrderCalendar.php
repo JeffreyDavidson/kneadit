@@ -53,7 +53,7 @@ class OrderCalendar extends Page
     {
         $this->currentYear = now()->year;
         $this->currentMonth = now()->month;
-        $this->selectedDayOrders = collect();
+        $this->selectedDayOrders = (new Order)->newCollection();
         $this->loadOrderCounts();
     }
 
@@ -74,7 +74,7 @@ class OrderCalendar extends Page
         $this->currentYear = $date->year;
         $this->currentMonth = $date->month;
         $this->selectedDate = null;
-        $this->selectedDayOrders = collect();
+        $this->selectedDayOrders = (new Order)->newCollection();
         $this->loadOrderCounts();
     }
 
@@ -84,7 +84,7 @@ class OrderCalendar extends Page
         $this->currentYear = $date->year;
         $this->currentMonth = $date->month;
         $this->selectedDate = null;
-        $this->selectedDayOrders = collect();
+        $this->selectedDayOrders = (new Order)->newCollection();
         $this->loadOrderCounts();
     }
 
