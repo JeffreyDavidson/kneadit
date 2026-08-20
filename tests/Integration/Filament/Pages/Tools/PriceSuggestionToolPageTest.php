@@ -10,15 +10,15 @@ beforeEach(function () {
 });
 
 test('selected recipe id defaults to null', function () {
-    expect(test()->page->selectedRecipeId)->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->selectedRecipeId)->toBeNull();
 });
 
 test('selected recipe defaults to null', function () {
-    expect(test()->page->selectedRecipe)->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->selectedRecipe)->toBeNull();
 });
 
 test('target margin percentage defaults to 65', function () {
-    expect(test()->page->targetMarginPercentage)->toBe(65.0);
+    expect(testFixture('page', PriceSuggestionTool::class)->targetMarginPercentage)->toBe(65.0);
 });
 
 test('mount loads recipes with cost', function () {
@@ -26,85 +26,85 @@ test('mount loads recipes with cost', function () {
     Recipe::factory()->create(['cost' => null]);
     Recipe::factory()->create(['cost' => 0]);
 
-    test()->page->mount();
+    testFixture('page', PriceSuggestionTool::class)->mount();
 
-    expect(test()->page->recipes)->toHaveCount(1);
+    expect(testFixture('page', PriceSuggestionTool::class)->recipes)->toHaveCount(1);
 });
 
 test('mount generates margin comparisons', function () {
-    test()->page->mount();
+    testFixture('page', PriceSuggestionTool::class)->mount();
 
-    expect(test()->page->marginComparisons)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', PriceSuggestionTool::class)->marginComparisons)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('updated selected recipe id loads recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipeId = $recipe->id;
-    test()->page->updatedSelectedRecipeId();
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipeId = $recipe->id;
+    testFixture('page', PriceSuggestionTool::class)->updatedSelectedRecipeId();
 
-    expect(test()->page->selectedRecipe)->not->toBeNull()
-        ->and(test()->page->selectedRecipe->id)->toBe($recipe->id);
+    expect(testFixture('page', PriceSuggestionTool::class)->selectedRecipe)->not->toBeNull()
+        ->and(testFixture('page', PriceSuggestionTool::class)->selectedRecipe->id)->toBe($recipe->id);
 });
 
 test('updated selected recipe id clears when null', function () {
-    test()->page->selectedRecipeId = null;
-    test()->page->updatedSelectedRecipeId();
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipeId = null;
+    testFixture('page', PriceSuggestionTool::class)->updatedSelectedRecipeId();
 
-    expect(test()->page->selectedRecipe)->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->selectedRecipe)->toBeNull();
 });
 
 test('generate margin comparisons empty when no recipe selected', function () {
-    test()->page->selectedRecipe = null;
-    test()->page->generateMarginComparisons();
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipe = null;
+    testFixture('page', PriceSuggestionTool::class)->generateMarginComparisons();
 
-    expect(test()->page->marginComparisons)->toBeEmpty();
+    expect(testFixture('page', PriceSuggestionTool::class)->marginComparisons)->toBeEmpty();
 });
 
 test('generate margin comparisons with recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipe = $recipe;
-    test()->page->generateMarginComparisons();
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipe = $recipe;
+    testFixture('page', PriceSuggestionTool::class)->generateMarginComparisons();
 
-    expect(test()->page->marginComparisons)->toHaveCount(4)
-        ->and(test()->page->marginComparisons->first())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
+    expect(testFixture('page', PriceSuggestionTool::class)->marginComparisons)->toHaveCount(4)
+        ->and(testFixture('page', PriceSuggestionTool::class)->marginComparisons->first())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
 });
 
 test('get suggested price returns zero when no recipe', function () {
-    expect(test()->page->getSuggestedPrice())->toBe(0.0);
+    expect(testFixture('page', PriceSuggestionTool::class)->getSuggestedPrice())->toBe(0.0);
 });
 
 test('get suggested price returns value for recipe with cost', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipe = $recipe;
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipe = $recipe;
 
-    expect(test()->page->getSuggestedPrice())->toBeGreaterThan(0);
+    expect(testFixture('page', PriceSuggestionTool::class)->getSuggestedPrice())->toBeGreaterThan(0);
 });
 
 test('get current margin returns null when no recipe product', function () {
-    expect(test()->page->getCurrentMargin())->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->getCurrentMargin())->toBeNull();
 });
 
 test('get margin at current price returns null when no recipe product', function () {
-    expect(test()->page->getMarginAtCurrentPrice())->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->getMarginAtCurrentPrice())->toBeNull();
 });
 
 test('get price difference returns null when no recipe product', function () {
-    expect(test()->page->getPriceDifference())->toBeNull();
+    expect(testFixture('page', PriceSuggestionTool::class)->getPriceDifference())->toBeNull();
 });
 
 test('get price difference returns data for valid recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipe = $recipe->load('product');
+    testFixture('page', PriceSuggestionTool::class)->selectedRecipe = $recipe->load('product');
 
-    $diff = test()->page->getPriceDifference();
+    $diff = testFixture('page', PriceSuggestionTool::class)->getPriceDifference();
 
     expect($diff)->toHaveKeys(['amount', 'percentage', 'direction']);
 });

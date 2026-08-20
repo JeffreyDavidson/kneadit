@@ -11,7 +11,7 @@ beforeEach(function () {
 test('get logs property returns paginator with no filters', function () {
     AdminAuditLog::factory()->count(3)->create();
 
-    $result = test()->page->getLogsProperty();
+    $result = testFixture('page', Activity::class)->getLogsProperty();
 
     expect($result->total())->toBe(3);
 });
@@ -20,8 +20,8 @@ test('get logs property filters by action', function () {
     AdminAuditLog::factory()->create(['action' => 'created_tenant']);
     AdminAuditLog::factory()->create(['action' => 'deleted_tenant']);
 
-    test()->page->filterAction = 'created_tenant';
-    $result = test()->page->getLogsProperty();
+    testFixture('page', Activity::class)->filterAction = 'created_tenant';
+    $result = testFixture('page', Activity::class)->getLogsProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -30,8 +30,8 @@ test('get logs property filters by search', function () {
     AdminAuditLog::factory()->create(['description' => 'Created bakery']);
     AdminAuditLog::factory()->create(['description' => 'Deleted something']);
 
-    test()->page->filterSearch = 'bakery';
-    $result = test()->page->getLogsProperty();
+    testFixture('page', Activity::class)->filterSearch = 'bakery';
+    $result = testFixture('page', Activity::class)->getLogsProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -40,8 +40,8 @@ test('get logs property filters by date from', function () {
     AdminAuditLog::factory()->create(['created_at' => now()->subDays(10)]);
     AdminAuditLog::factory()->create(['created_at' => now()->subDays(1)]);
 
-    test()->page->filterDateFrom = now()->subDays(3)->format('Y-m-d');
-    $result = test()->page->getLogsProperty();
+    testFixture('page', Activity::class)->filterDateFrom = now()->subDays(3)->format('Y-m-d');
+    $result = testFixture('page', Activity::class)->getLogsProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -50,8 +50,8 @@ test('get logs property filters by date to', function () {
     AdminAuditLog::factory()->create(['created_at' => now()->subDays(10)]);
     AdminAuditLog::factory()->create(['created_at' => now()]);
 
-    test()->page->filterDateTo = now()->subDays(5)->format('Y-m-d');
-    $result = test()->page->getLogsProperty();
+    testFixture('page', Activity::class)->filterDateTo = now()->subDays(5)->format('Y-m-d');
+    $result = testFixture('page', Activity::class)->getLogsProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -60,7 +60,7 @@ test('get today count property returns count', function () {
     AdminAuditLog::factory()->create(['created_at' => now()]);
     AdminAuditLog::factory()->create(['created_at' => now()->subDays(5)]);
 
-    $result = test()->page->getTodayCountProperty();
+    $result = testFixture('page', Activity::class)->getTodayCountProperty();
 
     expect($result)->toBe(1);
 });
@@ -69,7 +69,7 @@ test('get week count property returns count', function () {
     AdminAuditLog::factory()->create(['created_at' => now()]);
     AdminAuditLog::factory()->create(['created_at' => now()->subMonths(2)]);
 
-    $result = test()->page->getWeekCountProperty();
+    $result = testFixture('page', Activity::class)->getWeekCountProperty();
 
     expect($result)->toBe(1);
 });
@@ -78,36 +78,36 @@ test('get most common action property returns action string', function () {
     AdminAuditLog::factory()->count(3)->create(['action' => 'created_tenant', 'created_at' => now()]);
     AdminAuditLog::factory()->create(['action' => 'deleted_tenant', 'created_at' => now()]);
 
-    $result = test()->page->getMostCommonActionProperty();
+    $result = testFixture('page', Activity::class)->getMostCommonActionProperty();
 
     expect($result)->toBe('created_tenant');
 });
 
 test('get most common action property returns dash when no logs', function () {
-    $result = test()->page->getMostCommonActionProperty();
+    $result = testFixture('page', Activity::class)->getMostCommonActionProperty();
 
     expect($result)->toBe('—');
 });
 
 test('previous page decrements but stays at 1', function () {
-    test()->page->page = 1;
-    test()->page->previousPage();
+    testFixture('page', Activity::class)->page = 1;
+    testFixture('page', Activity::class)->previousPage();
 
-    expect(test()->page->page)->toBe(1);
+    expect(testFixture('page', Activity::class)->page)->toBe(1);
 });
 
 test('previous page decrements from higher page', function () {
-    test()->page->page = 3;
-    test()->page->previousPage();
+    testFixture('page', Activity::class)->page = 3;
+    testFixture('page', Activity::class)->previousPage();
 
-    expect(test()->page->page)->toBe(2);
+    expect(testFixture('page', Activity::class)->page)->toBe(2);
 });
 
 test('next page increments', function () {
-    test()->page->page = 1;
-    test()->page->nextPage();
+    testFixture('page', Activity::class)->page = 1;
+    testFixture('page', Activity::class)->nextPage();
 
-    expect(test()->page->page)->toBe(2);
+    expect(testFixture('page', Activity::class)->page)->toBe(2);
 });
 
 test('get event icon returns icon for all known events', function (string $event) {

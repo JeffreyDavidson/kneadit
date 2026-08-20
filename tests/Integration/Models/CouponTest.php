@@ -24,7 +24,7 @@ test('coupon has transactions relationship', function () {
 test('coupon has orders relationship', function () {
     $coupon = Coupon::factory()->create();
 
-    Order::factory()->recycle(test()->user)->create(['coupon_id' => $coupon->id]);
+    Order::factory()->recycle(testFixture('user', User::class))->create(['coupon_id' => $coupon->id]);
 
     expect($coupon->orders)->toHaveCount(1);
 });

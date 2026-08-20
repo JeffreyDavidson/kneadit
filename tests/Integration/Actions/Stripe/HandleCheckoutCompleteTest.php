@@ -18,8 +18,8 @@ beforeEach(function () {
 
 test('updates order with stripe payment intent id', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     resolve(HandleCheckoutComplete::class)($order, 'pi_test_123');
@@ -29,8 +29,8 @@ test('updates order with stripe payment intent id', function () {
 
 test('marks order as paid', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     resolve(HandleCheckoutComplete::class)($order, 'pi_test_456');
@@ -40,8 +40,8 @@ test('marks order as paid', function () {
 
 test('returns the updated order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     $result = resolve(HandleCheckoutComplete::class)($order, 'pi_test_789');

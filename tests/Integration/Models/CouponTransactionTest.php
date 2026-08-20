@@ -22,7 +22,7 @@ test('coupon transaction belongs to coupon', function () {
 });
 
 test('coupon transaction belongs to order', function () {
-    $order = Order::factory()->recycle(test()->user)->create();
+    $order = Order::factory()->recycle(testFixture('user', User::class))->create();
     $transaction = CouponTransaction::factory()->for($order)->create();
 
     expect($transaction->order)->toBeInstanceOf(Order::class)

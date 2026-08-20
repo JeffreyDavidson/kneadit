@@ -2,6 +2,7 @@
 
 use App\Enums\Orders\OrderStatus;
 use App\Services\Platform\WebhookService;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -36,7 +37,7 @@ test('dispatch includes event header', function () {
 
     resolve(WebhookService::class)->dispatch('order.updated', ['status' => OrderStatus::Delivered]);
 
-    Http::assertSent(function ($request) {
+    Http::assertSent(function (Request $request): bool {
         return $request->hasHeader('X-KneadIt-Event', 'order.updated');
     });
 });
@@ -49,7 +50,7 @@ test('dispatch includes signature header', function () {
 
     resolve(WebhookService::class)->dispatch('order.created', ['test' => true]);
 
-    Http::assertSent(function ($request) {
+    Http::assertSent(function (Request $request): bool {
         return $request->hasHeader('X-KneadIt-Signature');
     });
 });
@@ -62,7 +63,7 @@ test('dispatch body contains event and data', function () {
 
     resolve(WebhookService::class)->dispatch('order.created', ['order_number' => 'ORD-001']);
 
-    Http::assertSent(function ($request) {
+    Http::assertSent(function (Request $request): bool {
         $body = json_decode($request->body(), true);
 
         if (! is_array($body)) {

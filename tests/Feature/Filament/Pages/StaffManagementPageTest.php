@@ -12,7 +12,7 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     test()->user = User::factory()->owner()->create();
-    test()->actingAs(test()->user);
+    test()->actingAs(testFixture('user', User::class));
 });
 
 test('staff management page can render', function () {
@@ -51,11 +51,11 @@ test('change role action updates the member role', function () {
 
 test('change role action refuses to change own role', function () {
     Livewire::test(StaffManagement::class)
-        ->callAction('changeRole', arguments: ['user' => test()->user->id], data: [
+        ->callAction('changeRole', arguments: ['user' => testFixture('user', User::class)->id], data: [
             'role' => UserRole::Manager->value,
         ]);
 
-    expect(test()->user->fresh()->role)->toBe(UserRole::Owner);
+    expect(testFixture('user', User::class)->fresh()->role)->toBe(UserRole::Owner);
 });
 
 test('remove member action deletes the user', function () {
@@ -68,7 +68,7 @@ test('remove member action deletes the user', function () {
 });
 
 test('remove member action refuses to remove the last owner', function () {
-    $owner = test()->user;
+    $owner = testFixture('user', User::class);
 
     Livewire::test(StaffManagement::class)
         ->callAction('removeMember', arguments: ['user' => $owner->id]);

@@ -9,14 +9,14 @@ beforeEach(function () {
 });
 
 test('get tenant onboarding data returns empty when no tenants', function () {
-    expect(test()->page->getTenantOnboardingData())->toBeEmpty();
+    expect(testFixture('page', OnboardingTracker::class)->getTenantOnboardingData())->toBeEmpty();
 });
 
 test('get tenant onboarding data returns data for each tenant', function () {
     Tenant::factory()->create(['store_name' => 'Bakery A']);
     Tenant::factory()->create(['store_name' => 'Bakery B']);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data)->toHaveCount(2);
 });
@@ -24,7 +24,7 @@ test('get tenant onboarding data returns data for each tenant', function () {
 test('get tenant onboarding data includes expected keys', function () {
     Tenant::factory()->create(['store_name' => 'Test Bakery']);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
     $tenant = $data->first();
 
     expect($tenant)->toHaveKeys([
@@ -37,7 +37,7 @@ test('get tenant onboarding data includes expected keys', function () {
 test('get tenant onboarding data checks store name', function () {
     Tenant::factory()->create(['store_name' => 'My Bakery']);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['checks']['store_name'])->toBeTrue();
 });
@@ -45,7 +45,7 @@ test('get tenant onboarding data checks store name', function () {
 test('get tenant onboarding data checks empty store name', function () {
     Tenant::factory()->create(['store_name' => null]);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['checks']['store_name'])->toBeFalse();
 });
@@ -53,7 +53,7 @@ test('get tenant onboarding data checks empty store name', function () {
 test('get tenant onboarding data checks storefront enabled', function () {
     Tenant::factory()->create(['storefront_enabled' => true]);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['checks']['storefront_enabled'])->toBeTrue();
 });
@@ -61,7 +61,7 @@ test('get tenant onboarding data checks storefront enabled', function () {
 test('get tenant onboarding data checks brand customized', function () {
     Tenant::factory()->create(['brand_color_primary' => '#ff0000']);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['checks']['brand_customized'])->toBeTrue();
 });
@@ -69,7 +69,7 @@ test('get tenant onboarding data checks brand customized', function () {
 test('get tenant onboarding data detects default brand color', function () {
     Tenant::factory()->create(['brand_color_primary' => '#d4920c']);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['checks']['brand_customized'])->toBeFalse();
 });
@@ -81,7 +81,7 @@ test('get onboarding data reads tenant content checks from central metrics', fun
         'onboarding_orders_count' => 0,
     ]);
 
-    $checks = test()->page->getTenantOnboardingData()->first()['checks'];
+    $checks = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData()->first()['checks'];
 
     expect($checks['has_products'])->toBeTrue()
         ->and($checks['has_categories'])->toBeTrue()
@@ -91,19 +91,19 @@ test('get onboarding data reads tenant content checks from central metrics', fun
 test('total checks is always 7', function () {
     Tenant::factory()->create();
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['total'])->toBe(7);
 });
 
 test('get summary stats returns expected keys', function () {
-    $stats = test()->page->getSummaryStats();
+    $stats = testFixture('page', OnboardingTracker::class)->getSummaryStats();
 
     expect($stats)->toHaveKeys(['total', 'fully_onboarded', 'needs_attention']);
 });
 
 test('get summary stats with no tenants returns zeros', function () {
-    $stats = test()->page->getSummaryStats();
+    $stats = testFixture('page', OnboardingTracker::class)->getSummaryStats();
 
     expect($stats['total'])->toBe(0)
         ->and($stats['fully_onboarded'])->toBe(0)
@@ -119,7 +119,7 @@ test('get summary stats counts tenants needing attention', function () {
         'brand_color_primary' => '#d4920c',
     ]);
 
-    $stats = test()->page->getSummaryStats();
+    $stats = testFixture('page', OnboardingTracker::class)->getSummaryStats();
 
     expect($stats['total'])->toBe(1)
         ->and($stats['needs_attention'])->toBe(1);
@@ -139,7 +139,7 @@ test('onboarding data sorted by completion then date', function () {
         'brand_color_primary' => '#d4920c',
     ]);
 
-    $data = test()->page->getTenantOnboardingData();
+    $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
     expect($data->first()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
 });

@@ -139,7 +139,7 @@ test('cancellation decrements coupon used_count and creates reversal transaction
     $customer = Customer::factory()->create();
     $order = Order::factory()
         ->for($customer)
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->confirmed()
         ->create([
             'coupon_id' => $coupon->id,
@@ -213,7 +213,7 @@ test('cancellation restores gift card balance and creates refund transaction', f
     $customer = Customer::factory()->create();
     $order = Order::factory()
         ->for($customer)
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'status' => OrderStatus::Confirmed,
             'gift_card_id' => $giftCard->id,

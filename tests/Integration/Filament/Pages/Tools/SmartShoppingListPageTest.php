@@ -8,47 +8,47 @@ beforeEach(function () {
 });
 
 test('start date defaults to today on mount', function () {
-    test()->page->mount();
+    testFixture('page', SmartShoppingList::class)->mount();
 
-    expect(test()->page->startDate)->toBe(now()->format('Y-m-d'));
+    expect(testFixture('page', SmartShoppingList::class)->startDate)->toBe(now()->format('Y-m-d'));
 });
 
 test('end date defaults to planning days ahead on mount', function () {
-    test()->page->mount();
+    testFixture('page', SmartShoppingList::class)->mount();
 
     $expected = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
-    expect(test()->page->endDate)->toBe($expected);
+    expect(testFixture('page', SmartShoppingList::class)->endDate)->toBe($expected);
 });
 
 test('include upcoming defaults to false', function () {
-    test()->page->mount();
+    testFixture('page', SmartShoppingList::class)->mount();
 
-    expect(test()->page->includeUpcoming)->toBeFalse();
+    expect(testFixture('page', SmartShoppingList::class)->includeUpcoming)->toBeFalse();
 });
 
 test('mount initializes supplier groups', function () {
-    test()->page->mount();
+    testFixture('page', SmartShoppingList::class)->mount();
 
-    expect(test()->page->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', SmartShoppingList::class)->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('generate list populates supplier groups', function () {
-    test()->page->mount();
-    test()->page->generateList();
+    testFixture('page', SmartShoppingList::class)->mount();
+    testFixture('page', SmartShoppingList::class)->generateList();
 
-    expect(test()->page->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', SmartShoppingList::class)->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('toggle upcoming flips flag and regenerates list', function () {
-    test()->page->mount();
+    testFixture('page', SmartShoppingList::class)->mount();
 
-    expect(test()->page->includeUpcoming)->toBeFalse();
+    expect(testFixture('page', SmartShoppingList::class)->includeUpcoming)->toBeFalse();
 
-    test()->page->toggleUpcoming();
+    testFixture('page', SmartShoppingList::class)->toggleUpcoming();
 
-    expect(test()->page->includeUpcoming)->toBeTrue();
+    expect(testFixture('page', SmartShoppingList::class)->includeUpcoming)->toBeTrue();
 
-    test()->page->toggleUpcoming();
+    testFixture('page', SmartShoppingList::class)->toggleUpcoming();
 
-    expect(test()->page->includeUpcoming)->toBeFalse();
+    expect(testFixture('page', SmartShoppingList::class)->includeUpcoming)->toBeFalse();
 });

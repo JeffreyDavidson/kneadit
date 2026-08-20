@@ -14,34 +14,34 @@ beforeEach(function () {
 test('mount loads holidays', function () {
     Holiday::factory()->create(['name' => 'Christmas', 'date' => now()->addDays(30)]);
 
-    test()->page->mount();
+    testFixture('page', HolidayPlanningCalendar::class)->mount();
 
-    expect(test()->page->holidays)->toHaveCount(1);
+    expect(testFixture('page', HolidayPlanningCalendar::class)->holidays)->toHaveCount(1);
 });
 
 test('mount sets upcoming holidays', function () {
     Holiday::factory()->create(['name' => 'Upcoming', 'date' => now()->addDays(10)]);
     Holiday::factory()->create(['name' => 'Past', 'date' => now()->subDays(10)]);
 
-    test()->page->mount();
+    testFixture('page', HolidayPlanningCalendar::class)->mount();
 
-    expect(test()->page->upcomingHolidays->count())->toBeLessThanOrEqual(10);
+    expect(testFixture('page', HolidayPlanningCalendar::class)->upcomingHolidays->count())->toBeLessThanOrEqual(10);
 });
 
 test('load holidays populates all collections', function () {
-    test()->page->loadHolidays();
+    testFixture('page', HolidayPlanningCalendar::class)->loadHolidays();
 
-    expect(test()->page->holidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->upcomingHolidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->inPrepPeriod)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(testFixture('page', HolidayPlanningCalendar::class)->holidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->and(testFixture('page', HolidayPlanningCalendar::class)->upcomingHolidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->and(testFixture('page', HolidayPlanningCalendar::class)->inPrepPeriod)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get holidays by month groups holidays', function () {
     Holiday::factory()->create(['date' => now()->addDays(10)]);
     Holiday::factory()->create(['date' => now()->addDays(40)]);
 
-    test()->page->loadHolidays();
-    $grouped = test()->page->getHolidaysByMonth();
+    testFixture('page', HolidayPlanningCalendar::class)->loadHolidays();
+    $grouped = testFixture('page', HolidayPlanningCalendar::class)->getHolidaysByMonth();
 
     expect($grouped)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });

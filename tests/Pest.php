@@ -8,9 +8,11 @@ use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Listeners\Platform\SendWelcomeBakerEmailListener;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
@@ -118,6 +120,34 @@ function setUpTenantTest(): void
 function livewire(string $component, array $parameters = []): Testable
 {
     return Livewire::test($component, $parameters);
+}
+
+/**
+ * @template TFixture of object
+ *
+ * @param class-string<TFixture> $class
+ * @return TFixture
+ */
+function testFixture(string $name, string $class): object
+{
+    $fixture = test()->{$name};
+
+    if (! $fixture instanceof $class) {
+        throw new UnexpectedValueException("Test fixture [{$name}] must be an instance of [{$class}].");
+    }
+
+    return $fixture;
+}
+
+function testString(string $name): string
+{
+    $value = test()->{$name};
+
+    if (! is_string($value)) {
+        throw new UnexpectedValueException("Test value [{$name}] must be a string.");
+    }
+
+    return $value;
 }
 
 /** @return list<class-string> */
@@ -292,7 +322,7 @@ function setUpCentralTest(): void
 function createCentralTables(): void
 {
     if (! Schema::hasTable('tenants')) {
-        Schema::create('tenants', function ($table) {
+        Schema::create('tenants', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('name');
             $table->string('email');
@@ -312,7 +342,7 @@ function createCentralTables(): void
     }
 
     if (! Schema::hasTable('domains')) {
-        Schema::create('domains', function ($table) {
+        Schema::create('domains', function (Blueprint $table) {
             $table->increments('id');
             $table->string('domain', 255)->unique();
             $table->string('tenant_id');
@@ -321,7 +351,7 @@ function createCentralTables(): void
     }
 
     $tables = [
-        'platform_activities' => function ($table) {
+        'platform_activities' => function (Blueprint $table) {
             $table->id();
             $table->string('event');
             $table->string('tenant_id')->nullable();
@@ -329,7 +359,7 @@ function createCentralTables(): void
             $table->json('metadata')->nullable();
             $table->timestamps();
         },
-        'admin_audit_logs' => function ($table) {
+        'admin_audit_logs' => function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('admin_id')->nullable();
             $table->string('action');
@@ -341,7 +371,7 @@ function createCentralTables(): void
             $table->json('metadata')->nullable();
             $table->timestamps();
         },
-        'support_tickets' => function ($table) {
+        'support_tickets' => function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id')->nullable();
             $table->string('subject');
@@ -352,7 +382,7 @@ function createCentralTables(): void
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         },
-        'support_replies' => function ($table) {
+        'support_replies' => function (Blueprint $table) {
             $table->id();
             $table->foreignId('ticket_id');
             $table->string('author_type');
@@ -360,7 +390,7 @@ function createCentralTables(): void
             $table->text('body');
             $table->timestamps();
         },
-        'platform_messages' => function ($table) {
+        'platform_messages' => function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id')->nullable();
             $table->string('sender_type')->default('admin');
@@ -371,7 +401,7 @@ function createCentralTables(): void
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         },
-        'email_campaigns' => function ($table) {
+        'email_campaigns' => function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('subject');
@@ -383,7 +413,7 @@ function createCentralTables(): void
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
         },
-        'platform_announcements' => function ($table) {
+        'platform_announcements' => function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('body');
@@ -392,7 +422,7 @@ function createCentralTables(): void
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         },
-        'impersonation_tokens' => function ($table) {
+        'impersonation_tokens' => function (Blueprint $table) {
             $table->id();
             $table->string('token', 64)->unique();
             $table->string('tenant_id');
@@ -402,7 +432,7 @@ function createCentralTables(): void
             $table->string('consumer_ip', 45)->nullable();
             $table->timestamp('created_at')->nullable();
         },
-        'blog_posts' => function ($table) {
+        'blog_posts' => function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
@@ -416,7 +446,7 @@ function createCentralTables(): void
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         },
-        'scheduled_checkins' => function ($table) {
+        'scheduled_checkins' => function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->integer('days_after_signup');
@@ -425,7 +455,7 @@ function createCentralTables(): void
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         },
-        'feature_usage_logs' => function ($table) {
+        'feature_usage_logs' => function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id')->nullable();
             $table->string('feature');
@@ -434,20 +464,20 @@ function createCentralTables(): void
             $table->date('date');
             $table->timestamp('created_at')->nullable();
         },
-        'platform_settings' => function ($table) {
+        'platform_settings' => function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();
             $table->text('value')->nullable();
             $table->timestamps();
         },
-        'tenant_notes' => function ($table) {
+        'tenant_notes' => function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->text('body');
             $table->string('author')->nullable();
             $table->timestamps();
         },
-        'email_campaign_logs' => function ($table) {
+        'email_campaign_logs' => function (Blueprint $table) {
             $table->id();
             $table->foreignId('campaign_id');
             $table->string('tenant_id');
@@ -457,14 +487,14 @@ function createCentralTables(): void
             $table->timestamp('opened_at')->nullable();
             $table->timestamps();
         },
-        'checkin_logs' => function ($table) {
+        'checkin_logs' => function (Blueprint $table) {
             $table->id();
             $table->foreignId('checkin_id');
             $table->string('tenant_id');
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
         },
-        'referrals' => function ($table) {
+        'referrals' => function (Blueprint $table) {
             $table->id();
             $table->string('referrer_tenant_id');
             $table->string('referred_tenant_id')->nullable();
@@ -474,7 +504,7 @@ function createCentralTables(): void
             $table->integer('reward_months')->default(1);
             $table->timestamps();
         },
-        'platform_promo_codes' => function ($table) {
+        'platform_promo_codes' => function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->string('coupon_id');
@@ -494,14 +524,14 @@ function createCentralTables(): void
 
     foreach ($tables as $name => $callback) {
         if (! Schema::hasTable($name)) {
-            Schema::create($name, function ($table) use ($callback) {
+            Schema::create($name, function (Blueprint $table) use ($callback) {
                 $callback($table);
             });
         }
     }
 
     if (Schema::hasTable('blog_posts') && ! Schema::hasColumn('blog_posts', 'category')) {
-        Schema::table('blog_posts', function ($table) {
+        Schema::table('blog_posts', function (Blueprint $table) {
             $table->string('category')->default('guides');
         });
     }
@@ -588,7 +618,7 @@ function registerVisitorAsTenant(
 
     $tenantId ??= str($tenantName)
         ->slug()
-        ->append('-', str()->random(6))
+        ->append('-', Str::random(6))
         ->toString();
 
     $domain ??= "{$tenantId}.kneadit.test";

@@ -16,7 +16,7 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     test()->user = User::factory()->owner()->create();
-    test()->actingAs(test()->user);
+    test()->actingAs(testFixture('user', User::class));
 });
 
 test('can list contact messages in the table', function () {
@@ -95,14 +95,14 @@ test('reply action sends the email, persists the reply, and marks the message as
     expect($reply)
         ->subject->toBe('Re: Custom cake')
         ->body->toContain('Thanks for reaching out')
-        ->user_id->toBe(test()->user->id)
+        ->user_id->toBe(testFixture('user', User::class)->id)
         ->and($reply->sent_at)->not->toBeNull();
 });
 
 test('view page renders prior replies as a thread', function () {
     $message = ContactMessage::factory()->create();
 
-    ContactMessageReply::factory()->for($message, 'contactMessage')->recycle(test()->user)->create([
+    ContactMessageReply::factory()->for($message, 'contactMessage')->recycle(testFixture('user', User::class))->create([
         'subject' => 'Re: First touch',
         'body' => 'Original staff response body that should appear in the thread.',
     ]);

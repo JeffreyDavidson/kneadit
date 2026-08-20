@@ -2,6 +2,7 @@
 
 use App\Models\Staff\User;
 use Illuminate\Http\RedirectResponse;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -9,11 +10,10 @@ beforeEach(function () {
 });
 
 test('billing portal redirects authenticated user to stripe portal', function () {
-    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
-    $user->shouldReceive('redirectToBillingPortal')
-        ->once()
+    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user->expects('redirectToBillingPortal')
         ->with(route('filament.admin.pages.dashboard'))
-        ->andReturn(new RedirectResponse('https://billing.stripe.com/session/test'));
+        ->returns(new RedirectResponse('https://billing.stripe.com/session/test'));
 
     $this->actingAs($user)
         ->get(route('billing.portal'))

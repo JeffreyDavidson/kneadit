@@ -25,11 +25,11 @@ test('order mailables have correct envelope subjects', function (string $mailCla
 
     expect($subject)->toContain($expectedSubjectFragment);
 })->with([
-    'OrderPlacedMail' => [OrderPlacedMail::class, fn () => [test()->order], 'Received — Test Bakery'],
-    'OrderStatusMail (Confirmed)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Confirmed], 'Confirmed — Test Bakery'],
-    'OrderStatusMail (Ready)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Ready], 'is Ready!'],
-    'OrderStatusMail (Baking)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Baking], 'is Being Prepared'],
-    'OrderStatusMail (Delivered)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Delivered], 'Delivered'],
-    'OrderStatusMail (Cancelled)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Cancelled], 'Cancelled'],
-    'NewOrderNotificationMail' => [NewOrderNotificationMail::class, fn () => [test()->order], 'New Order #'],
+    'OrderPlacedMail' => [OrderPlacedMail::class, fn () => [testFixture('order', Order::class)], 'Received — Test Bakery'],
+    'OrderStatusMail (Confirmed)' => [OrderStatusMail::class, fn () => [testFixture('order', Order::class), OrderStatus::Confirmed], 'Confirmed — Test Bakery'],
+    'OrderStatusMail (Ready)' => [OrderStatusMail::class, fn () => [testFixture('order', Order::class), OrderStatus::Ready], 'is Ready!'],
+    'OrderStatusMail (Baking)' => [OrderStatusMail::class, fn () => [testFixture('order', Order::class), OrderStatus::Baking], 'is Being Prepared'],
+    'OrderStatusMail (Delivered)' => [OrderStatusMail::class, fn () => [testFixture('order', Order::class), OrderStatus::Delivered], 'Delivered'],
+    'OrderStatusMail (Cancelled)' => [OrderStatusMail::class, fn () => [testFixture('order', Order::class), OrderStatus::Cancelled], 'Cancelled'],
+    'NewOrderNotificationMail' => [NewOrderNotificationMail::class, fn () => [testFixture('order', Order::class)], 'New Order #'],
 ]);

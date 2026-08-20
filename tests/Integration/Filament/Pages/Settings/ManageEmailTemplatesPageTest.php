@@ -13,13 +13,13 @@ beforeEach(function () {
 });
 
 test('getTemplateData returns all email template types', function () {
-    $data = test()->page->getTemplateData();
+    $data = testFixture('page', ManageEmailTemplates::class)->getTemplateData();
 
     expect($data)->toHaveSameSize(EmailTemplateType::cases());
 });
 
 test('getTemplateData marks uncustomized templates as default', function () {
-    $data = test()->page->getTemplateData();
+    $data = testFixture('page', ManageEmailTemplates::class)->getTemplateData();
 
     $statuses = array_column($data, 'status');
 
@@ -33,7 +33,7 @@ test('getTemplateData marks customized templates correctly', function () {
         'body' => 'Custom body',
     ]);
 
-    $data = test()->page->getTemplateData();
+    $data = testFixture('page', ManageEmailTemplates::class)->getTemplateData();
     $orderPlaced = collect($data)->firstWhere('type', 'order_placed');
 
     expect($orderPlaced['status'])->toBe('Customized');
@@ -46,13 +46,13 @@ test('resetTemplate deletes custom template', function () {
         'body' => 'Custom body',
     ]);
 
-    test()->page->resetTemplate('order_placed');
+    testFixture('page', ManageEmailTemplates::class)->resetTemplate('order_placed');
 
     expect(EmailTemplate::query()->where('email_type', EmailTemplateType::OrderPlaced)->exists())->toBeFalse();
 });
 
 test('each template type includes placeholders', function () {
-    $data = test()->page->getTemplateData();
+    $data = testFixture('page', ManageEmailTemplates::class)->getTemplateData();
 
     foreach ($data as $template) {
         expect($template['placeholders'])->toBeArray()->not->toBeEmpty();

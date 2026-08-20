@@ -16,8 +16,8 @@ beforeEach(function () {
 
 it('calculates yearly totals from orders and expenses', function () {
     Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->delivered()
         ->create([
             'subtotal' => 100,

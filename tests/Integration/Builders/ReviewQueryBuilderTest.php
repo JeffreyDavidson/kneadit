@@ -12,8 +12,8 @@ beforeEach(function () {
 });
 
 test('approved scope returns only approved reviews', function () {
-    $approved = Review::factory()->recycle(test()->product)->approved()->create();
-    $pending = Review::factory()->recycle(test()->product)->create();
+    $approved = Review::factory()->recycle(testFixture('product', Product::class))->approved()->create();
+    $pending = Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     $results = Review::query()->approved()->get();
 
@@ -22,9 +22,9 @@ test('approved scope returns only approved reviews', function () {
 });
 
 test('featured scope returns only featured reviews', function () {
-    Review::factory()->recycle(test()->product)->featured()->create();
-    Review::factory()->recycle(test()->product)->approved()->create();
-    Review::factory()->recycle(test()->product)->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->featured()->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->approved()->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     $results = Review::query()->featured()->get();
 
@@ -33,7 +33,7 @@ test('featured scope returns only featured reviews', function () {
 });
 
 test('withProduct eager loads the product relationship', function () {
-    Review::factory()->recycle(test()->product)->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     $results = Review::query()->withProduct()->get();
 
@@ -42,9 +42,9 @@ test('withProduct eager loads the product relationship', function () {
 });
 
 test('withComments returns only reviews that have non-empty comments', function () {
-    Review::factory()->recycle(test()->product)->create(['comment' => 'Great bread!']);
-    Review::factory()->recycle(test()->product)->create(['comment' => null]);
-    Review::factory()->recycle(test()->product)->create(['comment' => '']);
+    Review::factory()->recycle(testFixture('product', Product::class))->create(['comment' => 'Great bread!']);
+    Review::factory()->recycle(testFixture('product', Product::class))->create(['comment' => null]);
+    Review::factory()->recycle(testFixture('product', Product::class))->create(['comment' => '']);
 
     $results = Review::query()->withComments()->get();
 
@@ -52,8 +52,8 @@ test('withComments returns only reviews that have non-empty comments', function 
 });
 
 test('forDisplay returns approved reviews with product', function () {
-    $approved = Review::factory()->recycle(test()->product)->approved()->create();
-    Review::factory()->recycle(test()->product)->create();
+    $approved = Review::factory()->recycle(testFixture('product', Product::class))->approved()->create();
+    Review::factory()->recycle(testFixture('product', Product::class))->create();
 
     $results = Review::query()->forDisplay()->get();
 
@@ -62,9 +62,9 @@ test('forDisplay returns approved reviews with product', function () {
 });
 
 test('statistics returns average rating and total count for approved reviews', function () {
-    Review::factory()->recycle(test()->product)->approved()->create(['rating' => 5]);
-    Review::factory()->recycle(test()->product)->approved()->create(['rating' => 3]);
-    Review::factory()->recycle(test()->product)->create(['rating' => 1]);
+    Review::factory()->recycle(testFixture('product', Product::class))->approved()->create(['rating' => 5]);
+    Review::factory()->recycle(testFixture('product', Product::class))->approved()->create(['rating' => 3]);
+    Review::factory()->recycle(testFixture('product', Product::class))->create(['rating' => 1]);
 
     $stats = Review::query()->statistics();
 
@@ -73,7 +73,7 @@ test('statistics returns average rating and total count for approved reviews', f
 });
 
 test('statistics returns zero values when no approved reviews exist', function () {
-    Review::factory()->recycle(test()->product)->create(['rating' => 5]);
+    Review::factory()->recycle(testFixture('product', Product::class))->create(['rating' => 5]);
 
     $stats = Review::query()->statistics();
 

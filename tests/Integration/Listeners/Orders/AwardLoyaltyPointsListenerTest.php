@@ -23,8 +23,8 @@ test('credits loyalty points for a delivered order', function () {
     settings(['loyalty_points_per_dollar' => '10']);
 
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->delivered()
         ->create(['total' => 20.00, 'subtotal' => 20.00]);
 
@@ -39,8 +39,8 @@ test('does not credit when loyalty is disabled', function () {
     settings(['loyalty_enabled' => '0']);
 
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->delivered()
         ->create(['total' => 20.00, 'subtotal' => 20.00]);
 

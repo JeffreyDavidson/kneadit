@@ -50,19 +50,18 @@ test('PricingRecommendation toLivewire returns all properties as array', functio
 
     $wire = $dto->toLivewire();
 
-    expect($wire)
-        ->toBeArray()
-        ->ingredientCost->toBe(2.50)
-        ->laborCost->toBe(1.00)
-        ->overhead->toBe(0.50)
-        ->totalCost->toBe(4.00)
-        ->recommendedPrice->toBe(8.00)
-        ->minPrice->toBe(6.00)
-        ->maxPrice->toBe(10.00)
-        ->currentPrice->toBe(7.50)
-        ->profitPerUnit->toBe(3.50)
-        ->actualMarginPercent->toBe(53.3)
-        ->bulkTiers->toBeEmpty();
+    expect($wire)->toBeArray();
+    expect($wire['ingredientCost'])->toBe(2.50);
+    expect($wire['laborCost'])->toBe(1.00);
+    expect($wire['overhead'])->toBe(0.50);
+    expect($wire['totalCost'])->toBe(4.00);
+    expect($wire['recommendedPrice'])->toBe(8.00);
+    expect($wire['minPrice'])->toBe(6.00);
+    expect($wire['maxPrice'])->toBe(10.00);
+    expect($wire['currentPrice'])->toBe(7.50);
+    expect($wire['profitPerUnit'])->toBe(3.50);
+    expect($wire['actualMarginPercent'])->toBe(53.3);
+    expect($wire['bulkTiers'])->toBeEmpty();
 });
 
 test('PricingRecommendation fromLivewire reconstructs DTO from array', function () {

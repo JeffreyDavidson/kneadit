@@ -23,7 +23,7 @@ test('can render products list page', function () {
 });
 
 test('can list products in the table', function () {
-    $products = Product::factory()->recycle(test()->category)->count(3)->create();
+    $products = Product::factory()->recycle(testFixture('category', Category::class))->count(3)->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanSeeTableRecords($products);
@@ -40,7 +40,7 @@ test('can search products by name', function () {
 });
 
 test('can render product table columns', function (string $column) {
-    Product::factory()->recycle(test()->category)->create();
+    Product::factory()->recycle(testFixture('category', Category::class))->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanRenderTableColumn($column);
@@ -105,7 +105,7 @@ test('can sort products by name', function () {
 });
 
 test('can edit a product via table action', function () {
-    $product = Product::factory()->recycle(test()->category)->create();
+    $product = Product::factory()->recycle(testFixture('category', Category::class))->create();
 
     Livewire::test(ListProducts::class)
         ->callAction(TestAction::make('edit')->table($product), data: [
@@ -125,14 +125,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $product = Product::factory()->recycle(test()->category)->create(['name' => 'Ciabatta']);
+    $product = Product::factory()->recycle(testFixture('category', Category::class))->create(['name' => 'Ciabatta']);
 
     expect(App\Filament\Resources\Products\ProductResource::getGlobalSearchResultTitle($product))
         ->toBe('Ciabatta');
 });
 
 test('resource returns global search result details', function () {
-    $product = Product::factory()->recycle(test()->category)->create(['price' => 5.50]);
+    $product = Product::factory()->recycle(testFixture('category', Category::class))->create(['price' => 5.50]);
 
     $details = App\Filament\Resources\Products\ProductResource::getGlobalSearchResultDetails($product);
 
@@ -147,8 +147,8 @@ test('global search eloquent query eager loads category', function () {
 });
 
 test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction', function () {
-    $kept = Product::factory()->recycle(test()->category)->create();
-    $doomed = Product::factory()->recycle(test()->category)->count(2)->create();
+    $kept = Product::factory()->recycle(testFixture('category', Category::class))->create();
+    $doomed = Product::factory()->recycle(testFixture('category', Category::class))->count(2)->create();
 
     Livewire::test(ListProducts::class)
         ->selectTableRecords($doomed)

@@ -11,5 +11,5 @@ beforeEach(function () {
 // in Integration context. We test what we can without that context.
 
 test('get unread count returns zero when no tenant context', function () {
-    expect(test()->widget->getUnreadCount())->toBe(0);
+    expect(testFixture('widget', InboxWidget::class)->getUnreadCount())->toBe(0);
 });
