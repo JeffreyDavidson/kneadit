@@ -22,7 +22,7 @@ test('generates shopping list with low stock ingredients', function () {
 
     expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class)
         ->not->toBeEmpty()
-        ->and($result->first())->toBeInstanceOf(SupplierShoppingList::class);
+        ->and($result->firstOrFail())->toBeInstanceOf(SupplierShoppingList::class);
 });
 
 test('returns empty list when all stock is sufficient', function () {

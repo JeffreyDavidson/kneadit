@@ -78,7 +78,7 @@ test('portfolio returns ProductPortfolioSummary', function () {
         ->toBeInstanceOf(ProductPortfolioSummary::class)
         ->totalProducts->toBe(1)
         ->productsWithCosts->toBe(1)
-        ->and($portfolio->products->first())->toMatchArray([
+        ->and($portfolio->products->firstOrFail())->toMatchArray([
             'price' => 10.00,
             'cost' => 4.00,
             'margin_percentage' => 60.0,

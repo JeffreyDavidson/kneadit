@@ -67,7 +67,7 @@ test('it loads orders with delivery addresses for a date', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(1)
-        ->and($result->first())->toBeInstanceOf(DeliveryStop::class)
+        ->and($result->firstOrFail())->toBeInstanceOf(DeliveryStop::class)
         ->deliveryAddress->toBe('123 Main St');
 });
 
@@ -136,7 +136,7 @@ test('it loads orders sorted by delivery time', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(2)
-        ->and($result->first()?->deliveryTime)->toBe('10:00');
+        ->and($result->firstOrFail()?->deliveryTime)->toBe('10:00');
 });
 
 test('it handles order with null delivery time', function () {
@@ -151,5 +151,5 @@ test('it handles order with null delivery time', function () {
     $result = resolve(DeliveryRouteService::class)->loadOrders($date);
 
     expect($result)->toHaveCount(1)
-        ->and($result->first()?->deliveryTime)->toBe('Not specified');
+        ->and($result->firstOrFail()?->deliveryTime)->toBe('Not specified');
 });

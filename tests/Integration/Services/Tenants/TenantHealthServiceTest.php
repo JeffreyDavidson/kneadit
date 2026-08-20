@@ -52,8 +52,8 @@ it('calculates health scores for tenants', function () {
     $data = $service->getTenantHealthData();
 
     expect($data)->toHaveCount(1)
-        ->and($data->first()?->name)->toBe('Health Bakery')
-        ->and($data->first()?->healthScore)->toBeGreaterThan(0);
+        ->and($data->firstOrFail()?->name)->toBe('Health Bakery')
+        ->and($data->firstOrFail()?->healthScore)->toBeGreaterThan(0);
 });
 
 it('handles tenant context failure gracefully', function () {
@@ -74,7 +74,7 @@ it('handles tenant context failure gracefully', function () {
 
     // Should still have tenant but with zero scores
     expect($data)->toHaveCount(1)
-        ->and($data->first()?->healthScore)->toBeGreaterThanOrEqual(0);
+        ->and($data->firstOrFail()?->healthScore)->toBeGreaterThanOrEqual(0);
 });
 
 it('returns zero summary stats when no tenants', function () {

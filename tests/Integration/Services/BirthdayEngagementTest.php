@@ -41,7 +41,7 @@ test('findRecipients returns customers with today birthday and email', function 
     $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toHaveCount(1)
-        ->and($recipients->first()->email)->toBe('birthday@example.com');
+        ->and($recipients->firstOrFail()->email)->toBe('birthday@example.com');
 });
 
 test('findRecipients excludes customers without a birthday', function () {

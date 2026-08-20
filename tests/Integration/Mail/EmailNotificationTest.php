@@ -32,8 +32,8 @@ test('order ready email sent on status change', function () {
     Mail::fake();
 
     testFixture('order', Order::class)->update(['status' => OrderStatus::Confirmed]);
-    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->fresh(), OrderStatus::Baking);
-    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->fresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->refresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->refresh(), OrderStatus::Ready);
 
     Mail::assertQueued(OrderStatusMail::class, fn (OrderStatusMail $mail) => $mail->status === OrderStatus::Ready && $mail->hasTo(testFixture('customer', Customer::class)->email));
 });
@@ -43,7 +43,7 @@ test('baking status sends baking email', function () {
 
     resolve(TransitionOrderStatus::class)(testFixture('order', Order::class), OrderStatus::Confirmed);
     Mail::fake(); // Reset to only capture baking email
-    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->fresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)(testFixture('order', Order::class)->refresh(), OrderStatus::Baking);
 
     Mail::assertQueued(OrderStatusMail::class, fn (OrderStatusMail $mail) => $mail->status === OrderStatus::Baking);
     Mail::assertNotQueued(OrderStatusMail::class, fn (OrderStatusMail $mail) => $mail->status === OrderStatus::Confirmed);
