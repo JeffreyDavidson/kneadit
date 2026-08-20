@@ -32,12 +32,12 @@ test('mark-read action toggles is_read on the row', function () {
     Livewire::test(ListContactMessages::class)
         ->callAction(TestAction::make('toggleRead')->table($message));
 
-    expect($message->fresh()->is_read)->toBeTrue();
+    expect($message->refresh()->is_read)->toBeTrue();
 
     Livewire::test(ListContactMessages::class)
         ->callAction(TestAction::make('toggleRead')->table($message));
 
-    expect($message->fresh()->is_read)->toBeFalse();
+    expect($message->refresh()->is_read)->toBeFalse();
 });
 
 test('view page renders for a contact message', function () {
@@ -53,7 +53,7 @@ test('mark-read action on the view page toggles is_read', function () {
     Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->callAction('toggleRead');
 
-    expect($message->fresh()->is_read)->toBeTrue();
+    expect($message->refresh()->is_read)->toBeTrue();
 });
 
 test('reply action exists on the view page', function () {
@@ -88,7 +88,7 @@ test('reply action sends the email, persists the reply, and marks the message as
             && str_contains($mail->replyBody, 'Thanks for reaching out');
     });
 
-    expect($message->fresh()->is_read)->toBeTrue();
+    expect($message->refresh()->is_read)->toBeTrue();
 
     $reply = $message->replies()->sole();
 

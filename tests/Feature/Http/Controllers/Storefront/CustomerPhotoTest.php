@@ -69,7 +69,7 @@ test('photo submission saves to database as unapproved', function () {
             'photo' => UploadedFile::fake()->image('order.jpg'),
         ]);
 
-    $photo = CustomerPhoto::query()->first();
+    $photo = CustomerPhoto::query()->firstOrFail();
 
     expect($photo)->not->toBeNull()->and($photo->is_approved)->toBeFalse()->and($photo->customer_name)->toBe('Carol');
 });

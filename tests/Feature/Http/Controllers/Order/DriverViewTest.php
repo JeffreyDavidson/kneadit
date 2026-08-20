@@ -80,7 +80,7 @@ test('mark delivered changes order status', function () {
         ->post(route('driver.delivered', $order->order_number, false));
 
     $response->assertRedirect();
-    expect($order->fresh()->status)->toBe(OrderStatus::Delivered);
+    expect($order->refresh()->status)->toBe(OrderStatus::Delivered);
 });
 
 test('mark delivered redirects back', function () {

@@ -143,7 +143,7 @@ test('successful onboarding creates domain record with correct subdomain', funct
     submitOnboarding($user, ['subdomain' => $sub]);
 
     $domain = DB::connection('central')->table('domains')
-        ->where('tenant_id', $sub)->first();
+        ->where('tenant_id', $sub)->firstOrFail();
 
     expect($domain)->not->toBeNull();
     throw_unless($domain instanceof stdClass, RuntimeException::class, 'Expected the tenant domain to exist.');
@@ -209,7 +209,7 @@ test('onboarding with storefront choice kneadit sets storefront enabled true', f
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub, 'storefront_choice' => 'kneadit']);
 
-    $tenant = DB::table('tenants')->where('id', $sub)->first();
+    $tenant = DB::table('tenants')->where('id', $sub)->firstOrFail();
     throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
     expect($tenant->storefront_enabled)->toBeTruthy();
 });
@@ -223,7 +223,7 @@ test('onboarding with storefront choice own sets storefront enabled false', func
         'external_website' => 'https://mybakery.com',
     ]);
 
-    $tenant = DB::table('tenants')->where('id', $sub)->first();
+    $tenant = DB::table('tenants')->where('id', $sub)->firstOrFail();
     throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
     expect($tenant->storefront_enabled)->toBeFalsy();
 });
@@ -333,7 +333,7 @@ test('tenant gets trial ends at set to 30 days from now', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $tenant = DB::table('tenants')->where('id', $sub)->first();
+    $tenant = DB::table('tenants')->where('id', $sub)->firstOrFail();
     throw_unless($tenant instanceof stdClass && is_string($tenant->trial_ends_at), RuntimeException::class, 'Expected a tenant trial end date.');
     $trialEnds = Date::parse($tenant->trial_ends_at);
 
@@ -396,7 +396,7 @@ test('referral code from session is forwarded to CompleteReferral', function () 
             'storefront_choice' => 'kneadit',
         ]);
 
-    expect($referral->fresh())
+    expect($referral->refresh())
         ->status->toBe(ReferralStatus::Completed)
         ->referred_tenant_id->toBe($sub)
         ->referred_email->toBe($user->email);

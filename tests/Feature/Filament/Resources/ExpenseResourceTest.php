@@ -61,7 +61,7 @@ test('can edit an expense via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($expense->fresh()->description)->toBe('Updated expense');
+    expect($expense->refresh()->description)->toBe('Updated expense');
 });
 
 test('create expense validates required fields', function (array $data, array $errors) {

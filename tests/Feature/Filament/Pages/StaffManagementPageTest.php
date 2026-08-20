@@ -46,7 +46,7 @@ test('change role action updates the member role', function () {
             'role' => UserRole::Manager->value,
         ]);
 
-    expect($member->fresh()->role)->toBe(UserRole::Manager);
+    expect($member->refresh()->role)->toBe(UserRole::Manager);
 });
 
 test('change role action refuses to change own role', function () {
@@ -55,7 +55,7 @@ test('change role action refuses to change own role', function () {
             'role' => UserRole::Manager->value,
         ]);
 
-    expect(testFixture('user', User::class)->fresh()->role)->toBe(UserRole::Owner);
+    expect(testFixture('user', User::class)->refresh()->role)->toBe(UserRole::Owner);
 });
 
 test('remove member action deletes the user', function () {

@@ -59,7 +59,7 @@ test('can create a capacity limit for a weekday', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect(CapacityLimit::query()->first())
+    expect(CapacityLimit::query()->firstOrFail())
         ->max_orders->toBe(25)
         ->is_blocked->toBeFalse();
 });

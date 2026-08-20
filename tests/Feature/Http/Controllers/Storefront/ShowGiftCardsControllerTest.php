@@ -89,5 +89,5 @@ test('gift card has transactions relationship', function () {
             'notes' => 'Initial purchase',
         ]);
 
-    expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount->dollars())->toBe(50.00);
+    expect($card->transactions)->toHaveCount(1)->and($card->transactions->firstOrFail()->amount->dollars())->toBe(50.00);
 });

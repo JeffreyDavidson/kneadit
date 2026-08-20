@@ -49,7 +49,7 @@ test('send quote is visible for an Inquiry with a quoted amount and dispatches t
         ->assertActionHidden('resendQuote')
         ->callAction('sendQuote');
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Quoted);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Quoted);
     Event::assertDispatched(CateringQuoteRequested::class);
 });
 
@@ -77,7 +77,7 @@ test('resend quote is visible when status is Quoted and dispatches the event', f
         ->assertActionHidden('sendQuote')
         ->callAction('resendQuote');
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Quoted);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Quoted);
     Event::assertDispatched(CateringQuoteRequested::class);
 });
 
@@ -194,7 +194,7 @@ test('edit notes action persists changes', function () {
     Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('editNotes', data: ['notes' => 'Talked to chef about gluten-free options.']);
 
-    expect($inquiry->fresh()->notes)->toBe('Talked to chef about gluten-free options.');
+    expect($inquiry->refresh()->notes)->toBe('Talked to chef about gluten-free options.');
 });
 
 test('a cancelled inquiry hides the quote, booking, and deposit action buttons', function () {
@@ -223,5 +223,5 @@ test('edit customer action updates contact fields', function () {
             'customer_phone' => '555-0123',
         ]);
 
-    expect($inquiry->fresh()->customer_name)->toBe('New Name');
+    expect($inquiry->refresh()->customer_name)->toBe('New Name');
 });

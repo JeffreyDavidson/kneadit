@@ -50,7 +50,7 @@ test('reset-password updates the customer password and redirects to login', func
     $response->assertRedirect(route('account.login.show', [], false))
         ->assertSessionHas('status');
 
-    expect(Hash::check('new-password-1', $customer->fresh()->password))->toBeTrue();
+    expect(Hash::check('new-password-1', $customer->refresh()->password))->toBeTrue();
 });
 
 test('reset-password rejects an invalid token', function () {

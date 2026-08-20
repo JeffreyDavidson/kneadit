@@ -51,7 +51,7 @@ test('modify endpoint updates order and queues confirmation email', function () 
     $response->assertRedirect(route('order.confirmation', testFixture('order', Order::class)));
 
     testFixture('order', Order::class)->refresh();
-    expect(testFixture('order', Order::class)->orderItems()->first()->quantity)->toBe(4)
+    expect(testFixture('order', Order::class)->orderItems()->firstOrFail()->quantity)->toBe(4)
         ->and(testFixture('order', Order::class)->tip_amount->dollars())->toBe(2.50);
 
     Mail::assertQueued(OrderModifiedMail::class);
@@ -80,5 +80,5 @@ test('modify endpoint returns session error when window has expired', function (
         ]);
 
     $response->assertSessionHasErrors(['items']);
-    expect(testFixture('order', Order::class)->fresh()->orderItems()->first()->quantity)->toBe(2);
+    expect(testFixture('order', Order::class)->refresh()->orderItems()->firstOrFail()->quantity)->toBe(2);
 });

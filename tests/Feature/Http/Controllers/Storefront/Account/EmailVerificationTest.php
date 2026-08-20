@@ -47,7 +47,7 @@ test('a signed verification URL marks the email verified and redirects to the da
         ->get($url);
 
     $response->assertRedirect(route('account.dashboard', [], false));
-    expect($customer->fresh()->hasVerifiedEmail())->toBeTrue();
+    expect($customer->refresh()->hasVerifiedEmail())->toBeTrue();
     Event::assertDispatched(Verified::class);
 });
 
@@ -59,7 +59,7 @@ test('an unsigned verification URL is rejected', function () {
         ->get(route('account.email.verify', ['id' => $customer->id, 'hash' => sha1($customer->email)], false));
 
     $response->assertForbidden();
-    expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
+    expect($customer->refresh()->hasVerifiedEmail())->toBeFalse();
 });
 
 test('a verification URL with a mismatched id is rejected', function () {
@@ -94,7 +94,7 @@ test('a verification URL whose hash does not match the customer email is rejecte
         ->get($url);
 
     $response->assertForbidden();
-    expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
+    expect($customer->refresh()->hasVerifiedEmail())->toBeFalse();
 });
 
 test('the resend route sends another verification email', function () {

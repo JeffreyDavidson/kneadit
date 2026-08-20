@@ -64,7 +64,7 @@ test('password can be reset', function () {
     ]);
 
     $response->assertRedirect('/login');
-    expect(Hash::check('newPassword1', $user->fresh()->password))->toBeTrue();
+    expect(Hash::check('newPassword1', $user->refresh()->password))->toBeTrue();
 });
 
 test('reset password page loads', function () {

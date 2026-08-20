@@ -53,7 +53,7 @@ test('can edit a loyalty reward via table action', function () {
         ])
         ->assertHasNoFormErrors();
 
-    expect($reward->fresh()->name)->toBe('Updated Reward');
+    expect($reward->refresh()->name)->toBe('Updated Reward');
 });
 
 test('create loyalty reward validates required fields', function (array $data, array $errors) {

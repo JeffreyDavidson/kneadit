@@ -73,7 +73,7 @@ test('does not allow changing the email address via the profile form', function 
             'email' => 'evil@example.com',
         ]);
 
-    expect($customer->fresh()->email)->toBe('original@example.com');
+    expect($customer->refresh()->email)->toBe('original@example.com');
 });
 
 test('rejects future birthday', function () {
