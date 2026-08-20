@@ -10,6 +10,7 @@ use App\Enums\Staff\UserRole;
 use App\Exceptions\Staff\StaffInvitationException;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
+use App\Queries\Staff\StaffDirectoryQuery;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -53,22 +54,13 @@ class StaffManagement extends Page
     /** @return Collection<int, User> */
     public function getTeamMembers(): Collection
     {
-        return User::query()
-            ->orderByRaw('CASE role WHEN ? THEN 1 WHEN ? THEN 2 WHEN ? THEN 3 ELSE 4 END', [
-                UserRole::Owner->value,
-                UserRole::Manager->value,
-                UserRole::Staff->value,
-            ])
-            ->get();
+        return StaffDirectoryQuery::members();
     }
 
     /** @return Collection<int, StaffInvitation> */
     public function getPendingInvitations(): Collection
     {
-        return StaffInvitation::query()->whereNull('accepted_at')
-            ->where('expires_at', '>', now())
-            ->latest()
-            ->get();
+        return StaffDirectoryQuery::pendingInvitations();
     }
 
     protected function getHeaderActions(): array

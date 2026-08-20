@@ -2,9 +2,11 @@
 
 namespace App\Models\Engagement;
 
+use App\Builders\Engagement\CustomerCampaignQueryBuilder;
 use App\Enums\Marketing\CustomerCampaignStatus;
 use Database\Factories\Engagement\CustomerCampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'subject', 'body', 'target_segment', 'status', 'scheduled_at', 'sent_at', 'recipient_count')]
+#[UseEloquentBuilder(CustomerCampaignQueryBuilder::class)]
 #[UseFactory(CustomerCampaignFactory::class)]
 class CustomerCampaign extends Model
 {

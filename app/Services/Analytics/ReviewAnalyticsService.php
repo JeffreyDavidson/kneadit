@@ -2,6 +2,9 @@
 
 namespace App\Services\Analytics;
 
+use App\DataTransferObjects\Analytics\ReviewOverview;
+use App\DataTransferObjects\Analytics\ReviewRatingDistributionEntry;
+use App\DataTransferObjects\Analytics\ReviewSentiment;
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,28 +14,22 @@ use Illuminate\Support\Str;
 
 class ReviewAnalyticsService
 {
-    /** @return array<string, mixed> */
-    public function getOverallStats(): array
+    public function getOverallStats(): ReviewOverview
     {
         $totalReviews = Review::query()->count();
 
         if ($totalReviews === 0) {
-            return ['total_reviews' => 0, 'average_rating' => 0, 'approval_rate' => 0, 'approved_reviews' => 0];
+            return new ReviewOverview(0, 0.0, 0.0, 0);
         }
 
         $averageRating = (float) Review::query()->avg('rating');
         $approvedReviews = Review::query()->approved()->count();
         $approvalRate = ($approvedReviews / $totalReviews) * 100;
 
-        return [
-            'total_reviews' => $totalReviews,
-            'average_rating' => round($averageRating, 1),
-            'approval_rate' => round($approvalRate, 1),
-            'approved_reviews' => $approvedReviews,
-        ];
+        return new ReviewOverview($totalReviews, round($averageRating, 1), round($approvalRate, 1), $approvedReviews);
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<ReviewRatingDistributionEntry> */
     public function getRatingDistribution(): array
     {
         $distribution = Review::query()->select('rating', DB::raw('count(*) as count'))
@@ -50,11 +47,7 @@ class ReviewAnalyticsService
             $count = is_int($count) ? $count : 0;
             $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
 
-            $ratingStats[] = [
-                'rating' => $i,
-                'count' => $count,
-                'percentage' => round($percentage, 1),
-            ];
+            $ratingStats[] = new ReviewRatingDistributionEntry($i, $count, round($percentage, 1));
         }
 
         return $ratingStats;
@@ -130,8 +123,7 @@ class ReviewAnalyticsService
             ]);
     }
 
-    /** @return array<string, float> */
-    public function getSentimentAnalysis(): array
+    public function getSentimentAnalysis(): ReviewSentiment
     {
         $reviews = Review::query()->whereNotNull('comment')
             ->where('comment', '!=', '')
@@ -161,10 +153,10 @@ class ReviewAnalyticsService
 
         $total = $positive + $neutral + $negative;
 
-        return [
-            'positive' => $total > 0 ? round(($positive / $total) * 100, 1) : 0,
-            'neutral' => $total > 0 ? round(($neutral / $total) * 100, 1) : 0,
-            'negative' => $total > 0 ? round(($negative / $total) * 100, 1) : 0,
-        ];
+        return new ReviewSentiment(
+            positive: $total > 0 ? round(($positive / $total) * 100, 1) : 0.0,
+            neutral: $total > 0 ? round(($neutral / $total) * 100, 1) : 0.0,
+            negative: $total > 0 ? round(($negative / $total) * 100, 1) : 0.0,
+        );
     }
 }

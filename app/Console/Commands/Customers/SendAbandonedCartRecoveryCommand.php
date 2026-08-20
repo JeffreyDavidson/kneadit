@@ -32,14 +32,7 @@ class SendAbandonedCartRecoveryCommand extends Command
 
                 $cutoff = now()->subHours($engagement->abandonedCartRecoveryHours);
 
-                $carts = Cart::query()
-                    ->whereNotNull('customer_email')
-                    ->whereNull('recovery_sent_at')
-                    ->whereNull('converted_at')
-                    ->where('last_activity_at', '<=', $cutoff)
-                    ->whereHas('items')
-                    ->with('items.product')
-                    ->get();
+                $carts = Cart::query()->abandonedBefore($cutoff)->withRecoverableItems()->get();
 
                 foreach ($carts as $cart) {
                     $coupon = $engagement->abandonedCartRecoveryCouponDollars > 0

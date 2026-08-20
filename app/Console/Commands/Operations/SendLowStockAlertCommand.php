@@ -10,7 +10,6 @@ use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('inventory:send-low-stock-alert')]
@@ -32,11 +31,7 @@ class SendLowStockAlertCommand extends Command
                     return;
                 }
 
-                $ingredients = Ingredient::query()
-                    ->where(function (QueryBuilder $q): void {
-                        $q->where('current_stock', '<=', 0)
-                            ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-                    })
+                $ingredients = Ingredient::query()->lowStock()
                     ->orderBy('current_stock')
                     ->get();
 

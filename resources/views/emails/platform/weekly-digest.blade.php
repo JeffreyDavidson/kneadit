@@ -32,7 +32,7 @@
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Orders</div>
                 </td>
                 <td style="text-align: center; padding: 10px;">
-                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ $stats['total_revenue'] }}</div>
+                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">@money($stats['total_revenue'])</div>
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Revenue</div>
                 </td>
             </tr>
@@ -42,7 +42,7 @@
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">New Customers</div>
                 </td>
                 <td style="text-align: center; padding: 10px;">
-                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ $stats['avg_order_value'] }}</div>
+                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">@money($stats['avg_order_value'])</div>
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Avg Order</div>
                 </td>
             </tr>

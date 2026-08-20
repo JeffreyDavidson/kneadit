@@ -2,21 +2,20 @@
 
 namespace App\Services\Inventory;
 
+use App\DataTransferObjects\Inventory\ShoppingListItem;
+use App\DataTransferObjects\Inventory\SupplierShoppingList;
+use App\DataTransferObjects\Inventory\SupplierSummary;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class ShoppingListService
 {
-    /** @return array<int|string, array<string, mixed>> */
-    public function generate(bool $includeUpcoming = false, ?string $startDate = null, ?string $endDate = null): array
+    /** @return Collection<int|string, SupplierShoppingList> */
+    public function generate(bool $includeUpcoming = false, ?string $startDate = null, ?string $endDate = null): Collection
     {
-        $lowStockIngredients = Ingredient::query()->where(function (Builder $q) {
-            $q->where('current_stock', '<=', 0)
-                ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-        })->with('suppliers')->get();
+        $lowStockIngredients = Ingredient::query()->lowStock()->withActiveSuppliers()->get();
 
         $upcomingNeeds = $this->calculateUpcomingNeeds($includeUpcoming, $startDate, $endDate);
 
@@ -54,9 +53,9 @@ class ShoppingListService
     /**
      * @param Collection<int, Ingredient> $lowStockIngredients
      * @param array<int, float> $upcomingNeeds
-     * @return array<int|string, array<string, mixed>>
+     * @return Collection<int|string, SupplierShoppingList>
      */
-    private function groupBySupplier(Collection $lowStockIngredients, array $upcomingNeeds): array
+    private function groupBySupplier(Collection $lowStockIngredients, array $upcomingNeeds): Collection
     {
         $grouped = [];
         $noSupplier = [];
@@ -83,28 +82,27 @@ class ShoppingListService
             $pivotUnitPrice = $pivot?->unit_price !== null ? (int) $pivot->unit_price / 100 : null;
             $effectiveUnitPrice = $pivotUnitPrice ?? $ingredient->cost_per_unit?->dollars() ?? 0;
 
-            $item = [
-                'ingredient_id' => $ingredient->id,
-                'name' => $ingredient->name,
-                'unit' => $ingredient->unit,
-                'current_stock' => $ingredient->current_stock,
-                'needed' => round($neededQty, 2),
-                'unit_price' => $effectiveUnitPrice,
-                'subtotal' => round($neededQty * (float) $effectiveUnitPrice, 2),
-                'sku' => $pivot?->sku,
-                'minimum_order' => $pivot?->minimum_order !== null ? (int) $pivot->minimum_order / 100 : null,
-                'lead_time_days' => $pivot?->lead_time_days,
-            ];
+            $item = new ShoppingListItem(
+                ingredientId: $ingredient->id,
+                name: $ingredient->name,
+                unit: $ingredient->unit,
+                currentStock: (float) $ingredient->current_stock,
+                needed: round($neededQty, 2),
+                unitPrice: (float) $effectiveUnitPrice,
+                subtotal: round($neededQty * (float) $effectiveUnitPrice, 2),
+                sku: $pivot?->sku,
+                minimumOrder: $pivot?->minimum_order !== null ? (int) $pivot->minimum_order / 100 : null,
+                leadTimeDays: $pivot?->lead_time_days,
+            );
 
             if ($bestSupplier) {
-                $grouped[$bestSupplier->id]['supplier'] = [
-                    'id' => $bestSupplier->id,
-                    'name' => $bestSupplier->name,
-                    'email' => $bestSupplier->email,
-                    'phone' => $bestSupplier->phone,
-                ];
+                $grouped[$bestSupplier->id]['supplier'] = new SupplierSummary(
+                    id: $bestSupplier->id,
+                    name: $bestSupplier->name,
+                    email: $bestSupplier->email,
+                    phone: $bestSupplier->phone,
+                );
                 $grouped[$bestSupplier->id]['items'][] = $item;
-                $grouped[$bestSupplier->id]['total'] = array_sum(array_column($grouped[$bestSupplier->id]['items'], 'subtotal'));
             } else {
                 $noSupplier[] = $item;
             }
@@ -112,12 +110,17 @@ class ShoppingListService
 
         if (! empty($noSupplier)) {
             $grouped['none'] = [
-                'supplier' => ['id' => null, 'name' => 'No Supplier Assigned', 'email' => null, 'phone' => null],
+                'supplier' => new SupplierSummary(null, 'No Supplier Assigned', null, null),
                 'items' => $noSupplier,
-                'total' => array_sum(array_column($noSupplier, 'subtotal')),
             ];
         }
 
-        return $grouped;
+        return collect($grouped)->map(
+            /** @param array{supplier: SupplierSummary, items: list<ShoppingListItem>} $group */
+            fn (array $group): SupplierShoppingList => new SupplierShoppingList(
+                supplier: $group['supplier'],
+                items: collect($group['items']),
+            ),
+        );
     }
 }

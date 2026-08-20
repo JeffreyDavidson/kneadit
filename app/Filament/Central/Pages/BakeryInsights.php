@@ -4,6 +4,8 @@ namespace App\Filament\Central\Pages;
 
 use App\Actions\Tenants\ExtendTenantTrial;
 use App\Actions\Tenants\SendTenantNudge;
+use App\DataTransferObjects\Tenants\ChurnAlert;
+use App\DataTransferObjects\Tenants\TenantHealthData;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\ChurnAlertService;
@@ -46,21 +48,21 @@ class BakeryInsights extends Page
     /** @return Collection<int, array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int}> */
     public function getTenantHealthData(): Collection
     {
-        return $this->service()->getTenantHealthData();
+        return $this->service()->getTenantHealthData()->map(fn (TenantHealthData $tenant): array => $tenant->toArray());
     }
 
     /** @return array<string, mixed> */
     public function getHealthSummaryStats(): array
     {
-        return $this->service()->getHealthSummaryStats();
+        return $this->service()->getHealthSummaryStats()->toArray();
     }
 
     // ── Churn Alerts Tab Methods ──
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{tenant_id: string, name: string, type: string, type_label: string, description: string, days_since_signup: int, severity: string}> */
     public function getAlerts(): Collection
     {
-        return resolve(ChurnAlertService::class)->getAlerts();
+        return resolve(ChurnAlertService::class)->getAlerts()->map(fn (ChurnAlert $alert): array => $alert->toArray());
     }
 
     public function extendTrial(string $tenantId): void

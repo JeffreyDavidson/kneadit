@@ -8,6 +8,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Presenters\CustomerPresenter;
+use App\Queries\Customers\CustomerDirectoryQuery;
 use App\Queries\Customers\CustomerDirectoryStatsQuery;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
@@ -15,10 +16,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
@@ -92,22 +92,7 @@ class CustomerDirectory extends Page
     /** @return Collection<int, array{id: int, name: string, email: string, phone: string, total_orders: int|null, total_spent: string|false, last_order_date: non-falsy-string}> */
     public function getCustomers(): Collection
     {
-        $query = Customer::query()
-            ->withCount('orders')
-            ->withSum('orders', 'total')
-            ->with(['orders' => function (Relation $query): void {
-                $query->latest()->take(1);
-            }]);
-
-        if ($this->search) {
-            $query->where(function (Builder $q) {
-                $q->whereLike('name', '%' . $this->search . '%')
-                    ->orWhereLike('email', '%' . $this->search . '%')
-                    ->orWhereLike('phone', '%' . $this->search . '%');
-            });
-        }
-
-        return $query->orderBy('name')->get()->map(function (Customer $customer) {
+        return CustomerDirectoryQuery::search($this->search)->map(function (Customer $customer) {
             return [
                 'id' => $customer->id,
                 'name' => $customer->name,
@@ -117,7 +102,9 @@ class CustomerDirectory extends Page
                 // orders.total is bigint cents (migration 2026_04_22_201500); withSum bypasses
                 // MoneyCentsCast and returns the raw cents, so divide back to dollars here.
                 'total_spent' => Number::currency(((int) ($customer->orders_sum_total ?? 0)) / 100),
-                'last_order_date' => $customer->orders->first()?->created_at?->format('M j, Y') ?? 'Never',
+                'last_order_date' => $customer->last_order_date
+                    ? Date::parse($customer->last_order_date)->format('M j, Y')
+                    : 'Never',
             ];
         });
     }
@@ -125,14 +112,7 @@ class CustomerDirectory extends Page
     /** @return array<string, mixed> */
     public function getCustomerDetails(int $customerId): ?array
     {
-        $customer = Customer::with([
-            'orders' => function (Relation $query) {
-                $query->latest();
-            },
-            'customerNotes' => function (Relation $query) {
-                $query->with('createdBy')->latest();
-            },
-        ])->find($customerId);
+        $customer = CustomerDirectoryQuery::findWithDetails($customerId);
 
         if (! $customer) {
             return null;

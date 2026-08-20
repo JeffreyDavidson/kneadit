@@ -74,9 +74,9 @@ class WeeklyPrepPlanner extends Page
 
         $data = resolve(PrepScheduleService::class)->loadWeeklyData($this->selectedWeekStart);
 
-        $this->weeklyOrders = $data['weeklyOrders'];
-        $this->weekDays = $data['weekDays'];
-        $this->prepSchedule = $data['prepSchedule'];
+        $this->weeklyOrders = $data->weeklyOrders;
+        $this->weekDays = $data->weekDays;
+        $this->prepSchedule = $data->prepSchedule;
     }
 
     /** @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}> */

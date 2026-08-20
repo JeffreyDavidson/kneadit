@@ -7,7 +7,6 @@ use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\Ingredient;
 use Filament\Widgets\Widget;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class LowStockWidget extends Widget
 {
@@ -19,20 +18,13 @@ class LowStockWidget extends Widget
 
     public static function canView(): bool
     {
-        return Ingredient::query()->where(function (Builder $q): void {
-            $q->where('current_stock', '<=', 0)
-                ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-        })->exists();
+        return Ingredient::query()->lowStock()->exists();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getRows(): array
     {
-        return Ingredient::query()
-            ->where(function (\Illuminate\Contracts\Database\Query\Builder $q): void {
-                $q->where('current_stock', '<=', 0)
-                    ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-            })
+        return Ingredient::query()->lowStock()
             ->orderBy('current_stock')
             ->get()
             ->map(fn (Ingredient $ingredient): array => [

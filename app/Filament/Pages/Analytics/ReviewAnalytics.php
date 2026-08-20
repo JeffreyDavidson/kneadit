@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Analytics\ReviewRatingDistributionEntry;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -44,13 +45,16 @@ class ReviewAnalytics extends Page
     /** @return array<string, mixed> */
     public function getOverallStats(): array
     {
-        return $this->service()->getOverallStats();
+        return $this->service()->getOverallStats()->toArray();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
-        return $this->service()->getRatingDistribution();
+        return array_map(
+            fn (ReviewRatingDistributionEntry $distribution): array => $distribution->toArray(),
+            $this->service()->getRatingDistribution(),
+        );
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -74,6 +78,6 @@ class ReviewAnalytics extends Page
     /** @return array<string, float> */
     public function getSentimentAnalysis(): array
     {
-        return $this->service()->getSentimentAnalysis();
+        return $this->service()->getSentimentAnalysis()->toArray();
     }
 }

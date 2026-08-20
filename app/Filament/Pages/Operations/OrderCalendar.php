@@ -2,10 +2,12 @@
 
 namespace App\Filament\Pages\Operations;
 
+use App\DataTransferObjects\Orders\OrderCalendarDay;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Orders\Order;
+use App\Queries\Orders\OrderCalendarQuery;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -41,7 +43,7 @@ class OrderCalendar extends Page
 
     public int $currentMonth;
 
-    /** @var Collection<string, mixed> */
+    /** @var Collection<string, int> */
     public Collection $orderCounts;
 
     /** @var Collection<int, Order> */
@@ -59,13 +61,9 @@ class OrderCalendar extends Page
 
     public function loadOrderCounts(): void
     {
-        $startOfMonth = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->startOfDay();
-        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $month = Date::createFromDate($this->currentYear, $this->currentMonth, 1);
 
-        $this->orderCounts = Order::query()->whereBetween('delivery_date', [$startOfMonth, $endOfMonth])
-            ->selectRaw('DATE(delivery_date) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->pluck('count', 'date');
+        $this->orderCounts = OrderCalendarQuery::countsForMonth($month);
     }
 
     public function previousMonth(): void
@@ -91,10 +89,7 @@ class OrderCalendar extends Page
     public function selectDay(string $date): void
     {
         $this->selectedDate = $date;
-        $this->selectedDayOrders = Order::with(['customer', 'orderItems.product'])
-            ->whereDate('delivery_date', $date)
-            ->orderBy('delivery_time')
-            ->get();
+        $this->selectedDayOrders = OrderCalendarQuery::ordersForDate($date);
     }
 
     /** @return Collection<int, mixed> */
@@ -110,37 +105,18 @@ class OrderCalendar extends Page
 
         while ($current->lte($endOfCalendar)) {
             $dateString = $current->format('Y-m-d');
-            $orderCount = filter_var($this->orderCounts->get($dateString, 0), FILTER_VALIDATE_INT);
-            $orderCount = is_int($orderCount) ? $orderCount : 0;
+            $orderCount = $this->orderCounts->get($dateString, 0);
 
-            $days->push([
-                'date' => $current->copy(),
-                'dateString' => $dateString,
-                'isCurrentMonth' => $current->month === $this->currentMonth,
-                'isToday' => $current->isToday(),
-                'orderCount' => $orderCount,
-                'colorClass' => $this->getColorClass($orderCount),
-            ]);
+            $days->push((new OrderCalendarDay(
+                date: $current->copy(),
+                displayMonth: $this->currentMonth,
+                orderCount: $orderCount,
+            ))->toArray());
 
             $current->addDay();
         }
 
         return $days;
-    }
-
-    private function getColorClass(int $count): string
-    {
-        if ($count === 0) {
-            return 'bg-gray-100 hover:bg-gray-200';
-        }
-        if ($count <= 5) {
-            return 'bg-green-100 hover:bg-green-200 text-green-800';
-        }
-        if ($count <= 10) {
-            return 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800';
-        }
-
-        return 'bg-red-100 hover:bg-red-200 text-red-800';
     }
 
     public function getCurrentMonthName(): string

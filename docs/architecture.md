@@ -60,6 +60,8 @@ KneadIt favors explicit Laravel boundaries rather than a generic service/reposit
 
 Models, actions, services, enums, builders, queries, policies, factories, and tests are grouped by domain. Tests mirror the `app` structure across the applicable unit, integration, and feature suites.
 
+Custom Eloquent builders contain reusable, chainable constraints for one model; Query classes compose complete read use cases, aggregates, and eager-loading plans. Stable results that cross application layers use domain-specific DTOs or value objects instead of anonymous mixed arrays. Filament and Livewire pages convert those objects to primitive arrays only at the public state/view boundary so hydration remains framework-compatible. Custom Eloquent collections are intentionally reserved for repeated behavior on already-loaded model sets; query-time aggregation remains in SQL.
+
 ## Major domains
 
 - **Platform and tenancy:** bakery registration, onboarding, domains, plans, trials, subscriptions, referrals, support, announcements, audits, impersonation, backups, and health.
