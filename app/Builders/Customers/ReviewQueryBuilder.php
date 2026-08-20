@@ -58,7 +58,9 @@ class ReviewQueryBuilder extends Builder
             ->first();
 
         return (object) [
-            'avg_rating' => Number::parseFloat((string) ($stats->avg_rating ?? 0)) ?: 0.0,
+            'avg_rating' => Number::parseFloat(
+                (string) (is_scalar($stats->avg_rating ?? null) ? ($stats->avg_rating ?? 0) : 0),
+            ) ?: 0.0,
             'total_count' => Arr::integer(['value' => $stats->total_count ?? 0], 'value', 0),
         ];
     }

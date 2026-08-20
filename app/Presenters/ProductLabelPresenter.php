@@ -6,7 +6,6 @@ use App\Enums\Inventory\Allergen;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 
@@ -17,9 +16,7 @@ use Illuminate\Support\Number;
  */
 final class ProductLabelPresenter
 {
-    public function __construct(public readonly Product $product)
-    {
-    }
+    public function __construct(public readonly Product $product) {}
 
     public static function for(Product $product): self
     {
@@ -47,7 +44,7 @@ final class ProductLabelPresenter
             ->sortByDesc(function (Ingredient $ingredient): float {
                 $quantity = $ingredient->pivot->quantity ?? 0;
 
-                return Number::parseFloat((string) $quantity) ?: 0.0;
+                return Number::parseFloat((string) (is_scalar($quantity) ? $quantity : 0)) ?: 0.0;
             })
             ->pluck('name')
             ->values()

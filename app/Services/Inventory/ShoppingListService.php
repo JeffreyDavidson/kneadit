@@ -41,7 +41,8 @@ class ShoppingListService
             foreach ($order->orderItems as $item) {
                 if ($item->product?->recipe) {
                     foreach ($item->product->recipe->inventoryIngredients as $ingredient) {
-                        $quantity = Number::parseFloat((string) ($ingredient->pivot->quantity ?? 0)) ?: 0.0;
+                        $rawQuantity = $ingredient->pivot->quantity ?? 0;
+                        $quantity = Number::parseFloat((string) (is_scalar($rawQuantity) ? $rawQuantity : 0)) ?: 0.0;
                         $needed = $quantity * $item->quantity;
                         $needs[$ingredient->id] = ($needs[$ingredient->id] ?? 0) + $needed;
                     }
