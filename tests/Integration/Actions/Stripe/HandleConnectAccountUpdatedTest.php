@@ -3,13 +3,14 @@
 use App\Actions\Stripe\HandleConnectAccountUpdated;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('logs warning when tenant_id is missing from account metadata', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'missing tenant_id'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'missing tenant_id'));
 
     $account = [
         'id' => 'acct_test123',
@@ -24,7 +25,7 @@ test('logs warning when tenant is not found', function () {
     Log::shouldReceive('info')->andReturnNull();
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'Tenant not found'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'Tenant not found'));
 
     $account = [
         'id' => 'acct_test123',
@@ -38,7 +39,7 @@ test('logs warning when tenant is not found', function () {
 test('reads tenant_id from object metadata', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'missing tenant_id'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'missing tenant_id'));
 
     $account = (object) [
         'id' => 'acct_test123',
@@ -52,10 +53,9 @@ test('reads tenant_id from object metadata', function () {
 test('updates tenant settings when tenant exists and charges enabled', function () {
     $tenant = createTenant(['id' => 'stripe-tenant', 'email' => 'stripe@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andReturnUsing(fn ($tenant, $callback) => $callback());
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (mixed ...$arguments): mixed => isset($arguments[1]) && is_callable($arguments[1]) ? $arguments[1]() : null);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -73,17 +73,15 @@ test('updates tenant settings when tenant exists and charges enabled', function 
 test('logs error when tenant context callback throws exception', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andThrow(new Exception('Connection failed'));
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')->throws(new Exception('Connection failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
     Log::shouldReceive('info')->andReturnNull();
     Log::shouldReceive('error')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'Failed to update tenant Stripe Connect'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'Failed to update tenant Stripe Connect'));
 
     $account = [
         'id' => 'acct_test123',

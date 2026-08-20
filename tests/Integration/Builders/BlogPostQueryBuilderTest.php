@@ -2,6 +2,7 @@
 
 use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ beforeEach(function () {
     );
 
     if (! Schema::hasColumn('blog_posts', 'category')) {
-        Schema::table('blog_posts', function ($table) {
+        Schema::table('blog_posts', function (Blueprint $table) {
             $table->string('category')->default('guides');
         });
     }
@@ -85,9 +86,12 @@ test('forListing returns published posts ordered by published_at descending', fu
 
     $results = BlogPost::query()->forListing()->get();
 
+    $last = $results->last();
+    throw_unless($last instanceof BlogPost, RuntimeException::class, 'Expected a second listing result.');
+
     expect($results)->toHaveCount(2)
         ->and($results->firstOrFail()->id)->toBe($newer->id)
-        ->and($results->last()->id)->toBe($older->id);
+        ->and($last->id)->toBe($older->id);
 });
 
 test('forListing filters by category when provided', function () {

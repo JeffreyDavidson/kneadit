@@ -3,6 +3,7 @@
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -18,7 +19,7 @@ test('it does nothing when tenant id is missing from metadata', function () {
     Log::shouldReceive('info')->andReturnNull();
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'missing tenant_id'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'missing tenant_id'));
 
     $session = [
         'id' => 'cs_test_456',
@@ -32,7 +33,7 @@ test('it does nothing when tenant is not found', function () {
     Log::shouldReceive('info')->andReturnNull();
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'Tenant not found'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'Tenant not found'));
 
     $session = [
         'id' => 'cs_test_789',
@@ -48,10 +49,9 @@ test('it does nothing when tenant is not found', function () {
 test('it processes checkout session within tenant context', function () {
     $tenant = createTenant(['id' => 'checkout-tenant', 'email' => 'checkout@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andReturnUsing(fn ($tenant, $callback) => $callback());
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (mixed ...$arguments): mixed => isset($arguments[1]) && is_callable($arguments[1]) ? $arguments[1]() : null);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -71,17 +71,15 @@ test('it processes checkout session within tenant context', function () {
 test('it catches exceptions during tenant context processing', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andThrow(new Exception('Processing failed'));
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')->throws(new Exception('Processing failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
     Log::shouldReceive('info')->andReturnNull();
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn ($msg) => str_contains($msg, 'Error processing checkout session'));
+        ->withArgs(fn (mixed $msg): bool => is_string($msg) && str_contains($msg, 'Error processing checkout session'));
 
     $session = [
         'id' => 'cs_test_error',

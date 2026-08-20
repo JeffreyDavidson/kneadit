@@ -3,6 +3,7 @@
 use App\Actions\Operations\SendTestWebhook;
 use App\Models\Operations\WebhookDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 pest()->use(RefreshDatabase::class);
@@ -18,16 +19,16 @@ test('sends a synthetic order.created payload flagged with test:true', function 
 
     resolve(SendTestWebhook::class)();
 
-    Http::assertSent(function ($request) {
+    Http::assertSent(function (Request $request): bool {
         $body = json_decode($request->body(), true);
 
         return $request->hasHeader('X-KneadIt-Event', 'order.created')
-            && $body['event'] === 'order.created'
-            && $body['data']['test'] === true
-            && $body['data']['order_number'] === 'TEST-0001';
+            && data_get($body, 'event') === 'order.created'
+            && data_get($body, 'data.test') === true
+            && data_get($body, 'data.order_number') === 'TEST-0001';
     });
 
-    expect(WebhookDelivery::sole())
-        ->event->toBe('order.created')
-        ->succeeded->toBeTrue();
+    $delivery = WebhookDelivery::sole();
+    expect($delivery->event)->toBe('order.created')
+        ->and($delivery->succeeded)->toBeTrue();
 });

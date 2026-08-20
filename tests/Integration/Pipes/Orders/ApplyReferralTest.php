@@ -35,12 +35,24 @@ function makeReferralPayload(string $email = 'newcomer@example.com'): OrderPipel
     return $payload;
 }
 
+function continueReferralPipeline(OrderPipelineData $payload): OrderPipelineData
+{
+    return $payload;
+}
+
+function referralPipelineResult(mixed $result): OrderPipelineData
+{
+    throw_unless($result instanceof OrderPipelineData, RuntimeException::class, 'Expected order pipeline data.');
+
+    return $result;
+}
+
 test('applies the referral discount when a valid code is in session', function () {
     $referrer = Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
     Session::put('referral_code', 'ABC12345');
 
     $payload = makeReferralPayload();
-    $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
+    $result = referralPipelineResult((new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, continueReferralPipeline(...)));
 
     expect($result->referrer?->is($referrer))->toBeTrue()
         ->and($result->discountAmount)->toBe(10.0)
@@ -53,7 +65,7 @@ test('skips when feature is disabled', function () {
     Session::put('referral_code', 'ABC12345');
 
     $payload = makeReferralPayload();
-    $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
+    $result = referralPipelineResult((new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, continueReferralPipeline(...)));
 
     expect($result->referrer)->toBeNull()
         ->and($result->discountAmount)->toBe(0.0);
@@ -63,7 +75,7 @@ test('skips when no code is in session', function () {
     Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
 
     $payload = makeReferralPayload();
-    $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
+    $result = referralPipelineResult((new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, continueReferralPipeline(...)));
 
     expect($result->referrer)->toBeNull();
 });
@@ -73,7 +85,7 @@ test('rejects self-referral', function () {
     Session::put('referral_code', 'SELF1234');
 
     $payload = makeReferralPayload(email: 'self@example.com');
-    $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
+    $result = referralPipelineResult((new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, continueReferralPipeline(...)));
 
     expect($result->referrer)->toBeNull()
         ->and($result->discountAmount)->toBe(0.0);
@@ -91,7 +103,7 @@ test('rejects when the referee has already been referred before', function () {
     Session::put('referral_code', 'ABC12345');
 
     $payload = makeReferralPayload(email: 'bob@example.com');
-    $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
+    $result = referralPipelineResult((new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, continueReferralPipeline(...)));
 
     expect($result->referrer)->toBeNull()
         ->and($result->discountAmount)->toBe(0.0);

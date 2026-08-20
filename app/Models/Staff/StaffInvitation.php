@@ -17,9 +17,9 @@ use Illuminate\Support\Carbon;
  * @property UserRole $role
  * @property-read User|null $inviter
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()
+ * @method static StaffInvitationQueryBuilder newModelQuery()
+ * @method static StaffInvitationQueryBuilder newQuery()
+ * @method static StaffInvitationQueryBuilder query()
  *
  * @property Carbon $expires_at
  *

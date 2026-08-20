@@ -33,6 +33,8 @@ test('prepends a stamped reason to notes when provided', function () {
     resolve(CancelCateringInquiry::class)($inquiry, 'Customer chose another vendor');
 
     $notes = $inquiry->refresh()->notes;
+    throw_unless(is_string($notes), RuntimeException::class, 'Expected cancellation notes to be a string.');
+
     expect($notes)->toContain('Cancelled: Customer chose another vendor')
         ->and($notes)->toContain('Existing internal note.')
         ->and(str_starts_with($notes, '['))->toBeTrue();

@@ -15,14 +15,14 @@ class StaffInvitationQueryBuilder extends Builder
         return $this;
     }
 
-    public function unexpired(): static
+    public function unexpired(): self
     {
         $this->where('expires_at', '>', now());
 
         return $this;
     }
 
-    public function pendingAndUnexpired(): static
+    public function pendingAndUnexpired(): self
     {
         return $this->pending()->unexpired();
     }

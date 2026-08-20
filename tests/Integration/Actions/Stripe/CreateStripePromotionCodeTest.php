@@ -1,44 +1,48 @@
 <?php
 
 use App\Actions\Stripe\CreateStripePromotionCode;
-use Mockery\MockInterface;
+use JMac\Testing\Double;
+use JMac\Testing\DoubleInterface;
+use JMac\Testing\Matching\Argument;
 use Stripe\Service\CouponService;
 use Stripe\Service\PromotionCodeService;
 use Stripe\StripeClient;
 
 beforeEach(fn () => setUpCentralTest());
 
+class FakePromotionStripeClient extends StripeClient
+{
+    public function __construct(
+        public CouponService $coupons,
+        public PromotionCodeService $promotionCodes,
+    ) {}
+}
+
 function bindMockedStripe(callable $couponsExpectations, callable $promoExpectations): void
 {
-    $coupons = mock(CouponService::class, $couponsExpectations);
-    $promotionCodes = mock(PromotionCodeService::class, $promoExpectations);
+    $coupons = Double::for(CouponService::class);
+    $promotionCodes = Double::for(PromotionCodeService::class);
+    $couponsExpectations($coupons);
+    $promoExpectations($promotionCodes);
 
-    app()->bind(StripeClient::class, function () use ($coupons, $promotionCodes): StripeClient {
-        $client = mock(StripeClient::class);
-        $client->coupons = $coupons;
-        $client->promotionCodes = $promotionCodes;
-
-        return $client;
-    });
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakePromotionStripeClient($coupons, $promotionCodes));
 }
 
 test('creates a percent-off once coupon and a promotion code', function () {
     bindMockedStripe(
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')
-                ->once()
-                ->with(Mockery::on(fn (array $payload): bool => ($payload['percent_off'] ?? null) === 100
+        function (CouponService&DoubleInterface $m): void {
+            $m->expects('create')
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['percent_off'] ?? null) === 100
                     && ($payload['duration'] ?? null) === 'once'
                     && ($payload['max_redemptions'] ?? null) === 1
-                    && ($payload['metadata']['tenant_id'] ?? null) === 'vip-baker'))
-                ->andReturn((object) ['id' => 'coupon_abc']);
+                    && data_get($payload, 'metadata.tenant_id') === 'vip-baker'))
+                ->returns((object) ['id' => 'coupon_abc']);
         },
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')
-                ->once()
-                ->with(Mockery::on(fn (array $payload): bool => ($payload['coupon'] ?? null) === 'coupon_abc'
+        function (PromotionCodeService&DoubleInterface $m): void {
+            $m->expects('create')
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['coupon'] ?? null) === 'coupon_abc'
                     && ($payload['code'] ?? null) === 'VIP-JANE'))
-                ->andReturn((object) ['id' => 'promo_xyz', 'code' => 'VIP-JANE']);
+                ->returns((object) ['id' => 'promo_xyz', 'code' => 'VIP-JANE']);
         },
     );
 
@@ -55,17 +59,14 @@ test('creates a percent-off once coupon and a promotion code', function () {
 
 test('creates a repeating coupon with duration_in_months', function () {
     bindMockedStripe(
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')
-                ->once()
-                ->with(Mockery::on(fn (array $payload): bool => ($payload['duration'] ?? null) === 'repeating'
+        function (CouponService&DoubleInterface $m): void {
+            $m->expects('create')
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['duration'] ?? null) === 'repeating'
                     && ($payload['duration_in_months'] ?? null) === 3))
-                ->andReturn((object) ['id' => 'coupon_rep']);
+                ->returns((object) ['id' => 'coupon_rep']);
         },
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')
-                ->once()
-                ->andReturn((object) ['id' => 'promo_rep', 'code' => 'THREE-MONTHS']);
+        function (PromotionCodeService&DoubleInterface $m): void {
+            $m->expects('create')->returns((object) ['id' => 'promo_rep', 'code' => 'THREE-MONTHS']);
         },
     );
 
@@ -79,16 +80,15 @@ test('creates a repeating coupon with duration_in_months', function () {
 
 test('creates an amount-off coupon with currency', function () {
     bindMockedStripe(
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')
-                ->once()
-                ->with(Mockery::on(fn (array $payload): bool => ($payload['amount_off'] ?? null) === 2500
+        function (CouponService&DoubleInterface $m): void {
+            $m->expects('create')
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['amount_off'] ?? null) === 2500
                     && ($payload['currency'] ?? null) === 'usd'
                     && ! isset($payload['percent_off'])))
-                ->andReturn((object) ['id' => 'coupon_amt']);
+                ->returns((object) ['id' => 'coupon_amt']);
         },
-        function (MockInterface $m): void {
-            $m->shouldReceive('create')->once()->andReturn((object) ['id' => 'p', 'code' => 'X']);
+        function (PromotionCodeService&DoubleInterface $m): void {
+            $m->expects('create')->returns((object) ['id' => 'p', 'code' => 'X']);
         },
     );
 

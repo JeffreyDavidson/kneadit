@@ -26,9 +26,9 @@ use Illuminate\Support\Carbon;
  * @property int $recipient_count
  * @property-read Collection<int, CustomerCampaignLog> $logs
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerCampaign newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerCampaign newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerCampaign query()
+ * @method static CustomerCampaignQueryBuilder newModelQuery()
+ * @method static CustomerCampaignQueryBuilder newQuery()
+ * @method static CustomerCampaignQueryBuilder query()
  *
  * @mixin \Eloquent
  */

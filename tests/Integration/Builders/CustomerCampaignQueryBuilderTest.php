@@ -1,10 +1,19 @@
 <?php
 
+use App\Builders\Engagement\CustomerCampaignQueryBuilder;
 use App\Enums\Marketing\CustomerCampaignStatus;
 use App\Models\Engagement\CustomerCampaign;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
+
+function customerCampaignQuery(): CustomerCampaignQueryBuilder
+{
+    $query = CustomerCampaign::query();
+    throw_unless($query instanceof CustomerCampaignQueryBuilder, RuntimeException::class, 'Expected the custom campaign builder.');
+
+    return $query;
+}
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -15,7 +24,7 @@ test('scheduled returns only scheduled campaigns', function () {
     ]);
     CustomerCampaign::factory()->sent()->create();
 
-    $campaigns = CustomerCampaign::query()->scheduled()->get();
+    $campaigns = customerCampaignQuery()->scheduled()->get();
 
     expect($campaigns)->toHaveCount(1);
 });
@@ -30,8 +39,8 @@ test('due returns scheduled campaigns whose scheduled time has arrived', functio
         'scheduled_at' => now()->addDay(),
     ]);
 
-    $campaigns = CustomerCampaign::query()->due()->get();
+    $campaigns = customerCampaignQuery()->due()->get();
 
     expect($campaigns)->toHaveCount(1)
-        ->and($campaigns->firstOrFail()?->is($due))->toBeTrue();
+        ->and($campaigns->firstOrFail()->is($due))->toBeTrue();
 });
