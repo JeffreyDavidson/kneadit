@@ -7,6 +7,7 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Inventory\ShoppingListService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,7 +20,7 @@ test('generates shopping list with low stock ingredients', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toBeArray()->not->toBeEmpty();
+    expect($result)->toBeInstanceOf(Collection::class)->not->toBeEmpty();
 });
 
 test('returns empty list when all stock is sufficient', function () {
@@ -28,7 +29,7 @@ test('returns empty list when all stock is sufficient', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toBeArray()->toBeEmpty();
+    expect($result)->toBeInstanceOf(Collection::class)->toBeEmpty();
 });
 
 test('includes upcoming order needs when enabled with date range', function () {
@@ -59,7 +60,7 @@ test('includes upcoming order needs when enabled with date range', function () {
         endDate: now()->addWeek()->format('Y-m-d'),
     );
 
-    expect($result)->toBeArray()->not->toBeEmpty();
+    expect($result)->toBeInstanceOf(Collection::class)->not->toBeEmpty();
 });
 
 test('upcoming order ingredient needs increase the suggested quantity', function () {
@@ -110,8 +111,8 @@ test('skips upcoming needs when not enabled', function () {
     $resultWith = $service->generate(includeUpcoming: true, startDate: null, endDate: null);
 
     // Both should return similar results since upcoming is disabled or missing dates
-    expect($resultWithout)->toBeArray();
-    expect($resultWith)->toBeArray();
+    expect($resultWithout)->toBeInstanceOf(Collection::class);
+    expect($resultWith)->toBeInstanceOf(Collection::class);
 });
 
 test('groups ingredients by supplier with best price', function () {
