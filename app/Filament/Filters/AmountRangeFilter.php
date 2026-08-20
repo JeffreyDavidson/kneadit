@@ -6,7 +6,7 @@ use App\ValueObjects\Money;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 
 class AmountRangeFilter extends Filter
 {
@@ -22,8 +22,8 @@ class AmountRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
-            $minimum = Arr::float($data, 'min_amount', 0.0);
-            $maximum = Arr::float($data, 'max_amount', 0.0);
+            $minimum = Number::parseFloat((string) ($data['min_amount'] ?? 0)) ?: 0.0;
+            $maximum = Number::parseFloat((string) ($data['max_amount'] ?? 0)) ?: 0.0;
 
             return $query
                 ->when(
@@ -38,8 +38,8 @@ class AmountRangeFilter extends Filter
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            $minimum = Arr::float($data, 'min_amount', 0.0);
-            $maximum = Arr::float($data, 'max_amount', 0.0);
+            $minimum = Number::parseFloat((string) ($data['min_amount'] ?? 0)) ?: 0.0;
+            $maximum = Number::parseFloat((string) ($data['max_amount'] ?? 0)) ?: 0.0;
             if ($minimum > 0) {
                 $indicators[] = 'Min: $' . $minimum;
             }
