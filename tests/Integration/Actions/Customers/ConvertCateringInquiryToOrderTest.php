@@ -36,9 +36,9 @@ test('creates a confirmed order with the quote total + a single line item, trans
         ->and($order->subtotal->dollars())->toBe(4200.00)
         ->and($order->catering_inquiry_id)->toBe($inquiry->id)
         ->and($order->orderItems)->toHaveCount(1)
-        ->and($order->orderItems->first()->name)->toBe('Catering — Wedding, 120 guests')
-        ->and($order->orderItems->first()->unit_price->dollars())->toBe(4200.00)
-        ->and($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Confirmed);
+        ->and($order->orderItems->firstOrFail()->name)->toBe('Catering — Wedding, 120 guests')
+        ->and($order->orderItems->firstOrFail()->unit_price->dollars())->toBe(4200.00)
+        ->and($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Confirmed);
 
     Event::assertDispatched(OrderCreated::class);
 });
@@ -124,7 +124,7 @@ test('copies inquiry items to OrderItems when items exist (no collapsed line)', 
         'sort_order' => 1,
     ]);
 
-    $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry->fresh());
+    $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry->refresh());
 
     expect($order->orderItems)->toHaveCount(2)
         ->and($order->orderItems->pluck('name')->all())->toContain('Wedding cake', 'Macarons')
@@ -146,6 +146,6 @@ test('falls back to single collapsed line when the inquiry has no items', functi
     $order = resolve(ConvertCateringInquiryToOrder::class)($inquiry);
 
     expect($order->orderItems)->toHaveCount(1)
-        ->and($order->orderItems->first()->name)->toBe('Catering — Wedding, 80 guests')
-        ->and($order->orderItems->first()->unit_price->dollars())->toBe(1500.00);
+        ->and($order->orderItems->firstOrFail()->name)->toBe('Catering — Wedding, 80 guests')
+        ->and($order->orderItems->firstOrFail()->unit_price->dollars())->toBe(1500.00);
 });

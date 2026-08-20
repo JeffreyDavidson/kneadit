@@ -18,7 +18,7 @@ test('approved scope returns only approved reviews', function () {
     $results = Review::query()->approved()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($approved->id);
+        ->and($results->firstOrFail()->id)->toBe($approved->id);
 });
 
 test('featured scope returns only featured reviews', function () {
@@ -29,7 +29,7 @@ test('featured scope returns only featured reviews', function () {
     $results = Review::query()->featured()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->is_featured)->toBeTrue();
+        ->and($results->firstOrFail()->is_featured)->toBeTrue();
 });
 
 test('withProduct eager loads the product relationship', function () {
@@ -38,7 +38,7 @@ test('withProduct eager loads the product relationship', function () {
     $results = Review::query()->withProduct()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->relationLoaded('product'))->toBeTrue();
+        ->and($results->firstOrFail()->relationLoaded('product'))->toBeTrue();
 });
 
 test('withComments returns only reviews that have non-empty comments', function () {
@@ -58,7 +58,7 @@ test('forDisplay returns approved reviews with product', function () {
     $results = Review::query()->forDisplay()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->relationLoaded('product'))->toBeTrue();
+        ->and($results->firstOrFail()->relationLoaded('product'))->toBeTrue();
 });
 
 test('statistics returns average rating and total count for approved reviews', function () {

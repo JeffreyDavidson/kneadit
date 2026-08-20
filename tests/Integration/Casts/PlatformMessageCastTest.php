@@ -23,7 +23,7 @@ it('scopes fromAdmin using the enum value', function () {
     $adminMessages = PlatformMessage::query()->fromAdmin()->get();
 
     expect($adminMessages)->toHaveCount(1)
-        ->and($adminMessages->first()->sender_type)->toBe(PlatformSenderType::Admin);
+        ->and($adminMessages->firstOrFail()->sender_type)->toBe(PlatformSenderType::Admin);
 });
 
 it('scopes fromTenant using the enum value', function () {
@@ -33,5 +33,5 @@ it('scopes fromTenant using the enum value', function () {
     $tenantMessages = PlatformMessage::query()->fromTenant()->get();
 
     expect($tenantMessages)->toHaveCount(1)
-        ->and($tenantMessages->first()->sender_type)->toBe(PlatformSenderType::Tenant);
+        ->and($tenantMessages->firstOrFail()->sender_type)->toBe(PlatformSenderType::Tenant);
 });

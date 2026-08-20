@@ -25,9 +25,9 @@ test('returns entries from GitHub releases API', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries)->toHaveCount(1)
-        ->and($entries->first()['version'])->toBe('1.5.0')
-        ->and($entries->first()['title'])->toBe('Blog & Platform Polish')
-        ->and($entries->first()['items'])->toHaveCount(3);
+        ->and($entries->firstOrFail()['version'])->toBe('1.5.0')
+        ->and($entries->firstOrFail()['title'])->toBe('Blog & Platform Polish')
+        ->and($entries->firstOrFail()['items'])->toHaveCount(3);
 });
 
 test('falls back to config when GitHub API fails', function () {
@@ -63,7 +63,7 @@ test('filters out draft releases', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries)->toHaveCount(1)
-        ->and($entries->first()['title'])->toBe('Published Release');
+        ->and($entries->firstOrFail()['title'])->toBe('Published Release');
 });
 
 test('falls back to config when GitHub API throws exception', function () {
@@ -78,7 +78,7 @@ test('falls back to config when GitHub API throws exception', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries)->toHaveCount(1)
-        ->and($entries->first()['title'])->toBe('Fallback');
+        ->and($entries->firstOrFail()['title'])->toBe('Fallback');
 });
 
 test('parses empty body into empty items array', function () {
@@ -96,7 +96,7 @@ test('parses empty body into empty items array', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect($entries->first()['items'])->toBeEmpty();
+    expect($entries->firstOrFail()['items'])->toBeEmpty();
 });
 
 test('cached payload survives unserialize with allowed_classes=false (the prod cache config)', function () {
@@ -139,5 +139,5 @@ test('parses body with asterisk bullet points', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect($entries->first()['items'])->toHaveCount(2);
+    expect($entries->firstOrFail()['items'])->toHaveCount(2);
 });

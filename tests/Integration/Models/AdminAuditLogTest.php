@@ -8,14 +8,14 @@ beforeEach(fn () => setUpCentralTest());
 test('log creates record', function () {
     $log = resolve(LogAuditEntry::class)('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
 
-    $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->first();
+    $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->firstOrFail();
     expect($found)->not->toBeNull()->and($found->description)->toBe('Suspended tenant')->and($found->target_type)->toBe('tenant')->and($found->target_id)->toBe('tenant-1')->and($found->metadata)->toBe(['reason' => 'abuse']);
 });
 
 test('log works with minimal params', function () {
     $log = resolve(LogAuditEntry::class)('login', 'Admin logged in');
 
-    expect(AdminAuditLog::query()->where('action', 'login')->first())->not->toBeNull()->and($log->target_type)->toBeNull();
+    expect(AdminAuditLog::query()->where('action', 'login')->firstOrFail())->not->toBeNull()->and($log->target_type)->toBeNull();
 });
 
 test('scope for action', function () {

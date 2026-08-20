@@ -16,7 +16,7 @@ test('can create an email campaign log', function () {
         'tenant_id' => test()->tenant->id,
     ]);
 
-    expect(EmailCampaignLog::query()->where('email', 'test@example.com')->first())
+    expect(EmailCampaignLog::query()->where('email', 'test@example.com')->firstOrFail())
         ->not->toBeNull();
 });
 

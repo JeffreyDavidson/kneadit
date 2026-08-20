@@ -11,7 +11,7 @@ test('can create message', function () {
         'body' => 'Hello there',
     ]);
 
-    expect(PlatformMessage::query()->where('subject', 'Welcome')->first())->not->toBeNull();
+    expect(PlatformMessage::query()->where('subject', 'Welcome')->firstOrFail())->not->toBeNull();
 });
 
 test('scope unread', function () {

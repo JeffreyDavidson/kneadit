@@ -37,5 +37,5 @@ test('abandonedBefore returns only recoverable carts older than the cutoff', fun
     $carts = Cart::query()->abandonedBefore(now()->subHours(12))->get();
 
     expect($carts)->toHaveCount(1)
-        ->and($carts->first()?->is($abandoned))->toBeTrue();
+        ->and($carts->firstOrFail()?->is($abandoned))->toBeTrue();
 });

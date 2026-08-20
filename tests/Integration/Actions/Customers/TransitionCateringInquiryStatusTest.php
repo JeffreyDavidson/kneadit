@@ -14,7 +14,7 @@ test('transitions catering inquiry to the given status', function (CateringInqui
 
     resolve(TransitionCateringInquiryStatus::class)($inquiry, $to);
 
-    expect($inquiry->fresh()->status)->toBe($to);
+    expect($inquiry->refresh()->status)->toBe($to);
 })->with([
     'inquiry to quoted' => [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted],
     'quoted to confirmed' => [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed],

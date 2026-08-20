@@ -19,8 +19,8 @@ test('returns customers ranked by loyalty point balance', function () {
     $result = TopLoyaltyCustomersQuery::get(limit: 10);
 
     expect($result)->toHaveCount(2)
-        ->and($result->first()->id)->toBe($topCustomer->id)
-        ->and((int) $result->first()->balance)->toBe(300)
+        ->and($result->firstOrFail()->id)->toBe($topCustomer->id)
+        ->and((int) $result->firstOrFail()->balance)->toBe(300)
         ->and($result->last()->id)->toBe($secondCustomer->id);
 });
 
@@ -31,8 +31,8 @@ test('subtracts redeemed points from balance', function () {
 
     $result = TopLoyaltyCustomersQuery::get();
 
-    expect((int) $result->first()->balance)->toBe(150)
-        ->and((int) $result->first()->total_earned)->toBe(200);
+    expect((int) $result->firstOrFail()->balance)->toBe(150)
+        ->and((int) $result->firstOrFail()->total_earned)->toBe(200);
 });
 
 test('respects the limit parameter', function () {
@@ -54,5 +54,5 @@ test('excludes customers with no loyalty points', function () {
     $result = TopLoyaltyCustomersQuery::get();
 
     expect($result)->toHaveCount(1)
-        ->and($result->first()->id)->toBe($withPoints->id);
+        ->and($result->firstOrFail()->id)->toBe($withPoints->id);
 });

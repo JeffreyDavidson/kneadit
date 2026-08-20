@@ -36,5 +36,5 @@ test('withActiveSuppliers excludes inactive suppliers from the loaded relationsh
     $result = Ingredient::query()->withActiveSuppliers()->findOrFail($ingredient->id);
 
     expect($result->suppliers)->toHaveCount(1)
-        ->and($result->suppliers->first()?->is($activeSupplier))->toBeTrue();
+        ->and($result->suppliers->firstOrFail()?->is($activeSupplier))->toBeTrue();
 });

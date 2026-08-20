@@ -33,7 +33,7 @@ test('promotes Quoted → Confirmed when deposit recorded', function () {
 
     resolve(RecordCateringDeposit::class)($inquiry, 125.00);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Confirmed);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Confirmed);
 });
 
 test('does not change status when already Confirmed', function () {
@@ -44,7 +44,7 @@ test('does not change status when already Confirmed', function () {
 
     resolve(RecordCateringDeposit::class)($inquiry, 125.00);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Confirmed);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Confirmed);
 });
 
 test('treats blank reference as null', function () {
@@ -55,7 +55,7 @@ test('treats blank reference as null', function () {
 
     resolve(RecordCateringDeposit::class)($inquiry, 100.00, '   ');
 
-    expect($inquiry->fresh()->deposit_reference)->toBeNull();
+    expect($inquiry->refresh()->deposit_reference)->toBeNull();
 });
 
 test('clamps negative amount to 0', function () {
@@ -66,7 +66,7 @@ test('clamps negative amount to 0', function () {
 
     resolve(RecordCateringDeposit::class)($inquiry, -50.00);
 
-    expect($inquiry->fresh()->deposit_amount->dollars())->toBe(0.00);
+    expect($inquiry->refresh()->deposit_amount->dollars())->toBe(0.00);
 });
 
 test('suggestedAmount returns the configured percent of the quote', function () {
@@ -92,7 +92,7 @@ test('marks a linked Unpaid order as Partial when deposit is recorded', function
 
     resolve(RecordCateringDeposit::class)($inquiry, 250.00);
 
-    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Partial);
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Partial);
 });
 
 test('does not downgrade a linked order whose payment_status is already Paid', function () {
@@ -106,5 +106,5 @@ test('does not downgrade a linked order whose payment_status is already Paid', f
 
     resolve(RecordCateringDeposit::class)($inquiry, 250.00);
 
-    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Paid);
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
 });

@@ -195,7 +195,7 @@ test('getTimelineView formats prep tasks for display', function () {
     $timeline = $service->getTimelineView($data->prepSchedule);
 
     expect($timeline)->toHaveCount(1)
-        ->and($timeline[$monday]->first())
+        ->and($timeline[$monday]->firstOrFail())
         ->toHaveKeys(['time', 'task', 'duration', 'order', 'delivery_time'])
         ->duration->toBe(30)
         ->delivery_time->toBe('10:00');

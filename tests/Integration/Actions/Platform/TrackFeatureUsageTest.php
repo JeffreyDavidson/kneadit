@@ -11,7 +11,7 @@ test('it creates a new usage record', function () {
     $found = FeatureUsageLog::query()
         ->where('tenant_id', 'tenant-1')
         ->where('feature', 'recipe_import')
-        ->first();
+        ->firstOrFail();
 
     expect($found)->not->toBeNull()->and($found->usage_count)->toBe(1);
 });
@@ -23,7 +23,7 @@ test('it increments an existing usage record', function () {
     $log = FeatureUsageLog::query()
         ->where('tenant_id', 'tenant-1')
         ->where('feature', 'recipe_import')
-        ->first();
+        ->firstOrFail();
 
     expect($log->usage_count)->toBe(2);
 });

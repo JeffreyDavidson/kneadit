@@ -49,7 +49,7 @@ test('dispatches event and logs when a tenant matches a checkin', function () {
     $log = DB::table('checkin_logs')
         ->where('checkin_id', 10)
         ->where('tenant_id', 'matching-bakery')
-        ->first();
+        ->firstOrFail();
 
     expect($log)->not->toBeNull();
 });

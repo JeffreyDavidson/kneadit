@@ -14,5 +14,5 @@ test('visible scope returns only visible photos', function () {
     $results = GalleryPhoto::query()->visible()->get();
 
     expect($results)->toHaveCount(1)
-        ->and($results->first()->id)->toBe($visible->id);
+        ->and($results->firstOrFail()->id)->toBe($visible->id);
 });

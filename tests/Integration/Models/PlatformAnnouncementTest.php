@@ -12,7 +12,7 @@ test('can create announcement', function () {
         'target_plans' => ['pro', 'enterprise'],
     ]);
 
-    expect(PlatformAnnouncement::query()->where('title', 'Maintenance')->first())->not->toBeNull();
+    expect(PlatformAnnouncement::query()->where('title', 'Maintenance')->firstOrFail())->not->toBeNull();
 });
 
 test('target plans is cast to array', function () {
@@ -27,5 +27,5 @@ test('target plans is cast to array', function () {
 test('is active defaults to true', function () {
     $ann = PlatformAnnouncement::factory()->create();
 
-    expect($ann->fresh()->is_active)->toBeTrue();
+    expect($ann->refresh()->is_active)->toBeTrue();
 });
