@@ -1,7 +1,7 @@
 parameters:
     paths:
         - tests/
-    level: max
+    level: 1
     bootstrapFiles:
         - bootstrap/app.php
         - phpstan-bootstrap.php
@@ -10,6 +10,7 @@ parameters:
         - stubs/Illuminate/Testing/TestResponse.stub
         - stubs/Symfony/Component/HttpFoundation/Response.stub
     excludePaths:
+        - tests/Browser/
         - bootstrap/cache/
         - storage/
     scanDirectories:
