@@ -22,8 +22,8 @@ beforeEach(function () {
 
 test('marks order as paid', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -33,8 +33,8 @@ test('marks order as paid', function () {
 
 test('auto-confirms pending stripe order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -46,8 +46,8 @@ test('auto-confirms pending stripe order', function () {
 
 test('auto-confirms pending paypal order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::PayPal]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -59,8 +59,8 @@ test('auto-confirms pending paypal order', function () {
 
 test('does not auto-confirm cash order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Cash]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -72,8 +72,8 @@ test('does not auto-confirm cash order', function () {
 
 test('does not auto-confirm other payment method order', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Other]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -85,8 +85,8 @@ test('does not auto-confirm other payment method order', function () {
 
 test('is idempotent when called twice', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
     resolve(MarkOrderPaid::class)($order);
@@ -99,8 +99,8 @@ test('is idempotent when called twice', function () {
 
 test('skips status transition when order is already confirmed', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->confirmed()
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
@@ -113,8 +113,8 @@ test('skips status transition when order is already confirmed', function () {
 
 test('skips status transition when order is already beyond confirmed', function () {
     $order = Order::factory()
-        ->for(test()->customer)
-        ->recycle(test()->user)
+        ->for(testFixture('customer', Customer::class))
+        ->recycle(testFixture('user', User::class))
         ->baking()
         ->create(['payment_method' => PaymentMethod::Stripe]);
 

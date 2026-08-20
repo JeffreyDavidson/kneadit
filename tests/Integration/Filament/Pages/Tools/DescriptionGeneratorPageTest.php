@@ -10,46 +10,46 @@ beforeEach(function () {
 });
 
 test('selected product id defaults to null', function () {
-    expect(test()->page->selectedProductId)->toBeNull();
+    expect(testFixture('page', DescriptionGenerator::class)->selectedProductId)->toBeNull();
 });
 
 test('manual product name defaults to empty', function () {
-    expect(test()->page->manualProductName)->toBeEmpty();
+    expect(testFixture('page', DescriptionGenerator::class)->manualProductName)->toBeEmpty();
 });
 
 test('tone defaults to professional', function () {
-    expect(test()->page->tone)->toBe('professional');
+    expect(testFixture('page', DescriptionGenerator::class)->tone)->toBe('professional');
 });
 
 test('length defaults to medium', function () {
-    expect(test()->page->length)->toBe('medium');
+    expect(testFixture('page', DescriptionGenerator::class)->length)->toBe('medium');
 });
 
 test('descriptions defaults to empty array', function () {
-    expect(test()->page->descriptions)->toBeEmpty();
+    expect(testFixture('page', DescriptionGenerator::class)->descriptions)->toBeEmpty();
 });
 
 test('get products property returns collection', function () {
     Product::factory()->count(2)->create();
 
-    expect(test()->page->getProductsProperty())->toHaveCount(2);
+    expect(testFixture('page', DescriptionGenerator::class)->getProductsProperty())->toHaveCount(2);
 });
 
 test('generate with no product name produces empty descriptions', function () {
-    test()->page->selectedProductId = null;
-    test()->page->manualProductName = '';
+    testFixture('page', DescriptionGenerator::class)->selectedProductId = null;
+    testFixture('page', DescriptionGenerator::class)->manualProductName = '';
 
-    test()->page->generate();
+    testFixture('page', DescriptionGenerator::class)->generate();
 
-    expect(test()->page->descriptions)->toBeEmpty();
+    expect(testFixture('page', DescriptionGenerator::class)->descriptions)->toBeEmpty();
 });
 
 test('generate with manual product name produces descriptions', function () {
-    test()->page->manualProductName = 'Chocolate Cake';
+    testFixture('page', DescriptionGenerator::class)->manualProductName = 'Chocolate Cake';
 
-    test()->page->generate();
+    testFixture('page', DescriptionGenerator::class)->generate();
 
-    expect(test()->page->descriptions)->toBeArray()->not->toBeEmpty();
+    expect(testFixture('page', DescriptionGenerator::class)->descriptions)->toBeArray()->not->toBeEmpty();
 });
 
 test('generate with selected product uses product details', function () {
@@ -60,30 +60,30 @@ test('generate with selected product uses product details', function () {
         'price' => 35.00,
     ]);
 
-    test()->page->selectedProductId = (string) $product->id;
+    testFixture('page', DescriptionGenerator::class)->selectedProductId = (string) $product->id;
 
-    test()->page->generate();
+    testFixture('page', DescriptionGenerator::class)->generate();
 
-    expect(test()->page->descriptions)->not->toBeEmpty();
+    expect(testFixture('page', DescriptionGenerator::class)->descriptions)->not->toBeEmpty();
 });
 
 test('apply to product updates product description', function () {
     $product = Product::factory()->create(['description' => 'Old description']);
 
-    test()->page->selectedProductId = (string) $product->id;
-    test()->page->descriptions = ['New amazing description', 'Another option'];
+    testFixture('page', DescriptionGenerator::class)->selectedProductId = (string) $product->id;
+    testFixture('page', DescriptionGenerator::class)->descriptions = ['New amazing description', 'Another option'];
 
-    test()->page->applyToProduct(0);
+    testFixture('page', DescriptionGenerator::class)->applyToProduct(0);
 
     $product->refresh();
     expect($product->description)->toBe('New amazing description');
 });
 
 test('apply to product does nothing when no product selected', function () {
-    test()->page->selectedProductId = null;
-    test()->page->descriptions = ['Some description'];
+    testFixture('page', DescriptionGenerator::class)->selectedProductId = null;
+    testFixture('page', DescriptionGenerator::class)->descriptions = ['Some description'];
 
-    test()->page->applyToProduct(0);
+    testFixture('page', DescriptionGenerator::class)->applyToProduct(0);
 
     // No exception thrown, silent return
     expect(true)->toBeTrue();
@@ -92,10 +92,10 @@ test('apply to product does nothing when no product selected', function () {
 test('apply to product does nothing when index not in descriptions', function () {
     $product = Product::factory()->create(['description' => 'Original']);
 
-    test()->page->selectedProductId = (string) $product->id;
-    test()->page->descriptions = ['Only one'];
+    testFixture('page', DescriptionGenerator::class)->selectedProductId = (string) $product->id;
+    testFixture('page', DescriptionGenerator::class)->descriptions = ['Only one'];
 
-    test()->page->applyToProduct(5);
+    testFixture('page', DescriptionGenerator::class)->applyToProduct(5);
 
     $product->refresh();
     expect($product->description)->toBe('Original');

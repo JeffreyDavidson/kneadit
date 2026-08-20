@@ -21,7 +21,7 @@ beforeEach(function () {
 test('restores coupon used_count and creates reversal transaction', function () {
     $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00, 'used_count' => 1]);
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'coupon_id' => $coupon->id,
             'discount_amount' => 5.00,
@@ -48,7 +48,7 @@ test('restores gift card balance and creates refund transaction', function () {
         'current_balance' => 30.00,
     ]);
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'gift_card_id' => $giftCard->id,
             'gift_card_amount' => 20.00,
@@ -75,7 +75,7 @@ test('reverses both coupon and gift card on same order', function () {
         'current_balance' => 20.00,
     ]);
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'coupon_id' => $coupon->id,
             'discount_amount' => 10.00,
@@ -103,7 +103,7 @@ test('reverses both coupon and gift card on same order', function () {
 
 test('does nothing for order without discounts', function () {
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create();
 
     resolve(ReverseOrderDiscounts::class)($order, 'Order cancelled');
@@ -115,7 +115,7 @@ test('does nothing for order without discounts', function () {
 test('is idempotent when called twice', function () {
     $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00, 'used_count' => 1]);
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'coupon_id' => $coupon->id,
             'discount_amount' => 5.00,
@@ -143,7 +143,7 @@ test('gift card reversal is idempotent when called twice', function () {
         'current_balance' => 30.00,
     ]);
     $order = Order::factory()
-        ->recycle(test()->user)
+        ->recycle(testFixture('user', User::class))
         ->create([
             'gift_card_id' => $giftCard->id,
             'gift_card_amount' => 20.00,

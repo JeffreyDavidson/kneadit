@@ -26,7 +26,7 @@ it('creates a tenant with domain and seeds the tenant database', function () {
     $action = resolve(CreateTenant::class);
 
     $tenant = $action(
-        user: test()->user,
+        user: testFixture('user', User::class),
         storeName: 'Test Bakery',
         subdomain: 'testbakery',
         useKneadItStorefront: true,
@@ -45,7 +45,7 @@ it('persists external website and disables storefront when storefront choice is 
     $action = resolve(CreateTenant::class);
 
     $tenant = $action(
-        user: test()->user,
+        user: testFixture('user', User::class),
         storeName: 'Own Site Bakery',
         subdomain: 'ownsite',
         useKneadItStorefront: false,
@@ -81,7 +81,7 @@ it('rolls back the central tenant + domain row when tenant-DB seeding fails', fu
     });
 
     expect(fn () => resolve(CreateTenant::class)(
-        user: test()->user,
+        user: testFixture('user', User::class),
         storeName: 'Fail Bakery',
         subdomain: 'failbakery',
         useKneadItStorefront: true,

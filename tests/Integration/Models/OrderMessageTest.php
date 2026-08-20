@@ -13,7 +13,7 @@ beforeEach(function () {
 });
 
 test('order message belongs to order', function () {
-    $order = Order::factory()->recycle(test()->user)->create();
+    $order = Order::factory()->recycle(testFixture('user', User::class))->create();
     $message = OrderMessage::factory()->recycle($order)->create();
 
     expect($message->order)->toBeInstanceOf(Order::class)
@@ -22,7 +22,7 @@ test('order message belongs to order', function () {
 
 test('sender_type cast resolves to SenderType enum for baker messages', function () {
     $message = OrderMessage::factory()->fromBaker()->recycle(
-        Order::factory()->recycle(test()->user)->create(),
+        Order::factory()->recycle(testFixture('user', User::class))->create(),
     )->create();
 
     expect($message->sender_type)->toBe(App\Enums\Orders\SenderType::Baker);
@@ -30,7 +30,7 @@ test('sender_type cast resolves to SenderType enum for baker messages', function
 
 test('sender_type cast resolves to SenderType enum for customer messages', function () {
     $message = OrderMessage::factory()->fromCustomer()->recycle(
-        Order::factory()->recycle(test()->user)->create(),
+        Order::factory()->recycle(testFixture('user', User::class))->create(),
     )->create();
 
     expect($message->sender_type)->toBe(App\Enums\Orders\SenderType::Customer);

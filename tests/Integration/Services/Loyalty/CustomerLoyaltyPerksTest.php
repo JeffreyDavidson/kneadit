@@ -24,31 +24,31 @@ beforeEach(function () {
 test('Bronze customers get the default 1.0 multiplier and no free delivery', function () {
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.0)
-        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
+    expect($service->pointsMultiplier(testFixture('customer', Customer::class)))->toBe(1.0)
+        ->and($service->qualifiesForFreeDelivery(testFixture('customer', Customer::class)))->toBeFalse();
 });
 
 test('Gold customers get the configured multiplier and free delivery', function () {
-    LoyaltyPoint::factory()->earned(2000)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(2000)->for(testFixture('customer', Customer::class))->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.5)
-        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
+    expect($service->pointsMultiplier(testFixture('customer', Customer::class)))->toBe(1.5)
+        ->and($service->qualifiesForFreeDelivery(testFixture('customer', Customer::class)))->toBeTrue();
 });
 
 test('Platinum customers get the configured multiplier and free delivery', function () {
-    LoyaltyPoint::factory()->earned(5000)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(5000)->for(testFixture('customer', Customer::class))->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(2.0)
-        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
+    expect($service->pointsMultiplier(testFixture('customer', Customer::class)))->toBe(2.0)
+        ->and($service->qualifiesForFreeDelivery(testFixture('customer', Customer::class)))->toBeTrue();
 });
 
 test('returns 1.0 / false when perks are disabled even at top tier', function () {
     settings(['loyalty_tier_perks_enabled' => false]);
-    LoyaltyPoint::factory()->earned(5000)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(5000)->for(testFixture('customer', Customer::class))->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.0)
-        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
+    expect($service->pointsMultiplier(testFixture('customer', Customer::class)))->toBe(1.0)
+        ->and($service->qualifiesForFreeDelivery(testFixture('customer', Customer::class)))->toBeFalse();
 });

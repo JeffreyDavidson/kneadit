@@ -9,53 +9,53 @@ beforeEach(function () {
 });
 
 test('get tenant health data returns collection', function () {
-    $result = test()->page->getTenantHealthData();
+    $result = testFixture('page', BakeryInsights::class)->getTenantHealthData();
 
     expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get alerts returns collection', function () {
-    $result = test()->page->getAlerts();
+    $result = testFixture('page', BakeryInsights::class)->getAlerts();
 
     expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('get tenant usage data returns collection', function () {
-    $result = test()->page->getTenantUsageData();
+    $result = testFixture('page', BakeryInsights::class)->getTenantUsageData();
 
     expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('extend trial with missing tenant does not record extension', function () {
-    test()->page->extendTrial('non-existent-id');
+    testFixture('page', BakeryInsights::class)->extendTrial('non-existent-id');
 
-    expect(test()->page->extendedTrials)->toBeEmpty();
+    expect(testFixture('page', BakeryInsights::class)->extendedTrials)->toBeEmpty();
 });
 
 test('extend trial with valid tenant records trial extension', function () {
     $tenant = Tenant::factory()->onTrial()->create();
 
-    test()->page->extendTrial($tenant->id);
+    testFixture('page', BakeryInsights::class)->extendTrial($tenant->id);
 
-    expect(test()->page->extendedTrials)->toContain($tenant->id);
+    expect(testFixture('page', BakeryInsights::class)->extendedTrials)->toContain($tenant->id);
 });
 
 test('send nudge with missing tenant does not record nudge', function () {
-    test()->page->sendNudge('non-existent-id');
+    testFixture('page', BakeryInsights::class)->sendNudge('non-existent-id');
 
-    expect(test()->page->sentNudges)->toBeEmpty();
+    expect(testFixture('page', BakeryInsights::class)->sentNudges)->toBeEmpty();
 });
 
 test('send nudge with valid tenant records nudge', function () {
     $tenant = Tenant::factory()->create(['store_name' => 'Test Bakery']);
 
-    test()->page->sendNudge($tenant->id);
+    testFixture('page', BakeryInsights::class)->sendNudge($tenant->id);
 
-    expect(test()->page->sentNudges)->toContain($tenant->id);
+    expect(testFixture('page', BakeryInsights::class)->sentNudges)->toContain($tenant->id);
 });
 
 test('suggest upgrade does not throw', function () {
-    test()->page->suggestUpgrade('some-tenant-id');
+    testFixture('page', BakeryInsights::class)->suggestUpgrade('some-tenant-id');
 
     expect(true)->toBeTrue();
 });

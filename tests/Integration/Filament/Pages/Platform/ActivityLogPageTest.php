@@ -10,33 +10,33 @@ beforeEach(function () {
 });
 
 test('filter action defaults to null', function () {
-    expect(test()->page->filterAction)->toBeNull();
+    expect(testFixture('page', ActivityLogPage::class)->filterAction)->toBeNull();
 });
 
 test('filter model type defaults to null', function () {
-    expect(test()->page->filterModelType)->toBeNull();
+    expect(testFixture('page', ActivityLogPage::class)->filterModelType)->toBeNull();
 });
 
 test('filter user defaults to null', function () {
-    expect(test()->page->filterUser)->toBeNull();
+    expect(testFixture('page', ActivityLogPage::class)->filterUser)->toBeNull();
 });
 
 test('page defaults to 1', function () {
-    expect(test()->page->page)->toBe(1);
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('per page defaults to 25', function () {
-    expect(test()->page->perPage)->toBe(25);
+    expect(testFixture('page', ActivityLogPage::class)->perPage)->toBe(25);
 });
 
 test('expanded id defaults to null', function () {
-    expect(test()->page->expandedId)->toBeNull();
+    expect(testFixture('page', ActivityLogPage::class)->expandedId)->toBeNull();
 });
 
 test('get activities property returns paginator', function () {
     ActivityLog::factory()->count(3)->create();
 
-    $result = test()->page->getActivitiesProperty();
+    $result = testFixture('page', ActivityLogPage::class)->getActivitiesProperty();
 
     expect($result)->toBeInstanceOf(Illuminate\Contracts\Pagination\LengthAwarePaginator::class)
         ->and($result->total())->toBe(3);
@@ -47,8 +47,8 @@ test('get activities property filters by action', function () {
     ActivityLog::factory()->create(['action' => 'updated']);
     ActivityLog::factory()->create(['action' => 'deleted']);
 
-    test()->page->filterAction = 'created';
-    $result = test()->page->getActivitiesProperty();
+    testFixture('page', ActivityLogPage::class)->filterAction = 'created';
+    $result = testFixture('page', ActivityLogPage::class)->getActivitiesProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -57,8 +57,8 @@ test('get activities property filters by model type', function () {
     ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
     ActivityLog::factory()->create(['model_type' => App\Models\Inventory\Product::class]);
 
-    test()->page->filterModelType = App\Models\Orders\Order::class;
-    $result = test()->page->getActivitiesProperty();
+    testFixture('page', ActivityLogPage::class)->filterModelType = App\Models\Orders\Order::class;
+    $result = testFixture('page', ActivityLogPage::class)->getActivitiesProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -67,8 +67,8 @@ test('get activities property filters by user name', function () {
     ActivityLog::factory()->create(['user_name' => 'John Doe']);
     ActivityLog::factory()->create(['user_name' => 'Jane Smith']);
 
-    test()->page->filterUser = 'John';
-    $result = test()->page->getActivitiesProperty();
+    testFixture('page', ActivityLogPage::class)->filterUser = 'John';
+    $result = testFixture('page', ActivityLogPage::class)->getActivitiesProperty();
 
     expect($result->total())->toBe(1);
 });
@@ -78,8 +78,8 @@ test('get activities property filters by date range', function () {
     ActivityLog::factory()->create(['created_at' => now()->subDays(5)]);
     ActivityLog::factory()->create(['created_at' => now()]);
 
-    test()->page->filterDateFrom = now()->subDays(6)->format('Y-m-d');
-    $result = test()->page->getActivitiesProperty();
+    testFixture('page', ActivityLogPage::class)->filterDateFrom = now()->subDays(6)->format('Y-m-d');
+    $result = testFixture('page', ActivityLogPage::class)->getActivitiesProperty();
 
     expect($result->total())->toBe(2);
 });
@@ -88,7 +88,7 @@ test('get action options returns value→label pairs for the filter Select', fun
     ActivityLog::factory()->create(['action' => 'created']);
     ActivityLog::factory()->create(['action' => 'updated']);
 
-    $options = test()->page->getActionOptions();
+    $options = testFixture('page', ActivityLogPage::class)->getActionOptions();
 
     expect($options)
         ->toBeArray()
@@ -99,7 +99,7 @@ test('get action options returns value→label pairs for the filter Select', fun
 test('get model type options returns value→class-basename pairs for the filter Select', function () {
     ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
 
-    $options = test()->page->getModelTypeOptions();
+    $options = testFixture('page', ActivityLogPage::class)->getModelTypeOptions();
 
     expect($options)
         ->toBeArray()
@@ -108,27 +108,27 @@ test('get model type options returns value→class-basename pairs for the filter
 });
 
 test('toggle expanded sets id', function () {
-    test()->page->toggleExpanded(5);
-    expect(test()->page->expandedId)->toBe(5);
+    testFixture('page', ActivityLogPage::class)->toggleExpanded(5);
+    expect(testFixture('page', ActivityLogPage::class)->expandedId)->toBe(5);
 });
 
 test('toggle expanded unsets when same id', function () {
-    test()->page->toggleExpanded(5);
-    test()->page->toggleExpanded(5);
-    expect(test()->page->expandedId)->toBeNull();
+    testFixture('page', ActivityLogPage::class)->toggleExpanded(5);
+    testFixture('page', ActivityLogPage::class)->toggleExpanded(5);
+    expect(testFixture('page', ActivityLogPage::class)->expandedId)->toBeNull();
 });
 
 test('reset filters clears all filters', function () {
-    test()->page->filterAction = 'created';
-    test()->page->filterModelType = 'Order';
-    test()->page->filterUser = 'John';
-    test()->page->filterDateFrom = '2026-01-01';
-    test()->page->filterDateTo = '2026-12-31';
-    test()->page->page = 3;
+    testFixture('page', ActivityLogPage::class)->filterAction = 'created';
+    testFixture('page', ActivityLogPage::class)->filterModelType = 'Order';
+    testFixture('page', ActivityLogPage::class)->filterUser = 'John';
+    testFixture('page', ActivityLogPage::class)->filterDateFrom = '2026-01-01';
+    testFixture('page', ActivityLogPage::class)->filterDateTo = '2026-12-31';
+    testFixture('page', ActivityLogPage::class)->page = 3;
 
-    test()->page->resetFilters();
+    testFixture('page', ActivityLogPage::class)->resetFilters();
 
-    $state = get_object_vars(test()->page);
+    $state = get_object_vars(testFixture('page', ActivityLogPage::class));
 
     expect($state['filterAction'])->toBeNull()
         ->and($state['filterModelType'])->toBeNull()
@@ -139,47 +139,47 @@ test('reset filters clears all filters', function () {
 });
 
 test('previous page decrements but not below 1', function () {
-    test()->page->page = 3;
-    test()->page->previousPage();
-    expect(test()->page->page)->toBe(2);
+    testFixture('page', ActivityLogPage::class)->page = 3;
+    testFixture('page', ActivityLogPage::class)->previousPage();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(2);
 
-    test()->page->page = 1;
-    test()->page->previousPage();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 1;
+    testFixture('page', ActivityLogPage::class)->previousPage();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('next page increments', function () {
-    test()->page->page = 1;
-    test()->page->nextPage();
-    expect(test()->page->page)->toBe(2);
+    testFixture('page', ActivityLogPage::class)->page = 1;
+    testFixture('page', ActivityLogPage::class)->nextPage();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(2);
 });
 
 test('updated filter action resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterAction();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 5;
+    testFixture('page', ActivityLogPage::class)->updatedFilterAction();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('updated filter model type resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterModelType();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 5;
+    testFixture('page', ActivityLogPage::class)->updatedFilterModelType();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('updated filter user resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterUser();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 5;
+    testFixture('page', ActivityLogPage::class)->updatedFilterUser();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('updated filter date from resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterDateFrom();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 5;
+    testFixture('page', ActivityLogPage::class)->updatedFilterDateFrom();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });
 
 test('updated filter date to resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterDateTo();
-    expect(test()->page->page)->toBe(1);
+    testFixture('page', ActivityLogPage::class)->page = 5;
+    testFixture('page', ActivityLogPage::class)->updatedFilterDateTo();
+    expect(testFixture('page', ActivityLogPage::class)->page)->toBe(1);
 });

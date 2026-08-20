@@ -10,73 +10,73 @@ beforeEach(function () {
 });
 
 test('selected recipe id defaults to null', function () {
-    expect(test()->page->selectedRecipeId)->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->selectedRecipeId)->toBeNull();
 });
 
 test('selected recipe defaults to null', function () {
-    expect(test()->page->selectedRecipe)->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->selectedRecipe)->toBeNull();
 });
 
 test('target margin percentage defaults to 65', function () {
-    expect(test()->page->targetMarginPercentage)->toBe(65.0);
+    expect(testFixture('page', RecipeCostCalculator::class)->targetMarginPercentage)->toBe(65.0);
 });
 
 test('analysis defaults to null', function () {
-    expect(test()->page->analysis)->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->analysis)->toBeNull();
 });
 
 test('mount loads all recipes', function () {
     Recipe::factory()->count(3)->create();
 
-    test()->page->mount();
+    testFixture('page', RecipeCostCalculator::class)->mount();
 
-    expect(test()->page->recipes)->toHaveCount(3);
+    expect(testFixture('page', RecipeCostCalculator::class)->recipes)->toHaveCount(3);
 });
 
 test('updated selected recipe id loads recipe and refreshes analysis', function () {
     $product = Product::factory()->create(['price' => 15.00]);
     $recipe = Recipe::factory()->for($product)->withCost(4.00)->create();
 
-    test()->page->selectedRecipeId = $recipe->id;
-    test()->page->updatedSelectedRecipeId();
+    testFixture('page', RecipeCostCalculator::class)->selectedRecipeId = $recipe->id;
+    testFixture('page', RecipeCostCalculator::class)->updatedSelectedRecipeId();
 
-    expect(test()->page->selectedRecipe)->not->toBeNull()
-        ->and(test()->page->selectedRecipe->id)->toBe($recipe->id)
-        ->and(test()->page->analysis)->not->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->selectedRecipe)->not->toBeNull()
+        ->and(testFixture('page', RecipeCostCalculator::class)->selectedRecipe->id)->toBe($recipe->id)
+        ->and(testFixture('page', RecipeCostCalculator::class)->analysis)->not->toBeNull();
 });
 
 test('updated selected recipe id clears when null', function () {
-    test()->page->selectedRecipeId = null;
-    test()->page->updatedSelectedRecipeId();
+    testFixture('page', RecipeCostCalculator::class)->selectedRecipeId = null;
+    testFixture('page', RecipeCostCalculator::class)->updatedSelectedRecipeId();
 
-    expect(test()->page->selectedRecipe)->toBeNull()
-        ->and(test()->page->analysis)->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->selectedRecipe)->toBeNull()
+        ->and(testFixture('page', RecipeCostCalculator::class)->analysis)->toBeNull();
 });
 
 test('refresh analysis returns null when no recipe product', function () {
-    test()->page->selectedRecipe = null;
-    test()->page->refreshAnalysis();
+    testFixture('page', RecipeCostCalculator::class)->selectedRecipe = null;
+    testFixture('page', RecipeCostCalculator::class)->refreshAnalysis();
 
-    expect(test()->page->analysis)->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->analysis)->toBeNull();
 });
 
 test('refresh analysis sets analysis for valid recipe', function () {
     $product = Product::factory()->create(['price' => 12.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipe = $recipe->load('product');
-    test()->page->refreshAnalysis();
+    testFixture('page', RecipeCostCalculator::class)->selectedRecipe = $recipe->load('product');
+    testFixture('page', RecipeCostCalculator::class)->refreshAnalysis();
 
-    expect(test()->page->analysis)->not->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->analysis)->not->toBeNull();
 });
 
 test('updated target margin percentage refreshes analysis', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
-    test()->page->selectedRecipe = $recipe->load('product');
-    test()->page->targetMarginPercentage = 50.0;
-    test()->page->updatedTargetMarginPercentage();
+    testFixture('page', RecipeCostCalculator::class)->selectedRecipe = $recipe->load('product');
+    testFixture('page', RecipeCostCalculator::class)->targetMarginPercentage = 50.0;
+    testFixture('page', RecipeCostCalculator::class)->updatedTargetMarginPercentage();
 
-    expect(test()->page->analysis)->not->toBeNull();
+    expect(testFixture('page', RecipeCostCalculator::class)->analysis)->not->toBeNull();
 });

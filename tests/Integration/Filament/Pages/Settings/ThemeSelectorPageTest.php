@@ -8,11 +8,11 @@ beforeEach(function () {
 });
 
 test('get title returns storefront theme', function () {
-    expect(test()->page->getTitle())->toBe('Storefront Theme');
+    expect(testFixture('page', ThemeSelector::class)->getTitle())->toBe('Storefront Theme');
 });
 
 test('select theme saves valid theme', function () {
-    test()->page->selectTheme('modern');
+    testFixture('page', ThemeSelector::class)->selectTheme('modern');
 
     expect(settings('storefront_theme'))->toBe('modern');
 });
@@ -20,7 +20,7 @@ test('select theme saves valid theme', function () {
 test('select theme ignores invalid theme', function () {
     settings(['storefront_theme' => 'classic']);
 
-    test()->page->selectTheme('nonexistent_theme_xyz');
+    testFixture('page', ThemeSelector::class)->selectTheme('nonexistent_theme_xyz');
 
     expect(settings('storefront_theme'))->toBe('classic');
 });

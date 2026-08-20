@@ -30,7 +30,7 @@ function createOrderWith(array $overrides = []): ?App\Models\Orders\Order
             'delivery_date' => now()->addDays(5)->toDateString(),
             'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
-                ['product_id' => test()->product->id, 'quantity' => 2],
+                ['product_id' => testFixture('product', Product::class)->id, 'quantity' => 2],
             ],
         ], $overrides))
     );

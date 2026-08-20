@@ -29,7 +29,7 @@ dataset('emailableTransitions', [
 ]);
 
 test('sends the correct email for each emailable status', function (OrderStatus $from, OrderStatus $to) {
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     (new SendOrderStatusEmailListener)->handle(new OrderStatusChanged($order, $from, $to));
 
@@ -40,7 +40,7 @@ test('sends the correct email for each emailable status', function (OrderStatus 
 })->with('emailableTransitions');
 
 test('does not send for non-emailable statuses', function () {
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     (new SendOrderStatusEmailListener)->handle(
         new OrderStatusChanged($order, OrderStatus::Confirmed, OrderStatus::Pending),
@@ -50,7 +50,7 @@ test('does not send for non-emailable statuses', function () {
 });
 
 test('does not send when customer has no email', function () {
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
     $order->setRelation('customer', null);
 
     (new SendOrderStatusEmailListener)->handle(
@@ -62,7 +62,7 @@ test('does not send when customer has no email', function () {
 
 test('does not send when the per-status email toggle is disabled', function () {
     settings(['email_order_baking_enabled' => false]);
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     (new SendOrderStatusEmailListener)->handle(
         new OrderStatusChanged($order, OrderStatus::Confirmed, OrderStatus::Baking),
@@ -73,7 +73,7 @@ test('does not send when the per-status email toggle is disabled', function () {
 
 test('still sends other statuses when only one toggle is disabled', function () {
     settings(['email_order_baking_enabled' => false]);
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     (new SendOrderStatusEmailListener)->handle(
         new OrderStatusChanged($order, OrderStatus::Baking, OrderStatus::Ready),

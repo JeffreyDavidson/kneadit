@@ -30,11 +30,11 @@ test('consume impersonation logs in user and redirects to admin', function () {
     $user = User::factory()->owner()->create();
     $request = impersonationRequest('/impersonate/valid-token-123');
 
-    $action = Mockery::mock(ConsumeImpersonationToken::class);
-    $action->shouldReceive('__invoke')
-        ->once()
+    $action = JMac\Testing\Double::for(ConsumeImpersonationToken::class);
+    $action->expects('__invoke')
+
         ->with('valid-token-123', '10.0.0.1')
-        ->andReturn($user);
+        ->returns($user);
 
     $controller = new ConsumeImpersonationController;
     $response = $controller('valid-token-123', $request, $action);
@@ -54,8 +54,8 @@ test('consume impersonation flushes prior session data', function () {
     $request->session()->put('password_hash_web', 'platform-admin-old-hash');
     $request->session()->put('login_web_xyz', 999);
 
-    $action = Mockery::mock(ConsumeImpersonationToken::class);
-    $action->shouldReceive('__invoke')->once()->andReturn($user);
+    $action = JMac\Testing\Double::for(ConsumeImpersonationToken::class);
+    $action->expects('__invoke')->returns($user);
 
     (new ConsumeImpersonationController)('valid-token-123', $request, $action);
 
@@ -66,10 +66,10 @@ test('consume impersonation flushes prior session data', function () {
 test('consume impersonation aborts for invalid token', function () {
     $request = impersonationRequest('/impersonate/bad-token');
 
-    $action = Mockery::mock(ConsumeImpersonationToken::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->andThrow(
+    $action = JMac\Testing\Double::for(ConsumeImpersonationToken::class);
+    $action->expects('__invoke')
+
+        ->throws(
             new Symfony\Component\HttpKernel\Exception\HttpException(403, 'Invalid or expired impersonation token.'),
         );
 

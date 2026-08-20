@@ -23,7 +23,7 @@ test('dispatches webhook with transition payload', function () {
     settings(['webhook_url' => 'https://8.8.8.8/test']);
     settings(['webhook_secret' => 'test-secret']);
 
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     resolve(DispatchOrderWebhookListener::class)->handle(
         new OrderStatusChanged($order, OrderStatus::Pending, OrderStatus::Confirmed),
@@ -39,7 +39,7 @@ test('dispatches webhook with transition payload', function () {
 });
 
 test('no request when webhook_url is not configured', function () {
-    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+    $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create();
 
     resolve(DispatchOrderWebhookListener::class)->handle(
         new OrderStatusChanged($order, OrderStatus::Pending, OrderStatus::Confirmed),

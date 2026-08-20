@@ -35,7 +35,8 @@ it('logs structured context on authentication exception', function () {
     }
 
     $verification->withArgs(
-        fn ($message, $context) => $message === 'PayPal authentication error'
+        fn (mixed $message, mixed $context): bool => $message === 'PayPal authentication error'
+        && is_array($context)
         && isset($context['error']),
     )
         ->once();
@@ -68,7 +69,8 @@ it('logs structured context on invoice status check exception', function () {
     }
 
     $verification->withArgs(
-        fn ($message, $context) => $message === 'PayPal invoice status check error'
+        fn (mixed $message, mixed $context): bool => $message === 'PayPal invoice status check error'
+        && is_array($context)
         && isset($context['invoice_id'])
         && isset($context['error']),
     )

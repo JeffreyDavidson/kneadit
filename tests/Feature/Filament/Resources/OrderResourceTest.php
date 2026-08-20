@@ -23,21 +23,21 @@ test('can render the orders list page', function () {
 });
 
 test('can list orders in the table', function () {
-    $orders = Order::factory()->recycle(test()->customer)->count(3)->create();
+    $orders = Order::factory()->recycle(testFixture('customer', Customer::class))->count(3)->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanSeeTableRecords($orders);
 });
 
 test('can render table columns', function (string $column) {
-    Order::factory()->recycle(test()->customer)->create();
+    Order::factory()->recycle(testFixture('customer', Customer::class))->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanRenderTableColumn($column);
 })->with(['order_number', 'customer.name', 'status', 'payment_status', 'total', 'delivery_date']);
 
 test('can render the view order page', function () {
-    $order = Order::factory()->recycle(test()->customer)->create();
+    $order = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk();
@@ -49,7 +49,7 @@ test('view order page renders the Catering section when the order is linked to a
         'guest_count' => 120,
         'venue_address' => '123 Beachfront Way',
     ]);
-    $order = Order::factory()->recycle(test()->customer)->for($inquiry, 'cateringInquiry')->create();
+    $order = Order::factory()->recycle(testFixture('customer', Customer::class))->for($inquiry, 'cateringInquiry')->create();
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
@@ -60,7 +60,7 @@ test('view order page renders the Catering section when the order is linked to a
 });
 
 test('view order page omits the Catering section for non-catering orders', function () {
-    $order = Order::factory()->recycle(test()->customer)->create();
+    $order = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
@@ -68,8 +68,8 @@ test('view order page omits the Catering section for non-catering orders', funct
 });
 
 test('can search orders by order number', function () {
-    $target = Order::factory()->recycle(test()->customer)->create();
-    $other = Order::factory()->recycle(test()->customer)->create();
+    $target = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
+    $other = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
 
     Livewire::test(ListOrders::class)
         ->searchTable($target->order_number)
@@ -78,8 +78,8 @@ test('can search orders by order number', function () {
 });
 
 test('can filter orders by status', function () {
-    $pending = Order::factory()->recycle(test()->customer)->create();
-    $delivered = Order::factory()->recycle(test()->customer)->delivered()->create();
+    $pending = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
+    $delivered = Order::factory()->recycle(testFixture('customer', Customer::class))->delivered()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('status', App\Enums\Orders\OrderStatus::Delivered->value)
@@ -88,8 +88,8 @@ test('can filter orders by status', function () {
 });
 
 test('can filter orders by payment status', function () {
-    $unpaid = Order::factory()->recycle(test()->customer)->create();
-    $paid = Order::factory()->recycle(test()->customer)->paid()->create();
+    $unpaid = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
+    $paid = Order::factory()->recycle(testFixture('customer', Customer::class))->paid()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('payment_status', App\Enums\Orders\PaymentStatus::Paid->value)
@@ -98,8 +98,8 @@ test('can filter orders by payment status', function () {
 });
 
 test('can sort orders by total', function () {
-    $cheap = Order::factory()->recycle(test()->customer)->create(['subtotal' => 10, 'total' => 10]);
-    $expensive = Order::factory()->recycle(test()->customer)->create(['subtotal' => 100, 'total' => 100]);
+    $cheap = Order::factory()->recycle(testFixture('customer', Customer::class))->create(['subtotal' => 10, 'total' => 10]);
+    $expensive = Order::factory()->recycle(testFixture('customer', Customer::class))->create(['subtotal' => 100, 'total' => 100]);
 
     Livewire::test(ListOrders::class)
         ->sortTable('total')
@@ -114,14 +114,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $order = Order::factory()->recycle(test()->customer)->create();
+    $order = Order::factory()->recycle(testFixture('customer', Customer::class))->create();
 
     expect(App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultTitle($order))
         ->toBe('Order #' . $order->order_number);
 });
 
 test('resource returns global search result details', function () {
-    $order = Order::factory()->recycle(test()->customer)->create(['total' => 99.99]);
+    $order = Order::factory()->recycle(testFixture('customer', Customer::class))->create(['total' => 99.99]);
 
     $details = App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultDetails($order);
 

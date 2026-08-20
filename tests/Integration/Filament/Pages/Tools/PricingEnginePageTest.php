@@ -10,37 +10,37 @@ beforeEach(function () {
 });
 
 test('selected product id defaults to null', function () {
-    expect(test()->page->selectedProductId)->toBeNull();
+    expect(testFixture('page', PricingEngine::class)->selectedProductId)->toBeNull();
 });
 
 test('ingredient cost defaults to zero', function () {
-    expect(test()->page->ingredientCost)->toBe(0.0);
+    expect(testFixture('page', PricingEngine::class)->ingredientCost)->toBe(0.0);
 });
 
 test('prep time minutes defaults to zero', function () {
-    expect(test()->page->prepTimeMinutes)->toBe(0);
+    expect(testFixture('page', PricingEngine::class)->prepTimeMinutes)->toBe(0);
 });
 
 test('positioning defaults to standard', function () {
-    expect(test()->page->positioning)->toBe('standard');
+    expect(testFixture('page', PricingEngine::class)->positioning)->toBe('standard');
 });
 
 test('result defaults to null', function () {
-    expect(test()->page->result)->toBeNull();
+    expect(testFixture('page', PricingEngine::class)->result)->toBeNull();
 });
 
 test('mount sets default rates from settings', function () {
-    test()->page->mount();
+    testFixture('page', PricingEngine::class)->mount();
 
-    expect(test()->page->hourlyLaborRate)->toBeFloat()
-        ->and(test()->page->overheadPercentage)->toBeFloat()
-        ->and(test()->page->targetProfitMargin)->toBeInt();
+    expect(testFixture('page', PricingEngine::class)->hourlyLaborRate)->toBeFloat()
+        ->and(testFixture('page', PricingEngine::class)->overheadPercentage)->toBeFloat()
+        ->and(testFixture('page', PricingEngine::class)->targetProfitMargin)->toBeInt();
 });
 
 test('get products property returns collection', function () {
     Product::factory()->count(2)->create();
 
-    expect(test()->page->getProductsProperty())->toHaveCount(2);
+    expect(testFixture('page', PricingEngine::class)->getProductsProperty())->toHaveCount(2);
 });
 
 test('updated selected product id loads recipe cost', function () {
@@ -51,64 +51,64 @@ test('updated selected product id loads recipe cost', function () {
         'prep_time_minutes' => 45,
     ]);
 
-    test()->page->selectedProductId = (string) $product->id;
-    test()->page->updatedSelectedProductId();
+    testFixture('page', PricingEngine::class)->selectedProductId = (string) $product->id;
+    testFixture('page', PricingEngine::class)->updatedSelectedProductId();
 
-    expect(test()->page->ingredientCost)->toBe(3.50)
-        ->and(test()->page->prepTimeMinutes)->toBe(45);
+    expect(testFixture('page', PricingEngine::class)->ingredientCost)->toBe(3.50)
+        ->and(testFixture('page', PricingEngine::class)->prepTimeMinutes)->toBe(45);
 });
 
 test('updated selected product id uses product cost when no recipe', function () {
     $product = Product::factory()->create(['cost' => 7.00]);
 
-    test()->page->selectedProductId = (string) $product->id;
-    test()->page->updatedSelectedProductId();
+    testFixture('page', PricingEngine::class)->selectedProductId = (string) $product->id;
+    testFixture('page', PricingEngine::class)->updatedSelectedProductId();
 
-    expect(test()->page->ingredientCost)->toBe(7.0)
-        ->and(test()->page->prepTimeMinutes)->toBe(0);
+    expect(testFixture('page', PricingEngine::class)->ingredientCost)->toBe(7.0)
+        ->and(testFixture('page', PricingEngine::class)->prepTimeMinutes)->toBe(0);
 });
 
 test('updated selected product id clears when null', function () {
-    test()->page->ingredientCost = 10.0;
-    test()->page->prepTimeMinutes = 30;
+    testFixture('page', PricingEngine::class)->ingredientCost = 10.0;
+    testFixture('page', PricingEngine::class)->prepTimeMinutes = 30;
 
-    test()->page->selectedProductId = null;
-    test()->page->updatedSelectedProductId();
+    testFixture('page', PricingEngine::class)->selectedProductId = null;
+    testFixture('page', PricingEngine::class)->updatedSelectedProductId();
 
-    expect(test()->page->ingredientCost)->toBe(0.0)
-        ->and(test()->page->prepTimeMinutes)->toBe(0);
+    expect(testFixture('page', PricingEngine::class)->ingredientCost)->toBe(0.0)
+        ->and(testFixture('page', PricingEngine::class)->prepTimeMinutes)->toBe(0);
 });
 
 test('calculate produces result', function () {
-    test()->page->mount();
-    test()->page->ingredientCost = 5.00;
-    test()->page->prepTimeMinutes = 30;
-    test()->page->targetProfitMargin = 50;
+    testFixture('page', PricingEngine::class)->mount();
+    testFixture('page', PricingEngine::class)->ingredientCost = 5.00;
+    testFixture('page', PricingEngine::class)->prepTimeMinutes = 30;
+    testFixture('page', PricingEngine::class)->targetProfitMargin = 50;
 
-    test()->page->calculate();
+    testFixture('page', PricingEngine::class)->calculate();
 
-    expect(test()->page->result)->not->toBeNull();
+    expect(testFixture('page', PricingEngine::class)->result)->not->toBeNull();
 });
 
 test('calculate with selected product includes current price', function () {
     $product = Product::factory()->create(['price' => 15.00]);
 
-    test()->page->mount();
-    test()->page->selectedProductId = (string) $product->id;
-    test()->page->ingredientCost = 5.00;
-    test()->page->prepTimeMinutes = 30;
+    testFixture('page', PricingEngine::class)->mount();
+    testFixture('page', PricingEngine::class)->selectedProductId = (string) $product->id;
+    testFixture('page', PricingEngine::class)->ingredientCost = 5.00;
+    testFixture('page', PricingEngine::class)->prepTimeMinutes = 30;
 
-    test()->page->calculate();
+    testFixture('page', PricingEngine::class)->calculate();
 
-    expect(test()->page->result)->not->toBeNull();
+    expect(testFixture('page', PricingEngine::class)->result)->not->toBeNull();
 });
 
 test('calculate without selected product works', function () {
-    test()->page->mount();
-    test()->page->selectedProductId = null;
-    test()->page->ingredientCost = 3.00;
+    testFixture('page', PricingEngine::class)->mount();
+    testFixture('page', PricingEngine::class)->selectedProductId = null;
+    testFixture('page', PricingEngine::class)->ingredientCost = 3.00;
 
-    test()->page->calculate();
+    testFixture('page', PricingEngine::class)->calculate();
 
-    expect(test()->page->result)->not->toBeNull();
+    expect(testFixture('page', PricingEngine::class)->result)->not->toBeNull();
 });
