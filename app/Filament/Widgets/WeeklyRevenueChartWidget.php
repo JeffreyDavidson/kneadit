@@ -10,7 +10,7 @@ use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Arr;
 
-class WeeklyRevenueChart extends ChartWidget
+class WeeklyRevenueChartWidget extends ChartWidget
 {
     use CachesWidgetData;
     use HasDashboardSize;
