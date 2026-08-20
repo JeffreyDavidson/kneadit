@@ -42,7 +42,11 @@ final class ProductLabelPresenter
 
         /** @var list<string> $relational */
         $relational = $recipe->inventoryIngredients
-            ->sortByDesc(fn (Ingredient $i): float => Number::parseFloat((string) ($i->pivot->quantity ?? 0)) ?: 0.0)
+            ->sortByDesc(function (Ingredient $ingredient): float {
+                $quantity = $ingredient->pivot->quantity ?? 0;
+
+                return Number::parseFloat((string) $quantity) ?: 0.0;
+            })
             ->pluck('name')
             ->values()
             ->all();
