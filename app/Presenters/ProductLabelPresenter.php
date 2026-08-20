@@ -17,7 +17,9 @@ use Illuminate\Support\Number;
  */
 final class ProductLabelPresenter
 {
-    public function __construct(public readonly Product $product) {}
+    public function __construct(public readonly Product $product)
+    {
+    }
 
     public static function for(Product $product): self
     {
