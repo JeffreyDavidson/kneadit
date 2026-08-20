@@ -7,6 +7,7 @@ use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Stancl\Tenancy\Database\Models\Domain;
 
 class CreateTenantRecord
 {
@@ -30,8 +31,9 @@ class CreateTenantRecord
                 'is_active' => true,
             ]);
 
-            $tenant->domains()->create([
+            Domain::query()->create([
                 'domain' => $subdomain,
+                'tenant_id' => $tenant->id,
             ]);
 
             return $tenant;

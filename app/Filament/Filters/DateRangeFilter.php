@@ -5,6 +5,7 @@ namespace App\Filament\Filters;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class DateRangeFilter extends Filter
@@ -21,24 +22,29 @@ class DateRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
+            $from = Arr::string($data, 'from', '');
+            $until = Arr::string($data, 'until', '');
+
             return $query
                 ->when(
-                    $data['from'],
-                    fn (Builder $query, string $date) => $query->whereDate($column, '>=', $date),
+                    $from !== '',
+                    fn (Builder $query) => $query->whereDate($column, '>=', $from),
                 )
                 ->when(
-                    $data['until'],
-                    fn (Builder $query, string $date) => $query->whereDate($column, '<=', $date),
+                    $until !== '',
+                    fn (Builder $query) => $query->whereDate($column, '<=', $until),
                 );
         });
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            if ($data['from'] ?? null) {
-                $indicators[] = 'From ' . Date::parse($data['from'])->toFormattedDateString();
+            $from = Arr::string($data, 'from', '');
+            $until = Arr::string($data, 'until', '');
+            if ($from !== '') {
+                $indicators[] = 'From ' . Date::parse($from)->toFormattedDateString();
             }
-            if ($data['until'] ?? null) {
-                $indicators[] = 'Until ' . Date::parse($data['until'])->toFormattedDateString();
+            if ($until !== '') {
+                $indicators[] = 'Until ' . Date::parse($until)->toFormattedDateString();
             }
 
             return $indicators;

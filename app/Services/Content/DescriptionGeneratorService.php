@@ -88,7 +88,7 @@ class DescriptionGeneratorService
             ->replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj])
             ->toString();
 
-        return $base . ' ' . $replace($selectedExtras[0]) . ' ' . $replace($selectedExtras[1]);
+        return $base . ' ' . $replace(Arr::string($selectedExtras, 0)) . ' ' . $replace(Arr::string($selectedExtras, 1));
     }
 
     /** @param array<int, string> $values */

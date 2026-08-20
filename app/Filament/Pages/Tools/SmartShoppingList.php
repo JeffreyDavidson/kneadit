@@ -54,7 +54,7 @@ class SmartShoppingList extends Page
     {
         $this->startDate = now()->format('Y-m-d');
         $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
-        $this->supplierGroups = collect();
+        $this->supplierGroups = new Collection;
         $this->generateList();
     }
 

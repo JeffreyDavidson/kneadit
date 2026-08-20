@@ -18,7 +18,7 @@ class AnnouncementBanner extends Widget
 
     protected string $view = 'filament.widgets.announcement-banner';
 
-    /** @return array<string, mixed> */
+    /** @return list<mixed> */
     public function getAnnouncements(): array
     {
         /** @var Tenant|null $tenant */
@@ -27,7 +27,7 @@ class AnnouncementBanner extends Widget
 
         $planKey = $plan ? $plan->value : 'none';
 
-        return $this->cached('announcements_' . $planKey, [1800, 3600], fn (): array => PlatformAnnouncement::active()
+        $announcements = $this->cached('announcements_' . $planKey, [1800, 3600], fn (): array => PlatformAnnouncement::active()
             ->orderBy('created_at', 'desc')
             ->get()
             ->filter(function (PlatformAnnouncement $announcement) use ($plan) {
@@ -36,7 +36,10 @@ class AnnouncementBanner extends Widget
                 return empty($targets) || in_array($plan, $targets);
             })
             ->values()
-            ->toArray());
+            ->values()
+            ->all());
+
+        return array_values($announcements);
     }
 
     protected function cachePrefix(): string

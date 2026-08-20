@@ -16,7 +16,7 @@ class SurveyController extends Controller
     {
         $submitResponse(
             survey: $survey,
-            answers: $request->array('answers'),
+            answers: array_values($request->array('answers')),
             customerName: $request->filled('customer_name') ? $request->string('customer_name')->toString() : null,
             customerEmail: $request->filled('customer_email') ? $request->string('customer_email')->toString() : null,
         );

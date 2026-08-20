@@ -12,6 +12,7 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class ActivityLogsTable
 {
@@ -79,17 +80,23 @@ class ActivityLogsTable
                         DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
+                        $from = Arr::string($data, 'from', '');
+                        $until = Arr::string($data, 'until', '');
+
                         return $query
-                            ->when($data['from'] ?? null, fn (Builder $q, string $date) => $q->whereDate('created_at', '>=', $date))
-                            ->when($data['until'] ?? null, fn (Builder $q, string $date) => $q->whereDate('created_at', '<=', $date));
+                            ->when($from !== '', fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
+                            ->when($until !== '', fn (Builder $q) => $q->whereDate('created_at', '<=', $until));
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['from'] ?? null) {
-                            $indicators[] = Indicator::make("From {$data['from']}")->removeField('from');
+                        $from = Arr::string($data, 'from', '');
+                        $until = Arr::string($data, 'until', '');
+
+                        if ($from !== '') {
+                            $indicators[] = Indicator::make("From {$from}")->removeField('from');
                         }
-                        if ($data['until'] ?? null) {
-                            $indicators[] = Indicator::make("Until {$data['until']}")->removeField('until');
+                        if ($until !== '') {
+                            $indicators[] = Indicator::make("Until {$until}")->removeField('until');
                         }
 
                         return $indicators;
@@ -106,11 +113,15 @@ class ActivityLogsTable
                             ->searchable(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        return $query->when($data['user_name'] ?? null, fn (Builder $q, string $name) => $q->where('user_name', $name));
+                        $name = Arr::string($data, 'user_name', '');
+
+                        return $query->when($name !== '', fn (Builder $q) => $q->where('user_name', $name));
                     })
                     ->indicateUsing(function (array $data): array {
-                        return ($data['user_name'] ?? null)
-                            ? [Indicator::make("Actor: {$data['user_name']}")->removeField('user_name')]
+                        $name = Arr::string($data, 'user_name', '');
+
+                        return $name !== ''
+                            ? [Indicator::make("Actor: {$name}")->removeField('user_name')]
                             : [];
                     }),
             ])

@@ -58,6 +58,10 @@ class Backups extends Page
 
         $backups = [];
         foreach ($folders as $folder) {
+            if (! is_string($folder)) {
+                continue;
+            }
+
             $name = basename($folder);
             $files = File::files($folder);
             $tenantFiles = collect($files)->filter(fn (\Symfony\Component\Finder\SplFileInfo $file): bool => $file->getFilename() !== 'central.sqlite');

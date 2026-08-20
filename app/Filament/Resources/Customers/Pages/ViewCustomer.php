@@ -14,6 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Livewire\Attributes\Rule;
 
 /**
@@ -72,17 +73,20 @@ class ViewCustomer extends ViewRecord
                         ->placeholder('Customer service comp · birthday gift · correction'),
                 ])
                 ->action(function (array $data): void {
+                    $points = Arr::integer($data, 'points');
+                    $description = Arr::string($data, 'description');
+
                     resolve(AdjustLoyaltyPoints::class)(
                         $this->record,
-                        (int) $data['points'],
-                        $data['description'],
+                        $points,
+                        $description,
                     );
 
                     $this->record->load('loyaltyPoints');
 
                     Notification::make()
                         ->title('Loyalty points adjusted')
-                        ->body(($data['points'] >= 0 ? '+' : '') . $data['points'] . ' points · ' . $data['description'])
+                        ->body(($points >= 0 ? '+' : '') . $points . ' points · ' . $description)
                         ->success()
                         ->send();
                 }),
@@ -106,17 +110,20 @@ class ViewCustomer extends ViewRecord
                         ->placeholder('Free coffee · 10% off pickup'),
                 ])
                 ->action(function (array $data): void {
+                    $points = Arr::integer($data, 'points');
+                    $description = Arr::string($data, 'description');
+
                     resolve(RedeemLoyaltyPoints::class)(
                         $this->record,
-                        (int) $data['points'],
-                        $data['description'],
+                        $points,
+                        $description,
                     );
 
                     $this->record->load('loyaltyPoints');
 
                     Notification::make()
                         ->title('Redemption recorded')
-                        ->body($data['points'] . ' points redeemed · ' . $data['description'])
+                        ->body($points . ' points redeemed · ' . $description)
                         ->success()
                         ->send();
                 }),

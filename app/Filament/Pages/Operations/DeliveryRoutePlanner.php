@@ -63,7 +63,7 @@ class DeliveryRoutePlanner extends Page
     public function loadOrders(): void
     {
         if (! $this->selectedDate) {
-            $this->deliveryOrders = collect();
+            $this->deliveryOrders = new Collection;
 
             return;
         }

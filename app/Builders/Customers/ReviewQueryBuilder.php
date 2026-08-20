@@ -57,8 +57,8 @@ class ReviewQueryBuilder extends Builder
             ->first();
 
         return (object) [
-            'avg_rating' => (float) ($stats->avg_rating ?? 0),
-            'total_count' => (int) ($stats->total_count ?? 0),
+            'avg_rating' => Arr::float(['value' => $stats->avg_rating ?? 0], 'value', 0.0),
+            'total_count' => Arr::integer(['value' => $stats->total_count ?? 0], 'value', 0),
         ];
     }
 

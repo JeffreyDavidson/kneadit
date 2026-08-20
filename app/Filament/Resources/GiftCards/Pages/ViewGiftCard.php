@@ -12,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 
 /**
  * @property-read GiftCard $record
@@ -47,8 +48,8 @@ class ViewGiftCard extends ViewRecord
                 ->action(function (array $data) {
                     resolve(AddGiftCardCredit::class)(
                         $this->record,
-                        (float) $data['amount'],
-                        $data['notes'] ?? 'Credit added by admin',
+                        Arr::float($data, 'amount'),
+                        Arr::string($data, 'notes', 'Credit added by admin'),
                     );
                 }),
 

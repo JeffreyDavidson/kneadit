@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Stancl\Tenancy\Database\Models\Domain;
 
 #[Signature('tenant:create-one {id : Tenant subdomain/id} {name : Owner name} {email : Owner email} {store_name : Bakery name} {brand_primary : Primary brand color} {brand_secondary : Secondary brand color}')]
 #[Description('Create a single demo tenant (called by tenant:bakeries)')]
@@ -36,8 +37,8 @@ class CreateOneTenantCommand extends Command
             'is_active' => true,
         ]);
 
-        $tenant->domains()->create(['domain' => $domain]);
-        $tenant->domains()->create(['domain' => $id]);
+        Domain::query()->create(['domain' => $domain, 'tenant_id' => $tenant->id]);
+        Domain::query()->create(['domain' => $id, 'tenant_id' => $tenant->id]);
 
         // Explicitly migrate
         Artisan::call('tenants:migrate', [

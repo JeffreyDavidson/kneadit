@@ -23,9 +23,9 @@ class PercentageInput extends TextInput
     /** @return array<int, StateCast> */
     public function getDefaultStateCasts(): array
     {
-        return [
+        return array_values([
             ...parent::getDefaultStateCasts(),
             resolve(PercentageStateCast::class),
-        ];
+        ]);
     }
 }

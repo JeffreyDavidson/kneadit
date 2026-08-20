@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureOnboardingComplete
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         $tenant = tenancy()->tenant;

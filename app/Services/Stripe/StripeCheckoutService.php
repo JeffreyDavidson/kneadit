@@ -58,7 +58,7 @@ class StripeCheckoutService
             $discounts = $this->buildDiscounts($order, $connectId);
             $sessionParams = $this->payloadBuilder->build(
                 $order,
-                $tenant->getTenantKey(),
+                $tenant->id,
                 $successUrl,
                 $cancelUrl,
                 $discounts,

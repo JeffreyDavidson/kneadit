@@ -22,6 +22,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class OrdersTable
@@ -156,12 +157,13 @@ class OrdersTable
                     ->maxLength(500),
             ])
             ->action(function (Order $record, array $data): void {
+                $reason = Arr::string($data, 'reason', '');
                 resolve(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
 
                 $refund = resolve(RefundStripePayment::class)(
                     $record->refresh(),
                     initiatedBy: Auth::user() instanceof User ? Auth::user() : null,
-                    reason: $data['reason'] ?? null,
+                    reason: $reason !== '' ? $reason : null,
                 );
 
                 Notification::make()

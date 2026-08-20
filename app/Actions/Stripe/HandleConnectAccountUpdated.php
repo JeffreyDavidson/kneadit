@@ -18,11 +18,9 @@ class HandleConnectAccountUpdated
     {
         $accountId = data_get($account, 'id');
         $chargesEnabled = (bool) data_get($account, 'charges_enabled', false);
-        $tenantId = is_object($account)
-            ? ($account->metadata->tenant_id ?? null)
-            : data_get($account, 'metadata.tenant_id');
+        $tenantId = data_get($account, 'metadata.tenant_id');
 
-        if (! $tenantId) {
+        if (! is_string($tenantId) || $tenantId === '') {
             Log::warning('Stripe Connect account.updated missing tenant_id', ['account_id' => $accountId]);
 
             return;

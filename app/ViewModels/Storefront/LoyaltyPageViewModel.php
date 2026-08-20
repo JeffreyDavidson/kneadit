@@ -5,6 +5,7 @@ namespace App\ViewModels\Storefront;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Engagement\LoyaltyTier;
 use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
 use App\Services\Loyalty\CustomerLoyalty;
 use App\Services\Settings\TenantSettings;
@@ -52,7 +53,7 @@ class LoyaltyPageViewModel
             settings: $settings,
             customer: null,
             balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: collect(),
+            history: (new LoyaltyPoint)->newCollection(),
             rewards: $rewards,
             content: $content,
             howSteps: $howSteps,
@@ -71,7 +72,7 @@ class LoyaltyPageViewModel
             settings: $settings,
             customer: null,
             balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: collect(),
+            history: (new LoyaltyPoint)->newCollection(),
             rewards: $rewards,
             content: $content,
             howSteps: $howSteps,
@@ -126,7 +127,7 @@ class LoyaltyPageViewModel
 
     /**
      * @param Collection<int, LoyaltyReward> $rewards
-     * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
+     * @param Collection<int, LoyaltyPoint> $history
      * @param array<string, string> $content
      * @param array<int, array<string, string>> $howSteps
      */

@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class HolidaysTable
 {
@@ -53,7 +54,7 @@ class HolidaysTable
                 TextColumn::make('orders_display')
                     ->label('Orders')
                     ->getStateUsing(function (Holiday $record) {
-                        $count = $record->order_count ?? 0;
+                        $count = Arr::integer(['value' => $record->order_count ?? 0], 'value', 0);
 
                         return $record->max_orders
                             ? "{$count} / {$record->max_orders}"
