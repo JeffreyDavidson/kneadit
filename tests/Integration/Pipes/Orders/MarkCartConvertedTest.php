@@ -28,7 +28,7 @@ test('marks the cart matching the cookie as converted', function () {
 
     resolve(MarkCartConverted::class)->handle(makeConvertPayload(), fn ($p) => $p);
 
-    expect($cart->fresh()->converted_at)->not->toBeNull();
+    expect($cart->refresh()->converted_at)->not->toBeNull();
 });
 
 test('does nothing when no cookie is present', function () {
@@ -36,7 +36,7 @@ test('does nothing when no cookie is present', function () {
 
     resolve(MarkCartConverted::class)->handle(makeConvertPayload(), fn ($p) => $p);
 
-    expect($cart->fresh()->converted_at)->toBeNull();
+    expect($cart->refresh()->converted_at)->toBeNull();
 });
 
 test('does nothing when no cart matches the cookie', function () {

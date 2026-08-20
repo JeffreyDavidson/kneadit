@@ -24,5 +24,5 @@ test('pendingAndUnexpired excludes accepted and expired invitations', function (
     $invitations = StaffInvitation::query()->pendingAndUnexpired()->get();
 
     expect($invitations)->toHaveCount(1)
-        ->and($invitations->first()?->is($pending))->toBeTrue();
+        ->and($invitations->firstOrFail()?->is($pending))->toBeTrue();
 });

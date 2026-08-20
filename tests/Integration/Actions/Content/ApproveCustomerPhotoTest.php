@@ -13,5 +13,5 @@ test('it approves a customer photo', function () {
 
     resolve(ApproveCustomerPhoto::class)($photo);
 
-    expect($photo->fresh()->is_approved)->toBeTrue();
+    expect($photo->refresh()->is_approved)->toBeTrue();
 });

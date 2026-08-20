@@ -33,5 +33,5 @@ test('due returns scheduled campaigns whose scheduled time has arrived', functio
     $campaigns = CustomerCampaign::query()->due()->get();
 
     expect($campaigns)->toHaveCount(1)
-        ->and($campaigns->first()?->is($due))->toBeTrue();
+        ->and($campaigns->firstOrFail()?->is($due))->toBeTrue();
 });

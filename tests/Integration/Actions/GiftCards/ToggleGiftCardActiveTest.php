@@ -13,7 +13,7 @@ test('it deactivates an active gift card', function () {
 
     resolve(ToggleGiftCardActive::class)($giftCard);
 
-    expect($giftCard->fresh()->is_active)->toBeFalse();
+    expect($giftCard->refresh()->is_active)->toBeFalse();
 });
 
 test('it activates an inactive gift card', function () {
@@ -21,5 +21,5 @@ test('it activates an inactive gift card', function () {
 
     resolve(ToggleGiftCardActive::class)($giftCard);
 
-    expect($giftCard->fresh()->is_active)->toBeTrue();
+    expect($giftCard->refresh()->is_active)->toBeTrue();
 });

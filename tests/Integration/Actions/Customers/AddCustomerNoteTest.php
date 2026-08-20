@@ -16,7 +16,7 @@ test('creates a customer note', function () {
 
     resolve(AddCustomerNote::class)($customer->id, 'Great customer!', $user->id);
 
-    expect(CustomerNote::query()->where('customer_id', $customer->id)->first())
+    expect(CustomerNote::query()->where('customer_id', $customer->id)->firstOrFail())
         ->not->toBeNull()
         ->note->toBe('Great customer!')
         ->created_by->toBe($user->id);

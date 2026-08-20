@@ -21,6 +21,6 @@ test('transitions Inquiry to Quoted and dispatches the quote event', function ()
 
     resolve(SendCateringQuote::class)($inquiry);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Quoted);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Quoted);
     Event::assertDispatched(CateringQuoteRequested::class);
 });

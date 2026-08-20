@@ -20,7 +20,7 @@ test('consumes valid token and returns owner user', function () {
 
     $user = resolve(ConsumeImpersonationToken::class)($rawToken, '10.0.0.1');
 
-    $record = ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->first();
+    $record = ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->firstOrFail();
 
     expect($user)->toBeInstanceOf(User::class)
         ->and($user->role)->toBe(UserRole::Owner)

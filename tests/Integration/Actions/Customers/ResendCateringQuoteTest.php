@@ -21,6 +21,6 @@ test('redispatches the quote event without touching status', function () {
 
     resolve(ResendCateringQuote::class)($inquiry);
 
-    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Quoted);
+    expect($inquiry->refresh()->status)->toBe(CateringInquiryStatus::Quoted);
     Event::assertDispatched(CateringQuoteRequested::class);
 });
