@@ -12,7 +12,7 @@ test('can create campaign', function () {
         'subject' => 'Newsletter',
     ]);
 
-    expect(EmailCampaign::query()->where('subject', 'Newsletter')->first())->not->toBeNull();
+    expect(EmailCampaign::query()->where('subject', 'Newsletter')->firstOrFail())->not->toBeNull();
 });
 
 test('sent at is cast to datetime', function () {
@@ -28,7 +28,7 @@ test('status can be updated to sent', function () {
     $campaign = EmailCampaign::factory()->create();
     $campaign->update(['status' => EmailCampaignStatus::Sent, 'sent_at' => now()]);
 
-    expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent);
+    expect($campaign->refresh()->status)->toBe(EmailCampaignStatus::Sent);
 });
 
 test('recipient count stored correctly', function () {

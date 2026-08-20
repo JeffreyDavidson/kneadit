@@ -14,7 +14,7 @@ test('creating ticket creates audit log with ticket opened action', function () 
         'body' => 'My orders are not showing up.',
     ]);
 
-    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
+    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->firstOrFail();
 
     expect($log)->not->toBeNull()->and($log->target_type)->toBe('support_ticket')->and($log->target_id)->toBe((string) $ticket->id);
 });
@@ -25,7 +25,7 @@ test('audit log description contains ticket subject', function () {
         'subject' => 'Billing issue with subscription',
     ]);
 
-    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
+    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->firstOrFail();
 
     expect($log)->not->toBeNull()->and($log->description)->toContain('Billing issue with subscription');
 });

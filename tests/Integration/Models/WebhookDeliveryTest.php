@@ -12,7 +12,7 @@ test('payload is cast to array', function () {
         'payload' => ['event' => 'order.created', 'data' => ['order_number' => 'ORD-001']],
     ]);
 
-    expect($delivery->fresh()->payload)
+    expect($delivery->refresh()->payload)
         ->toBeArray()
         ->toMatchArray(['event' => 'order.created']);
 });
@@ -20,7 +20,7 @@ test('payload is cast to array', function () {
 test('succeeded is cast to bool', function () {
     $delivery = WebhookDelivery::factory()->succeeded()->create();
 
-    expect($delivery->fresh()->succeeded)->toBeTrue();
+    expect($delivery->refresh()->succeeded)->toBeTrue();
 });
 
 test('dispatched_at is cast to Carbon', function () {
