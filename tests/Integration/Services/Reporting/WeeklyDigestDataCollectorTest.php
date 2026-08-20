@@ -12,5 +12,7 @@ it('returns expected data keys', function () {
     $collector = new WeeklyDigestDataCollector;
     $data = $collector->collect();
 
-    expect($data)->toHaveKeys(['stats', 'topProducts', 'atRiskCustomers', 'upcomingCount', 'storeName', 'adminUrl'])->and($data['stats'])->toHaveKeys(['total_orders', 'total_revenue', 'new_customers', 'avg_order_value']);
+    expect($data->stats)->toHaveKeys(['total_orders', 'total_revenue', 'new_customers', 'avg_order_value'])
+        ->and($data->topProducts)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->and($data->atRiskCustomers)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });

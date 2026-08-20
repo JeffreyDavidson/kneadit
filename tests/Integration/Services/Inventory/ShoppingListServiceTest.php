@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Inventory\SupplierShoppingList;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Supplier;
@@ -19,7 +20,9 @@ test('generates shopping list with low stock ingredients', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toBeArray()->not->toBeEmpty();
+    expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class)
+        ->not->toBeEmpty()
+        ->and($result->first())->toBeInstanceOf(SupplierShoppingList::class);
 });
 
 test('returns empty list when all stock is sufficient', function () {
@@ -28,7 +31,7 @@ test('returns empty list when all stock is sufficient', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toBeArray()->toBeEmpty();
+    expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class)->toBeEmpty();
 });
 
 test('includes upcoming order needs when enabled with date range', function () {
@@ -59,7 +62,7 @@ test('includes upcoming order needs when enabled with date range', function () {
         endDate: now()->addWeek()->format('Y-m-d'),
     );
 
-    expect($result)->toBeArray()->not->toBeEmpty();
+    expect($result)->not->toBeEmpty();
 });
 
 test('upcoming order ingredient needs increase the suggested quantity', function () {
@@ -96,8 +99,8 @@ test('upcoming order ingredient needs increase the suggested quantity', function
         endDate: now()->addWeek()->format('Y-m-d'),
     );
 
-    $needWithout = collect($without)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
-    $needWith = collect($with)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
+    $needWithout = $without->flatMap(fn (SupplierShoppingList $group) => $group->items)->firstWhere('ingredientId', $ingredient->id)?->needed ?? 0;
+    $needWith = $with->flatMap(fn (SupplierShoppingList $group) => $group->items)->firstWhere('ingredientId', $ingredient->id)?->needed ?? 0;
 
     expect($needWith)->toBe($needWithout + 20.0);
 });
@@ -110,8 +113,8 @@ test('skips upcoming needs when not enabled', function () {
     $resultWith = $service->generate(includeUpcoming: true, startDate: null, endDate: null);
 
     // Both should return similar results since upcoming is disabled or missing dates
-    expect($resultWithout)->toBeArray();
-    expect($resultWith)->toBeArray();
+    expect($resultWithout)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($resultWith)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });
 
 test('groups ingredients by supplier with best price', function () {
@@ -132,8 +135,8 @@ test('groups ingredients by supplier with best price', function () {
     $result = $service->generate();
 
     expect($result)->toHaveKey($supplier->id)
-        ->and($result[$supplier->id]['supplier']['name'])->toBe('Best Flour Co')
-        ->and($result[$supplier->id]['items'])->not->toBeEmpty();
+        ->and($result->get($supplier->id)?->supplier->name)->toBe('Best Flour Co')
+        ->and($result->get($supplier->id)?->items)->not->toBeEmpty();
 });
 
 test('ingredients without suppliers go into no supplier group', function () {
@@ -143,7 +146,7 @@ test('ingredients without suppliers go into no supplier group', function () {
     $result = $service->generate();
 
     expect($result)->toHaveKey('none')
-        ->and($result['none']['supplier']['name'])->toBe('No Supplier Assigned');
+        ->and($result->get('none')?->supplier->name)->toBe('No Supplier Assigned');
 });
 
 test('skips ingredient when needed quantity is zero', function () {
