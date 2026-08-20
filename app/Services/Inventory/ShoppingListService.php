@@ -5,8 +5,8 @@ namespace App\Services\Inventory;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 class ShoppingListService
 {
@@ -41,7 +41,8 @@ class ShoppingListService
             foreach ($order->orderItems as $item) {
                 if ($item->product?->recipe) {
                     foreach ($item->product->recipe->inventoryIngredients as $ingredient) {
-                        $needed = Arr::float(['value' => $ingredient->pivot->quantity ?? 0], 'value', 0.0) * $item->quantity;
+                        $quantity = Number::parseFloat((string) ($ingredient->pivot->quantity ?? 0)) ?: 0.0;
+                        $needed = $quantity * $item->quantity;
                         $needs[$ingredient->id] = ($needs[$ingredient->id] ?? 0) + $needed;
                     }
                 }

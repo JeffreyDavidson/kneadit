@@ -8,6 +8,7 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 /**
  * Formats a Product for a printable compliance label — ingredients ordered
@@ -41,7 +42,7 @@ final class ProductLabelPresenter
 
         /** @var list<string> $relational */
         $relational = $recipe->inventoryIngredients
-            ->sortByDesc(fn (Ingredient $i) => Arr::float(['value' => $i->pivot->quantity ?? 0], 'value', 0.0))
+            ->sortByDesc(fn (Ingredient $i): float => Number::parseFloat((string) ($i->pivot->quantity ?? 0)) ?: 0.0)
             ->pluck('name')
             ->values()
             ->all();
