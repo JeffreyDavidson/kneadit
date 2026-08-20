@@ -70,7 +70,7 @@ test('generate margin comparisons with recipe', function () {
     testFixture('page', PriceSuggestionTool::class)->generateMarginComparisons();
 
     expect(testFixture('page', PriceSuggestionTool::class)->marginComparisons)->toHaveCount(4)
-        ->and(testFixture('page', PriceSuggestionTool::class)->marginComparisons->first())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
+        ->and(testFixture('page', PriceSuggestionTool::class)->marginComparisons->firstOrFail())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
 });
 
 test('get suggested price returns zero when no recipe', function () {

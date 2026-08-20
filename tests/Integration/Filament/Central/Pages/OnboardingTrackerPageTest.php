@@ -25,7 +25,7 @@ test('get tenant onboarding data includes expected keys', function () {
     Tenant::factory()->create(['store_name' => 'Test Bakery']);
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
-    $tenant = $data->first();
+    $tenant = $data->firstOrFail();
 
     expect($tenant)->toHaveKeys([
         'id', 'name', 'subdomain', 'owner', 'email',
@@ -39,7 +39,7 @@ test('get tenant onboarding data checks store name', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['checks']['store_name'])->toBeTrue();
+    expect($data->firstOrFail()['checks']['store_name'])->toBeTrue();
 });
 
 test('get tenant onboarding data checks empty store name', function () {
@@ -47,7 +47,7 @@ test('get tenant onboarding data checks empty store name', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['checks']['store_name'])->toBeFalse();
+    expect($data->firstOrFail()['checks']['store_name'])->toBeFalse();
 });
 
 test('get tenant onboarding data checks storefront enabled', function () {
@@ -55,7 +55,7 @@ test('get tenant onboarding data checks storefront enabled', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['checks']['storefront_enabled'])->toBeTrue();
+    expect($data->firstOrFail()['checks']['storefront_enabled'])->toBeTrue();
 });
 
 test('get tenant onboarding data checks brand customized', function () {
@@ -63,7 +63,7 @@ test('get tenant onboarding data checks brand customized', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['checks']['brand_customized'])->toBeTrue();
+    expect($data->firstOrFail()['checks']['brand_customized'])->toBeTrue();
 });
 
 test('get tenant onboarding data detects default brand color', function () {
@@ -71,7 +71,7 @@ test('get tenant onboarding data detects default brand color', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['checks']['brand_customized'])->toBeFalse();
+    expect($data->firstOrFail()['checks']['brand_customized'])->toBeFalse();
 });
 
 test('get onboarding data reads tenant content checks from central metrics', function () {
@@ -81,7 +81,7 @@ test('get onboarding data reads tenant content checks from central metrics', fun
         'onboarding_orders_count' => 0,
     ]);
 
-    $checks = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData()->first()['checks'];
+    $checks = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData()->firstOrFail()['checks'];
 
     expect($checks['has_products'])->toBeTrue()
         ->and($checks['has_categories'])->toBeTrue()
@@ -93,7 +93,7 @@ test('total checks is always 7', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['total'])->toBe(7);
+    expect($data->firstOrFail()['total'])->toBe(7);
 });
 
 test('get summary stats returns expected keys', function () {
@@ -141,5 +141,5 @@ test('onboarding data sorted by completion then date', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->first()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
+    expect($data->firstOrFail()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
 });

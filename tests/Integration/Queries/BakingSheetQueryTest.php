@@ -41,7 +41,7 @@ test('returns aggregated baking items for a given date', function () {
     ]);
 
     $items = BakingSheetQuery::forDate($date);
-    $item = $items->first();
+    $item = $items->firstOrFail();
     if (! $item instanceof OrderItem) {
         throw new UnexpectedValueException('The baking sheet item is missing.');
     }

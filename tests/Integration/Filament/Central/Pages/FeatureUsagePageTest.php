@@ -61,8 +61,8 @@ test('get feature usage bars returns sorted collection', function () {
     $bars = testFixture('page', FeatureUsage::class)->getFeatureUsageBars();
 
     expect($bars)->toHaveCount(2)
-        ->and($bars->first()['feature'])->toBe('products')
-        ->and($bars->first()['percent'])->toBe(100.0)
+        ->and($bars->firstOrFail()['feature'])->toBe('products')
+        ->and($bars->firstOrFail()['percent'])->toBe(100.0)
         ->and($bars->last()['feature'])->toBe('orders')
         ->and($bars->last()['percent'])->toBe(20.0);
 });
@@ -112,8 +112,8 @@ test('get feature tenant breakdown returns data for selected feature', function 
     $breakdown = testFixture('page', FeatureUsage::class)->getFeatureTenantBreakdown();
 
     expect($breakdown)->toHaveCount(2)
-        ->and($breakdown->first()['tenant_id'])->toBe('bakery-1')
-        ->and($breakdown->first())->toHaveKeys(['tenant_id', 'name', 'total']);
+        ->and($breakdown->firstOrFail()['tenant_id'])->toBe('bakery-1')
+        ->and($breakdown->firstOrFail())->toHaveKeys(['tenant_id', 'name', 'total']);
 });
 
 test('format feature name replaces underscores and capitalizes', function () {
