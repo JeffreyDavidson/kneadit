@@ -58,16 +58,19 @@ test('updated selected tenant clears counts when tenant not found', function () 
 
 test('get export types returns expected types', function () {
     $types = testFixture('page', DataExport::class)->getExportTypes();
+    $products = $types['products'] ?? null;
+    throw_unless(is_array($products), RuntimeException::class, 'Expected product export type.');
 
     expect($types)->toHaveKeys(['products', 'categories', 'orders', 'customers', 'reviews'])
-        ->and($types['products'])->toHaveKeys(['icon', 'name', 'description'])
-        ->and($types['products']['name'])->toBe('Products');
+        ->and($products)->toHaveKeys(['icon', 'name', 'description'])
+        ->and($products['name'] ?? null)->toBe('Products');
 });
 
 test('get export types icons are heroicons', function () {
     $types = testFixture('page', DataExport::class)->getExportTypes();
 
     foreach ($types as $type) {
-        expect($type['icon'])->toBeInstanceOf(Heroicon::class);
+        throw_unless(is_array($type), RuntimeException::class, 'Expected an export type array.');
+        expect($type['icon'] ?? null)->toBeInstanceOf(Heroicon::class);
     }
 });

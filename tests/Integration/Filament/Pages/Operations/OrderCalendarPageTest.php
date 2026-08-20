@@ -95,7 +95,7 @@ test('get calendar days includes today flag', function () {
     testFixture('page', OrderCalendar::class)->mount();
     $days = testFixture('page', OrderCalendar::class)->getCalendarDays();
 
-    $today = $days->first(fn (array $day) => $day['isToday'] === true);
+    $today = $days->first(fn (mixed $day): bool => is_array($day) && ($day['isToday'] ?? false) === true);
 
     expect($today)->not->toBeNull();
 });
@@ -104,7 +104,7 @@ test('get calendar days includes current month flag', function () {
     testFixture('page', OrderCalendar::class)->mount();
     $days = testFixture('page', OrderCalendar::class)->getCalendarDays();
 
-    $currentMonthDays = $days->filter(fn (array $day) => $day['isCurrentMonth'] === true);
+    $currentMonthDays = $days->filter(fn (mixed $day): bool => is_array($day) && ($day['isCurrentMonth'] ?? false) === true);
 
     expect($currentMonthDays)->not->toBeEmpty();
 });
@@ -113,7 +113,9 @@ test('get calendar days includes color class', function () {
     testFixture('page', OrderCalendar::class)->mount();
     $days = testFixture('page', OrderCalendar::class)->getCalendarDays();
 
-    expect($days->firstOrFail()['colorClass'])->toBeString();
+    $first = $days->firstOrFail();
+    throw_unless(is_array($first), RuntimeException::class, 'Expected a calendar day.');
+    expect($first['colorClass'] ?? null)->toBeString();
 });
 
 test('get current month name returns formatted string', function () {

@@ -69,7 +69,10 @@ test('get upcoming birthdays sorted by days until', function () {
 
     $birthdays = testFixture('widget', BirthdayWidget::class)->getUpcomingBirthdays();
 
+    $last = $birthdays->last();
+    throw_unless($last instanceof stdClass, RuntimeException::class, 'Expected a birthday result.');
+
     expect($birthdays)->toHaveCount(2)
         ->and($birthdays->firstOrFail()->customer_name)->toBe('Sooner')
-        ->and($birthdays->last()->customer_name)->toBe('Later');
+        ->and($last->customer_name)->toBe('Later');
 });

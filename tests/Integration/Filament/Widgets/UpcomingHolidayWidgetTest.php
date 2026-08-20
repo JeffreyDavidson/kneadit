@@ -44,5 +44,7 @@ test('getHolidayData includes the holiday name', function () {
         'is_active' => true,
     ]);
 
-    expect(testFixture('widget', UpcomingHolidayWidget::class)->getHolidayData()['name'])->toBe('Easter');
+    $holiday = testFixture('widget', UpcomingHolidayWidget::class)->getHolidayData();
+    throw_unless(is_array($holiday), RuntimeException::class, 'Expected holiday data.');
+    expect($holiday['name'] ?? null)->toBe('Easter');
 });

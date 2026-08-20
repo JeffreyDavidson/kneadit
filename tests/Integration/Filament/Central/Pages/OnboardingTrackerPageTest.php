@@ -141,5 +141,8 @@ test('onboarding data sorted by completion then date', function () {
 
     $data = testFixture('page', OnboardingTracker::class)->getTenantOnboardingData();
 
-    expect($data->firstOrFail()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
+    $first = $data->firstOrFail();
+    $last = $data->last();
+    throw_unless(is_array($last), RuntimeException::class, 'Expected final onboarding data.');
+    expect($first['completed'])->toBeLessThanOrEqual($last['completed']);
 });

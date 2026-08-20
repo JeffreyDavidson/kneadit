@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Tools\SmartShoppingList;
+use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -16,7 +17,7 @@ test('start date defaults to today on mount', function () {
 test('end date defaults to planning days ahead on mount', function () {
     testFixture('page', SmartShoppingList::class)->mount();
 
-    $expected = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
+    $expected = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
     expect(testFixture('page', SmartShoppingList::class)->endDate)->toBe($expected);
 });
 

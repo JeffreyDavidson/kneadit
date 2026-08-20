@@ -60,11 +60,14 @@ test('get feature usage bars returns sorted collection', function () {
 
     $bars = testFixture('page', FeatureUsage::class)->getFeatureUsageBars();
 
+    $first = $bars->firstOrFail();
+    $last = $bars->last();
+    throw_unless(is_array($last), RuntimeException::class, 'Expected a final feature usage bar.');
     expect($bars)->toHaveCount(2)
-        ->and($bars->firstOrFail()['feature'])->toBe('products')
-        ->and($bars->firstOrFail()['percent'])->toBe(100.0)
-        ->and($bars->last()['feature'])->toBe('orders')
-        ->and($bars->last()['percent'])->toBe(20.0);
+        ->and($first['feature'])->toBe('products')
+        ->and($first['percent'])->toBe(100.0)
+        ->and($last['feature'])->toBe('orders')
+        ->and($last['percent'])->toBe(20.0);
 });
 
 test('get feature usage bars returns empty collection when no data', function () {

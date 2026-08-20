@@ -37,8 +37,11 @@ test('get view data reflects current state', function () {
 
     $method = new ReflectionMethod(ProductImportExport::class, 'getViewData');
     $viewData = $method->invoke(testFixture('page', ProductImportExport::class));
+    throw_unless(is_array($viewData), RuntimeException::class, 'Expected import view data.');
+    $importResults = $viewData['importResults'] ?? null;
+    throw_unless(is_array($importResults), RuntimeException::class, 'Expected import results.');
 
-    expect($viewData['importResults']['created'])->toBe(5)
-        ->and($viewData['previewData'])->toHaveCount(1)
-        ->and($viewData['previewErrors'])->toHaveCount(1);
+    expect($importResults['created'] ?? null)->toBe(5)
+        ->and($viewData['previewData'] ?? null)->toHaveCount(1)
+        ->and($viewData['previewErrors'] ?? null)->toHaveCount(1);
 });

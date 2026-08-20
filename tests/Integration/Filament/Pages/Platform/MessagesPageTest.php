@@ -53,8 +53,9 @@ test('get viewing record returns message', function () {
 
     testFixture('page', Messages::class)->viewingMessage = $message->id;
 
-    expect(testFixture('page', Messages::class)->getViewingRecord())->not->toBeNull()
-        ->and(testFixture('page', Messages::class)->getViewingRecord()->id)->toBe($message->id);
+    $viewing = testFixture('page', Messages::class)->getViewingRecord();
+    throw_unless($viewing instanceof PlatformMessage, RuntimeException::class, 'Expected a platform message.');
+    expect($viewing->id)->toBe($message->id);
 });
 
 test('back to list resets state', function () {
