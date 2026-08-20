@@ -5,7 +5,6 @@ namespace App\Filament\Filters;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class DateRangeFilter extends Filter
@@ -22,8 +21,8 @@ class DateRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
-            $from = Arr::string($data, 'from', '');
-            $until = Arr::string($data, 'until', '');
+            $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+            $until = is_string($data['until'] ?? null) ? $data['until'] : '';
 
             return $query
                 ->when(
@@ -38,8 +37,8 @@ class DateRangeFilter extends Filter
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            $from = Arr::string($data, 'from', '');
-            $until = Arr::string($data, 'until', '');
+            $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+            $until = is_string($data['until'] ?? null) ? $data['until'] : '';
             if ($from !== '') {
                 $indicators[] = 'From ' . Date::parse($from)->toFormattedDateString();
             }

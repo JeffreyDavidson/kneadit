@@ -12,7 +12,6 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 
 class ActivityLogsTable
 {
@@ -80,8 +79,8 @@ class ActivityLogsTable
                         DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        $from = Arr::string($data, 'from', '');
-                        $until = Arr::string($data, 'until', '');
+                        $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+                        $until = is_string($data['until'] ?? null) ? $data['until'] : '';
 
                         return $query
                             ->when($from !== '', fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
@@ -89,8 +88,8 @@ class ActivityLogsTable
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        $from = Arr::string($data, 'from', '');
-                        $until = Arr::string($data, 'until', '');
+                        $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+                        $until = is_string($data['until'] ?? null) ? $data['until'] : '';
 
                         if ($from !== '') {
                             $indicators[] = Indicator::make("From {$from}")->removeField('from');
@@ -113,12 +112,12 @@ class ActivityLogsTable
                             ->searchable(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        $name = Arr::string($data, 'user_name', '');
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
 
                         return $query->when($name !== '', fn (Builder $q) => $q->where('user_name', $name));
                     })
                     ->indicateUsing(function (array $data): array {
-                        $name = Arr::string($data, 'user_name', '');
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
 
                         return $name !== ''
                             ? [Indicator::make("Actor: {$name}")->removeField('user_name')]
