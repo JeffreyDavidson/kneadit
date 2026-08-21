@@ -8,7 +8,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Illuminate\Support\Arr;
 
 class OrderSettingsSection
 {
@@ -62,9 +61,21 @@ class OrderSettingsSection
                             ->placeholder('Local delivery (0-5 miles)')
                             ->helperText('Shown to customers at checkout. Optional.'),
                     ])
-                    ->itemLabel(fn (array $state): ?string => isset($state['min_distance'], $state['max_distance'], $state['fee'])
-                        ? Arr::string($state, 'min_distance') . '–' . Arr::string($state, 'max_distance') . ' mi · $' . Arr::string($state, 'fee')
-                        : null),
+                    ->itemLabel(function (array $state): ?string {
+                        if (! isset($state['min_distance'], $state['max_distance'], $state['fee'])) {
+                            return null;
+                        }
+
+                        $minDistance = $state['min_distance'];
+                        $maxDistance = $state['max_distance'];
+                        $fee = $state['fee'];
+
+                        return (is_scalar($minDistance) ? (string) $minDistance : '')
+                            . '–'
+                            . (is_scalar($maxDistance) ? (string) $maxDistance : '')
+                            . ' mi · $'
+                            . (is_scalar($fee) ? (string) $fee : '');
+                    }),
 
                 Grid::make(2)
                     ->schema([
