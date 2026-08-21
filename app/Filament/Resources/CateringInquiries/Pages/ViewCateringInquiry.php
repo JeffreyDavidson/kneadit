@@ -9,6 +9,7 @@ use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
 use App\Actions\Customers\SyncCateringQuoteItems;
 use App\Actions\Customers\UpdateCateringCustomerDetails;
+use App\Actions\Customers\UpdateCateringInquiryNotes;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
@@ -317,7 +318,14 @@ class ViewCateringInquiry extends ViewRecord
                     ->columnSpanFull(),
             ])
             ->action(function (array $data): void {
-                $this->record->update(['notes' => $data['notes']]);
+                $notes = new ValidatedInput($data);
+
+                resolve(UpdateCateringInquiryNotes::class)(
+                    $this->record,
+                    $notes->filled('notes')
+                        ? $notes->string('notes')->toString()
+                        : null,
+                );
 
                 Notification::make()->title('Notes updated.')->success()->send();
             });
