@@ -29,7 +29,7 @@ use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\TopProductsWidget;
 use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Filament\Widgets\UpcomingOrdersWidget;
-use App\Filament\Widgets\WeeklyRevenueChart;
+use App\Filament\Widgets\WeeklyRevenueChartWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use Filament\Support\Icons\Heroicon;
 
@@ -43,7 +43,7 @@ class WidgetMeta
 
         // Revenue & Finance — charts need horizontal room (XL adds vertical breakdown).
         'revenue_chart' => ['class' => RevenueChartWidget::class, 'name' => 'Revenue Chart', 'description' => 'Monthly revenue trends', 'icon' => Heroicon::OutlinedArrowTrendingUp, 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge]],
-        'weekly_revenue' => ['class' => WeeklyRevenueChart::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => Heroicon::OutlinedCurrencyDollar, 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge], 'defaultHidden' => true],
+        'weekly_revenue' => ['class' => WeeklyRevenueChartWidget::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => Heroicon::OutlinedCurrencyDollar, 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge], 'defaultHidden' => true],
         'margin_alert' => ['class' => MarginAlertWidget::class, 'name' => 'Margin Alerts', 'description' => 'Products with low profit margins', 'icon' => Heroicon::OutlinedBanknotes, 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
 
         // Orders — recent_orders + upcoming_orders are flexible tables; today's needs a wider row.
