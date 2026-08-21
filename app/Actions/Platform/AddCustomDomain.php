@@ -13,7 +13,7 @@ class AddCustomDomain
         $tenant->update(['custom_domain' => $domain]);
 
         if (! Domain::query()->where('domain', $domain)->exists()) {
-            Domain::query()->create(['domain' => $domain, 'tenant_id' => $tenant->id]);
+            $tenant->createDomain(['domain' => $domain]);
         }
 
         if (ForgeService::isConfigured()) {
