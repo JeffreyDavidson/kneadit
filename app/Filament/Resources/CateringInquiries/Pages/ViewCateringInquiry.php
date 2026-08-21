@@ -7,6 +7,7 @@ use App\Actions\Customers\ConvertCateringInquiryToOrder;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
+use App\Actions\Customers\SyncCateringQuoteItems;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
@@ -15,7 +16,6 @@ use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use App\Services\Settings\TenantSettings;
-use App\ValueObjects\Money;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -183,50 +183,7 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->action(function (array $data): void {
                 $rows = $this->quoteItemRows($data['items'] ?? []);
-
-                $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = array_values(array_filter(
-                    array_column($rows, 'id'),
-                    fn (?int $id): bool => $id !== null,
-                ));
-
-                foreach ($existing as $id => $item) {
-                    if (! in_array($id, $submittedIds, true)) {
-                        $item->delete();
-                    }
-                }
-
-                foreach (array_values($rows) as $sortOrder => $row) {
-                    $payload = [
-                        'name' => $row['name'],
-                        'quantity' => $row['quantity'],
-                        'unit_price' => $row['unit_price'],
-                        'special_instructions' => $row['special_instructions'],
-                        'sort_order' => $sortOrder,
-                    ];
-
-                    if ($row['id'] !== null) {
-                        $existingItem = $existing->get($row['id']);
-
-                        if ($existingItem instanceof CateringInquiryItem) {
-                            $existingItem->update($payload);
-
-                            continue;
-                        }
-                    }
-
-                    $this->record->items()->create($payload);
-                }
-
-                // Defensive recompute: the observer covers per-item CRUD, but
-                // the Filament Repeater path bulk-mutates and we want the
-                // parent total guaranteed in sync before the page rerenders.
-                $sumCents = $this->record->items()->get()
-                    ->sum(fn (CateringInquiryItem $i): int => $i->unit_price->cents() * $i->quantity);
-
-                $this->record->update(['quoted_amount' => Money::fromCents((int) $sumCents)]);
-
-                $this->record->refresh();
+                resolve(SyncCateringQuoteItems::class)($this->record, $rows);
 
                 Notification::make()->title('Quote items updated.')->success()->send();
             });
@@ -360,7 +317,7 @@ class ViewCateringInquiry extends ViewRecord
             });
     }
 
-    /** @return array<int, array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
+    /** @return list<array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
     private function quoteItemRows(mixed $value): array
     {
         $items = Validator::make(['items' => $value], [
