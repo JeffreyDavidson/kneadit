@@ -25,6 +25,7 @@ use App\Pipes\Orders\ValidateStockAvailability;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use UnexpectedValueException;
 
 class CreateOrder
 {
@@ -55,7 +56,7 @@ class CreateOrder
             ->thenReturn());
 
         if (! $result instanceof OrderPipelineData) {
-            throw new \UnexpectedValueException('The order pipeline returned an invalid payload.');
+            throw new UnexpectedValueException('The order pipeline returned an invalid payload.');
         }
 
         if ($result->cancelled || ! $result->order) {
