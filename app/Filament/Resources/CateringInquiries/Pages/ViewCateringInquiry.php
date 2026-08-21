@@ -8,6 +8,7 @@ use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
 use App\Actions\Customers\SyncCateringQuoteItems;
+use App\Actions\Customers\UpdateCateringCustomerDetails;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
@@ -87,11 +88,16 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema(ContactFields::nameEmailPhone())
             ->action(function (array $data): void {
-                $this->record->update([
-                    'customer_name' => $data['customer_name'],
-                    'customer_email' => $data['customer_email'],
-                    'customer_phone' => $data['customer_phone'],
-                ]);
+                $customer = new ValidatedInput($data);
+
+                resolve(UpdateCateringCustomerDetails::class)(
+                    $this->record,
+                    $customer->string('customer_name')->toString(),
+                    $customer->string('customer_email')->toString(),
+                    $customer->filled('customer_phone')
+                        ? $customer->string('customer_phone')->toString()
+                        : null,
+                );
 
                 Notification::make()->title('Customer updated.')->success()->send();
             });
