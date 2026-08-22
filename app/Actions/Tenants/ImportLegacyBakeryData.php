@@ -2,11 +2,16 @@
 
 namespace App\Actions\Tenants;
 
+use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ImportLegacyBakeryData
 {
+    public function __construct(
+        private readonly TenantSettingCipher $settingCipher,
+    ) {}
+
     /**
      * @param array<string, array<int, array<string, mixed>>> $data
      * @return array<string, int>
@@ -18,7 +23,12 @@ class ImportLegacyBakeryData
             $productIds = $this->importProducts($data['products'] ?? [], $categoryIds);
             $couponIds = $this->importCoupons($data['coupons'] ?? []);
             $customerIds = $this->importCustomers($data['orders'] ?? []);
-            $orderIds = $this->importOrders($data['orders'] ?? [], $customerIds, $couponIds);
+            $orderIds = $this->importOrders(
+                $data['orders'] ?? [],
+                $data['order_notes'] ?? [],
+                $customerIds,
+                $couponIds,
+            );
 
             $this->importOrderItems($data['order_items'] ?? [], $orderIds, $productIds);
             $this->importReviews($data['reviews'] ?? [], $productIds);
@@ -35,6 +45,7 @@ class ImportLegacyBakeryData
                 'coupons' => count($couponIds),
                 'customers' => count($customerIds),
                 'orders' => count($orderIds),
+                'order_notes' => count($data['order_notes'] ?? []),
                 'order_items' => count($data['order_items'] ?? []),
                 'reviews' => count($data['reviews'] ?? []),
                 'recipes' => count($data['recipes'] ?? []),
@@ -165,11 +176,12 @@ class ImportLegacyBakeryData
     }
 
     /** @param array<int, array<string, mixed>> $orders
+     * @param array<int, array<string, mixed>> $orderNotes
      * @param array<string, int> $customerIds
      * @param array<int, int> $couponIds
      * @return array<int, int>
      */
-    private function importOrders(array $orders, array $customerIds, array $couponIds): array
+    private function importOrders(array $orders, array $orderNotes, array $customerIds, array $couponIds): array
     {
         $ids = [];
 
@@ -194,7 +206,7 @@ class ImportLegacyBakeryData
                     'delivery_type' => $order['fulfillment_type'] ?? 'pickup',
                     'delivery_date' => $order['requested_date'] ?? null,
                     'delivery_time' => $order['requested_time'] ?? null,
-                    'notes' => $order['notes'] ?? null,
+                    'notes' => $this->orderNotes($order, $orderNotes),
                     'created_at' => $order['created_at'] ?? now(),
                     'updated_at' => $order['updated_at'] ?? now(),
                 ],
@@ -203,6 +215,39 @@ class ImportLegacyBakeryData
         }
 
         return $ids;
+    }
+
+    /**
+     * @param array<string, mixed> $order
+     * @param array<int, array<string, mixed>> $orderNotes
+     */
+    private function orderNotes(array $order, array $orderNotes): ?string
+    {
+        $notes = collect($orderNotes)
+            ->filter(fn (array $note): bool => $this->integerValue($note['order_id']) === $this->integerValue($order['id']))
+            ->sortBy([
+                ['created_at', 'asc'],
+                ['id', 'asc'],
+            ])
+            ->map(function (array $note): string {
+                $timestamp = $this->stringValue($note['created_at'] ?? 'Unknown date');
+                $type = Str::headline($this->stringValue($note['type'] ?? 'note'));
+
+                return "[{$timestamp}] [{$type}] {$this->stringValue($note['content'])}";
+            })
+            ->values();
+
+        $originalNotes = trim($this->stringValue($order['notes'] ?? ''));
+
+        if ($notes->isEmpty()) {
+            return $originalNotes !== '' ? $originalNotes : null;
+        }
+
+        $legacyHistory = "Legacy order history:\n" . $notes->implode("\n");
+
+        return $originalNotes !== ''
+            ? "{$originalNotes}\n\n{$legacyHistory}"
+            : $legacyHistory;
     }
 
     /** @param array<int, array<string, mixed>> $items
@@ -437,7 +482,10 @@ class ImportLegacyBakeryData
         foreach ($settings as $setting) {
             $legacyKey = $this->stringValue($setting['key']);
             $key = $keyMap[$legacyKey] ?? $legacyKey;
-            $value = $this->normalizeSettingValue($key, $setting['value']);
+            $value = $this->settingCipher->encrypt(
+                $key,
+                $this->normalizeSettingValue($key, $setting['value']),
+            );
             DB::table('settings')->updateOrInsert(
                 ['key' => $key],
                 ['value' => $value, 'updated_at' => now(), 'created_at' => $setting['created_at'] ?? now()],
