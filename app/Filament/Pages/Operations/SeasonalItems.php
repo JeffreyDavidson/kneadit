@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Actions\Inventory\AddSeasonalItem;
+use App\Actions\Inventory\RemoveSeasonalItem;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -116,7 +117,7 @@ class SeasonalItems extends Page
 
     public function deleteSeasonalItem(int $id): void
     {
-        SeasonalItem::query()->findOrFail($id)->delete();
+        resolve(RemoveSeasonalItem::class)($id);
 
         Notification::make()
             ->title('Seasonal item removed.')
