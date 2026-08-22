@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Actions\Marketing\ResetEmailTemplate;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -135,7 +136,7 @@ class ManageEmailTemplates extends Page
     {
         $type = EmailTemplateType::from($typeValue);
 
-        EmailTemplate::query()->where('email_type', $type)->delete();
+        resolve(ResetEmailTemplate::class)($type);
 
         Notification::make()
             ->title('Template reset to default')
