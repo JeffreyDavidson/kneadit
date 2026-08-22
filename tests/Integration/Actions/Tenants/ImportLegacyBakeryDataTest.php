@@ -2,9 +2,11 @@
 
 use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
+    config(['app.key' => 'base64:BskavyAdxjag1K/BGSEfPPiwB/QDha6hMH4H0i1wM7A=']);
     setUpTenantTest();
 });
 
@@ -31,6 +33,10 @@ it('imports a legacy catalog and order history idempotently while converting dol
             'payment_method' => 'cash',
             'coupon_id' => 25,
         ]],
+        'order_notes' => [
+            ['id' => 42, 'order_id' => 30, 'type' => 'system', 'content' => 'Email notification sent: Order Confirmed', 'created_at' => '2026-08-15 09:15:00'],
+            ['id' => 41, 'order_id' => 30, 'type' => 'status_change', 'content' => 'Status changed from Pending to Confirmed', 'created_at' => '2026-08-15 09:00:00'],
+        ],
         'order_items' => [['id' => 40, 'order_id' => 30, 'product_id' => 20, 'product_name' => 'Sourdough', 'unit_price' => '12.50', 'quantity' => 2]],
         'reviews' => [['id' => 50, 'name' => 'Jane Baker', 'email' => 'jane@example.com', 'rating' => 5, 'body' => 'Excellent', 'status' => 'approved', 'is_featured' => true]],
         'recipes' => [['id' => 60, 'product_id' => 20, 'name' => 'Sourdough Recipe', 'prep_time_minutes' => 30]],
@@ -48,6 +54,8 @@ it('imports a legacy catalog and order history idempotently while converting dol
             ['key' => 'tagline', 'value' => 'Freshly baked with love'],
             ['key' => 'delivery_fee_tiers', 'value' => '0-5:5.00,5-10:8.00,10+:12.00'],
             ['key' => 'operating_hours', 'value' => "Mon-Fri: 7am - 6pm\nSat: 8am - 4pm\nSun: Closed"],
+            ['key' => 'paypal_client_id', 'value' => 'legacy-client-id'],
+            ['key' => 'paypal_client_secret', 'value' => 'legacy-client-secret'],
         ],
     ];
 
@@ -55,7 +63,7 @@ it('imports a legacy catalog and order history idempotently while converting dol
     $firstResult = $import($data);
     $secondResult = $import($data);
 
-    expect($firstResult)->toMatchArray(['categories' => 1, 'products' => 1, 'customers' => 1, 'orders' => 1, 'order_items' => 1, 'reviews' => 1, 'settings' => 4])
+    expect($firstResult)->toMatchArray(['categories' => 1, 'products' => 1, 'customers' => 1, 'orders' => 1, 'order_notes' => 2, 'order_items' => 1, 'reviews' => 1, 'settings' => 6])
         ->and($secondResult)->toEqual($firstResult);
 
     test()->assertDatabaseCount('categories', 1)
@@ -91,11 +99,19 @@ it('imports a legacy catalog and order history idempotently while converting dol
 
     $deliveryFeeTiers = json_decode((string) DB::table('settings')->where('key', 'delivery_fee_tiers')->value('value'), true);
     $operatingHours = json_decode((string) DB::table('settings')->where('key', 'operating_hours')->value('value'), true);
+    $paypalClientId = DB::table('settings')->where('key', 'paypal_client_id')->value('value');
+    $paypalClientSecret = DB::table('settings')->where('key', 'paypal_client_secret')->value('value');
+    $orderNotes = DB::table('orders')->where('order_number', 'BOB-TEST')->value('notes');
 
     expect($deliveryFeeTiers)->toHaveCount(3)
         ->and($deliveryFeeTiers[0])->toMatchArray(['min_distance' => 0, 'max_distance' => 5, 'fee' => '5.00'])
         ->and($operatingHours['monday'])->toBe(['open' => '07:00', 'close' => '18:00'])
-        ->and($operatingHours['sunday'])->toBe([]);
+        ->and($operatingHours['sunday'])->toBe([])
+        ->and($paypalClientId)->not->toBe('legacy-client-id')
+        ->and($paypalClientSecret)->not->toBe('legacy-client-secret')
+        ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_id', $paypalClientId))->toBe('legacy-client-id')
+        ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_secret', $paypalClientSecret))->toBe('legacy-client-secret')
+        ->and($orderNotes)->toBe("Legacy order history:\n[2026-08-15 09:00:00] [Status Change] Status changed from Pending to Confirmed\n[2026-08-15 09:15:00] [System] Email notification sent: Order Confirmed");
 });
 
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {
