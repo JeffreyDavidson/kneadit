@@ -9,7 +9,9 @@ use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
 use App\Actions\Customers\SyncCateringQuoteItems;
 use App\Actions\Customers\UpdateCateringCustomerDetails;
+use App\Actions\Customers\UpdateCateringEventDetails;
 use App\Actions\Customers\UpdateCateringInquiryNotes;
+use App\DataTransferObjects\Customers\CateringEventDetails;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
@@ -138,15 +140,24 @@ class ViewCateringInquiry extends ViewRecord
                 Textarea::make('venue_address')->rows(2),
             ])
             ->action(function (array $data): void {
-                $this->record->update([
-                    'event_type' => $data['event_type'],
-                    'event_date' => $data['event_date'],
-                    'guest_count' => $data['guest_count'],
-                    'budget' => $data['budget'],
-                    'details' => $data['details'],
-                    'dietary_requirements' => $data['dietary_requirements'],
-                    'venue_address' => $data['venue_address'],
-                ]);
+                $event = new ValidatedInput($data);
+
+                resolve(UpdateCateringEventDetails::class)(
+                    $this->record,
+                    new CateringEventDetails(
+                        eventType: $event->string('event_type')->toString(),
+                        eventDate: $event->string('event_date')->toString(),
+                        guestCount: $event->integer('guest_count'),
+                        budget: $event->filled('budget') ? $event->float('budget') : null,
+                        details: $event->string('details')->toString(),
+                        dietaryRequirements: $event->filled('dietary_requirements')
+                            ? $event->string('dietary_requirements')->toString()
+                            : null,
+                        venueAddress: $event->filled('venue_address')
+                            ? $event->string('venue_address')->toString()
+                            : null,
+                    ),
+                );
 
                 Notification::make()->title('Event details updated.')->success()->send();
             });

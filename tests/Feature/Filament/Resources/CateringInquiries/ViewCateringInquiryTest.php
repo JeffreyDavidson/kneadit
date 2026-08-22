@@ -225,3 +225,28 @@ test('edit customer action updates contact fields', function () {
 
     expect($inquiry->fresh()->customer_name)->toBe('New Name');
 });
+
+test('edit event details action updates the inquiry', function () {
+    $inquiry = CateringInquiry::factory()->create();
+
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->callAction('editEventDetails', data: [
+            'event_type' => 'Wedding',
+            'event_date' => '2026-11-14',
+            'guest_count' => 72,
+            'budget' => 1800.50,
+            'details' => 'Dessert reception after the ceremony.',
+            'dietary_requirements' => null,
+            'venue_address' => '45 Garden Lane',
+        ]);
+
+    $inquiry->refresh();
+
+    expect($inquiry->event_type)->toBe('Wedding')
+        ->and($inquiry->event_date?->toDateString())->toBe('2026-11-14')
+        ->and($inquiry->guest_count)->toBe(72)
+        ->and($inquiry->budget?->dollars())->toBe(1800.50)
+        ->and($inquiry->details)->toBe('Dessert reception after the ceremony.')
+        ->and($inquiry->dietary_requirements)->toBeNull()
+        ->and($inquiry->venue_address)->toBe('45 Garden Lane');
+});
