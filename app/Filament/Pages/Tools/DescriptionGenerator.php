@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Tools;
 
+use App\Actions\Content\ApplyProductDescription;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -92,13 +93,16 @@ class DescriptionGenerator extends Page
         }
 
         $product = Product::query()->find($this->selectedProductId);
-        if ($product) {
-            $product->update(['description' => $this->descriptions[$index]]);
-            Notification::make()
-                ->title('Description applied!')
-                ->body("Description saved to {$product->name}.")
-                ->success()
-                ->send();
+        if (! $product) {
+            return;
         }
+
+        resolve(ApplyProductDescription::class)($product, $this->descriptions[$index]);
+
+        Notification::make()
+            ->title('Description applied!')
+            ->body("Description saved to {$product->name}.")
+            ->success()
+            ->send();
     }
 }
