@@ -171,7 +171,7 @@ class AppServiceProvider extends ServiceProvider
         $tenant = app()->bound(\Stancl\Tenancy\Contracts\Tenant::class)
             ? app(\Stancl\Tenancy\Contracts\Tenant::class)
             : tenancy()->tenant;
-        $plan = is_object($tenant) ? ($tenant->plan ?? null) : null;
+        $plan = data_get($tenant, 'plan');
 
         return $plan instanceof SubscriptionTier && $plan->meetsRequirement($required);
     }

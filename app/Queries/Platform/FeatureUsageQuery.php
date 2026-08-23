@@ -67,10 +67,12 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $max = (int) ($data->max('total') ?? 1);
+        $maxValue = $data->max('total');
+        $max = is_numeric($maxValue) ? (int) $maxValue : 1;
 
         return $data->map(function (FeatureUsageLog $row) use ($max): array {
-            $total = (int) ($row->getAttribute('total') ?? 0);
+            $totalValue = $row->getAttribute('total');
+            $total = is_numeric($totalValue) ? (int) $totalValue : 0;
 
             return [
                 'feature' => $row->feature,
@@ -100,9 +102,10 @@ class FeatureUsageQuery
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxCount = (int) ($logs->max(
+        $maxValue = $logs->max(
             fn (Collection $group): mixed => $group->sum('usage_count'),
-        ) ?? 1);
+        );
+        $maxCount = is_numeric($maxValue) ? (int) $maxValue : 1;
 
         $rows = [];
         foreach ($features as $feature) {
@@ -110,7 +113,7 @@ class FeatureUsageQuery
             foreach ($days as $day) {
                 $key = $feature . '|' . $day->toDateString();
                 $count = isset($logs[$key])
-                    ? (int) $logs[$key]->sum('usage_count')
+                    ? (is_numeric($countValue = $logs[$key]->sum('usage_count')) ? (int) $countValue : 0)
                     : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [

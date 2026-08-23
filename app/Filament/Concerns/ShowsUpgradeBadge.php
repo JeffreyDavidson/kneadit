@@ -15,7 +15,7 @@ trait ShowsUpgradeBadge
         $tenant = static::currentTenant();
 
         return cache()->remember('navigation-badge:upgrade:' . static::class . ':' . ($tenant?->getTenantKey() ?? 'central') . ':' . static::requiredTier()->value, 60, function () use ($tenant): ?string {
-            $current = $tenant?->plan;
+            $current = data_get($tenant, 'plan');
 
             if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
                 return null;
@@ -27,7 +27,7 @@ trait ShowsUpgradeBadge
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $current = static::currentTenant()?->plan;
+        $current = data_get(static::currentTenant(), 'plan');
 
         if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
             return null;
