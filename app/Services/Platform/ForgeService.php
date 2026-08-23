@@ -3,15 +3,18 @@
 namespace App\Services\Platform;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ForgeService
 {
-    protected string $baseUrl = 'https://forge.laravel.com/api/v1';
+    protected string $baseUrl = 'https://forge.laravel.com/api';
 
     protected string $token;
+
+    protected string $organization;
 
     protected string $serverId;
 
@@ -20,6 +23,7 @@ class ForgeService
     public function __construct()
     {
         $this->token = $this->configString('services.forge.token');
+        $this->organization = $this->configString('services.forge.organization');
         $this->serverId = $this->configString('services.forge.server_id');
         $this->siteId = $this->configString('services.forge.site_id');
     }
@@ -27,6 +31,7 @@ class ForgeService
     public static function isConfigured(): bool
     {
         return ! empty(config('services.forge.token'))
+            && ! empty(config('services.forge.organization'))
             && ! empty(config('services.forge.server_id'))
             && ! empty(config('services.forge.site_id'));
     }
@@ -34,49 +39,40 @@ class ForgeService
     protected function request(): PendingRequest
     {
         return Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withToken($this->token)
-            ->acceptJson()
+            ->accept('application/vnd.api+json')
+            ->contentType('application/vnd.api+json')
             ->baseUrl($this->baseUrl);
     }
 
     /**
-     * Add a custom domain alias to the site's nginx config.
+     * Add a custom domain to the Forge site.
      */
     public function addDomainAlias(string $domain): bool
     {
         try {
-            // Get current site config
-            $response = $this->request()->get("/servers/{$this->serverId}/sites/{$this->siteId}");
-
-            if (! $response->successful()) {
-                Log::error('Forge: failed to get site', ['status' => $response->status()]);
-
-                return false;
+            if ($this->findDomainId($domain) !== null) {
+                return true;
             }
 
-            $currentAliases = $this->aliasesFromSite($response->json('site'));
-
-            if (in_array($domain, $currentAliases)) {
-                return true; // Already added
-            }
-
-            $currentAliases[] = $domain;
-
-            // Update site aliases
-            $updateResponse = $this->request()->put(
-                "/servers/{$this->serverId}/sites/{$this->siteId}",
-                ['aliases' => $currentAliases],
+            $response = $this->request()->post(
+                $this->domainsPath(),
+                [
+                    'name' => $domain,
+                    'allow_wildcard_subdomains' => false,
+                    'www_redirect_type' => 'none',
+                ],
             );
 
-            if (! $updateResponse->successful()) {
-                Log::error('Forge: failed to add alias', [
+            if (! $response->successful()) {
+                Log::error('Forge: failed to add domain', [
                     'domain' => $domain,
-                    'status' => $updateResponse->status(),
+                    'status' => $response->status(),
                 ]);
 
                 return false;
             }
 
-            Log::info('Forge: domain alias added', ['domain' => $domain]);
+            Log::info('Forge: domain added', ['domain' => $domain]);
 
             return true;
         } catch (\Throwable $e) {
@@ -92,9 +88,17 @@ class ForgeService
     public function obtainSslCertificate(string $domain): bool
     {
         try {
+            $domainId = $this->findDomainId($domain);
+
+            if ($domainId === null) {
+                Log::error('Forge: domain not found for SSL request', ['domain' => $domain]);
+
+                return false;
+            }
+
             $response = $this->request()->post(
-                "/servers/{$this->serverId}/sites/{$this->siteId}/certificates/letsencrypt",
-                ['domains' => [$domain]],
+                "{$this->domainsPath()}/{$domainId}/certificates",
+                ['type' => 'letsencrypt'],
             );
 
             if (! $response->successful()) {
@@ -118,28 +122,20 @@ class ForgeService
     }
 
     /**
-     * Remove a domain alias from the site.
+     * Remove a custom domain from the Forge site.
      */
     public function removeDomainAlias(string $domain): bool
     {
         try {
-            $response = $this->request()->get("/servers/{$this->serverId}/sites/{$this->siteId}");
+            $domainId = $this->findDomainId($domain);
 
-            if (! $response->successful()) {
-                return false;
+            if ($domainId === null) {
+                return true;
             }
 
-            $currentAliases = array_values(array_filter(
-                $this->aliasesFromSite($response->json('site')),
-                fn (string $alias): bool => $alias !== $domain,
-            ));
-
-            $updateResponse = $this->request()->put(
-                "/servers/{$this->serverId}/sites/{$this->siteId}",
-                ['aliases' => $currentAliases],
-            );
-
-            return $updateResponse->successful();
+            return $this->request()
+                ->delete("{$this->domainsPath()}/{$domainId}")
+                ->successful();
         } catch (\Throwable $e) {
             Log::error('Forge: removeDomainAlias failed', ['error' => $e->getMessage()]);
 
@@ -152,19 +148,41 @@ class ForgeService
         return Config::string($key, '');
     }
 
-    /** @return list<string> */
-    private function aliasesFromSite(mixed $site): array
+    private function domainsPath(): string
     {
-        if (! is_array($site)) {
-            return [];
-        }
+        return "/orgs/{$this->organization}/servers/{$this->serverId}/sites/{$this->siteId}/domains";
+    }
 
-        $aliases = $site['aliases'] ?? null;
+    private function findDomainId(string $domain): ?string
+    {
+        $cursor = null;
 
-        if (! is_array($aliases)) {
-            return [];
-        }
+        do {
+            $response = $this->request()->get($this->domainsPath(), [
+                'page' => Arr::whereNotNull([
+                    'size' => 100,
+                    'cursor' => $cursor,
+                ]),
+            ])->throw();
 
-        return array_values(array_filter($aliases, is_string(...)));
+            $records = $response->json('data');
+            $record = collect(is_array($records) ? $records : [])->first(
+                fn (mixed $record): bool => is_array($record)
+                    && Arr::get($record, 'attributes.name') === $domain,
+            );
+
+            if (is_array($record)) {
+                $id = Arr::get($record, 'id');
+
+                if (is_int($id) || is_string($id)) {
+                    return (string) $id;
+                }
+            }
+
+            $nextCursor = $response->json('meta.next_cursor');
+            $cursor = is_string($nextCursor) && $nextCursor !== '' ? $nextCursor : null;
+        } while ($cursor !== null);
+
+        return null;
     }
 }
