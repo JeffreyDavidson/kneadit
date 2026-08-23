@@ -2,6 +2,8 @@
 
 namespace App\DataTransferObjects\GiftCards;
 
+use DateTimeInterface;
+
 final readonly class CreateGiftCardData
 {
     public function __construct(
@@ -43,6 +45,10 @@ final readonly class CreateGiftCardData
     {
         if ($value === null) {
             return null;
+        }
+
+        if ($value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
         }
 
         return self::stringValue($value, $key);

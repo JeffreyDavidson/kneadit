@@ -13,6 +13,8 @@ A production environment needs all of the following:
 
 Do not run tenant database files from ephemeral storage. `TENANT_DB_PATH` must resolve to durable storage shared by every process serving the application. Tenant database names are confined to that root, symlinked database files are refused, and newly provisioned files use owner-only permissions.
 
+Public uploads must also survive release replacement. On zero-downtime deployments, set `PUBLIC_STORAGE_PATH` to an absolute, writable directory outside the numbered release directories. Both the `public` filesystem disk and Laravel's `public/storage` link resolve to this path. Preserve and back up this directory with the tenant databases.
+
 ## Queue operations
 
 Local `composer run dev` starts `queue:listen` alongside the web server, logs, and Vite. Production should use a supervised `queue:work` process appropriate to the configured connection and restart workers after deployments.

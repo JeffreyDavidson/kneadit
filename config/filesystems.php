@@ -6,6 +6,12 @@ if (! is_string($appUrl)) {
     $appUrl = 'http://localhost';
 }
 
+$publicStoragePath = env('PUBLIC_STORAGE_PATH', storage_path('app/public'));
+
+if (! is_string($publicStoragePath) || $publicStoragePath === '') {
+    $publicStoragePath = storage_path('app/public');
+}
+
 return [
 
     /*
@@ -53,7 +59,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => $publicStoragePath,
             'url' => rtrim($appUrl, '/') . '/storage',
             'visibility' => 'public',
             'throw' => true,
@@ -85,7 +91,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path('storage') => $publicStoragePath,
     ],
 
 ];
