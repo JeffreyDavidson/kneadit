@@ -18,13 +18,7 @@ use App\Services\Settings\TenantSettings;
 
 beforeEach(function () {
     setUpCentralTest();
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize(new Tenant([
-        'id' => 'onboarding-steps-test',
-        'name' => 'Onboarding Steps Test Owner',
-        'email' => 'owner@onboarding-steps.test',
-        'store_name' => 'Onboarding Steps Test Bakery',
-    ]));
+    tenancy()->initialize(Tenant::factory()->create());
 });
 
 // --- CompleteStep ---

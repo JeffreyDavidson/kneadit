@@ -18,13 +18,7 @@ use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function () {
     setUpCentralTest();
-    tenancy()->getBootstrappersUsing = fn (): array => [];
-    tenancy()->initialize(new Tenant([
-        'id' => 'onboarding-test',
-        'name' => 'Onboarding Test Owner',
-        'email' => 'owner@onboarding.test',
-        'store_name' => 'Onboarding Test Bakery',
-    ]));
+    tenancy()->initialize(Tenant::factory()->create());
 
     test()->user = User::factory()->owner()->create([
 

@@ -16,7 +16,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
@@ -95,7 +95,7 @@ class CustomerDirectory extends Page
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function (Relation $query): void {
+            ->with(['orders' => function (HasMany $query): void {
                 $query->latest()->take(1);
             }]);
 
@@ -126,10 +126,10 @@ class CustomerDirectory extends Page
     public function getCustomerDetails(int $customerId): ?array
     {
         $customer = Customer::with([
-            'orders' => function (Relation $query) {
+            'orders' => function (HasMany $query): void {
                 $query->latest();
             },
-            'customerNotes' => function (Relation $query) {
+            'customerNotes' => function (HasMany $query): void {
                 $query->with('createdBy')->latest();
             },
         ])->find($customerId);

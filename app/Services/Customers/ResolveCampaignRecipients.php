@@ -44,7 +44,7 @@ class ResolveCampaignRecipients
 
         $segment = RfmSegment::tryFrom($targetSegment);
         if ($segment === null) {
-            return (new Customer)->newCollection();
+            return collect();
         }
 
         $now = now();
@@ -55,7 +55,7 @@ class ResolveCampaignRecipients
                 return false;
             }
 
-            $recencyDays = $now->copy()->diffInDays($lastOrderAt, true);
+            $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
             $frequency = filter_var($customer->getAttribute('frequency'), FILTER_VALIDATE_INT);
             $monetaryCents = filter_var($customer->getAttribute('monetary_cents'), FILTER_VALIDATE_INT);
 

@@ -14,7 +14,6 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
-use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
@@ -183,8 +182,11 @@ class AppServiceProvider extends ServiceProvider
 
     private function tenantMeetsRequirement(SubscriptionTier $required): bool
     {
-        $tenant = tenancy()->tenant;
+        $tenant = app()->bound(\Stancl\Tenancy\Contracts\Tenant::class)
+            ? app(\Stancl\Tenancy\Contracts\Tenant::class)
+            : tenancy()->tenant;
+        $plan = data_get($tenant, 'plan');
 
-        return $tenant instanceof Tenant && $tenant->plan->meetsRequirement($required);
+        return $plan instanceof SubscriptionTier && $plan->meetsRequirement($required);
     }
 }
