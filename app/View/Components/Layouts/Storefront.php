@@ -9,8 +9,8 @@ use Illuminate\View\Component;
 class Storefront extends Component
 {
     public function __construct(
-        public string $title = '',
-        public string $metaDescription = '',
+        public ?string $title = null,
+        public ?string $metaDescription = null,
     ) {}
 
     public function render(): View
