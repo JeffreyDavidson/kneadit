@@ -130,6 +130,8 @@ class SeedDemoCommand extends Command
                 continue;
             }
 
+            Tenant::query()->whereKey($bakery['id'])->update(['is_demo' => true]);
+
             $domain = $bakery['id'] . '.kneadit.test';
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
             $created[] = $bakery['id'];
