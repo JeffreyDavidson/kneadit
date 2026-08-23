@@ -14,6 +14,7 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;

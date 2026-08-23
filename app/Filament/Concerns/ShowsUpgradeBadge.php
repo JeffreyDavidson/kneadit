@@ -3,8 +3,8 @@
 namespace App\Filament\Concerns;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Str;
-use Stancl\Tenancy\Contracts\Tenant;
 
 trait ShowsUpgradeBadge
 {
@@ -13,8 +13,9 @@ trait ShowsUpgradeBadge
     public static function getNavigationBadge(): ?string
     {
         $tenant = static::currentTenant();
+        $tenantKey = $tenant instanceof Tenant ? $tenant->id : 'central';
 
-        return cache()->remember('navigation-badge:upgrade:' . static::class . ':' . ($tenant?->getTenantKey() ?? 'central') . ':' . static::requiredTier()->value, 60, function () use ($tenant): ?string {
+        return cache()->remember('navigation-badge:upgrade:' . static::class . ':' . $tenantKey . ':' . static::requiredTier()->value, 60, function () use ($tenant): ?string {
             $current = data_get($tenant, 'plan');
 
             if ($current instanceof SubscriptionTier && $current->meetsRequirement(static::requiredTier())) {
