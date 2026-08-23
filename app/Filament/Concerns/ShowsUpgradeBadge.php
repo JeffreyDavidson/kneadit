@@ -3,8 +3,8 @@
 namespace App\Filament\Concerns;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Models\Platform\Tenant;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Contracts\Tenant;
 
 trait ShowsUpgradeBadge
 {
@@ -38,7 +38,9 @@ trait ShowsUpgradeBadge
 
     protected static function currentTenant(): ?Tenant
     {
-        $tenant = tenancy()->tenant;
+        $tenant = app()->bound(Tenant::class)
+            ? app(Tenant::class)
+            : tenancy()->tenant;
 
         return $tenant instanceof Tenant ? $tenant : null;
     }
