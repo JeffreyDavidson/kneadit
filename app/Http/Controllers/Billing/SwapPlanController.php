@@ -14,8 +14,8 @@ class SwapPlanController extends Controller
 {
     public function __invoke(#[CurrentUser] User $user, string $plan): RedirectResponse
     {
-        $priceId = Config::string("kneadit.stripe_prices.{$plan}");
-        abort_unless($priceId !== '', 404, 'Plan not found.');
+        $priceId = Config::get("kneadit.stripe_prices.{$plan}");
+        abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
         try {
             $user->subscription('default')?->swap($priceId);
