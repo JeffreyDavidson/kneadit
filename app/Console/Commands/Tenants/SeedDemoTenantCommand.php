@@ -41,6 +41,7 @@ class SeedDemoTenantCommand extends Command
                 'name' => 'Demo Owner',
                 'email' => 'demo@getkneadit.app',
                 'store_name' => 'Demo Bakery',
+                'is_demo' => true,
             ]);
 
         // Register both the full hostname AND the bare subdomain so the tenant
