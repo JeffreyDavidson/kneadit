@@ -5,7 +5,6 @@ namespace App\Queries\Customers;
 use App\Builders\Orders\OrderQueryBuilder;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Number;
 
@@ -18,13 +17,13 @@ class CustomerDirectoryStatsQuery
 
         // orders.total is bigint cents (migration 2026_04_22_201500); divide back
         // to dollars at the boundary.
-        $avgLifetimeValue = Arr::float(['value' => Order::query()->active()
+        $avgLifetimeValue = (float) (Order::query()->active()
             ->selectRaw('AVG(customer_total) as avg_ltv')
             ->fromSub(
                 Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
                 'customer_totals',
             )
-            ->value('avg_ltv')], 'value', 0.0) / 100;
+            ->value('avg_ltv') ?? 0) / 100;
 
         $atRiskDays = Config::integer('analytics.at_risk_threshold_days', 30);
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);

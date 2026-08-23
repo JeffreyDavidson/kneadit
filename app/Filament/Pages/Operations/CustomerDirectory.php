@@ -95,7 +95,7 @@ class CustomerDirectory extends Page
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function (EloquentBuilder $query): void {
+            ->with(['orders' => function ($query): void {
                 $query->latest()->take(1);
             }]);
 
@@ -126,7 +126,7 @@ class CustomerDirectory extends Page
     public function getCustomerDetails(int $customerId): ?array
     {
         $customer = Customer::with([
-            'orders' => function (EloquentBuilder $query) {
+            'orders' => function ($query) {
                 $query->latest();
             },
             'customerNotes' => function (EloquentBuilder $query) {
