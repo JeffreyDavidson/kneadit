@@ -55,11 +55,11 @@ class ResolveCampaignRecipients
                 return false;
             }
 
-            $recencyDays = filter_var($now->copy()->diffInDays($lastOrderAt, true), FILTER_VALIDATE_INT);
+            $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
             $frequency = filter_var($customer->getAttribute('frequency'), FILTER_VALIDATE_INT);
             $monetaryCents = filter_var($customer->getAttribute('monetary_cents'), FILTER_VALIDATE_INT);
 
-            if ($recencyDays === false || $frequency === false || $monetaryCents === false) {
+            if ($frequency === false || $monetaryCents === false) {
                 return false;
             }
 
