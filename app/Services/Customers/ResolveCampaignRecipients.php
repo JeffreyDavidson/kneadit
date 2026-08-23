@@ -44,7 +44,7 @@ class ResolveCampaignRecipients
 
         $segment = RfmSegment::tryFrom($targetSegment);
         if ($segment === null) {
-            return collect();
+            return (new Customer)->newCollection();
         }
 
         $now = now();
