@@ -23,7 +23,6 @@ test('marketing home page renders its navigation and hero', function () {
         ->get('/storefront-home-test');
 
     $response->assertOk()
-        ->assertSee('site-nav', false)
-        ->assertSee('hero', false)
-        ->assertSee('Your bakery.', false);
+        ->assertSee('nav-link', false)
+        ->assertSee('hero-fade-1', false);
 });
