@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantDatabasePath;
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -20,9 +21,9 @@ use function Laravel\Prompts\warning;
 #[Description('Diagnose tenant rows vs SQLite files and optionally repair drift')]
 class DoctorTenantsCommand extends Command
 {
-    public function handle(TenantSQLiteDatabaseManager $manager): int
+    public function handle(TenantSQLiteDatabaseManager $manager, TenantDatabasePath $tenantDatabasePath): int
     {
-        $report = $this->scan();
+        $report = $this->scan($tenantDatabasePath);
 
         $this->info('Tenant diagnostic:');
         $this->line("  ✓ Healthy:        {$report['healthy']}");
@@ -55,7 +56,7 @@ class DoctorTenantsCommand extends Command
     /**
      * @return array{healthy: int, orphanRows: list<Tenant>, orphanFiles: list<string>}
      */
-    private function scan(): array
+    private function scan(TenantDatabasePath $tenantDatabasePath): array
     {
         $orphanRows = [];
         $orphanFiles = [];
@@ -65,7 +66,7 @@ class DoctorTenantsCommand extends Command
         foreach (Tenant::all() as $tenant) {
             /** @var Tenant $tenant */
             $name = (string) $tenant->database()->getName();
-            $path = (string) database_path($name);
+            $path = $tenantDatabasePath->resolve($name);
             $expectedFiles[$name] = true;
 
             if (file_exists($path)) {
@@ -75,7 +76,9 @@ class DoctorTenantsCommand extends Command
             }
         }
 
-        foreach (glob((string) database_path('tenant*')) ?: [] as $file) {
+        $tenantDbDirectory = dirname($tenantDatabasePath->resolve('tenant'));
+
+        foreach (glob("{$tenantDbDirectory}/tenant*") ?: [] as $file) {
             $name = basename($file);
             if (! isset($expectedFiles[$name])) {
                 $orphanFiles[] = $file;
