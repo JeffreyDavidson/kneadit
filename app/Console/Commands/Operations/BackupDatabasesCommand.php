@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Operations;
 
+use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -13,7 +15,7 @@ use Illuminate\Support\Str;
 #[Description('Backup central and all tenant SQLite databases')]
 class BackupDatabasesCommand extends Command
 {
-    public function handle(): int
+    public function handle(TenantDatabasePath $tenantDatabasePath): int
     {
         $backupDir = $this->getBackupDir();
         $timestamp = now()->format('Y-m-d_H-i-s');
@@ -38,12 +40,21 @@ class BackupDatabasesCommand extends Command
         // 2. Backup all tenant databases
         $tenantDbDir = Config::string('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir)) {
-            $tenantFiles = glob("{$tenantDbDir}/*.sqlite") ?: [];
             $count = 0;
 
-            foreach ($tenantFiles as $tenantDb) {
+            foreach (Tenant::all() as $tenant) {
+                $databaseName = (string) $tenant->database()->getName();
+                $tenantDb = $tenantDatabasePath->resolve($databaseName);
+
+                if (! is_file($tenantDb) || is_link($tenantDb)) {
+                    $this->warn("  ⚠ Tenant DB not found: {$databaseName}");
+
+                    continue;
+                }
+
                 $filename = basename($tenantDb);
                 copy($tenantDb, "{$backupPath}/{$filename}");
+                chmod("{$backupPath}/{$filename}", 0600);
                 $count++;
             }
 

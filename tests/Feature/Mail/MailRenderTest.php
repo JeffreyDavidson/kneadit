@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\Orders\OrderStatus;
+use App\Mail\Customers\NewContactMessageNotificationMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WelcomeBakerMail;
+use App\Models\Customers\ContactMessage;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 
@@ -20,6 +22,19 @@ test('RepeatOrderReminderMail renders', function () {
     $customer = Customer::factory()->create();
 
     expect((new RepeatOrderReminderMail($customer, 30))->render())->toBeString()->not->toBeEmpty();
+});
+
+test('NewContactMessageNotificationMail renders', function () {
+    $message = ContactMessage::factory()->create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'subject' => 'Custom cake',
+        'message' => 'Can you make a birthday cake?',
+    ]);
+
+    expect((new NewContactMessageNotificationMail($message))->render())
+        ->toContain('Jane Baker')
+        ->toContain('Can you make a birthday cake?');
 });
 
 test('WelcomeBakerMail renders', function () {
