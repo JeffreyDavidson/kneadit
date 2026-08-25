@@ -1,6 +1,9 @@
 <?php
 
 use App\Console\Commands\Operations\BackupDatabasesCommand;
+use App\Models\Platform\Tenant;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
@@ -124,4 +127,31 @@ test('backup handles missing central database gracefully', function () {
 test('backup reports tenant database count or missing directory', function () {
     $this->artisan('backup:databases')
         ->assertSuccessful();
+});
+
+test('backup includes extensionless tenant databases from the configured directory', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
+    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    File::ensureDirectoryExists($tenantDbDirectory);
+    config(['tenancy.tenant_db_path' => $tenantDbDirectory]);
+
+    try {
+        $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'backup-tenant']));
+        $databaseName = (string) $tenant->database()->getName();
+        File::put("{$tenantDbDirectory}/{$databaseName}", 'tenant database');
+
+        $this->artisan('backup:databases')
+            ->expectsOutputToContain('1 tenant database(s)')
+            ->assertSuccessful();
+
+        expect("{$backupDirectory}/{$databaseName}")
+            ->toBeFile()
+            ->and(fileperms("{$backupDirectory}/{$databaseName}") & 0777)->toBe(0600);
+    } finally {
+        Carbon::setTestNow();
+        File::deleteDirectory($tenantDbDirectory);
+        File::deleteDirectory($backupDirectory);
+    }
 });
