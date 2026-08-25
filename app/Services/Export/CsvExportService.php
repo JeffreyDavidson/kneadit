@@ -94,7 +94,10 @@ class CsvExportService
                             $csvRow[] = $row->{$column} ?? '';
                         }
                     }
-                    fputcsv($handle, $csvRow);
+                    fputcsv($handle, array_map(
+                        fn (mixed $value): bool|float|int|string => is_scalar($value) ? $value : '',
+                        $csvRow,
+                    ));
                 }
             });
     }

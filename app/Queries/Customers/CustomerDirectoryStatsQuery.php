@@ -17,14 +17,16 @@ class CustomerDirectoryStatsQuery
 
         // orders.total is bigint cents (migration 2026_04_22_201500); divide back
         // to dollars at the boundary.
-        $avgLifetimeValueValue = Order::query()->active()
+        $averageLifetimeValue = Order::query()->active()
             ->selectRaw('AVG(customer_total) as avg_ltv')
             ->fromSub(
                 Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
                 'customer_totals',
             )
             ->value('avg_ltv');
-        $avgLifetimeValue = (is_numeric($avgLifetimeValueValue) ? (float) $avgLifetimeValueValue : 0.0) / 100;
+        $avgLifetimeValue = is_numeric($averageLifetimeValue)
+            ? (float) $averageLifetimeValue / 100
+            : 0.0;
 
         $atRiskDays = Config::integer('analytics.at_risk_threshold_days', 30);
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);

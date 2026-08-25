@@ -66,8 +66,8 @@ class WeeklyPrepPlanner extends Page
     public function loadWeeklyData(): void
     {
         if (! $this->selectedWeekStart) {
-            $this->weeklyOrders = collect();
-            $this->prepSchedule = collect();
+            $this->weeklyOrders = new Collection;
+            $this->prepSchedule = new Collection;
 
             return;
         }

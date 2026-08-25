@@ -82,6 +82,11 @@ pest()->extend(TestCase::class)
     ->afterEach($cleanupTenantFiles)
     ->in('Feature', 'Integration', 'Unit', 'Browser');
 
+pest()->tia()
+    ->always()
+    ->locally()
+    ->filtered();
+
 /*
 |--------------------------------------------------------------------------
 | Tenant Test Helpers
@@ -150,7 +155,7 @@ function verifiedOrdersSession(array $orders): array
 |
 | The session file expires every two hours (Laravel session lifetime).
 | When the helper detects a stale or missing session it transparently
-| re-runs prepare-admin-session.py — first test pays the ~30s login cost,
+| re-runs prepare-admin-session.mjs — first test pays the login cost,
 | every subsequent test uses the warm session.
 */
 
@@ -200,13 +205,13 @@ function ensureFreshAdminSessions(string $referencedPath): void
         return;
     }
 
-    $script = base_path('tests/Browser/Helpers/prepare-admin-session.py');
+    $script = base_path('tests/Browser/Helpers/prepare-admin-session.mjs');
 
     throw_unless(file_exists($script), RuntimeException::class, "Login helper missing: {$script}");
 
     $output = [];
     $exitCode = 0;
-    exec('python3 ' . escapeshellarg($script) . ' 2>&1', $output, $exitCode);
+    exec('node ' . escapeshellarg($script) . ' 2>&1', $output, $exitCode);
 
     if ($exitCode !== 0) {
         throw new RuntimeException(

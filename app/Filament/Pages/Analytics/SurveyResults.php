@@ -48,35 +48,33 @@ class SurveyResults extends Page
             return null;
         }
 
-        return response()->streamDownload(function () use ($survey) {
+        return response()->streamDownload(static function () use ($survey) {
+            $csvValue = static fn (mixed $value): bool|float|int|string|null => is_scalar($value) || $value === null
+                ? $value
+                : '';
             $handle = fopen('php://output', 'w');
             throw_if($handle === false, \RuntimeException::class, 'Failed to open file');
             $questions = $survey->questions;
             $headers = ['Response #', 'Customer Name', 'Customer Email', 'Date'];
             foreach ($questions as $q) {
-                $headers[] = $this->csvValue($q['question']);
+                $headers[] = $csvValue($q['question']);
             }
             fputcsv($handle, $headers);
 
             foreach ($survey->responses as $i => $response) {
                 $row = [
                     $i + 1,
-                    $this->csvValue($response->customer_name),
-                    $this->csvValue($response->customer_email),
+                    $csvValue($response->customer_name),
+                    $csvValue($response->customer_email),
                     $response->created_at?->format('Y-m-d H:i'),
                 ];
                 foreach ($questions as $qi => $q) {
-                    $row[] = $this->csvValue($response->answers[$qi] ?? '');
+                    $row[] = $csvValue($response->answers[$qi] ?? '');
                 }
                 fputcsv($handle, $row);
             }
             fclose($handle);
         }, "survey-{$survey->id}-results.csv");
-    }
-
-    private function csvValue(mixed $value): bool|float|int|string|null
-    {
-        return is_scalar($value) || $value === null ? $value : '';
     }
 
     protected function getViewData(): array

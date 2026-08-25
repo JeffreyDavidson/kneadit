@@ -5,6 +5,7 @@ namespace App\Queries\Platform;
 use App\Models\Platform\FeatureUsageLog;
 use App\Models\Platform\Tenant;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
@@ -67,12 +68,11 @@ class FeatureUsageQuery
             ->orderByDesc('total')
             ->get();
 
-        $maxValue = $data->max('total');
-        $max = is_numeric($maxValue) ? (int) $maxValue : 1;
+        $maximumTotal = $data->max('total');
+        $max = is_numeric($maximumTotal) ? (int) $maximumTotal : 1;
 
         return $data->map(function (FeatureUsageLog $row) use ($max): array {
-            $totalValue = $row->getAttribute('total');
-            $total = is_numeric($totalValue) ? (int) $totalValue : 0;
+            $total = Arr::integer($row->getAttributes(), 'total', 0);
 
             return [
                 'feature' => $row->feature,
@@ -102,10 +102,10 @@ class FeatureUsageQuery
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
-        $maxValue = $logs->max(
+        $maximumCount = $logs->max(
             fn (Collection $group): mixed => $group->sum('usage_count'),
         );
-        $maxCount = is_numeric($maxValue) ? (int) $maxValue : 1;
+        $maxCount = is_numeric($maximumCount) ? (int) $maximumCount : 1;
 
         $rows = [];
         foreach ($features as $feature) {
@@ -113,7 +113,7 @@ class FeatureUsageQuery
             foreach ($days as $day) {
                 $key = $feature . '|' . $day->toDateString();
                 $count = isset($logs[$key])
-                    ? (is_numeric($countValue = $logs[$key]->sum('usage_count')) ? (int) $countValue : 0)
+                    ? Arr::integer(['count' => $logs[$key]->sum('usage_count')], 'count', 0)
                     : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [

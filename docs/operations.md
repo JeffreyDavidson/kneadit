@@ -132,7 +132,7 @@ Browser tests use Pest Browser/Playwright against live local URLs. Defaults are:
 - `BROWSER_TEST_CENTRAL_URL=http://kneadit.test`
 - `BROWSER_TEST_STOREFRONT_URL=http://browser-test.kneadit.test`
 
-They expect the central application and a `browser-test` tenant to be reachable, frontend assets to be available, and fixture records/authentication state required by admin tests to exist. `tests/Browser/Helpers/prepare-admin-session.py` creates browser authentication state used by authenticated central and tenant visits.
+They expect the central application and a `browser-test` tenant to be reachable, frontend assets to be available, and fixture records/authentication state required by admin tests to exist. `tests/Browser/Helpers/prepare-admin-session.mjs` creates browser authentication state used by authenticated central and tenant visits with the Playwright dependency declared in `package.json`.
 
 A practical local sequence is:
 
@@ -140,7 +140,7 @@ A practical local sequence is:
 2. Start the application and Vite with `composer run dev` (or serve prebuilt assets).
 3. Provision the tenant fixture: `php artisan tenants:provision-test-tenant`.
 4. Seed the central fixture: `php artisan db:seed --class="Database\\Seeders\\BrowserTestCentralFixtureSeeder"`.
-5. Create the authenticated browser sessions: `python3 tests/Browser/Helpers/prepare-admin-session.py`.
+5. Create the authenticated browser sessions: `node tests/Browser/Helpers/prepare-admin-session.mjs`.
 6. Run `php artisan test --testsuite=Browser` or a targeted browser file.
 
 Browser tests perform real writes. Use disposable local fixture data, never a production tenant.

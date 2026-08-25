@@ -2,7 +2,7 @@
 
 KneadIt is a multi-tenant SaaS application for independent bakeries. It provides each bakery with a public storefront and a Filament administration panel for orders, products, customers, operations, marketing, and reporting. The central application handles registration, onboarding, subscriptions, platform administration, and public marketing content.
 
-KneadIt runs on PHP 8.4, Laravel 13, Filament 5, Livewire 4, Tailwind CSS 4, Vite 7, Pest 4, and `stancl/tenancy` 3.
+KneadIt runs on PHP 8.4, Laravel 13, Filament 5, Livewire 4, Tailwind CSS 4, Vite 7, Pest 5, PHPUnit 13, and `stancl/tenancy` 3.
 
 ## Local setup
 

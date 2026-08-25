@@ -2,6 +2,7 @@
 
 namespace App\Services\Platform;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Services\Settings\PlatformSettingsManager;
 use Throwable;
 
@@ -58,7 +59,7 @@ class ScheduledTaskMonitor
 
         $status = json_decode($value, true);
 
-        return is_array($status) ? $status : [];
+        return SettingValue::map($status);
     }
 
     /** @param array<string, mixed> $status */

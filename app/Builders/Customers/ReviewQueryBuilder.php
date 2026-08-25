@@ -5,6 +5,7 @@ namespace App\Builders\Customers;
 use App\Models\Engagement\Review;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 
 /** @extends Builder<Review> */
 class ReviewQueryBuilder extends Builder
@@ -57,8 +58,10 @@ class ReviewQueryBuilder extends Builder
             ->first();
 
         return (object) [
-            'avg_rating' => (float) ($stats->avg_rating ?? 0),
-            'total_count' => (int) ($stats->total_count ?? 0),
+            'avg_rating' => Number::parseFloat(
+                (string) (is_scalar($stats->avg_rating ?? null) ? ($stats->avg_rating ?? 0) : 0),
+            ) ?: 0.0,
+            'total_count' => Arr::integer(['value' => $stats->total_count ?? 0], 'value', 0),
         ];
     }
 

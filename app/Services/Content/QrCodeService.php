@@ -2,7 +2,9 @@
 
 namespace App\Services\Content;
 
+use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Stringable;
 
 class QrCodeService
 {
@@ -38,11 +40,11 @@ class QrCodeService
             return '';
         }
 
-        if (is_object($value) && method_exists($value, '__toString')) {
-            return $value->__toString();
+        if (is_string($value) || $value instanceof Stringable) {
+            return Str::of($value)->toString();
         }
 
-        return is_string($value) ? $value : '';
+        return '';
     }
 
     /**

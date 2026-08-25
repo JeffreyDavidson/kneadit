@@ -52,7 +52,7 @@ class ShoppingListGenerator extends Page
     {
         $this->startDate = now()->format('Y-m-d');
         $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
-        $this->shoppingList = collect();
+        $this->shoppingList = new Collection;
     }
 
     public function generateShoppingList(OrderIngredientAggregator $service): void

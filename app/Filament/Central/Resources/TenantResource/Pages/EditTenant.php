@@ -11,7 +11,7 @@ class EditTenant extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('view', ['record' => $this->record]);
+        return TenantResource::getUrl('view', ['record' => $this->record]);
     }
 
     /** Notes are surfaced on the View page's Notes tab; don't duplicate them here. */

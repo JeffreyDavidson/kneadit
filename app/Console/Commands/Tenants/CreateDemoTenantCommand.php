@@ -11,6 +11,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
+use Stancl\Tenancy\Database\Models\Domain;
 
 #[Signature('tenant:demo {--fresh : Drop and recreate the demo tenant}')]
 #[Description('Create a demo tenant for local testing')]
@@ -55,10 +56,11 @@ class CreateDemoTenantCommand extends Command
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
             'is_active' => true,
+            'is_demo' => true,
         ]);
 
-        $tenant->domains()->create(['domain' => $domain]);
-        $tenant->domains()->create(['domain' => $subdomain]);
+        Domain::query()->create(['domain' => $domain, 'tenant_id' => $tenant->id]);
+        Domain::query()->create(['domain' => $subdomain, 'tenant_id' => $tenant->id]);
 
         // Verify tenant database was created
         $dbName = 'tenant' . $subdomain;

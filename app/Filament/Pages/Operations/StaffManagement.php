@@ -18,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
@@ -110,9 +111,9 @@ class StaffManagement extends Page
             ->action(function (array $data): void {
                 try {
                     resolve(SendStaffInvitation::class)(
-                        email: $data['email'],
-                        role: UserRole::from($data['role']),
-                        invitedBy: (int) Auth::id(),
+                        email: Arr::string($data, 'email'),
+                        role: UserRole::from(Arr::string($data, 'role')),
+                        invitedBy: Arr::integer(['id' => Auth::id()], 'id'),
                     );
 
                     Notification::make()
@@ -162,7 +163,7 @@ class StaffManagement extends Page
                     ->native(false),
             ])
             ->action(function (array $data, array $arguments): void {
-                $role = UserRole::tryFrom($data['role']);
+                $role = UserRole::tryFrom(Arr::string($data, 'role'));
 
                 if (! $role) {
                     return;
@@ -170,9 +171,9 @@ class StaffManagement extends Page
 
                 try {
                     resolve(ChangeStaffRole::class)(
-                        userId: (int) $arguments['user'],
+                        userId: Arr::integer($arguments, 'user'),
                         newRole: $role,
-                        currentUserId: (int) Auth::id(),
+                        currentUserId: Arr::integer(['id' => Auth::id()], 'id'),
                     );
 
                     Notification::make()
@@ -207,8 +208,8 @@ class StaffManagement extends Page
             ->action(function (array $arguments): void {
                 try {
                     resolve(RemoveStaffMember::class)(
-                        userId: (int) $arguments['user'],
-                        currentUserId: (int) Auth::id(),
+                        userId: Arr::integer($arguments, 'user'),
+                        currentUserId: Arr::integer(['id' => Auth::id()], 'id'),
                     );
 
                     Notification::make()
@@ -235,7 +236,7 @@ class StaffManagement extends Page
             ->modalDescription('The invite link will stop working. You can always send a fresh invitation.')
             ->modalSubmitActionLabel('Revoke')
             ->action(function (array $arguments): void {
-                resolve(RevokeStaffInvitation::class)((int) $arguments['invitation']);
+                resolve(RevokeStaffInvitation::class)(Arr::integer($arguments, 'invitation'));
 
                 Notification::make()
                     ->title('Invitation revoked')

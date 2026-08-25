@@ -6,6 +6,7 @@ use App\ValueObjects\Money;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 
 class AmountRangeFilter extends Filter
 {
@@ -21,24 +22,33 @@ class AmountRangeFilter extends Filter
         ]);
 
         $this->query(function (Builder $query, array $data) use ($column) {
+            $minimumValue = $data['min_amount'] ?? 0;
+            $maximumValue = $data['max_amount'] ?? 0;
+            $minimum = Number::parseFloat((string) (is_scalar($minimumValue) ? $minimumValue : 0)) ?: 0.0;
+            $maximum = Number::parseFloat((string) (is_scalar($maximumValue) ? $maximumValue : 0)) ?: 0.0;
+
             return $query
                 ->when(
-                    $data['min_amount'],
-                    fn (Builder $query, string $amount) => $query->where($column, '>=', Money::fromDollars((float) $amount)->cents()),
+                    $minimum > 0,
+                    fn (Builder $query) => $query->where($column, '>=', Money::fromDollars($minimum)->cents()),
                 )
                 ->when(
-                    $data['max_amount'],
-                    fn (Builder $query, string $amount) => $query->where($column, '<=', Money::fromDollars((float) $amount)->cents()),
+                    $maximum > 0,
+                    fn (Builder $query) => $query->where($column, '<=', Money::fromDollars($maximum)->cents()),
                 );
         });
 
         $this->indicateUsing(function (array $data): array {
             $indicators = [];
-            if ($data['min_amount'] ?? null) {
-                $indicators[] = 'Min: $' . $data['min_amount'];
+            $minimumValue = $data['min_amount'] ?? 0;
+            $maximumValue = $data['max_amount'] ?? 0;
+            $minimum = Number::parseFloat((string) (is_scalar($minimumValue) ? $minimumValue : 0)) ?: 0.0;
+            $maximum = Number::parseFloat((string) (is_scalar($maximumValue) ? $maximumValue : 0)) ?: 0.0;
+            if ($minimum > 0) {
+                $indicators[] = 'Min: $' . $minimum;
             }
-            if ($data['max_amount'] ?? null) {
-                $indicators[] = 'Max: $' . $data['max_amount'];
+            if ($maximum > 0) {
+                $indicators[] = 'Max: $' . $maximum;
             }
 
             return $indicators;

@@ -145,8 +145,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
-- pestphp/pest (PEST) - v4
-- phpunit/phpunit (PHPUNIT) - v12
+- pestphp/pest (PEST) - v5
+- phpunit/phpunit (PHPUNIT) - v13
 - rector/rector (RECTOR) - v2
 - alpinejs (ALPINEJS) - v3
 - tailwindcss (TAILWINDCSS) - v4
@@ -296,8 +296,8 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 # Laravel Pint Code Formatter
 
-- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
+- If you have modified any PHP or Blade files, you must run `vendor/bin/pint --dirty --blade --format agent` before finalizing changes to ensure your code matches the project's expected style.
+- Do not run `vendor/bin/pint --blade --test --format agent`, simply run `vendor/bin/pint --blade --format agent` to fix any formatting issues.
 
 === pest/core rules ===
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CheckCapacityRequest extends FormRequest
@@ -24,7 +25,7 @@ class CheckCapacityRequest extends FormRequest
     /** @return array<string, mixed> */
     public function validationData(): array
     {
-        return array_merge(parent::validationData(), [
+        return array_merge(SettingValue::map(parent::validationData()), [
             'date' => $this->route('date'),
         ]);
     }

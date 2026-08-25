@@ -9,6 +9,7 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class CustomerLoyalty
 {
@@ -41,9 +42,9 @@ class CustomerLoyalty
             ->first();
 
         return new LoyaltyBalance(
-            earned: (int) ($stats->earned ?? 0),
-            redeemed: (int) ($stats->redeemed ?? 0),
-            adjusted: (int) ($stats->adjusted ?? 0),
+            earned: Arr::integer(['value' => $stats->earned ?? 0], 'value', 0),
+            redeemed: Arr::integer(['value' => $stats->redeemed ?? 0], 'value', 0),
+            adjusted: Arr::integer(['value' => $stats->adjusted ?? 0], 'value', 0),
         );
     }
 

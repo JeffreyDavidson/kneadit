@@ -2,9 +2,10 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Models\Platform\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Pennant\Feature;
-use Stancl\Tenancy\Contracts\Tenant;
 
 pest()->use(RefreshDatabase::class);
 
@@ -12,40 +13,14 @@ beforeEach(fn () => setUpTenantTest());
 
 function setTenantPlanForAccess(string $plan): void
 {
-    $tenant = new class($plan) implements Tenant {
-        public ?SubscriptionTier $plan;
-
-        public function __construct(string $plan)
-        {
-            $this->plan = SubscriptionTier::from($plan);
-        }
-
-        public function getTenantKeyName(): string
-        {
-            return 'id';
-        }
-
-        public function getTenantKey()
-        {
-            return 'test';
-        }
-
-        public function getInternal(string $key)
-        {
-            return $key === 'plan' ? $this->plan : null;
-        }
-
-        public function setInternal(string $key, $value) {}
-
-        public function run(callable $callback)
-        {
-            return $callback($this);
-        }
-    };
-
-    app()->instance(Tenant::class, $tenant);
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize(new Tenant([
+        'id' => 'access-control-test',
+        'plan' => SubscriptionTier::from($plan),
+    ]));
 
     Feature::purge(['growth-features', 'pro-features']);
+    Cache::flush();
 }
 
 test('growth-features is active for growth plan', function () {

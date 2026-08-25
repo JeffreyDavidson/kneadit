@@ -10,6 +10,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Stancl\Tenancy\Database\Models\Domain;
 
 #[Signature('tenants:provision-test-tenant {--fresh : Drop and recreate the browser-test tenant}')]
 #[Description('Provision the canonical browser-test tenant (tenant + domain + DB + migrations + BrowserTestFixtureSeeder)')]
@@ -65,8 +66,8 @@ class ProvisionTestTenantCommand extends Command
             'storefront_enabled' => true,
         ]);
 
-        $tenant->domains()->create(['domain' => $this->domain()]);
-        $tenant->domains()->create(['domain' => self::TENANT_ID]);
+        Domain::query()->create(['domain' => $this->domain(), 'tenant_id' => $tenant->id]);
+        Domain::query()->create(['domain' => self::TENANT_ID, 'tenant_id' => $tenant->id]);
 
         Artisan::call('tenants:migrate', [
             '--tenants' => [self::TENANT_ID],

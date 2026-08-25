@@ -13,6 +13,8 @@ class SecurityHeaders
 
     /**
      * Add security headers to every response.
+     *
+     * @param Closure(Request): Response $next
      */
     public function handle(Request $request, Closure $next): Response
     {

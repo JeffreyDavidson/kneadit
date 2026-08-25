@@ -33,6 +33,7 @@ class ShowOrderFormController extends Controller
             'settings' => $settings,
             'categories' => $categories,
             'content' => settingsPageContent('order'),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
             'hydratedCartItems' => $hydratedItems,
             'hydratedCartEmail' => $cart?->customer_email,
             'hydratedCartName' => $cart?->customer_name,

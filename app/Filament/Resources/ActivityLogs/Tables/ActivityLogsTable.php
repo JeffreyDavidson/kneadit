@@ -79,17 +79,23 @@ class ActivityLogsTable
                         DatePicker::make('until')->label('Until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
+                        $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+                        $until = is_string($data['until'] ?? null) ? $data['until'] : '';
+
                         return $query
-                            ->when($data['from'] ?? null, fn (Builder $q, string $date) => $q->whereDate('created_at', '>=', $date))
-                            ->when($data['until'] ?? null, fn (Builder $q, string $date) => $q->whereDate('created_at', '<=', $date));
+                            ->when($from !== '', fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
+                            ->when($until !== '', fn (Builder $q) => $q->whereDate('created_at', '<=', $until));
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['from'] ?? null) {
-                            $indicators[] = Indicator::make("From {$data['from']}")->removeField('from');
+                        $from = is_string($data['from'] ?? null) ? $data['from'] : '';
+                        $until = is_string($data['until'] ?? null) ? $data['until'] : '';
+
+                        if ($from !== '') {
+                            $indicators[] = Indicator::make("From {$from}")->removeField('from');
                         }
-                        if ($data['until'] ?? null) {
-                            $indicators[] = Indicator::make("Until {$data['until']}")->removeField('until');
+                        if ($until !== '') {
+                            $indicators[] = Indicator::make("Until {$until}")->removeField('until');
                         }
 
                         return $indicators;
@@ -106,11 +112,15 @@ class ActivityLogsTable
                             ->searchable(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        return $query->when($data['user_name'] ?? null, fn (Builder $q, string $name) => $q->where('user_name', $name));
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
+
+                        return $query->when($name !== '', fn (Builder $q) => $q->where('user_name', $name));
                     })
                     ->indicateUsing(function (array $data): array {
-                        return ($data['user_name'] ?? null)
-                            ? [Indicator::make("Actor: {$data['user_name']}")->removeField('user_name')]
+                        $name = is_string($data['user_name'] ?? null) ? $data['user_name'] : '';
+
+                        return $name !== ''
+                            ? [Indicator::make("Actor: {$name}")->removeField('user_name')]
                             : [];
                     }),
             ])

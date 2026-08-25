@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Actions\Marketing\ResetEmailTemplate;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -15,6 +16,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Laravel\Pennant\Feature;
 
 class ManageEmailTemplates extends Page
@@ -84,7 +86,7 @@ class ManageEmailTemplates extends Page
             ->label('Edit Template')
             ->slideOver()
             ->schema(function (array $arguments): array {
-                $type = EmailTemplateType::from($arguments['email_type']);
+                $type = EmailTemplateType::from(Arr::string($arguments, 'email_type'));
                 $placeholderList = implode(', ', $type->availablePlaceholders());
 
                 return [
@@ -104,7 +106,7 @@ class ManageEmailTemplates extends Page
                 ];
             })
             ->fillForm(function (array $arguments): array {
-                $type = EmailTemplateType::from($arguments['email_type']);
+                $type = EmailTemplateType::from(Arr::string($arguments, 'email_type'));
                 $existing = EmailTemplate::query()->where('email_type', $type)->first();
 
                 return [
@@ -113,7 +115,7 @@ class ManageEmailTemplates extends Page
                 ];
             })
             ->action(function (array $data, array $arguments): void {
-                $type = EmailTemplateType::from($arguments['email_type']);
+                $type = EmailTemplateType::from(Arr::string($arguments, 'email_type'));
 
                 EmailTemplate::query()->updateOrCreate(
                     ['email_type' => $type],
@@ -134,7 +136,7 @@ class ManageEmailTemplates extends Page
     {
         $type = EmailTemplateType::from($typeValue);
 
-        EmailTemplate::query()->where('email_type', $type)->delete();
+        resolve(ResetEmailTemplate::class)($type);
 
         Notification::make()
             ->title('Template reset to default')

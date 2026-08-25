@@ -79,7 +79,7 @@ class PriceSuggestionTool extends Page
     public function generateMarginComparisons(): void
     {
         if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
-            $this->marginComparisons = collect();
+            $this->marginComparisons = new Collection;
 
             return;
         }

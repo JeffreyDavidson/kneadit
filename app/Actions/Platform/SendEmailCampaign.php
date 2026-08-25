@@ -58,15 +58,15 @@ class SendEmailCampaign
     /** @return Collection<int, string> */
     private function emailsBySegment(EmailCampaignSegment $segment): Collection
     {
-        $emails = collect();
+        $emails = [];
 
         foreach ($this->filteredTenants($segment) as $tenant) {
             $this->tenancyManager->withinTenant($tenant, function () use (&$emails) {
-                $emails = $emails->merge($this->currentTenantEmails());
+                array_push($emails, ...$this->currentTenantEmails()->all());
             });
         }
 
-        return $emails->unique()->values();
+        return collect($emails)->unique()->values();
     }
 
     /** @return EloquentCollection<int, Tenant> */

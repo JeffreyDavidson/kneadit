@@ -31,6 +31,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property bool $storefront_enabled
  * @property string|null $external_website
  * @property bool $is_active
+ * @property bool $is_demo
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int $onboarding_products_count
@@ -85,6 +86,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'storefront_enabled',
             'external_website',
             'is_active',
+            'is_demo',
             'custom_domain',
             'last_login_at',
             'onboarding_products_count',
@@ -102,6 +104,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'trial_ends_at' => 'datetime',
             'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
+            'is_demo' => 'boolean',
             'last_login_at' => 'datetime',
             'onboarding_products_count' => 'integer',
             'onboarding_categories_count' => 'integer',

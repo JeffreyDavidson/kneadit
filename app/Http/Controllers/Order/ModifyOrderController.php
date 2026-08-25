@@ -30,7 +30,7 @@ class ModifyOrderController extends Controller
     }
 
     /**
-     * @param array<int, mixed> $items
+     * @param array<mixed> $items
      * @return array<int, array{order_item_id: int, quantity: int}>
      */
     private function items(array $items): array

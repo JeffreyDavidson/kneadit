@@ -61,9 +61,21 @@ class OrderSettingsSection
                             ->placeholder('Local delivery (0-5 miles)')
                             ->helperText('Shown to customers at checkout. Optional.'),
                     ])
-                    ->itemLabel(fn (array $state): ?string => isset($state['min_distance'], $state['max_distance'], $state['fee'])
-                        ? "{$state['min_distance']}–{$state['max_distance']} mi · \${$state['fee']}"
-                        : null),
+                    ->itemLabel(function (array $state): ?string {
+                        if (! isset($state['min_distance'], $state['max_distance'], $state['fee'])) {
+                            return null;
+                        }
+
+                        $minDistance = $state['min_distance'];
+                        $maxDistance = $state['max_distance'];
+                        $fee = $state['fee'];
+
+                        return (is_scalar($minDistance) ? (string) $minDistance : '')
+                            . '–'
+                            . (is_scalar($maxDistance) ? (string) $maxDistance : '')
+                            . ' mi · $'
+                            . (is_scalar($fee) ? (string) $fee : '');
+                    }),
 
                 Grid::make(2)
                     ->schema([

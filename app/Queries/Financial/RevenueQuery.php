@@ -44,7 +44,9 @@ class RevenueQuery
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue_cents')
             ->groupBy('date')
             ->pluck('revenue_cents', 'date')
-            ->map(fn (mixed $v): float => Arr::integer(['value' => $v], 'value', 0) / 100)
+            ->mapWithKeys(fn (mixed $value, mixed $date): array => [
+                Arr::string(['date' => $date], 'date') => Arr::integer(['value' => $value], 'value', 0) / 100,
+            ])
             ->all();
     }
 

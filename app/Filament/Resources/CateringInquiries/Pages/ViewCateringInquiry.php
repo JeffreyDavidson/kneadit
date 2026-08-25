@@ -7,6 +7,11 @@ use App\Actions\Customers\ConvertCateringInquiryToOrder;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
+use App\Actions\Customers\SyncCateringQuoteItems;
+use App\Actions\Customers\UpdateCateringCustomerDetails;
+use App\Actions\Customers\UpdateCateringEventDetails;
+use App\Actions\Customers\UpdateCateringInquiryNotes;
+use App\DataTransferObjects\Customers\CateringEventDetails;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
@@ -15,7 +20,6 @@ use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use App\Services\Settings\TenantSettings;
-use App\ValueObjects\Money;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -25,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ValidatedInput;
 
@@ -61,7 +66,8 @@ class ViewCateringInquiry extends ViewRecord
                     ->rows(3),
             ])
             ->action(function (array $data): void {
-                resolve(CancelCateringInquiry::class)($this->record, $data['reason'] ?? null);
+                $reason = Arr::string($data, 'reason', '');
+                resolve(CancelCateringInquiry::class)($this->record, $reason !== '' ? $reason : null);
 
                 $this->record->refresh();
 
@@ -85,7 +91,16 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema(ContactFields::nameEmailPhone())
             ->action(function (array $data): void {
-                $this->record->update($data);
+                $customer = new ValidatedInput($data);
+
+                resolve(UpdateCateringCustomerDetails::class)(
+                    $this->record,
+                    $customer->string('customer_name')->toString(),
+                    $customer->string('customer_email')->toString(),
+                    $customer->filled('customer_phone')
+                        ? $customer->string('customer_phone')->toString()
+                        : null,
+                );
 
                 Notification::make()->title('Customer updated.')->success()->send();
             });
@@ -125,7 +140,24 @@ class ViewCateringInquiry extends ViewRecord
                 Textarea::make('venue_address')->rows(2),
             ])
             ->action(function (array $data): void {
-                $this->record->update($data);
+                $event = new ValidatedInput($data);
+
+                resolve(UpdateCateringEventDetails::class)(
+                    $this->record,
+                    new CateringEventDetails(
+                        eventType: $event->string('event_type')->toString(),
+                        eventDate: $event->string('event_date')->toString(),
+                        guestCount: $event->integer('guest_count'),
+                        budget: $event->filled('budget') ? $event->float('budget') : null,
+                        details: $event->string('details')->toString(),
+                        dietaryRequirements: $event->filled('dietary_requirements')
+                            ? $event->string('dietary_requirements')->toString()
+                            : null,
+                        venueAddress: $event->filled('venue_address')
+                            ? $event->string('venue_address')->toString()
+                            : null,
+                    ),
+                );
 
                 Notification::make()->title('Event details updated.')->success()->send();
             });
@@ -169,50 +201,7 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->action(function (array $data): void {
                 $rows = $this->quoteItemRows($data['items'] ?? []);
-
-                $existing = $this->record->items()->get()->keyBy('id');
-                $submittedIds = array_values(array_filter(
-                    array_column($rows, 'id'),
-                    fn (?int $id): bool => $id !== null,
-                ));
-
-                foreach ($existing as $id => $item) {
-                    if (! in_array($id, $submittedIds, true)) {
-                        $item->delete();
-                    }
-                }
-
-                foreach (array_values($rows) as $sortOrder => $row) {
-                    $payload = [
-                        'name' => $row['name'],
-                        'quantity' => $row['quantity'],
-                        'unit_price' => $row['unit_price'],
-                        'special_instructions' => $row['special_instructions'],
-                        'sort_order' => $sortOrder,
-                    ];
-
-                    if ($row['id'] !== null) {
-                        $existingItem = $existing->get($row['id']);
-
-                        if ($existingItem instanceof CateringInquiryItem) {
-                            $existingItem->update($payload);
-
-                            continue;
-                        }
-                    }
-
-                    $this->record->items()->create($payload);
-                }
-
-                // Defensive recompute: the observer covers per-item CRUD, but
-                // the Filament Repeater path bulk-mutates and we want the
-                // parent total guaranteed in sync before the page rerenders.
-                $sumCents = $this->record->items()->get()
-                    ->sum(fn (CateringInquiryItem $i): int => $i->unit_price->cents() * $i->quantity);
-
-                $this->record->update(['quoted_amount' => Money::fromCents((int) $sumCents)]);
-
-                $this->record->refresh();
+                resolve(SyncCateringQuoteItems::class)($this->record, $rows);
 
                 Notification::make()->title('Quote items updated.')->success()->send();
             });
@@ -310,10 +299,11 @@ class ViewCateringInquiry extends ViewRecord
                     ->maxLength(255),
             ])
             ->action(function (array $data): void {
+                $reference = Arr::string($data, 'reference', '');
                 resolve(RecordCateringDeposit::class)(
                     $this->record,
-                    (float) $data['amount'],
-                    $data['reference'] ?? null,
+                    Arr::float($data, 'amount'),
+                    $reference !== '' ? $reference : null,
                 );
 
                 $this->record->refresh();
@@ -339,13 +329,20 @@ class ViewCateringInquiry extends ViewRecord
                     ->columnSpanFull(),
             ])
             ->action(function (array $data): void {
-                $this->record->update(['notes' => $data['notes']]);
+                $notes = new ValidatedInput($data);
+
+                resolve(UpdateCateringInquiryNotes::class)(
+                    $this->record,
+                    $notes->filled('notes')
+                        ? $notes->string('notes')->toString()
+                        : null,
+                );
 
                 Notification::make()->title('Notes updated.')->success()->send();
             });
     }
 
-    /** @return array<int, array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
+    /** @return list<array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
     private function quoteItemRows(mixed $value): array
     {
         $items = Validator::make(['items' => $value], [

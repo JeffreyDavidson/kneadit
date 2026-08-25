@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CheckPlatformMaintenance
 {
+    /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response
     {
         if (platformSettings('maintenance_mode') !== '1') {

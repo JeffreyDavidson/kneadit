@@ -40,6 +40,7 @@ class TenantFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'plan' => SubscriptionTier::Starter->value,
             'is_active' => true,
+            'is_demo' => false,
             'storefront_enabled' => true,
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
@@ -60,6 +61,14 @@ class TenantFactory extends Factory
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
+     * Mark the tenant as demo data so queued work can be identified safely.
+     */
+    public function demo(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_demo' => true]);
     }
 
     /**

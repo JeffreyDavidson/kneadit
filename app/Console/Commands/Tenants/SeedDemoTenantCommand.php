@@ -8,6 +8,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
+use Stancl\Tenancy\Database\Models\Domain;
 
 #[Signature('tenants:seed-demo {--fresh : Drop and recreate if the demo tenant already exists}')]
 #[Description("Provision a 'demo' tenant seeded with the onboarded() factory state — used by the central WidgetCatalog page for design preview")]
@@ -40,6 +41,7 @@ class SeedDemoTenantCommand extends Command
                 'name' => 'Demo Owner',
                 'email' => 'demo@getkneadit.app',
                 'store_name' => 'Demo Bakery',
+                'is_demo' => true,
             ]);
 
         // Register both the full hostname AND the bare subdomain so the tenant
@@ -51,8 +53,8 @@ class SeedDemoTenantCommand extends Command
         // Matches the pattern in CreateOneTenantCommand used by kneadit:seed-local.
         $centralDomains = Config::array('tenancy.central_domains', []);
         $centralDomain = is_string($centralDomains[0] ?? null) ? $centralDomains[0] : '';
-        $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain]);
-        $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID]);
+        Domain::query()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain], ['tenant_id' => $tenant->id]);
+        Domain::query()->updateOrCreate(['domain' => self::DEMO_ID], ['tenant_id' => $tenant->id]);
 
         $this->info('✅ Demo tenant ready at https://' . self::DEMO_ID . '.' . $centralDomain);
 

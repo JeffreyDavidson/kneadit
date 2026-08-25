@@ -14,6 +14,7 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
@@ -27,6 +28,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -79,6 +81,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Queue::createPayloadUsing(function (): array {
+            $tenant = tenancy()->initialized ? tenancy()->tenant : null;
+
+            if (! $tenant instanceof Tenant) {
+                return [];
+            }
+
+            return [
+                'tenant_id' => $tenant->getTenantKey(),
+                'is_demo' => (bool) $tenant->is_demo,
+            ];
+        });
+
         Cashier::useCustomerModel(User::class);
 
         Model::preventLazyLoading(! app()->isProduction());
