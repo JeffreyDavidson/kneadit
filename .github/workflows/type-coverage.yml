@@ -14,6 +14,7 @@ jobs:
   type-coverage:
     name: Pest Type Coverage
     runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
