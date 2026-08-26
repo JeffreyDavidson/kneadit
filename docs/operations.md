@@ -133,7 +133,7 @@ php artisan test --filter='descriptive test name'
 
 Tests default to in-memory SQLite, synchronous queues, array mail/cache/session drivers, and a placeholder Stripe secret via `phpunit.xml`. Feature helpers in `tests/Pest.php` create central tenant/domain records and initialize isolated tenant databases. Tests that exercise request tenancy should use a host/domain record rather than bypassing middleware.
 
-Quality workflows normally run for pull requests. If GitHub does not deliver a pull-request event, FilaCheck, PHPStan, Pint, Rector, Security Scan, Tests, and Type Coverage can each be dispatched manually from the Actions page or with `gh workflow run <workflow-file> --ref <branch>`. Confirm every expected run passes before merging; manual dispatch is a recovery path, not a substitute for the normal PR gate.
+Quality workflows normally run for pull requests. If GitHub does not deliver a pull-request event, FilaCheck, PHPStan, Pint, Rector, Security Scan, Tests, and Type Coverage can each be dispatched manually from the Actions page or with `gh workflow run <workflow-file> --ref <branch>`. GitHub only exposes manual dispatch after the workflow definition containing `workflow_dispatch` is present on the default branch (`main`), so a newly added fallback becomes available after its next release. Confirm every expected run passes before merging; manual dispatch is a recovery path, not a substitute for the normal PR gate.
 
 ### Browser tests
 
