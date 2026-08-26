@@ -20,6 +20,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync application version
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            bin/sync-version "$GITHUB_REF_NAME"
+          else
+            bin/sync-version
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -46,7 +56,7 @@ jobs:
           composer install --no-interaction --prefer-dist
           php artisan key:generate
           php artisan migrate:fresh --force
-          php artisan tenants:provision-test-tenant --fresh
+          php artisan tenants:provision-test-tenant --fresh --domain='[::1]'
           php artisan db:seed --class="Database\\Seeders\\BrowserTestCentralFixtureSeeder" --force
 
       - name: Install browser dependencies
@@ -55,10 +65,40 @@ jobs:
           npx playwright install chromium
           npm run build
 
+      - name: Start application servers
+        run: |
+          available_port() {
+            php -r '$socket = stream_socket_server("tcp://{$argv[1]}:0", $errorCode, $errorMessage); if ($socket === false) { fwrite(STDERR, $errorMessage); exit(1); } $address = stream_socket_get_name($socket, false); fclose($socket); preg_match("/:(\\d+)$/", $address, $matches); echo $matches[1];' "$1"
+          }
+
+          CENTRAL_PORT="$(available_port '127.0.0.1')"
+          TENANT_PORT="$(available_port '[::1]')"
+          CENTRAL_URL="http://127.0.0.1:$CENTRAL_PORT"
+          TENANT_URL="http://[::1]:$TENANT_PORT"
+
+          echo "BROWSER_TEST_CENTRAL_URL=$CENTRAL_URL" >> "$GITHUB_ENV"
+          echo "BROWSER_TEST_STOREFRONT_URL=$TENANT_URL" >> "$GITHUB_ENV"
+
+          php artisan serve --host=127.0.0.1 --port="$CENTRAL_PORT" > "$RUNNER_TEMP/kneadit-central-server.log" 2>&1 &
+          echo "CENTRAL_SERVER_PID=$!" >> "$GITHUB_ENV"
+
+          php artisan serve --host='[::1]' --port="$TENANT_PORT" > "$RUNNER_TEMP/kneadit-tenant-server.log" 2>&1 &
+          echo "TENANT_SERVER_PID=$!" >> "$GITHUB_ENV"
+
+          for attempt in {1..30}; do
+            if curl --noproxy '*' --fail --silent "$CENTRAL_URL/up" > /dev/null \
+              && curl --noproxy '*' --fail --silent "$TENANT_URL/admin/login" > /dev/null; then
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          cat "$RUNNER_TEMP/kneadit-central-server.log"
+          cat "$RUNNER_TEMP/kneadit-tenant-server.log"
+          exit 1
+
       - name: Refresh browser sessions
-        env:
-          BROWSER_TEST_CENTRAL_URL: http://kneadit.test
-          BROWSER_TEST_STOREFRONT_URL: http://browser-test.kneadit.test
         run: |
           rm -f tests/Browser/.admin-session.json
           rm -f tests/Browser/.central-admin-session.json
@@ -66,7 +106,20 @@ jobs:
           node tests/Browser/Helpers/prepare-admin-session.mjs
 
       - name: Run launch browser smoke tests
-        env:
-          BROWSER_TEST_CENTRAL_URL: http://kneadit.test
-          BROWSER_TEST_STOREFRONT_URL: http://browser-test.kneadit.test
         run: php artisan test --testsuite=Browser --group=launch-smoke --compact
+
+      - name: Stop application servers
+        if: always()
+        run: |
+          if [[ -n "${CENTRAL_SERVER_PID:-}" ]]; then
+            kill "$CENTRAL_SERVER_PID" 2>/dev/null || true
+          fi
+
+          if [[ -n "${TENANT_SERVER_PID:-}" ]]; then
+            kill "$TENANT_SERVER_PID" 2>/dev/null || true
+          fi
+
+          if [[ "${{ job.status }}" != "success" ]]; then
+            cat "$RUNNER_TEMP/kneadit-central-server.log" 2>/dev/null || true
+            cat "$RUNNER_TEMP/kneadit-tenant-server.log" 2>/dev/null || true
+          fi

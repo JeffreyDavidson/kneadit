@@ -5,6 +5,7 @@ namespace App\Console\Commands\Tenants;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
+use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Stancl\Tenancy\Database\Models\Domain;
 
-#[Signature('tenants:provision-test-tenant {--fresh : Drop and recreate the browser-test tenant}')]
+#[Signature('tenants:provision-test-tenant {--fresh : Drop and recreate the browser-test tenant} {--domain=browser-test.kneadit.test : Domain used for the browser-test tenant}')]
 #[Description('Provision the canonical browser-test tenant (tenant + domain + DB + migrations + BrowserTestFixtureSeeder)')]
 class ProvisionTestTenantCommand extends Command
 {
@@ -20,8 +21,12 @@ class ProvisionTestTenantCommand extends Command
 
     public const string STORE_NAME = 'Browser Test Bakery';
 
-    public function handle(): int
+    public function handle(TenantSQLiteDatabaseManager $manager): int
     {
+        if ($this->option('fresh')) {
+            $this->deleteOrphanedDatabase($manager);
+        }
+
         if ($this->option('fresh') && Tenant::query()->whereKey(self::TENANT_ID)->exists()) {
             $this->info('Dropping existing browser-test tenant...');
             Tenant::query()->whereKey(self::TENANT_ID)->first()?->delete();
@@ -44,9 +49,12 @@ class ProvisionTestTenantCommand extends Command
 
         $this->newLine();
         $this->info("✅ browser-test tenant ready at http://{$this->domain()}");
-        $this->newLine();
-        $this->warn('Add to /etc/hosts if not already present:');
-        $this->line("  127.0.0.1  {$this->domain()}");
+
+        if (filter_var(trim($this->domain(), '[]'), FILTER_VALIDATE_IP) === false) {
+            $this->newLine();
+            $this->warn('Add to /etc/hosts if not already present:');
+            $this->line("  127.0.0.1  {$this->domain()}");
+        }
 
         return self::SUCCESS;
     }
@@ -97,6 +105,23 @@ class ProvisionTestTenantCommand extends Command
 
     private function domain(): string
     {
-        return self::TENANT_ID . '.kneadit.test';
+        return (string) $this->option('domain');
+    }
+
+    private function deleteOrphanedDatabase(TenantSQLiteDatabaseManager $manager): void
+    {
+        if (Tenant::query()->whereKey(self::TENANT_ID)->exists()) {
+            return;
+        }
+
+        $tenant = new Tenant(['id' => self::TENANT_ID]);
+        $databaseName = $tenant->database()->getName();
+
+        if ($databaseName === null || ! $manager->databaseExists($databaseName)) {
+            return;
+        }
+
+        $this->info('Dropping orphaned browser-test tenant database...');
+        $manager->deleteDatabase($tenant);
     }
 }
