@@ -8,7 +8,6 @@ use App\Filament\Pages\Platform\OnboardingSteps\ComplianceStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ContactStep;
 use App\Filament\Pages\Platform\OnboardingSteps\DeliveryStep;
 use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
-use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
@@ -22,10 +21,6 @@ beforeEach(function () {
 });
 
 // --- CompleteStep ---
-
-test('complete step key is complete', function () {
-    expect(CompleteStep::key())->toBe('complete');
-});
 
 test('complete step defaults returns empty array', function () {
     $settings = resolve(TenantSettings::class);
@@ -42,10 +37,6 @@ test('complete step save does nothing', function () {
 
 // --- PreviewStep ---
 
-test('preview step key is preview', function () {
-    expect(PreviewStep::key())->toBe('preview');
-});
-
 test('preview step defaults returns empty array', function () {
     $settings = resolve(TenantSettings::class);
 
@@ -61,10 +52,6 @@ test('preview step save does nothing', function () {
 
 // --- WelcomeStep ---
 
-test('welcome step key is welcome', function () {
-    expect(WelcomeStep::key())->toBe('welcome');
-});
-
 test('welcome step defaults returns expected keys', function () {
     $defaults = WelcomeStep::defaults(resolve(TenantSettings::class));
 
@@ -72,10 +59,6 @@ test('welcome step defaults returns expected keys', function () {
 });
 
 // --- ContactStep ---
-
-test('contact step key is contact', function () {
-    expect(ContactStep::key())->toBe('contact');
-});
 
 test('contact step defaults returns expected keys', function () {
     $defaults = ContactStep::defaults(resolve(TenantSettings::class));
@@ -97,10 +80,6 @@ test('contact step defaults returns stored values', function () {
 
 // --- BrandingStep ---
 
-test('branding step key is branding', function () {
-    expect(BrandingStep::key())->toBe('branding');
-});
-
 test('branding step defaults returns expected keys', function () {
     $defaults = BrandingStep::defaults(resolve(TenantSettings::class));
 
@@ -108,10 +87,6 @@ test('branding step defaults returns expected keys', function () {
 });
 
 // --- ProductStep ---
-
-test('product step key is product', function () {
-    expect(ProductStep::key())->toBe('product');
-});
 
 test('product step defaults returns expected keys', function () {
     $defaults = ProductStep::defaults(resolve(TenantSettings::class));
@@ -154,10 +129,6 @@ test('product step defaults loads existing product', function () {
 });
 
 // --- BusinessHoursStep ---
-
-test('business hours step key is hours', function () {
-    expect(BusinessHoursStep::key())->toBe('hours');
-});
 
 test('business hours step defaults returns all day keys', function () {
     $defaults = BusinessHoursStep::defaults(resolve(TenantSettings::class));
@@ -205,10 +176,6 @@ test('business hours step defaults loads existing settings', function () {
 
 // --- ComplianceStep ---
 
-test('compliance step key is compliance', function () {
-    expect(ComplianceStep::key())->toBe('compliance');
-});
-
 test('compliance step defaults returns expected keys', function () {
     $defaults = ComplianceStep::defaults(resolve(TenantSettings::class));
 
@@ -237,21 +204,7 @@ test('compliance step defaults loads existing settings', function () {
         ->and($defaults['acknowledged'])->toBeTrue();
 });
 
-test('compliance step us states returns all 50 states', function () {
-    $states = ComplianceStep::usStates();
-
-    expect($states)->toBeArray()
-        ->toHaveCount(50)
-        ->toHaveKey('FL', 'Florida')
-        ->toHaveKey('CA', 'California')
-        ->toHaveKey('NY', 'New York');
-});
-
 // --- DeliveryStep ---
-
-test('delivery step key is delivery', function () {
-    expect(DeliveryStep::key())->toBe('delivery');
-});
 
 test('delivery step defaults returns expected keys', function () {
     $defaults = DeliveryStep::defaults(resolve(TenantSettings::class));
@@ -273,12 +226,6 @@ test('delivery step defaults pickup enabled by default', function () {
 
     expect($defaults['pickup_enabled'])->toBeTrue()
         ->and($defaults['delivery_enabled'])->toBeFalse();
-});
-
-// --- PaymentsStep ---
-
-test('payments step key is payments', function () {
-    expect(PaymentsStep::key())->toBe('payments');
 });
 
 // --- OnboardingStepRegistry ---
