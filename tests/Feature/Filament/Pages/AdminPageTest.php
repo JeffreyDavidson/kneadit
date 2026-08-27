@@ -23,51 +23,59 @@ beforeEach(function () {
     tenancy()->initialize($tenant);
 });
 
-dataset('adminPages', [
-    'Dashboard' => [App\Filament\Pages\Dashboard\Dashboard::class],
-    'ManageSettings' => [App\Filament\Pages\Settings\ManageSettings::class],
-    'HelpCenter' => [App\Filament\Pages\Platform\HelpCenter::class],
-    'OrderCalendar' => [App\Filament\Pages\Operations\OrderCalendar::class],
-    'FinanceSummary' => [App\Filament\Pages\Analytics\FinanceSummary::class],
-    'ReportsCenter' => [App\Filament\Pages\Analytics\ReportsCenter::class],
-    'LoyaltyDashboard' => [App\Filament\Pages\Engagement\LoyaltyDashboard::class],
-    'CustomerDirectory' => [App\Filament\Pages\Operations\CustomerDirectory::class],
-    'ScheduleManager' => [App\Filament\Pages\Operations\ScheduleManager::class],
-    'BakingSheet' => [App\Filament\Pages\Operations\BakingSheet::class],
-    'DeliveryRoutePlanner' => [App\Filament\Pages\Operations\DeliveryRoutePlanner::class],
-    'LabelGenerator' => [App\Filament\Pages\Tools\LabelGenerator::class],
-    'UpgradePlan' => [App\Filament\Pages\Platform\UpgradePlan::class],
+dataset('adminPageGroups', [
+    'Dashboard pages' => [
+        App\Filament\Pages\Dashboard\Dashboard::class,
+        App\Filament\Pages\Dashboard\DashboardConfig::class,
+    ],
+    'Settings pages' => [
+        App\Filament\Pages\Settings\ManageSettings::class,
+        App\Filament\Pages\Settings\HomepageBuilder::class,
+        App\Filament\Pages\Settings\ManagePageContent::class,
+        App\Filament\Pages\Settings\ThemeSelector::class,
+    ],
+    'Platform pages' => [
+        App\Filament\Pages\Platform\HelpCenter::class,
+        App\Filament\Pages\Platform\UpgradePlan::class,
+        App\Filament\Pages\Platform\ActivityLogPage::class,
+    ],
+    'Operations pages' => [
+        App\Filament\Pages\Operations\OrderCalendar::class,
+        App\Filament\Pages\Operations\CustomerDirectory::class,
+        App\Filament\Pages\Operations\ScheduleManager::class,
+        App\Filament\Pages\Operations\BakingSheet::class,
+        App\Filament\Pages\Operations\DeliveryRoutePlanner::class,
+        App\Filament\Pages\Operations\HolidayPlanningCalendar::class,
+        App\Filament\Pages\Operations\SeasonalItems::class,
+        App\Filament\Pages\Operations\WeeklyPrepPlanner::class,
+    ],
+    'Analytics pages' => [
+        App\Filament\Pages\Analytics\FinanceSummary::class,
+        App\Filament\Pages\Analytics\ReportsCenter::class,
+        App\Filament\Pages\Analytics\ProductTrends::class,
+        App\Filament\Pages\Analytics\ProfitAnalysis::class,
+        App\Filament\Pages\Analytics\StorefrontAnalytics::class,
+        App\Filament\Pages\Analytics\SurveyResults::class,
+    ],
+    'Engagement pages' => [
+        App\Filament\Pages\Engagement\LoyaltyDashboard::class,
+        App\Filament\Pages\Engagement\AnnouncementBanner::class,
+        App\Filament\Pages\Engagement\SocialCalendar::class,
+    ],
+    'Tools pages' => [
+        App\Filament\Pages\Tools\LabelGenerator::class,
+        App\Filament\Pages\Tools\DescriptionGenerator::class,
+        App\Filament\Pages\Tools\PriceSuggestionTool::class,
+        App\Filament\Pages\Tools\PricingEngine::class,
+        App\Filament\Pages\Tools\RecipeCostCalculator::class,
+        App\Filament\Pages\Tools\ShoppingListGenerator::class,
+        App\Filament\Pages\Tools\SmartShoppingList::class,
+    ],
 ]);
 
-test('admin page can render', function (string $pageClass) {
-    Livewire::test($pageClass)
-        ->assertOk();
-})->with('adminPages');
-
-dataset('moreAdminPages', [
-    'ActivityLogPage' => [App\Filament\Pages\Platform\ActivityLogPage::class],
-    'AnnouncementBanner' => [App\Filament\Pages\Engagement\AnnouncementBanner::class],
-    'DashboardConfig' => [App\Filament\Pages\Dashboard\DashboardConfig::class],
-    'DescriptionGenerator' => [App\Filament\Pages\Tools\DescriptionGenerator::class],
-    'HolidayPlanningCalendar' => [App\Filament\Pages\Operations\HolidayPlanningCalendar::class],
-    'HomepageBuilder' => [App\Filament\Pages\Settings\HomepageBuilder::class],
-    'ManagePageContent' => [App\Filament\Pages\Settings\ManagePageContent::class],
-    'PriceSuggestionTool' => [App\Filament\Pages\Tools\PriceSuggestionTool::class],
-    'PricingEngine' => [App\Filament\Pages\Tools\PricingEngine::class],
-    'ProductTrends' => [App\Filament\Pages\Analytics\ProductTrends::class],
-    'ProfitAnalysis' => [App\Filament\Pages\Analytics\ProfitAnalysis::class],
-    'RecipeCostCalculator' => [App\Filament\Pages\Tools\RecipeCostCalculator::class],
-    'SeasonalItems' => [App\Filament\Pages\Operations\SeasonalItems::class],
-    'ShoppingListGenerator' => [App\Filament\Pages\Tools\ShoppingListGenerator::class],
-    'SmartShoppingList' => [App\Filament\Pages\Tools\SmartShoppingList::class],
-    'SocialCalendar' => [App\Filament\Pages\Engagement\SocialCalendar::class],
-    'StorefrontAnalytics' => [App\Filament\Pages\Analytics\StorefrontAnalytics::class],
-    'SurveyResults' => [App\Filament\Pages\Analytics\SurveyResults::class],
-    'ThemeSelector' => [App\Filament\Pages\Settings\ThemeSelector::class],
-    'WeeklyPrepPlanner' => [App\Filament\Pages\Operations\WeeklyPrepPlanner::class],
-]);
-
-test('additional admin page can render', function (string $pageClass) {
-    Livewire::test($pageClass)
-        ->assertOk();
-})->with('moreAdminPages');
+test('admin pages can render', function (string ...$pageClasses) {
+    foreach ($pageClasses as $pageClass) {
+        Livewire::test($pageClass)
+            ->assertOk();
+    }
+})->with('adminPageGroups');
