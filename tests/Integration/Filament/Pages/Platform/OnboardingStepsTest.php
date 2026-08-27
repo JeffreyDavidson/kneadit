@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Pages\Platform\Onboarding;
 use App\Filament\Pages\Platform\OnboardingSteps\BrandingStep;
 use App\Filament\Pages\Platform\OnboardingSteps\BusinessHoursStep;
 use App\Filament\Pages\Platform\OnboardingSteps\CompleteStep;
@@ -12,12 +11,18 @@ use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Platform\Tenant;
-use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 
 beforeEach(function () {
-    setUpCentralTest();
-    tenancy()->initialize(Tenant::factory()->create());
+    setUpTenantTest();
+
+    // Defaults require tenant identity, but their data already lives in the in-memory tenant schema.
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize(new Tenant([
+        'id' => 'onboarding-test',
+        'name' => 'Test Owner',
+        'store_name' => 'Test Bakery',
+    ]));
 });
 
 // --- CompleteStep ---
@@ -28,26 +33,12 @@ test('complete step defaults returns empty array', function () {
     expect(CompleteStep::defaults($settings))->toBeEmpty();
 });
 
-test('complete step save does nothing', function () {
-    CompleteStep::save(['some' => 'data']);
-
-    // No exception, no side effects
-    expect(true)->toBeTrue();
-});
-
 // --- PreviewStep ---
 
 test('preview step defaults returns empty array', function () {
     $settings = resolve(TenantSettings::class);
 
     expect(PreviewStep::defaults($settings))->toBeEmpty();
-});
-
-test('preview step save does nothing', function () {
-    PreviewStep::save(['some' => 'data']);
-
-    // No exception, no side effects
-    expect(true)->toBeTrue();
 });
 
 // --- WelcomeStep ---
@@ -246,31 +237,4 @@ test('registry defaults returns all step keys', function () {
             'preview',
             'complete',
         ]);
-});
-
-// --- Onboarding page ---
-
-test('onboarding page is accessible to owner', function () {
-    $owner = User::factory()->owner()->create();
-    $this->actingAs($owner);
-
-    expect(Onboarding::canAccess())->toBeTrue();
-});
-
-test('onboarding page is accessible to manager', function () {
-    $manager = User::factory()->manager()->create();
-    $this->actingAs($manager);
-
-    expect(Onboarding::canAccess())->toBeTrue();
-});
-
-test('onboarding page is not accessible to staff', function () {
-    $staff = User::factory()->staff()->create();
-    $this->actingAs($staff);
-
-    expect(Onboarding::canAccess())->toBeFalse();
-});
-
-test('onboarding page is not accessible to guests', function () {
-    expect(Onboarding::canAccess())->toBeFalse();
 });

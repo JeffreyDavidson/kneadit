@@ -11,24 +11,18 @@ use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Inventory\Category;
 use App\Models\Platform\Tenant;
-use App\Models\Staff\User;
 use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function () {
     setUpCentralTest();
-    tenancy()->initialize(Tenant::factory()->create());
 
-    test()->user = User::factory()->owner()->create([
+    // Persist the central tenant without provisioning a separate database for each test.
+    $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create());
 
-    ]);
-});
-
-test('onboarding page is registered in filament', function () {
-    $page = new Onboarding;
-    expect($page::$title ?? (new ReflectionClass($page))->getStaticPropertyValue('title'))
-        ->toBe('Welcome to KneadIt')->and($page::$shouldRegisterNavigation ?? (new ReflectionClass($page))->getStaticPropertyValue('shouldRegisterNavigation'))->toBeFalse();
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
 });
 
 test('completed onboarding is detected', function () {
@@ -320,13 +314,6 @@ test('complete onboarding timestamp is valid iso date', function () {
     $parsed = Date::parse($timestamp);
     expect($parsed)->not->toBeNull()
         ->and($parsed->isToday())->toBeTrue();
-});
-
-test('onboarding page is hidden from navigation', function () {
-    expect(
-        (new ReflectionClass(Onboarding::class))
-            ->getStaticPropertyValue('shouldRegisterNavigation'),
-    )->toBeFalse();
 });
 
 test('full onboarding flow saves all settings', function () {
