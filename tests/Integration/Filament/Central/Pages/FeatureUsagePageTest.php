@@ -8,105 +8,67 @@ beforeEach(function () {
     test()->page = new FeatureUsage;
 });
 
-test('has data returns false when no logs exist', function () {
+test('empty feature usage returns default analytics', function () {
     expect(test()->page->getHasData())->toBeFalse();
+    expect(test()->page->getMostUsedFeature())->toBeNull();
+    expect(test()->page->getLeastUsedFeature())->toBeNull();
+    expect(test()->page->getTotalInteractionsThisMonth())->toBe(0);
+    expect(test()->page->getFeatureUsageBars())->toBeEmpty();
+
+    $heatmap = test()->page->getHeatmapData();
+
+    expect($heatmap['days'])->toHaveCount(7)
+        ->and($heatmap['rows'])->toBeEmpty();
+
+    expect(test()->page->getFeatureTenantBreakdown())->toBeEmpty();
+    expect(test()->page->selectedFeature)->toBeNull();
 });
 
-test('has data returns true when logs exist', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5]);
+test('populated feature usage returns aggregated analytics', function () {
+    FeatureUsageLog::factory()->forFeature('orders')->create([
+        'usage_count' => 10,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('orders')->create([
+        'usage_count' => 5,
+        'tenant_id' => 'bakery-2',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('products')->create([
+        'usage_count' => 150,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('reviews')->create([
+        'usage_count' => 2,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('historical')->create([
+        'usage_count' => 99,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->subMonth()->toDateString(),
+    ]);
 
     expect(test()->page->getHasData())->toBeTrue();
-});
-
-test('get most used feature returns feature with highest total', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 50, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 3, 'date' => now()->toDateString()]);
-
     expect(test()->page->getMostUsedFeature())->toBe('products');
-});
-
-test('get most used feature returns null when no logs', function () {
-    expect(test()->page->getMostUsedFeature())->toBeNull();
-});
-
-test('get least used feature returns feature with lowest total', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 2, 'date' => now()->toDateString()]);
-
     expect(test()->page->getLeastUsedFeature())->toBe('reviews');
-});
-
-test('get least used feature returns null when no logs', function () {
-    expect(test()->page->getLeastUsedFeature())->toBeNull();
-});
-
-test('get total interactions this month', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 20, 'date' => now()->toDateString()]);
-    // Previous month should not count
-    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 99, 'date' => now()->subMonth()->toDateString()]);
-
-    expect(test()->page->getTotalInteractionsThisMonth())->toBe(30);
-});
-
-test('get total interactions this month returns zero when empty', function () {
-    expect(test()->page->getTotalInteractionsThisMonth())->toBe(0);
-});
-
-test('get feature usage bars returns sorted collection', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 50, 'date' => now()->toDateString()]);
+    expect(test()->page->getTotalInteractionsThisMonth())->toBe(167);
 
     $bars = test()->page->getFeatureUsageBars();
 
-    expect($bars)->toHaveCount(2)
+    expect($bars)->toHaveCount(4)
         ->and($bars->first()['feature'])->toBe('products')
         ->and($bars->first()['percent'])->toBe(100.0)
-        ->and($bars->last()['feature'])->toBe('orders')
-        ->and($bars->last()['percent'])->toBe(20.0);
-});
+        ->and($bars->last()['feature'])->toBe('reviews')
+        ->and($bars->last()['percent'])->toBe(1.0);
 
-test('get feature usage bars returns empty collection when no data', function () {
-    expect(test()->page->getFeatureUsageBars())->toBeEmpty();
-});
+    $heatmap = test()->page->getHeatmapData();
 
-test('get heatmap data returns expected structure', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5, 'date' => now()->toDateString()]);
-
-    $data = test()->page->getHeatmapData();
-
-    expect($data)->toHaveKeys(['days', 'rows'])
-        ->and($data['days'])->toHaveCount(7)
-        ->and($data['rows'])->toBeArray();
-});
-
-test('get heatmap data returns empty rows when no data', function () {
-    $data = test()->page->getHeatmapData();
-
-    expect($data['days'])->toHaveCount(7)
-        ->and($data['rows'])->toBeEmpty();
-});
-
-test('select feature toggles selection', function () {
-    test()->page->selectFeature('orders');
-    expect(test()->page->selectedFeature)->toBe('orders');
-
-    test()->page->selectFeature('orders');
-    expect(test()->page->selectedFeature)->toBeNull();
-
-    test()->page->selectFeature('products');
-    expect(test()->page->selectedFeature)->toBe('products');
-});
-
-test('get feature tenant breakdown returns empty when no feature selected', function () {
-    expect(test()->page->getFeatureTenantBreakdown())->toBeEmpty();
-});
-
-test('get feature tenant breakdown returns data for selected feature', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5, 'tenant_id' => 'bakery-2', 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 99, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
+    expect($heatmap)->toHaveKeys(['days', 'rows'])
+        ->and($heatmap['days'])->toHaveCount(7)
+        ->and($heatmap['rows'])->toBeArray();
 
     test()->page->selectedFeature = 'orders';
     $breakdown = test()->page->getFeatureTenantBreakdown();
@@ -116,11 +78,16 @@ test('get feature tenant breakdown returns data for selected feature', function 
         ->and($breakdown->first())->toHaveKeys(['tenant_id', 'name', 'total']);
 });
 
-test('format feature name replaces underscores and capitalizes', function () {
+test('feature usage selection and labels update locally', function () {
+    test()->page->selectFeature('orders');
+    expect(test()->page->selectedFeature)->toBe('orders');
+
+    test()->page->selectFeature('orders');
+    expect(test()->page->selectedFeature)->toBeNull();
+
+    test()->page->selectFeature('products');
+    expect(test()->page->selectedFeature)->toBe('products');
+
     expect(test()->page->formatFeatureName('shopping_list'))->toBe('Shopping list')
         ->and(test()->page->formatFeatureName('orders'))->toBe('Orders');
-});
-
-test('selected feature defaults to null', function () {
-    expect(test()->page->selectedFeature)->toBeNull();
 });
