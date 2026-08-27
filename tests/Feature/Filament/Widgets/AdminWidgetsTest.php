@@ -14,39 +14,61 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
-dataset('adminWidgets', [
-    'StatsOverview' => [App\Filament\Widgets\StatsOverview::class],
-    'RecentOrdersWidget' => [App\Filament\Widgets\RecentOrdersWidget::class],
-    'QuickActionsWidget' => [App\Filament\Widgets\QuickActionsWidget::class],
-    'WelcomeBannerWidget' => [App\Filament\Widgets\WelcomeBannerWidget::class],
-    'TodaysOrdersWidget' => [App\Filament\Widgets\TodaysOrdersWidget::class],
-    'LowStockWidget' => [App\Filament\Widgets\LowStockWidget::class],
-    'TopProductsWidget' => [App\Filament\Widgets\TopProductsWidget::class],
-    'CustomerInsightsWidget' => [App\Filament\Widgets\CustomerInsightsWidget::class],
-    'RecentActivityWidget' => [App\Filament\Widgets\RecentActivityWidget::class],
-    'UpcomingOrdersWidget' => [App\Filament\Widgets\UpcomingOrdersWidget::class],
-    'BirthdayWidget' => [App\Filament\Widgets\BirthdayWidget::class],
-    'CapacityTodayWidget' => [App\Filament\Widgets\CapacityTodayWidget::class],
-    'AtRiskCustomersWidget' => [App\Filament\Widgets\AtRiskCustomersWidget::class],
-    'GiftCardBalanceWidget' => [App\Filament\Widgets\GiftCardBalanceWidget::class],
-    'GoalTrackerWidget' => [App\Filament\Widgets\GoalTrackerWidget::class],
-    'LoyaltyLeadersWidget' => [App\Filament\Widgets\LoyaltyLeadersWidget::class],
-    'OrderFunnelWidget' => [App\Filament\Widgets\OrderFunnelWidget::class],
-    'ReviewSummaryWidget' => [App\Filament\Widgets\ReviewSummaryWidget::class],
-    'SeasonalItemsWidget' => [App\Filament\Widgets\SeasonalItemsWidget::class],
-    'StorefrontViewsWidget' => [App\Filament\Widgets\StorefrontViewsWidget::class],
-    'UpcomingHolidayWidget' => [App\Filament\Widgets\UpcomingHolidayWidget::class],
-    'WeeklyRevenueChartWidget' => [App\Filament\Widgets\WeeklyRevenueChartWidget::class],
-    'BakingSheetWidget' => [App\Filament\Widgets\BakingSheetWidget::class],
-    'CateringPipelineWidget' => [App\Filament\Widgets\CateringPipelineWidget::class],
-    'CouponUsageWidget' => [App\Filament\Widgets\CouponUsageWidget::class],
-    'InboxWidget' => [App\Filament\Widgets\InboxWidget::class],
-    'MarginAlertWidget' => [App\Filament\Widgets\MarginAlertWidget::class],
-    'ReorderRemindersWidget' => [App\Filament\Widgets\ReorderRemindersWidget::class],
-    'RevenueChartWidget' => [App\Filament\Widgets\RevenueChartWidget::class],
+dataset('adminWidgetGroups', [
+    'Core widgets' => [
+        App\Filament\Widgets\StatsOverview::class,
+        App\Filament\Widgets\QuickActionsWidget::class,
+        App\Filament\Widgets\WelcomeBannerWidget::class,
+    ],
+    'Revenue widgets' => [
+        App\Filament\Widgets\WeeklyRevenueChartWidget::class,
+        App\Filament\Widgets\MarginAlertWidget::class,
+        App\Filament\Widgets\RevenueChartWidget::class,
+    ],
+    'Order widgets' => [
+        App\Filament\Widgets\RecentOrdersWidget::class,
+        App\Filament\Widgets\TodaysOrdersWidget::class,
+        App\Filament\Widgets\UpcomingOrdersWidget::class,
+        App\Filament\Widgets\OrderFunnelWidget::class,
+    ],
+    'Product and prep widgets' => [
+        App\Filament\Widgets\LowStockWidget::class,
+        App\Filament\Widgets\TopProductsWidget::class,
+        App\Filament\Widgets\BakingSheetWidget::class,
+    ],
+    'Customer widgets' => [
+        App\Filament\Widgets\CustomerInsightsWidget::class,
+        App\Filament\Widgets\BirthdayWidget::class,
+        App\Filament\Widgets\AtRiskCustomersWidget::class,
+    ],
+    'Communication widgets' => [
+        App\Filament\Widgets\RecentActivityWidget::class,
+        App\Filament\Widgets\InboxWidget::class,
+    ],
+    'Planning widgets' => [
+        App\Filament\Widgets\GoalTrackerWidget::class,
+        App\Filament\Widgets\UpcomingHolidayWidget::class,
+        App\Filament\Widgets\StorefrontViewsWidget::class,
+    ],
+    'Promotion and loyalty widgets' => [
+        App\Filament\Widgets\GiftCardBalanceWidget::class,
+        App\Filament\Widgets\LoyaltyLeadersWidget::class,
+        App\Filament\Widgets\CouponUsageWidget::class,
+    ],
+    'Operations widgets' => [
+        App\Filament\Widgets\CapacityTodayWidget::class,
+        App\Filament\Widgets\SeasonalItemsWidget::class,
+        App\Filament\Widgets\CateringPipelineWidget::class,
+    ],
+    'Feedback widgets' => [
+        App\Filament\Widgets\ReviewSummaryWidget::class,
+        App\Filament\Widgets\ReorderRemindersWidget::class,
+    ],
 ]);
 
-test('admin widget can render', function (string $widgetClass) {
-    Livewire::test($widgetClass)
-        ->assertOk();
-})->with('adminWidgets');
+test('admin widgets can render', function (string ...$widgetClasses) {
+    foreach ($widgetClasses as $widgetClass) {
+        Livewire::test($widgetClass)
+            ->assertOk();
+    }
+})->with('adminWidgetGroups');
