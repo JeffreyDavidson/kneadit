@@ -1,11 +1,9 @@
 <?php
 
-use App\Enums\Filament\WidgetSize;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -16,24 +14,29 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
-dataset('widgetsWithAllowedSizes', function (): array {
-    $cases = [];
-    foreach (WidgetMeta::all() as $key => $meta) {
-        $sizes = array_map(
-            fn (WidgetSize $size): string => $size->value,
-            WidgetMeta::allowedSizesFor($key),
-        );
+dataset('widgetSizeGroups', function (): array {
+    $groups = [];
 
-        $cases[$key] = [$meta['class'], ...$sizes];
+    foreach (array_chunk(array_keys(WidgetMeta::all()), 5) as $index => $widgetKeys) {
+        $groups['Widget group ' . ($index + 1)] = $widgetKeys;
     }
 
-    return $cases;
+    return $groups;
 });
 
-test('widget renders cleanly at each allowed size', function (string $class, string ...$sizes) {
+test('widgets render cleanly at each allowed size', function (string ...$widgetKeys) {
     // dashboardSize gets ignored by widgets that don't use the HasDashboardSize trait,
     // so passing it unconditionally is safe.
-    foreach ($sizes as $size) {
-        Livewire::test($class, ['dashboardSize' => $size])->assertOk();
+    foreach ($widgetKeys as $widgetKey) {
+        $widgetClass = WidgetMeta::classFor($widgetKey);
+
+        if ($widgetClass === null) {
+            throw new LogicException("Unknown widget key [{$widgetKey}].");
+        }
+
+        foreach (WidgetMeta::allowedSizesFor($widgetKey) as $size) {
+            livewire($widgetClass, ['dashboardSize' => $size->value])
+                ->assertOk();
+        }
     }
-})->with('widgetsWithAllowedSizes');
+})->with('widgetSizeGroups');
