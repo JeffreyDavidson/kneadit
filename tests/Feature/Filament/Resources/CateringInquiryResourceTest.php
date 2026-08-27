@@ -7,7 +7,6 @@ use App\Models\Customers\CateringInquiry;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,12 +18,12 @@ beforeEach(function () {
 test('can list catering inquiries in the table', function () {
     $inquiries = CateringInquiry::factory()->count(3)->create();
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->assertCanSeeTableRecords($inquiries);
 });
 
 test('can create a catering inquiry via slide-over', function () {
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->callAction(CreateAction::class, data: [
             'customer_name' => 'Jane Smith',
             'customer_email' => 'jane@example.com',
@@ -44,41 +43,50 @@ test('can create a catering inquiry via slide-over', function () {
     ]);
 });
 
-test('create catering inquiry validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListCateringInquiries::class)
-        ->callAction(CreateAction::class, data: [
-            'customer_name' => 'Test',
-            'customer_email' => 'test@example.com',
-            'event_type' => 'Birthday Party',
-            'event_date' => now()->addWeek()->format('Y-m-d'),
-            'guest_count' => 20,
-            'details' => 'Test details here.',
-            'status' => CateringInquiryStatus::Inquiry->value,
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
-    'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],
-    'event type is required' => [['event_type' => null], ['event_type' => 'required']],
-    'event date is required' => [['event_date' => null], ['event_date' => 'required']],
-    'guest count is required' => [['guest_count' => null], ['guest_count' => 'required']],
-    'details is required' => [['details' => null], ['details' => 'required']],
-    'status is required' => [['status' => null], ['status' => 'required']],
-]);
+test('create catering inquiry validates required fields', function () {
+    $cases = [
+        [['customer_name' => null], ['customer_name' => 'required']],
+        [['customer_email' => null], ['customer_email' => 'required']],
+        [['event_type' => null], ['event_type' => 'required']],
+        [['event_date' => null], ['event_date' => 'required']],
+        [['guest_count' => null], ['guest_count' => 'required']],
+        [['details' => null], ['details' => 'required']],
+        [['status' => null], ['status' => 'required']],
+    ];
 
-test('can render catering inquiry table columns', function (string $column) {
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListCateringInquiries::class)
+            ->callAction(CreateAction::class, data: [
+                'customer_name' => 'Test',
+                'customer_email' => 'test@example.com',
+                'event_type' => 'Birthday Party',
+                'event_date' => now()->addWeek()->format('Y-m-d'),
+                'guest_count' => 20,
+                'details' => 'Test details here.',
+                'status' => CateringInquiryStatus::Inquiry->value,
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
+
+test('can render catering inquiry table columns', function () {
     CateringInquiry::factory()->create();
 
-    Livewire::test(ListCateringInquiries::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['customer_name', 'event_type', 'event_date', 'guest_count', 'status', 'quoted_amount']);
+    livewire(ListCateringInquiries::class)
+        ->assertCanRenderTableColumn('customer_name')
+        ->assertCanRenderTableColumn('event_type')
+        ->assertCanRenderTableColumn('event_date')
+        ->assertCanRenderTableColumn('guest_count')
+        ->assertCanRenderTableColumn('status')
+        ->assertCanRenderTableColumn('quoted_amount');
+});
 
 test('can search catering inquiries by customer name', function () {
     $target = CateringInquiry::factory()->create(['customer_name' => 'Alice Baker']);
     $other = CateringInquiry::factory()->create(['customer_name' => 'Bob Smith']);
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->searchTable('Alice')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -88,7 +96,7 @@ test('can filter catering inquiries by status', function () {
     $inquiry = CateringInquiry::factory()->inquiry()->create();
     $confirmed = CateringInquiry::factory()->confirmed()->create();
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->filterTable('status', CateringInquiryStatus::Inquiry->value)
         ->assertCanSeeTableRecords(collect([$inquiry]))
         ->assertCanNotSeeTableRecords(collect([$confirmed]));
@@ -98,7 +106,7 @@ test('can filter catering inquiries by event type', function () {
     $wedding = CateringInquiry::factory()->create(['event_type' => 'Wedding']);
     $corporate = CateringInquiry::factory()->create(['event_type' => 'Corporate Event']);
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->filterTable('event_type', 'Wedding')
         ->assertCanSeeTableRecords(collect([$wedding]))
         ->assertCanNotSeeTableRecords(collect([$corporate]));
@@ -108,7 +116,7 @@ test('can sort catering inquiries by customer name', function () {
     $alice = CateringInquiry::factory()->create(['customer_name' => 'Alice']);
     $zach = CateringInquiry::factory()->create(['customer_name' => 'Zach']);
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->sortTable('customer_name')
         ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
         ->sortTable('customer_name', 'desc')
@@ -119,7 +127,7 @@ test('can sort catering inquiries by event date', function () {
     $early = CateringInquiry::factory()->create(['event_date' => now()->addWeek()]);
     $late = CateringInquiry::factory()->create(['event_date' => now()->addMonths(3)]);
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->sortTable('event_date')
         ->assertCanSeeTableRecords(collect([$early, $late]), inOrder: true)
         ->sortTable('event_date', 'desc')
