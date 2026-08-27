@@ -20,31 +20,25 @@ use App\Enums\Storefront\StorefrontTheme;
 // Simple HasLabel enums — every case returns a non-empty label
 // ---------------------------------------------------------------------------
 
-dataset('simple_label_enums', function () {
-    $enums = [
-        ActivityAction::class,
-        CaptionStyle::class,
-        DnsVerificationStatus::class,
-        PageType::class,
-        ReferralStatus::class,
-        CouponTransactionType::class,
-        GiftCardTransactionType::class,
-        StockAdjustmentType::class,
-        StockStatus::class,
-        SenderType::class,
-        StorefrontTheme::class,
-        SurveyQuestionType::class,
-    ];
+dataset('simple_label_enums', [
+    'ActivityAction' => [ActivityAction::class],
+    'CaptionStyle' => [CaptionStyle::class],
+    'DnsVerificationStatus' => [DnsVerificationStatus::class],
+    'PageType' => [PageType::class],
+    'ReferralStatus' => [ReferralStatus::class],
+    'CouponTransactionType' => [CouponTransactionType::class],
+    'GiftCardTransactionType' => [GiftCardTransactionType::class],
+    'StockAdjustmentType' => [StockAdjustmentType::class],
+    'StockStatus' => [StockStatus::class],
+    'SenderType' => [SenderType::class],
+    'StorefrontTheme' => [StorefrontTheme::class],
+    'SurveyQuestionType' => [SurveyQuestionType::class],
+]);
 
-    foreach ($enums as $enum) {
-        foreach ($enum::cases() as $case) {
-            yield "{$enum}::{$case->name}" => [$case];
-        }
+test('every case has a non-empty label', function (string $enum) {
+    foreach ($enum::cases() as $case) {
+        expect($case->getLabel())->toBeString()->not->toBeEmpty();
     }
-});
-
-test('every case has a non-empty label', function ($case) {
-    expect($case->getLabel())->toBeString()->not->toBeEmpty();
 })->with('simple_label_enums');
 
 // ---------------------------------------------------------------------------
@@ -65,9 +59,11 @@ test('SenderType::isCustomer returns true only for Customer', function () {
 // MarginHealth
 // ---------------------------------------------------------------------------
 
-test('MarginHealth has a non-empty label for every case', function (MarginHealth $case) {
-    expect($case->getLabel())->toBeString()->not->toBeEmpty();
-})->with(MarginHealth::cases());
+test('MarginHealth has a non-empty label for every case', function () {
+    foreach (MarginHealth::cases() as $case) {
+        expect($case->getLabel())->toBeString()->not->toBeEmpty();
+    }
+});
 
 test('MarginHealth::fromPercentage returns correct health', function (
     ?float $margin,
@@ -85,17 +81,21 @@ test('MarginHealth::fromPercentage returns correct health', function (
     'negative is Critical' => [-10.0, MarginHealth::Critical],
 ]);
 
-test('MarginHealth::cssClass returns the backing value', function (MarginHealth $case) {
-    expect($case->cssClass())->toBe($case->value);
-})->with(MarginHealth::cases());
+test('MarginHealth::cssClass returns the backing value', function () {
+    foreach (MarginHealth::cases() as $case) {
+        expect($case->cssClass())->toBe($case->value);
+    }
+});
 
 // ---------------------------------------------------------------------------
 // PricingPosition
 // ---------------------------------------------------------------------------
 
-test('PricingPosition has a non-empty label for every case', function (PricingPosition $case) {
-    expect($case->getLabel())->toBeString()->not->toBeEmpty();
-})->with(PricingPosition::cases());
+test('PricingPosition has a non-empty label for every case', function () {
+    foreach (PricingPosition::cases() as $case) {
+        expect($case->getLabel())->toBeString()->not->toBeEmpty();
+    }
+});
 
 test('PricingPosition::multiplier returns expected values', function (
     PricingPosition $position,
@@ -112,9 +112,11 @@ test('PricingPosition::multiplier returns expected values', function (
 // BlogPostCategory
 // ---------------------------------------------------------------------------
 
-test('BlogPostCategory has a non-empty label for every case', function (BlogPostCategory $case) {
-    expect($case->getLabel())->toBeString()->not->toBeEmpty();
-})->with(BlogPostCategory::cases());
+test('BlogPostCategory has a non-empty label for every case', function () {
+    foreach (BlogPostCategory::cases() as $case) {
+        expect($case->getLabel())->toBeString()->not->toBeEmpty();
+    }
+});
 
 test('BlogPostCategory::options returns all cases plus All Posts', function () {
     $options = BlogPostCategory::options();
@@ -125,28 +127,36 @@ test('BlogPostCategory::options returns all cases plus All Posts', function () {
     expect($options->first())->toBe('All Posts');
 });
 
-test('BlogPostCategory::options includes case', function (BlogPostCategory $case) {
+test('BlogPostCategory::options includes every case', function () {
     $options = BlogPostCategory::options();
 
-    expect($options)->toHaveKey($case->value);
-})->with(BlogPostCategory::cases());
+    foreach (BlogPostCategory::cases() as $case) {
+        expect($options)->toHaveKey($case->value);
+    }
+});
 
-test('BlogPostCategory::getColor returns a non-empty string for every case', function (BlogPostCategory $case) {
-    expect($case->getColor())->toBeString()->not->toBeEmpty();
-})->with(BlogPostCategory::cases());
+test('BlogPostCategory::getColor returns a non-empty string for every case', function () {
+    foreach (BlogPostCategory::cases() as $case) {
+        expect($case->getColor())->toBeString()->not->toBeEmpty();
+    }
+});
 
 // ---------------------------------------------------------------------------
 // ActivityAction — every case must have a getColor()
 // ---------------------------------------------------------------------------
 
-test('ActivityAction::getColor returns a non-empty string for every case', function (ActivityAction $case) {
-    expect($case->getColor())->toBeString()->not->toBeEmpty();
-})->with(ActivityAction::cases());
+test('ActivityAction::getColor returns a non-empty string for every case', function () {
+    foreach (ActivityAction::cases() as $case) {
+        expect($case->getColor())->toBeString()->not->toBeEmpty();
+    }
+});
 
 // ---------------------------------------------------------------------------
 // DnsVerificationStatus — every case must have a getColor()
 // ---------------------------------------------------------------------------
 
-test('DnsVerificationStatus::getColor returns a non-empty string for every case', function (DnsVerificationStatus $case) {
-    expect($case->getColor())->toBeString()->not->toBeEmpty();
-})->with(DnsVerificationStatus::cases());
+test('DnsVerificationStatus::getColor returns a non-empty string for every case', function () {
+    foreach (DnsVerificationStatus::cases() as $case) {
+        expect($case->getColor())->toBeString()->not->toBeEmpty();
+    }
+});
