@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,19 +16,24 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
-dataset('widgetsAtAllSizes', function (): array {
+dataset('widgetsWithAllowedSizes', function (): array {
     $cases = [];
     foreach (WidgetMeta::all() as $key => $meta) {
-        foreach (WidgetMeta::allowedSizesFor($key) as $size) {
-            $cases["{$key} @ {$size->value}"] = [$meta['class'], $size->value];
-        }
+        $sizes = array_map(
+            fn (WidgetSize $size): string => $size->value,
+            WidgetMeta::allowedSizesFor($key),
+        );
+
+        $cases[$key] = [$meta['class'], ...$sizes];
     }
 
     return $cases;
 });
 
-test('widget renders cleanly at each allowed size', function (string $class, string $size) {
+test('widget renders cleanly at each allowed size', function (string $class, string ...$sizes) {
     // dashboardSize gets ignored by widgets that don't use the HasDashboardSize trait,
     // so passing it unconditionally is safe.
-    Livewire::test($class, ['dashboardSize' => $size])->assertOk();
-})->with('widgetsAtAllSizes');
+    foreach ($sizes as $size) {
+        Livewire::test($class, ['dashboardSize' => $size])->assertOk();
+    }
+})->with('widgetsWithAllowedSizes');
