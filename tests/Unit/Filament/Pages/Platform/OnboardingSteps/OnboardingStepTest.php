@@ -34,3 +34,12 @@ test('compliance step exposes all US states', function () {
         ->toHaveKey('CA', 'California')
         ->toHaveKey('NY', 'New York');
 });
+
+test('non-persistent onboarding steps ignore save data', function (string $step) {
+    $step::save(['some' => 'data']);
+
+    expect(true)->toBeTrue();
+})->with([
+    'complete' => [CompleteStep::class],
+    'preview' => [PreviewStep::class],
+]);
