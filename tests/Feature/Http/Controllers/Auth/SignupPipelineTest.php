@@ -29,7 +29,6 @@ beforeEach(function () {
     DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
 
     createCentralTables();
-    $this->createdSubdomains = [];
     $this->subdomainCounter = 0;
 });
 
@@ -42,12 +41,8 @@ function createSignupUser(array $overrides = []): User
 function uniqueSubdomain(): string
 {
     test()->subdomainCounter++;
-    $sub = 'testbakery' . test()->subdomainCounter;
-    $subs = test()->createdSubdomains;
-    $subs[] = $sub;
-    test()->createdSubdomains = $subs;
 
-    return $sub;
+    return 'testbakery' . test()->subdomainCounter;
 }
 
 /**
@@ -58,13 +53,6 @@ function submitOnboarding(User $user, array $data = []): TestResponse
 {
     if (! isset($data['subdomain'])) {
         $data['subdomain'] = uniqueSubdomain();
-    } elseif (is_string($data['subdomain'])) {
-        $sub = strtolower($data['subdomain']);
-        if (! in_array($sub, test()->createdSubdomains)) {
-            $subs = test()->createdSubdomains;
-            $subs[] = $sub;
-            test()->createdSubdomains = $subs;
-        }
     }
 
     $payload = array_merge([
@@ -73,18 +61,6 @@ function submitOnboarding(User $user, array $data = []): TestResponse
     ], $data);
 
     return actingAs($user)->post(route('onboarding.store'), $payload);
-}
-
-function mockTenantWithPlan(string $plan): void
-{
-    $tenant = Tenant::query()->make([
-        'id' => "test-{$plan}",
-        'name' => 'Test',
-        'email' => 'test@example.com',
-        'plan' => $plan,
-    ]);
-
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
 }
 
 // -------------------------------------------------------
@@ -129,69 +105,67 @@ test('authenticated user can view onboarding page', function () {
     $response->assertOk();
 });
 
-test('successful onboarding creates tenant record', function () {
+test('successful onboarding completes the default KneadIt pipeline', function () {
+    Event::fake([TenantOnboarded::class]);
+
     $user = createSignupUser();
     $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
+    $tokenBefore = csrf_token();
 
-    test()->assertDatabaseHas('tenants', ['id' => $sub]);
-});
-
-test('successful onboarding creates domain record with correct subdomain', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
+    $response = submitOnboarding($user, [
+        'subdomain' => $sub,
+        'store_name' => 'Artisan Breads',
+    ]);
 
     $domain = DB::connection('central')->table('domains')
         ->where('tenant_id', $sub)->first();
-
-    expect($domain)->not->toBeNull();
     throw_unless($domain instanceof stdClass, RuntimeException::class, 'Expected the tenant domain to exist.');
-    expect($domain->domain)->toBe($sub);
-});
-
-test('successful onboarding creates tenant user with same email', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
 
     $tenant = Tenant::query()->findOrFail($sub);
     $tenant->run(function () use ($user) {
         test()->assertDatabaseHas('users', ['email' => $user->email]);
-    });
-});
-
-test('successful onboarding seeds store name setting in tenant', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub, 'store_name' => 'Artisan Breads']);
-
-    $tenant = Tenant::query()->findOrFail($sub);
-    $tenant->run(function () {
         test()->assertDatabaseHas('settings', [
             'key' => 'store_name',
             'value' => 'Artisan Breads',
         ]);
-    });
-});
-
-test('successful onboarding seeds store email setting in tenant', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    $tenant = Tenant::query()->findOrFail($sub);
-    $tenant->run(function () use ($user) {
         test()->assertDatabaseHas('settings', [
             'key' => 'store_email',
             'value' => $user->email,
         ]);
     });
+
+    test()->assertDatabaseHas('tenants', ['id' => $sub]);
+    test()->assertDatabaseHas('tenants', [
+        'id' => $sub,
+        'plan' => SubscriptionTier::Starter,
+    ]);
+
+    $tenantRow = DB::table('tenants')->where('id', $sub)->first();
+    throw_unless($tenantRow instanceof stdClass && is_string($tenantRow->trial_ends_at), RuntimeException::class, 'Expected the tenant and trial end date to exist.');
+    $trialEnds = Date::parse($tenantRow->trial_ends_at);
+    $host = parse_url(Config::string('app.url'), PHP_URL_HOST);
+
+    expect($domain)->not->toBeNull()
+        ->and($domain->domain)->toBe($sub)
+        ->and($tenantRow->storefront_enabled)->toBeTruthy()
+        ->and($trialEnds->isBetween(now()->addDays(29), now()->addDays(31)))->toBeTrue()
+        ->and(auth()->check())->toBeFalse()
+        ->and(csrf_token())->not->toBe($tokenBefore);
+
+    $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
+
+    Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
+        return $event->user->is($user)
+            && $event->tenant->id === $sub
+            && str_contains($event->adminUrl, "{$sub}.")
+            && str_ends_with($event->adminUrl, '/admin');
+    });
 });
 
-test('onboarding with storefront choice own stores external website', function () {
+test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {
     $user = createSignupUser();
     $sub = uniqueSubdomain();
+
     submitOnboarding($user, [
         'subdomain' => $sub,
         'storefront_choice' => 'own',
@@ -202,39 +176,11 @@ test('onboarding with storefront choice own stores external website', function (
         'id' => $sub,
         'external_website' => 'https://mybakery.com',
     ]);
-});
-
-test('onboarding with storefront choice kneadit sets storefront enabled true', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub, 'storefront_choice' => 'kneadit']);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
     throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
-    expect($tenant->storefront_enabled)->toBeTruthy();
-});
 
-test('onboarding with storefront choice own sets storefront enabled false', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, [
-        'subdomain' => $sub,
-        'storefront_choice' => 'own',
-        'external_website' => 'https://mybakery.com',
-    ]);
-
-    $tenant = DB::table('tenants')->where('id', $sub)->first();
-    throw_unless($tenant instanceof stdClass, RuntimeException::class, 'Expected the tenant to exist.');
     expect($tenant->storefront_enabled)->toBeFalsy();
-});
-
-test('onboarding redirects to tenant admin url', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    $response = submitOnboarding($user, ['subdomain' => $sub]);
-
-    $host = parse_url(Config::string('app.url'), PHP_URL_HOST);
-    $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
 });
 
 test('duplicate subdomain returns validation error', function () {
@@ -310,73 +256,10 @@ test('subdomain is lowercased', function () {
     $this->subdomainCounter++;
     $sub = 'MyBaKeRy' . $this->subdomainCounter;
     $lower = strtolower($sub);
-    $this->createdSubdomains[] = $lower;
 
     submitOnboarding($user, ['subdomain' => $sub]);
 
     test()->assertDatabaseHas('tenants', ['id' => $lower]);
-});
-
-test('tenant gets starter plan by default', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    test()->assertDatabaseHas('tenants', [
-        'id' => $sub,
-        'plan' => SubscriptionTier::Starter,
-    ]);
-});
-
-test('tenant gets trial ends at set to 30 days from now', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    $tenant = DB::table('tenants')->where('id', $sub)->first();
-    throw_unless($tenant instanceof stdClass && is_string($tenant->trial_ends_at), RuntimeException::class, 'Expected a tenant trial end date.');
-    $trialEnds = Date::parse($tenant->trial_ends_at);
-
-    expect(
-        $trialEnds->isBetween(now()->addDays(29), now()->addDays(31)),
-    )->toBeTrue("Trial ends at {$trialEnds} is not approximately 30 days from now");
-});
-
-// -------------------------------------------------------
-// CompleteOnboardingController — security boundary
-// -------------------------------------------------------
-
-test('successful onboarding logs the user out so they re-authenticate on the tenant subdomain', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    expect(auth()->check())->toBeFalse();
-});
-
-test('successful onboarding invalidates the central session and rotates the CSRF token', function () {
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-
-    $tokenBefore = csrf_token();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    expect(csrf_token())->not->toBe($tokenBefore);
-});
-
-test('successful onboarding dispatches TenantOnboarded with the user, tenant, and admin url', function () {
-    Event::fake([TenantOnboarded::class]);
-
-    $user = createSignupUser();
-    $sub = uniqueSubdomain();
-    submitOnboarding($user, ['subdomain' => $sub]);
-
-    Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
-        return $event->user->is($user)
-            && $event->tenant->id === $sub
-            && str_contains($event->adminUrl, "{$sub}.")
-            && str_ends_with($event->adminUrl, '/admin');
-    });
 });
 
 test('referral code from session is forwarded to CompleteReferral', function () {
@@ -401,7 +284,3 @@ test('referral code from session is forwarded to CompleteReferral', function () 
         ->referred_tenant_id->toBe($sub)
         ->referred_email->toBe($user->email);
 });
-
-// -------------------------------------------------------
-// Plan Gating (post-signup)
-// -------------------------------------------------------
