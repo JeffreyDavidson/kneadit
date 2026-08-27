@@ -67,43 +67,31 @@ function submitOnboarding(User $user, array $data = []): TestResponse
 // Registration & Auth — Billing Plans
 // -------------------------------------------------------
 
-test('guest viewing billing plans is redirected', function () {
+test('billing and onboarding routes enforce guest and authenticated access contracts', function () {
     $response = get(route('billing.plans'));
     expect($response->getStatusCode())->not->toBe(200);
-});
 
-test('authenticated user can view billing plans page', function () {
     $user = createSignupUser();
     $response = actingAs($user)->get(route('billing.plans'));
     $response->assertOk();
-});
 
-test('authenticated user can initiate checkout with valid plan', function () {
-    $user = createSignupUser();
     $response = actingAs($user)->post(route('billing.checkout', 'starter'));
     expect($response->getStatusCode())->not->toBe(422);
-});
 
-test('invalid plan name returns error', function () {
-    $user = createSignupUser();
     $response = actingAs($user)->post(route('billing.checkout', 'nonexistent'));
     $response->assertNotFound();
+
+    auth()->logout();
+    $response = get(route('onboarding.show'));
+    expect($response->getStatusCode())->not->toBe(200);
+
+    $response = actingAs($user)->get(route('onboarding.show'));
+    $response->assertOk();
 });
 
 // -------------------------------------------------------
 // Onboarding Flow
 // -------------------------------------------------------
-
-test('guest cannot access onboarding', function () {
-    $response = get(route('onboarding.show'));
-    expect($response->getStatusCode())->not->toBe(200);
-});
-
-test('authenticated user can view onboarding page', function () {
-    $user = createSignupUser();
-    $response = actingAs($user)->get(route('onboarding.show'));
-    $response->assertOk();
-});
 
 test('successful onboarding completes the default KneadIt pipeline', function () {
     Event::fake([TenantOnboarded::class]);
@@ -183,7 +171,7 @@ test('onboarding with an external storefront stores its URL and disables the Kne
     expect($tenant->storefront_enabled)->toBeFalsy();
 });
 
-test('duplicate subdomain returns validation error', function () {
+test('onboarding rejects invalid payloads', function () {
     $sub = uniqueSubdomain();
     DB::table('tenants')->insert([
         'id' => $sub,
@@ -205,50 +193,37 @@ test('duplicate subdomain returns validation error', function () {
     ]);
 
     $user = createSignupUser();
-    $response = actingAs($user)->post(route('onboarding.store'), [
-        'store_name' => 'My Bakery',
-        'subdomain' => $sub,
-        'storefront_choice' => 'kneadit',
-    ]);
-    $response->assertSessionHasErrors('subdomain');
-});
+    $cases = [
+        'duplicate subdomain' => [[
+            'store_name' => 'My Bakery',
+            'subdomain' => $sub,
+            'storefront_choice' => 'kneadit',
+        ], 'subdomain'],
+        'missing store name' => [[
+            'subdomain' => 'missing-name',
+            'storefront_choice' => 'kneadit',
+        ], 'store_name'],
+        'missing subdomain' => [[
+            'store_name' => 'My Bakery',
+            'storefront_choice' => 'kneadit',
+        ], 'subdomain'],
+        'invalid storefront choice' => [[
+            'store_name' => 'My Bakery',
+            'subdomain' => 'invalid-choice',
+            'storefront_choice' => 'invalid',
+        ], 'storefront_choice'],
+        'missing external website' => [[
+            'store_name' => 'My Bakery',
+            'subdomain' => 'missing-website',
+            'storefront_choice' => 'own',
+        ], 'external_website'],
+    ];
 
-test('missing store name returns validation error', function () {
-    $user = createSignupUser();
-    $response = actingAs($user)->post(route('onboarding.store'), [
-        'subdomain' => 'testshop',
-        'storefront_choice' => 'kneadit',
-    ]);
-    $response->assertSessionHasErrors('store_name');
-});
-
-test('missing subdomain returns validation error', function () {
-    $user = createSignupUser();
-    $response = actingAs($user)->post(route('onboarding.store'), [
-        'store_name' => 'My Bakery',
-        'storefront_choice' => 'kneadit',
-    ]);
-    $response->assertSessionHasErrors('subdomain');
-});
-
-test('invalid storefront choice returns validation error', function () {
-    $user = createSignupUser();
-    $response = actingAs($user)->post(route('onboarding.store'), [
-        'store_name' => 'My Bakery',
-        'subdomain' => 'testshop',
-        'storefront_choice' => 'invalid',
-    ]);
-    $response->assertSessionHasErrors('storefront_choice');
-});
-
-test('storefront choice own without external website returns validation error', function () {
-    $user = createSignupUser();
-    $response = actingAs($user)->post(route('onboarding.store'), [
-        'store_name' => 'My Bakery',
-        'subdomain' => 'testshop',
-        'storefront_choice' => 'own',
-    ]);
-    $response->assertSessionHasErrors('external_website');
+    foreach ($cases as [$payload, $error]) {
+        actingAs($user)
+            ->post(route('onboarding.store'), $payload)
+            ->assertSessionHasErrors($error);
+    }
 });
 
 test('subdomain is lowercased', function () {
