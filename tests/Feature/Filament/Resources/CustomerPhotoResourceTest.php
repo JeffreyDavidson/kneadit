@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -21,21 +20,22 @@ beforeEach(function () {
 test('can list customer photos in the table', function () {
     $photos = CustomerPhoto::factory()->count(3)->create();
 
-    Livewire::test(ListCustomerPhotos::class)
+    livewire(ListCustomerPhotos::class)
         ->assertCanSeeTableRecords($photos);
 });
 
-test('can render customer photo table columns', function (string $column) {
+test('can render customer photo table columns', function () {
     CustomerPhoto::factory()->create();
 
-    Livewire::test(ListCustomerPhotos::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['customer_name', 'caption']);
+    livewire(ListCustomerPhotos::class)
+        ->assertCanRenderTableColumn('customer_name')
+        ->assertCanRenderTableColumn('caption');
+});
 
 test('can create a customer photo via header action', function () {
     Storage::fake('public');
 
-    Livewire::test(ListCustomerPhotos::class)
+    livewire(ListCustomerPhotos::class)
         ->callAction('create', data: [
             'customer_name' => 'Alice Baker',
             'customer_email' => 'alice@example.com',
@@ -53,24 +53,28 @@ test('can create a customer photo via header action', function () {
         ->photo_path->not->toBeNull();
 });
 
-test('create customer photo validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListCustomerPhotos::class)
-        ->callAction('create', data: [
-            'customer_name' => 'Alice',
-            'customer_email' => 'alice@example.com',
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'name is required' => [['customer_name' => null], ['customer_name' => 'required']],
-    'email is required' => [['customer_email' => null], ['customer_email' => 'required']],
-    'email must be valid' => [['customer_email' => 'not-an-email'], ['customer_email' => 'email']],
-]);
+test('create customer photo validates required fields', function () {
+    $cases = [
+        [['customer_name' => null], ['customer_name' => 'required']],
+        [['customer_email' => null], ['customer_email' => 'required']],
+        [['customer_email' => 'not-an-email'], ['customer_email' => 'email']],
+    ];
+
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListCustomerPhotos::class)
+            ->callAction('create', data: [
+                'customer_name' => 'Alice',
+                'customer_email' => 'alice@example.com',
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can edit a customer photo via table action', function () {
     $photo = CustomerPhoto::factory()->create();
 
-    Livewire::test(ListCustomerPhotos::class)
+    livewire(ListCustomerPhotos::class)
         ->callAction(TestAction::make('edit')->table($photo), data: [
             'customer_name' => 'Updated Name',
             'customer_email' => $photo->customer_email,
@@ -91,7 +95,7 @@ test('can search customer photos by customer name', function () {
     $target = CustomerPhoto::factory()->create(['customer_name' => 'Alice Baker']);
     $other = CustomerPhoto::factory()->create(['customer_name' => 'Bob Smith']);
 
-    Livewire::test(ListCustomerPhotos::class)
+    livewire(ListCustomerPhotos::class)
         ->searchTable('Alice')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
