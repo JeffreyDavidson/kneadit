@@ -8,7 +8,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,7 +18,7 @@ beforeEach(function () {
 });
 
 test('can create a coupon via slide-over', function () {
-    Livewire::test(ListCoupons::class)
+    livewire(ListCoupons::class)
         ->callAction(CreateAction::class, data: [
             'code' => 'SPRING20',
             'type' => CouponType::Percentage->value,
@@ -34,24 +33,28 @@ test('can create a coupon via slide-over', function () {
     ]);
 });
 
-test('create coupon validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListCoupons::class)
-        ->callAction(CreateAction::class, data: [
-            'code' => 'TEST01',
-            'type' => CouponType::Percentage->value,
-            'percentage' => 10,
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'code is required' => [['code' => null], ['code' => 'required']],
-    'type is required' => [['type' => null], ['type' => 'required']],
-]);
+test('create coupon validates required fields', function () {
+    $cases = [
+        [['code' => null], ['code' => 'required']],
+        [['type' => null], ['type' => 'required']],
+    ];
+
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListCoupons::class)
+            ->callAction(CreateAction::class, data: [
+                'code' => 'TEST01',
+                'type' => CouponType::Percentage->value,
+                'percentage' => 10,
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can edit a coupon via table action', function () {
     $coupon = Coupon::factory()->percentage()->create();
 
-    Livewire::test(ListCoupons::class)
+    livewire(ListCoupons::class)
         ->callAction(TestAction::make('edit')->table($coupon), data: [
             'code' => 'UPDATED01',
             'type' => $coupon->type->value,
@@ -67,24 +70,27 @@ test('can search coupons by code', function () {
     $target = Coupon::factory()->create(['code' => 'SPRING20']);
     $other = Coupon::factory()->create(['code' => 'WINTER10']);
 
-    Livewire::test(ListCoupons::class)
+    livewire(ListCoupons::class)
         ->searchTable('SPRING')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
 
-test('can render coupon table columns', function (string $column) {
+test('can render coupon table columns', function () {
     Coupon::factory()->create();
 
-    Livewire::test(ListCoupons::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['code', 'type', 'discount_value', 'is_active']);
+    livewire(ListCoupons::class)
+        ->assertCanRenderTableColumn('code')
+        ->assertCanRenderTableColumn('type')
+        ->assertCanRenderTableColumn('discount_value')
+        ->assertCanRenderTableColumn('is_active');
+});
 
 test('can filter coupons by type', function () {
     $percentage = Coupon::factory()->percentage()->create();
     $fixed = Coupon::factory()->fixed()->create();
 
-    Livewire::test(ListCoupons::class)
+    livewire(ListCoupons::class)
         ->filterTable('type', CouponType::Percentage->value)
         ->assertCanSeeTableRecords(collect([$percentage]))
         ->assertCanNotSeeTableRecords(collect([$fixed]));
@@ -94,7 +100,7 @@ test('can sort coupons by code', function () {
     $alpha = Coupon::factory()->create(['code' => 'ALPHA01']);
     $zeta = Coupon::factory()->create(['code' => 'ZETA99']);
 
-    Livewire::test(ListCoupons::class)
+    livewire(ListCoupons::class)
         ->sortTable('code')
         ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
         ->sortTable('code', 'desc')
