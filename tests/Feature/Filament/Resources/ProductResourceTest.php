@@ -7,7 +7,6 @@ use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,14 +17,14 @@ beforeEach(function () {
 });
 
 test('can render products list page', function () {
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->assertOk();
 });
 
 test('can list products in the table', function () {
     $products = Product::factory()->recycle(test()->category)->count(3)->create();
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->assertCanSeeTableRecords($products);
 });
 
@@ -33,23 +32,27 @@ test('can search products by name', function () {
     $sourdough = Product::factory()->create(['name' => 'Sourdough Loaf']);
     $baguette = Product::factory()->create(['name' => 'Baguette']);
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->searchTable('Sourdough')
         ->assertCanSeeTableRecords(collect([$sourdough]))
         ->assertCanNotSeeTableRecords(collect([$baguette]));
 });
 
-test('can render product table columns', function (string $column) {
+test('can render product table columns', function () {
     Product::factory()->recycle(test()->category)->create();
 
-    Livewire::test(ListProducts::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'category.name', 'price', 'is_active', 'is_featured']);
+    livewire(ListProducts::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('category.name')
+        ->assertCanRenderTableColumn('price')
+        ->assertCanRenderTableColumn('is_active')
+        ->assertCanRenderTableColumn('is_featured');
+});
 
 test('can create a product via slide-over', function () {
     $category = Category::factory()->create();
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->callAction(CreateAction::class, data: [
             'name' => 'Ciabatta Roll',
             'slug' => 'ciabatta-roll',
@@ -64,30 +67,32 @@ test('can create a product via slide-over', function () {
     ]);
 });
 
-test('create product validates required fields', function (array $data, array $errors) {
-    $category = Category::factory()->create();
+test('create product validates required fields', function () {
+    $cases = [
+        [['name' => null], ['name' => 'required']],
+        [['slug' => null], ['slug' => 'required']],
+        [['price' => null], ['price' => 'required']],
+        [['category_id' => null], ['category_id' => 'required']],
+    ];
 
-    Livewire::test(ListProducts::class)
-        ->callAction(CreateAction::class, data: [
-            'name' => 'Test',
-            'slug' => 'test',
-            'price' => 5.00,
-            'category_id' => $category->id,
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'name is required' => [['name' => null], ['name' => 'required']],
-    'slug is required' => [['slug' => null], ['slug' => 'required']],
-    'price is required' => [['price' => null], ['price' => 'required']],
-    'category is required' => [['category_id' => null], ['category_id' => 'required']],
-]);
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListProducts::class)
+            ->callAction(CreateAction::class, data: [
+                'name' => 'Test',
+                'slug' => 'test',
+                'price' => 5.00,
+                'category_id' => test()->category->id,
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can filter products by active status', function () {
     $active = Product::factory()->active()->create();
     $inactive = Product::factory()->inactive()->create();
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->filterTable('is_active', true)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
@@ -97,7 +102,7 @@ test('can sort products by name', function () {
     $apple = Product::factory()->create(['name' => 'Apple Tart']);
     $zucchini = Product::factory()->create(['name' => 'Zucchini Bread']);
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$apple, $zucchini]), inOrder: true)
         ->sortTable('name', 'desc')
@@ -107,7 +112,7 @@ test('can sort products by name', function () {
 test('can edit a product via table action', function () {
     $product = Product::factory()->recycle(test()->category)->create();
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->callAction(TestAction::make('edit')->table($product), data: [
             'name' => 'Updated Bread',
             'slug' => $product->slug,
@@ -150,7 +155,7 @@ test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction
     $kept = Product::factory()->recycle(test()->category)->create();
     $doomed = Product::factory()->recycle(test()->category)->count(2)->create();
 
-    Livewire::test(ListProducts::class)
+    livewire(ListProducts::class)
         ->selectTableRecords($doomed)
         ->callAction(TestAction::make('delete')->table()->bulk());
 
