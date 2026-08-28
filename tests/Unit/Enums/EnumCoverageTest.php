@@ -20,26 +20,28 @@ use App\Enums\Storefront\StorefrontTheme;
 // Simple HasLabel enums — every case returns a non-empty label
 // ---------------------------------------------------------------------------
 
-dataset('simple_label_enums', [
-    'ActivityAction' => [ActivityAction::class],
-    'CaptionStyle' => [CaptionStyle::class],
-    'DnsVerificationStatus' => [DnsVerificationStatus::class],
-    'PageType' => [PageType::class],
-    'ReferralStatus' => [ReferralStatus::class],
-    'CouponTransactionType' => [CouponTransactionType::class],
-    'GiftCardTransactionType' => [GiftCardTransactionType::class],
-    'StockAdjustmentType' => [StockAdjustmentType::class],
-    'StockStatus' => [StockStatus::class],
-    'SenderType' => [SenderType::class],
-    'StorefrontTheme' => [StorefrontTheme::class],
-    'SurveyQuestionType' => [SurveyQuestionType::class],
-]);
+test('every case has a non-empty label', function () {
+    $enums = [
+        ActivityAction::class,
+        CaptionStyle::class,
+        DnsVerificationStatus::class,
+        PageType::class,
+        ReferralStatus::class,
+        CouponTransactionType::class,
+        GiftCardTransactionType::class,
+        StockAdjustmentType::class,
+        StockStatus::class,
+        SenderType::class,
+        StorefrontTheme::class,
+        SurveyQuestionType::class,
+    ];
 
-test('every case has a non-empty label', function (string $enum) {
-    foreach ($enum::cases() as $case) {
-        expect($case->getLabel())->toBeString()->not->toBeEmpty();
+    foreach ($enums as $enum) {
+        foreach ($enum::cases() as $case) {
+            expect($case->getLabel())->toBeString()->not->toBeEmpty();
+        }
     }
-})->with('simple_label_enums');
+});
 
 // ---------------------------------------------------------------------------
 // SenderType — custom boolean helpers
@@ -65,21 +67,22 @@ test('MarginHealth has a non-empty label for every case', function () {
     }
 });
 
-test('MarginHealth::fromPercentage returns correct health', function (
-    ?float $margin,
-    MarginHealth $expected,
-) {
-    expect(MarginHealth::fromPercentage($margin))->toBe($expected);
-})->with([
-    'null returns Unknown' => [null, MarginHealth::Unknown],
-    '50+ is Healthy' => [50.0, MarginHealth::Healthy],
-    '75 is Healthy' => [75.0, MarginHealth::Healthy],
-    '30 is Warning' => [30.0, MarginHealth::Warning],
-    '49.9 is Warning' => [49.9, MarginHealth::Warning],
-    '29.9 is Critical' => [29.9, MarginHealth::Critical],
-    '0 is Critical' => [0.0, MarginHealth::Critical],
-    'negative is Critical' => [-10.0, MarginHealth::Critical],
-]);
+test('MarginHealth::fromPercentage returns correct health', function () {
+    $cases = [
+        [null, MarginHealth::Unknown],
+        [50.0, MarginHealth::Healthy],
+        [75.0, MarginHealth::Healthy],
+        [30.0, MarginHealth::Warning],
+        [49.9, MarginHealth::Warning],
+        [29.9, MarginHealth::Critical],
+        [0.0, MarginHealth::Critical],
+        [-10.0, MarginHealth::Critical],
+    ];
+
+    foreach ($cases as [$margin, $expected]) {
+        expect(MarginHealth::fromPercentage($margin))->toBe($expected);
+    }
+});
 
 test('MarginHealth::cssClass returns the backing value', function () {
     foreach (MarginHealth::cases() as $case) {
@@ -97,16 +100,17 @@ test('PricingPosition has a non-empty label for every case', function () {
     }
 });
 
-test('PricingPosition::multiplier returns expected values', function (
-    PricingPosition $position,
-    float $expected,
-) {
-    expect($position->multiplier())->toBe($expected);
-})->with([
-    'Economy' => [PricingPosition::Economy, 0.85],
-    'Standard' => [PricingPosition::Standard, 1.0],
-    'Premium' => [PricingPosition::Premium, 1.25],
-]);
+test('PricingPosition::multiplier returns expected values', function () {
+    $cases = [
+        [PricingPosition::Economy, 0.85],
+        [PricingPosition::Standard, 1.0],
+        [PricingPosition::Premium, 1.25],
+    ];
+
+    foreach ($cases as [$position, $expected]) {
+        expect($position->multiplier())->toBe($expected);
+    }
+});
 
 // ---------------------------------------------------------------------------
 // BlogPostCategory
