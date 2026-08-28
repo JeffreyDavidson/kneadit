@@ -7,7 +7,6 @@ use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,28 +17,33 @@ beforeEach(function () {
 });
 
 test('can render the orders list page', function () {
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->assertOk();
 });
 
 test('can list orders in the table', function () {
     $orders = Order::factory()->recycle(test()->customer)->count(3)->create();
 
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->assertCanSeeTableRecords($orders);
 });
 
-test('can render table columns', function (string $column) {
+test('can render table columns', function () {
     Order::factory()->recycle(test()->customer)->create();
 
-    Livewire::test(ListOrders::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['order_number', 'customer.name', 'status', 'payment_status', 'total', 'delivery_date']);
+    livewire(ListOrders::class)
+        ->assertCanRenderTableColumn('order_number')
+        ->assertCanRenderTableColumn('customer.name')
+        ->assertCanRenderTableColumn('status')
+        ->assertCanRenderTableColumn('payment_status')
+        ->assertCanRenderTableColumn('total')
+        ->assertCanRenderTableColumn('delivery_date');
+});
 
 test('can render the view order page', function () {
     $order = Order::factory()->recycle(test()->customer)->create();
 
-    Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk();
 });
 
@@ -51,7 +55,7 @@ test('view order page renders the Catering section when the order is linked to a
     ]);
     $order = Order::factory()->recycle(test()->customer)->for($inquiry, 'cateringInquiry')->create();
 
-    Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
         ->assertSee('Catering')
         ->assertSee('Wedding')
@@ -62,7 +66,7 @@ test('view order page renders the Catering section when the order is linked to a
 test('view order page omits the Catering section for non-catering orders', function () {
     $order = Order::factory()->recycle(test()->customer)->create();
 
-    Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
         ->assertDontSee('View inquiry');
 });
@@ -71,7 +75,7 @@ test('can search orders by order number', function () {
     $target = Order::factory()->recycle(test()->customer)->create();
     $other = Order::factory()->recycle(test()->customer)->create();
 
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->searchTable($target->order_number)
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -81,7 +85,7 @@ test('can filter orders by status', function () {
     $pending = Order::factory()->recycle(test()->customer)->create();
     $delivered = Order::factory()->recycle(test()->customer)->delivered()->create();
 
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->filterTable('status', App\Enums\Orders\OrderStatus::Delivered->value)
         ->assertCanSeeTableRecords(collect([$delivered]))
         ->assertCanNotSeeTableRecords(collect([$pending]));
@@ -91,7 +95,7 @@ test('can filter orders by payment status', function () {
     $unpaid = Order::factory()->recycle(test()->customer)->create();
     $paid = Order::factory()->recycle(test()->customer)->paid()->create();
 
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->filterTable('payment_status', App\Enums\Orders\PaymentStatus::Paid->value)
         ->assertCanSeeTableRecords(collect([$paid]))
         ->assertCanNotSeeTableRecords(collect([$unpaid]));
@@ -101,7 +105,7 @@ test('can sort orders by total', function () {
     $cheap = Order::factory()->recycle(test()->customer)->create(['subtotal' => 10, 'total' => 10]);
     $expensive = Order::factory()->recycle(test()->customer)->create(['subtotal' => 100, 'total' => 100]);
 
-    Livewire::test(ListOrders::class)
+    livewire(ListOrders::class)
         ->sortTable('total')
         ->assertCanSeeTableRecords(collect([$cheap, $expensive]), inOrder: true)
         ->sortTable('total', 'desc')
