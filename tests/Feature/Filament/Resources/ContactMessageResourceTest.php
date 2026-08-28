@@ -9,7 +9,6 @@ use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -22,19 +21,19 @@ beforeEach(function () {
 test('can list contact messages in the table', function () {
     $messages = ContactMessage::factory()->count(3)->create();
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->assertCanSeeTableRecords($messages);
 });
 
 test('mark-read action toggles is_read on the row', function () {
     $message = ContactMessage::factory()->unread()->create();
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->callAction(TestAction::make('toggleRead')->table($message));
 
     expect($message->fresh()->is_read)->toBeTrue();
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->callAction(TestAction::make('toggleRead')->table($message));
 
     expect($message->fresh()->is_read)->toBeFalse();
@@ -43,14 +42,14 @@ test('mark-read action toggles is_read on the row', function () {
 test('view page renders for a contact message', function () {
     $message = ContactMessage::factory()->create();
 
-    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->assertOk();
 });
 
 test('mark-read action on the view page toggles is_read', function () {
     $message = ContactMessage::factory()->unread()->create();
 
-    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->callAction('toggleRead');
 
     expect($message->fresh()->is_read)->toBeTrue();
@@ -62,7 +61,7 @@ test('reply action exists on the view page', function () {
         'subject' => 'Custom cake',
     ]);
 
-    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->assertActionExists('reply')
         ->assertActionVisible('reply');
 });
@@ -76,7 +75,7 @@ test('reply action sends the email, persists the reply, and marks the message as
         'subject' => 'Custom cake',
     ]);
 
-    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->callAction('reply', data: [
             'subject' => 'Re: Custom cake',
             'body' => 'Thanks for reaching out — happy to help with that.',
@@ -107,24 +106,26 @@ test('view page renders prior replies as a thread', function () {
         'body' => 'Original staff response body that should appear in the thread.',
     ]);
 
-    Livewire::test(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
         ->assertOk()
         ->assertSee('Re: First touch')
         ->assertSee('Original staff response body that should appear in the thread.');
 });
 
-test('can render contact message table columns', function (string $column) {
+test('can render contact message table columns', function () {
     ContactMessage::factory()->create();
 
-    Livewire::test(ListContactMessages::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'email', 'subject']);
+    livewire(ListContactMessages::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('email')
+        ->assertCanRenderTableColumn('subject');
+});
 
 test('can search contact messages by name', function () {
     $target = ContactMessage::factory()->create(['name' => 'Alice']);
     $other = ContactMessage::factory()->create(['name' => 'Bob']);
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->searchTable('Alice')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -134,7 +135,7 @@ test('can sort contact messages by name', function () {
     $alice = ContactMessage::factory()->create(['name' => 'Alice']);
     $zach = ContactMessage::factory()->create(['name' => 'Zach']);
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
         ->sortTable('name', 'desc')
@@ -145,7 +146,7 @@ test('can filter contact messages by read status', function () {
     $read = ContactMessage::factory()->read()->create();
     $unread = ContactMessage::factory()->unread()->create();
 
-    Livewire::test(ListContactMessages::class)
+    livewire(ListContactMessages::class)
         ->filterTable('is_read', true)
         ->assertCanSeeTableRecords(collect([$read]))
         ->assertCanNotSeeTableRecords(collect([$unread]));
