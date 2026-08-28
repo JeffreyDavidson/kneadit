@@ -22,90 +22,115 @@ function rolePolicyResult(string $policyClass, string $ability, User $user, ?obj
     return $result;
 }
 
-dataset('managerRolePolicies', [
-    'BlockedDate' => [App\Policies\Operations\BlockedDatePolicy::class, App\Models\Operations\BlockedDate::class],
-    'CapacityLimit' => [App\Policies\Operations\CapacityLimitPolicy::class, App\Models\Operations\CapacityLimit::class],
-    'CateringInquiry' => [App\Policies\Customers\CateringInquiryPolicy::class, App\Models\Customers\CateringInquiry::class],
-    'Category' => [App\Policies\Inventory\CategoryPolicy::class, App\Models\Inventory\Category::class],
-    'ContactMessage' => [App\Policies\Customers\ContactMessagePolicy::class, App\Models\Customers\ContactMessage::class],
-    'Coupon' => [App\Policies\Engagement\CouponPolicy::class, App\Models\Financial\Coupon::class],
-    'CustomerPhoto' => [App\Policies\Content\CustomerPhotoPolicy::class, App\Models\Customers\CustomerPhoto::class],
-    'Customer' => [App\Policies\Customers\CustomerPolicy::class, App\Models\Customers\Customer::class],
-    'CustomerCampaign' => [App\Policies\Engagement\CustomerCampaignPolicy::class, App\Models\Engagement\CustomerCampaign::class],
-    'EmailCampaign' => [App\Policies\Platform\EmailCampaignPolicy::class, App\Models\Engagement\EmailCampaign::class],
-    'Expense' => [App\Policies\Financial\ExpensePolicy::class, App\Models\Financial\Expense::class],
-    'GalleryPhoto' => [App\Policies\Content\GalleryPhotoPolicy::class, App\Models\Content\GalleryPhoto::class],
-    'GiftCard' => [App\Policies\Financial\GiftCardPolicy::class, App\Models\Financial\GiftCard::class],
-    'Holiday' => [App\Policies\Operations\HolidayPolicy::class, App\Models\Operations\Holiday::class],
-    'Income' => [App\Policies\Financial\IncomePolicy::class, App\Models\Financial\Income::class],
-    'Ingredient' => [App\Policies\Inventory\IngredientPolicy::class, App\Models\Inventory\Ingredient::class],
-    'LoyaltyReward' => [App\Policies\Engagement\LoyaltyRewardPolicy::class, App\Models\Engagement\LoyaltyReward::class],
-    'Recipe' => [App\Policies\Inventory\RecipePolicy::class, App\Models\Inventory\Recipe::class],
-    'Review' => [App\Policies\Customers\ReviewPolicy::class, App\Models\Engagement\Review::class],
-    'Setting' => [App\Policies\Operations\SettingPolicy::class, App\Models\Platform\Setting::class],
-    'SocialPost' => [App\Policies\Engagement\SocialPostPolicy::class, App\Models\Content\SocialPost::class],
-    'Supplier' => [App\Policies\Inventory\SupplierPolicy::class, App\Models\Inventory\Supplier::class],
-    'Survey' => [App\Policies\Engagement\SurveyPolicy::class, App\Models\Engagement\Survey::class],
-    'WaitlistEntry' => [App\Policies\Customers\WaitlistEntryPolicy::class, App\Models\Customers\WaitlistEntry::class],
+dataset('managerRolePolicyGroups', [
+    'Operations policies' => [[
+        [App\Policies\Operations\BlockedDatePolicy::class, App\Models\Operations\BlockedDate::class],
+        [App\Policies\Operations\CapacityLimitPolicy::class, App\Models\Operations\CapacityLimit::class],
+        [App\Policies\Operations\HolidayPolicy::class, App\Models\Operations\Holiday::class],
+        [App\Policies\Operations\SettingPolicy::class, App\Models\Platform\Setting::class],
+    ]],
+    'Customer and content policies' => [[
+        [App\Policies\Customers\CateringInquiryPolicy::class, App\Models\Customers\CateringInquiry::class],
+        [App\Policies\Customers\ContactMessagePolicy::class, App\Models\Customers\ContactMessage::class],
+        [App\Policies\Content\CustomerPhotoPolicy::class, App\Models\Customers\CustomerPhoto::class],
+        [App\Policies\Customers\CustomerPolicy::class, App\Models\Customers\Customer::class],
+        [App\Policies\Content\GalleryPhotoPolicy::class, App\Models\Content\GalleryPhoto::class],
+        [App\Policies\Customers\ReviewPolicy::class, App\Models\Engagement\Review::class],
+        [App\Policies\Customers\WaitlistEntryPolicy::class, App\Models\Customers\WaitlistEntry::class],
+    ]],
+    'Financial and inventory policies' => [[
+        [App\Policies\Inventory\CategoryPolicy::class, App\Models\Inventory\Category::class],
+        [App\Policies\Financial\ExpensePolicy::class, App\Models\Financial\Expense::class],
+        [App\Policies\Financial\GiftCardPolicy::class, App\Models\Financial\GiftCard::class],
+        [App\Policies\Financial\IncomePolicy::class, App\Models\Financial\Income::class],
+        [App\Policies\Inventory\IngredientPolicy::class, App\Models\Inventory\Ingredient::class],
+        [App\Policies\Inventory\RecipePolicy::class, App\Models\Inventory\Recipe::class],
+        [App\Policies\Inventory\SupplierPolicy::class, App\Models\Inventory\Supplier::class],
+    ]],
+    'Engagement and campaign policies' => [[
+        [App\Policies\Engagement\CouponPolicy::class, App\Models\Financial\Coupon::class],
+        [App\Policies\Engagement\CustomerCampaignPolicy::class, App\Models\Engagement\CustomerCampaign::class],
+        [App\Policies\Platform\EmailCampaignPolicy::class, App\Models\Engagement\EmailCampaign::class],
+        [App\Policies\Engagement\LoyaltyRewardPolicy::class, App\Models\Engagement\LoyaltyReward::class],
+        [App\Policies\Engagement\SocialPostPolicy::class, App\Models\Content\SocialPost::class],
+        [App\Policies\Engagement\SurveyPolicy::class, App\Models\Engagement\Survey::class],
+    ]],
 ]);
 
-dataset('staffRolePolicies', [
-    'BlogPost' => [App\Policies\Content\BlogPostPolicy::class, App\Models\Content\BlogPost::class],
-    'Order' => [App\Policies\Orders\OrderPolicy::class, App\Models\Orders\Order::class],
-    'Product' => [App\Policies\Inventory\ProductPolicy::class, App\Models\Inventory\Product::class],
+dataset('staffRolePolicyGroups', [
+    'Staff policies' => [[
+        [App\Policies\Content\BlogPostPolicy::class, App\Models\Content\BlogPost::class],
+        [App\Policies\Orders\OrderPolicy::class, App\Models\Orders\Order::class],
+        [App\Policies\Inventory\ProductPolicy::class, App\Models\Inventory\Product::class],
+    ]],
 ]);
 
-test('manager policies deny staff users', function (string $policyClass, string $modelClass) {
+test('manager policies deny staff users', function (array $policies) {
     $user = new User(['role' => UserRole::Staff]);
-    $model = new $modelClass;
 
-    expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeFalse()
-        ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeFalse()
-        ->and(rolePolicyResult($policyClass, 'create', $user))->toBeFalse()
-        ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeFalse()
-        ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeFalse();
-})->with('managerRolePolicies');
+    foreach ($policies as [$policyClass, $modelClass]) {
+        $model = new $modelClass;
 
-test('manager policies allow owner users', function (string $policyClass, string $modelClass) {
+        expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeFalse()
+            ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeFalse()
+            ->and(rolePolicyResult($policyClass, 'create', $user))->toBeFalse()
+            ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeFalse()
+            ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeFalse();
+    }
+})->with('managerRolePolicyGroups');
+
+test('manager policies allow owner users', function (array $policies) {
     $user = new User(['role' => UserRole::Owner]);
-    $model = new $modelClass;
 
-    expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
-})->with('managerRolePolicies');
+    foreach ($policies as [$policyClass, $modelClass]) {
+        $model = new $modelClass;
 
-test('manager policies allow manager users', function (string $policyClass, string $modelClass) {
+        expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    }
+})->with('managerRolePolicyGroups');
+
+test('manager policies allow manager users', function (array $policies) {
     $user = new User(['role' => UserRole::Manager]);
-    $model = new $modelClass;
 
-    expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
-})->with('managerRolePolicies');
+    foreach ($policies as [$policyClass, $modelClass]) {
+        $model = new $modelClass;
 
-test('staff policies allow staff users', function (string $policyClass, string $modelClass) {
+        expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    }
+})->with('managerRolePolicyGroups');
+
+test('staff policies allow staff users', function (array $policies) {
     $user = new User(['role' => UserRole::Staff]);
-    $model = new $modelClass;
 
-    expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
-})->with('staffRolePolicies');
+    foreach ($policies as [$policyClass, $modelClass]) {
+        $model = new $modelClass;
 
-test('staff policies allow owner users', function (string $policyClass, string $modelClass) {
+        expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    }
+})->with('staffRolePolicyGroups');
+
+test('staff policies allow owner users', function (array $policies) {
     $user = new User(['role' => UserRole::Owner]);
-    $model = new $modelClass;
 
-    expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
-        ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
-})->with('staffRolePolicies');
+    foreach ($policies as [$policyClass, $modelClass]) {
+        $model = new $modelClass;
+
+        expect(rolePolicyResult($policyClass, 'viewAny', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'view', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'create', $user))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'update', $user, $model))->toBeTrue()
+            ->and(rolePolicyResult($policyClass, 'delete', $user, $model))->toBeTrue();
+    }
+})->with('staffRolePolicyGroups');
