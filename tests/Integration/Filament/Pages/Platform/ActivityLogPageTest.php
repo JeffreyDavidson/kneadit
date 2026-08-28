@@ -9,28 +9,13 @@ beforeEach(function () {
     test()->page = new ActivityLogPage;
 });
 
-test('filter action defaults to null', function () {
-    expect(test()->page->filterAction)->toBeNull();
-});
-
-test('filter model type defaults to null', function () {
-    expect(test()->page->filterModelType)->toBeNull();
-});
-
-test('filter user defaults to null', function () {
-    expect(test()->page->filterUser)->toBeNull();
-});
-
-test('page defaults to 1', function () {
-    expect(test()->page->page)->toBe(1);
-});
-
-test('per page defaults to 25', function () {
-    expect(test()->page->perPage)->toBe(25);
-});
-
-test('expanded id defaults to null', function () {
-    expect(test()->page->expandedId)->toBeNull();
+test('page state has expected defaults', function () {
+    expect(test()->page->filterAction)->toBeNull()
+        ->and(test()->page->filterModelType)->toBeNull()
+        ->and(test()->page->filterUser)->toBeNull()
+        ->and(test()->page->page)->toBe(1)
+        ->and(test()->page->perPage)->toBe(25)
+        ->and(test()->page->expandedId)->toBeNull();
 });
 
 test('get activities property returns paginator', function () {
@@ -107,13 +92,10 @@ test('get model type options returns value→class-basename pairs for the filter
         ->and($options[App\Models\Orders\Order::class])->toBe('Order');
 });
 
-test('toggle expanded sets id', function () {
+test('toggle expanded sets and clears the same id', function () {
     test()->page->toggleExpanded(5);
     expect(test()->page->expandedId)->toBe(5);
-});
 
-test('toggle expanded unsets when same id', function () {
-    test()->page->toggleExpanded(5);
     test()->page->toggleExpanded(5);
     expect(test()->page->expandedId)->toBeNull();
 });
@@ -138,7 +120,7 @@ test('reset filters clears all filters', function () {
         ->and($state['page'])->toBe(1);
 });
 
-test('previous page decrements but not below 1', function () {
+test('pagination increments and decrements without going below 1', function () {
     test()->page->page = 3;
     test()->page->previousPage();
     expect(test()->page->page)->toBe(2);
@@ -146,40 +128,24 @@ test('previous page decrements but not below 1', function () {
     test()->page->page = 1;
     test()->page->previousPage();
     expect(test()->page->page)->toBe(1);
-});
 
-test('next page increments', function () {
-    test()->page->page = 1;
     test()->page->nextPage();
     expect(test()->page->page)->toBe(2);
 });
 
-test('updated filter action resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterAction();
-    expect(test()->page->page)->toBe(1);
-});
+test('updated filters reset pagination', function () {
+    $methods = [
+        'updatedFilterAction',
+        'updatedFilterModelType',
+        'updatedFilterUser',
+        'updatedFilterDateFrom',
+        'updatedFilterDateTo',
+    ];
 
-test('updated filter model type resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterModelType();
-    expect(test()->page->page)->toBe(1);
-});
+    foreach ($methods as $method) {
+        test()->page->page = 5;
+        test()->page->{$method}();
 
-test('updated filter user resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterUser();
-    expect(test()->page->page)->toBe(1);
-});
-
-test('updated filter date from resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterDateFrom();
-    expect(test()->page->page)->toBe(1);
-});
-
-test('updated filter date to resets page', function () {
-    test()->page->page = 5;
-    test()->page->updatedFilterDateTo();
-    expect(test()->page->page)->toBe(1);
+        expect(test()->page->page)->toBe(1);
+    }
 });
