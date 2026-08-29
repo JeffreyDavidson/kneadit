@@ -7,14 +7,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = ['code' => 'SAVE10', 'subtotal' => 25.00];
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    $validator = validator([], (new ApplyDiscountRequest)->rules());
 
-    $validator = validator($data, (new ApplyDiscountRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['code', 'subtotal']);
+    foreach (['code', 'subtotal'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('code is capped at 50 chars', function () {
     $validator = validator(
@@ -25,17 +24,16 @@ test('code is capped at 50 chars', function () {
     expect($validator->errors()->has('code'))->toBeTrue();
 });
 
-test('subtotal must be numeric and non-negative', function (mixed $subtotal) {
-    $validator = validator(
-        ['code' => 'SAVE10', 'subtotal' => $subtotal],
-        (new ApplyDiscountRequest)->rules(),
-    );
+test('subtotal must be numeric and non-negative', function () {
+    foreach ([-1, 'free'] as $subtotal) {
+        $validator = validator(
+            ['code' => 'SAVE10', 'subtotal' => $subtotal],
+            (new ApplyDiscountRequest)->rules(),
+        );
 
-    expect($validator->errors()->has('subtotal'))->toBeTrue();
-})->with([
-    'negative' => -1,
-    'string' => 'free',
-]);
+        expect($validator->errors()->has('subtotal'))->toBeTrue();
+    }
+});
 
 test('valid input passes', function () {
     $validator = validator(
