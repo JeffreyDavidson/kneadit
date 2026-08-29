@@ -8,36 +8,29 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
+test('required fields are enforced', function () {
+    $validator = validator([], (new StoreApiReviewRequest)->rules());
+
+    foreach (['customer_name', 'customer_email', 'product_id', 'rating', 'comment'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
+
+test('rating bounded 1..5', function () {
     $product = Product::factory()->create();
 
-    $data = [
-        'customer_name' => 'Alice',
-        'customer_email' => 'alice@example.com',
-        'product_id' => $product->id,
-        'rating' => 5,
-        'comment' => 'Loved it',
-    ];
-    unset($data[$field]);
+    foreach ([0, 6, -1] as $rating) {
+        $validator = validator([
+            'customer_name' => 'Alice',
+            'customer_email' => 'alice@example.com',
+            'product_id' => $product->id,
+            'rating' => $rating,
+            'comment' => 'meh',
+        ], (new StoreApiReviewRequest)->rules());
 
-    $validator = validator($data, (new StoreApiReviewRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['customer_name', 'customer_email', 'product_id', 'rating', 'comment']);
-
-test('rating bounded 1..5', function (int $rating) {
-    $product = Product::factory()->create();
-
-    $validator = validator([
-        'customer_name' => 'Alice',
-        'customer_email' => 'alice@example.com',
-        'product_id' => $product->id,
-        'rating' => $rating,
-        'comment' => 'meh',
-    ], (new StoreApiReviewRequest)->rules());
-
-    expect($validator->errors()->has('rating'))->toBeTrue();
-})->with([0, 6, -1]);
+        expect($validator->errors()->has('rating'))->toBeTrue();
+    }
+});
 
 test('product_id must reference an existing product', function () {
     $validator = validator([
