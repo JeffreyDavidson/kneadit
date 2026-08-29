@@ -13,11 +13,13 @@ test('all params optional', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-test('featured accepts boolean-shaped string values', function (string $value) {
-    $validator = validator(['featured' => $value], (new IndexProductsRequest)->rules());
+test('featured accepts boolean-shaped string values', function () {
+    foreach (['true', 'false', '1', '0'] as $value) {
+        $validator = validator(['featured' => $value], (new IndexProductsRequest)->rules());
 
-    expect($validator->passes())->toBeTrue();
-})->with(['true', 'false', '1', '0']);
+        expect($validator->passes())->toBeTrue();
+    }
+});
 
 test('featured rejects other strings', function () {
     $validator = validator(['featured' => 'yes'], (new IndexProductsRequest)->rules());
