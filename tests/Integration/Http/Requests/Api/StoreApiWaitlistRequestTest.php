@@ -8,19 +8,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = [
-        'customer_name' => 'Alice',
-        'customer_email' => 'alice@example.com',
-        'customer_phone' => '555-0100',
-        'requested_date' => now()->addDays(3)->toDateString(),
-    ];
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    $validator = validator([], (new StoreApiWaitlistRequest)->rules());
 
-    $validator = validator($data, (new StoreApiWaitlistRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['customer_name', 'customer_email', 'customer_phone', 'requested_date']);
+    foreach (['customer_name', 'customer_email', 'customer_phone', 'requested_date'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('product_id must reference an existing product when provided', function () {
     $validator = validator([
