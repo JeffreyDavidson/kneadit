@@ -4,18 +4,13 @@ use App\Http\Requests\Central\ContactRequest;
 
 beforeEach(fn () => setUpCentralTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = [
-        'name' => 'Alice',
-        'email' => 'alice@example.com',
-        'message' => 'Hi there',
-    ];
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    $validator = validator([], (new ContactRequest)->rules());
 
-    $validator = validator($data, (new ContactRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['name', 'email', 'message']);
+    foreach (['name', 'email', 'message'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('email must be valid', function () {
     $validator = validator([

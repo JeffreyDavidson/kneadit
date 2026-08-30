@@ -19,22 +19,23 @@ test('items must contain at least one row', function () {
     expect($validator->errors()->has('items'))->toBeTrue();
 });
 
-test('each item requires order_item_id and quantity', function (string $field) {
-    $row = ['order_item_id' => 5, 'quantity' => 1];
-    unset($row[$field]);
+test('each item requires order_item_id and quantity', function () {
+    $validator = validator(['items' => [[]]], (new ModifyOrderRequest)->rules());
 
-    $validator = validator(['items' => [$row]], (new ModifyOrderRequest)->rules());
+    foreach (['order_item_id', 'quantity'] as $field) {
+        expect($validator->errors()->has("items.0.{$field}"))->toBeTrue();
+    }
+});
 
-    expect($validator->errors()->has("items.0.{$field}"))->toBeTrue();
-})->with(['order_item_id', 'quantity']);
+test('item quantity is bounded 0..20', function () {
+    foreach ([-1, 21, 100] as $quantity) {
+        $validator = validator([
+            'items' => [['order_item_id' => 5, 'quantity' => $quantity]],
+        ], (new ModifyOrderRequest)->rules());
 
-test('item quantity is bounded 0..20', function (int $qty) {
-    $validator = validator([
-        'items' => [['order_item_id' => 5, 'quantity' => $qty]],
-    ], (new ModifyOrderRequest)->rules());
-
-    expect($validator->errors()->has('items.0.quantity'))->toBeTrue();
-})->with([-1, 21, 100]);
+        expect($validator->errors()->has('items.0.quantity'))->toBeTrue();
+    }
+});
 
 test('quantity 0 is allowed (treated as removal)', function () {
     $validator = validator([
@@ -44,14 +45,16 @@ test('quantity 0 is allowed (treated as removal)', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-test('tip_amount is bounded 0..1000', function (mixed $tip) {
-    $validator = validator([
-        'items' => [['order_item_id' => 5, 'quantity' => 1]],
-        'tip_amount' => $tip,
-    ], (new ModifyOrderRequest)->rules());
+test('tip_amount is bounded 0..1000', function () {
+    foreach ([-1, 1001, 'abc'] as $tip) {
+        $validator = validator([
+            'items' => [['order_item_id' => 5, 'quantity' => 1]],
+            'tip_amount' => $tip,
+        ], (new ModifyOrderRequest)->rules());
 
-    expect($validator->errors()->has('tip_amount'))->toBeTrue();
-})->with([-1, 1001, 'abc']);
+        expect($validator->errors()->has('tip_amount'))->toBeTrue();
+    }
+});
 
 test('valid modification passes', function () {
     $validator = validator([

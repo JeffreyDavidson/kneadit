@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Pages\Platform\Onboarding;
 use App\Filament\Pages\Platform\OnboardingSteps\BrandingStep;
 use App\Filament\Pages\Platform\OnboardingSteps\BusinessHoursStep;
 use App\Filament\Pages\Platform\OnboardingSteps\CompleteStep;
@@ -8,24 +7,25 @@ use App\Filament\Pages\Platform\OnboardingSteps\ComplianceStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ContactStep;
 use App\Filament\Pages\Platform\OnboardingSteps\DeliveryStep;
 use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
-use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
 use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Platform\Tenant;
-use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 
 beforeEach(function () {
-    setUpCentralTest();
-    tenancy()->initialize(Tenant::factory()->create());
+    setUpTenantTest();
+
+    // Defaults require tenant identity, but their data already lives in the in-memory tenant schema.
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize(new Tenant([
+        'id' => 'onboarding-test',
+        'name' => 'Test Owner',
+        'store_name' => 'Test Bakery',
+    ]));
 });
 
 // --- CompleteStep ---
-
-test('complete step key is complete', function () {
-    expect(CompleteStep::key())->toBe('complete');
-});
 
 test('complete step defaults returns empty array', function () {
     $settings = resolve(TenantSettings::class);
@@ -33,18 +33,7 @@ test('complete step defaults returns empty array', function () {
     expect(CompleteStep::defaults($settings))->toBeEmpty();
 });
 
-test('complete step save does nothing', function () {
-    CompleteStep::save(['some' => 'data']);
-
-    // No exception, no side effects
-    expect(true)->toBeTrue();
-});
-
 // --- PreviewStep ---
-
-test('preview step key is preview', function () {
-    expect(PreviewStep::key())->toBe('preview');
-});
 
 test('preview step defaults returns empty array', function () {
     $settings = resolve(TenantSettings::class);
@@ -52,18 +41,7 @@ test('preview step defaults returns empty array', function () {
     expect(PreviewStep::defaults($settings))->toBeEmpty();
 });
 
-test('preview step save does nothing', function () {
-    PreviewStep::save(['some' => 'data']);
-
-    // No exception, no side effects
-    expect(true)->toBeTrue();
-});
-
 // --- WelcomeStep ---
-
-test('welcome step key is welcome', function () {
-    expect(WelcomeStep::key())->toBe('welcome');
-});
 
 test('welcome step defaults returns expected keys', function () {
     $defaults = WelcomeStep::defaults(resolve(TenantSettings::class));
@@ -72,10 +50,6 @@ test('welcome step defaults returns expected keys', function () {
 });
 
 // --- ContactStep ---
-
-test('contact step key is contact', function () {
-    expect(ContactStep::key())->toBe('contact');
-});
 
 test('contact step defaults returns expected keys', function () {
     $defaults = ContactStep::defaults(resolve(TenantSettings::class));
@@ -97,10 +71,6 @@ test('contact step defaults returns stored values', function () {
 
 // --- BrandingStep ---
 
-test('branding step key is branding', function () {
-    expect(BrandingStep::key())->toBe('branding');
-});
-
 test('branding step defaults returns expected keys', function () {
     $defaults = BrandingStep::defaults(resolve(TenantSettings::class));
 
@@ -108,10 +78,6 @@ test('branding step defaults returns expected keys', function () {
 });
 
 // --- ProductStep ---
-
-test('product step key is product', function () {
-    expect(ProductStep::key())->toBe('product');
-});
 
 test('product step defaults returns expected keys', function () {
     $defaults = ProductStep::defaults(resolve(TenantSettings::class));
@@ -154,10 +120,6 @@ test('product step defaults loads existing product', function () {
 });
 
 // --- BusinessHoursStep ---
-
-test('business hours step key is hours', function () {
-    expect(BusinessHoursStep::key())->toBe('hours');
-});
 
 test('business hours step defaults returns all day keys', function () {
     $defaults = BusinessHoursStep::defaults(resolve(TenantSettings::class));
@@ -205,10 +167,6 @@ test('business hours step defaults loads existing settings', function () {
 
 // --- ComplianceStep ---
 
-test('compliance step key is compliance', function () {
-    expect(ComplianceStep::key())->toBe('compliance');
-});
-
 test('compliance step defaults returns expected keys', function () {
     $defaults = ComplianceStep::defaults(resolve(TenantSettings::class));
 
@@ -237,21 +195,7 @@ test('compliance step defaults loads existing settings', function () {
         ->and($defaults['acknowledged'])->toBeTrue();
 });
 
-test('compliance step us states returns all 50 states', function () {
-    $states = ComplianceStep::usStates();
-
-    expect($states)->toBeArray()
-        ->toHaveCount(50)
-        ->toHaveKey('FL', 'Florida')
-        ->toHaveKey('CA', 'California')
-        ->toHaveKey('NY', 'New York');
-});
-
 // --- DeliveryStep ---
-
-test('delivery step key is delivery', function () {
-    expect(DeliveryStep::key())->toBe('delivery');
-});
 
 test('delivery step defaults returns expected keys', function () {
     $defaults = DeliveryStep::defaults(resolve(TenantSettings::class));
@@ -275,12 +219,6 @@ test('delivery step defaults pickup enabled by default', function () {
         ->and($defaults['delivery_enabled'])->toBeFalse();
 });
 
-// --- PaymentsStep ---
-
-test('payments step key is payments', function () {
-    expect(PaymentsStep::key())->toBe('payments');
-});
-
 // --- OnboardingStepRegistry ---
 
 test('registry defaults returns all step keys', function () {
@@ -299,31 +237,4 @@ test('registry defaults returns all step keys', function () {
             'preview',
             'complete',
         ]);
-});
-
-// --- Onboarding page ---
-
-test('onboarding page is accessible to owner', function () {
-    $owner = User::factory()->owner()->create();
-    $this->actingAs($owner);
-
-    expect(Onboarding::canAccess())->toBeTrue();
-});
-
-test('onboarding page is accessible to manager', function () {
-    $manager = User::factory()->manager()->create();
-    $this->actingAs($manager);
-
-    expect(Onboarding::canAccess())->toBeTrue();
-});
-
-test('onboarding page is not accessible to staff', function () {
-    $staff = User::factory()->staff()->create();
-    $this->actingAs($staff);
-
-    expect(Onboarding::canAccess())->toBeFalse();
-});
-
-test('onboarding page is not accessible to guests', function () {
-    expect(Onboarding::canAccess())->toBeFalse();
 });

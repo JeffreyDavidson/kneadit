@@ -8,7 +8,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -22,12 +21,12 @@ beforeEach(function () {
 test('can list reviews in the table', function () {
     $reviews = Review::factory()->recycle(test()->product)->count(3)->create();
 
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->assertCanSeeTableRecords($reviews);
 });
 
 test('can create a review via slide-over', function () {
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->callAction(CreateAction::class, data: [
             'customer_name' => 'Happy Customer',
             'customer_email' => 'happy@example.com',
@@ -43,17 +42,21 @@ test('can create a review via slide-over', function () {
     ]);
 });
 
-test('can render review table columns', function (string $column) {
+test('can render review table columns', function () {
     Review::factory()->recycle(test()->product)->create();
 
-    Livewire::test(ListReviews::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);
+    livewire(ListReviews::class)
+        ->assertCanRenderTableColumn('customer_name')
+        ->assertCanRenderTableColumn('product.name')
+        ->assertCanRenderTableColumn('rating')
+        ->assertCanRenderTableColumn('is_approved')
+        ->assertCanRenderTableColumn('is_featured');
+});
 
 test('can edit a review via table action', function () {
     $review = Review::factory()->recycle(test()->product)->create();
 
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->callAction(TestAction::make('edit')->table($review), data: [
             'customer_name' => 'Updated Reviewer',
             'customer_email' => $review->customer_email,
@@ -69,32 +72,36 @@ test('can filter reviews by approval status', function () {
     $approved = Review::factory()->approved()->create();
     $pending = Review::factory()->recycle(test()->product)->create();
 
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->filterTable('is_approved', 1)
         ->assertCanSeeTableRecords(collect([$approved]))
         ->assertCanNotSeeTableRecords(collect([$pending]));
 });
 
-test('create review validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListReviews::class)
-        ->callAction(CreateAction::class, data: [
-            'customer_name' => 'Test',
-            'customer_email' => 'test@example.com',
-            'rating' => 5,
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
-    'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],
-    'rating is required' => [['rating' => null], ['rating' => 'required']],
-]);
+test('create review validates required fields', function () {
+    $cases = [
+        [['customer_name' => null], ['customer_name' => 'required']],
+        [['customer_email' => null], ['customer_email' => 'required']],
+        [['rating' => null], ['rating' => 'required']],
+    ];
+
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListReviews::class)
+            ->callAction(CreateAction::class, data: [
+                'customer_name' => 'Test',
+                'customer_email' => 'test@example.com',
+                'rating' => 5,
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can search reviews by customer name', function () {
     $target = Review::factory()->create(['customer_name' => 'Alice Baker']);
     $other = Review::factory()->create(['customer_name' => 'Bob Smith']);
 
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->searchTable('Alice')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -104,7 +111,7 @@ test('can sort reviews by customer name', function () {
     $alice = Review::factory()->create(['customer_name' => 'Alice']);
     $zach = Review::factory()->create(['customer_name' => 'Zach']);
 
-    Livewire::test(ListReviews::class)
+    livewire(ListReviews::class)
         ->sortTable('customer_name')
         ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
         ->sortTable('customer_name', 'desc')

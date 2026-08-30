@@ -6,7 +6,6 @@ use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,12 +17,12 @@ beforeEach(function () {
 test('can list categories in the table', function () {
     $categories = Category::factory()->count(3)->create();
 
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->assertCanSeeTableRecords($categories);
 });
 
 test('can create a category via slide-over', function () {
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->callAction(CreateAction::class, data: [
             'name' => 'Pastries',
             'slug' => 'pastries',
@@ -37,7 +36,7 @@ test('can create a category via slide-over', function () {
 });
 
 test('create category validates name is required', function () {
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->callAction(CreateAction::class, data: [
             'name' => null,
             'slug' => 'test',
@@ -48,7 +47,7 @@ test('create category validates name is required', function () {
 test('can edit a category via table action', function () {
     $category = Category::factory()->create();
 
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->callAction(TestAction::make('edit')->table($category), data: [
             'name' => 'Updated Category',
             'slug' => $category->slug,
@@ -58,18 +57,20 @@ test('can edit a category via table action', function () {
     expect($category->fresh()->name)->toBe('Updated Category');
 });
 
-test('can render category table columns', function (string $column) {
+test('can render category table columns', function () {
     Category::factory()->create();
 
-    Livewire::test(ListCategories::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'slug', 'is_active']);
+    livewire(ListCategories::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('slug')
+        ->assertCanRenderTableColumn('is_active');
+});
 
 test('can search categories by name', function () {
     $bread = Category::factory()->create(['name' => 'Bread']);
     $pastry = Category::factory()->create(['name' => 'Pastries']);
 
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->searchTable('Bread')
         ->assertCanSeeTableRecords(collect([$bread]))
         ->assertCanNotSeeTableRecords(collect([$pastry]));
@@ -79,7 +80,7 @@ test('can sort categories by name', function () {
     $alpha = Category::factory()->create(['name' => 'Alpha']);
     $zeta = Category::factory()->create(['name' => 'Zeta']);
 
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
         ->sortTable('name', 'desc')
@@ -90,7 +91,7 @@ test('can filter categories by active status', function () {
     $active = Category::factory()->create();
     $inactive = Category::factory()->inactive()->create();
 
-    Livewire::test(ListCategories::class)
+    livewire(ListCategories::class)
         ->filterTable('is_active', 1)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));

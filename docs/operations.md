@@ -84,7 +84,7 @@ The repository uses simplified gitflow:
 
 - `develop` deploys to staging.
 - `main` deploys to production through Laravel Forge.
-- release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`.
+- release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`; run `bin/sync-version` during deployment before caching configuration.
 
 Before merging a release:
 
@@ -106,6 +106,14 @@ php artisan test --testsuite=Browser
 git diff --check
 ```
 
+After checking out a release, synchronize the deployed version before running `php artisan config:cache`:
+
+```bash
+bin/sync-version
+```
+
+The command reads the nearest reachable `vX.Y.Z` tag, rejects malformed versions, and writes the result to `VERSION`. Tag-triggered browser smoke runs pass the exact pushed tag explicitly.
+
 The full suite may be lengthy. Use bounded targeted tests during development, but do not replace release-level coverage with a narrow selection.
 
 ## Testing
@@ -125,12 +133,16 @@ php artisan test --filter='descriptive test name'
 
 Tests default to in-memory SQLite, synchronous queues, array mail/cache/session drivers, and a placeholder Stripe secret via `phpunit.xml`. Feature helpers in `tests/Pest.php` create central tenant/domain records and initialize isolated tenant databases. Tests that exercise request tenancy should use a host/domain record rather than bypassing middleware.
 
+Quality workflows normally run for pull requests. If GitHub does not deliver a pull-request event, FilaCheck, PHPStan, Pint, Rector, Security Scan, Tests, and Type Coverage can each be dispatched manually from the Actions page or with `gh workflow run <workflow-file> --ref <branch>`. GitHub only exposes manual dispatch after the workflow definition containing `workflow_dispatch` is present on the default branch (`main`), so a newly added fallback becomes available after its next release. Confirm every expected run passes before merging; manual dispatch is a recovery path, not a substitute for the normal PR gate.
+
 ### Browser tests
 
 Browser tests use Pest Browser/Playwright against live local URLs. Defaults are:
 
 - `BROWSER_TEST_CENTRAL_URL=http://kneadit.test`
 - `BROWSER_TEST_STOREFRONT_URL=http://browser-test.kneadit.test`
+
+The Browser Smoke workflow starts and stops bounded Laravel servers on dynamically allocated ports. It uses the IPv4 loopback for the central app and the IPv6 loopback for the tenant, so the release gate does not depend on Herd, local DNS services, or fixed ports shared with other processes.
 
 They expect the central application and a `browser-test` tenant to be reachable, frontend assets to be available, and fixture records/authentication state required by admin tests to exist. `tests/Browser/Helpers/prepare-admin-session.mjs` creates browser authentication state used by authenticated central and tenant visits with the Playwright dependency declared in `package.json`.
 

@@ -1,8 +1,9 @@
 name: FilaCheck
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main, develop]
 
@@ -14,6 +15,7 @@ jobs:
   filacheck:
     name: Filament Lint
     runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4

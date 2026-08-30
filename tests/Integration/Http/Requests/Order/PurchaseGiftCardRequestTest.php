@@ -7,14 +7,16 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = validPurchaseGiftCardData();
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    foreach (['purchaser_name', 'purchaser_email', 'initial_balance'] as $field) {
+        $data = validPurchaseGiftCardData();
+        unset($data[$field]);
 
-    $validator = validator($data, (new PurchaseGiftCardRequest)->rules());
+        $validator = validator($data, (new PurchaseGiftCardRequest)->rules());
 
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['purchaser_name', 'purchaser_email', 'initial_balance']);
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('purchaser_email must be valid', function () {
     $validator = validator(
@@ -34,18 +36,16 @@ test('recipient_email must be valid when provided', function () {
     expect($validator->errors()->has('recipient_email'))->toBeTrue();
 });
 
-test('initial_balance must be between 1 and 500', function (mixed $amount) {
-    $validator = validator(
-        array_merge(validPurchaseGiftCardData(), ['initial_balance' => $amount]),
-        (new PurchaseGiftCardRequest)->rules(),
-    );
+test('initial_balance must be between 1 and 500', function () {
+    foreach ([0, 501, -10] as $amount) {
+        $validator = validator(
+            array_merge(validPurchaseGiftCardData(), ['initial_balance' => $amount]),
+            (new PurchaseGiftCardRequest)->rules(),
+        );
 
-    expect($validator->errors()->has('initial_balance'))->toBeTrue();
-})->with([
-    'zero' => 0,
-    'too-large' => 501,
-    'negative' => -10,
-]);
+        expect($validator->errors()->has('initial_balance'))->toBeTrue();
+    }
+});
 
 test('message capped at 1000 chars', function () {
     $validator = validator(

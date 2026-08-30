@@ -1,6 +1,7 @@
 name: Tests
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -14,6 +15,7 @@ jobs:
   frontend:
     name: Frontend Build
     runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Verify local PHP
         run: php -v && php -m
@@ -49,6 +50,7 @@ jobs:
   tests:
     name: Pest
     runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -79,4 +81,13 @@ jobs:
         run: php artisan config:clear
 
       - name: Run tests
-        run: php artisan test --ci --compact --exclude-testsuite=Browser
+        run: php artisan test --ci --compact --exclude-testsuite=Browser --log-junit="$RUNNER_TEMP/pest-junit.xml"
+
+      - name: Upload Pest timing report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pest-junit
+          path: ${{ runner.temp }}/pest-junit.xml
+          if-no-files-found: ignore
+          retention-days: 7

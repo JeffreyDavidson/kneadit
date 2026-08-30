@@ -18,16 +18,19 @@ beforeEach(function () {
     ]);
 });
 
-test('store order request requires essential fields', function (string $field) {
+test('store order request requires essential fields', function () {
     $request = new StoreOrderRequest;
-    $data = validOrderData();
-    unset($data[$field]);
 
-    $validator = validator($data, $request->rules());
+    foreach (['customer_name', 'customer_email', 'delivery_type', 'delivery_date', 'items'] as $field) {
+        $data = validOrderData();
+        unset($data[$field]);
 
-    expect($validator->fails())->toBeTrue()
-        ->and($validator->errors()->has($field))->toBeTrue();
-})->with(['customer_name', 'customer_email', 'delivery_type', 'delivery_date', 'items']);
+        $validator = validator($data, $request->rules());
+
+        expect($validator->fails())->toBeTrue()
+            ->and($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('store order request requires delivery address for delivery orders', function () {
     $request = new StoreOrderRequest;
