@@ -7,6 +7,7 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\AtRiskCustomersQuery;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -16,6 +17,10 @@ use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
 {
+    public function __construct(
+        private TenantSettings $settings,
+    ) {}
+
     /** @return array{stats: array<string, mixed>, topProducts: Collection<int, OrderItem>, atRiskCustomers: SupportCollection<int, array{name: string, days_since_last_order: ?int}>, upcomingCount: int, storeName: string, adminUrl: string} */
     public function collect(): array
     {
@@ -56,7 +61,7 @@ class WeeklyDigestDataCollector
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()
                 ->count(),
-            'storeName' => resolve(\App\Services\Settings\TenantSettings::class)->store->name,
+            'storeName' => $this->settings->store->name,
             'adminUrl' => url('/admin'),
         ];
     }
