@@ -16,7 +16,7 @@ it('initializes tenancy, runs callback, and ends tenancy', function () {
     $this->tenancy->expects('initialize');
     $this->tenancy->expects('end');
 
-    $manager = new TenancyManager;
+    $manager = resolve(TenancyManager::class);
     $result = $manager->withinTenant($tenant, function () use (&$callbackExecuted) {
         $callbackExecuted = true;
 
@@ -32,7 +32,7 @@ it('ends tenancy even when callback throws an exception', function () {
     $this->tenancy->expects('initialize');
     $this->tenancy->expects('end');
 
-    $manager = new TenancyManager;
+    $manager = resolve(TenancyManager::class);
 
     expect(fn () => $manager->withinTenant($tenant, function () {
         throw new RuntimeException('Test error');
@@ -46,7 +46,7 @@ it('passes the tenant to the callback', function () {
     $this->tenancy->expects('initialize');
     $this->tenancy->expects('end');
 
-    $manager = new TenancyManager;
+    $manager = resolve(TenancyManager::class);
     $manager->withinTenant($tenant, function (Tenant $t) use (&$receivedTenant) {
         $receivedTenant = $t;
     });
