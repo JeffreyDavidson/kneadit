@@ -61,6 +61,8 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 #[UseFactory(TenantFactory::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
+    public const string DEMO_ID = 'demo';
+
     use HasDatabase, HasDomains;
 
     /** @use HasFactory<TenantFactory> */
