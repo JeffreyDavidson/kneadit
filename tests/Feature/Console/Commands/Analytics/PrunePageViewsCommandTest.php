@@ -18,7 +18,10 @@ beforeEach(function () {
     $tenancyManager = new class extends TenancyManager {
         public function __construct()
         {
-            parent::__construct(app(SettingsManager::class), app(TenantSettingsRegistry::class));
+            parent::__construct(
+                app(SettingsManager::class),
+                app(TenantSettingsRegistry::class),
+            );
         }
 
         public function forEachTenant(callable $callback, ?callable $onError = null): int
