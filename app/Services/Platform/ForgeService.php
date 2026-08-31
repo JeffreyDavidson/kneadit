@@ -145,7 +145,9 @@ class ForgeService
 
     private function configString(string $key): string
     {
-        return Config::string($key, '');
+        $value = Config::get($key);
+
+        return is_string($value) ? $value : '';
     }
 
     private function domainsPath(): string
