@@ -4,6 +4,7 @@ use App\Actions\Tenants\CreateTenant;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -71,13 +72,11 @@ it('persists external website and disables storefront when storefront choice is 
 it('rolls back the central tenant + domain row when tenant-DB seeding fails', function () {
     // Force the tenant-DB seed step to throw by replacing the SettingsManager
     // binding with one that explodes on setMany().
-    app()->instance(
-        SettingsManager::class,
-        Mockery::mock(SettingsManager::class)
-            ->shouldReceive('setMany')
-            ->andThrow(new RuntimeException('Simulated tenant DB seed failure'))
-            ->getMock(),
-    );
+    $settingsManager = Double::for(SettingsManager::class);
+    $settingsManager->expects('setMany')
+        ->throws(new RuntimeException('Simulated tenant DB seed failure'));
+
+    app()->instance(SettingsManager::class, $settingsManager);
 
     expect(fn () => resolve(CreateTenant::class)(
         user: test()->user,
