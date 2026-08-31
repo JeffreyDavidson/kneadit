@@ -71,14 +71,13 @@ it('persists external website and disables storefront when storefront choice is 
 it('rolls back the central tenant + domain row when tenant-DB seeding fails', function () {
     // Force the tenant-DB seed step to throw by replacing the SettingsManager
     // binding with one that explodes on setMany().
-    app()->bind(SettingsManager::class, function () {
-        return new class {
-            public function setMany(array $settings): void
-            {
-                throw new RuntimeException('Simulated tenant DB seed failure');
-            }
-        };
-    });
+    app()->instance(
+        SettingsManager::class,
+        Mockery::mock(SettingsManager::class)
+            ->shouldReceive('setMany')
+            ->andThrow(new RuntimeException('Simulated tenant DB seed failure'))
+            ->getMock(),
+    );
 
     expect(fn () => resolve(CreateTenant::class)(
         user: test()->user,
