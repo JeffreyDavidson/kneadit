@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Products\NotifyProductWaitlist;
+use App\Actions\Inventory\NotifyProductWaitlist;
 use App\Mail\Customers\ProductAvailableMail;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;

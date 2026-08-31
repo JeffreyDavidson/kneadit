@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use App\Actions\Products\NotifyProductWaitlist;
+use App\Actions\Inventory\NotifyProductWaitlist;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Products;
+namespace App\Actions\Inventory;
 
 use App\DataTransferObjects\Settings\EngagementSettings;
 use App\Mail\Customers\ProductAvailableMail;
