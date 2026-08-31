@@ -2,7 +2,6 @@
 
 namespace App\Services\Filament;
 
-use App\Console\Commands\Tenants\SeedDemoTenantCommand;
 use App\Models\Platform\Tenant;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +27,7 @@ class WidgetPreviewRenderer
      */
     public function render(string $widgetClass): HtmlString
     {
-        $demo = Tenant::query()->find(SeedDemoTenantCommand::DEMO_ID);
+        $demo = Tenant::query()->find(Tenant::DEMO_ID);
 
         if (! $demo) {
             return $this->placeholder(
