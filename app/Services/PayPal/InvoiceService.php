@@ -12,6 +12,7 @@ class InvoiceService
     public function __construct(
         protected TokenManager $tokenManager,
         protected InvoicePayloadBuilder $payloadBuilder,
+        protected RecordPayPalInvoice $recordPayPalInvoice,
     ) {}
 
     public function createAndSend(Order $order): ?string
@@ -67,7 +68,7 @@ class InvoiceService
                 return null;
             }
 
-            resolve(RecordPayPalInvoice::class)($order, $invoiceId);
+            ($this->recordPayPalInvoice)($order, $invoiceId);
 
             Log::info('PayPal invoice created and sent', [
                 'order_id' => $order->id,
