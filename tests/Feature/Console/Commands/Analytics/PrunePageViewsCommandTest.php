@@ -2,9 +2,9 @@
 
 use App\Models\Engagement\PageView;
 use App\Models\Platform\Tenant;
-use App\Services\Tenants\TenancyManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\PendingCommand;
 
