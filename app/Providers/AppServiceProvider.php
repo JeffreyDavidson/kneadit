@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\Tenants\LegacyCatalogImporter;
+use App\Contracts\Tenants\LegacyCouponImporter;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
@@ -22,6 +23,7 @@ use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\DatabaseLegacyCatalogImporter;
+use App\Services\Tenants\DatabaseLegacyCouponImporter;
 use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
+        $this->app->bind(LegacyCouponImporter::class, DatabaseLegacyCouponImporter::class);
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
         $this->app->scoped(TenantSettingsRegistry::class);

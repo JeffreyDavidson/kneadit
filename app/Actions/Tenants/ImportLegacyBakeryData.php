@@ -3,6 +3,7 @@
 namespace App\Actions\Tenants;
 
 use App\Contracts\Tenants\LegacyCatalogImporter;
+use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Enums\Financial\CouponType;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -18,6 +19,7 @@ class ImportLegacyBakeryData
     public function __construct(
         private readonly TenantSettingCipher $settingCipher,
         private readonly LegacyCatalogImporter $catalogImporter,
+        private readonly LegacyCouponImporter $couponImporter,
     ) {}
 
     /**
@@ -35,7 +37,7 @@ class ImportLegacyBakeryData
             );
             $categoryIds = $catalogIds['category_ids'];
             $productIds = $catalogIds['product_ids'];
-            $couponIds = $this->importCoupons($data['coupons'] ?? []);
+            $couponIds = $this->couponImporter->import($data['coupons'] ?? []);
             $customerIds = $this->importCustomers($data['orders'] ?? []);
             $orderIds = $this->importOrders(
                 $data['orders'] ?? [],
@@ -269,37 +271,6 @@ class ImportLegacyBakeryData
         if (! isset($references[$id])) {
             throw new InvalidArgumentException($message);
         }
-    }
-
-    /** @param array<int, array<string, mixed>> $coupons
-     * @return array<int, int>
-     */
-    private function importCoupons(array $coupons): array
-    {
-        $ids = [];
-
-        foreach ($coupons as $coupon) {
-            $type = $this->couponType($coupon['type']);
-            DB::table('coupons')->updateOrInsert(
-                ['code' => Str::upper($this->stringValue($coupon['code']))],
-                [
-                    'type' => $type,
-                    'fixed_amount' => $type === 'fixed' ? $this->cents($coupon['value']) : null,
-                    'percentage' => $type === 'percentage' ? $coupon['value'] : null,
-                    'min_order_amount' => isset($coupon['minimum_order']) ? $this->cents($coupon['minimum_order']) : null,
-                    'max_uses' => $coupon['max_uses'] ?? null,
-                    'used_count' => $coupon['times_used'] ?? 0,
-                    'starts_at' => $coupon['starts_at'] ?? null,
-                    'expires_at' => $coupon['expires_at'] ?? null,
-                    'is_active' => $coupon['is_active'] ?? true,
-                    'created_at' => $coupon['created_at'] ?? now(),
-                    'updated_at' => $coupon['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->parseLegacyInteger($coupon['id'])] = $this->parseLegacyInteger(DB::table('coupons')->where('code', Str::upper($this->stringValue($coupon['code'])))->value('id'));
-        }
-
-        return $ids;
     }
 
     /** @param array<int, array<string, mixed>> $orders
