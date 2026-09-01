@@ -31,6 +31,9 @@ test('swap plan succeeds for valid plan with active subscription', function () {
     $user->shouldReceive('subscription')
         ->with('default')
         ->andReturn($subscription);
+    $subscription->shouldReceive('valid')
+        ->once()
+        ->andReturnTrue();
 
     $controller = new SwapPlanController;
     $response = $controller($user, 'starter');
@@ -51,6 +54,9 @@ test('swap plan shows error when stripe throws exception', function () {
     $user->shouldReceive('subscription')
         ->with('default')
         ->andReturn($subscription);
+    $subscription->shouldReceive('valid')
+        ->once()
+        ->andReturnTrue();
 
     $controller = new SwapPlanController;
     $response = $controller($user, 'starter');
@@ -77,5 +83,25 @@ test('swap plan handles null subscription gracefully', function () {
 
     // null?->swap() is a no-op so success path
     expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getSession()->get('success'))->toBe('Your plan has been updated!');
+        ->and($response->getSession()->get('error'))->toBe('No active subscription found. Choose a plan to start billing.');
+});
+
+test('swap plan rejects an ended subscription', function () {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
+
+    $subscription = Mockery::mock(Subscription::class);
+    $subscription->shouldReceive('valid')
+        ->once()
+        ->andReturnFalse();
+
+    $user = Mockery::mock(User::factory()->owner()->make())->makePartial();
+    $user->shouldReceive('subscription')
+        ->with('default')
+        ->andReturn($subscription);
+
+    $controller = new SwapPlanController;
+    $response = $controller($user, 'starter');
+
+    expect($response)->toBeInstanceOf(RedirectResponse::class)
+        ->and($response->getSession()->get('error'))->toBe('No active subscription found. Choose a plan to start billing.');
 });

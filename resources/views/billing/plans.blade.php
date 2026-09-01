@@ -15,6 +15,9 @@
     @session('success')
         <div class="success-banner">{{ $value }}</div>
     @endsession
+    @session('error')
+        <div class="error-banner">{{ $value }}</div>
+    @endsession
 
     <div class="container">
         <div class="header">
