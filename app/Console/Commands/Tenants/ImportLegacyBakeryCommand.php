@@ -4,6 +4,7 @@ namespace App\Console\Commands\Tenants;
 
 use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -31,19 +32,16 @@ class ImportLegacyBakeryCommand extends Command
             return self::FAILURE;
         }
 
-        if (! $this->hasValidDatasetShape($decoded)) {
-            $this->error('The import file must contain an object of dataset arrays.');
+        try {
+            $importData = LegacyBakeryImportData::from($decoded);
+        } catch (\InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
 
             return self::FAILURE;
         }
 
-        /** @var array<string, array<int, array<string, mixed>>> $data */
-        $data = $decoded;
-
-        $counts = [];
-        foreach ($data as $name => $records) {
-            $counts[$name] = count($records);
-        }
+        $data = $importData->toArray();
+        $counts = $importData->counts();
 
         if ($this->option('dry-run')) {
             $this->table(['Dataset', 'Records'], $this->tableRows($counts));
@@ -112,26 +110,5 @@ class ImportLegacyBakeryCommand extends Command
         }
 
         return $rows;
-    }
-
-    private function hasValidDatasetShape(mixed $data): bool
-    {
-        if (! is_array($data)) {
-            return false;
-        }
-
-        foreach ($data as $dataset => $records) {
-            if (! is_string($dataset) || ! is_array($records)) {
-                return false;
-            }
-
-            foreach ($records as $record) {
-                if (! is_array($record)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 }
