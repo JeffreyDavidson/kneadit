@@ -128,6 +128,15 @@ class ImportLegacyBakeryData
                 $this->assertReference($productIds, $productId, "Order item at index {$index} references missing product ID {$productId}.");
             }
         }
+
+        foreach ($data['customer_favorites'] ?? [] as $index => $favorite) {
+            if (! array_key_exists('product_id', $favorite)) {
+                throw new InvalidArgumentException("Customer favorite at index {$index} is missing a product ID.");
+            }
+
+            $productId = $this->parseLegacyInteger($favorite['product_id']);
+            $this->assertReference($productIds, $productId, "Customer favorite at index {$index} references missing product ID {$productId}.");
+        }
     }
 
     /**
@@ -557,10 +566,6 @@ class ImportLegacyBakeryData
 
         foreach ($favorites as $favorite) {
             $productId = $this->parseLegacyInteger($favorite['product_id']);
-
-            if (! isset($productIds[$productId])) {
-                continue;
-            }
 
             DB::table('customer_favorites')->updateOrInsert(
                 ['customer_email' => Str::lower($this->stringValue($favorite['customer_email'])), 'product_id' => $productIds[$productId]],
