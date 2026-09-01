@@ -422,7 +422,9 @@ class ImportLegacyBakeryData
             DB::table('order_items')->insert([
                 'order_id' => $orderIds[$this->parseLegacyInteger($item['order_id'])],
                 'name' => $item['product_name'],
-                'product_id' => $productIds[$this->parseLegacyInteger($item['product_id'])] ?? null,
+                'product_id' => isset($item['product_id'])
+                    ? ($productIds[$this->parseLegacyInteger($item['product_id'])] ?? null)
+                    : null,
                 'quantity' => $item['quantity'],
                 'unit_price' => $this->cents($item['unit_price'] ?? 0),
                 'special_instructions' => isset($item['selections']) ? json_encode($item['selections'], JSON_THROW_ON_ERROR) : null,
