@@ -60,8 +60,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
-        $this->app->singleton(TenantSettingsRegistry::class);
-        $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
+        $this->app->scoped(TenantSettingsRegistry::class);
+        $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
         // Per-request scoped: SecurityHeaders middleware writes the nonce into
         // the CSP header, the @cspnonce Blade directive emits it on inline
