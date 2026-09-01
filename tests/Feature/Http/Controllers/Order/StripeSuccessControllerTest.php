@@ -2,6 +2,7 @@
 
 use App\Models\Orders\Order;
 use App\Services\Stripe\StripeCheckoutService;
+use JMac\Testing\Double;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -10,9 +11,9 @@ beforeEach(fn () => setUpTenantTest());
 test('redirects to order confirmation with success message', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
-    app()->instance(StripeCheckoutService::class, $mock);
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('handleCheckoutComplete')->never();
+    app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.stripe.success', $order, false));
@@ -24,11 +25,10 @@ test('redirects to order confirmation with success message', function () {
 test('calls handleCheckoutComplete when session_id is present', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')
-        ->once()
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('handleCheckoutComplete')
         ->with('cs_test_123');
-    app()->instance(StripeCheckoutService::class, $mock);
+    app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));
@@ -40,9 +40,9 @@ test('calls handleCheckoutComplete when session_id is present', function () {
 test('does not call handleCheckoutComplete when session_id is absent', function () {
     $order = Order::factory()->create();
 
-    $mock = Mockery::mock(StripeCheckoutService::class);
-    $mock->shouldReceive('handleCheckoutComplete')->never();
-    app()->instance(StripeCheckoutService::class, $mock);
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('handleCheckoutComplete')->never();
+    app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.stripe.success', $order, false));

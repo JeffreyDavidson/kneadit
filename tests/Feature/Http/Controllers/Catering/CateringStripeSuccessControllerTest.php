@@ -3,7 +3,7 @@
 use App\Models\Customers\CateringInquiry;
 use App\Services\Stripe\CateringDepositCheckoutService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery\MockInterface;
+use JMac\Testing\Double;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -14,9 +14,9 @@ beforeEach(fn () => setUpTenantTest());
 test('renders the success view without finalizing checkout when no session_id is provided', function () {
     $inquiry = CateringInquiry::factory()->create(['deposit_paid_at' => null]);
 
-    test()->mock(CateringDepositCheckoutService::class, function (MockInterface $mock) {
-        $mock->shouldNotReceive('handleCheckoutComplete');
-    });
+    $checkoutService = Double::for(CateringDepositCheckoutService::class);
+    $checkoutService->expects('handleCheckoutComplete')->never();
+    app()->instance(CateringDepositCheckoutService::class, $checkoutService);
 
     withoutMiddleware(tenantMiddleware())
         ->get(route('catering.stripe.success', ['inquiry' => $inquiry]))
@@ -28,9 +28,9 @@ test('renders the success view without finalizing checkout when no session_id is
 test('skips the checkout finalize call when the inquiry already has a deposit_paid_at', function () {
     $inquiry = CateringInquiry::factory()->create(['deposit_paid_at' => now()]);
 
-    test()->mock(CateringDepositCheckoutService::class, function (MockInterface $mock) {
-        $mock->shouldNotReceive('handleCheckoutComplete');
-    });
+    $checkoutService = Double::for(CateringDepositCheckoutService::class);
+    $checkoutService->expects('handleCheckoutComplete')->never();
+    app()->instance(CateringDepositCheckoutService::class, $checkoutService);
 
     withoutMiddleware(tenantMiddleware())
         ->get(route('catering.stripe.success', ['inquiry' => $inquiry]) . '?session_id=cs_test_123')
@@ -42,16 +42,15 @@ test('skips the checkout finalize call when the inquiry already has a deposit_pa
 test('finalizes the checkout via the service when session_id is provided and deposit is unpaid', function () {
     $inquiry = CateringInquiry::factory()->create(['deposit_paid_at' => null]);
 
-    test()->mock(CateringDepositCheckoutService::class, function (MockInterface $mock) use ($inquiry) {
-        $mock->shouldReceive('handleCheckoutComplete')
-            ->once()
-            ->with('cs_test_abc')
-            ->andReturnUsing(function () use ($inquiry) {
-                $inquiry->forceFill(['deposit_paid_at' => now()])->save();
+    $checkoutService = Double::for(CateringDepositCheckoutService::class);
+    $checkoutService->expects('handleCheckoutComplete')
+        ->with('cs_test_abc')
+        ->resolves(function () use ($inquiry): CateringInquiry {
+            $inquiry->forceFill(['deposit_paid_at' => now()])->save();
 
-                return $inquiry->fresh();
-            });
-    });
+            return $inquiry->fresh();
+        });
+    app()->instance(CateringDepositCheckoutService::class, $checkoutService);
 
     withoutMiddleware(tenantMiddleware())
         ->get(route('catering.stripe.success', ['inquiry' => $inquiry]) . '?session_id=cs_test_abc')
