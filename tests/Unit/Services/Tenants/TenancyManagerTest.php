@@ -2,10 +2,11 @@
 
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
+use JMac\Testing\Double;
 use Stancl\Tenancy\Tenancy;
 
 beforeEach(function () {
-    $this->tenancy = Tests\Support\TypedMock::make(Tenancy::class);
+    $this->tenancy = Double::for(Tenancy::class);
     $this->app->instance(Tenancy::class, $this->tenancy);
 });
 

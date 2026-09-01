@@ -4,6 +4,7 @@ use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Models\Customers\Customer;
 use App\Presenters\CustomerPresenter;
 use App\Services\Customers\CustomerIntelligence;
+use JMac\Testing\Double;
 
 function makeCustomerMetrics(): CustomerMetrics
 {
@@ -21,8 +22,8 @@ function makeCustomerMetrics(): CustomerMetrics
 
 test('delegates computed metrics to CustomerIntelligence', function () {
     $customer = new Customer(['name' => 'Ada']);
-    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
-    $intelligence->allows(['metrics' => makeCustomerMetrics()]);
+    $intelligence = Double::for(CustomerIntelligence::class);
+    $intelligence->allows('metrics')->returns(makeCustomerMetrics());
 
     $presenter = new CustomerPresenter($customer, $intelligence);
 
@@ -38,8 +39,8 @@ test('delegates computed metrics to CustomerIntelligence', function () {
 
 test('memoizes metrics across multiple reads', function () {
     $customer = new Customer(['name' => 'Ada']);
-    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
-    $intelligence->allows(['metrics' => makeCustomerMetrics()]);
+    $intelligence = Double::for(CustomerIntelligence::class);
+    $intelligence->allows('metrics')->returns(makeCustomerMetrics());
 
     $presenter = new CustomerPresenter($customer, $intelligence);
 
@@ -51,8 +52,8 @@ test('memoizes metrics across multiple reads', function () {
 test('for() resolves CustomerIntelligence from the container', function () {
     $customer = new Customer(['name' => 'Linus']);
     $fakeMetrics = makeCustomerMetrics();
-    $intelligence = Tests\Support\TypedMock::make(CustomerIntelligence::class);
-    $intelligence->allows(['metrics' => $fakeMetrics]);
+    $intelligence = Double::for(CustomerIntelligence::class);
+    $intelligence->allows('metrics')->returns($fakeMetrics);
     app()->instance(CustomerIntelligence::class, $intelligence);
 
     $presenter = CustomerPresenter::for($customer);
@@ -68,7 +69,7 @@ test('address() builds an Address value object from the customer columns', funct
         'zip' => '62704',
     ]);
 
-    $presenter = new CustomerPresenter($customer, Tests\Support\TypedMock::make(CustomerIntelligence::class));
+    $presenter = new CustomerPresenter($customer, Double::for(CustomerIntelligence::class));
 
     expect($presenter->address())
         ->street->toBe('123 Main St')
