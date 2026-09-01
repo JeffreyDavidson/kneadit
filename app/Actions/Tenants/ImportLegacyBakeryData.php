@@ -39,7 +39,7 @@ class ImportLegacyBakeryData
             );
 
             $this->importOrderItems($data['order_items'] ?? [], $orderIds, $productIds);
-            $this->importReviews($data['reviews'] ?? [], $productIds);
+            $this->importReviews($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->importCapacityLimits($data['capacity_limits'] ?? []);
@@ -151,6 +151,15 @@ class ImportLegacyBakeryData
         $this->validateOptionalProductReferences($data['reviews'] ?? [], $productIds, 'Review');
         $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
         $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
+
+        foreach ($data['reviews'] ?? [] as $index => $review) {
+            if (! array_key_exists('order_id', $review) || $review['order_id'] === null) {
+                continue;
+            }
+
+            $orderId = $this->parseLegacyInteger($review['order_id']);
+            $this->assertReference($orderIds, $orderId, "Review at index {$index} references missing order ID {$orderId}.");
+        }
 
         $this->validateRecipeReferences($data['recipe_ingredients'] ?? [], $recipeIds, 'Recipe ingredient');
         $this->validateRecipeReferences($data['recipe_stages'] ?? [], $recipeIds, 'Recipe stage');
@@ -436,8 +445,9 @@ class ImportLegacyBakeryData
 
     /** @param array<int, array<string, mixed>> $reviews
      * @param array<int, int> $productIds
+     * @param array<int, int> $orderIds
      */
-    private function importReviews(array $reviews, array $productIds): void
+    private function importReviews(array $reviews, array $productIds, array $orderIds): void
     {
         foreach ($reviews as $review) {
             $email = $review['email'] ?: 'legacy-review-' . $this->stringValue($review['id']) . '@migration.invalid';
@@ -446,6 +456,7 @@ class ImportLegacyBakeryData
                 [
                     'customer_name' => $review['name'],
                     'product_id' => isset($review['product_id']) ? ($productIds[$this->parseLegacyInteger($review['product_id'])] ?? null) : null,
+                    'order_id' => isset($review['order_id']) ? ($orderIds[$this->parseLegacyInteger($review['order_id'])] ?? null) : null,
                     'rating' => $review['rating'],
                     'is_approved' => ($review['status'] ?? null) === 'approved',
                     'is_featured' => $review['is_featured'] ?? false,

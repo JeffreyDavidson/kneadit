@@ -290,6 +290,49 @@ it('imports order items without legacy product IDs', function () {
         ->assertDatabaseHas('order_items', ['name' => 'Unlinked item', 'product_id' => null, 'unit_price' => 200]);
 });
 
+it('preserves review order references during import', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    $result = $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-REVIEW',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'order_id' => 30,
+        ]],
+    ]);
+
+    expect($result['reviews'])->toBe(1);
+
+    test()->assertDatabaseCount('reviews', 1)
+        ->assertDatabaseHas('reviews', ['customer_email' => 'jane@example.com', 'order_id' => 1]);
+});
+
+it('rejects reviews that reference missing orders before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'order_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Review at index 0 references missing order ID 999.');
+
+    test()->assertDatabaseCount('reviews', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
