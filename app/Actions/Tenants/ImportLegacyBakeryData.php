@@ -137,6 +137,26 @@ class ImportLegacyBakeryData
             $productId = $this->parseLegacyInteger($favorite['product_id']);
             $this->assertReference($productIds, $productId, "Customer favorite at index {$index} references missing product ID {$productId}.");
         }
+
+        $this->validateOptionalProductReferences($data['reviews'] ?? [], $productIds, 'Review');
+        $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
+        $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @param array<int, true> $productIds
+     */
+    private function validateOptionalProductReferences(array $records, array $productIds, string $dataset): void
+    {
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('product_id', $record) || $record['product_id'] === null) {
+                continue;
+            }
+
+            $productId = $this->parseLegacyInteger($record['product_id']);
+            $this->assertReference($productIds, $productId, "{$dataset} at index {$index} references missing product ID {$productId}.");
+        }
     }
 
     /**
