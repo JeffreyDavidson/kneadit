@@ -4,6 +4,7 @@ use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
 
 beforeEach(function () {
     config(['app.key' => 'base64:BskavyAdxjag1K/BGSEfPPiwB/QDha6hMH4H0i1wM7A=']);
@@ -112,6 +113,18 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_id', $paypalClientId))->toBe('legacy-client-id')
         ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_secret', $paypalClientSecret))->toBe('legacy-client-secret')
         ->and($orderNotes)->toBe("Legacy order history:\n[2026-08-15 09:00:00] [Status Change] Status changed from Pending to Confirmed\n[2026-08-15 09:15:00] [System] Email notification sent: Order Confirmed");
+});
+
+it('rejects missing foreign-key references before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'categories' => [['id' => 10, 'name' => 'Breads']],
+        'products' => [['id' => 20, 'category_id' => 999, 'name' => 'Sourdough', 'price' => '12.50']],
+    ]))->toThrow(InvalidArgumentException::class, 'Product at index 0 references missing category ID 999.');
+
+    test()->assertDatabaseCount('categories', 0)
+        ->assertDatabaseCount('products', 0);
 });
 
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {

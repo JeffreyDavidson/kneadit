@@ -85,8 +85,15 @@ class ImportLegacyBakeryCommand extends Command
             'is_active' => true,
         ]);
 
-        /** @var array<string, int> $result */
-        $result = $tenant->run(fn (): array => $import($data));
+        try {
+            /** @var array<string, int> $result */
+            $result = $tenant->run(fn (): array => $import($data));
+        } catch (\InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
+
         $this->table(['Imported dataset', 'Records'], $this->tableRows($result));
 
         return self::SUCCESS;
