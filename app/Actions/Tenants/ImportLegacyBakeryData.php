@@ -80,6 +80,7 @@ class ImportLegacyBakeryData
         $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
         $productIds = $this->legacyIds($data['products'] ?? [], 'product');
         $couponIds = $this->legacyIds($data['coupons'] ?? [], 'coupon');
+        $recipeIds = $this->legacyIds($data['recipes'] ?? [], 'recipe');
         $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
 
         foreach ($data['coupons'] ?? [] as $index => $coupon) {
@@ -141,6 +142,9 @@ class ImportLegacyBakeryData
         $this->validateOptionalProductReferences($data['reviews'] ?? [], $productIds, 'Review');
         $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
         $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
+
+        $this->validateRecipeReferences($data['recipe_ingredients'] ?? [], $recipeIds, 'Recipe ingredient');
+        $this->validateRecipeReferences($data['recipe_stages'] ?? [], $recipeIds, 'Recipe stage');
     }
 
     /**
@@ -156,6 +160,22 @@ class ImportLegacyBakeryData
 
             $productId = $this->parseLegacyInteger($record['product_id']);
             $this->assertReference($productIds, $productId, "{$dataset} at index {$index} references missing product ID {$productId}.");
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @param array<int, true> $recipeIds
+     */
+    private function validateRecipeReferences(array $records, array $recipeIds, string $dataset): void
+    {
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('recipe_id', $record)) {
+                throw new InvalidArgumentException("{$dataset} at index {$index} is missing a recipe ID.");
+            }
+
+            $recipeId = $this->parseLegacyInteger($record['recipe_id']);
+            $this->assertReference($recipeIds, $recipeId, "{$dataset} at index {$index} references missing recipe ID {$recipeId}.");
         }
     }
 

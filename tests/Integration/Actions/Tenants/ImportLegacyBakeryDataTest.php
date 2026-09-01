@@ -215,6 +215,37 @@ it('rejects waitlist entries that reference missing products before writing any 
     test()->assertDatabaseCount('waitlist_entries', 0);
 });
 
+it('rejects recipe ingredients that reference missing recipes before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipe_ingredients' => [[
+            'id' => 61,
+            'recipe_id' => 999,
+            'name' => 'Flour',
+            'quantity' => 2,
+            'unit' => 'lb',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe ingredient at index 0 references missing recipe ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
+it('rejects recipe stages that reference missing recipes before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipe_stages' => [[
+            'id' => 62,
+            'recipe_id' => 999,
+            'name' => 'Mix',
+            'instructions' => 'Combine ingredients.',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe stage at index 0 references missing recipe ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
