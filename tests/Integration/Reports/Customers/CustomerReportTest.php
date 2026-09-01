@@ -60,3 +60,34 @@ test('report shape matches the recorded snapshot for known inputs', function () 
 
     assertMatchesSnapshot($report);
 });
+
+test('only active paid orders contribute to customer metrics', function () {
+    $customer = Customer::factory()->create();
+    $unpaidOnly = Customer::factory()->create();
+
+    Order::factory()->for($customer)->paid()->create([
+        'delivery_date' => '2026-03-10',
+        'total' => 100.00,
+    ]);
+    Order::factory()->for($customer)->unpaid()->create([
+        'delivery_date' => '2026-03-11',
+        'total' => 500.00,
+    ]);
+    Order::factory()->for($customer)->cancelled()->paid()->create([
+        'delivery_date' => '2026-03-12',
+        'total' => 700.00,
+    ]);
+    Order::factory()->for($unpaidOnly)->unpaid()->create([
+        'delivery_date' => '2026-03-13',
+        'total' => 900.00,
+    ]);
+
+    $result = (new CustomerReport)->generate(DateRange::forMonth(2026, 3));
+
+    expect($result['totalCustomersWithOrders'])->toBe(1)
+        ->and($result['repeatCustomers'])->toBe(0)
+        ->and($result['repeatRate'])->toBe(0.0)
+        ->and($result['topCustomers'])->toHaveCount(1)
+        ->and($result['topCustomers'][0]['total_spend'])->toBe(100.0)
+        ->and($result['topCustomers'][0]['order_count'])->toBe(1);
+});

@@ -14,7 +14,7 @@ beforeEach(fn () => setUpTenantTest());
 test('topByRevenue returns products sorted by revenue', function () {
     $expensive = Product::factory()->create();
     $cheap = Product::factory()->create();
-    $order = Order::factory()->withDeliveryDate(now())->create();
+    $order = Order::factory()->paid()->withDeliveryDate(now())->create();
 
     OrderItem::factory()->recycle($order, $expensive)->create(['quantity' => 1, 'unit_price' => 50.00]);
     OrderItem::factory()->recycle($order, $cheap)->create(['quantity' => 5, 'unit_price' => 3.00]);
@@ -29,7 +29,7 @@ test('topByRevenue returns products sorted by revenue', function () {
 test('topByQuantity returns products sorted by quantity sold', function () {
     $highQuantity = Product::factory()->create();
     $lowQuantity = Product::factory()->create();
-    $order = Order::factory()->withDeliveryDate(now())->create();
+    $order = Order::factory()->paid()->withDeliveryDate(now())->create();
 
     OrderItem::factory()->recycle($order, $highQuantity)->create(['quantity' => 20, 'unit_price' => 2.00]);
     OrderItem::factory()->recycle($order, $lowQuantity)->create(['quantity' => 1, 'unit_price' => 100.00]);
@@ -46,8 +46,8 @@ test('topByQuantity returns products sorted by quantity sold', function () {
 
 test('topByQuantity excludes cancelled orders', function () {
     $product = Product::factory()->create();
-    $activeOrder = Order::factory()->withDeliveryDate(now())->create();
-    $cancelledOrder = Order::factory()->cancelled()->withDeliveryDate(now())->create();
+    $activeOrder = Order::factory()->paid()->withDeliveryDate(now())->create();
+    $cancelledOrder = Order::factory()->cancelled()->paid()->withDeliveryDate(now())->create();
 
     OrderItem::factory()->recycle($activeOrder, $product)->create(['quantity' => 3, 'unit_price' => 10.00]);
     OrderItem::factory()->recycle($cancelledOrder, $product)->create(['quantity' => 50, 'unit_price' => 10.00]);
@@ -60,7 +60,7 @@ test('topByQuantity excludes cancelled orders', function () {
 });
 
 test('topByQuantity respects the limit parameter', function () {
-    $order = Order::factory()->withDeliveryDate(now())->create();
+    $order = Order::factory()->paid()->withDeliveryDate(now())->create();
 
     $products = Product::factory()->count(5)->create();
     $products->each(function (Product $product, int $index) use ($order) {
@@ -80,8 +80,8 @@ test('topByQuantity excludes orders outside date range', function () {
     $inRange = Product::factory()->create();
     $outOfRange = Product::factory()->create();
 
-    $orderInRange = Order::factory()->withDeliveryDate(now())->create();
-    $orderOutOfRange = Order::factory()->withDeliveryDate(now()->subMonth())->create();
+    $orderInRange = Order::factory()->paid()->withDeliveryDate(now())->create();
+    $orderOutOfRange = Order::factory()->paid()->withDeliveryDate(now()->subMonth())->create();
 
     OrderItem::factory()->recycle($orderInRange, $inRange)->create(['quantity' => 5, 'unit_price' => 10.00]);
     OrderItem::factory()->recycle($orderOutOfRange, $outOfRange)->create(['quantity' => 100, 'unit_price' => 10.00]);
@@ -91,4 +91,19 @@ test('topByQuantity excludes orders outside date range', function () {
 
     expect($result)->toHaveCount(1)
         ->and($result->first()['name'])->toBe($inRange->name);
+});
+
+test('topByRevenue excludes unpaid orders', function () {
+    $product = Product::factory()->create();
+    $paidOrder = Order::factory()->paid()->withDeliveryDate(now())->create();
+    $unpaidOrder = Order::factory()->unpaid()->withDeliveryDate(now())->create();
+
+    OrderItem::factory()->recycle($paidOrder, $product)->create(['quantity' => 2, 'unit_price' => 10.00]);
+    OrderItem::factory()->recycle($unpaidOrder, $product)->create(['quantity' => 50, 'unit_price' => 10.00]);
+
+    $result = ProductSalesQuery::topByRevenue(new DateRange(now()->subDay(), now()->addDay()));
+
+    expect($result)->toHaveCount(1)
+        ->and($result->first()['units_sold'])->toBe(2)
+        ->and($result->first()['revenue'])->toBe(20.0);
 });

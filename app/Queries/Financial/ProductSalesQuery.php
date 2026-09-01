@@ -20,7 +20,7 @@ class ProductSalesQuery
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
-        $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
+        $orderIds = Order::query()->active()->paid()->whereBetween('delivery_date', $dates)->select('id');
 
         // unit_price is bigint cents (migration 2026_04_22_201500), so the
         // SUM(quantity * unit_price) aggregate returns cents — divide back to dollars.
@@ -49,7 +49,7 @@ class ProductSalesQuery
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
-        $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
+        $orderIds = Order::query()->active()->paid()->whereBetween('delivery_date', $dates)->select('id');
 
         // unit_price is bigint cents (migration 2026_04_22_201500); divide aggregates.
         return OrderItem::query()
