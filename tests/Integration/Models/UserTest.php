@@ -4,6 +4,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Models\Staff\User;
 use Filament\Panel;
 use Illuminate\Support\Facades\Gate;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -11,8 +12,8 @@ test('can access central panel only as platform admin', function () {
     $admin = User::factory()->platformAdmin()->create();
     $owner = User::factory()->owner()->create();
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('central');
+    $panel = Double::for(Panel::class);
+    $panel->allows('getId')->returns('central');
 
     expect($admin->canAccessPanel($panel))->toBeTrue()
         ->and($owner->canAccessPanel($panel))->toBeFalse();
@@ -21,8 +22,8 @@ test('can access central panel only as platform admin', function () {
 test('can access non-central panel for any role', function (string $factoryState) {
     $user = User::factory()->{$factoryState}()->create();
 
-    $panel = Mockery::mock(Panel::class);
-    $panel->shouldReceive('getId')->andReturn('app');
+    $panel = Double::for(Panel::class);
+    $panel->allows('getId')->returns('app');
 
     expect($user->canAccessPanel($panel))->toBeTrue();
 })->with(['owner', 'manager', 'staff']);

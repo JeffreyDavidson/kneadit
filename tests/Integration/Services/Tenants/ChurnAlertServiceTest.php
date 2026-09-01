@@ -3,17 +3,18 @@
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\ChurnAlertService;
 use App\Services\Tenants\TenantHealthService;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
 });
 
-function mockHealthService(array $healthData = [], int $recentOrders = 0): void
+function doubleHealthService(array $healthData = [], int $recentOrders = 0): void
 {
-    $mock = Mockery::mock(TenantHealthService::class);
-    $mock->shouldReceive('getTenantHealthData')->andReturn(collect($healthData));
-    $mock->shouldReceive('getRecentOrderCount')->andReturn($recentOrders);
-    app()->instance(TenantHealthService::class, $mock);
+    $healthService = Double::for(TenantHealthService::class);
+    $healthService->allows('getTenantHealthData')->returns(collect($healthData));
+    $healthService->allows('getRecentOrderCount')->returns($recentOrders);
+    app()->instance(TenantHealthService::class, $healthService);
 }
 
 test('returns trial expiring alert when trial ends soon with low setup', function () {
@@ -24,7 +25,7 @@ test('returns trial expiring alert when trial ends soon with low setup', functio
         'created_at' => now()->subDays(12),
     ]);
 
-    mockHealthService([
+    doubleHealthService([
         ['id' => 'expiring-bakery', 'health_score' => 30, 'setup_score' => 10],
     ]);
 
@@ -43,7 +44,7 @@ test('does not alert for trial with good setup progress', function () {
         'created_at' => now()->subDays(12),
     ]);
 
-    mockHealthService([
+    doubleHealthService([
         ['id' => 'good-bakery', 'health_score' => 60, 'setup_score' => 50],
     ]);
 
@@ -64,7 +65,7 @@ test('returns no login alert when tenant has not logged in recently', function (
         'data' => json_encode(['last_login_at' => now()->subDays(14)->toDateTimeString()]),
     ]);
 
-    mockHealthService([
+    doubleHealthService([
         ['id' => 'inactive-bakery', 'health_score' => 50, 'setup_score' => 20],
     ]);
 
@@ -86,7 +87,7 @@ test('returns no orders alert for established tenant with no recent orders', fun
         'created_at' => now()->subDays(30),
     ]);
 
-    mockHealthService(
+    doubleHealthService(
         healthData: [['id' => 'stale-bakery', 'health_score' => 50, 'setup_score' => 20]],
         recentOrders: 0,
     );
@@ -105,7 +106,7 @@ test('does not alert for no orders on new tenants', function () {
         'created_at' => now()->subDays(5),
     ]);
 
-    mockHealthService(
+    doubleHealthService(
         healthData: [['id' => 'new-bakery', 'health_score' => 50, 'setup_score' => 20]],
         recentOrders: 0,
     );
@@ -122,7 +123,7 @@ test('returns low health alert when health score is below 40', function () {
         'created_at' => now()->subDays(30),
     ]);
 
-    mockHealthService(
+    doubleHealthService(
         healthData: [['id' => 'unhealthy-bakery', 'health_score' => 20, 'setup_score' => 10]],
         recentOrders: 0,
     );
@@ -142,7 +143,7 @@ test('does not alert for healthy tenants', function () {
         'created_at' => now()->subDays(30),
     ]);
 
-    mockHealthService(
+    doubleHealthService(
         healthData: [['id' => 'healthy-bakery', 'health_score' => 80, 'setup_score' => 70]],
         recentOrders: 10,
     );
@@ -159,7 +160,7 @@ test('critical alerts are sorted before warnings', function () {
         'created_at' => now()->subDays(30),
     ]);
 
-    mockHealthService(
+    doubleHealthService(
         healthData: [['id' => 'mixed-bakery', 'health_score' => 20, 'setup_score' => 10]],
         recentOrders: 0,
     );
