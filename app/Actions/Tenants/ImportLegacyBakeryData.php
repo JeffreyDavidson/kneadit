@@ -2,6 +2,11 @@
 
 namespace App\Actions\Tenants;
 
+use App\Enums\Financial\CouponType;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentMethod;
+use App\Enums\Orders\PaymentStatus;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -76,6 +81,14 @@ class ImportLegacyBakeryData
         $productIds = $this->legacyIds($data['products'] ?? [], 'product');
         $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
 
+        foreach ($data['coupons'] ?? [] as $index => $coupon) {
+            if (! array_key_exists('type', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a type.");
+            }
+
+            $this->couponType($coupon['type']);
+        }
+
         foreach ($data['products'] ?? [] as $index => $product) {
             if (! array_key_exists('category_id', $product)) {
                 throw new InvalidArgumentException("Product at index {$index} is missing a category ID.");
@@ -89,6 +102,11 @@ class ImportLegacyBakeryData
             if (! array_key_exists('customer_email', $order)) {
                 throw new InvalidArgumentException("Order at index {$index} is missing a customer email.");
             }
+
+            $this->orderStatus($order['status'] ?? OrderStatus::Pending->value);
+            $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value);
+            $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value);
+            $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value);
         }
 
         foreach ($data['order_items'] ?? [] as $index => $item) {
@@ -141,7 +159,7 @@ class ImportLegacyBakeryData
         $ids = [];
 
         foreach ($coupons as $coupon) {
-            $type = $coupon['type'] === 'fixed_amount' ? 'fixed' : $coupon['type'];
+            $type = $this->couponType($coupon['type']);
             DB::table('coupons')->updateOrInsert(
                 ['code' => Str::upper($this->stringValue($coupon['code']))],
                 [
@@ -264,9 +282,9 @@ class ImportLegacyBakeryData
                 [
                     'customer_id' => $customerIds[$email],
                     'coupon_id' => isset($order['coupon_id']) ? ($couponIds[$this->integerValue($order['coupon_id'])] ?? null) : null,
-                    'status' => $order['status'] ?? 'pending',
-                    'payment_status' => $order['payment_status'] ?? 'unpaid',
-                    'payment_method' => $order['payment_method'] ?: 'other',
+                    'status' => $this->orderStatus($order['status'] ?? OrderStatus::Pending->value),
+                    'payment_status' => $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value),
+                    'payment_method' => $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value),
                     'subtotal' => $this->cents($order['subtotal'] ?? 0),
                     'delivery_fee' => $this->cents($order['delivery_fee'] ?? 0),
                     'discount_amount' => $this->cents($order['discount_amount'] ?? 0),
@@ -275,7 +293,7 @@ class ImportLegacyBakeryData
                     'total' => $this->cents($order['total'] ?? 0),
                     'paypal_invoice_id' => $order['paypal_invoice_id'] ?? null,
                     'delivery_address' => $order['delivery_address'] ?? null,
-                    'delivery_type' => $order['fulfillment_type'] ?? 'pickup',
+                    'delivery_type' => $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value),
                     'delivery_date' => $order['requested_date'] ?? null,
                     'delivery_time' => $order['requested_time'] ?? null,
                     'notes' => $this->orderNotes($order, $orderNotes),
@@ -630,6 +648,57 @@ class ImportLegacyBakeryData
             ['key' => $key],
             ['value' => $value, 'updated_at' => now(), 'created_at' => now()],
         );
+    }
+
+    private function couponType(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+        $normalized = $normalized === 'fixed_amount' ? CouponType::Fixed->value : $normalized;
+
+        $type = CouponType::tryFrom($normalized);
+        throw_if($type === null, InvalidArgumentException::class, "Unsupported coupon type [{$normalized}].");
+
+        return $type->value;
+    }
+
+    private function orderStatus(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $status = OrderStatus::tryFrom($normalized);
+        throw_if($status === null, InvalidArgumentException::class, "Unsupported order status [{$normalized}].");
+
+        return $status->value;
+    }
+
+    private function paymentStatus(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $status = PaymentStatus::tryFrom($normalized);
+        throw_if($status === null, InvalidArgumentException::class, "Unsupported payment status [{$normalized}].");
+
+        return $status->value;
+    }
+
+    private function paymentMethod(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $method = PaymentMethod::tryFrom($normalized);
+        throw_if($method === null, InvalidArgumentException::class, "Unsupported payment method [{$normalized}].");
+
+        return $method->value;
+    }
+
+    private function deliveryType(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $type = DeliveryType::tryFrom($normalized);
+        throw_if($type === null, InvalidArgumentException::class, "Unsupported fulfillment type [{$normalized}].");
+
+        return $type->value;
     }
 
     private function cents(mixed $dollars): int

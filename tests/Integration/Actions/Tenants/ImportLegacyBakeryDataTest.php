@@ -127,6 +127,22 @@ it('rejects missing foreign-key references before writing any records', function
         ->assertDatabaseCount('products', 0);
 });
 
+it('rejects unsupported enum values before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID',
+            'customer_email' => 'jane@example.com',
+            'status' => 'shipped',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Unsupported order status [shipped].');
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+});
+
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {
     Storage::fake('local');
     Storage::fake('public');
