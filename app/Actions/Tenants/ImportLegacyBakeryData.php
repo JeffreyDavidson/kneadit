@@ -130,6 +130,15 @@ class ImportLegacyBakeryData
             }
         }
 
+        foreach ($data['order_notes'] ?? [] as $index => $note) {
+            if (! array_key_exists('order_id', $note)) {
+                throw new InvalidArgumentException("Order note at index {$index} is missing an order ID.");
+            }
+
+            $orderId = $this->parseLegacyInteger($note['order_id']);
+            $this->assertReference($orderIds, $orderId, "Order note at index {$index} references missing order ID {$orderId}.");
+        }
+
         foreach ($data['customer_favorites'] ?? [] as $index => $favorite) {
             if (! array_key_exists('product_id', $favorite)) {
                 throw new InvalidArgumentException("Customer favorite at index {$index} is missing a product ID.");

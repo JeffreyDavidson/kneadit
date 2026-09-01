@@ -246,6 +246,27 @@ it('rejects recipe stages that reference missing recipes before writing any reco
     test()->assertDatabaseCount('recipes', 0);
 });
 
+it('rejects order notes that reference missing orders before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-ORDER-NOTE',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_notes' => [[
+            'id' => 42,
+            'order_id' => 999,
+            'type' => 'system',
+            'content' => 'Orphaned note',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Order note at index 0 references missing order ID 999.');
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
