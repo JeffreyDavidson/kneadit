@@ -2,6 +2,7 @@
 
 namespace App\Actions\Tenants;
 
+use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Enums\Financial\CouponType;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -16,6 +17,7 @@ class ImportLegacyBakeryData
 {
     public function __construct(
         private readonly TenantSettingCipher $settingCipher,
+        private readonly LegacyCatalogImporter $catalogImporter,
     ) {}
 
     /**
@@ -27,8 +29,12 @@ class ImportLegacyBakeryData
         $this->validateReferences($data);
 
         return DB::transaction(function () use ($data): array {
-            $categoryIds = $this->importCategories($data['categories'] ?? []);
-            $productIds = $this->importProducts($data['products'] ?? [], $categoryIds);
+            $catalogIds = $this->catalogImporter->import(
+                $data['categories'] ?? [],
+                $data['products'] ?? [],
+            );
+            $categoryIds = $catalogIds['category_ids'];
+            $productIds = $catalogIds['product_ids'];
             $couponIds = $this->importCoupons($data['coupons'] ?? []);
             $customerIds = $this->importCustomers($data['orders'] ?? []);
             $orderIds = $this->importOrders(
@@ -291,63 +297,6 @@ class ImportLegacyBakeryData
                 ],
             );
             $ids[$this->parseLegacyInteger($coupon['id'])] = $this->parseLegacyInteger(DB::table('coupons')->where('code', Str::upper($this->stringValue($coupon['code'])))->value('id'));
-        }
-
-        return $ids;
-    }
-
-    /** @param array<int, array<string, mixed>> $categories
-     * @return array<int, int>
-     */
-    private function importCategories(array $categories): array
-    {
-        $ids = [];
-
-        foreach ($categories as $category) {
-            $slug = Str::slug($this->stringValue($category['name']));
-            DB::table('categories')->updateOrInsert(
-                ['slug' => $slug],
-                [
-                    'name' => $category['name'],
-                    'description' => $category['description'] ?? null,
-                    'is_active' => $category['is_active'] ?? true,
-                    'sort_order' => $category['sort_order'] ?? 0,
-                    'created_at' => $category['created_at'] ?? now(),
-                    'updated_at' => $category['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->parseLegacyInteger($category['id'])] = $this->parseLegacyInteger(DB::table('categories')->where('slug', $slug)->value('id'));
-        }
-
-        return $ids;
-    }
-
-    /** @param array<int, array<string, mixed>> $products
-     * @param array<int, int> $categoryIds
-     * @return array<int, int>
-     */
-    private function importProducts(array $products, array $categoryIds): array
-    {
-        $ids = [];
-
-        foreach ($products as $product) {
-            $slug = Str::slug($this->stringValue($product['name']));
-            DB::table('products')->updateOrInsert(
-                ['slug' => $slug],
-                [
-                    'name' => $product['name'],
-                    'description' => $product['description'] ?? null,
-                    'price' => $this->cents($product['price'] ?? 0),
-                    'cost' => isset($product['cost']) ? $this->cents($product['cost']) : null,
-                    'category_id' => $categoryIds[$this->parseLegacyInteger($product['category_id'])],
-                    'is_active' => $product['is_available'] ?? $product['is_active'] ?? true,
-                    'is_featured' => $product['is_featured'] ?? false,
-                    'image' => $product['image'] ?? null,
-                    'created_at' => $product['created_at'] ?? now(),
-                    'updated_at' => $product['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->parseLegacyInteger($product['id'])] = $this->parseLegacyInteger(DB::table('products')->where('slug', $slug)->value('id'));
         }
 
         return $ids;
