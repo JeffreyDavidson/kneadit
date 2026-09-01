@@ -5,6 +5,7 @@ namespace App\Actions\Tenants;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ImportLegacyBakeryData
 {
@@ -18,6 +19,8 @@ class ImportLegacyBakeryData
      */
     public function __invoke(array $data): array
     {
+        $this->validateReferences($data);
+
         return DB::transaction(function () use ($data): array {
             $categoryIds = $this->importCategories($data['categories'] ?? []);
             $productIds = $this->importProducts($data['products'] ?? [], $categoryIds);
@@ -59,6 +62,75 @@ class ImportLegacyBakeryData
                 'settings' => count($data['settings'] ?? []),
             ];
         });
+    }
+
+    /**
+     * Validate references before the transaction starts so malformed exports
+     * fail clearly without partially changing the tenant database.
+     *
+     * @param array<string, array<int, array<string, mixed>>> $data
+     */
+    private function validateReferences(array $data): void
+    {
+        $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
+        $productIds = $this->legacyIds($data['products'] ?? [], 'product');
+        $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
+
+        foreach ($data['products'] ?? [] as $index => $product) {
+            if (! array_key_exists('category_id', $product)) {
+                throw new InvalidArgumentException("Product at index {$index} is missing a category ID.");
+            }
+
+            $categoryId = $this->integerValue($product['category_id']);
+            $this->assertReference($categoryIds, $categoryId, "Product at index {$index} references missing category ID {$categoryId}.");
+        }
+
+        foreach ($data['orders'] ?? [] as $index => $order) {
+            if (! array_key_exists('customer_email', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing a customer email.");
+            }
+        }
+
+        foreach ($data['order_items'] ?? [] as $index => $item) {
+            if (! array_key_exists('order_id', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing an order ID.");
+            }
+
+            $orderId = $this->integerValue($item['order_id']);
+            $this->assertReference($orderIds, $orderId, "Order item at index {$index} references missing order ID {$orderId}.");
+
+            if (array_key_exists('product_id', $item) && $item['product_id'] !== null) {
+                $productId = $this->integerValue($item['product_id']);
+                $this->assertReference($productIds, $productId, "Order item at index {$index} references missing product ID {$productId}.");
+            }
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @return array<int, true>
+     */
+    private function legacyIds(array $records, string $dataset): array
+    {
+        $ids = [];
+
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('id', $record)) {
+                throw new InvalidArgumentException(ucfirst($dataset) . " at index {$index} is missing an ID.");
+            }
+
+            $ids[$this->integerValue($record['id'])] = true;
+        }
+
+        return $ids;
+    }
+
+    /** @param array<int, true> $references */
+    private function assertReference(array $references, int $id, string $message): void
+    {
+        if (! isset($references[$id])) {
+            throw new InvalidArgumentException($message);
+        }
     }
 
     /** @param array<int, array<string, mixed>> $coupons
