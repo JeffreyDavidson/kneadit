@@ -122,6 +122,8 @@ test('backup secures the central database copy', function () {
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
     File::put($centralDatabase, 'central database');
+    File::put($centralDatabase . '-wal', 'central wal');
+    File::put($centralDatabase . '-shm', 'central shm');
     config(['database.connections.sqlite.database' => $centralDatabase]);
 
     try {
@@ -129,10 +131,14 @@ test('backup secures the central database copy', function () {
 
         expect("{$backupDirectory}/central.sqlite")
             ->toBeFile()
-            ->and(fileperms("{$backupDirectory}/central.sqlite") & 0777)->toBe(0600);
+            ->and(fileperms("{$backupDirectory}/central.sqlite") & 0777)->toBe(0600)
+            ->and("{$backupDirectory}/central.sqlite-wal")->toBeFile()
+            ->and("{$backupDirectory}/central.sqlite-shm")->toBeFile();
     } finally {
         Carbon::setTestNow();
         File::delete($centralDatabase);
+        File::delete($centralDatabase . '-wal');
+        File::delete($centralDatabase . '-shm');
         File::deleteDirectory($backupDirectory);
     }
 });
@@ -162,6 +168,8 @@ test('backup includes extensionless tenant databases from the configured directo
         $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'backup-tenant']));
         $databaseName = (string) $tenant->database()->getName();
         File::put("{$tenantDbDirectory}/{$databaseName}", 'tenant database');
+        File::put("{$tenantDbDirectory}/{$databaseName}-wal", 'tenant wal');
+        File::put("{$tenantDbDirectory}/{$databaseName}-shm", 'tenant shm');
 
         $this->artisan('backup:databases')
             ->expectsOutputToContain('1 tenant database(s)')
@@ -169,7 +177,9 @@ test('backup includes extensionless tenant databases from the configured directo
 
         expect("{$backupDirectory}/{$databaseName}")
             ->toBeFile()
-            ->and(fileperms("{$backupDirectory}/{$databaseName}") & 0777)->toBe(0600);
+            ->and(fileperms("{$backupDirectory}/{$databaseName}") & 0777)->toBe(0600)
+            ->and("{$backupDirectory}/{$databaseName}-wal")->toBeFile()
+            ->and("{$backupDirectory}/{$databaseName}-shm")->toBeFile();
     } finally {
         Carbon::setTestNow();
         File::deleteDirectory($tenantDbDirectory);
