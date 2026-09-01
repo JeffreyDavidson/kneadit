@@ -20,7 +20,7 @@ class TenantDataCountsQuery
             'products' => DB::table('products')->count(),
             'categories' => DB::table('categories')->count(),
             'orders' => DB::table('orders')->count(),
-            'customers' => DB::table('users')->count(),
+            'customers' => DB::table('customers')->count(),
             'reviews' => DB::table('reviews')->count(),
         ]);
 
