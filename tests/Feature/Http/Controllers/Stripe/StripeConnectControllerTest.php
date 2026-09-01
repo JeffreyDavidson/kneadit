@@ -3,16 +3,17 @@
 use App\Actions\Stripe\InitiateStripeConnect;
 use App\Http\Controllers\Stripe\StripeConnectController;
 use Illuminate\Http\RedirectResponse;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 test('stripe connect controller redirects to onboarding url', function () {
-    $action = Mockery::mock(InitiateStripeConnect::class);
-    $action->shouldReceive('__invoke')
-        ->once()
+    $action = Double::for(InitiateStripeConnect::class);
+    $action->expects('__invoke')
         ->with(
-            Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=refresh')),
-            Mockery::on(fn ($url) => str_contains($url, 'stripe_connect=complete')),
+            Argument::satisfies(fn (mixed $url): bool => is_string($url) && str_contains($url, 'stripe_connect=refresh')),
+            Argument::satisfies(fn (mixed $url): bool => is_string($url) && str_contains($url, 'stripe_connect=complete')),
         )
-        ->andReturn('https://connect.stripe.com/setup/test123');
+        ->returns('https://connect.stripe.com/setup/test123');
 
     $controller = new StripeConnectController;
     $response = $controller($action);
@@ -25,10 +26,9 @@ test('stripe connect controller passes correct refresh and return urls', functio
     $capturedRefresh = null;
     $capturedReturn = null;
 
-    $action = Mockery::mock(InitiateStripeConnect::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->andReturnUsing(function (string $refreshUrl, string $returnUrl) use (&$capturedRefresh, &$capturedReturn) {
+    $action = Double::for(InitiateStripeConnect::class);
+    $action->expects('__invoke')
+        ->resolves(function (string $refreshUrl, string $returnUrl) use (&$capturedRefresh, &$capturedReturn): string {
             $capturedRefresh = $refreshUrl;
             $capturedReturn = $returnUrl;
 
