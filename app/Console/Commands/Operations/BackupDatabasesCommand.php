@@ -137,6 +137,27 @@ class BackupDatabasesCommand extends Command
             RuntimeException::class,
             "Failed to secure database backup at {$destination}.",
         );
+
+        foreach (['-wal', '-shm'] as $suffix) {
+            $sidecarSource = $source . $suffix;
+
+            if (is_link($sidecarSource) || ! File::isFile($sidecarSource)) {
+                continue;
+            }
+
+            $sidecarDestination = $destination . $suffix;
+            throw_unless(
+                File::copy($sidecarSource, $sidecarDestination),
+                RuntimeException::class,
+                "Failed to copy database sidecar backup to {$sidecarDestination}.",
+            );
+
+            throw_unless(
+                File::chmod($sidecarDestination, 0600),
+                RuntimeException::class,
+                "Failed to secure database sidecar backup at {$sidecarDestination}.",
+            );
+        }
     }
 
     protected function dirSize(string $dir): int
