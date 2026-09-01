@@ -57,8 +57,9 @@ test('it does not send when the order_placed email toggle is disabled', function
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendOrderPlacedEmailListener failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendOrderPlacedEmailListener failed'
+            && $context['order'] === 'ORD-001'
+            && $context['error'] === 'SMTP timeout');
 
     $order = Order::factory()->create(['order_number' => 'ORD-001']);
     $event = new OrderCreated($order);

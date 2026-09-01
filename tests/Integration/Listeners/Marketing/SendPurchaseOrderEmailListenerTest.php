@@ -32,8 +32,9 @@ test('it sends purchase order email to the supplier', function () {
 test('failed method logs a warning with supplier name and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendPurchaseOrderEmailListener failed', Mockery::on(fn (array $context) => $context['supplier'] === 'Flour Co.'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendPurchaseOrderEmailListener failed'
+            && $context['supplier'] === 'Flour Co.'
+            && $context['error'] === 'SMTP timeout');
 
     $event = new PurchaseOrderRequested(
         supplierEmail: 'supplier@example.com',

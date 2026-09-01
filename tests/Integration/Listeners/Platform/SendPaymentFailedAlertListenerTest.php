@@ -33,8 +33,9 @@ test('it sends payment-failed alert to platform admin with structured data', fun
 test('failed method logs a warning with user email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendPaymentFailedAlertListener failed', Mockery::on(fn (array $context) => $context['user'] === 'jane@example.com'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendPaymentFailedAlertListener failed'
+            && $context['user'] === 'jane@example.com'
+            && $context['error'] === 'SMTP timeout');
 
     $user = User::factory()->create(['email' => 'jane@example.com']);
     $event = new PaymentFailed($user, null, 29.00);
