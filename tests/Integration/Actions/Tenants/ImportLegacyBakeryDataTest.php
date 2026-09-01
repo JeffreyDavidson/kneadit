@@ -333,6 +333,37 @@ it('rejects reviews that reference missing orders before writing any records', f
     test()->assertDatabaseCount('reviews', 0);
 });
 
+it('rejects order items missing required fields before writing any records', function (array $item, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID-ITEM',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_items' => [$item + ['order_id' => 30]],
+    ]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0)
+        ->assertDatabaseCount('order_items', 0);
+})->with([
+    'product name' => [
+        ['quantity' => 1, 'unit_price' => '4.50'],
+        'Order item at index 0 is missing a product name.',
+    ],
+    'quantity' => [
+        ['product_name' => 'Custom item', 'unit_price' => '4.50'],
+        'Order item at index 0 is missing a quantity.',
+    ],
+    'unit price' => [
+        ['product_name' => 'Custom item', 'quantity' => 1],
+        'Order item at index 0 is missing a unit price.',
+    ],
+]);
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 

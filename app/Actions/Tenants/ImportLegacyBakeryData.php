@@ -121,8 +121,23 @@ class ImportLegacyBakeryData
                 throw new InvalidArgumentException("Order item at index {$index} is missing an order ID.");
             }
 
+            if (! array_key_exists('product_name', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a product name.");
+            }
+
+            if (! array_key_exists('quantity', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a quantity.");
+            }
+
+            if (! array_key_exists('unit_price', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a unit price.");
+            }
+
             $orderId = $this->parseLegacyInteger($item['order_id']);
             $this->assertReference($orderIds, $orderId, "Order item at index {$index} references missing order ID {$orderId}.");
+            $this->stringValue($item['product_name']);
+            $this->parseLegacyInteger($item['quantity']);
+            $this->floatValue($item['unit_price']);
 
             if (array_key_exists('product_id', $item) && $item['product_id'] !== null) {
                 $productId = $this->parseLegacyInteger($item['product_id']);
