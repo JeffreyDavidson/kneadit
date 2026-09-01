@@ -40,7 +40,15 @@ class ImportLegacyBakeryAssets
         $destinations = [];
         foreach ($sources as $key => $source) {
             $destination = "tenants/{$tenantId}/bakery-on-biscotto/" . basename($source);
-            Storage::disk('public')->put($destination, (string) file_get_contents($source));
+            $contents = file_get_contents($source);
+            throw_if($contents === false, InvalidArgumentException::class, "The legacy asset [{$source}] could not be read.");
+
+            throw_unless(
+                Storage::disk('public')->put($destination, $contents),
+                InvalidArgumentException::class,
+                "The legacy asset [{$source}] could not be stored.",
+            );
+
             $destinations[$key] = $destination;
         }
 
