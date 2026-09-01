@@ -158,6 +158,20 @@ it('rejects orders that reference missing coupons before writing any records', f
         ->assertDatabaseCount('orders', 0);
 });
 
+it('rejects customer favorites that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'customer_favorites' => [[
+            'id' => 92,
+            'customer_email' => 'jane@example.com',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Customer favorite at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('customer_favorites', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
