@@ -148,6 +148,7 @@ it('rejects orders that reference missing coupons before writing any records', f
         'orders' => [[
             'id' => 30,
             'order_number' => 'BOB-INVALID-COUPON',
+            'customer_name' => 'Jane Baker',
             'customer_email' => 'jane@example.com',
             'coupon_id' => 999,
         ]],
@@ -253,6 +254,7 @@ it('rejects order notes that reference missing orders before writing any records
         'orders' => [[
             'id' => 30,
             'order_number' => 'BOB-ORDER-NOTE',
+            'customer_name' => 'Jane Baker',
             'customer_email' => 'jane@example.com',
         ]],
         'order_notes' => [[
@@ -364,6 +366,24 @@ it('rejects order items missing required fields before writing any records', fun
     ],
 ]);
 
+it('rejects orders missing required identity fields before writing any records', function (array $order, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import(['orders' => [$order]]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+})->with([
+    'customer name' => [
+        ['id' => 30, 'order_number' => 'BOB-MISSING-NAME', 'customer_email' => 'jane@example.com'],
+        'Order at index 0 is missing a customer name.',
+    ],
+    'order number' => [
+        ['id' => 30, 'customer_name' => 'Jane Baker', 'customer_email' => 'jane@example.com'],
+        'Order at index 0 is missing an order number.',
+    ],
+]);
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
@@ -371,6 +391,7 @@ it('rejects unsupported enum values before writing any records', function () {
         'orders' => [[
             'id' => 30,
             'order_number' => 'BOB-INVALID',
+            'customer_name' => 'Jane Baker',
             'customer_email' => 'jane@example.com',
             'status' => 'shipped',
         ]],

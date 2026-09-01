@@ -105,10 +105,20 @@ class ImportLegacyBakeryData
                 throw new InvalidArgumentException("Order at index {$index} is missing a customer email.");
             }
 
+            if (! array_key_exists('customer_name', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing a customer name.");
+            }
+
+            if (! array_key_exists('order_number', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing an order number.");
+            }
+
             $this->orderStatus($order['status'] ?? OrderStatus::Pending->value);
             $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value);
             $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value);
             $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value);
+            $this->stringValue($order['customer_name']);
+            $this->stringValue($order['order_number']);
 
             if (array_key_exists('coupon_id', $order) && $order['coupon_id'] !== null) {
                 $couponId = $this->parseLegacyInteger($order['coupon_id']);
