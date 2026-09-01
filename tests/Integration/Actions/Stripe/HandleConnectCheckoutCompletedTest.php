@@ -1,8 +1,10 @@
 <?php
 
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
+use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -48,10 +50,9 @@ test('it does nothing when tenant is not found', function () {
 test('it processes checkout session within tenant context', function () {
     $tenant = createTenant(['id' => 'checkout-tenant', 'email' => 'checkout@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andReturnUsing(fn ($tenant, $callback) => $callback());
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (Tenant $tenant, callable $callback): mixed => $callback($tenant));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -71,10 +72,9 @@ test('it processes checkout session within tenant context', function () {
 test('it catches exceptions during tenant context processing', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andThrow(new Exception('Processing failed'));
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->throws(new Exception('Processing failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
