@@ -1,8 +1,10 @@
 <?php
 
 use App\Actions\Stripe\HandleConnectAccountUpdated;
+use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -52,10 +54,9 @@ test('reads tenant_id from object metadata', function () {
 test('updates tenant settings when tenant exists and charges enabled', function () {
     $tenant = createTenant(['id' => 'stripe-tenant', 'email' => 'stripe@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andReturnUsing(fn ($tenant, $callback) => $callback());
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (Tenant $tenant, callable $callback): mixed => $callback($tenant));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -73,10 +74,9 @@ test('updates tenant settings when tenant exists and charges enabled', function 
 test('logs error when tenant context callback throws exception', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
-    $tenancyManager = Mockery::mock(TenancyManager::class);
-    $tenancyManager->shouldReceive('withinTenant')
-        ->once()
-        ->andThrow(new Exception('Connection failed'));
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->throws(new Exception('Connection failed'));
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
