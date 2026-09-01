@@ -88,7 +88,17 @@ class ImportLegacyBakeryData
                 throw new InvalidArgumentException("Coupon at index {$index} is missing a type.");
             }
 
+            if (! array_key_exists('code', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a code.");
+            }
+
+            if (! array_key_exists('value', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a value.");
+            }
+
             $this->couponType($coupon['type']);
+            $this->stringValue($coupon['code']);
+            $this->floatValue($coupon['value']);
         }
 
         foreach ($data['products'] ?? [] as $index => $product) {

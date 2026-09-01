@@ -384,6 +384,23 @@ it('rejects orders missing required identity fields before writing any records',
     ],
 ]);
 
+it('rejects coupons missing required fields before writing any records', function (array $coupon, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import(['coupons' => [$coupon]]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('coupons', 0);
+})->with([
+    'code' => [
+        ['id' => 25, 'type' => 'fixed_amount', 'value' => '5.00'],
+        'Coupon at index 0 is missing a code.',
+    ],
+    'value' => [
+        ['id' => 25, 'code' => 'welcome5', 'type' => 'fixed_amount'],
+        'Coupon at index 0 is missing a value.',
+    ],
+]);
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
