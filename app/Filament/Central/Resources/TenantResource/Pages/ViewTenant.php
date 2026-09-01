@@ -58,7 +58,7 @@ class ViewTenant extends ViewRecord
                     'orders' => DB::table('orders')->count(),
                     // orders.total is bigint cents (migration 2026_04_22_201500).
                     'revenue' => (int) DB::table('orders')->sum('total') / 100,
-                    'customers' => DB::table('users')->count(),
+                    'customers' => DB::table('customers')->count(),
                     'reviews' => DB::table('reviews')->count(),
                     'last_order' => DB::table('orders')->max('created_at'),
                 ];
