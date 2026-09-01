@@ -79,6 +79,7 @@ class ImportLegacyBakeryData
     {
         $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
         $productIds = $this->legacyIds($data['products'] ?? [], 'product');
+        $couponIds = $this->legacyIds($data['coupons'] ?? [], 'coupon');
         $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
 
         foreach ($data['coupons'] ?? [] as $index => $coupon) {
@@ -107,6 +108,11 @@ class ImportLegacyBakeryData
             $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value);
             $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value);
             $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value);
+
+            if (array_key_exists('coupon_id', $order) && $order['coupon_id'] !== null) {
+                $couponId = $this->parseLegacyInteger($order['coupon_id']);
+                $this->assertReference($couponIds, $couponId, "Order at index {$index} references missing coupon ID {$couponId}.");
+            }
         }
 
         foreach ($data['order_items'] ?? [] as $index => $item) {

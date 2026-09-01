@@ -140,6 +140,24 @@ it('rejects duplicate legacy IDs before writing any records', function () {
     test()->assertDatabaseCount('categories', 0);
 });
 
+it('rejects orders that reference missing coupons before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'coupons' => [['id' => 25, 'code' => 'welcome5', 'type' => 'fixed_amount', 'value' => '5.00']],
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID-COUPON',
+            'customer_email' => 'jane@example.com',
+            'coupon_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Order at index 0 references missing coupon ID 999.');
+
+    test()->assertDatabaseCount('coupons', 0)
+        ->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
