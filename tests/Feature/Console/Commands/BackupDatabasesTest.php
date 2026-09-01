@@ -116,6 +116,27 @@ test('backup creates timestamped subdirectory', function () {
     expect($found)->toBeTrue('Timestamped backup subdirectory should be created');
 });
 
+test('backup secures the central database copy', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    File::put($centralDatabase, 'central database');
+    config(['database.connections.sqlite.database' => $centralDatabase]);
+
+    try {
+        $this->artisan('backup:databases')->assertSuccessful();
+
+        expect("{$backupDirectory}/central.sqlite")
+            ->toBeFile()
+            ->and(fileperms("{$backupDirectory}/central.sqlite") & 0777)->toBe(0600);
+    } finally {
+        Carbon::setTestNow();
+        File::delete($centralDatabase);
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
 test('backup handles missing central database gracefully', function () {
     config(['database.connections.sqlite.database' => '/nonexistent/path/db.sqlite']);
 
