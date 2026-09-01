@@ -3,11 +3,10 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
-use App\Services\Tenants\TenancyManager;
+use App\Queries\Platform\TenantDataCountsQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class DataExport extends Page
@@ -24,7 +23,7 @@ class DataExport extends Page
 
     public ?string $selectedTenant = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, int> */
     public array $counts = [];
 
     /** @return array<string, mixed> */
@@ -52,13 +51,7 @@ class DataExport extends Page
         }
 
         try {
-            $this->counts = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
-                'products' => DB::table('products')->count(),
-                'categories' => DB::table('categories')->count(),
-                'orders' => DB::table('orders')->count(),
-                'customers' => DB::table('users')->count(),
-                'reviews' => DB::table('reviews')->count(),
-            ]);
+            $this->counts = resolve(TenantDataCountsQuery::class)->forTenant($tenant);
         } catch (\Throwable) {
             $this->counts = [];
         }

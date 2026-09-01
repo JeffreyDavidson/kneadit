@@ -2,7 +2,9 @@
 
 use App\Filament\Central\Pages\DataExport;
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use Filament\Support\Icons\Heroicon;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -54,6 +56,26 @@ test('updated selected tenant clears counts when tenant not found', function () 
     test()->page->updatedSelectedTenant('nonexistent-id');
 
     expect(test()->page->counts)->toBeEmpty();
+});
+
+test('updated selected tenant loads data counts', function () {
+    $tenant = Tenant::factory()->create();
+
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (Tenant $tenant, callable $callback): mixed => $callback($tenant));
+
+    app()->instance(TenancyManager::class, $tenancyManager);
+
+    test()->page->updatedSelectedTenant($tenant->id);
+
+    expect(test()->page->counts)->toBe([
+        'products' => 0,
+        'categories' => 0,
+        'orders' => 0,
+        'customers' => 0,
+        'reviews' => 0,
+    ]);
 });
 
 test('get export types returns expected types', function () {
