@@ -267,6 +267,29 @@ it('rejects order notes that reference missing orders before writing any records
         ->assertDatabaseCount('orders', 0);
 });
 
+it('imports order items without legacy product IDs', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    $result = $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-NO-PRODUCT',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_items' => [
+            ['id' => 40, 'order_id' => 30, 'product_name' => 'Custom item', 'unit_price' => '4.50', 'quantity' => 1],
+            ['id' => 41, 'order_id' => 30, 'product_id' => null, 'product_name' => 'Unlinked item', 'unit_price' => '2.00', 'quantity' => 2],
+        ],
+    ]);
+
+    expect($result['order_items'])->toBe(2);
+
+    test()->assertDatabaseCount('order_items', 2)
+        ->assertDatabaseHas('order_items', ['name' => 'Custom item', 'product_id' => null, 'unit_price' => 450])
+        ->assertDatabaseHas('order_items', ['name' => 'Unlinked item', 'product_id' => null, 'unit_price' => 200]);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
