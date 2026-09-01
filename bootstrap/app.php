@@ -90,12 +90,15 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $status = $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500;
+            $detail = $status >= 500
+                ? 'An unexpected error occurred.'
+                : ($e->getMessage() ?: null);
 
             return response()->json([
                 'errors' => [[
                     'status' => (string) $status,
                     'title' => Response::$statusTexts[$status] ?? 'Error',
-                    'detail' => $e->getMessage() ?: null,
+                    'detail' => $detail,
                 ]],
             ], $status, ['Content-Type' => 'application/vnd.api+json']);
         });
