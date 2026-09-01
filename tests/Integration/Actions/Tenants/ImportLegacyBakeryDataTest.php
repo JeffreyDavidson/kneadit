@@ -127,6 +127,19 @@ it('rejects missing foreign-key references before writing any records', function
         ->assertDatabaseCount('products', 0);
 });
 
+it('rejects duplicate legacy IDs before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'categories' => [
+            ['id' => 10, 'name' => 'Breads'],
+            ['id' => 10, 'name' => 'Pastries'],
+        ],
+    ]))->toThrow(InvalidArgumentException::class, 'Duplicate category ID 10 at index 1.');
+
+    test()->assertDatabaseCount('categories', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 

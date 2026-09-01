@@ -137,7 +137,13 @@ class ImportLegacyBakeryData
                 throw new InvalidArgumentException(ucfirst($dataset) . " at index {$index} is missing an ID.");
             }
 
-            $ids[$this->integerValue($record['id'])] = true;
+            $id = $this->integerValue($record['id']);
+
+            if (isset($ids[$id])) {
+                throw new InvalidArgumentException("Duplicate {$dataset} ID {$id} at index {$index}.");
+            }
+
+            $ids[$id] = true;
         }
 
         return $ids;
