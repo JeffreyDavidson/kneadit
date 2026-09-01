@@ -172,6 +172,49 @@ it('rejects customer favorites that reference missing products before writing an
     test()->assertDatabaseCount('customer_favorites', 0);
 });
 
+it('rejects reviews that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Review at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('reviews', 0);
+});
+
+it('rejects recipes that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipes' => [['id' => 60, 'product_id' => 999, 'name' => 'Sourdough Recipe']],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
+it('rejects waitlist entries that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'waitlist_entries' => [[
+            'id' => 91,
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+            'requested_date' => '2026-08-20',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Waitlist entry at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('waitlist_entries', 0);
+});
+
 it('rejects unsupported enum values before writing any records', function () {
     $import = resolve(ImportLegacyBakeryData::class);
 
