@@ -78,6 +78,20 @@ jobs:
       - name: Initialize Ward
         run: ward init
 
+      - name: Generate baseline from previous revision
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          if git rev-parse "${GITHUB_SHA}^" >/dev/null 2>&1; then
+            git checkout "${GITHUB_SHA}^"
+            ward init
+            ward scan . --output json --update-baseline "$RUNNER_TEMP/ward-baseline.json" || true
+            git checkout "$GITHUB_SHA"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run security scan (PR)
         if: github.event_name == 'pull_request'
         run: |
@@ -89,7 +103,12 @@ jobs:
 
       - name: Run security scan (push/schedule)
         if: github.event_name != 'pull_request'
-        run: ward scan . --output json,sarif --fail-on high
+        run: |
+          if [ -f "$RUNNER_TEMP/ward-baseline.json" ]; then
+            ward scan . --output json,sarif --fail-on high --baseline "$RUNNER_TEMP/ward-baseline.json"
+          else
+            ward scan . --output json,sarif --fail-on high
+          fi
 
       - name: Normalize empty SARIF collections
         if: always() && hashFiles('ward-report.sarif') != ''
