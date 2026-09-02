@@ -11,6 +11,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Services\Settings\TenantSettingCipher;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -197,11 +198,10 @@ class ImportLegacyBakeryData
         $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
         $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
 
-        foreach ($data['reviews'] ?? [] as $index => $review) {
-            if (! array_key_exists('order_id', $review) || $review['order_id'] === null) {
-                continue;
-            }
-
+        foreach (Arr::reject(
+            $data['reviews'] ?? [],
+            static fn (array $review): bool => ! array_key_exists('order_id', $review) || $review['order_id'] === null,
+        ) as $index => $review) {
             $orderId = $this->parseLegacyInteger($review['order_id']);
             $this->assertReference($orderIds, $orderId, "Review at index {$index} references missing order ID {$orderId}.");
         }
@@ -216,11 +216,10 @@ class ImportLegacyBakeryData
      */
     private function validateOptionalProductReferences(array $records, array $productIds, string $dataset): void
     {
-        foreach ($records as $index => $record) {
-            if (! array_key_exists('product_id', $record) || $record['product_id'] === null) {
-                continue;
-            }
-
+        foreach (Arr::reject(
+            $records,
+            static fn (array $record): bool => ! array_key_exists('product_id', $record) || $record['product_id'] === null,
+        ) as $index => $record) {
             $productId = $this->parseLegacyInteger($record['product_id']);
             $this->assertReference($productIds, $productId, "{$dataset} at index {$index} references missing product ID {$productId}.");
         }
