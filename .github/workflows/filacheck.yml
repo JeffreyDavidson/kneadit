@@ -11,25 +11,20 @@ concurrency:
   group: filacheck-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   filacheck:
     name: Filament Lint
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
-    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Verify local PHP
-        run: php -v && php -m
-
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+      - name: Setup PHP and Composer
+        uses: ./.github/actions/setup-php-composer
 
       - name: Install Composer dependencies
         env:

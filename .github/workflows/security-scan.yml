@@ -20,40 +20,65 @@ permissions:
 jobs:
   dependencies:
     name: Dependency Audit
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
-    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: '24.x'
 
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
+      - name: Setup PHP and Composer
+        uses: ./.github/actions/setup-php-composer
+
+      - name: Validate Composer configuration
+        run: composer validate --strict --no-check-publish --no-interaction
+
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Verify Composer platform requirements
+        run: composer check-platform-reqs --no-dev --no-interaction
+
+      - name: Verify PHP 8.5 compatibility
+        run: composer why-not php 8.5 --locked --no-interaction
+
+      - name: Resolve npm cache directory
+        id: npm-cache
+        shell: bash
+        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore npm cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.npm-cache.outputs.directory }}
+          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-node-24-
+
+      - name: Install npm dependencies
+        run: npm ci --ignore-scripts --no-fund
 
       - name: Audit Composer dependencies
         run: composer audit --locked --format=plain
 
       - name: Audit npm dependencies
-        run: npm audit --package-lock-only --audit-level=high
+        run: npm audit --audit-level=high
 
   ward:
     name: Ward Security Scan
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: '1.24.x'
 
@@ -87,9 +112,6 @@ jobs:
             ward init
             ward scan . --output json --update-baseline "$RUNNER_TEMP/ward-baseline.json" || true
             git checkout "$GITHUB_SHA"
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run security scan (PR)
@@ -118,7 +140,7 @@ jobs:
 
       - name: Upload Ward reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ward-security-reports
           path: |
@@ -130,6 +152,6 @@ jobs:
       - name: Upload Ward SARIF
         if: always() && hashFiles('ward-report.sarif') != ''
         continue-on-error: true
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ward-report.sarif

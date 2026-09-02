@@ -1,0 +1,67 @@
+name: Code Coverage
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 1'
+
+concurrency:
+  group: coverage-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    name: PCOV Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP and Composer with PCOV
+        uses: ./.github/actions/setup-php-composer
+        with:
+          coverage: pcov
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Clear config cache
+        run: php artisan config:clear
+
+      - name: Verify PCOV
+        run: php --ri pcov
+
+      # Measured from the current non-browser suite on 2026-09-02: 85.2% lines.
+      # Keep this floor at the measured baseline; raise it with intentional coverage work.
+      - name: Generate coverage reports
+        run: |
+          php -d memory_limit=4G vendor/bin/pest --ci --compact \
+            --configuration=.github/phpunit-ci.xml \
+            --strict-coverage --coverage --min=85.2 \
+            --coverage-clover="$RUNNER_TEMP/coverage.xml" \
+            --coverage-cobertura="$RUNNER_TEMP/coverage-cobertura.xml" \
+            --coverage-text="$RUNNER_TEMP/coverage.txt"
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-coverage-report
+          path: |
+            ${{ runner.temp }}/coverage.xml
+            ${{ runner.temp }}/coverage-cobertura.xml
+            ${{ runner.temp }}/coverage.txt
+          if-no-files-found: error
+          retention-days: 14
