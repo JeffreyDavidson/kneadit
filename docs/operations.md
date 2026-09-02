@@ -86,6 +86,25 @@ The repository uses simplified gitflow:
 - `main` deploys to production through Laravel Forge.
 - release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`; run `bin/sync-version` during deployment before caching configuration.
 
+The repository does not automatically back-merge `main` into `develop`. Prepare releases locally from a freshly pulled `develop` branch so release history stays linear and reviewable:
+
+```bash
+git fetch origin
+git switch develop
+git pull --ff-only origin develop
+git switch -c release/vX.Y.Z
+```
+
+If a release branch already exists, rebase it onto the pulled `develop` branch before opening or updating its release pull request:
+
+```bash
+git fetch origin
+git switch develop
+git pull --ff-only origin develop
+git switch release/vX.Y.Z
+git rebase develop
+```
+
 Before merging a release:
 
 1. Review the complete `develop...main` diff and all migrations.
