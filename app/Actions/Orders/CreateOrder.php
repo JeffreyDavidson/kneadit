@@ -29,11 +29,15 @@ use UnexpectedValueException;
 
 class CreateOrder
 {
+    public function __construct(
+        private Pipeline $pipeline,
+    ) {}
+
     public function __invoke(CreateOrderData $data): ?Order
     {
         $payload = new OrderPipelineData($data);
 
-        $result = DB::transaction(fn () => resolve(Pipeline::class)
+        $result = DB::transaction(fn () => $this->pipeline
             ->send($payload)
             ->through([
                 CalculateOrderTotals::class,

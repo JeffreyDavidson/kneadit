@@ -4,6 +4,7 @@ use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
 
 beforeEach(function () {
     config(['app.key' => 'base64:BskavyAdxjag1K/BGSEfPPiwB/QDha6hMH4H0i1wM7A=']);
@@ -112,6 +113,309 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_id', $paypalClientId))->toBe('legacy-client-id')
         ->and(resolve(TenantSettingCipher::class)->decrypt('paypal_client_secret', $paypalClientSecret))->toBe('legacy-client-secret')
         ->and($orderNotes)->toBe("Legacy order history:\n[2026-08-15 09:00:00] [Status Change] Status changed from Pending to Confirmed\n[2026-08-15 09:15:00] [System] Email notification sent: Order Confirmed");
+});
+
+it('rejects missing foreign-key references before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'categories' => [['id' => 10, 'name' => 'Breads']],
+        'products' => [['id' => 20, 'category_id' => 999, 'name' => 'Sourdough', 'price' => '12.50']],
+    ]))->toThrow(InvalidArgumentException::class, 'Product at index 0 references missing category ID 999.');
+
+    test()->assertDatabaseCount('categories', 0)
+        ->assertDatabaseCount('products', 0);
+});
+
+it('rejects duplicate legacy IDs before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'categories' => [
+            ['id' => 10, 'name' => 'Breads'],
+            ['id' => 10, 'name' => 'Pastries'],
+        ],
+    ]))->toThrow(InvalidArgumentException::class, 'Duplicate category ID 10 at index 1.');
+
+    test()->assertDatabaseCount('categories', 0);
+});
+
+it('rejects orders that reference missing coupons before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'coupons' => [['id' => 25, 'code' => 'welcome5', 'type' => 'fixed_amount', 'value' => '5.00']],
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID-COUPON',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+            'coupon_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Order at index 0 references missing coupon ID 999.');
+
+    test()->assertDatabaseCount('coupons', 0)
+        ->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+});
+
+it('rejects customer favorites that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'customer_favorites' => [[
+            'id' => 92,
+            'customer_email' => 'jane@example.com',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Customer favorite at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('customer_favorites', 0);
+});
+
+it('rejects reviews that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Review at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('reviews', 0);
+});
+
+it('rejects recipes that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipes' => [['id' => 60, 'product_id' => 999, 'name' => 'Sourdough Recipe']],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
+it('rejects waitlist entries that reference missing products before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'waitlist_entries' => [[
+            'id' => 91,
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+            'requested_date' => '2026-08-20',
+            'product_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Waitlist entry at index 0 references missing product ID 999.');
+
+    test()->assertDatabaseCount('waitlist_entries', 0);
+});
+
+it('rejects recipe ingredients that reference missing recipes before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipe_ingredients' => [[
+            'id' => 61,
+            'recipe_id' => 999,
+            'name' => 'Flour',
+            'quantity' => 2,
+            'unit' => 'lb',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe ingredient at index 0 references missing recipe ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
+it('rejects recipe stages that reference missing recipes before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'recipe_stages' => [[
+            'id' => 62,
+            'recipe_id' => 999,
+            'name' => 'Mix',
+            'instructions' => 'Combine ingredients.',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Recipe stage at index 0 references missing recipe ID 999.');
+
+    test()->assertDatabaseCount('recipes', 0);
+});
+
+it('rejects order notes that reference missing orders before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-ORDER-NOTE',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_notes' => [[
+            'id' => 42,
+            'order_id' => 999,
+            'type' => 'system',
+            'content' => 'Orphaned note',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Order note at index 0 references missing order ID 999.');
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+});
+
+it('imports order items without legacy product IDs', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    $result = $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-NO-PRODUCT',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_items' => [
+            ['id' => 40, 'order_id' => 30, 'product_name' => 'Custom item', 'unit_price' => '4.50', 'quantity' => 1],
+            ['id' => 41, 'order_id' => 30, 'product_id' => null, 'product_name' => 'Unlinked item', 'unit_price' => '2.00', 'quantity' => 2],
+        ],
+    ]);
+
+    expect($result['order_items'])->toBe(2);
+
+    test()->assertDatabaseCount('order_items', 2)
+        ->assertDatabaseHas('order_items', ['name' => 'Custom item', 'product_id' => null, 'unit_price' => 450])
+        ->assertDatabaseHas('order_items', ['name' => 'Unlinked item', 'product_id' => null, 'unit_price' => 200]);
+});
+
+it('preserves review order references during import', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    $result = $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-REVIEW',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'order_id' => 30,
+        ]],
+    ]);
+
+    expect($result['reviews'])->toBe(1);
+
+    test()->assertDatabaseCount('reviews', 1)
+        ->assertDatabaseHas('reviews', ['customer_email' => 'jane@example.com', 'order_id' => 1]);
+});
+
+it('rejects reviews that reference missing orders before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'reviews' => [[
+            'id' => 50,
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'rating' => 5,
+            'body' => 'Excellent',
+            'order_id' => 999,
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Review at index 0 references missing order ID 999.');
+
+    test()->assertDatabaseCount('reviews', 0);
+});
+
+it('rejects order items missing required fields before writing any records', function (array $item, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID-ITEM',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+        ]],
+        'order_items' => [$item + ['order_id' => 30]],
+    ]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0)
+        ->assertDatabaseCount('order_items', 0);
+})->with([
+    'product name' => [
+        ['quantity' => 1, 'unit_price' => '4.50'],
+        'Order item at index 0 is missing a product name.',
+    ],
+    'quantity' => [
+        ['product_name' => 'Custom item', 'unit_price' => '4.50'],
+        'Order item at index 0 is missing a quantity.',
+    ],
+    'unit price' => [
+        ['product_name' => 'Custom item', 'quantity' => 1],
+        'Order item at index 0 is missing a unit price.',
+    ],
+]);
+
+it('rejects orders missing required identity fields before writing any records', function (array $order, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import(['orders' => [$order]]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
+})->with([
+    'customer name' => [
+        ['id' => 30, 'order_number' => 'BOB-MISSING-NAME', 'customer_email' => 'jane@example.com'],
+        'Order at index 0 is missing a customer name.',
+    ],
+    'order number' => [
+        ['id' => 30, 'customer_name' => 'Jane Baker', 'customer_email' => 'jane@example.com'],
+        'Order at index 0 is missing an order number.',
+    ],
+]);
+
+it('rejects coupons missing required fields before writing any records', function (array $coupon, string $message) {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import(['coupons' => [$coupon]]))->toThrow(InvalidArgumentException::class, $message);
+
+    test()->assertDatabaseCount('coupons', 0);
+})->with([
+    'code' => [
+        ['id' => 25, 'type' => 'fixed_amount', 'value' => '5.00'],
+        'Coupon at index 0 is missing a code.',
+    ],
+    'value' => [
+        ['id' => 25, 'code' => 'welcome5', 'type' => 'fixed_amount'],
+        'Coupon at index 0 is missing a value.',
+    ],
+]);
+
+it('rejects unsupported enum values before writing any records', function () {
+    $import = resolve(ImportLegacyBakeryData::class);
+
+    expect(fn () => $import([
+        'orders' => [[
+            'id' => 30,
+            'order_number' => 'BOB-INVALID',
+            'customer_name' => 'Jane Baker',
+            'customer_email' => 'jane@example.com',
+            'status' => 'shipped',
+        ]],
+    ]))->toThrow(InvalidArgumentException::class, 'Unsupported order status [shipped].');
+
+    test()->assertDatabaseCount('customers', 0)
+        ->assertDatabaseCount('orders', 0);
 });
 
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {

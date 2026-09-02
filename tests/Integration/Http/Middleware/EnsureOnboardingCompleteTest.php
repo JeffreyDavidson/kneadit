@@ -4,6 +4,8 @@ use App\Http\Middleware\EnsureOnboardingComplete;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JMac\Testing\Double;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 use function Pest\Laravel\actingAs;
 
@@ -22,7 +24,7 @@ test('passes through when no tenant is initialized', function () {
 
 test('passes through for unauthenticated users', function () {
     // Bind a fake tenant so tenant() returns truthy
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing());
+    app()->instance(TenantContract::class, Double::for(TenantContract::class));
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin');
@@ -33,8 +35,8 @@ test('passes through for unauthenticated users', function () {
 });
 
 test('passes through for auth routes', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
@@ -50,8 +52,8 @@ test('passes through for auth routes', function () {
 });
 
 test('passes through when already on onboarding page', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
@@ -66,8 +68,8 @@ test('passes through when already on onboarding page', function () {
 });
 
 test('passes through for livewire update requests', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
@@ -82,8 +84,8 @@ test('passes through for livewire update requests', function () {
 });
 
 test('passes through for livewire hashed paths', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
@@ -98,9 +100,9 @@ test('passes through for livewire hashed paths', function () {
 });
 
 test('passes through when onboarding is complete', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    $tenant->allows('getTenantKey')->returns('test-bakery');
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();
@@ -120,9 +122,9 @@ test('passes through when onboarding is complete', function () {
 });
 
 test('passes through gracefully when TenantSettings throws exception', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    $tenant->shouldReceive('getTenantKey')->andReturn('test-bakery');
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    $tenant->allows('getTenantKey')->returns('test-bakery');
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $user = App\Models\Staff\User::factory()->create();

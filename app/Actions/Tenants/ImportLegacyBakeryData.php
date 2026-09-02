@@ -2,14 +2,26 @@
 
 namespace App\Actions\Tenants;
 
+use App\Contracts\Tenants\LegacyCatalogImporter;
+use App\Contracts\Tenants\LegacyCouponImporter;
+use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Enums\Financial\CouponType;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentMethod;
+use App\Enums\Orders\PaymentStatus;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ImportLegacyBakeryData
 {
     public function __construct(
         private readonly TenantSettingCipher $settingCipher,
+        private readonly LegacyCatalogImporter $catalogImporter,
+        private readonly LegacyCouponImporter $couponImporter,
+        private readonly LegacyCustomerImporter $customerImporter,
     ) {}
 
     /**
@@ -18,11 +30,17 @@ class ImportLegacyBakeryData
      */
     public function __invoke(array $data): array
     {
+        $this->validateReferences($data);
+
         return DB::transaction(function () use ($data): array {
-            $categoryIds = $this->importCategories($data['categories'] ?? []);
-            $productIds = $this->importProducts($data['products'] ?? [], $categoryIds);
-            $couponIds = $this->importCoupons($data['coupons'] ?? []);
-            $customerIds = $this->importCustomers($data['orders'] ?? []);
+            $catalogIds = $this->catalogImporter->import(
+                $data['categories'] ?? [],
+                $data['products'] ?? [],
+            );
+            $categoryIds = $catalogIds['category_ids'];
+            $productIds = $catalogIds['product_ids'];
+            $couponIds = $this->couponImporter->import($data['coupons'] ?? []);
+            $customerIds = $this->customerImporter->import($data['orders'] ?? []);
             $orderIds = $this->importOrders(
                 $data['orders'] ?? [],
                 $data['order_notes'] ?? [],
@@ -31,7 +49,7 @@ class ImportLegacyBakeryData
             );
 
             $this->importOrderItems($data['order_items'] ?? [], $orderIds, $productIds);
-            $this->importReviews($data['reviews'] ?? [], $productIds);
+            $this->importReviews($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->importCapacityLimits($data['capacity_limits'] ?? []);
@@ -61,118 +79,200 @@ class ImportLegacyBakeryData
         });
     }
 
-    /** @param array<int, array<string, mixed>> $coupons
-     * @return array<int, int>
+    /**
+     * Validate references before the transaction starts so malformed exports
+     * fail clearly without partially changing the tenant database.
+     *
+     * @param array<string, array<int, array<string, mixed>>> $data
      */
-    private function importCoupons(array $coupons): array
+    private function validateReferences(array $data): void
+    {
+        $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
+        $productIds = $this->legacyIds($data['products'] ?? [], 'product');
+        $couponIds = $this->legacyIds($data['coupons'] ?? [], 'coupon');
+        $recipeIds = $this->legacyIds($data['recipes'] ?? [], 'recipe');
+        $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
+
+        foreach ($data['coupons'] ?? [] as $index => $coupon) {
+            if (! array_key_exists('type', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a type.");
+            }
+
+            if (! array_key_exists('code', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a code.");
+            }
+
+            if (! array_key_exists('value', $coupon)) {
+                throw new InvalidArgumentException("Coupon at index {$index} is missing a value.");
+            }
+
+            $this->couponType($coupon['type']);
+            $this->stringValue($coupon['code']);
+            $this->floatValue($coupon['value']);
+        }
+
+        foreach ($data['products'] ?? [] as $index => $product) {
+            if (! array_key_exists('category_id', $product)) {
+                throw new InvalidArgumentException("Product at index {$index} is missing a category ID.");
+            }
+
+            $categoryId = $this->parseLegacyInteger($product['category_id']);
+            $this->assertReference($categoryIds, $categoryId, "Product at index {$index} references missing category ID {$categoryId}.");
+        }
+
+        foreach ($data['orders'] ?? [] as $index => $order) {
+            if (! array_key_exists('customer_email', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing a customer email.");
+            }
+
+            if (! array_key_exists('customer_name', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing a customer name.");
+            }
+
+            if (! array_key_exists('order_number', $order)) {
+                throw new InvalidArgumentException("Order at index {$index} is missing an order number.");
+            }
+
+            $this->orderStatus($order['status'] ?? OrderStatus::Pending->value);
+            $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value);
+            $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value);
+            $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value);
+            $this->stringValue($order['customer_name']);
+            $this->stringValue($order['order_number']);
+
+            if (array_key_exists('coupon_id', $order) && $order['coupon_id'] !== null) {
+                $couponId = $this->parseLegacyInteger($order['coupon_id']);
+                $this->assertReference($couponIds, $couponId, "Order at index {$index} references missing coupon ID {$couponId}.");
+            }
+        }
+
+        foreach ($data['order_items'] ?? [] as $index => $item) {
+            if (! array_key_exists('order_id', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing an order ID.");
+            }
+
+            if (! array_key_exists('product_name', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a product name.");
+            }
+
+            if (! array_key_exists('quantity', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a quantity.");
+            }
+
+            if (! array_key_exists('unit_price', $item)) {
+                throw new InvalidArgumentException("Order item at index {$index} is missing a unit price.");
+            }
+
+            $orderId = $this->parseLegacyInteger($item['order_id']);
+            $this->assertReference($orderIds, $orderId, "Order item at index {$index} references missing order ID {$orderId}.");
+            $this->stringValue($item['product_name']);
+            $this->parseLegacyInteger($item['quantity']);
+            $this->floatValue($item['unit_price']);
+
+            if (array_key_exists('product_id', $item) && $item['product_id'] !== null) {
+                $productId = $this->parseLegacyInteger($item['product_id']);
+                $this->assertReference($productIds, $productId, "Order item at index {$index} references missing product ID {$productId}.");
+            }
+        }
+
+        foreach ($data['order_notes'] ?? [] as $index => $note) {
+            if (! array_key_exists('order_id', $note)) {
+                throw new InvalidArgumentException("Order note at index {$index} is missing an order ID.");
+            }
+
+            $orderId = $this->parseLegacyInteger($note['order_id']);
+            $this->assertReference($orderIds, $orderId, "Order note at index {$index} references missing order ID {$orderId}.");
+        }
+
+        foreach ($data['customer_favorites'] ?? [] as $index => $favorite) {
+            if (! array_key_exists('product_id', $favorite)) {
+                throw new InvalidArgumentException("Customer favorite at index {$index} is missing a product ID.");
+            }
+
+            $productId = $this->parseLegacyInteger($favorite['product_id']);
+            $this->assertReference($productIds, $productId, "Customer favorite at index {$index} references missing product ID {$productId}.");
+        }
+
+        $this->validateOptionalProductReferences($data['reviews'] ?? [], $productIds, 'Review');
+        $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
+        $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
+
+        foreach ($data['reviews'] ?? [] as $index => $review) {
+            if (! array_key_exists('order_id', $review) || $review['order_id'] === null) {
+                continue;
+            }
+
+            $orderId = $this->parseLegacyInteger($review['order_id']);
+            $this->assertReference($orderIds, $orderId, "Review at index {$index} references missing order ID {$orderId}.");
+        }
+
+        $this->validateRecipeReferences($data['recipe_ingredients'] ?? [], $recipeIds, 'Recipe ingredient');
+        $this->validateRecipeReferences($data['recipe_stages'] ?? [], $recipeIds, 'Recipe stage');
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @param array<int, true> $productIds
+     */
+    private function validateOptionalProductReferences(array $records, array $productIds, string $dataset): void
+    {
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('product_id', $record) || $record['product_id'] === null) {
+                continue;
+            }
+
+            $productId = $this->parseLegacyInteger($record['product_id']);
+            $this->assertReference($productIds, $productId, "{$dataset} at index {$index} references missing product ID {$productId}.");
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @param array<int, true> $recipeIds
+     */
+    private function validateRecipeReferences(array $records, array $recipeIds, string $dataset): void
+    {
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('recipe_id', $record)) {
+                throw new InvalidArgumentException("{$dataset} at index {$index} is missing a recipe ID.");
+            }
+
+            $recipeId = $this->parseLegacyInteger($record['recipe_id']);
+            $this->assertReference($recipeIds, $recipeId, "{$dataset} at index {$index} references missing recipe ID {$recipeId}.");
+        }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @return array<int, true>
+     */
+    private function legacyIds(array $records, string $dataset): array
     {
         $ids = [];
 
-        foreach ($coupons as $coupon) {
-            $type = $coupon['type'] === 'fixed_amount' ? 'fixed' : $coupon['type'];
-            DB::table('coupons')->updateOrInsert(
-                ['code' => Str::upper($this->stringValue($coupon['code']))],
-                [
-                    'type' => $type,
-                    'fixed_amount' => $type === 'fixed' ? $this->cents($coupon['value']) : null,
-                    'percentage' => $type === 'percentage' ? $coupon['value'] : null,
-                    'min_order_amount' => isset($coupon['minimum_order']) ? $this->cents($coupon['minimum_order']) : null,
-                    'max_uses' => $coupon['max_uses'] ?? null,
-                    'used_count' => $coupon['times_used'] ?? 0,
-                    'starts_at' => $coupon['starts_at'] ?? null,
-                    'expires_at' => $coupon['expires_at'] ?? null,
-                    'is_active' => $coupon['is_active'] ?? true,
-                    'created_at' => $coupon['created_at'] ?? now(),
-                    'updated_at' => $coupon['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->integerValue($coupon['id'])] = $this->integerValue(DB::table('coupons')->where('code', Str::upper($this->stringValue($coupon['code'])))->value('id'));
+        foreach ($records as $index => $record) {
+            if (! array_key_exists('id', $record)) {
+                throw new InvalidArgumentException(ucfirst($dataset) . " at index {$index} is missing an ID.");
+            }
+
+            $id = $this->parseLegacyInteger($record['id']);
+
+            if (isset($ids[$id])) {
+                throw new InvalidArgumentException("Duplicate {$dataset} ID {$id} at index {$index}.");
+            }
+
+            $ids[$id] = true;
         }
 
         return $ids;
     }
 
-    /** @param array<int, array<string, mixed>> $categories
-     * @return array<int, int>
-     */
-    private function importCategories(array $categories): array
+    /** @param array<int, true> $references */
+    private function assertReference(array $references, int $id, string $message): void
     {
-        $ids = [];
-
-        foreach ($categories as $category) {
-            $slug = Str::slug($this->stringValue($category['name']));
-            DB::table('categories')->updateOrInsert(
-                ['slug' => $slug],
-                [
-                    'name' => $category['name'],
-                    'description' => $category['description'] ?? null,
-                    'is_active' => $category['is_active'] ?? true,
-                    'sort_order' => $category['sort_order'] ?? 0,
-                    'created_at' => $category['created_at'] ?? now(),
-                    'updated_at' => $category['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->integerValue($category['id'])] = $this->integerValue(DB::table('categories')->where('slug', $slug)->value('id'));
+        if (! isset($references[$id])) {
+            throw new InvalidArgumentException($message);
         }
-
-        return $ids;
-    }
-
-    /** @param array<int, array<string, mixed>> $products
-     * @param array<int, int> $categoryIds
-     * @return array<int, int>
-     */
-    private function importProducts(array $products, array $categoryIds): array
-    {
-        $ids = [];
-
-        foreach ($products as $product) {
-            $slug = Str::slug($this->stringValue($product['name']));
-            DB::table('products')->updateOrInsert(
-                ['slug' => $slug],
-                [
-                    'name' => $product['name'],
-                    'description' => $product['description'] ?? null,
-                    'price' => $this->cents($product['price'] ?? 0),
-                    'cost' => isset($product['cost']) ? $this->cents($product['cost']) : null,
-                    'category_id' => $categoryIds[$this->integerValue($product['category_id'])],
-                    'is_active' => $product['is_available'] ?? $product['is_active'] ?? true,
-                    'is_featured' => $product['is_featured'] ?? false,
-                    'image' => $product['image'] ?? null,
-                    'created_at' => $product['created_at'] ?? now(),
-                    'updated_at' => $product['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$this->integerValue($product['id'])] = $this->integerValue(DB::table('products')->where('slug', $slug)->value('id'));
-        }
-
-        return $ids;
-    }
-
-    /** @param array<int, array<string, mixed>> $orders
-     * @return array<string, int>
-     */
-    private function importCustomers(array $orders): array
-    {
-        $ids = [];
-
-        foreach ($orders as $order) {
-            $email = Str::lower(trim($this->stringValue($order['customer_email'])));
-            DB::table('customers')->updateOrInsert(
-                ['email' => $email],
-                [
-                    'name' => $order['customer_name'],
-                    'phone' => $order['customer_phone'] ?? null,
-                    'address' => $order['delivery_address'] ?? null,
-                    'zip' => $order['delivery_zip'] ?? null,
-                    'created_at' => $order['created_at'] ?? now(),
-                    'updated_at' => $order['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$email] = $this->integerValue(DB::table('customers')->where('email', $email)->value('id'));
-        }
-
-        return $ids;
     }
 
     /** @param array<int, array<string, mixed>> $orders
@@ -191,10 +291,10 @@ class ImportLegacyBakeryData
                 ['order_number' => $order['order_number']],
                 [
                     'customer_id' => $customerIds[$email],
-                    'coupon_id' => isset($order['coupon_id']) ? ($couponIds[$this->integerValue($order['coupon_id'])] ?? null) : null,
-                    'status' => $order['status'] ?? 'pending',
-                    'payment_status' => $order['payment_status'] ?? 'unpaid',
-                    'payment_method' => $order['payment_method'] ?: 'other',
+                    'coupon_id' => isset($order['coupon_id']) ? ($couponIds[$this->parseLegacyInteger($order['coupon_id'])] ?? null) : null,
+                    'status' => $this->orderStatus($order['status'] ?? OrderStatus::Pending->value),
+                    'payment_status' => $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value),
+                    'payment_method' => $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value),
                     'subtotal' => $this->cents($order['subtotal'] ?? 0),
                     'delivery_fee' => $this->cents($order['delivery_fee'] ?? 0),
                     'discount_amount' => $this->cents($order['discount_amount'] ?? 0),
@@ -203,7 +303,7 @@ class ImportLegacyBakeryData
                     'total' => $this->cents($order['total'] ?? 0),
                     'paypal_invoice_id' => $order['paypal_invoice_id'] ?? null,
                     'delivery_address' => $order['delivery_address'] ?? null,
-                    'delivery_type' => $order['fulfillment_type'] ?? 'pickup',
+                    'delivery_type' => $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value),
                     'delivery_date' => $order['requested_date'] ?? null,
                     'delivery_time' => $order['requested_time'] ?? null,
                     'notes' => $this->orderNotes($order, $orderNotes),
@@ -211,7 +311,7 @@ class ImportLegacyBakeryData
                     'updated_at' => $order['updated_at'] ?? now(),
                 ],
             );
-            $ids[$this->integerValue($order['id'])] = $this->integerValue(DB::table('orders')->where('order_number', $order['order_number'])->value('id'));
+            $ids[$this->parseLegacyInteger($order['id'])] = $this->parseLegacyInteger(DB::table('orders')->where('order_number', $order['order_number'])->value('id'));
         }
 
         return $ids;
@@ -224,7 +324,7 @@ class ImportLegacyBakeryData
     private function orderNotes(array $order, array $orderNotes): ?string
     {
         $notes = collect($orderNotes)
-            ->filter(fn (array $note): bool => $this->integerValue($note['order_id']) === $this->integerValue($order['id']))
+            ->filter(fn (array $note): bool => $this->parseLegacyInteger($note['order_id']) === $this->parseLegacyInteger($order['id']))
             ->sortBy([
                 ['created_at', 'asc'],
                 ['id', 'asc'],
@@ -260,9 +360,11 @@ class ImportLegacyBakeryData
 
         foreach ($items as $item) {
             DB::table('order_items')->insert([
-                'order_id' => $orderIds[$this->integerValue($item['order_id'])],
+                'order_id' => $orderIds[$this->parseLegacyInteger($item['order_id'])],
                 'name' => $item['product_name'],
-                'product_id' => $productIds[$this->integerValue($item['product_id'])] ?? null,
+                'product_id' => isset($item['product_id'])
+                    ? ($productIds[$this->parseLegacyInteger($item['product_id'])] ?? null)
+                    : null,
                 'quantity' => $item['quantity'],
                 'unit_price' => $this->cents($item['unit_price'] ?? 0),
                 'special_instructions' => isset($item['selections']) ? json_encode($item['selections'], JSON_THROW_ON_ERROR) : null,
@@ -274,8 +376,9 @@ class ImportLegacyBakeryData
 
     /** @param array<int, array<string, mixed>> $reviews
      * @param array<int, int> $productIds
+     * @param array<int, int> $orderIds
      */
-    private function importReviews(array $reviews, array $productIds): void
+    private function importReviews(array $reviews, array $productIds, array $orderIds): void
     {
         foreach ($reviews as $review) {
             $email = $review['email'] ?: 'legacy-review-' . $this->stringValue($review['id']) . '@migration.invalid';
@@ -283,7 +386,8 @@ class ImportLegacyBakeryData
                 ['customer_email' => $email, 'comment' => $review['body']],
                 [
                     'customer_name' => $review['name'],
-                    'product_id' => isset($review['product_id']) ? ($productIds[$this->integerValue($review['product_id'])] ?? null) : null,
+                    'product_id' => isset($review['product_id']) ? ($productIds[$this->parseLegacyInteger($review['product_id'])] ?? null) : null,
+                    'order_id' => isset($review['order_id']) ? ($orderIds[$this->parseLegacyInteger($review['order_id'])] ?? null) : null,
                     'rating' => $review['rating'],
                     'is_approved' => ($review['status'] ?? null) === 'approved',
                     'is_featured' => $review['is_featured'] ?? false,
@@ -310,9 +414,9 @@ class ImportLegacyBakeryData
                     'unit' => $ingredient['unit'],
                     'cost' => $this->floatValue($ingredient['cost_per_unit'] ?? 0),
                 ],
-                array_filter($ingredients, fn (array $ingredient): bool => $this->integerValue($ingredient['recipe_id']) === $this->integerValue($recipe['id'])),
+                array_filter($ingredients, fn (array $ingredient): bool => $this->parseLegacyInteger($ingredient['recipe_id']) === $this->parseLegacyInteger($recipe['id'])),
             ));
-            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => $this->integerValue($stage['recipe_id']) === $this->integerValue($recipe['id'])));
+            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => $this->parseLegacyInteger($stage['recipe_id']) === $this->parseLegacyInteger($recipe['id'])));
             usort($recipeStages, fn (array $first, array $second): int => ($first['sort_order'] ?? 0) <=> ($second['sort_order'] ?? 0));
             $instructions = collect($recipeStages)
                 ->map(fn (array $stage): string => $this->stringValue($stage['name']) . "\n" . $this->stringValue($stage['instructions']))
@@ -322,7 +426,7 @@ class ImportLegacyBakeryData
             DB::table('recipes')->updateOrInsert(
                 ['name' => $recipe['name']],
                 [
-                    'product_id' => isset($recipe['product_id']) ? ($productIds[$this->integerValue($recipe['product_id'])] ?? null) : null,
+                    'product_id' => isset($recipe['product_id']) ? ($productIds[$this->parseLegacyInteger($recipe['product_id'])] ?? null) : null,
                     'ingredients' => json_encode($recipeIngredients, JSON_THROW_ON_ERROR),
                     'instructions' => $instructions ?: ($recipe['description'] ?? ''),
                     'prep_time_minutes' => $recipe['prep_time_minutes'] ?? 0,
@@ -341,7 +445,7 @@ class ImportLegacyBakeryData
     private function importFinancials(array $expenses, array $incomes): void
     {
         foreach ($expenses as $expense) {
-            $businessPercentage = $this->integerValue($expense['business_percentage'] ?? 100);
+            $businessPercentage = $this->parseLegacyInteger($expense['business_percentage'] ?? 100);
             DB::table('expenses')->updateOrInsert(
                 ['description' => $expense['description'], 'date' => $expense['date']],
                 [
@@ -380,7 +484,7 @@ class ImportLegacyBakeryData
         foreach ($capacityLimits as $capacityLimit) {
             $dayOfWeek = $capacityLimit['day_of_week'] ?? null;
             $specificDate = $capacityLimit['specific_date'] ?? null;
-            $date = $specificDate ?? now()->startOfWeek()->addDays($this->integerValue($dayOfWeek))->toDateString();
+            $date = $specificDate ?? now()->startOfWeek()->addDays($this->parseLegacyInteger($dayOfWeek))->toDateString();
 
             DB::table('capacity_limits')->updateOrInsert(
                 $specificDate ? ['specific_date' => $specificDate] : ['day_of_week' => $this->stringValue($dayOfWeek)],
@@ -444,7 +548,7 @@ class ImportLegacyBakeryData
                 [
                     'customer_name' => $entry['customer_name'],
                     'customer_phone' => $entry['customer_phone'] ?? null,
-                    'product_id' => isset($entry['product_id']) ? ($productIds[$this->integerValue($entry['product_id'])] ?? null) : null,
+                    'product_id' => isset($entry['product_id']) ? ($productIds[$this->parseLegacyInteger($entry['product_id'])] ?? null) : null,
                     'notes' => $notes ?: null,
                     'status' => $entry['status'] ?? 'waiting',
                     'created_at' => $entry['created_at'] ?? now(),
@@ -454,11 +558,7 @@ class ImportLegacyBakeryData
         }
 
         foreach ($favorites as $favorite) {
-            $productId = $this->integerValue($favorite['product_id']);
-
-            if (! isset($productIds[$productId])) {
-                continue;
-            }
+            $productId = $this->parseLegacyInteger($favorite['product_id']);
 
             DB::table('customer_favorites')->updateOrInsert(
                 ['customer_email' => Str::lower($this->stringValue($favorite['customer_email'])), 'product_id' => $productIds[$productId]],
@@ -560,6 +660,57 @@ class ImportLegacyBakeryData
         );
     }
 
+    private function couponType(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+        $normalized = $normalized === 'fixed_amount' ? CouponType::Fixed->value : $normalized;
+
+        $type = CouponType::tryFrom($normalized);
+        throw_if($type === null, InvalidArgumentException::class, "Unsupported coupon type [{$normalized}].");
+
+        return $type->value;
+    }
+
+    private function orderStatus(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $status = OrderStatus::tryFrom($normalized);
+        throw_if($status === null, InvalidArgumentException::class, "Unsupported order status [{$normalized}].");
+
+        return $status->value;
+    }
+
+    private function paymentStatus(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $status = PaymentStatus::tryFrom($normalized);
+        throw_if($status === null, InvalidArgumentException::class, "Unsupported payment status [{$normalized}].");
+
+        return $status->value;
+    }
+
+    private function paymentMethod(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $method = PaymentMethod::tryFrom($normalized);
+        throw_if($method === null, InvalidArgumentException::class, "Unsupported payment method [{$normalized}].");
+
+        return $method->value;
+    }
+
+    private function deliveryType(mixed $value): string
+    {
+        $normalized = Str::lower($this->stringValue($value));
+
+        $type = DeliveryType::tryFrom($normalized);
+        throw_if($type === null, InvalidArgumentException::class, "Unsupported fulfillment type [{$normalized}].");
+
+        return $type->value;
+    }
+
     private function cents(mixed $dollars): int
     {
         return (int) round($this->floatValue($dollars) * 100);
@@ -574,7 +725,7 @@ class ImportLegacyBakeryData
         return (string) $value;
     }
 
-    private function integerValue(mixed $value): int
+    private function parseLegacyInteger(mixed $value): int
     {
         if (is_int($value)) {
             return $value;

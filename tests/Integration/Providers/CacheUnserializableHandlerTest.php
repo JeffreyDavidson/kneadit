@@ -20,7 +20,7 @@ test('handler throws in non-production when an unserializable class is read from
         ->toThrow(RuntimeException::class, 'Cache returned __PHP_Incomplete_Class for key [orders.dashboard.cards]');
 
     $logger->shouldHaveReceived('error')
-        ->with(Mockery::on(fn (string $msg): bool => str_contains($msg, 'orders.dashboard.cards')));
+        ->withArgs(fn (string $msg): bool => str_contains($msg, 'orders.dashboard.cards'));
 });
 
 test('handler still fires (logs + throws) when class name is unknown', function () {

@@ -8,6 +8,10 @@ use Stancl\Tenancy\Database\Models\Domain;
 
 class AddCustomDomain
 {
+    public function __construct(
+        private ForgeService $forge,
+    ) {}
+
     public function __invoke(Tenant $tenant, string $domain): void
     {
         $tenant->update(['custom_domain' => $domain]);
@@ -17,7 +21,7 @@ class AddCustomDomain
         }
 
         if (ForgeService::isConfigured()) {
-            resolve(ForgeService::class)->addDomainAlias($domain);
+            $this->forge->addDomainAlias($domain);
         }
     }
 }

@@ -3,6 +3,7 @@
 use App\Actions\Platform\CreateImpersonationToken;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -13,10 +14,9 @@ test('platform admin can impersonate a tenant', function () {
     $user = User::factory()->platformAdmin()->create();
     $tenant = Tenant::factory()->create();
 
-    $action = Mockery::mock(CreateImpersonationToken::class);
-    $action->shouldReceive('__invoke')
-        ->once()
-        ->andReturn('https://test-bakery.kneadit.test/impersonate/token123');
+    $action = Double::for(CreateImpersonationToken::class);
+    $action->expects('__invoke')
+        ->returns('https://test-bakery.kneadit.test/impersonate/token123');
 
     app()->instance(CreateImpersonationToken::class, $action);
 

@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class TenancyManager
 {
+    public function __construct(
+        private SettingsManager $settingsManager,
+        private TenantSettingsRegistry $tenantSettingsRegistry,
+    ) {}
+
     /**
      * Execute a callback within a tenant's context, ensuring proper cleanup.
      *
@@ -21,15 +26,15 @@ class TenancyManager
     public function withinTenant(Tenant $tenant, callable $callback): mixed
     {
         tenancy()->initialize($tenant);
-        resolve(SettingsManager::class)->flushCache();
-        resolve(TenantSettingsRegistry::class)->flush();
+        $this->settingsManager->flushCache();
+        $this->tenantSettingsRegistry->flush();
 
         try {
             return $callback($tenant);
         } finally {
             tenancy()->end();
-            resolve(SettingsManager::class)->flushCache();
-            resolve(TenantSettingsRegistry::class)->flush();
+            $this->settingsManager->flushCache();
+            $this->tenantSettingsRegistry->flush();
         }
     }
 
@@ -49,7 +54,7 @@ class TenancyManager
         foreach (Tenant::query()->cursor() as $tenant) {
             try {
                 $this->withinTenant($tenant, function () use ($tenant, $callback) {
-                    $settings = resolve(TenantSettings::class);
+                    $settings = $this->tenantSettingsRegistry->all();
                     $callback($tenant, $settings);
                 });
             } catch (\Throwable $e) {

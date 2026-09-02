@@ -5,21 +5,16 @@ use App\Models\Staff\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('allows subscribed users through', function () {
-    $user = User::factory()->owner()->create();
-    $user->subscription = Mockery::mock()
-        ->shouldReceive('valid')->andReturn(true)
-        ->getMock();
+    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user->expects('subscribed')->with('default')->returns(true);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
-
-    // Mock user subscribed method
-    $user = Mockery::mock($user)->makePartial();
-    $user->shouldReceive('subscribed')->with('default')->andReturn(true);
 
     $request->setUserResolver(fn () => $user);
 
@@ -30,9 +25,9 @@ test('allows subscribed users through', function () {
 });
 
 test('allows trial users through', function () {
-    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
-    $user->shouldReceive('subscribed')->with('default')->andReturn(false);
-    $user->shouldReceive('onTrial')->andReturn(true);
+    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user->expects('subscribed')->with('default')->returns(false);
+    $user->expects('onTrial')->returns(true);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
@@ -44,9 +39,9 @@ test('allows trial users through', function () {
 });
 
 test('redirects unsubscribed non-trial users to billing', function () {
-    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
-    $user->shouldReceive('subscribed')->with('default')->andReturn(false);
-    $user->shouldReceive('onTrial')->andReturn(false);
+    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user->expects('subscribed')->with('default')->returns(false);
+    $user->expects('onTrial')->returns(false);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
@@ -71,8 +66,8 @@ test('allows free-forever tenants through without a subscription', function () {
 });
 
 test('aborts with 403 for wrong plan when plan parameter specified', function () {
-    $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
-    $user->shouldReceive('subscribed')->with('default')->andReturn(true);
+    $user = Double::for(User::factory()->owner()->create())->passthru();
+    $user->expects('subscribed')->with('default')->returns(true);
 
     Gate::define('has-plan', fn () => false);
 

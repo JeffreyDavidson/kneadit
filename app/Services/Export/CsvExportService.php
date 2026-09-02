@@ -28,7 +28,7 @@ class CsvExportService
             'orders' => [
                 'table' => 'orders',
                 'headers' => ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Qty', 'Item Unit Price', 'Order Created At'],
-                'columns' => ['id', 'user_id', 'status', 'total', 'item_product_id', 'item_qty', 'item_price', 'created_at'],
+                'columns' => ['id', 'customer_id', 'status', 'total', 'item_product_id', 'item_qty', 'item_price', 'created_at'],
                 'join' => [
                     'table' => 'order_items',
                     'first' => 'orders.id',
@@ -42,14 +42,14 @@ class CsvExportService
                 ],
             ],
             'customers' => [
-                'table' => 'users',
+                'table' => 'customers',
                 'headers' => ['ID', 'Name', 'Email', 'Created At', 'Updated At'],
                 'columns' => ['id', 'name', 'email', 'created_at', 'updated_at'],
             ],
             'reviews' => [
                 'table' => 'reviews',
-                'headers' => ['ID', 'Product ID', 'User ID', 'Rating', 'Comment', 'Created At', 'Updated At'],
-                'columns' => ['id', 'product_id', 'user_id', 'rating', ['comment', 'body'], 'created_at', 'updated_at'],
+                'headers' => ['ID', 'Product ID', 'Order ID', 'Customer Name', 'Customer Email', 'Rating', 'Comment', 'Created At', 'Updated At'],
+                'columns' => ['id', 'product_id', 'order_id', 'customer_name', 'customer_email', 'rating', 'comment', 'created_at', 'updated_at'],
             ],
         ];
     }

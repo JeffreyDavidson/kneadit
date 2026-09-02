@@ -2,6 +2,7 @@
 
 namespace App\Reports\Customers;
 
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\ValueObjects\DateRange;
@@ -15,14 +16,26 @@ class CustomerReport
     {
         $newCustomers = Customer::query()->whereBetween('created_at', $range->toArray())->count();
 
-        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', $range->toArray()))->count();
+        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q
+            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->where('payment_status', PaymentStatus::Paid)
+            ->whereBetween('delivery_date', $range->toArray()))->count();
 
-        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', $range->toArray()), '>=', 2)->count();
+        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q
+            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->where('payment_status', PaymentStatus::Paid)
+            ->whereBetween('delivery_date', $range->toArray()), '>=', 2)->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
-        $topCustomers = Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid)], 'total')
-            ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())])
+        $topCustomers = Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q
+            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->where('payment_status', PaymentStatus::Paid)
+            ->whereBetween('delivery_date', $range->toArray())], 'total')
+            ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q
+                ->whereNotIn('status', [OrderStatus::Cancelled])
+                ->where('payment_status', PaymentStatus::Paid)
+                ->whereBetween('delivery_date', $range->toArray())])
             ->orderByDesc('total_spend')
             ->get()
             ->filter(fn (Customer $c) => ((float) $c->total_spend) > 0)

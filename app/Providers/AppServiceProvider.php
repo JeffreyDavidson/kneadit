@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Tenants\LegacyCatalogImporter;
+use App\Contracts\Tenants\LegacyCouponImporter;
+use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
@@ -20,6 +23,9 @@ use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\DatabaseLegacyCatalogImporter;
+use App\Services\Tenants\DatabaseLegacyCouponImporter;
+use App\Services\Tenants\DatabaseLegacyCustomerImporter;
 use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -58,10 +64,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
+        $this->app->bind(LegacyCouponImporter::class, DatabaseLegacyCouponImporter::class);
+        $this->app->bind(LegacyCustomerImporter::class, DatabaseLegacyCustomerImporter::class);
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
-        $this->app->singleton(TenantSettingsRegistry::class);
-        $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
+        $this->app->scoped(TenantSettingsRegistry::class);
+        $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
         // Per-request scoped: SecurityHeaders middleware writes the nonce into
         // the CSP header, the @cspnonce Blade directive emits it on inline

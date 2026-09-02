@@ -3,11 +3,12 @@
 use App\Enums\Platform\SubscriptionTier;
 use App\Services\Tenants\TenancyManager;
 use App\Services\Tenants\TenantUsageService;
+use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('getNextPlan returns correct upgrade path', function (string $current, ?SubscriptionTier $expected) {
-    $service = new TenantUsageService(Tests\Support\TypedMock::make(TenancyManager::class));
+    $service = new TenantUsageService(Double::for(TenancyManager::class));
 
     expect($service->getNextPlan($current))->toBe($expected);
 })->with([
@@ -31,8 +32,8 @@ test('getTenantUsageData returns tenants approaching limits', function () {
         'store_name' => 'High Usage Bakery',
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [9, 18]]); // 90% products, 90% orders
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('withinTenant')->returns([9, 18]); // 90% products, 90% orders
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -56,9 +57,9 @@ test('getTenantUsageData skips pro tenants', function () {
         'plan' => SubscriptionTier::Pro,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
+    $tenancyManager = Double::for(TenancyManager::class);
     // Should never be called for pro tenants
-    $tenancyManager->shouldNotReceive('withinTenant');
+    $tenancyManager->expects('withinTenant')->never();
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -78,8 +79,8 @@ test('getTenantUsageData skips tenants below 80 percent usage', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [5, 5]]); // 5% usage
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('withinTenant')->returns([5, 5]); // 5% usage
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -95,10 +96,8 @@ test('getTenantUsageData handles exception gracefully', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows([
-        'withinTenant' => fn () => throw new RuntimeException('DB error'),
-    ]);
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('withinTenant')->throws(new RuntimeException('DB error'));
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();
@@ -118,8 +117,8 @@ test('getTenantUsageData marks at_limit when at 100 percent', function () {
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $tenancyManager = Tests\Support\TypedMock::make(TenancyManager::class);
-    $tenancyManager->allows(['withinTenant' => [10, 20]]); // 100% usage
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('withinTenant')->returns([10, 20]); // 100% usage
 
     $service = new TenantUsageService($tenancyManager);
     $result = $service->getTenantUsageData();

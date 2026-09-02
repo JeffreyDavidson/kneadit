@@ -8,8 +8,10 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 #[Signature('backup:databases {--keep=7 : Number of days to retain backups}')]
 #[Description('Backup central and all tenant SQLite databases')]
@@ -21,9 +23,7 @@ class BackupDatabasesCommand extends Command
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupPath = "{$backupDir}/{$timestamp}";
 
-        if (! is_dir($backupPath)) {
-            mkdir($backupPath, 0755, true);
-        }
+        File::ensureDirectoryExists($backupPath, 0755);
 
         $this->info("Backing up to: {$backupPath}");
 
@@ -31,7 +31,7 @@ class BackupDatabasesCommand extends Command
         $centralDb = Config::string('database.connections.sqlite.database');
         if ($centralDb !== '' && file_exists($centralDb)) {
             $dest = "{$backupPath}/central.sqlite";
-            copy($centralDb, $dest);
+            $this->copyDatabase($centralDb, $dest);
             $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
         } else {
             $this->warn("  ⚠ Central DB not found at: {$centralDb}");
@@ -53,8 +53,8 @@ class BackupDatabasesCommand extends Command
                 }
 
                 $filename = basename($tenantDb);
-                copy($tenantDb, "{$backupPath}/{$filename}");
-                chmod("{$backupPath}/{$filename}", 0600);
+                $destination = "{$backupPath}/{$filename}";
+                $this->copyDatabase($tenantDb, $destination);
                 $count++;
             }
 
@@ -91,7 +91,7 @@ class BackupDatabasesCommand extends Command
         }
 
         if (! is_dir($sharedDir)) {
-            mkdir($sharedDir, 0755, true);
+            File::ensureDirectoryExists($sharedDir, 0755);
         }
 
         return $sharedDir;
@@ -117,11 +117,47 @@ class BackupDatabasesCommand extends Command
 
     protected function removeDir(string $dir): void
     {
-        $files = glob("{$dir}/*") ?: [];
-        foreach ($files as $file) {
-            unlink($file);
+        throw_unless(
+            File::deleteDirectory($dir),
+            RuntimeException::class,
+            "Failed to remove old backup directory {$dir}.",
+        );
+    }
+
+    protected function copyDatabase(string $source, string $destination): void
+    {
+        throw_unless(
+            File::copy($source, $destination),
+            RuntimeException::class,
+            "Failed to copy database backup to {$destination}.",
+        );
+
+        throw_unless(
+            File::chmod($destination, 0600),
+            RuntimeException::class,
+            "Failed to secure database backup at {$destination}.",
+        );
+
+        foreach (['-wal', '-shm'] as $suffix) {
+            $sidecarSource = $source . $suffix;
+
+            if (is_link($sidecarSource) || ! File::isFile($sidecarSource)) {
+                continue;
+            }
+
+            $sidecarDestination = $destination . $suffix;
+            throw_unless(
+                File::copy($sidecarSource, $sidecarDestination),
+                RuntimeException::class,
+                "Failed to copy database sidecar backup to {$sidecarDestination}.",
+            );
+
+            throw_unless(
+                File::chmod($sidecarDestination, 0600),
+                RuntimeException::class,
+                "Failed to secure database sidecar backup at {$sidecarDestination}.",
+            );
         }
-        rmdir($dir);
     }
 
     protected function dirSize(string $dir): int

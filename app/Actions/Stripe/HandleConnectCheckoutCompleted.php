@@ -12,6 +12,7 @@ class HandleConnectCheckoutCompleted
 {
     public function __construct(
         private TenancyManager $tenancyManager,
+        private MarkOrderPaid $markOrderPaid,
     ) {}
 
     public function __invoke(mixed $session): void
@@ -49,7 +50,7 @@ class HandleConnectCheckoutCompleted
             $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant) {
                 $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
                 if ($order) {
-                    resolve(MarkOrderPaid::class)($order);
+                    ($this->markOrderPaid)($order);
                     Log::info('Order marked paid via webhook', [
                         'order' => $order->order_number,
                         'tenant' => $tenant->id,

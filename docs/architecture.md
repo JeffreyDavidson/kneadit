@@ -62,6 +62,9 @@ Models, actions, services, enums, builders, queries, policies, factories, and te
 
 ## Major domains
 
+See [Domain ownership map](domain-ownership.md) for the ownership rules, current organization audit, and sequenced refactoring candidates.
+See [Deep application audit](deep-application-audit.md) for the broader Laravel, class-design, persistence, UI, testing, and operations review.
+
 - **Platform and tenancy:** bakery registration, onboarding, domains, plans, trials, subscriptions, referrals, support, announcements, audits, impersonation, backups, and health.
 - **Storefront and content:** bakery home pages, menus, blogs, galleries, catering, gift cards, reviews, policies, branding, and PWA metadata.
 - **Orders:** carts, checkout, capacity and stock validation, discounts, fulfillment, order messaging, tracking, invoices, payment state, and refunds.

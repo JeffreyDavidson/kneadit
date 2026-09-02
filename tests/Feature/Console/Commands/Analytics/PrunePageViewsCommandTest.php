@@ -2,6 +2,8 @@
 
 use App\Models\Engagement\PageView;
 use App\Models\Platform\Tenant;
+use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\PendingCommand;
@@ -14,6 +16,14 @@ beforeEach(function () {
     setUpTenantTest();
 
     $tenancyManager = new class extends TenancyManager {
+        public function __construct()
+        {
+            parent::__construct(
+                app(SettingsManager::class),
+                app(TenantSettingsRegistry::class),
+            );
+        }
+
         public function forEachTenant(callable $callback, ?callable $onError = null): int
         {
             $callback(new Tenant(['id' => 'test-tenant']));

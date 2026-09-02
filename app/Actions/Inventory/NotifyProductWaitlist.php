@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Products;
+namespace App\Actions\Inventory;
 
 use App\DataTransferObjects\Settings\EngagementSettings;
 use App\Mail\Customers\ProductAvailableMail;
@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Mail;
 
 class NotifyProductWaitlist
 {
+    public function __construct(
+        private EngagementSettings $engagementSettings,
+    ) {}
+
     /**
      * Queue "product is back" emails for every waitlist entry on the product
      * that hasn't been notified yet, and mark them notified atomically.
@@ -20,7 +24,7 @@ class NotifyProductWaitlist
      */
     public function __invoke(Product $product): int
     {
-        if (! resolve(EngagementSettings::class)->emailProductAvailableEnabled) {
+        if (! $this->engagementSettings->emailProductAvailableEnabled) {
             return 0;
         }
 
