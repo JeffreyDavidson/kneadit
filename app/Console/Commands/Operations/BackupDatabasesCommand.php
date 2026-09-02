@@ -7,6 +7,7 @@ use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -138,12 +139,13 @@ class BackupDatabasesCommand extends Command
             "Failed to secure database backup at {$destination}.",
         );
 
-        foreach (['-wal', '-shm'] as $suffix) {
-            $sidecarSource = $source . $suffix;
+        $sidecars = Arr::reject(
+            ['-wal', '-shm'],
+            fn (string $suffix): bool => is_link($source . $suffix) || ! File::isFile($source . $suffix),
+        );
 
-            if (is_link($sidecarSource) || ! File::isFile($sidecarSource)) {
-                continue;
-            }
+        foreach ($sidecars as $suffix) {
+            $sidecarSource = $source . $suffix;
 
             $sidecarDestination = $destination . $suffix;
             throw_unless(
