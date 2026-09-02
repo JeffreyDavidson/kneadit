@@ -10,7 +10,6 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
 class MessageResource extends Resource
@@ -33,10 +32,14 @@ class MessageResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = Cache::remember(
-            'filament.central.messages.unread_count',
-            now()->addMinute(),
+        $count = rescue(
+            fn (): int => cache()->remember(
+                'filament.central.messages.unread_count',
+                now()->addMinute(),
+                fn (): int => PlatformMessage::topLevel()->fromTenant()->unread()->count(),
+            ),
             fn (): int => PlatformMessage::topLevel()->fromTenant()->unread()->count(),
+            report: false,
         );
 
         return $count > 0 ? (string) $count : null;
