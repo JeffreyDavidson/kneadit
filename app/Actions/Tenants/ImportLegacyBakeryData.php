@@ -4,6 +4,7 @@ namespace App\Actions\Tenants;
 
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
+use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\Enums\Financial\CouponType;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -20,6 +21,7 @@ class ImportLegacyBakeryData
         private readonly TenantSettingCipher $settingCipher,
         private readonly LegacyCatalogImporter $catalogImporter,
         private readonly LegacyCouponImporter $couponImporter,
+        private readonly LegacyCustomerImporter $customerImporter,
     ) {}
 
     /**
@@ -38,7 +40,7 @@ class ImportLegacyBakeryData
             $categoryIds = $catalogIds['category_ids'];
             $productIds = $catalogIds['product_ids'];
             $couponIds = $this->couponImporter->import($data['coupons'] ?? []);
-            $customerIds = $this->importCustomers($data['orders'] ?? []);
+            $customerIds = $this->customerImporter->import($data['orders'] ?? []);
             $orderIds = $this->importOrders(
                 $data['orders'] ?? [],
                 $data['order_notes'] ?? [],
@@ -271,32 +273,6 @@ class ImportLegacyBakeryData
         if (! isset($references[$id])) {
             throw new InvalidArgumentException($message);
         }
-    }
-
-    /** @param array<int, array<string, mixed>> $orders
-     * @return array<string, int>
-     */
-    private function importCustomers(array $orders): array
-    {
-        $ids = [];
-
-        foreach ($orders as $order) {
-            $email = Str::lower(trim($this->stringValue($order['customer_email'])));
-            DB::table('customers')->updateOrInsert(
-                ['email' => $email],
-                [
-                    'name' => $order['customer_name'],
-                    'phone' => $order['customer_phone'] ?? null,
-                    'address' => $order['delivery_address'] ?? null,
-                    'zip' => $order['delivery_zip'] ?? null,
-                    'created_at' => $order['created_at'] ?? now(),
-                    'updated_at' => $order['updated_at'] ?? now(),
-                ],
-            );
-            $ids[$email] = $this->parseLegacyInteger(DB::table('customers')->where('email', $email)->value('id'));
-        }
-
-        return $ids;
     }
 
     /** @param array<int, array<string, mixed>> $orders
