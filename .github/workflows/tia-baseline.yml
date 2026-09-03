@@ -79,11 +79,11 @@ jobs:
         id: baseline
         env:
           HOME: ${{ runner.temp }}/pest-home
+          PAO_DISABLE: 1
         shell: bash
         run: |
           set -euo pipefail
-          raw="$(vendor/bin/pest --baseline 2>/dev/null || true)"
-          baseline_path="$(printf '%s\n' "$raw" | sed -n '1s/.*"raw":\["\([^"\\]*\)".*/\1/p')"
+          baseline_path="$(vendor/bin/pest --baseline)"
 
           if [[ -z "$baseline_path" || ! -s "$baseline_path/graph.json" ]]; then
             echo 'Pest did not produce a readable TIA graph.' >&2

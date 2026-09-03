@@ -159,12 +159,12 @@ jobs:
         id: tia-baseline
         env:
           HOME: ${{ runner.temp }}/pest-home
+          PAO_DISABLE: 1
         shell: bash
         run: |
           set -euo pipefail
           rm -rf "$HOME/.pest"
-          raw="$(vendor/bin/pest --baseline 2>/dev/null || true)"
-          baseline_path="$(printf '%s\n' "$raw" | sed -n '1s/.*"raw":\["\([^"\\]*\)".*/\1/p')"
+          baseline_path="$(vendor/bin/pest --baseline)"
 
           if [[ -z "$baseline_path" ]]; then
             echo 'valid=false' >> "$GITHUB_OUTPUT"
