@@ -1,10 +1,12 @@
 <?php
 
+use App\DataTransferObjects\Orders\SalesReportResult;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -17,7 +19,8 @@ it('returns expected report keys', function () {
 
     $result = $report->generate($range);
 
-    expect($result)->toHaveKeys(['totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay']);
+    expect($result)->toBeInstanceOf(SalesReportResult::class)
+        ->and($result->toArray())->toHaveKeys(['totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay']);
 });
 
 it('only includes active paid orders in sales metrics', function () {
@@ -42,11 +45,22 @@ it('only includes active paid orders in sales metrics', function () {
 
     $result = (new SalesReport)->generate(DateRange::fromStrings('2026-01-01', '2026-01-31'));
 
-    expect($result['totalOrders'])->toBe(1)
-        ->and($result['totalRevenue'])->toBe(20.0)
-        ->and($result['avgOrderValue'])->toBe(20.0)
-        ->and($result['ordersByStatus'])->toBe(['pending' => 1])
-        ->and($result['topProducts'])->toHaveCount(1)
-        ->and($result['topProducts'][0]['units_sold'])->toBe(2)
-        ->and($result['revenueByDay'])->toBe([['date' => '2026-01-15', 'revenue' => 20]]);
+    expect($result->totalOrders)->toBe(1)
+        ->and($result->totalRevenue)->toEqual(Money::fromDollars(20))
+        ->and($result->averageOrderValue)->toEqual(Money::fromDollars(20))
+        ->and($result->ordersByStatus)->toBe(['pending' => 1])
+        ->and($result->topProducts)->toHaveCount(1)
+        ->and($result->topProducts[0]['units_sold'])->toBe(2)
+        ->and($result->topProducts[0]['revenue'])->toEqual(Money::fromDollars(20))
+        ->and($result->revenueByDay)->toHaveCount(1)
+        ->and($result->revenueByDay[0]['date'])->toBe('2026-01-15')
+        ->and($result->revenueByDay[0]['revenue'])->toEqual(Money::fromDollars(20))
+        ->and($result->toArray())->toMatchArray([
+            'totalOrders' => 1,
+            'totalRevenue' => 20.0,
+            'avgOrderValue' => 20.0,
+            'ordersByStatus' => ['pending' => 1],
+            'topProducts' => [['name' => $product->name, 'units_sold' => 2, 'revenue' => 20.0]],
+            'revenueByDay' => [['date' => '2026-01-15', 'revenue' => 20.0]],
+        ]);
 });

@@ -14,6 +14,7 @@ use App\Reports\Inventory\InventoryReport;
 use App\Reports\Inventory\ProductReport;
 use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -41,8 +42,8 @@ test('sales report returns correct totals', function () {
 
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(2)
-        ->and((float) $report['totalRevenue'])->toBe(80.00);
+    expect($report->totalOrders)->toBe(2)
+        ->and($report->totalRevenue)->toEqual(Money::fromDollars(80));
 });
 
 test('sales report respects date range', function () {
@@ -51,8 +52,8 @@ test('sales report respects date range', function () {
 
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(1)
-        ->and((float) $report['totalRevenue'])->toBe(30.00);
+    expect($report->totalOrders)->toBe(1)
+        ->and($report->totalRevenue)->toEqual(Money::fromDollars(30));
 });
 
 test('customer report returns data for date range', function () {
