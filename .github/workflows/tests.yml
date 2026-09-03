@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '24.x'
+          node-version: "24.x"
 
       - name: Setup PHP and Composer
         uses: ./.github/actions/setup-php-composer
@@ -95,7 +95,7 @@ jobs:
   tia:
     name: Pest Test Impact Analysis
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     steps:
       - uses: actions/checkout@v7
@@ -105,7 +105,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '24.x'
+          node-version: "24.x"
 
       - name: Setup PHP and Composer with PCOV
         uses: ./.github/actions/setup-php-composer
@@ -189,6 +189,7 @@ jobs:
           echo 'valid=true' >> "$GITHUB_OUTPUT"
 
       - name: Run impacted tests with full-suite fallback
+        id: tia-tests
         if: steps.tia-baseline.outputs.valid == 'true'
         env:
           HOME: ${{ runner.temp }}/pest-home
@@ -200,15 +201,46 @@ jobs:
           set -e
 
           if [[ "$tia_status" -eq 0 ]]; then
+            echo 'mode=impact-analysis' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo '::warning::Pest TIA was unavailable or its baseline was stale; running the full relevant suite.'
+          echo 'mode=full-suite-fallback' >> "$GITHUB_OUTPUT"
           vendor/bin/pest --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
 
       - name: Run full relevant suite fallback
+        id: full-tests
         if: steps.tia-baseline.outputs.valid != 'true'
-        run: vendor/bin/pest --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
+        run: |
+          echo 'mode=full-suite-fallback' >> "$GITHUB_OUTPUT"
+          vendor/bin/pest --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
+
+      - name: Summarize TIA execution
+        if: ${{ always() && !cancelled() }}
+        env:
+          BASELINE_VALID: ${{ steps.tia-baseline.outputs.valid }}
+          TIA_MODE: ${{ steps.tia-tests.outputs.mode }}
+          FULL_MODE: ${{ steps.full-tests.outputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mode="${TIA_MODE:-${FULL_MODE:-unknown}}"
+          test_count='unavailable'
+
+          if [[ -s "$RUNNER_TEMP/tia-junit.xml" ]]; then
+            parsed_count="$(php -r '$xml = simplexml_load_file($argv[1]); if ($xml === false) { exit(1); } $tests = (string) $xml["tests"]; if ($tests === "") { $count = 0; foreach ($xml->testsuite as $suite) { $count += (int) $suite["tests"]; } $tests = (string) $count; } echo $tests;' "$RUNNER_TEMP/tia-junit.xml" 2>/dev/null || true)"
+
+            if [[ -n "$parsed_count" ]]; then
+              test_count="$parsed_count"
+            fi
+          fi
+
+          printf '%s\n' \
+            '### Pest Test Impact Analysis' \
+            "- Baseline valid: ${BASELINE_VALID:-false}" \
+            "- Execution mode: $mode" \
+            "- Tests executed: $test_count" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload TIA timing report
         if: ${{ !cancelled() }}
