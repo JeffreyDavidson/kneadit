@@ -62,7 +62,7 @@ class WidgetPreviewRenderer
                 'error' => $e->getMessage(),
             ]);
 
-            return $this->placeholder('Widget render failed: ' . e($e->getMessage()));
+            return $this->placeholder('Widget preview is unavailable.');
         } finally {
             foreach ($snapshot as $property => $value) {
                 $this->restore($factory, $property, $value);
