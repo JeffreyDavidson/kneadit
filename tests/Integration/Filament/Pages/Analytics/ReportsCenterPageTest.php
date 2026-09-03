@@ -37,7 +37,15 @@ test('generate report sets active report type', function () {
     test()->page->mount();
     test()->page->generateReport('sales');
 
-    expect(test()->page->activeReport)->toBe('sales');
+    expect(test()->page->activeReport)->toBe('sales')
+        ->and(test()->page->reportData)->toHaveKeys([
+            'totalOrders',
+            'totalRevenue',
+            'avgOrderValue',
+            'ordersByStatus',
+            'topProducts',
+            'revenueByDay',
+        ]);
 });
 
 test('generate report with inventory type', function () {
