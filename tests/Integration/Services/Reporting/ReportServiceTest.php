@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Enums\Financial\ExpenseCategory;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Expense;
@@ -67,8 +68,8 @@ test('product performance report returns data for date range', function () {
 
     $report = resolve(ProductReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report)->toBeArray()
-        ->and($report)->toHaveKey('products');
+    expect($report)->toBeInstanceOf(ProductReportResult::class)
+        ->and($report->products)->toHaveCount(1);
 });
 
 test('financial summary calculates profit', function () {
