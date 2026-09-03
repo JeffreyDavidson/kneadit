@@ -180,7 +180,7 @@ jobs:
           mkdir -p "$baseline_path"
           cp -R "$(dirname "$graph_path")"/. "$baseline_path"/
 
-          if ! php -r '$data = json_decode(file_get_contents($argv[1]), true); if (! is_array($data) || ! is_array($data["baselines"] ?? null) || count($data["baselines"]) === 0) { exit(1); } foreach ($data["baselines"] as $baseline) { if (($baseline["complete"] ?? false) === true && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0) { exit(0); } } exit(1);' "$baseline_path/graph.json"; then
+          if ! php -r '$data = json_decode(file_get_contents($argv[1]), true); $baseline = is_array($data) ? ($data["baselines"]["main"] ?? null) : null; $valid = ($data["schema"] ?? null) === 1 && is_array($baseline) && is_string($baseline["sha"] ?? null) && $baseline["sha"] !== "" && is_array($baseline["tree"] ?? null) && count($baseline["tree"]) > 0 && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0; exit($valid ? 0 : 1);' "$baseline_path/graph.json"; then
             rm -rf "$baseline_path"
             echo 'valid=false' >> "$GITHUB_OUTPUT"
             exit 0
