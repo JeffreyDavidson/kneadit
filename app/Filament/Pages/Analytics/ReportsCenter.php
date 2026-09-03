@@ -67,7 +67,7 @@ class ReportsCenter extends Page
             'sales' => resolve(SalesReport::class)->generate($dateRange)->toArray(),
             'customers' => resolve(CustomerReport::class)->generate($dateRange),
             'products' => resolve(ProductReport::class)->generate($dateRange),
-            'financial' => resolve(FinancialReport::class)->generate($this->selectedYear),
+            'financial' => resolve(FinancialReport::class)->generate($this->selectedYear)->toArray(),
             'inventory' => resolve(InventoryReport::class)->generate(),
             default => [],
         };

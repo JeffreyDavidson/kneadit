@@ -84,5 +84,12 @@ test('generate report with financial type', function () {
     test()->page->generateReport('financial');
 
     expect(test()->page->activeReport)->toBe('financial')
-        ->and(test()->page->reportData)->toBeArray();
+        ->and(test()->page->reportData)->toHaveKeys([
+            'totalRevenue',
+            'totalExpenses',
+            'profit',
+            'deductible',
+            'monthly',
+            'expensesByCategory',
+        ]);
 });

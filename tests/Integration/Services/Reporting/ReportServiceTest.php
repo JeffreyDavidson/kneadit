@@ -82,10 +82,14 @@ test('financial summary calculates profit', function () {
     ]);
 
     $report = resolve(FinancialReport::class)->generate(2026);
+    $serialized = $report->toArray();
 
-    expect((float) $report['totalRevenue'])->toBe(100.00)
-        ->and((float) $report['totalExpenses'])->toBe(30.00)
-        ->and((float) $report['profit'])->toBe(70.00);
+    expect($report->totalRevenue)->toEqual(Money::fromDollars(100))
+        ->and($report->totalExpenses)->toEqual(Money::fromDollars(30))
+        ->and($report->profit)->toEqual(Money::fromDollars(70))
+        ->and($serialized['totalRevenue'])->toBe(100.0)
+        ->and($serialized['totalExpenses'])->toBe(30.0)
+        ->and($serialized['profit'])->toBe(70.0);
 });
 
 test('inventory report flags low stock', function () {

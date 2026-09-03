@@ -2,8 +2,11 @@
 
 namespace App\Reports\Financial;
 
+use App\DataTransferObjects\Financial\FinancialReportResult;
+use App\DataTransferObjects\Financial\MonthlyFinancials;
 use App\Models\Financial\Expense;
 use App\Services\Financial\FinancialCalculator;
+use App\ValueObjects\Money;
 
 class FinancialReport
 {
@@ -11,33 +14,32 @@ class FinancialReport
         private FinancialCalculator $calculator,
     ) {}
 
-    /** @return array<string, mixed> */
-    public function generate(int $year): array
+    public function generate(int $year): FinancialReportResult
     {
         $summary = $this->calculator->calculate($year);
 
         // expenses.deductible_amount is bigint cents (migration 2026_04_22_230000).
-        $deductible = (int) Expense::query()->whereYear('date', $year)->sum('deductible_amount') / 100;
+        $deductible = Money::fromCents((int) Expense::query()->whereYear('date', $year)->sum('deductible_amount'));
 
-        $monthly = $summary->monthlyBreakdown->map(fn (mixed $m) => [
+        $monthly = array_values($summary->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => [
             'month' => substr($m->monthName, 0, 3),
-            'revenue' => $m->revenue,
-            'expenses' => $m->expenses,
-            'profit' => $m->net,
-        ]);
+            'revenue' => Money::fromDollars($m->revenue),
+            'expenses' => Money::fromDollars($m->expenses),
+            'profit' => Money::fromDollars($m->net),
+        ])->all());
 
-        $expensesByCategory = $summary->expenseBreakdown->map(fn (array $e) => [
+        $expensesByCategory = array_values($summary->expenseBreakdown->map(fn (array $e): array => [
             'category' => $e['category'],
-            'amount' => (float) $e['amount'],
-        ])->values()->all();
+            'amount' => Money::fromDollars($e['amount']),
+        ])->all());
 
-        return [
-            'totalRevenue' => $summary->totalRevenue,
-            'totalExpenses' => $summary->totalExpenses,
-            'profit' => $summary->netProfit,
-            'deductible' => $deductible,
-            'monthly' => $monthly,
-            'expensesByCategory' => $expensesByCategory,
-        ];
+        return new FinancialReportResult(
+            totalRevenue: Money::fromDollars($summary->totalRevenue),
+            totalExpenses: Money::fromDollars($summary->totalExpenses),
+            profit: Money::fromDollars($summary->netProfit),
+            deductible: $deductible,
+            monthly: $monthly,
+            expensesByCategory: $expensesByCategory,
+        );
     }
 }
