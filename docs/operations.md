@@ -4,7 +4,7 @@
 
 A production environment needs all of the following:
 
-- PHP 8.4 and the web server/PHP process manager
+- PHP 8.5 and the web server/PHP process manager
 - a central database plus writable storage for per-tenant SQLite databases
 - a long-running queue worker using the configured queue connection (database by default)
 - Laravel's scheduler invoked once per minute
@@ -134,6 +134,25 @@ bin/sync-version
 The command reads the nearest reachable `vX.Y.Z` tag, rejects malformed versions, and writes the result to `VERSION`. Tag-triggered browser smoke runs pass the exact pushed tag explicitly.
 
 The full suite may be lengthy. Use bounded targeted tests during development, but do not replace release-level coverage with a narrow selection.
+
+### Forge PHP runtime
+
+The production site on `cold-moon` uses PHP 8.5. Keep the deployment script on Forge's version-aware `$FORGE_COMPOSER` and `$FORGE_PHP` variables so Composer and Artisan follow the PHP version configured for the site. Do not replace them with the server-wide `php` command, because other sites may intentionally use a different PHP version.
+
+Forge-managed processes do not automatically follow a later site PHP change. After changing the site's PHP version, update and restart the KneadIt queue worker so its command begins with `php8.5`, and ensure the KneadIt scheduler invokes `php8.5 artisan schedule:run` once per minute. Verify the deployed release and runtime with bounded, read-only checks:
+
+```bash
+cd /home/forge/getkneadit.app/current
+git rev-parse HEAD
+php8.5 artisan --version
+php8.5 /usr/local/bin/composer check-platform-reqs --no-dev
+systemctl is-active php8.5-fpm
+ps -eo args | grep '[p]hp8.5 .*getkneadit.app/current/artisan queue:work'
+crontab -l | grep '/home/forge/getkneadit.app/current.*php8.5 artisan schedule:run'
+curl --fail --silent --show-error --output /dev/null https://getkneadit.app/up
+```
+
+The retired Ondrej Nginx Launchpad source is disabled on `cold-moon` at `/etc/apt/sources.list.d/ondrej-ubuntu-nginx-jammy.list.disabled`. Do not re-enable it. Establish and validate a supported Nginx package source separately before attempting an Nginx package upgrade; changing the PHP repository does not replace the Nginx update channel.
 
 ## Testing
 
