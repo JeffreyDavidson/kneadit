@@ -11,60 +11,60 @@ concurrency:
   group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   frontend:
     name: Frontend Build
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: '24.x'
 
-      - name: Verify local PHP
-        run: php -v && php -m
+      - name: Setup PHP and Composer
+        uses: ./.github/actions/setup-php-composer
 
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+      - name: Resolve npm cache directory
+        id: npm-cache
+        shell: bash
+        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore npm cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.npm-cache.outputs.directory }}
+          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-node-24-
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Install Composer dependencies
         env:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist
 
-      - name: Install Node dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-
       - name: Build production assets
         run: npm run build
 
   tests:
     name: Pest
-    runs-on: [self-hosted, macOS, ARM64, mac-studio-kneadit]
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Verify local PHP
-        run: php -v && php -m
-
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+      - name: Setup PHP and Composer
+        uses: ./.github/actions/setup-php-composer
 
       - name: Copy environment file
         run: cp .env.example .env
@@ -85,9 +85,136 @@ jobs:
 
       - name: Upload Pest timing report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pest-junit
           path: ${{ runner.temp }}/pest-junit.xml
+          if-no-files-found: ignore
+          retention-days: 7
+
+  tia:
+    name: Pest Test Impact Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+
+      - name: Setup PHP and Composer with PCOV
+        uses: ./.github/actions/setup-php-composer
+        with:
+          coverage: pcov
+
+      - name: Resolve npm cache directory
+        id: npm-cache
+        shell: bash
+        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore npm cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.npm-cache.outputs.directory }}
+          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-node-24-
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Clear config cache
+        run: php artisan config:clear
+
+      - name: Restore latest main TIA baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set +e
+          rm -rf "$RUNNER_TEMP/tia-artifact"
+          mkdir -p "$RUNNER_TEMP/tia-artifact"
+          run_id="$(gh run list --workflow=tia-baseline.yml --branch=main --status=success --limit=1 --json databaseId --jq '.[0].databaseId' 2>/dev/null)"
+          if [[ -n "$run_id" ]]; then
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name pest-tia-baseline --dir "$RUNNER_TEMP/tia-artifact" >/dev/null 2>&1
+          fi
+          exit 0
+
+      - name: Install and validate TIA baseline
+        id: tia-baseline
+        env:
+          HOME: ${{ runner.temp }}/pest-home
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "$HOME/.pest"
+          raw="$(vendor/bin/pest --baseline 2>/dev/null || true)"
+          baseline_path="$(printf '%s\n' "$raw" | sed -n '1s/.*"raw":\["\([^"\\]*\)".*/\1/p')"
+
+          if [[ -z "$baseline_path" ]]; then
+            echo 'valid=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          graph_path="$(find "$RUNNER_TEMP/tia-artifact" -type f -name graph.json -print -quit 2>/dev/null || true)"
+          if [[ -z "$graph_path" ]]; then
+            echo 'valid=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          mkdir -p "$baseline_path"
+          cp -R "$(dirname "$graph_path")"/. "$baseline_path"/
+
+          if ! php -r '$data = json_decode(file_get_contents($argv[1]), true); if (! is_array($data) || ! is_array($data["baselines"] ?? null) || count($data["baselines"]) === 0) { exit(1); } foreach ($data["baselines"] as $baseline) { if (($baseline["complete"] ?? false) === true && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0) { exit(0); } } exit(1);' "$baseline_path/graph.json"; then
+            rm -rf "$baseline_path"
+            echo 'valid=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo 'valid=true' >> "$GITHUB_OUTPUT"
+
+      - name: Run impacted tests with full-suite fallback
+        if: steps.tia-baseline.outputs.valid == 'true'
+        env:
+          HOME: ${{ runner.temp }}/pest-home
+        shell: bash
+        run: |
+          set +e
+          vendor/bin/pest --tia --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
+          tia_status=$?
+          set -e
+
+          if [[ "$tia_status" -eq 0 ]]; then
+            exit 0
+          fi
+
+          echo '::warning::Pest TIA was unavailable or its baseline was stale; running the full relevant suite.'
+          vendor/bin/pest --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
+
+      - name: Run full relevant suite fallback
+        if: steps.tia-baseline.outputs.valid != 'true'
+        run: vendor/bin/pest --ci --compact --configuration=.github/phpunit-ci.xml --log-junit="$RUNNER_TEMP/tia-junit.xml"
+
+      - name: Upload TIA timing report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-tia-junit
+          path: ${{ runner.temp }}/tia-junit.xml
           if-no-files-found: ignore
           retention-days: 7
