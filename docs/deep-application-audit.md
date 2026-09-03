@@ -1,6 +1,6 @@
 # Deep application audit
 
-This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.4, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
+This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.5, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
 
 ## Executive summary
 
