@@ -2,6 +2,7 @@
 
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\ValueObjects\DateRange;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -50,4 +51,32 @@ test('forReferralCode filters customers by referral code', function () {
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($target->id);
+});
+
+test('withPaidOrderMetrics aggregates only active paid orders in the date range', function () {
+    $customer = Customer::factory()->create();
+
+    Order::factory()->for($customer)->paid()->create([
+        'delivery_date' => '2026-03-10',
+        'total' => 100,
+    ]);
+    Order::factory()->for($customer)->unpaid()->create([
+        'delivery_date' => '2026-03-11',
+        'total' => 500,
+    ]);
+    Order::factory()->for($customer)->cancelled()->paid()->create([
+        'delivery_date' => '2026-03-12',
+        'total' => 700,
+    ]);
+    Order::factory()->for($customer)->paid()->create([
+        'delivery_date' => '2026-04-01',
+        'total' => 900,
+    ]);
+
+    $result = Customer::query()
+        ->withPaidOrderMetrics(DateRange::forMonth(2026, 3))
+        ->findOrFail($customer->id);
+
+    expect((int) $result->total_spend)->toBe(10_000)
+        ->and($result->order_count)->toBe(1);
 });
