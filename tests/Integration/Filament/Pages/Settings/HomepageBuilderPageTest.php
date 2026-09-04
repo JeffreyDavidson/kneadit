@@ -1,6 +1,10 @@
 <?php
 
 use App\Filament\Pages\Settings\HomepageBuilder;
+use App\Services\Settings\SettingsManager;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Exceptions;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -180,6 +184,24 @@ test('save persists hero tagline and CTA text', function () {
     expect(settings('hero_tagline'))->toBe('Fresh every morning')
         ->and(settings('hero_primary_cta_text'))->toBe('Start Your Order')
         ->and(settings('hero_secondary_cta_text'))->toBe('View Our Menu');
+});
+
+test('save reports failures without exposing internal details', function () {
+    $exception = new RuntimeException('database password leaked');
+    $settingsManager = Double::for(SettingsManager::class);
+    $settingsManager->expects('setMany')->throws($exception);
+    app()->instance(SettingsManager::class, $settingsManager);
+    Exceptions::fake();
+
+    test()->page->save();
+
+    Exceptions::assertReported(fn (RuntimeException $reported): bool => $reported === $exception);
+    Notification::assertNotified(
+        Notification::make()
+            ->title('Error saving homepage sections')
+            ->body('Please try again. If the problem continues, contact support.')
+            ->danger(),
+    );
 });
 
 test('reset to defaults restores hero CTA text', function () {
