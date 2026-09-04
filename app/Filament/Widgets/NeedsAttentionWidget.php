@@ -15,7 +15,6 @@ use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
  * Surfaces the few operational urgencies a baker should act on right
@@ -38,12 +37,7 @@ class NeedsAttentionWidget extends Widget
         return Order::query()->where('status', OrderStatus::Pending)->exists()
             || ContactMessage::query()->where('is_read', false)->exists()
             || CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()
-            || Ingredient::query()
-                ->where(function (Builder $q): void {
-                    $q->where('current_stock', '<=', 0)
-                        ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-                })
-                ->exists();
+            || Ingredient::query()->lowStock()->exists();
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -93,12 +87,7 @@ class NeedsAttentionWidget extends Widget
             ];
         }
 
-        $lowStock = Ingredient::query()
-            ->where(function (Builder $q): void {
-                $q->where('current_stock', '<=', 0)
-                    ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-            })
-            ->count();
+        $lowStock = Ingredient::query()->lowStock()->count();
         if ($lowStock > 0) {
             $items[] = [
                 'severity' => 'info',
