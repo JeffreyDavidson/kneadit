@@ -463,6 +463,7 @@ function createCentralTables(): void
             $table->string('tenant_id');
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
+            $table->unique(['checkin_id', 'tenant_id']);
         },
         'referrals' => function ($table) {
             $table->id();
