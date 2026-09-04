@@ -2,14 +2,15 @@
 
 namespace App\DataTransferObjects\Customers;
 
+use App\ValueObjects\Money;
 use Illuminate\Support\Carbon;
 
 final readonly class CustomerMetrics
 {
     public function __construct(
-        public float $lifetimeValue,
+        public Money $lifetimeValue,
         public int $orderCount,
-        public float $averageOrderValue,
+        public Money $averageOrderValue,
         public ?Carbon $lastOrderDate,
         public ?int $daysSinceLastOrder,
         public bool $isAtRisk,
