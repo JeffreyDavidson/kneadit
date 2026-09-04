@@ -27,6 +27,7 @@ class BackupDatabasesCommand extends Command
         File::ensureDirectoryExists($backupPath, 0755);
 
         $this->info("Backing up to: {$backupPath}");
+        $backupComplete = true;
 
         // 1. Backup central database
         $centralDb = Config::string('database.connections.sqlite.database');
@@ -36,19 +37,22 @@ class BackupDatabasesCommand extends Command
             $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
         } else {
             $this->warn("  ⚠ Central DB not found at: {$centralDb}");
+            $backupComplete = false;
         }
 
         // 2. Backup all tenant databases
+        $tenants = Tenant::all();
         $tenantDbDir = Config::string('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir)) {
             $count = 0;
 
-            foreach (Tenant::all() as $tenant) {
+            foreach ($tenants as $tenant) {
                 $databaseName = (string) $tenant->database()->getName();
                 $tenantDb = $tenantDatabasePath->resolve($databaseName);
 
                 if (! is_file($tenantDb) || is_link($tenantDb)) {
                     $this->warn("  ⚠ Tenant DB not found: {$databaseName}");
+                    $backupComplete = false;
 
                     continue;
                 }
@@ -60,15 +64,30 @@ class BackupDatabasesCommand extends Command
             }
 
             $this->info("  ✓ {$count} tenant database(s)");
+        } elseif ($tenants->isNotEmpty()) {
+            $this->warn("  ⚠ Tenant DB directory not found at: {$tenantDbDir}");
+            $backupComplete = false;
         } else {
             $this->info('  - No tenant DB directory found');
+        }
+
+        $totalSize = $this->dirSize($backupPath);
+
+        if (! $backupComplete) {
+            $this->error("Backup incomplete ({$this->formatSize($totalSize)})");
+
+            Log::error('Database backup incomplete', [
+                'path' => $backupPath,
+                'size' => $totalSize,
+            ]);
+
+            return Command::FAILURE;
         }
 
         // 3. Clean old backups
         $keep = (int) $this->option('keep');
         $this->cleanOldBackups($backupDir, $keep);
 
-        $totalSize = $this->dirSize($backupPath);
         $this->info("Backup complete ({$this->formatSize($totalSize)})");
 
         Log::info('Database backup completed', [
