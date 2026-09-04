@@ -2,16 +2,17 @@
 
 namespace App\Reports\Inventory;
 
+use App\DataTransferObjects\Inventory\InventoryReportResult;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
+use App\ValueObjects\Money;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class InventoryReport
 {
-    /** @return array<string, mixed> */
-    public function generate(): array
+    public function generate(): InventoryReportResult
     {
         $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
 
@@ -25,7 +26,7 @@ class InventoryReport
             ->groupBy('recipe_ingredients.ingredient_id')
             ->pluck('total_usage', 'ingredient_id');
 
-        $ingredients = Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays) {
+        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): array {
             $usageLast30 = Arr::float($usageData->all(), $i->id, 0.0);
             $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
@@ -39,14 +40,19 @@ class InventoryReport
                 'is_out' => $i->current_stock <= 0,
                 'daily_usage' => round($dailyUsage, 2),
                 'days_until_stockout' => $daysUntilStockout,
-                'cost_per_unit' => $i->cost_per_unit?->dollars() ?? 0.0,
+                'cost_per_unit' => $i->cost_per_unit ?? Money::zero(),
             ];
-        })->all();
+        })->all());
 
         $totalItems = count($ingredients);
         $lowStockItems = collect($ingredients)->where('is_low', true)->count();
         $outOfStockItems = collect($ingredients)->where('is_out', true)->count();
 
-        return ['ingredients' => $ingredients, 'totalItems' => $totalItems, 'lowStockItems' => $lowStockItems, 'outOfStockItems' => $outOfStockItems];
+        return new InventoryReportResult(
+            ingredients: $ingredients,
+            totalItems: $totalItems,
+            lowStockItems: $lowStockItems,
+            outOfStockItems: $outOfStockItems,
+        );
     }
 }
