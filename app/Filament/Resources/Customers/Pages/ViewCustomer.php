@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Customers\Pages;
 
+use App\Actions\Customers\AddCustomerNote;
 use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Filament\Resources\Customers\CustomerResource;
@@ -15,6 +16,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Rule;
 
 /**
@@ -142,10 +144,11 @@ class ViewCustomer extends ViewRecord
     {
         $this->validate(['noteBody' => ['required', 'min:3']]);
 
-        $this->record->customerNotes()->create([
-            'note' => $this->noteBody,
-            'created_by' => auth()->id(),
-        ]);
+        resolve(AddCustomerNote::class)(
+            $this->record->id,
+            $this->noteBody,
+            (int) Auth::id(),
+        );
 
         $this->noteBody = '';
         $this->record->load('customerNotes');
