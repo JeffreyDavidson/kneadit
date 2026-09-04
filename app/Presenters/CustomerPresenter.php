@@ -40,7 +40,7 @@ final class CustomerPresenter
 
     public function lifetimeValue(): float
     {
-        return $this->metrics()->lifetimeValue;
+        return $this->metrics()->lifetimeValue->dollars();
     }
 
     public function orderCount(): int
@@ -55,7 +55,7 @@ final class CustomerPresenter
 
     public function averageOrderValue(): float
     {
-        return $this->metrics()->averageOrderValue;
+        return $this->metrics()->averageOrderValue->dollars();
     }
 
     public function daysSinceLastOrder(): ?int
