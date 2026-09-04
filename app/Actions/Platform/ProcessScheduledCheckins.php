@@ -35,22 +35,26 @@ class ProcessScheduledCheckins
 
             /** @var Tenant $tenant */
             foreach ($tenants as $tenant) {
-                $alreadySent = CheckinLog::query()
-                    ->where('checkin_id', $checkin->id)
-                    ->where('tenant_id', $tenant->id)
-                    ->exists();
-
-                if ($alreadySent) {
-                    continue;
-                }
-
                 if (! $tenant->email) {
                     $skippedNoEmail++;
 
                     continue;
                 }
 
+                $log = null;
+
                 try {
+                    $log = CheckinLog::query()->createOrFirst([
+                        'checkin_id' => $checkin->id,
+                        'tenant_id' => $tenant->id,
+                    ], [
+                        'sent_at' => now(),
+                    ]);
+
+                    if (! $log->wasRecentlyCreated) {
+                        continue;
+                    }
+
                     event(new ScheduledCheckinDue(
                         tenantEmail: $tenant->email,
                         body: $checkin->body,
@@ -59,14 +63,12 @@ class ProcessScheduledCheckins
                         tenantId: $tenant->id,
                     ));
 
-                    CheckinLog::query()->create([
-                        'checkin_id' => $checkin->id,
-                        'tenant_id' => $tenant->id,
-                        'sent_at' => now(),
-                    ]);
-
                     $sent++;
                 } catch (\Exception $e) {
+                    if (isset($log) && $log->wasRecentlyCreated) {
+                        $log->delete();
+                    }
+
                     Log::error('Failed to send checkin to tenant', [
                         'tenant' => $tenant->id,
                         'error' => $e->getMessage(),

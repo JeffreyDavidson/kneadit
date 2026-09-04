@@ -2,6 +2,7 @@
 
 use App\Actions\Platform\ProcessScheduledCheckins;
 use App\Events\Platform\ScheduledCheckinDue;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -90,6 +91,24 @@ test('skips tenant that was already sent the same checkin', function () {
 
     expect($summary['sent'])->toBe(0);
     Event::assertNotDispatched(ScheduledCheckinDue::class);
+});
+
+test('enforces one log per checkin and tenant', function () {
+    DB::table('checkin_logs')->insert([
+        'checkin_id' => 50,
+        'tenant_id' => 'already-sent-bakery',
+        'sent_at' => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    expect(fn () => DB::table('checkin_logs')->insert([
+        'checkin_id' => 50,
+        'tenant_id' => 'already-sent-bakery',
+        'sent_at' => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]))->toThrow(UniqueConstraintViolationException::class);
 });
 
 test('skips tenant with empty email and increments counter', function () {
@@ -212,5 +231,6 @@ test('catches dispatch exceptions and counts them as failures', function () {
     $summary = resolve(ProcessScheduledCheckins::class)();
 
     expect($summary['sent'])->toBe(0)
-        ->and($summary['failures'])->toBe(1);
+        ->and($summary['failures'])->toBe(1)
+        ->and(DB::table('checkin_logs')->count())->toBe(0);
 });
