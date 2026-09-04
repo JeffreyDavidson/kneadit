@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Customers\CustomerReportResult;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
 use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Enums\Financial\ExpenseCategory;
@@ -61,7 +62,7 @@ test('sales report respects date range', function () {
 test('customer report returns data for date range', function () {
     $report = resolve(CustomerReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report)->toBeArray();
+    expect($report)->toBeInstanceOf(CustomerReportResult::class);
 });
 
 test('product performance report returns data for date range', function () {
