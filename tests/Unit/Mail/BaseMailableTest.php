@@ -2,16 +2,15 @@
 
 use App\Mail\BaseMailable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\Attributes\Backoff;
-use Illuminate\Queue\Attributes\Tries;
+use Illuminate\Mail\SendQueuedMailable;
 
-it('implements ShouldQueue with default retry config', function () {
-    $ref = new ReflectionClass(BaseMailable::class);
+it('queues mail with bounded retries and delivery time', function () {
+    $mailable = new class extends BaseMailable {};
+    $queuedMailable = new SendQueuedMailable($mailable);
 
-    $tries = $ref->getAttributes(Tries::class)[0]->newInstance();
-    $backoff = $ref->getAttributes(Backoff::class)[0]->newInstance();
-
-    expect(new class extends BaseMailable {})->toBeInstanceOf(ShouldQueue::class)
-        ->and($tries->tries)->toBe(3)
-        ->and($backoff->backoff)->toBe([10, 60, 300]);
+    expect($mailable)->toBeInstanceOf(ShouldQueue::class)
+        ->and($queuedMailable->tries)->toBe(3)
+        ->and($queuedMailable->backoff())->toBe([10, 60, 300])
+        ->and($queuedMailable->timeout)->toBe(60)
+        ->and(config('mail.mailers.smtp.timeout'))->toBe(10);
 });
