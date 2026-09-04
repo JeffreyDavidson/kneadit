@@ -65,7 +65,7 @@ class ReportsCenter extends Page
 
         $this->reportData = match ($type) {
             'sales' => resolve(SalesReport::class)->generate($dateRange)->toArray(),
-            'customers' => resolve(CustomerReport::class)->generate($dateRange),
+            'customers' => resolve(CustomerReport::class)->generate($dateRange)->toArray(),
             'products' => resolve(ProductReport::class)->generate($dateRange)->toArray(),
             'financial' => resolve(FinancialReport::class)->generate($this->selectedYear)->toArray(),
             'inventory' => resolve(InventoryReport::class)->generate()->toArray(),
