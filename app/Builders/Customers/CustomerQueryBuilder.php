@@ -6,6 +6,7 @@ use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
 
 /** @extends Builder<Customer> */
@@ -39,6 +40,18 @@ class CustomerQueryBuilder extends Builder
                     ->latest()
                     ->limit(1),
             ]);
+
+        return $this;
+    }
+
+    public function withPaidOrderMetrics(DateRange $range): static
+    {
+        $paidOrders = function (OrderQueryBuilder $query) use ($range): void {
+            $query->active()->paidInDateRange($range);
+        };
+
+        $this->withSum(['orders as total_spend' => $paidOrders], 'total')
+            ->withCount(['orders as order_count' => $paidOrders]);
 
         return $this;
     }

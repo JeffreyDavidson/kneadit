@@ -9,7 +9,6 @@ use App\Models\Customers\Customer;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
 
 class CustomerReport
@@ -30,14 +29,8 @@ class CustomerReport
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
-        $topCustomers = array_values(Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q
-            ->whereNotIn('status', [OrderStatus::Cancelled])
-            ->where('payment_status', PaymentStatus::Paid)
-            ->whereBetween('delivery_date', $range->toArray())], 'total')
-            ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q
-                ->whereNotIn('status', [OrderStatus::Cancelled])
-                ->where('payment_status', PaymentStatus::Paid)
-                ->whereBetween('delivery_date', $range->toArray())])
+        $topCustomers = array_values(Customer::query()
+            ->withPaidOrderMetrics($range)
             ->orderByDesc('total_spend')
             ->get()
             ->filter(fn (Customer $c) => ((float) $c->total_spend) > 0)
