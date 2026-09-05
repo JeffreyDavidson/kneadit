@@ -102,7 +102,14 @@ test('platform account mail classes render without errors', function () {
         ->toBeString()
         ->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\NewSubscriberNotificationMail('Jane', 'jane@example.com', 'Sweet Bakery', 'sweet-bakery', 'starter'))->render())
+    expect((new App\Mail\Platform\NewSubscriberNotificationMail(
+        'Jane',
+        'jane@example.com',
+        'Sweet Bakery',
+        'sweet-bakery.kneadit.test',
+        'starter',
+        'https://kneadit.test/central',
+    ))->render())
         ->toBeString()
         ->not->toBeEmpty();
 

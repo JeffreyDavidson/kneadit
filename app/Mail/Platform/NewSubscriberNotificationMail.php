@@ -12,8 +12,9 @@ class NewSubscriberNotificationMail extends BaseMailable
         public string $bakerName,
         public string $bakerEmail,
         public string $storeName,
-        public string $subdomain,
+        public string $storefrontHost,
         public string $plan,
+        public string $centralAdminUrl,
     ) {}
 
     public function envelope(): Envelope
