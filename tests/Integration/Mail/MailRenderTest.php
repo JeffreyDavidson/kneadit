@@ -44,10 +44,12 @@ test('ScheduledCheckinMail has correct subject and renders', function () {
 
 test('TrialExpiredMail has correct subject and renders', function () {
     $user = User::factory()->owner()->create();
-    $mail = new TrialExpiredMail($user, 'test-tenant');
+    $mail = new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin');
 
     $mail->assertHasSubject('Your KneadIt trial has expired');
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://test-tenant.kneadit.test/admin');
 });
 
 test('TrialReminderMail has correct subject for 7 days and renders', function () {

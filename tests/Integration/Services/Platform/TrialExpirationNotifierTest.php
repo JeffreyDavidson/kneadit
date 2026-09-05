@@ -5,6 +5,7 @@ use App\Events\Platform\TrialReminding;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Platform\TrialExpirationNotifier;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(fn () => setUpCentralTest());
@@ -46,11 +47,14 @@ test('sendReminder falls back to tenant name when store_name is empty', function
 
 test('notifyExpired dispatches TrialExpired with tenant id', function () {
     Event::fake([TrialExpired::class]);
+    Config::set('app.url', 'http://kneadit.test:8000');
     $user = User::factory()->create();
     createTenant(['id' => 'expired-tenant']);
     $tenant = Tenant::query()->find('expired-tenant');
 
     resolve(TrialExpirationNotifier::class)->notifyExpired($user, $tenant);
 
-    Event::assertDispatched(fn (TrialExpired $event): bool => $event->user->is($user) && $event->tenantId === 'expired-tenant');
+    Event::assertDispatched(fn (TrialExpired $event): bool => $event->user->is($user)
+        && $event->tenantId === 'expired-tenant'
+        && $event->adminUrl === 'http://expired-tenant.kneadit.test:8000/admin');
 });
