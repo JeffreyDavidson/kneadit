@@ -3,6 +3,7 @@
 use App\Filament\Central\Resources\TenantResource\Pages\ListTenants;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -68,4 +69,12 @@ test('tenant table supports listing columns searching and filters', function () 
     Livewire::test(ListTenants::class)
         ->filterTable('is_active', true)
         ->assertOk();
+});
+
+test('tenant table displays the configured storefront host', function () {
+    Config::set('app.url', 'https://kneadit.test');
+    createTestTenant('sweet-bakes');
+
+    Livewire::test(ListTenants::class)
+        ->assertSee('sweet-bakes.kneadit.test');
 });

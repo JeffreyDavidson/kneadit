@@ -15,6 +15,11 @@ final class TenantUrlGenerator
         return Str::rtrim((string) $this->tenantUri($tenant), '/');
     }
 
+    public function storefrontHost(Tenant $tenant): string
+    {
+        return (string) $this->tenantUri($tenant)->authority();
+    }
+
     public function impersonation(Tenant $tenant, string $token): string
     {
         return (string) $this->tenantUri($tenant)

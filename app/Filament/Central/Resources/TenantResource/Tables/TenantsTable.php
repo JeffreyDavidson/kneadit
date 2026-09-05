@@ -35,7 +35,7 @@ class TenantsTable
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->description(fn (Tenant $record) => $record->id . '.getkneadit.app'),
+                    ->description(fn (Tenant $record, TenantUrlGenerator $urls): string => $urls->storefrontHost($record)),
 
                 TextColumn::make('store_name')
                     ->label('Bakery')

@@ -20,6 +20,14 @@ test('preserves the configured port', function () {
     expect($url)->toBe('http://test-bakery.kneadit.test:8000');
 });
 
+test('generates a storefront host for display', function () {
+    Config::set('app.url', 'http://kneadit.test:8000');
+
+    $host = resolve(TenantUrlGenerator::class)->storefrontHost(new Tenant(['id' => 'test-bakery']));
+
+    expect($host)->toBe('test-bakery.kneadit.test:8000');
+});
+
 test('uses the named route for impersonation without base path query or fragment', function () {
     Config::set('app.url', 'https://getkneadit.app/base?source=test#section');
 
