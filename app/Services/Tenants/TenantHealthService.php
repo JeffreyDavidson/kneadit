@@ -8,6 +8,7 @@ use App\ValueObjects\TenantHealthScore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
 class TenantHealthService
@@ -22,7 +23,16 @@ class TenantHealthService
         $results = [];
 
         foreach (Tenant::query()->lazy() as $tenant) {
-            $healthScore = $this->calculateHealthScore($tenant);
+            try {
+                $healthScore = $this->calculateHealthScore($tenant);
+            } catch (\Throwable $exception) {
+                Log::warning('Unable to calculate tenant health', [
+                    'tenant_id' => $tenant->id,
+                    'error' => $exception->getMessage(),
+                ]);
+
+                continue;
+            }
 
             $results[] = [
                 'id' => $tenant->id,
@@ -59,32 +69,21 @@ class TenantHealthService
      */
     protected function getTenantMetrics(Tenant $tenant): array
     {
-        try {
-            return $this->tenancyManager->withinTenant($tenant, function () {
-                $lastLogin = DB::table('users')->max('updated_at');
-                $orderCount = DB::table('orders')->count();
-                $productCount = DB::table('products')->count();
-                $categoryCount = DB::table('categories')->count();
+        return $this->tenancyManager->withinTenant($tenant, function () {
+            $lastLogin = DB::table('users')->max('updated_at');
+            $orderCount = DB::table('orders')->count();
+            $productCount = DB::table('products')->count();
+            $categoryCount = DB::table('categories')->count();
 
-                return [
-                    'days_since_login' => is_string($lastLogin) ? (int) Date::parse($lastLogin)->diffInDays(now()) : null,
-                    'total_orders' => $orderCount,
-                    'total_products' => $productCount,
-                    'has_products' => $productCount > 0,
-                    'has_categories' => $categoryCount > 0,
-                    'has_orders' => $orderCount > 0,
-                ];
-            });
-        } catch (\Throwable) {
             return [
-                'days_since_login' => null,
-                'total_orders' => 0,
-                'total_products' => 0,
-                'has_products' => false,
-                'has_categories' => false,
-                'has_orders' => false,
+                'days_since_login' => is_string($lastLogin) ? (int) Date::parse($lastLogin)->diffInDays(now()) : null,
+                'total_orders' => $orderCount,
+                'total_products' => $productCount,
+                'has_products' => $productCount > 0,
+                'has_categories' => $categoryCount > 0,
+                'has_orders' => $orderCount > 0,
             ];
-        }
+        });
     }
 
     /** @return array{average: float|int, healthy: int, at_risk: int, critical: int, total: int} */
@@ -130,12 +129,8 @@ class TenantHealthService
 
     public function getRecentOrderCount(Tenant $tenant, int $days): int
     {
-        try {
-            return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
-                ->where('created_at', '>=', now()->subDays($days))
-                ->count());
-        } catch (\Throwable) {
-            return 0;
-        }
+        return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
+            ->where('created_at', '>=', now()->subDays($days))
+            ->count());
     }
 }
