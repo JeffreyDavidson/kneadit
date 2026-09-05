@@ -6,6 +6,7 @@ use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -63,25 +64,24 @@ class ReviewAnalyticsService
     /** @return array<int, array<string, mixed>> */
     public function getMonthlyTrend(): array
     {
+        $startDate = Date::now()->subMonths(11)->startOfMonth();
+
+        /** @var Collection<string, object{month: string, count: int, avg_rating: float}> $monthlyData */
         $monthlyData = Review::query()
-            ->where('created_at', '>=', now()->subMonths(12))
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw("strftime('%Y-%m', created_at) AS month, COUNT(*) AS count, AVG(rating) AS avg_rating")
+            ->groupByRaw("strftime('%Y-%m', created_at)")
+            ->orderBy('month')
+            ->toBase()
             ->get()
-            ->groupBy(fn (Review $review) => $review->created_at?->format('Y-m') ?? '')
-            ->map(fn (Collection $reviews, string $month) => (object) [
-                'month' => $month,
-                'count' => $reviews->count(),
-                'avg_rating' => $reviews->avg('rating'),
-            ])
-            ->sortKeys()
-            ->values();
+            ->keyBy('month');
 
         $trend = [];
-        $startDate = now()->subMonths(11)->startOfMonth();
 
         for ($i = 0; $i < 12; $i++) {
             $month = $startDate->copy()->addMonths($i);
             $monthKey = $month->format('Y-m');
-            $monthData = $monthlyData->firstWhere('month', $monthKey);
+            $monthData = $monthlyData->get($monthKey);
 
             $trend[] = [
                 'month' => $month->format('M Y'),
