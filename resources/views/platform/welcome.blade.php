@@ -15,8 +15,8 @@
         content="The business platform built for cottage food bakers. Orders, invoicing, recipes, storefronts — everything you need to run your home bakery."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://getkneadit.app" />
-    <meta property="og:image" content="https://getkneadit.app/og.svg" />
+    <meta property="og:url" content="{{ route('home') }}" />
+    <meta property="og:image" content="{{ asset('og.svg') }}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
