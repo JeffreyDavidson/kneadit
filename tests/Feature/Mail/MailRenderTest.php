@@ -116,7 +116,7 @@ test('platform account mail classes render without errors', function () {
         ->toBeString()
         ->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\TrialExpiredMail($user, 'test-tenant'))->render())
+    expect((new App\Mail\Platform\TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin'))->render())
         ->toBeString()
         ->not->toBeEmpty();
 });

@@ -7,7 +7,7 @@
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
 /** @var \App\Models\Staff\User $user */
-/** @var string $tenantId */
+/** @var string $adminUrl */
 @endphp
 
 Hi {{ $user->name }},
@@ -18,6 +18,6 @@ Don't worry — your data is safe. Subscribe to reactivate:
 https://getkneadit.app/billing/plans
 
 Your admin panel is still accessible at:
-https://{{ $tenantId }}.getkneadit.app/admin
+{{ $adminUrl }}
 
 — The KneadIt Team

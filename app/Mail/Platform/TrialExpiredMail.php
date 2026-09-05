@@ -11,7 +11,7 @@ class TrialExpiredMail extends BaseMailable
 {
     public function __construct(
         public User $user,
-        public string $tenantId,
+        public string $adminUrl,
     ) {}
 
     public function envelope(): Envelope
