@@ -23,10 +23,13 @@ class SendScheduledCheckinEmailListener extends SendEmailListener
     {
         /** @var ScheduledCheckinDue $event */
         $adminUrl = $event->adminUrl;
+        $helpUrl = $event->helpUrl;
 
-        // Keep queued events created before adminUrl was added deploy-safe.
-        if ($adminUrl === null && $event->tenantId !== null) {
-            $adminUrl = $this->tenantUrls->admin(new Tenant(['id' => $event->tenantId]));
+        // Keep queued events created before generated URLs were added deploy-safe.
+        if (($adminUrl === null || $helpUrl === null) && $event->tenantId !== null) {
+            $tenant = new Tenant(['id' => $event->tenantId]);
+            $adminUrl ??= $this->tenantUrls->admin($tenant);
+            $helpUrl ??= $this->tenantUrls->helpCenter($tenant);
         }
 
         return new ScheduledCheckinMail(
@@ -34,6 +37,7 @@ class SendScheduledCheckinEmailListener extends SendEmailListener
             emailSubject: $event->subject,
             bakerName: $event->bakerName,
             adminUrl: $adminUrl,
+            helpUrl: $helpUrl,
         );
     }
 

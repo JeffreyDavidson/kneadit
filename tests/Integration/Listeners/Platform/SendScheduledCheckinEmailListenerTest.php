@@ -20,6 +20,7 @@ test('it sends scheduled checkin email to the tenant', function () {
         body: 'How are things going?',
         subject: 'Week 1 Check-in',
         adminUrl: 'https://baker.kneadit.test/admin',
+        helpUrl: 'https://baker.kneadit.test/admin/help-center',
     );
 
     $listener = resolve(SendScheduledCheckinEmailListener::class);
@@ -28,7 +29,8 @@ test('it sends scheduled checkin email to the tenant', function () {
     Mail::assertQueued(
         ScheduledCheckinMail::class,
         fn (ScheduledCheckinMail $mail) => $mail->hasTo('baker@example.com')
-            && $mail->adminUrl === 'https://baker.kneadit.test/admin',
+            && $mail->adminUrl === 'https://baker.kneadit.test/admin'
+            && $mail->helpUrl === 'https://baker.kneadit.test/admin/help-center',
     );
 });
 
@@ -60,6 +62,7 @@ test('it supports queued events created with a tenant id', function () {
 
     Mail::assertQueued(
         ScheduledCheckinMail::class,
-        fn (ScheduledCheckinMail $mail) => $mail->adminUrl === 'http://legacy-baker.kneadit.test:8000/admin',
+        fn (ScheduledCheckinMail $mail) => $mail->adminUrl === 'http://legacy-baker.kneadit.test:8000/admin'
+            && $mail->helpUrl === 'http://legacy-baker.kneadit.test:8000/admin/help-center',
     );
 });

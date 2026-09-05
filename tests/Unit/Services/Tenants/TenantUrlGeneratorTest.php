@@ -36,6 +36,14 @@ test('generates a tenant admin URL without base URL state', function () {
     expect($url)->toBe('http://test-bakery.kneadit.test:8000/admin');
 });
 
+test('uses the named Filament route for the tenant help center', function () {
+    Config::set('app.url', 'http://kneadit.test:8000');
+
+    $url = resolve(TenantUrlGenerator::class)->helpCenter(new Tenant(['id' => 'test-bakery']));
+
+    expect($url)->toBe('http://test-bakery.kneadit.test:8000/admin/help-center');
+});
+
 test('uses the named route for impersonation without base path query or fragment', function () {
     Config::set('app.url', 'https://getkneadit.app/base?source=test#section');
 

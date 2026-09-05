@@ -48,7 +48,8 @@ test('dispatches event and logs when a tenant matches a checkin', function () {
 
     Event::assertDispatched(fn (ScheduledCheckinDue $event): bool => $event->tenantEmail === 'matching@test.com'
         && $event->subject === 'How is it going?'
-        && $event->adminUrl === 'http://matching-bakery.kneadit.test:8000/admin');
+        && $event->adminUrl === 'http://matching-bakery.kneadit.test:8000/admin'
+        && $event->helpUrl === 'http://matching-bakery.kneadit.test:8000/admin/help-center');
 
     $log = DB::table('checkin_logs')
         ->where('checkin_id', 10)

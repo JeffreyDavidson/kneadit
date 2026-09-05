@@ -65,6 +65,7 @@ class ProcessScheduledCheckins
                         bakerName: $tenant->name,
                         tenantId: $tenant->id,
                         adminUrl: $this->tenantUrls->admin($tenant),
+                        helpUrl: $this->tenantUrls->helpCenter($tenant),
                     ));
 
                     $sent++;
