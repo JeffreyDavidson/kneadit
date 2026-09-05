@@ -5,6 +5,7 @@ use App\Mail\Marketing\CustomerBlastMail;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 
 pest()->use(RefreshDatabase::class);
 
@@ -48,11 +49,15 @@ test('PurchaseOrder has correct subject', function () {
 });
 
 test('StaffInvitationMail has correct subject with store name', function () {
+    URL::forceRootUrl('https://platform.kneadit.test');
+    URL::forceScheme('https');
+
     $invitation = App\Models\Staff\StaffInvitation::factory()->create();
     $mail = new App\Mail\Platform\StaffInvitationMail($invitation, 'Test Bakery', 'https://example.test/accept');
 
     expect($mail->envelope()->subject)->toContain('Test Bakery')
-        ->and($mail->envelope()->subject)->toContain('invited');
+        ->and($mail->envelope()->subject)->toContain('invited')
+        ->and($mail->render())->toContain('href="https://platform.kneadit.test"');
 });
 
 test('HappyBirthday has correct subject with customer name', function () {
