@@ -14,6 +14,7 @@ class ScheduledCheckinMail extends BaseMailable
         public string $emailSubject,
         public ?string $bakerName = null,
         public ?string $adminUrl = null,
+        public ?string $helpUrl = null,
     ) {}
 
     public function envelope(): Envelope
@@ -33,6 +34,7 @@ class ScheduledCheckinMail extends BaseMailable
                 'emailSubject' => $this->emailSubject,
                 'bakerName' => $this->bakerName,
                 'adminUrl' => $this->adminUrl ?? Config::string('app.url'),
+                'helpUrl' => $this->helpUrl ?? $this->adminUrl ?? Config::string('app.url'),
             ],
         );
     }

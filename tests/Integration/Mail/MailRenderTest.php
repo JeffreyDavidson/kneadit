@@ -39,12 +39,14 @@ test('ScheduledCheckinMail has correct subject and renders', function () {
         body: 'Check-in body text',
         emailSubject: 'How is your bakery going?',
         adminUrl: 'https://test-bakery.kneadit.test/admin',
+        helpUrl: 'https://test-bakery.kneadit.test/admin/help-center',
     );
 
     $mail->assertHasSubject('How is your bakery going?');
     expect($mail->render())
         ->toBeString()
-        ->toContain('https://test-bakery.kneadit.test/admin');
+        ->toContain('https://test-bakery.kneadit.test/admin')
+        ->toContain('https://test-bakery.kneadit.test/admin/help-center');
 });
 
 test('TrialExpiredMail has correct subject and renders', function () {

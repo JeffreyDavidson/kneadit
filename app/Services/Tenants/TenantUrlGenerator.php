@@ -25,6 +25,12 @@ final class TenantUrlGenerator
         return (string) $this->tenantUri($tenant)->withPath('/admin');
     }
 
+    public function helpCenter(Tenant $tenant): string
+    {
+        return (string) $this->tenantUri($tenant)
+            ->withPath(URL::route('filament.admin.pages.help-center', absolute: false));
+    }
+
     public function impersonation(Tenant $tenant, string $token): string
     {
         return (string) $this->tenantUri($tenant)
