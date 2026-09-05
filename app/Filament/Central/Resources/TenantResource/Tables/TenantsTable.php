@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
@@ -107,7 +108,7 @@ class TenantsTable
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
                         ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                        ->url(fn (Tenant $record): string => self::storefrontUrl($record))
+                        ->url(fn (Tenant $record, TenantUrlGenerator $urls): string => $urls->storefront($record))
                         ->openUrlInNewTab(),
                 ]),
             ])
@@ -209,25 +210,6 @@ class TenantsTable
                     ->button(),
             ])
             ->defaultSort('created_at', 'desc');
-    }
-
-    private static function storefrontUrl(Tenant $tenant): string
-    {
-        $appUrl = Config::string('app.url');
-
-        $host = parse_url($appUrl, PHP_URL_HOST);
-        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
-
-        if (! is_string($host) || $host === '') {
-            throw new \UnexpectedValueException('The application URL must contain a host.');
-        }
-
-        return sprintf(
-            '%s://%s.%s',
-            is_string($scheme) && $scheme !== '' ? $scheme : 'https',
-            $tenant->id,
-            $host,
-        );
     }
 
     private static function trialDays(): int

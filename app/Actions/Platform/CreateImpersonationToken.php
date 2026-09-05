@@ -4,11 +4,15 @@ namespace App\Actions\Platform;
 
 use App\Models\Platform\ImpersonationToken;
 use App\Models\Platform\Tenant;
-use Illuminate\Support\Facades\Config;
+use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Support\Str;
 
 class CreateImpersonationToken
 {
+    public function __construct(
+        private TenantUrlGenerator $tenantUrlGenerator,
+    ) {}
+
     public function __invoke(Tenant $tenant, ?int $createdByUserId = null): string
     {
         $token = Str::random(64);
@@ -21,23 +25,6 @@ class CreateImpersonationToken
             'created_at' => now(),
         ]);
 
-        // Use the tenant id as the subdomain (not the domains relation, since
-        // tenants store both the FQDN AND the bare subdomain — concatenating
-        // either with $appHost can produce a doubled host like
-        // "{id}.kneadit.test.kneadit.test").
-        $appUrl = Config::string('app.url');
-
-        $appHost = parse_url($appUrl, PHP_URL_HOST);
-        $scheme = parse_url($appUrl, PHP_URL_SCHEME);
-
-        if (! is_string($appHost) || $appHost === '') {
-            throw new \UnexpectedValueException('The application URL must contain a host.');
-        }
-
-        if (! is_string($scheme) || $scheme === '') {
-            $scheme = 'https';
-        }
-
-        return "{$scheme}://{$tenant->id}.{$appHost}/impersonate/{$token}";
+        return $this->tenantUrlGenerator->impersonation($tenant, $token);
     }
 }
