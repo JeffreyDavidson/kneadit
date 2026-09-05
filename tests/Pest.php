@@ -141,7 +141,7 @@ function tenantMiddleware(): array
 function verifiedOrdersSession(array $orders): array
 {
     return [
-        'verified_order_numbers' => array_map(fn ($order) => $order->order_number, $orders),
+        'verified_order_numbers' => array_map(fn (App\Models\Orders\Order $order) => $order->order_number, $orders),
     ];
 }
 
@@ -159,10 +159,7 @@ function verifiedOrdersSession(array $orders): array
 | every subsequent test uses the warm session.
 */
 
-/**
- * @return Pest\Browser\Api\PendingAwaitablePage
- */
-function authenticatedVisit(string $url)
+function authenticatedVisit(string $url): Pest\Browser\Api\PendingAwaitablePage
 {
     return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
 }
@@ -675,7 +672,7 @@ function queueTenantOnboardingNotifications(User $user, Tenant $tenant, ?string 
     );
 
     (new SendWelcomeBakerEmailListener)->handle($event);
-    (new NotifyPlatformOfNewTenantListener)->handle($event);
+    resolve(NotifyPlatformOfNewTenantListener::class)->handle($event);
 }
 
 /**

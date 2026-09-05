@@ -79,8 +79,18 @@ test('WelcomeBaker has correct subject and renders', function () {
 });
 
 test('NewSubscriberNotification has correct subject and renders', function () {
-    $mail = new NewSubscriberNotificationMail('Jane', 'jane@test.com', 'Jane\'s Bakery', 'janes-bakery', 'starter');
+    $mail = new NewSubscriberNotificationMail(
+        'Jane',
+        'jane@test.com',
+        'Jane\'s Bakery',
+        'janes-bakery.kneadit.test',
+        'starter',
+        'https://kneadit.test/central',
+    );
 
     $mail->assertHasSubject("New KneadIt Signup — Jane's Bakery");
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('janes-bakery.kneadit.test')
+        ->toContain('https://kneadit.test/central');
 });
