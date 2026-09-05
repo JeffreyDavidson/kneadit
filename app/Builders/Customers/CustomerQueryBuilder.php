@@ -4,6 +4,7 @@ namespace App\Builders\Customers;
 
 use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
@@ -52,6 +53,20 @@ class CustomerQueryBuilder extends Builder
 
         $this->withSum(['orders as total_spend' => $paidOrders], 'total')
             ->withCount(['orders as order_count' => $paidOrders]);
+
+        return $this;
+    }
+
+    public function withRfmMetrics(): static
+    {
+        $paidOrders = function (Builder $query): void {
+            $query->where('payment_status', PaymentStatus::Paid);
+        };
+
+        $this->whereHas('orders', $paidOrders)
+            ->withCount(['orders as frequency' => $paidOrders])
+            ->withSum(['orders as monetary_cents' => $paidOrders], 'total')
+            ->withMax(['orders as last_order_at' => $paidOrders], 'delivery_date');
 
         return $this;
     }
