@@ -3,6 +3,7 @@
 use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
@@ -12,6 +13,8 @@ beforeEach(function () {
 });
 
 test('can render the view tenant page', function () {
+    Config::set('app.url', 'https://kneadit.test');
+
     $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
     if (! $tenant) {
         DB::table('tenants')->insert([
@@ -26,7 +29,9 @@ test('can render the view tenant page', function () {
     }
 
     livewire(ViewTenant::class, ['record' => 'test-bakery'])
-        ->assertOk();
+        ->assertOk()
+        ->assertSee('test-bakery.kneadit.test')
+        ->assertSeeHtml('href="https://test-bakery.kneadit.test"');
 });
 
 test('can render the view ticket page', function () {
