@@ -2,6 +2,7 @@
 
 use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
+use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
 
@@ -12,6 +13,16 @@ beforeEach(function () {
 
 test('blog index page renders', function () {
     get(route('blog.index'))->assertOk();
+});
+
+test('blog index metadata uses the application asset URL', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<meta property="og:image" content="https://kneadit.test/og.svg" />')
+        ->assertDontSee('https://getkneadit.app/og.svg');
 });
 
 test('index validates category against allowed values', function () {

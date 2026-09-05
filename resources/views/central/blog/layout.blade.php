@@ -21,7 +21,7 @@
     <meta property="og:description" content="@yield('meta_description', 'Resources for cottage food bakers')" />
     <meta property="og:type" content="@yield('og_type', 'website')" />
     <meta property="og:url" content="{{ url()->current() }}" />
-    <meta property="og:image" content="@yield('og_image', 'https://getkneadit.app/og.svg')" />
+    <meta property="og:image" content="@yield('og_image', asset('og.svg'))" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/images/logo-icon.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
