@@ -3,7 +3,9 @@
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\ChurnAlertService;
 use App\Services\Tenants\TenantHealthService;
+use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -151,6 +153,55 @@ test('does not alert for healthy tenants', function () {
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     expect($alerts)->toBeEmpty();
+});
+
+test('does not treat missing health data as low health or incomplete setup', function () {
+    createTenant([
+        'id' => 'unreadable-bakery',
+        'name' => 'Unreadable Bakery',
+        'trial_ends_at' => now()->addHours(24),
+        'created_at' => now()->subDays(30),
+    ]);
+
+    doubleHealthService(recentOrders: 1);
+
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
+
+    expect($alerts->firstWhere('type', 'low_health'))->toBeNull()
+        ->and($alerts->firstWhere('type', 'trial_expiring'))->toBeNull();
+});
+
+test('does not treat a failed recent order read as no orders', function () {
+    $tenant = createTenant([
+        'id' => 'orders-unavailable',
+        'name' => 'Orders Unavailable',
+        'created_at' => now()->subDays(30),
+    ]);
+
+    $healthService = Double::for(TenantHealthService::class);
+    $healthService->allows('getTenantHealthData')->returns(collect([
+        ['id' => $tenant->id, 'health_score' => 80, 'setup_score' => 70],
+    ]));
+    $healthService->expects('getRecentOrderCount')
+        ->with(
+            Argument::satisfies(
+                fn (mixed $candidate): bool => $candidate instanceof Tenant && $candidate->id === $tenant->id,
+            ),
+            30,
+        )
+        ->throws(new RuntimeException('DB connection failed'));
+    app()->instance(TenantHealthService::class, $healthService);
+
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Unable to evaluate tenant order churn', [
+            'tenant_id' => 'orders-unavailable',
+            'error' => 'DB connection failed',
+        ]);
+
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
+
+    expect($alerts->firstWhere('type', 'no_orders'))->toBeNull();
 });
 
 test('critical alerts are sorted before warnings', function () {

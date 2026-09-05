@@ -6,6 +6,7 @@ use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 
 /** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
 class ChurnAlertService
@@ -24,22 +25,24 @@ class ChurnAlertService
         foreach ($tenants as $tenant) {
             $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
             $health = $healthData->get($tenant->id);
-            $healthScore = $health ? $health['health_score'] : 0;
 
-            $this->checkTrialExpiring($tenant, $health, $daysSinceSignup, $alerts);
+            if ($health) {
+                $this->checkTrialExpiring($tenant, $health, $daysSinceSignup, $alerts);
+                $this->checkLowHealth($tenant, $health['health_score'], $daysSinceSignup, $alerts);
+            }
+
             $this->checkNoLogin($tenant, $daysSinceSignup, $alerts);
             $this->checkNoOrders($tenant, $daysSinceSignup, $alerts);
-            $this->checkLowHealth($tenant, $healthScore, $daysSinceSignup, $alerts);
         }
 
         return collect($alerts)->sortByDesc(fn (array $alert): int => $alert['severity'] === 'critical' ? 1 : 0)->values();
     }
 
     /**
-     * @param HealthData|null $health
+     * @param HealthData $health
      * @param array<int, array<string, mixed>> $alerts
      */
-    private function checkTrialExpiring(Tenant $tenant, ?array $health, int $daysSinceSignup, array &$alerts): void
+    private function checkTrialExpiring(Tenant $tenant, array $health, int $daysSinceSignup, array &$alerts): void
     {
         if (! $tenant->trial_ends_at) {
             return;
@@ -50,8 +53,7 @@ class ChurnAlertService
             return;
         }
 
-        $setupScore = $health ? $health['setup_score'] : 0;
-        if ($setupScore >= $this->configInt('monitoring.churn_low_setup_threshold', 15)) {
+        if ($health['setup_score'] >= $this->configInt('monitoring.churn_low_setup_threshold', 15)) {
             return;
         }
 
@@ -98,7 +100,17 @@ class ChurnAlertService
         }
 
         $days = $this->configInt('monitoring.churn_no_orders_days', 30);
-        $recentOrders = $this->healthService->getRecentOrderCount($tenant, $days);
+        try {
+            $recentOrders = $this->healthService->getRecentOrderCount($tenant, $days);
+        } catch (\Throwable $exception) {
+            Log::warning('Unable to evaluate tenant order churn', [
+                'tenant_id' => $tenant->id,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return;
+        }
+
         if ($recentOrders > 0) {
             return;
         }
