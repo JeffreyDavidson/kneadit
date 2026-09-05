@@ -30,10 +30,16 @@ test('PaymentFailedMail has correct subject and renders', function () {
 });
 
 test('ScheduledCheckinMail has correct subject and renders', function () {
-    $mail = new ScheduledCheckinMail('Check-in body text', 'How is your bakery going?');
+    $mail = new ScheduledCheckinMail(
+        body: 'Check-in body text',
+        emailSubject: 'How is your bakery going?',
+        adminUrl: 'https://test-bakery.kneadit.test/admin',
+    );
 
     $mail->assertHasSubject('How is your bakery going?');
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://test-bakery.kneadit.test/admin');
 });
 
 test('TrialExpiredMail has correct subject and renders', function () {

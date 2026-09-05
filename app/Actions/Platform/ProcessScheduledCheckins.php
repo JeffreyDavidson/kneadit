@@ -6,11 +6,14 @@ use App\Events\Platform\ScheduledCheckinDue;
 use App\Models\Operations\CheckinLog;
 use App\Models\Operations\ScheduledCheckin;
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
 class ProcessScheduledCheckins
 {
+    public function __construct(private readonly TenantUrlGenerator $tenantUrls) {}
+
     /** @return array{sent: int, skipped_no_email: int, failures: int, no_active_checkins: bool} */
     public function __invoke(): array
     {
@@ -61,6 +64,7 @@ class ProcessScheduledCheckins
                         subject: $checkin->subject,
                         bakerName: $tenant->name,
                         tenantId: $tenant->id,
+                        adminUrl: $this->tenantUrls->admin($tenant),
                     ));
 
                     $sent++;

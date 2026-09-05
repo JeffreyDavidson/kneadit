@@ -3,6 +3,7 @@
 use App\Actions\Platform\ProcessScheduledCheckins;
 use App\Events\Platform\ScheduledCheckinDue;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,7 @@ test('returns no_active_checkins flag when none are active', function () {
 
 test('dispatches event and logs when a tenant matches a checkin', function () {
     Event::fake([ScheduledCheckinDue::class]);
+    Config::set('app.url', 'http://kneadit.test:8000');
 
     $daysAgo = 7;
 
@@ -45,7 +47,8 @@ test('dispatches event and logs when a tenant matches a checkin', function () {
     expect($summary['sent'])->toBe(1);
 
     Event::assertDispatched(fn (ScheduledCheckinDue $event): bool => $event->tenantEmail === 'matching@test.com'
-        && $event->subject === 'How is it going?');
+        && $event->subject === 'How is it going?'
+        && $event->adminUrl === 'http://matching-bakery.kneadit.test:8000/admin');
 
     $log = DB::table('checkin_logs')
         ->where('checkin_id', 10)

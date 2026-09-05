@@ -20,6 +20,11 @@ final class TenantUrlGenerator
         return (string) $this->tenantUri($tenant)->authority();
     }
 
+    public function admin(Tenant $tenant): string
+    {
+        return (string) $this->tenantUri($tenant)->withPath('/admin');
+    }
+
     public function impersonation(Tenant $tenant, string $token): string
     {
         return (string) $this->tenantUri($tenant)

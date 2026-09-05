@@ -28,6 +28,14 @@ test('generates a storefront host for display', function () {
     expect($host)->toBe('test-bakery.kneadit.test:8000');
 });
 
+test('generates a tenant admin URL without base URL state', function () {
+    Config::set('app.url', 'http://kneadit.test:8000/base?source=test#section');
+
+    $url = resolve(TenantUrlGenerator::class)->admin(new Tenant(['id' => 'test-bakery']));
+
+    expect($url)->toBe('http://test-bakery.kneadit.test:8000/admin');
+});
+
 test('uses the named route for impersonation without base path query or fragment', function () {
     Config::set('app.url', 'https://getkneadit.app/base?source=test#section');
 

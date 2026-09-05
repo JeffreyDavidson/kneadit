@@ -5,6 +5,7 @@ namespace App\Mail\Platform;
 use App\Mail\BaseMailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\Config;
 
 class ScheduledCheckinMail extends BaseMailable
 {
@@ -12,7 +13,7 @@ class ScheduledCheckinMail extends BaseMailable
         public string $body,
         public string $emailSubject,
         public ?string $bakerName = null,
-        public ?string $tenantId = null,
+        public ?string $adminUrl = null,
     ) {}
 
     public function envelope(): Envelope
@@ -24,10 +25,6 @@ class ScheduledCheckinMail extends BaseMailable
 
     public function content(): Content
     {
-        $adminUrl = $this->tenantId
-            ? 'https://' . $this->tenantId . '.getkneadit.app/admin'
-            : 'https://getkneadit.app';
-
         return new Content(
             view: 'emails.platform.scheduled-checkin',
             text: 'emails.platform.scheduled-checkin-text',
@@ -35,7 +32,7 @@ class ScheduledCheckinMail extends BaseMailable
                 'body' => $this->body,
                 'emailSubject' => $this->emailSubject,
                 'bakerName' => $this->bakerName,
-                'adminUrl' => $adminUrl,
+                'adminUrl' => $this->adminUrl ?? Config::string('app.url'),
             ],
         );
     }
