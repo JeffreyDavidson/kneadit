@@ -26,6 +26,21 @@ test('blog index metadata uses application URLs', function () {
         ->assertDontSee('https://getkneadit.app/og.svg');
 });
 
+test('blog header navigation uses application routes', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test" class="nav-brand">KneadIt</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test">Home</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#features">Features</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#pricing">Pricing</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#contact">Contact</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/resources">Resources</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/register" class="nav-cta">Get Started</a>');
+});
+
 test('index validates category against allowed values', function () {
     get(route('blog.index', ['category' => 'malicious-value']))
         ->assertRedirect();
