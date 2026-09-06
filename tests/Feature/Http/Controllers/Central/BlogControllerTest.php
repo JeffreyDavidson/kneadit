@@ -22,6 +22,7 @@ test('blog index metadata uses application URLs', function () {
     get(route('blog.index'))
         ->assertOk()
         ->assertSeeHtml('<meta property="og:image" content="https://kneadit.test/og.svg" />')
+        ->assertSeeHtml('<link rel="icon" href="https://kneadit.test/images/logo-icon.png" type="image/png" />')
         ->assertSeeHtml('href="https://kneadit.test/resources/feed.xml"')
         ->assertDontSee('https://getkneadit.app/og.svg');
 });
