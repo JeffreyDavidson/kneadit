@@ -41,6 +41,18 @@ test('blog header navigation uses application routes', function () {
         ->assertSeeHtml('<a href="https://kneadit.test/register" class="nav-cta">Get Started</a>');
 });
 
+test('blog footer navigation uses application routes', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test/terms">Terms</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/privacy">Privacy</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/resources">Resources</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/changelog">Changelog</a>');
+});
+
 test('index validates category against allowed values', function () {
     get(route('blog.index', ['category' => 'malicious-value']))
         ->assertRedirect();
