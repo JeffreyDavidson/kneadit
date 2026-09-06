@@ -15,7 +15,7 @@
     />
     <meta property="og:url" content="{{ route('pricing') }}" />
     <link rel="canonical" href="{{ route('pricing') }}" />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
