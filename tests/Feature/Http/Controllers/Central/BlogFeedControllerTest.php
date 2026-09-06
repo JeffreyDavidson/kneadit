@@ -35,3 +35,17 @@ test('blog feed renders category enum labels', function () {
         ->assertOk()
         ->assertSeeHtml('<category>Baker Tips</category>');
 });
+
+test('blog feed generates item URLs from the blog show route', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    BlogPost::factory()
+        ->published()
+        ->create(['slug' => 'fresh-bread']);
+
+    get(route('blog.feed'))
+        ->assertOk()
+        ->assertSeeHtml('<link>https://kneadit.test/resources/fresh-bread</link>')
+        ->assertSeeHtml('<guid isPermaLink="true">https://kneadit.test/resources/fresh-bread</guid>');
+});
