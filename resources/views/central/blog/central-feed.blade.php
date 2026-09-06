@@ -5,7 +5,7 @@
     <link>{{ url('/resources') }}</link>
     <description>Guides, tips, and resources for cottage food bakers.</description>
     <language>en-us</language>
-    <atom:link href="{{ url('/resources/feed.xml') }}" rel="self" type="application/rss+xml"/>
+    <atom:link href="{{ route('blog.feed') }}" rel="self" type="application/rss+xml"/>
     @foreach ($posts as $post)
     <item>
         <title>{{ htmlspecialchars($post->title) }}</title>

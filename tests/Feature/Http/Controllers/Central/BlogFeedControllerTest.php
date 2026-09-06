@@ -2,6 +2,7 @@
 
 use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
+use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
 
@@ -11,9 +12,13 @@ beforeEach(function () {
 });
 
 test('blog feed returns xml', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
     get(route('blog.feed'))
         ->assertOk()
-        ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
+        ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
+        ->assertSeeHtml('href="https://kneadit.test/resources/feed.xml"');
 });
 
 test('blog feed renders category enum labels', function () {
@@ -27,5 +32,5 @@ test('blog feed renders category enum labels', function () {
 
     get(route('blog.feed'))
         ->assertOk()
-        ->assertSee('<category>Baker Tips</category>', false);
+        ->assertSeeHtml('<category>Baker Tips</category>');
 });
