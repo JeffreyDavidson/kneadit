@@ -33,7 +33,7 @@
         <div class="nav-links">
             <a href="{{ route('home') }}#features">Features</a>
             <a href="{{ route('blog.index') }}">Resources</a>
-            <a href="/changelog">Changelog</a>
+            <a href="{{ route('changelog') }}">Changelog</a>
             <a href="/register" class="nav-cta">Start Free Trial</a>
         </div>
     </nav>
