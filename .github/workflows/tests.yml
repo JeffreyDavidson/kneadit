@@ -95,7 +95,9 @@ jobs:
   tia:
     name: Pest Test Impact Analysis
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    # TIA can take substantially longer than the regular suite when PCOV builds
+    # the dependency graph; keep it bounded while allowing the impacted run to finish.
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v7
