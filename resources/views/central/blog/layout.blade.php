@@ -30,14 +30,14 @@
 </head>
 <body>
     <nav class="site-nav">
-        <a href="/" class="nav-brand">KneadIt</a>
+        <a href="{{ route('home') }}" class="nav-brand">KneadIt</a>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/#features">Features</a>
-            <a href="/#pricing">Pricing</a>
-            <a href="/#contact">Contact</a>
-            <a href="/resources">Resources</a>
-            <a href="/register" class="nav-cta">Get Started</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('home') }}#features">Features</a>
+            <a href="{{ route('home') }}#pricing">Pricing</a>
+            <a href="{{ route('home') }}#contact">Contact</a>
+            <a href="{{ route('blog.index') }}">Resources</a>
+            <a href="{{ route('register') }}" class="nav-cta">Get Started</a>
         </div>
     </nav>
 
