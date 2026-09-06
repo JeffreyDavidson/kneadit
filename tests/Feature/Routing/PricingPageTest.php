@@ -13,5 +13,6 @@ test('pricing metadata uses the pricing route URL', function () {
         ->assertOk()
         ->assertSee('<meta property="og:url" content="https://kneadit.test/pricing" />', escape: false)
         ->assertSee('<link rel="canonical" href="https://kneadit.test/pricing" />', escape: false)
+        ->assertSeeHtml('<link rel="icon" href="https://kneadit.test/images/logo-icon.png" type="image/png" />')
         ->assertDontSee('https://getkneadit.app/pricing');
 });
