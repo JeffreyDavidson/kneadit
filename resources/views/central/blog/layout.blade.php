@@ -11,12 +11,7 @@
     @hasSection('canonical')
         <link rel="canonical" href="@yield('canonical')" />
     @endif
-    <link
-        rel="alternate"
-        type="application/rss+xml"
-        title="KneadIt Resources"
-        href="{{ url('/resources/feed.xml') }}"
-    />
+    <link rel="alternate" type="application/rss+xml" title="KneadIt Resources" href="{{ route('blog.feed') }}" />
     <meta property="og:title" content="@yield('title', 'Blog — KneadIt')" />
     <meta property="og:description" content="@yield('meta_description', 'Resources for cottage food bakers')" />
     <meta property="og:type" content="@yield('og_type', 'website')" />

@@ -15,13 +15,14 @@ test('blog index page renders', function () {
     get(route('blog.index'))->assertOk();
 });
 
-test('blog index metadata uses the application asset URL', function () {
+test('blog index metadata uses application URLs', function () {
     URL::forceRootUrl('https://kneadit.test');
     URL::forceScheme('https');
 
     get(route('blog.index'))
         ->assertOk()
         ->assertSeeHtml('<meta property="og:image" content="https://kneadit.test/og.svg" />')
+        ->assertSeeHtml('href="https://kneadit.test/resources/feed.xml"')
         ->assertDontSee('https://getkneadit.app/og.svg');
 });
 
