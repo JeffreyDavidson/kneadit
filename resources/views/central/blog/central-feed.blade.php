@@ -9,8 +9,8 @@
     @foreach ($posts as $post)
     <item>
         <title>{{ htmlspecialchars($post->title) }}</title>
-        <link>{{ url("/resources/{$post->slug}") }}</link>
-        <guid isPermaLink="true">{{ url("/resources/{$post->slug}") }}</guid>
+        <link>{{ route('blog.show', ['centralPost' => $post->slug]) }}</link>
+        <guid isPermaLink="true">{{ route('blog.show', ['centralPost' => $post->slug]) }}</guid>
         <description>{{ htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))) }}</description>
         <pubDate>{{ $post->published_at?->toRfc2822String() }}</pubDate>
         <category>{{ $post->category?->getLabel() ?? 'Uncategorized' }}</category>
