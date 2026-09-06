@@ -16,5 +16,6 @@ test('pricing metadata uses the pricing route URL', function () {
         ->assertSeeHtml('<link rel="icon" href="https://kneadit.test/images/logo-icon.png" type="image/png" />')
         ->assertSee('href="https://kneadit.test" class="nav-logo"', escape: false)
         ->assertSee('src="https://kneadit.test/images/logo-transparent.png" alt="KneadIt"', escape: false)
+        ->assertSeeHtml('<a href="https://kneadit.test#features">Features</a>')
         ->assertDontSee('https://getkneadit.app/pricing');
 });

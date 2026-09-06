@@ -31,7 +31,7 @@
             ><img src="{{ asset('images/logo-transparent.png') }}" alt="KneadIt"
         /></a>
         <div class="nav-links">
-            <a href="/#features">Features</a>
+            <a href="{{ route('home') }}#features">Features</a>
             <a href="/resources">Resources</a>
             <a href="/changelog">Changelog</a>
             <a href="/register" class="nav-cta">Start Free Trial</a>
