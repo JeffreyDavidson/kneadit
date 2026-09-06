@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
     <title>KneadIt — Resources for Cottage Food Bakers</title>
-    <link>{{ url('/resources') }}</link>
+    <link>{{ route('blog.index') }}</link>
     <description>Guides, tips, and resources for cottage food bakers.</description>
     <language>en-us</language>
     <atom:link href="{{ route('blog.feed') }}" rel="self" type="application/rss+xml"/>
