@@ -18,6 +18,7 @@ test('blog feed returns xml', function () {
     get(route('blog.feed'))
         ->assertOk()
         ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
+        ->assertSeeHtml('<link>https://kneadit.test/resources</link>')
         ->assertSeeHtml('href="https://kneadit.test/resources/feed.xml"');
 });
 
