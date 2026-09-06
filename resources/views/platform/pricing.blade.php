@@ -27,7 +27,9 @@
 </head>
 <body>
     <nav class="nav">
-        <a href="/" class="nav-logo"><img src="{{ asset('images/logo-transparent.png') }}" alt="KneadIt" /></a>
+        <a href="{{ route('home') }}" class="nav-logo"
+            ><img src="{{ asset('images/logo-transparent.png') }}" alt="KneadIt"
+        /></a>
         <div class="nav-links">
             <a href="/#features">Features</a>
             <a href="/resources">Resources</a>
