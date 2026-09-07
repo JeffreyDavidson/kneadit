@@ -6,11 +6,11 @@
         </div>
 
         <div class="card p-8">
-            @if (session('status'))
+            @session('status')
                 <div class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                    {{ session('status') }}
+                    {{ $value }}
                 </div>
-            @endif
+            @endsession
 
             <form
                 method="POST"
