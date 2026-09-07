@@ -25,8 +25,7 @@
         rel="stylesheet"
     />
 
-    @include('components.layouts.storefront-styles')
-    {{-- Original style block replaced by include above --}}
+    <x-layouts.storefront-styles />
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="{{ tenant()->brand_color_primary ?? '#d4920c' }}" />
