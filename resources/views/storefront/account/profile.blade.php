@@ -10,11 +10,11 @@
             </a>
         </div>
 
-        @if (session('status'))
+        @session('status')
             <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                {{ session('status') }}
+                {{ $value }}
             </div>
-        @endif
+        @endsession
 
         <div class="card p-6">
             <p class="text-warm-500 mb-6 text-sm">
