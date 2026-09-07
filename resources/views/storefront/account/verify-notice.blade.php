@@ -6,11 +6,11 @@
         </div>
 
         <div class="card space-y-5 p-8">
-            @if (session('status'))
+            @session('status')
                 <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                    {{ session('status') }}
+                    {{ $value }}
                 </div>
-            @endif
+            @endsession
 
             <p class="text-warm-700 text-sm leading-relaxed">
                 Click the link in the email we just sent to <strong>{{ auth('customer')->user()->email }}</strong> to
