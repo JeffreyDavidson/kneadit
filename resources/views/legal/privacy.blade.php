@@ -8,7 +8,7 @@
         name="description"
         content="KneadIt Privacy Policy — how we collect, use, and protect your data on our cottage food baker management platform."
     />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,12 +20,12 @@
 </head>
 <body>
     <nav class="site-nav">
-        <a href="/" class="nav-brand">KneadIt</a>
+        <a href="{{ route('home') }}" class="nav-brand">KneadIt</a>
         <div class="nav-links">
-            <a href="/#features">Features</a>
-            <a href="/#pricing">Pricing</a>
-            <a href="/#contact">Contact</a>
-            <a href="/register" class="nav-cta">Get Started</a>
+            <a href="{{ route('home') }}#features">Features</a>
+            <a href="{{ route('home') }}#pricing">Pricing</a>
+            <a href="{{ route('home') }}#contact">Contact</a>
+            <a href="{{ route('register') }}" class="nav-cta">Get Started</a>
         </div>
     </nav>
 
@@ -274,9 +274,9 @@
         <div class="footer-brand">KneadIt</div>
         <div class="footer-tagline">Business management for cottage food bakers</div>
         <div class="footer-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-            <a href="/#contact">Contact</a>
+            <a href="{{ route('privacy') }}">Privacy</a>
+            <a href="{{ route('terms') }}">Terms</a>
+            <a href="{{ route('home') }}#contact">Contact</a>
         </div>
         <div class="footer-made">© 2026 KneadIt · Created by Infinity Digital</div>
     </footer>
