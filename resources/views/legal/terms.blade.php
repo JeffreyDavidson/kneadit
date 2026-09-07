@@ -19,15 +19,7 @@
     @include('partials.fathom')
 </head>
 <body>
-    <nav class="site-nav">
-        <a href="{{ route('home') }}" class="nav-brand">KneadIt</a>
-        <div class="nav-links">
-            <a href="{{ route('home') }}#features">Features</a>
-            <a href="{{ route('home') }}#pricing">Pricing</a>
-            <a href="{{ route('home') }}#contact">Contact</a>
-            <a href="{{ route('register') }}" class="nav-cta">Get Started</a>
-        </div>
-    </nav>
+    <x-legal.navigation />
 
     <div class="legal-hero">
         <h1>Terms of Service</h1>
@@ -311,15 +303,6 @@
         </div>
     </div>
 
-    <footer>
-        <div class="footer-brand">KneadIt</div>
-        <div class="footer-tagline">Business management for cottage food bakers</div>
-        <div class="footer-links">
-            <a href="{{ route('privacy') }}">Privacy</a>
-            <a href="{{ route('terms') }}">Terms</a>
-            <a href="{{ route('home') }}#contact">Contact</a>
-        </div>
-        <div class="footer-made">© 2026 KneadIt · Created by Infinity Digital</div>
-    </footer>
+    <x-legal.footer />
 </body>
 </html>
