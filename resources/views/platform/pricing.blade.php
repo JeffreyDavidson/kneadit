@@ -34,7 +34,7 @@
             <a href="{{ route('home') }}#features">Features</a>
             <a href="{{ route('blog.index') }}">Resources</a>
             <a href="{{ route('changelog') }}">Changelog</a>
-            <a href="/register" class="nav-cta">Start Free Trial</a>
+            <a href="{{ route('register') }}" class="nav-cta">Start Free Trial</a>
         </div>
     </nav>
 
@@ -66,7 +66,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card popular">
                 <span class="price-badge">Most Popular</span>
@@ -88,7 +88,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card">
                 <div class="price-tier">Pro</div>
@@ -114,7 +114,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
         </div>
     </section>
@@ -172,7 +172,8 @@
     </section>
 
     <div class="pricing-footer">
-        <a href="/">← Back to KneadIt</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
+        <a href="{{ route('home') }}">← Back to KneadIt</a> · <a href="{{ route('terms') }}">Terms</a> ·
+        <a href="{{ route('privacy') }}">Privacy</a>
     </div>
 </body>
 </html>
