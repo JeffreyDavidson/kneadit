@@ -34,6 +34,15 @@ test('forgot-password still reports success for unknown emails to avoid leaking 
     Notification::assertNothingSent();
 });
 
+test('forgot-password page displays its session status', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(['status' => 'We have emailed your password reset link.'])
+        ->get(route('account.password.request', [], false));
+
+    $response->assertOk()
+        ->assertSee('We have emailed your password reset link.');
+});
+
 test('reset-password updates the customer password and redirects to login', function () {
     $customer = Customer::factory()->withPassword('old-password-1')->create(['email' => 'jane@example.com']);
 
