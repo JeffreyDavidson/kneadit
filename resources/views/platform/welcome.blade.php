@@ -20,7 +20,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,8 +41,8 @@
             <a href="#story">Our Story</a>
             <a href="#pricing">Pricing</a>
             <a href="#contact">Contact</a>
-            <a href="/resources">Resources</a>
-            <a href="/register" class="nav-cta">Get Started</a>
+            <a href="{{ route('blog.index') }}">Resources</a>
+            <a href="{{ route('register') }}" class="nav-cta">Get Started</a>
         </div>
     </nav>
 
@@ -99,7 +99,7 @@
 
             <div class="reveal reveal-d3" style="margin-top: 2.5rem">
                 <a
-                    href="/register"
+                    href="{{ route('register') }}"
                     class="cta-btn"
                     style="display: inline-block; padding: 0.85rem 2.5rem; border-radius: 14px; text-decoration: none"
                 >Start Free Trial</a>
@@ -555,7 +555,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card popular reveal reveal-d1">
                 <span class="price-badge">Most Popular</span>
@@ -577,7 +577,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card reveal reveal-d2">
                 <div class="price-tier">Pro</div>
@@ -603,7 +603,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
         </div>
     </section>
@@ -754,7 +754,7 @@
             <p class="cta-sub reveal reveal-d1">Start your 30-day free trial today.</p>
             <div class="reveal reveal-d1" style="margin-top: 1.5rem">
                 <a
-                    href="/register"
+                    href="{{ route('register') }}"
                     class="cta-btn"
                     style="display: inline-block; padding: 0.85rem 2.5rem; border-radius: 14px; text-decoration: none"
                 >Get Started Free</a>
@@ -768,8 +768,8 @@
         <div class="footer-tagline">Business management for cottage food bakers</div>
         <!-- social removed -->
         <div class="footer-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
+            <a href="{{ route('privacy') }}">Privacy</a>
+            <a href="{{ route('terms') }}">Terms</a>
             <a href="#contact">Contact</a>
         </div>
         <div class="footer-made">© 2026 KneadIt · Created by Infinity Digital</div>
