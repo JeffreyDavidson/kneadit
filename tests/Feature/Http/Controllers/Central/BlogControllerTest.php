@@ -12,7 +12,12 @@ beforeEach(function () {
 });
 
 test('blog index page renders', function () {
-    get(route('blog.index'))->assertOk();
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test/register">Start Your Free Trial →</a>');
 });
 
 test('blog index metadata uses application URLs', function () {
@@ -60,6 +65,9 @@ test('index validates category against allowed values', function () {
 });
 
 test('blog show renders a central post by slug', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
     $post = BlogPost::factory()
         ->published()
         ->create([
@@ -69,7 +77,8 @@ test('blog show renders a central post by slug', function () {
 
     get(route('blog.show', $post->slug))
         ->assertOk()
-        ->assertSee('Central Resource Article');
+        ->assertSee('Central Resource Article')
+        ->assertSeeHtml('<a href="https://kneadit.test/register">Start Your Free Trial →</a>');
 });
 
 test('blog show ignores related published posts without routable slugs', function () {
