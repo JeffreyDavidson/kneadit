@@ -1,6 +1,6 @@
 @use(App\Enums\Engagement\SurveyQuestionType)
 <x-layouts.storefront>
-    @if (session('survey_submitted'))
+    @session('survey_submitted')
         {{-- Success State --}}
         <x-storefront.hero-section
             :image="$settings->heroImageUrl()"
@@ -23,7 +23,7 @@
                 </x-storefront.button>
             </div>
         </x-storefront.hero-section>
-    @else
+        @else
         {{-- Photo-Forward Hero --}}
         <x-storefront.hero-section
             :image="$settings->heroImageUrl()"
@@ -148,5 +148,5 @@
                 </form>
             </div>
         </section>
-    @endif
+    @endsession
 </x-layouts.storefront>
