@@ -62,7 +62,7 @@
             <p>
                 KneadIt gives cottage food bakers the tools to take orders, manage finances, and grow, all in one place.
             </p>
-            <a href="/register">Start Your Free Trial →</a>
+            <a href="{{ route('register') }}">Start Your Free Trial →</a>
         </div>
 
         {{-- Disclaimer --}}

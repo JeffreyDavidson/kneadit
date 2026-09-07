@@ -147,6 +147,6 @@
     <section class="res-cta">
         <h2>Ready to manage your bakery?</h2>
         <p>KneadIt gives cottage food bakers the tools to take orders, manage finances, and grow.</p>
-        <a href="/register">Start Your Free Trial →</a>
+        <a href="{{ route('register') }}">Start Your Free Trial →</a>
     </section>
 @endsection
