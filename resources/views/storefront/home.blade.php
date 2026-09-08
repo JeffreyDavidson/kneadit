@@ -26,7 +26,7 @@
                 <x-home.cta :config="$config" />
                 @break
             @case ('social')
-                @include('partials.home.social', ['config' => $config])
+                <x-home.social />
                 @break
         @endswitch
     @endforeach
@@ -41,6 +41,6 @@
         <x-home.gallery :config="['count' => 4, 'title' => 'Customer Gallery', 'subtitle' => 'Shared by our community']" />
         <x-home.blog-posts :config="['count' => 3, 'title' => 'Latest Updates', 'subtitle' => 'From our kitchen']" />
         <x-home.cta :config="['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']" />
-        @include('partials.home.social', ['config' => []])
+        <x-home.social />
     @endif
 </x-layouts.storefront>

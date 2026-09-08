@@ -1,7 +1,3 @@
-@php
-    $socialLinks = $settings->homepage->socialMediaLinks;
-    $storeName = $settings->store->name;
-@endphp
 @if (! empty(array_filter($socialLinks ?? [])))
     <section class="bg-warm-200 px-4 py-16">
         <div class="mx-auto max-w-3xl text-center">
