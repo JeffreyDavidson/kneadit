@@ -49,7 +49,7 @@
             @foreach ($categories as $key => $label)
                 <a
                     href="{{ $key === 'all' ? route('blog.index') : route('blog.index', ['category' => $key]) }}"
-                    class="{{ $activeCategory === $key ? 'on' : '' }}"
+                    @class(['on' => $activeCategory === $key])
                 >{{ $label }}</a>
             @endforeach
         </div>
@@ -73,7 +73,7 @@
             {{-- Grid --}}
             <div class="grid">
                 @foreach ($posts as $i => $post)
-                    @if ($posts->currentPage() === 1 && $i === 0) @continue @endif
+                    @continue($posts->currentPage() === 1 && $i === 0)
                     <a href="{{ route('blog.show', $post->slug) }}" class="card">
                         <div class="card-cat">{{ $post->category?->getLabel() ?? "Uncategorized" }}</div>
                         <h3>{{ $post->title }}</h3>
