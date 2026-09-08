@@ -5,7 +5,7 @@
                 <x-home.hero />
                 @break
             @case ('about')
-                @include('partials.home.about')
+                <x-home.about />
                 @break
             @case ('featured_products')
                 <x-home.featured-products :config="$config" />
@@ -34,7 +34,7 @@
     {{-- Fallback: if no homepage_sections configured, show all sections with defaults --}}
     @if (empty($settings->homepage->sections))
         <x-home.hero />
-        @include('partials.home.about')
+        <x-home.about />
         <x-home.featured-products :config="['count' => 6, 'title' => 'Our Favorites', 'subtitle' => 'Freshly made']" />
         <x-home.categories :config="['title' => 'What We Bake', 'subtitle' => 'Something for everyone']" />
         <x-home.reviews :config="['count' => 3, 'title' => 'Kind Words', 'subtitle' => 'What our customers say']" />
