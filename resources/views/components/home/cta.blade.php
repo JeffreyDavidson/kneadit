@@ -1,27 +1,7 @@
-@php
-    $heading = $config['heading'] ?? 'Treat Yourself Today';
-    $subtext = $config['subtext'] ?? null;
-    $buttonText = $config['button_text'] ?? 'Start Your Order';
-    $buttonLink = $config['button_link'] ?? 'order';
-    $leadTimeHours = $settings->orders->leadTimeHours;
-    $storeName = $settings->store->name;
-    $heroImage = $settings->branding->heroImage;
-
-    $linkMap = [
-        'order' => route('order.create'),
-        'menu' => route('storefront.menu'),
-        'contact' => route('contact.show'),
-    ];
-    $href = $linkMap[$buttonLink] ?? route('order.create');
-
-    $ctaImageUrl = $heroImage
-        ? Storage::url($heroImage)
-        : 'https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=1920&q=80';
-@endphp
 <section class="relative min-h-[500px] overflow-hidden py-0">
     {{-- Background image --}}
     <div class="absolute inset-0">
-        <img src="{{ $ctaImageUrl }}" alt="" class="h-full w-full object-cover brightness-[0.3]" />
+        <img src="{{ $imageUrl }}" alt="" class="h-full w-full object-cover brightness-[0.3]" />
     </div>
 
     {{-- Gradient overlay --}}
