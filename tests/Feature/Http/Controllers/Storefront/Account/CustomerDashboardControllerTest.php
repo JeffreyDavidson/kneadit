@@ -13,14 +13,16 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('dashboard renders with empty state for a fresh customer', function () {
+test('dashboard renders with empty state and session status for a fresh customer', function () {
     $customer = Customer::factory()->verified()->withPassword()->create();
 
     actingAs($customer, 'customer');
 
     withoutMiddleware(tenantMiddleware())
+        ->withSession(['status' => 'Welcome back.'])
         ->get(route('account.dashboard', [], false))
         ->assertOk()
+        ->assertSee('Welcome back.')
         ->assertViewIs('storefront.account.dashboard')
         ->assertViewHas('customer', fn (Customer $passed) => $passed->is($customer))
         ->assertViewHas('orders', fn ($orders) => $orders->isEmpty())

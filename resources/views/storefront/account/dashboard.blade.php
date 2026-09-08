@@ -9,11 +9,11 @@
 @endphp
 <x-layouts.storefront>
     <section class="mx-auto max-w-4xl px-4 py-12">
-        @if (session('status'))
+        @session('status')
             <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                {{ session('status') }}
+                {{ $value }}
             </div>
-        @endif
+        @endsession
 
         @if (! $customer->hasVerifiedEmail())
             <div class="mb-6 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
