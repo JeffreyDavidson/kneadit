@@ -103,11 +103,11 @@
 
                 <a
                     href="{{ route('storefront.menu') }}"
-                    class="nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}"
+                    @class(['nav-link font-display', 'active' => request()->routeIs('storefront.menu')])
                 >Menu</a>
                 <a
                     href="{{ route('order.create') }}"
-                    class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}"
+                    @class(['nav-link font-display', 'active' => request()->routeIs('order.create')])
                 >Order</a>
 
                 <!-- Explore Dropdown -->
@@ -117,7 +117,7 @@
                             explore = ! explore;
                             account = false;
                         "
-                        class="nav-link font-display inline-flex items-center gap-1 {{ $exploreActive ? 'active' : '' }}"
+                        @class(['nav-link font-display inline-flex items-center gap-1', 'active' => $exploreActive])
                         :aria-expanded="explore"
                     >
                         Explore
@@ -139,24 +139,24 @@
                     >
                         <a
                             href="{{ route('storefront.blog') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.blog*')])
                         >Blog</a>
                         <a
                             href="{{ route('storefront.gallery') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.gallery')])
                         >Gallery</a>
                         <a
                             href="{{ route('storefront.reviews') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.reviews')])
                         >Reviews</a>
                         <a
                             href="{{ route('storefront.about') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.about')])
                         >About</a>
                         @if ($cateringEnabled)
                         <a
                             href="{{ route('storefront.catering') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.catering')])
                         >Catering</a>
                         @endif
                     </div>
@@ -169,7 +169,7 @@
                             account = ! account;
                             explore = false;
                         "
-                        class="nav-link font-display inline-flex items-center gap-1 {{ $accountActive ? 'active' : '' }}"
+                        @class(['nav-link font-display inline-flex items-center gap-1', 'active' => $accountActive])
                         :aria-expanded="account"
                     >
                         My Account
@@ -191,22 +191,22 @@
                     >
                         <a
                             href="{{ route('order.track') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('order.track')])
                         >Track Order</a>
                         <a
                             href="{{ route('storefront.giftCards') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.giftCards') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.giftCards')])
                         >Gift Cards</a>
                         @if ($loyaltyEnabled)
                         <a
                             href="{{ route('storefront.rewards') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('storefront.rewards')])
                         >{{ $loyaltyName }}</a>
                         @endif
                         @auth('customer')
                         <a
                             href="{{ route('account.dashboard') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('account.dashboard') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('account.dashboard')])
                         >My dashboard</a>
                         <form method="POST" action="{{ route('account.logout') }}">
                             @csrf
@@ -217,11 +217,11 @@
                         @else
                         <a
                             href="{{ route('account.login.show') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('account.login.show') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('account.login.show')])
                         >Sign in</a>
                         <a
                             href="{{ route('account.register.show') }}"
-                            class="nav-dropdown-link font-display {{ request()->routeIs('account.register.show') ? 'active' : '' }}"
+                            @class(['nav-dropdown-link font-display', 'active' => request()->routeIs('account.register.show')])
                         >Create account</a>
                         @endauth
                     </div>
@@ -229,7 +229,7 @@
 
                 <a
                     href="{{ route('contact.show') }}"
-                    class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}"
+                    @class(['nav-link font-display', 'active' => request()->routeIs('contact.show')])
                 >Contact</a>
             </div>
 
@@ -252,17 +252,17 @@
                 <div x-show="open" x-collapse class="mt-4 space-y-1">
                     <a
                         href="{{ route('storefront.menu') }}"
-                        class="block nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}"
+                        @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.menu')])
                     >Menu</a>
                     <a
                         href="{{ route('order.create') }}"
-                        class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}"
+                        @class(['block nav-link font-display', 'active' => request()->routeIs('order.create')])
                     >Order</a>
 
                     <!-- Mobile Explore Group -->
                     <button
                         @click="explore = ! explore"
-                        class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $exploreActive ? 'active' : '' }}"
+                        @class(['w-full text-left nav-link font-display inline-flex items-center justify-between', 'active' => $exploreActive])
                         :aria-expanded="explore"
                     >
                         Explore
@@ -275,24 +275,24 @@
                     <div x-show="explore" x-collapse class="space-y-1 pl-4">
                         <a
                             href="{{ route('storefront.blog') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.blog*')])
                         >Blog</a>
                         <a
                             href="{{ route('storefront.gallery') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.gallery')])
                         >Gallery</a>
                         <a
                             href="{{ route('storefront.reviews') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.reviews')])
                         >Reviews</a>
                         <a
                             href="{{ route('storefront.about') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.about')])
                         >About</a>
                         @if ($cateringEnabled)
                         <a
                             href="{{ route('storefront.catering') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.catering')])
                         >Catering</a>
                         @endif
                     </div>
@@ -300,7 +300,7 @@
                     <!-- Mobile Account Group -->
                     <button
                         @click="account = ! account"
-                        class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $accountActive ? 'active' : '' }}"
+                        @class(['w-full text-left nav-link font-display inline-flex items-center justify-between', 'active' => $accountActive])
                         :aria-expanded="account"
                     >
                         My Account
@@ -313,22 +313,22 @@
                     <div x-show="account" x-collapse class="space-y-1 pl-4">
                         <a
                             href="{{ route('order.track') }}"
-                            class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('order.track')])
                         >Track Order</a>
                         <a
                             href="{{ route('storefront.giftCards') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.giftCards') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.giftCards')])
                         >Gift Cards</a>
                         @if ($loyaltyEnabled)
                         <a
                             href="{{ route('storefront.rewards') }}"
-                            class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('storefront.rewards')])
                         >{{ $loyaltyName }}</a>
                         @endif
                         @auth('customer')
                         <a
                             href="{{ route('account.dashboard') }}"
-                            class="block nav-link font-display {{ request()->routeIs('account.dashboard') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('account.dashboard')])
                         >My dashboard</a>
                         <form method="POST" action="{{ route('account.logout') }}">
                             @csrf
@@ -337,18 +337,18 @@
                         @else
                         <a
                             href="{{ route('account.login.show') }}"
-                            class="block nav-link font-display {{ request()->routeIs('account.login.show') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('account.login.show')])
                         >Sign in</a>
                         <a
                             href="{{ route('account.register.show') }}"
-                            class="block nav-link font-display {{ request()->routeIs('account.register.show') ? 'active' : '' }}"
+                            @class(['block nav-link font-display', 'active' => request()->routeIs('account.register.show')])
                         >Create account</a>
                         @endauth
                     </div>
 
                     <a
                         href="{{ route('contact.show') }}"
-                        class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}"
+                        @class(['block nav-link font-display', 'active' => request()->routeIs('contact.show')])
                     >Contact</a>
                 </div>
             </div>
