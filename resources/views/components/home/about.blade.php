@@ -1,8 +1,3 @@
-@php
-    $aboutUs = $settings->branding->aboutUsText;
-    $storeName = $settings->store->name;
-    $storePhoto = $settings->store->photo;
-@endphp
 @if ($aboutUs)
     <section class="bg-warm-50 relative overflow-hidden px-4 py-24">
         <div class="mx-auto max-w-6xl">
