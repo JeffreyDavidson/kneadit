@@ -23,7 +23,7 @@
                 <x-home.blog-posts :config="$config" />
                 @break
             @case ('cta')
-                @include('partials.home.cta', ['config' => $config])
+                <x-home.cta :config="$config" />
                 @break
             @case ('social')
                 @include('partials.home.social', ['config' => $config])
@@ -40,7 +40,7 @@
         <x-home.reviews :config="['count' => 3, 'title' => 'Kind Words', 'subtitle' => 'What our customers say']" />
         <x-home.gallery :config="['count' => 4, 'title' => 'Customer Gallery', 'subtitle' => 'Shared by our community']" />
         <x-home.blog-posts :config="['count' => 3, 'title' => 'Latest Updates', 'subtitle' => 'From our kitchen']" />
-        @include('partials.home.cta', ['config' => ['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']])
+        <x-home.cta :config="['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']" />
         @include('partials.home.social', ['config' => []])
     @endif
 </x-layouts.storefront>
