@@ -27,3 +27,19 @@ test('switching the year reloads financial data', function () {
     $component->assertOk();
     $component->assertSet('selectedYear', now()->year - 1);
 });
+
+test('profit colors distinguish losses from nonnegative results', function (float $net, string $color) {
+    $component = livewire(FinanceSummary::class);
+
+    $component->set('netProfit', $net);
+    $component->set('monthlyBreakdown', collect([
+        ['month_name' => 'January', 'revenue' => 100.0, 'expenses' => 100.0 - $net, 'net' => $net],
+    ]));
+
+    $component->assertSee("text-3xl font-bold text-{$color}-900", false);
+    $component->assertSee("px-4 py-3 text-right font-medium text-{$color}-600", false);
+})->with([
+    'profit' => [25.0, 'green'],
+    'break even' => [0.0, 'green'],
+    'loss' => [-25.0, 'red'],
+]);
