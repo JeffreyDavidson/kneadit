@@ -33,7 +33,7 @@
                     @foreach ($allowedSizes as $size)
                         <button
                             type="button"
-                            class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
+                            @class(['config-size-btn', 'active' => ($widget['size'] ?? 'sm') === $size->value])
                             wire:click="setSize({{ $index }}, '{{ $size->value }}')"
                             title="{{ $size->getLabel() }} ({{ $size->columns() }}/3 width)"
                         >
@@ -50,7 +50,7 @@
 
             <button
                 type="button"
-                class="config-ctrl config-toggle {{ ($widget['visible'] ?? true) ? 'is-on' : 'is-off' }}"
+                @class(['config-ctrl config-toggle', 'is-on' => $widget['visible'] ?? true, 'is-off' => ! ($widget['visible'] ?? true)])
                 wire:click="toggleWidget({{ $index }})"
                 title="{{ ($widget['visible'] ?? true) ? 'Hide widget' : 'Show widget' }}"
             >
