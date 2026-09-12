@@ -26,6 +26,7 @@
 !/docs/**
 /auth.json
 /node_modules
+.venv/
 /public/build
 /public/hot
 /public/storage
