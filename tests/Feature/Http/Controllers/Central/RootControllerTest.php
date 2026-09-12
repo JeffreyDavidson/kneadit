@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Central\RootController;
-use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Tenant\Storefront\HomeController;
 use App\Models\Platform\Tenant;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response as HttpResponse;

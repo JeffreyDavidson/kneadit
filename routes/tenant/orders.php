@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Storefront\ApplyReferralCodeController;
-use App\Http\Controllers\Storefront\PersistCartController;
-use App\Http\Controllers\Storefront\RecoverCartController;
-use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
-use App\Http\Controllers\Storefront\ShowOrderFormController;
-use App\Http\Controllers\Storefront\SubmitOrderController;
 use App\Http\Controllers\Tenant\Orders\ApplyCouponController;
 use App\Http\Controllers\Tenant\Orders\ApplyGiftCardController;
 use App\Http\Controllers\Tenant\Orders\AvailabilityController;
@@ -20,6 +14,12 @@ use App\Http\Controllers\Tenant\Orders\StripeCancelController;
 use App\Http\Controllers\Tenant\Orders\StripeSuccessController;
 use App\Http\Controllers\Tenant\Orders\TrackingController;
 use App\Http\Controllers\Tenant\Orders\VerifyOrderAccessController;
+use App\Http\Controllers\Tenant\Storefront\ApplyReferralCodeController;
+use App\Http\Controllers\Tenant\Storefront\PersistCartController;
+use App\Http\Controllers\Tenant\Storefront\RecoverCartController;
+use App\Http\Controllers\Tenant\Storefront\ShowOrderConfirmationController;
+use App\Http\Controllers\Tenant\Storefront\ShowOrderFormController;
+use App\Http\Controllers\Tenant\Storefront\SubmitOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');

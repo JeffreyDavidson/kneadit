@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Tenant\Storefront\HomeController;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;

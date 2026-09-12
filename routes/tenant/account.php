@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
-use App\Http\Controllers\Storefront\Account\LoginCustomerController;
-use App\Http\Controllers\Storefront\Account\LogoutCustomerController;
-use App\Http\Controllers\Storefront\Account\OrderHistoryController;
-use App\Http\Controllers\Storefront\Account\ProfileController;
-use App\Http\Controllers\Storefront\Account\RegisterCustomerController;
-use App\Http\Controllers\Storefront\Account\ResendCustomerVerificationController;
-use App\Http\Controllers\Storefront\Account\ResetPasswordController;
-use App\Http\Controllers\Storefront\Account\SendPasswordResetLinkController;
-use App\Http\Controllers\Storefront\Account\ShowEmailVerifyNoticeController;
-use App\Http\Controllers\Storefront\Account\ShowResetPasswordController;
-use App\Http\Controllers\Storefront\Account\VerifyCustomerEmailController;
+use App\Http\Controllers\Tenant\Storefront\Account\CustomerDashboardController;
+use App\Http\Controllers\Tenant\Storefront\Account\LoginCustomerController;
+use App\Http\Controllers\Tenant\Storefront\Account\LogoutCustomerController;
+use App\Http\Controllers\Tenant\Storefront\Account\OrderHistoryController;
+use App\Http\Controllers\Tenant\Storefront\Account\ProfileController;
+use App\Http\Controllers\Tenant\Storefront\Account\RegisterCustomerController;
+use App\Http\Controllers\Tenant\Storefront\Account\ResendCustomerVerificationController;
+use App\Http\Controllers\Tenant\Storefront\Account\ResetPasswordController;
+use App\Http\Controllers\Tenant\Storefront\Account\SendPasswordResetLinkController;
+use App\Http\Controllers\Tenant\Storefront\Account\ShowEmailVerifyNoticeController;
+use App\Http\Controllers\Tenant\Storefront\Account\ShowResetPasswordController;
+use App\Http\Controllers\Tenant\Storefront\Account\VerifyCustomerEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:customer')->group(function () {
