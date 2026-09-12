@@ -8,6 +8,12 @@
 - Use xhigh reasoning only when the task explicitly requests a deep audit.
 - Do not change the model or reasoning level without explaining the change first.
 
+## Branch naming
+
+- Do not add a `codex/` prefix to KneadIt branches.
+- Use the conventional `<type>/<short-description>` format: `feature/`, `feat/`, `fix/`, `hotfix/`, `refactor/`, `docs/`, `test/`, `chore/`, or `release/`.
+- Keep descriptions lowercase, concise, and hyphen-separated. For example: `docs/boost-rules-and-docs-cleanup`.
+
 ## Git and pull requests
 
 - Use conventional type-based branch names, such as `chore/remove-claude-specific-files`.

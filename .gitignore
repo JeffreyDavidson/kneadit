@@ -16,10 +16,14 @@
 /_plans
 /_tasks
 /tasks
-/docs/*
-!/docs/architecture.md
-!/docs/operations.md
-!/docs/sentry.md
+# Documentation is versioned, including dated audits and release notes.
+.ai/*
+!.ai/skills/
+!.ai/skills/**
+!.ai/rules/
+!.ai/rules/**
+!/docs/
+!/docs/**
 /auth.json
 /node_modules
 .venv/
@@ -35,8 +39,6 @@ Thumbs.db
 database/tenant*
 test_central.sqlite*
 .env.backup-*
-.ai/*
-!.ai/skills/
 tests/Browser/Screenshots
 tests/Browser/.admin-session.json
 tests/Browser/.admin-fixture-ids.json
