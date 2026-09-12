@@ -40,7 +40,7 @@ class SendWeeklyDigestCommand extends Command
                     $data = resolve(WeeklyDigestDataCollector::class)->collect();
 
                     foreach ($users as $user) {
-                        event(new WeeklyDigestRequested($user, $data['stats'], $data['topProducts'], $data['atRiskCustomers'], $data['upcomingCount'], $data['storeName'], $data['adminUrl']));
+                        event(new WeeklyDigestRequested($user, $data->stats, $data->topProducts, $data->atRiskCustomers, $data->upcomingCount, $data->storeName, $data->adminUrl));
                     }
 
                     $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");
