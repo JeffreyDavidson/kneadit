@@ -15,6 +15,7 @@ use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
+use App\Services\Tenants\LegacyImportValueParser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -32,6 +33,7 @@ class ImportLegacyBakeryData
         private readonly LegacyReviewImporter $reviewImporter,
         private readonly LegacySchedulingImporter $schedulingImporter,
         private readonly LegacySettingsImporter $settingsImporter,
+        private readonly LegacyImportValueParser $valueParser,
     ) {}
 
     /**
@@ -245,41 +247,21 @@ class ImportLegacyBakeryData
 
     private function cents(mixed $dollars): int
     {
-        return (int) round($this->floatValue($dollars) * 100);
+        return $this->valueParser->cents($dollars);
     }
 
     private function stringValue(mixed $value): string
     {
-        if (! is_string($value) && ! is_int($value) && ! is_float($value)) {
-            throw new \UnexpectedValueException('Expected a string-compatible legacy value.');
-        }
-
-        return (string) $value;
+        return $this->valueParser->string($value);
     }
 
     private function parseLegacyInteger(mixed $value): int
     {
-        if (is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
-            throw new \UnexpectedValueException('Expected an integer-compatible legacy value.');
-        }
-
-        return (int) $value;
+        return $this->valueParser->integer($value);
     }
 
     private function floatValue(mixed $value): float
     {
-        if (is_float($value) || is_int($value)) {
-            return $value;
-        }
-
-        if (! is_string($value) || ! is_numeric($value)) {
-            throw new \UnexpectedValueException('Expected a numeric legacy value.');
-        }
-
-        return (float) $value;
+        return $this->valueParser->number($value);
     }
 }
