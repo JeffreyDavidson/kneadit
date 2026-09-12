@@ -44,7 +44,7 @@ class ImportLegacyBakeryData
      */
     public function __invoke(array $data): array
     {
-        $this->validator->validate($data);
+        ($this->validator)($data);
 
         return DB::transaction(function () use ($data): array {
             $catalogIds = $this->catalogImporter->import(

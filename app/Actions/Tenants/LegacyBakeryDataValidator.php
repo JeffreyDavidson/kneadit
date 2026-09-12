@@ -18,7 +18,7 @@ final class LegacyBakeryDataValidator
      *
      * @param array<string, array<int, array<string, mixed>>> $data
      */
-    public function validate(array $data): void
+    public function __invoke(array $data): void
     {
         $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
         $productIds = $this->legacyIds($data['products'] ?? [], 'product');
