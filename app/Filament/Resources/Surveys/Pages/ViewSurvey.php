@@ -28,7 +28,7 @@ class ViewSurvey extends ViewRecord
             Section::make('Results')
                 ->schema([
                     ViewEntry::make('results')
-                        ->view('filament.survey-results')
+                        ->view('filament.resources.surveys.survey-results')
                         ->columnSpanFull(),
                 ]),
         ]);

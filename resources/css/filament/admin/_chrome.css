@@ -13,7 +13,7 @@
 
 /* ===================================================================
    SHARED: Dark gradient header bar
-   Used by: Filament tables, x-admin.card, goal-tracker, etc.
+   Used by: Filament tables, x-tenant-admin.card, goal-tracker, etc.
    =================================================================== */
 
 [data-admin-gradient-header] {
@@ -64,5 +64,4 @@
 .fi-btn-primary:hover {
     background: var(--brand-700) !important;
 }
-
 

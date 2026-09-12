@@ -20,7 +20,7 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('storefront.home', [
+        return view('tenant.storefront.home', [
             'settings' => $settings,
             'categories' => $categories,
             'sections' => $settings->visibleHomepageSections(),

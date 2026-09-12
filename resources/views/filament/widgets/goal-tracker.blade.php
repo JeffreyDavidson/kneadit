@@ -19,7 +19,7 @@
 @endphp
 
 <div>
-    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="heroicon-o-flag">
+    <x-tenant-admin.dashboard.preview-card heading="Goal Tracker" icon="heroicon-o-flag">
         @foreach ([
             ['key' => 'monthly', 'eyebrow' => 'Monthly Revenue Goal', 'data' => $monthly],
             ['key' => 'yearly', 'eyebrow' => 'Yearly Revenue Goal', 'data' => $yearly],
@@ -92,16 +92,17 @@
                 </div>
             </div>
         @endforeach
-    </x-admin.dashboard.preview-card>
+    </x-tenant-admin.dashboard.preview-card>
 
     {{-- Edit modal --}}
     @if ($showEditModal)
-        <x-admin.modal>
+        <x-tenant-admin.modal>
             <div class="text-brand-900 mb-4 text-base font-bold">Edit {{ ucfirst($editingType) }} Goal</div>
-            <x-admin.eyebrow as="label" class="mb-1 block">Goal Amount ($)</x-admin.eyebrow>
-            <x-admin.input type="number" wire:model="editingGoal" step="100" min="0" class="mb-4" />
+            <x-tenant-admin.eyebrow as="label" class="mb-1 block">Goal Amount ($)</x-tenant-admin.eyebrow>
+            <x-tenant-admin.input type="number" wire:model="editingGoal" step="100" min="0" class="mb-4" />
             <div class="flex justify-end gap-2">
-                <x-admin.btn variant="secondary" wire:click="closeEditModal" size="sm">Cancel</x-admin.btn>
+                <x-tenant-admin.btn variant="secondary" wire:click="closeEditModal" size="sm">
+                    Cancel</x-tenant-admin.btn>
                 <button
                     wire:click="saveGoal"
                     type="button"
@@ -110,6 +111,6 @@
                     Save
                 </button>
             </div>
-        </x-admin.modal>
+        </x-tenant-admin.modal>
     @endif
 </div>

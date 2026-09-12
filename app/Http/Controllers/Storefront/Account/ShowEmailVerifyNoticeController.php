@@ -18,6 +18,6 @@ class ShowEmailVerifyNoticeController extends Controller
             return to_route('account.dashboard');
         }
 
-        return view('storefront.account.verify-notice');
+        return view('tenant.storefront.account.verify-notice');
     }
 }

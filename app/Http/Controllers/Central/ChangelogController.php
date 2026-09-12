@@ -10,7 +10,7 @@ class ChangelogController extends Controller
 {
     public function __invoke(ChangelogService $changelog): View
     {
-        return view('platform.changelog', [
+        return view('central.blog.changelog', [
             'entries' => $changelog->entries(),
         ]);
     }

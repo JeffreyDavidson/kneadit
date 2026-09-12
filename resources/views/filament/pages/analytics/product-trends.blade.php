@@ -13,7 +13,7 @@
     @endphp
 
     <div class="mx-auto max-w-[1200px]">
-        <x-admin.nav-controls
+        <x-tenant-admin.nav-controls
             :label="$this->monthLabel"
             prevClick="previousMonth"
             nextClick="nextMonth"
@@ -22,8 +22,8 @@
         />
 
         @forelse ($this->trendsData as $group)
-            <x-admin.card :title="$group['category']">
-                <x-admin.data-table data-admin-table>
+            <x-tenant-admin.card :title="$group['category']">
+                <x-tenant-admin.data-table data-admin-table>
                     <x-slot:head>
                         <th class="text-left">Product</th>
                         <th class="text-right">{{ $this->prevMonthLabel }}</th>
@@ -44,10 +44,10 @@
                             </td>
                         </tr>
                     @endforeach
-                </x-admin.data-table>
-            </x-admin.card>
+                </x-tenant-admin.data-table>
+            </x-tenant-admin.card>
         @empty
-            <x-admin.empty-state
+            <x-tenant-admin.empty-state
                 icon="heroicon-o-chart-bar-square"
                 title="No order data found for this period"
                 subtitle="Try navigating to a different month."

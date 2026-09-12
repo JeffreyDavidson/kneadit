@@ -6,7 +6,7 @@
 
 <div class="dashboard-stats-grid col-span-full">
     @foreach ($cards as $card)
-        <x-admin.dashboard.stat-card
+        <x-tenant-admin.dashboard.stat-card
             :label="$card['label']"
             :value="$card['value']"
             :description="$card['delta']"

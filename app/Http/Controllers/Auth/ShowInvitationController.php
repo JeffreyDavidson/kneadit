@@ -18,7 +18,7 @@ class ShowInvitationController extends Controller
 
         $existingUser = User::query()->where('email', $invitation->email)->first();
 
-        return view('invitations.show', [
+        return view('tenant.invitations.show', [
             'settings' => $settings,
             'invitation' => $invitation,
             'existingUser' => $existingUser,

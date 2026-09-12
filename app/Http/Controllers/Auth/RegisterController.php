@@ -28,6 +28,6 @@ class RegisterController extends Controller
 
     public function show(): View
     {
-        return view('auth.register');
+        return view('central.auth.register');
     }
 }

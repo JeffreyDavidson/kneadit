@@ -16,7 +16,7 @@ class AboutController extends Controller
     {
         $stats = StorefrontStatsQuery::get();
 
-        return view('storefront.about', [
+        return view('tenant.storefront.about', [
             'settings' => $settings,
             'content' => settingsPageContent('about'),
             'customerCount' => $stats['customer_count'],

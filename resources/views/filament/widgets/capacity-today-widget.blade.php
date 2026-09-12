@@ -10,7 +10,7 @@
     $blocked = $this->isSize('sm') ? [] : $this->getBlockedDaysWarning();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Order Capacity" icon="heroicon-o-clock">
+<x-tenant-admin.dashboard.preview-card heading="Order Capacity" icon="heroicon-o-clock">
     @foreach ($days as $day)
         @php
             $pct = $day['data']['percentage'];
@@ -55,4 +55,4 @@
             @endforeach
         </div>
     @endif
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

@@ -16,7 +16,7 @@ test('sitemap returns response with xml content type', function () {
     $tmpView = sys_get_temp_dir() . '/sitemap-stub.php';
     file_put_contents($tmpView, '<urlset></urlset>');
 
-    View::composer('platform.sitemap', function ($view) use ($tmpView) {
+    View::composer('central.seo.sitemap', function ($view) use ($tmpView) {
         $view->setPath($tmpView);
     });
 

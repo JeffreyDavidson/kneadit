@@ -22,7 +22,7 @@ class CateringStripeSuccessController extends Controller
             $inquiry->refresh();
         }
 
-        return view('storefront.catering.deposit-success', [
+        return view('tenant.storefront.catering.deposit-success', [
             'inquiry' => $inquiry,
             'paid' => $inquiry->deposit_paid_at !== null,
         ]);

@@ -29,7 +29,7 @@ class GalleryController extends Controller
 
     public function show(TenantSettings $settings): View
     {
-        return view('storefront.gallery', [
+        return view('tenant.storefront.gallery', [
             'settings' => $settings,
             'photos' => CustomerPhoto::query()->approved()
                 ->with('product')

@@ -26,7 +26,7 @@ class ShowOrderConfirmationController extends Controller
             ? $order->customer?->referral_code
             : null;
 
-        return view('storefront.order-confirmation', [
+        return view('tenant.storefront.order-confirmation', [
             'settings' => $settings,
             'storefrontTheme' => $settings->branding->storefrontTheme,
             'order' => $order,

@@ -23,7 +23,7 @@ class ContactController extends Controller
 
     public function show(TenantSettings $settings): View
     {
-        return view('storefront.contact', [
+        return view('tenant.storefront.contact', [
             'settings' => $settings,
             'content' => settingsPageContent('contact'),
             'storefrontTheme' => $settings->branding->storefrontTheme,

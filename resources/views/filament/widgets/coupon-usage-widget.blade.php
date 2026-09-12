@@ -5,10 +5,10 @@
     $expiring = $this->getExpiringSoonCount();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Coupon Usage" icon="heroicon-o-ticket">
+<x-tenant-admin.dashboard.preview-card heading="Coupon Usage" icon="heroicon-o-ticket">
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px">
-        <x-admin.dashboard.stat-row label="Active" :value="$active" />
-        <x-admin.dashboard.stat-row label="Redemptions" :value="$redemptions" />
+        <x-tenant-admin.dashboard.stat-row label="Active" :value="$active" />
+        <x-tenant-admin.dashboard.stat-row label="Redemptions" :value="$redemptions" />
     </div>
 
     @unless ($this->isSize('sm'))
@@ -51,4 +51,4 @@
             </div>
         @endif
     @endunless
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

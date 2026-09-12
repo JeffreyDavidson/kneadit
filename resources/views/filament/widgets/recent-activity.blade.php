@@ -24,7 +24,7 @@
             <span class="text-brand-400 font-mono text-[0.7rem]">{{ $row['ip_address'] ?? '' }}</span>
         </div>
     @empty
-        <x-admin.dashboard.empty-state
+        <x-tenant-admin.dashboard.empty-state
             icon="heroicon-o-clipboard-document-list"
             title="No tracked activity yet"
             copy="Customer, order, and settings changes will appear here once the bakery starts moving."

@@ -5,10 +5,10 @@
     $latest = $this->getLatestInquiry();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Catering Pipeline" icon="heroicon-o-document-text">
+<x-tenant-admin.dashboard.preview-card heading="Catering Pipeline" icon="heroicon-o-document-text">
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px">
-        <x-admin.dashboard.stat-row label="Open" :value="$open" />
-        <x-admin.dashboard.stat-row label="Quoted" :value="$pending" />
+        <x-tenant-admin.dashboard.stat-row label="Open" :value="$open" />
+        <x-tenant-admin.dashboard.stat-row label="Quoted" :value="$pending" />
         <div class="pw-stat">
             <span class="pw-stat-label">Pipeline</span>
             <span style="font-size: 1.1rem; font-weight: 700; color: var(--pw-card-text)">${{ number_format($value, 0) }}</span>
@@ -41,4 +41,4 @@
             @endif
         </div>
     @endunless
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

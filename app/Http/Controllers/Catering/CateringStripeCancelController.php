@@ -10,7 +10,7 @@ class CateringStripeCancelController extends Controller
 {
     public function __invoke(CateringInquiry $inquiry): View
     {
-        return view('storefront.catering.deposit-cancel', [
+        return view('tenant.storefront.catering.deposit-cancel', [
             'inquiry' => $inquiry,
         ]);
     }

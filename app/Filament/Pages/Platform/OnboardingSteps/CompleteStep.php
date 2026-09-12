@@ -26,7 +26,7 @@ final class CompleteStep extends OnboardingStep
             ->icon(Heroicon::OutlinedCheckCircle)
             ->description('You\'re all set!')
             ->schema([
-                View::make('filament.pages.platform.onboarding-complete'),
+                View::make('filament.pages.central.platform.onboarding-complete'),
             ]);
     }
 
