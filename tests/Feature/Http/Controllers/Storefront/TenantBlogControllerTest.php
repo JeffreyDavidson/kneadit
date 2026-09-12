@@ -14,7 +14,7 @@ test('blog index shows published tenant posts', function () {
         ->get(route('storefront.blog', [], false));
 
     $response->assertOk()
-        ->assertViewIs('storefront.blog.index')
+        ->assertViewIs('tenant.storefront.blog.index')
         ->assertSee('My First Recipe')
         ->assertDontSee('Draft Post');
 });

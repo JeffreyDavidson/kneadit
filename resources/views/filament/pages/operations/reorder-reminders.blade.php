@@ -9,7 +9,7 @@
     @endphp
 
     {{-- Page banner --}}
-    <x-admin.page-banner title="Customer Reorder Reminders">
+    <x-tenant-admin.page-banner title="Customer Reorder Reminders">
         <div class="flex items-center gap-2.5">
             <span class="text-[0.8rem] text-white/60">Inactive for</span>
             <select
@@ -27,33 +27,33 @@
                 @endforeach
             </select>
         </div>
-    </x-admin.page-banner>
+    </x-tenant-admin.page-banner>
 
     @if ($customers->isEmpty())
-        <x-admin.empty-state
+        <x-tenant-admin.empty-state
             icon="heroicon-o-check-circle"
             title="All customers are active!"
             subtitle="No one has been inactive for more than {{ $threshold }} days. Great retention!"
         />
     @else
         {{-- Stats --}}
-        <x-admin.stat-grid :cols="4" data-stat-grid>
-            <x-admin.stat-card label="Need Outreach" :value="$customers->count()" />
-            <x-admin.stat-card label="Critical (120+ days)" :value="$criticalCount" tone="danger" />
-            <x-admin.stat-card label="Warning (90+ days)" :value="$warningCount" tone="warning" />
-            <x-admin.stat-card
+        <x-tenant-admin.stat-grid :cols="4" data-stat-grid>
+            <x-tenant-admin.stat-card label="Need Outreach" :value="$customers->count()" />
+            <x-tenant-admin.stat-card label="Critical (120+ days)" :value="$criticalCount" tone="danger" />
+            <x-tenant-admin.stat-card label="Warning (90+ days)" :value="$warningCount" tone="warning" />
+            <x-tenant-admin.stat-card
                 label="Revenue at Risk"
                 :value="'$' . number_format($totalRevAtRisk, 0)"
                 tone="brand-600"
             />
-        </x-admin.stat-grid>
+        </x-tenant-admin.stat-grid>
 
         {{-- Customer table --}}
-        <x-admin.card
+        <x-tenant-admin.card
             title="Inactive Customers"
             :subtitle="$customers->count() . ' ' . Str::plural('customer', $customers->count())"
         >
-            <x-admin.data-table data-admin-table>
+            <x-tenant-admin.data-table data-admin-table>
                 <x-slot:head>
                     <th>Customer</th>
                     <th>Last Order</th>
@@ -69,7 +69,7 @@
                     <tr>
                         <td>
                             <div class="flex items-center gap-2.5">
-                                <x-admin.avatar :name="$customer->customer_name" size="sm" />
+                                <x-tenant-admin.avatar :name="$customer->customer_name" size="sm" />
                                 <div>
                                     <div class="text-brand-900 text-sm font-semibold">
                                         {{ $customer->customer_name }}
@@ -82,7 +82,7 @@
                             {{ \Carbon\Carbon::parse($customer->last_order_date)->format('M j, Y') }}
                         </td>
                         <td>
-                            <x-admin.badge :type="$urgency" :label="$customer->days_since . ' days'" />
+                            <x-tenant-admin.badge :type="$urgency" :label="$customer->days_since . ' days'" />
                         </td>
                         <td class="text-brand-900 text-center font-semibold">{{ $customer->total_orders }}</td>
                         <td class="text-brand-900 text-right font-bold">@money($customer->total_spent)</td>
@@ -91,18 +91,18 @@
                                 $subject = rawurlencode('We miss you at ' . app(TenantSettings::class)->storeName . '!');
                                 $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(TenantSettings::class)->storeName);
                             @endphp
-                            <x-admin.btn
+                            <x-tenant-admin.btn
                                 variant="primary"
                                 :href="'mailto:' . $customer->customer_email . '?subject=' . $subject . '&body=' . $body"
                                 icon="heroicon-o-envelope"
                                 size="sm"
                             >
                                 Send Reminder
-                            </x-admin.btn>
+                            </x-tenant-admin.btn>
                         </td>
                     </tr>
                 @endforeach
-            </x-admin.data-table>
-        </x-admin.card>
+            </x-tenant-admin.data-table>
+        </x-tenant-admin.card>
     @endif
 </x-filament-panels::page>

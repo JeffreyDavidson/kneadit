@@ -29,7 +29,7 @@ class ShowOrderFormController extends Controller
             ])->values()->all()
             : [];
 
-        return view('storefront.order', [
+        return view('tenant.storefront.order', [
             'settings' => $settings,
             'categories' => $categories,
             'content' => settingsPageContent('order'),

@@ -17,13 +17,13 @@ use App\Http\Controllers\Storefront\Account\VerifyCustomerEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:customer')->group(function () {
-    Route::view('account/register', 'storefront.account.register')->name('account.register.show');
+    Route::view('account/register', 'tenant.storefront.account.register')->name('account.register.show');
     Route::post('account/register', RegisterCustomerController::class)->name('account.register')->middleware('throttle:sensitive-write');
 
-    Route::view('account/login', 'storefront.account.login')->name('account.login.show');
+    Route::view('account/login', 'tenant.storefront.account.login')->name('account.login.show');
     Route::post('account/login', LoginCustomerController::class)->name('account.login')->middleware('throttle:sensitive-write');
 
-    Route::view('account/forgot-password', 'storefront.account.forgot-password')->name('account.password.request');
+    Route::view('account/forgot-password', 'tenant.storefront.account.forgot-password')->name('account.password.request');
     Route::post('account/forgot-password', SendPasswordResetLinkController::class)->name('account.password.email')->middleware('throttle:sensitive-write');
 
     Route::get('account/password/reset/{token}', ShowResetPasswordController::class)->name('account.password.reset');

@@ -144,7 +144,7 @@ test('verify-notice GET shows the notice view and session status for an unverifi
         ->get(route('account.email.verify.notice', [], false));
 
     $response->assertOk()
-        ->assertViewIs('storefront.account.verify-notice')
+        ->assertViewIs('tenant.storefront.account.verify-notice')
         ->assertSee('A fresh verification link has been sent.');
 });
 

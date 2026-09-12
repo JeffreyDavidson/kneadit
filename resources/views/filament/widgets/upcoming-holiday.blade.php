@@ -2,7 +2,7 @@
 
 <div>
     @if ($h)
-        <x-admin.dashboard.preview-card heading="Upcoming Holiday" icon="heroicon-o-calendar">
+        <x-tenant-admin.dashboard.preview-card heading="Upcoming Holiday" icon="heroicon-o-calendar">
             <div class="pw-stat">
                 <span class="pw-stat-label">{{ $h['name'] }}</span>
                 <span class="pw-stat-value">{{ $h['date'] }}</span>
@@ -20,6 +20,6 @@
                     Deadline in {{ $h['days_until_deadline'] }}d
                 @endif
             </div>
-        </x-admin.dashboard.preview-card>
+        </x-tenant-admin.dashboard.preview-card>
     @endif
 </div>

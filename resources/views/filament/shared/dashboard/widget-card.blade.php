@@ -505,7 +505,7 @@
                     </div>
                 @endif
                 @foreach ($items as $item)
-                    <x-admin.dashboard.list-row
+                    <x-tenant-admin.dashboard.list-row
                         :label="$item['label']"
                         :value="$item['value']"
                         :dot-color="$item['color']"

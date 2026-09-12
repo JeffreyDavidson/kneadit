@@ -23,7 +23,7 @@ class TrackingController extends Controller
         // for the duration of this session.
         $orders->each(fn (Order $order) => OrderAccessGuard::grant($order));
 
-        return view('storefront.order-tracking', [
+        return view('tenant.storefront.order-tracking', [
             'settings' => $settings,
             'storefrontTheme' => $settings->branding->storefrontTheme,
             'orders' => $orders,
@@ -36,7 +36,7 @@ class TrackingController extends Controller
 
     public function show(TenantSettings $settings): View
     {
-        return view('storefront.order-tracking', [
+        return view('tenant.storefront.order-tracking', [
             'settings' => $settings,
             'storefrontTheme' => $settings->branding->storefrontTheme,
             'content' => settingsPageContent('order_tracking'),

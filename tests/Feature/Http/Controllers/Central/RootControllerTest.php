@@ -28,7 +28,7 @@ test('central requests render the platform welcome page', function () {
 
     throw_unless($response instanceof View, RuntimeException::class, 'Expected the platform welcome view.');
 
-    expect($response->name())->toBe('platform.welcome');
+    expect($response->name())->toBe('central.marketing.welcome');
 });
 
 test('central welcome uses application URLs', function () {
@@ -61,7 +61,7 @@ test('active tenant requests render the storefront home page', function () {
 
     throw_unless($response instanceof View, RuntimeException::class, 'Expected the storefront home view.');
 
-    expect($response->name())->toBe('storefront.home');
+    expect($response->name())->toBe('tenant.storefront.home');
 });
 
 test('the web middleware initializes tenant context before root dispatch', function () {
@@ -74,7 +74,7 @@ test('the web middleware initializes tenant context before root dispatch', funct
 
     get('http://rootroute.kneadit.test/')
         ->assertOk()
-        ->assertViewIs('storefront.home');
+        ->assertViewIs('tenant.storefront.home');
 });
 
 test('disabled tenant storefronts redirect only to valid external websites', function () {
@@ -107,5 +107,5 @@ test('disabled tenant storefronts reject unsafe external redirects', function ()
     throw_unless($view instanceof View, RuntimeException::class, 'Expected the disabled storefront view.');
 
     expect($response->getStatusCode())->toBe(200)
-        ->and($view->name())->toBe('platform.storefront-disabled');
+        ->and($view->name())->toBe('central.platform.storefront-disabled');
 });

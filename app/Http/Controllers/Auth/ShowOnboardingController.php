@@ -9,7 +9,7 @@ class ShowOnboardingController extends Controller
 {
     public function __invoke(): View
     {
-        return view('platform.onboarding', [
+        return view('central.platform.onboarding', [
             'bakeryName' => session('bakery_name', ''),
         ]);
     }

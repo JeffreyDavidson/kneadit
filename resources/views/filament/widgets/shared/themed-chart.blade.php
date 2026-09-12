@@ -1,5 +1,5 @@
 {{-- Shared rendering partial for ChartWidget subclasses that want the
-     <x-admin.dashboard.preview-card> shell instead of Filament's section
+     <x-tenant-admin.dashboard.preview-card> shell instead of Filament's section
      chrome. Replicates the DOM structure Filament's chart Alpine
      component depends on (data-chart-type, x-ref="canvas", color
      reference spans), so Chart.js still renders correctly inside the
@@ -15,7 +15,7 @@
 @endphp
 
 <div class="col-span-full">
-    <x-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? 'heroicon-o-arrow-trending-up'">
+    <x-tenant-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? 'heroicon-o-arrow-trending-up'">
         <div
             @if ($pollingInterval = $this->getPollingInterval())
                 wire:poll.{{ $pollingInterval }}="updateChartData"
@@ -49,5 +49,5 @@
                 <span x-ref="textColorElement" class="fi-wi-chart-text-color"></span>
             </div>
         </div>
-    </x-admin.dashboard.preview-card>
+    </x-tenant-admin.dashboard.preview-card>
 </div>

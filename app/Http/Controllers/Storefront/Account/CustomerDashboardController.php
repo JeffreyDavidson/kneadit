@@ -40,7 +40,7 @@ class CustomerDashboardController extends Controller
             ])
             : null;
 
-        return view('storefront.account.dashboard', [
+        return view('tenant.storefront.account.dashboard', [
             'customer' => $customer,
             'orders' => $customer->orders,
             'favorites' => $favorites,

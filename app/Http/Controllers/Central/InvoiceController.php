@@ -13,7 +13,7 @@ class InvoiceController extends Controller
     {
         $order->load(['customer', 'orderItems.product']);
 
-        return view('admin.orders.invoice', [
+        return view('tenant.admin.orders.invoice', [
             'order' => $order,
             'settings' => $settings,
         ]);

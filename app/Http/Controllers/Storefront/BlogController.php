@@ -15,7 +15,7 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(6);
 
-        return view('storefront.blog.index', [
+        return view('tenant.storefront.blog.index', [
             'posts' => $posts,
         ]);
     }
@@ -29,7 +29,7 @@ class BlogController extends Controller
             ->limit(3)
             ->get();
 
-        return view('storefront.blog.show', [
+        return view('tenant.storefront.blog.show', [
             'post' => $post,
             'relatedPosts' => $relatedPosts,
         ]);

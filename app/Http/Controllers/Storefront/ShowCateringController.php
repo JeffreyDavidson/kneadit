@@ -20,7 +20,7 @@ class ShowCateringController extends Controller
 
         $content = settingsPageContent('catering');
 
-        return view('storefront.catering', [
+        return view('tenant.storefront.catering', [
             'settings' => $settings,
             'cateringPhotos' => $cateringPhotos,
             'content' => $content,

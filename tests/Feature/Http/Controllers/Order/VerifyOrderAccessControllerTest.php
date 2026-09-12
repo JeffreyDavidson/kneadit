@@ -16,7 +16,7 @@ test('show renders the verification form', function () {
         ->get(route('order.verify.show', ['order' => $order->order_number], false));
 
     $response->assertOk()
-        ->assertViewIs('storefront.order-verify')
+        ->assertViewIs('tenant.storefront.order-verify')
         ->assertViewHas('order')
         ->assertViewHas('settings')
         ->assertViewHas('storefrontTheme');

@@ -12,7 +12,7 @@ class MaintenancePreviewController extends Controller
     #[Authorize('platform-admin')]
     public function __invoke(Request $request): View
     {
-        return view('platform.maintenance', [
+        return view('central.platform.maintenance', [
             'message' => $request->string('message')->toString() ?: null,
             'scheduled_end' => $request->string('end')->toString() ?: null,
         ]);

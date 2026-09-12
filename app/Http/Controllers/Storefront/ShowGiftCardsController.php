@@ -15,7 +15,7 @@ class ShowGiftCardsController extends Controller
     {
         $content = settingsPageContent('gift_cards');
 
-        return view('storefront.gift-cards', [
+        return view('tenant.storefront.gift-cards', [
             'settings' => $settings,
             'content' => $content,
         ]);

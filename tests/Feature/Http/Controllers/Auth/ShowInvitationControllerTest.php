@@ -13,6 +13,6 @@ test('it shows a pending invitation', function () {
         ->get(route('invitation.show', $invitation->token, false));
 
     $response->assertOk()
-        ->assertViewIs('invitations.show')
+        ->assertViewIs('tenant.invitations.show')
         ->assertViewHas('invitation');
 });

@@ -66,6 +66,10 @@ Important entry points:
 - `app/Services/Settings` — tenant and platform settings access
 - `app/Filament` — tenant administration
 - `app/Filament/Central` — platform administration
+- `resources/views/central` — central application views by concern
+- `resources/views/tenant` — tenant storefront, account, admin, and invitation views
+- `resources/views/components` — reusable Blade components grouped by surface
+- `resources/views/shared` — shared Blade includes such as analytics and order-form scripts
 
 See [Architecture](docs/architecture.md) for request flow, domain boundaries, order/payment behavior, and settings design. See [Operations](docs/operations.md) for queues, scheduling, deployment, testing, security, and monitoring.
 

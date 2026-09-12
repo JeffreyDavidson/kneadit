@@ -22,7 +22,7 @@ class StoreReviewController extends Controller
 
         $content = settingsPageContent('submit_review');
 
-        return view('storefront.submit-review', [
+        return view('tenant.storefront.submit-review', [
             'settings' => $settings,
             'order' => $order,
             'content' => $content,
