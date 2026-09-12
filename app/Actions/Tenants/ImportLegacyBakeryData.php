@@ -5,6 +5,7 @@ namespace App\Actions\Tenants;
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Contracts\Tenants\LegacyFinancialImporter;
 use App\Contracts\Tenants\LegacyOrderItemImporter;
 use App\Contracts\Tenants\LegacyReviewImporter;
 use App\Contracts\Tenants\LegacySettingsImporter;
@@ -23,6 +24,7 @@ class ImportLegacyBakeryData
         private readonly LegacyCatalogImporter $catalogImporter,
         private readonly LegacyCouponImporter $couponImporter,
         private readonly LegacyCustomerImporter $customerImporter,
+        private readonly LegacyFinancialImporter $financialImporter,
         private readonly LegacyOrderItemImporter $orderItemImporter,
         private readonly LegacyReviewImporter $reviewImporter,
         private readonly LegacySettingsImporter $settingsImporter,
@@ -55,7 +57,7 @@ class ImportLegacyBakeryData
             $this->orderItemImporter->import($data['order_items'] ?? [], $orderIds, $productIds);
             $this->reviewImporter->import($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
-            $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
+            $this->financialImporter->import($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->importCapacityLimits($data['capacity_limits'] ?? []);
             $this->importHolidays($data['holidays'] ?? []);
             $this->importEngagement($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
@@ -193,46 +195,6 @@ class ImportLegacyBakeryData
                     'cost' => $this->cents($cost),
                     'created_at' => $recipe['created_at'] ?? now(),
                     'updated_at' => $recipe['updated_at'] ?? now(),
-                ],
-            );
-        }
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $expenses
-     * @param array<int, array<string, mixed>> $incomes
-     */
-    private function importFinancials(array $expenses, array $incomes): void
-    {
-        foreach ($expenses as $expense) {
-            $businessPercentage = $this->parseLegacyInteger($expense['business_percentage'] ?? 100);
-            DB::table('expenses')->updateOrInsert(
-                ['description' => $expense['description'], 'date' => $expense['date']],
-                [
-                    'amount' => $this->cents($expense['amount']),
-                    'category' => $expense['category'] === 'delivery_gas' ? 'delivery' : $expense['category'],
-                    'receipt_image' => $expense['receipt'] ?? null,
-                    'notes' => $expense['notes'] ?? null,
-                    'business_percentage' => $businessPercentage,
-                    'deductible_amount' => $this->cents($this->floatValue($expense['amount']) * $businessPercentage / 100),
-                    'created_at' => $expense['created_at'] ?? now(),
-                    'updated_at' => $expense['updated_at'] ?? now(),
-                ],
-            );
-        }
-
-        foreach ($incomes as $income) {
-            $source = in_array($income['source'], ['farmers_market', 'cash_sale', 'paypal_direct', 'catering'], true)
-                ? $income['source']
-                : 'other';
-            DB::table('incomes')->updateOrInsert(
-                ['description' => $income['description'], 'date' => $income['date']],
-                [
-                    'amount' => $this->cents($income['amount']),
-                    'source' => $source,
-                    'notes' => $income['notes'] ?? null,
-                    'created_at' => $income['created_at'] ?? now(),
-                    'updated_at' => $income['updated_at'] ?? now(),
                 ],
             );
         }
