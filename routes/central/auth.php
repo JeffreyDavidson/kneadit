@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\SendVerificationNotificationController;
-use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Central\Auth\ForgotPasswordController;
+use App\Http\Controllers\Central\Auth\LogoutController;
+use App\Http\Controllers\Central\Auth\RegisterController;
+use App\Http\Controllers\Central\Auth\ResetPasswordController;
+use App\Http\Controllers\Central\Auth\SendVerificationNotificationController;
+use App\Http\Controllers\Central\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {

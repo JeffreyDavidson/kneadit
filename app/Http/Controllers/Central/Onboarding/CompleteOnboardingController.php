@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Central\Onboarding;
 
 use App\Actions\Tenants\CompleteTenantOnboarding;
 use App\Http\Controllers\Controller;

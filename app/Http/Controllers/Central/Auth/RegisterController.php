@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Central\Auth;
 
 use App\Actions\Staff\CreateUser;
 use App\Http\Controllers\Controller;

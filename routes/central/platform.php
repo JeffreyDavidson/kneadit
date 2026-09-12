@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Auth\CompleteOnboardingController;
-use App\Http\Controllers\Auth\ShowOnboardingController;
 use App\Http\Controllers\Central\BackupDownloadController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Central\MaintenancePreviewController;
+use App\Http\Controllers\Central\Onboarding\CompleteOnboardingController;
+use App\Http\Controllers\Central\Onboarding\ShowOnboardingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
