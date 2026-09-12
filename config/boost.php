@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 return [
-    'enabled' => env('BOOST_ENABLED', true),
+    'enabled' => env('BOOST_ENABLED', false),
 
-    'browser_logs_watcher' => env('BOOST_BROWSER_LOGS_WATCHER', true),
+    'browser_logs_watcher' => env('BOOST_BROWSER_LOGS_WATCHER', false),
 
     'rules' => [
         // Project rules are committed and shared with every coding agent.
-        'enabled' => env('BOOST_RULES_ENABLED', true),
+        'enabled' => env('BOOST_RULES_ENABLED', false),
     ],
 
     'executable_paths' => [
