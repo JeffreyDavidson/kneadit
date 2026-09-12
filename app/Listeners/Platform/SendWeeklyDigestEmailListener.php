@@ -19,12 +19,12 @@ class SendWeeklyDigestEmailListener extends SendEmailListener
     {
         /** @var WeeklyDigestRequested $event */
         return new WeeklyDigestMail(
-            stats: $event->stats,
-            topProducts: $event->topProducts,
-            atRiskCustomers: $event->atRiskCustomers,
-            upcomingCount: $event->upcomingCount,
-            storeName: $event->storeName,
-            adminUrl: $event->adminUrl,
+            stats: $event->data->stats,
+            topProducts: $event->data->topProducts,
+            atRiskCustomers: $event->data->atRiskCustomers,
+            upcomingCount: $event->data->upcomingCount,
+            storeName: $event->data->storeName,
+            adminUrl: $event->data->adminUrl,
         );
     }
 

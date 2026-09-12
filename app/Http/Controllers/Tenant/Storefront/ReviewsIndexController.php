@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Controllers\Tenant\Storefront;
+
+use App\Http\Controllers\Controller;
+use App\Models\Engagement\Review;
+use App\Services\Settings\TenantSettings;
+use App\ViewModels\Storefront\ReviewsPageViewModel;
+use Illuminate\Contracts\View\View;
+
+class ReviewsIndexController extends Controller
+{
+    public function __invoke(TenantSettings $settings): View
+    {
+        $reviews = Review::query()->forDisplay()->paginate(12);
+        $stats = Review::query()->statistics();
+        $starCounts = Review::query()->ratingBreakdown();
+
+        return view('tenant.storefront.reviews', [
+            'storefrontTheme' => $settings->branding->storefrontTheme,
+            'vm' => new ReviewsPageViewModel(
+                reviews: $reviews,
+                stats: $stats,
+                starCounts: $starCounts,
+                settings: $settings,
+                content: settingsPageContent('reviews'),
+            ),
+        ]);
+    }
+}

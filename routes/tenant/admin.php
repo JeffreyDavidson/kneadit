@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Central\InvoiceController;
-use App\Http\Controllers\Central\PrintProductLabelController;
+use App\Http\Controllers\Tenant\Admin\InvoiceController;
+use App\Http\Controllers\Tenant\Admin\PrintProductLabelController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {

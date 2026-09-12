@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Http\Controllers\Tenant\Orders;
+
+use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
+use App\Services\Scheduling\AvailabilityService;
+use Illuminate\Http\JsonResponse;
+
+class AvailabilityController extends Controller
+{
+    public function __invoke(AvailabilityService $availabilityService): JsonResponse
+    {
+        return ApiResponse::success($availabilityService->getAvailability(), 'Availability retrieved successfully.');
+    }
+}

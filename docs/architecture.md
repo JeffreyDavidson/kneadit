@@ -65,6 +65,16 @@ The root URL is deliberately universal: the global middleware establishes centra
 
 Routes that access tenant models belong under the tenant loader, even when their controllers are used by an admin-facing page. This keeps route middleware, model binding, and database tenancy context aligned.
 
+### HTTP controller organization
+
+HTTP controllers are grouped first by application surface and then by concern:
+
+- `app/Http/Controllers/Central/` contains platform-facing controllers. `Auth/` and `Onboarding/` hold the central authentication and signup lifecycle; other controllers remain at the central surface root when they span a single platform concern.
+- `app/Http/Controllers/Tenant/` contains tenant-bound controllers. `Storefront/` owns public bakery pages and customer account flows, while `Admin/`, `Api/`, `Catering/`, `Invitations/`, `Marketing/`, and `Orders/` make their route surface explicit.
+- `app/Http/Controllers/Billing/` and `app/Http/Controllers/Stripe/` are provider or subscription boundaries. They may invoke domain actions but do not define tenant presentation ownership.
+
+The controller namespace should match the route surface and the mirrored `tests/Feature/Http/Controllers/` path. New tenant controllers belong under `Tenant/<Surface>/`; do not add new top-level tenant controller directories.
+
 ## Application layers
 
 KneadIt favors explicit Laravel boundaries rather than a generic service/repository layer:
@@ -80,6 +90,10 @@ KneadIt favors explicit Laravel boundaries rather than a generic service/reposit
 - **Presenters/ViewModels/components** shape complex output where the view earns a separate boundary.
 
 Models, actions, services, enums, builders, queries, policies, factories, and tests are grouped by domain. Tests mirror the `app` structure across the applicable unit, integration, and feature suites.
+
+Application-wide framework wiring is split by responsibility in `app/Providers/`: `ApplicationBindingsServiceProvider` owns container bindings, `InfrastructureServiceProvider` owns queue, cache, tenancy, and payment infrastructure hooks, `RateLimitServiceProvider` owns named throttles, and `AppServiceProvider` owns application features and UI hooks. Keep new bootstrapping in the narrowest provider rather than expanding a catch-all provider.
+
+Shared test setup follows the same rule: `tests/Pest.php` keeps suite-wide lifecycle configuration, while domain or environment-specific fixtures belong in named files under `tests/Support/Bootstrap/` or `tests/Support/`. Tenant database cleanup is implemented there so feature and integration tests do not each need to know which persistent browser fixtures must be preserved.
 
 ## Major domains
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Routing\Resolvers\PublishedBlogPostResolver;
+use App\Routing\Bindings\PublishedBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::bind('centralPost', resolve(PublishedBlogPostResolver::class));

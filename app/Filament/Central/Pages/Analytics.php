@@ -2,7 +2,9 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Queries\Platform\TenantAnalyticsQuery;
+use App\Queries\Platform\TenantAnalyticsSummaryQuery;
+use App\Queries\Platform\TenantSignupAnalyticsQuery;
+use App\Queries\Platform\TenantSubscriptionAnalyticsQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -23,56 +25,56 @@ class Analytics extends Page
     /** @return array<int, array<string, mixed>> */
     public function getSignupsByMonth(): array
     {
-        return TenantAnalyticsQuery::signupsByMonth();
+        return resolve(TenantSignupAnalyticsQuery::class)->byMonth();
     }
 
     /** @return array<string, mixed> */
     public function getPlanDistribution(): array
     {
-        return TenantAnalyticsQuery::planDistribution();
+        return resolve(TenantSubscriptionAnalyticsQuery::class)->planDistribution();
     }
 
     /** @return array<string, int> */
     public function getTrialConversion(): array
     {
-        return TenantAnalyticsQuery::trialConversion();
+        return resolve(TenantSubscriptionAnalyticsQuery::class)->trialConversion();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getMonthlyGrowth(): array
     {
-        return TenantAnalyticsQuery::monthlyGrowth();
+        return resolve(TenantSignupAnalyticsQuery::class)->monthlyGrowth();
     }
 
     public function getTotalSignups(): int
     {
-        return TenantAnalyticsQuery::totalSignups();
+        return resolve(TenantSignupAnalyticsQuery::class)->total();
     }
 
     public function getThisMonthSignups(): int
     {
-        return TenantAnalyticsQuery::thisMonthSignups();
+        return resolve(TenantSignupAnalyticsQuery::class)->thisMonth();
     }
 
     public function getAvgDaysOnTrial(): float
     {
-        return TenantAnalyticsQuery::avgDaysOnTrial();
+        return resolve(TenantSubscriptionAnalyticsQuery::class)->averageTrialDays();
     }
 
     public function getMostPopularPlan(): string
     {
-        return TenantAnalyticsQuery::mostPopularPlan();
+        return resolve(TenantSubscriptionAnalyticsQuery::class)->mostPopularPlan();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getKpis(): array
     {
-        return TenantAnalyticsQuery::kpis();
+        return resolve(TenantAnalyticsSummaryQuery::class)->kpis();
     }
 
     /** @return array<string, int> */
     public function getTenantStatus(): array
     {
-        return TenantAnalyticsQuery::tenantStatus();
+        return resolve(TenantAnalyticsSummaryQuery::class)->tenantStatus();
     }
 }

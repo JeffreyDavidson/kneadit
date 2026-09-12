@@ -6,6 +6,20 @@
 
 This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.5, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
 
+## Progress on `refactor/application-boundaries`
+
+The following focused slices from this audit are now complete:
+
+- Central and tenant route/view/controller boundaries, including architecture coverage.
+- Service-provider and tenant-test bootstrap boundaries.
+- Tenant analytics, activity, staff-directory, tenant-statistics, and tenant-archive queries/services.
+- Typed weekly digest data and event boundaries.
+- Settings form mapping and legacy settings import handling.
+- Legacy import validation and catering quote-item form mapping.
+- Legacy order-item, review, financial, scheduling, and engagement importers.
+
+The remaining recommendations below are intentionally still incremental; each should be implemented as a separate, tested slice.
+
 ## Executive summary
 
 KneadIt has unusually strong foundations for a growing Laravel application:

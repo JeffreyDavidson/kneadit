@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Catering\CateringStripeCancelController;
-use App\Http\Controllers\Catering\CateringStripeSuccessController;
-use App\Http\Controllers\Catering\PayCateringDepositController;
-use App\Http\Controllers\Storefront\AboutController;
-use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
-use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
-use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
-use App\Http\Controllers\Storefront\ContactController;
-use App\Http\Controllers\Storefront\GalleryController;
-use App\Http\Controllers\Storefront\LoyaltyController;
-use App\Http\Controllers\Storefront\MenuController;
-use App\Http\Controllers\Storefront\ProductWaitlistController;
-use App\Http\Controllers\Storefront\PurchaseGiftCardController;
-use App\Http\Controllers\Storefront\ReviewsIndexController;
-use App\Http\Controllers\Storefront\ShowCateringController;
-use App\Http\Controllers\Storefront\ShowGiftCardsController;
-use App\Http\Controllers\Storefront\ShowReviewFormController;
-use App\Http\Controllers\Storefront\StoreReviewController;
-use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
-use App\Http\Controllers\Storefront\SurveyController;
-use App\Routing\Resolvers\ActiveSurveyResolver;
-use App\Routing\Resolvers\PublishedTenantBlogPostResolver;
+use App\Http\Controllers\Tenant\Catering\CateringStripeCancelController;
+use App\Http\Controllers\Tenant\Catering\CateringStripeSuccessController;
+use App\Http\Controllers\Tenant\Catering\PayCateringDepositController;
+use App\Http\Controllers\Tenant\Storefront\AboutController;
+use App\Http\Controllers\Tenant\Storefront\BlogController as StorefrontBlogController;
+use App\Http\Controllers\Tenant\Storefront\BlogFeedController as StorefrontBlogFeedController;
+use App\Http\Controllers\Tenant\Storefront\CheckGiftCardBalanceController;
+use App\Http\Controllers\Tenant\Storefront\ContactController;
+use App\Http\Controllers\Tenant\Storefront\GalleryController;
+use App\Http\Controllers\Tenant\Storefront\LoyaltyController;
+use App\Http\Controllers\Tenant\Storefront\MenuController;
+use App\Http\Controllers\Tenant\Storefront\ProductWaitlistController;
+use App\Http\Controllers\Tenant\Storefront\PurchaseGiftCardController;
+use App\Http\Controllers\Tenant\Storefront\ReviewsIndexController;
+use App\Http\Controllers\Tenant\Storefront\ShowCateringController;
+use App\Http\Controllers\Tenant\Storefront\ShowGiftCardsController;
+use App\Http\Controllers\Tenant\Storefront\ShowReviewFormController;
+use App\Http\Controllers\Tenant\Storefront\StoreReviewController;
+use App\Http\Controllers\Tenant\Storefront\SubmitCateringInquiryController;
+use App\Http\Controllers\Tenant\Storefront\SurveyController;
+use App\Routing\Bindings\ActiveSurveyResolver;
+use App\Routing\Bindings\PublishedTenantBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::bind('post', resolve(PublishedTenantBlogPostResolver::class));
@@ -85,6 +85,6 @@ Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey
 Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:form-write');
 
 // Campaign open tracking pixel — public, returns a 1x1 GIF.
-Route::get('track/email-open/{token}.gif', App\Http\Controllers\Marketing\TrackCampaignOpenController::class)
+Route::get('track/email-open/{token}.gif', App\Http\Controllers\Tenant\Marketing\TrackCampaignOpenController::class)
     ->name('campaign.track.open')
     ->where('token', '[A-Z0-9]{26}');

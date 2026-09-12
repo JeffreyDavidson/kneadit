@@ -6,13 +6,13 @@ use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\Tenant;
 use App\Models\Platform\TenantNote;
+use App\Queries\Platform\TenantStatsQuery;
 use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Rule;
 
@@ -52,19 +52,7 @@ class ViewTenant extends ViewRecord
     public function getTenantStats(): array
     {
         try {
-            $this->record->run(function () use (&$stats) {
-                $stats = [
-                    'products' => DB::table('products')->count(),
-                    'orders' => DB::table('orders')->count(),
-                    // orders.total is bigint cents (migration 2026_04_22_201500).
-                    'revenue' => (int) DB::table('orders')->sum('total') / 100,
-                    'customers' => DB::table('customers')->count(),
-                    'reviews' => DB::table('reviews')->count(),
-                    'last_order' => DB::table('orders')->max('created_at'),
-                ];
-            });
-
-            return $stats ?? $this->emptyStats();
+            return resolve(TenantStatsQuery::class)->forTenant($this->record);
         } catch (\Throwable $e) {
             return $this->emptyStats();
         }

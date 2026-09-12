@@ -17,6 +17,7 @@ use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
+use App\Filament\Resources\CateringInquiries\Support\CateringQuoteItemMapper;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use App\Services\Settings\TenantSettings;
@@ -30,7 +31,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ValidatedInput;
 
 /**
@@ -200,7 +200,7 @@ class ViewCateringInquiry extends ViewRecord
                     ]),
             ])
             ->action(function (array $data): void {
-                $rows = $this->quoteItemRows($data['items'] ?? []);
+                $rows = resolve(CateringQuoteItemMapper::class)->map($data['items'] ?? []);
                 resolve(SyncCateringQuoteItems::class)($this->record, $rows);
 
                 Notification::make()->title('Quote items updated.')->success()->send();
@@ -340,41 +340,5 @@ class ViewCateringInquiry extends ViewRecord
 
                 Notification::make()->title('Notes updated.')->success()->send();
             });
-    }
-
-    /** @return list<array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> */
-    private function quoteItemRows(mixed $value): array
-    {
-        $items = Validator::make(['items' => $value], [
-            'items' => ['required', 'array'],
-            'items.*' => ['required', 'array'],
-            'items.*.id' => ['nullable', 'numeric', 'multiple_of:1', 'min:1'],
-            'items.*.name' => ['required', 'string'],
-            'items.*.quantity' => ['required', 'numeric', 'multiple_of:1', 'min:1'],
-            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
-            'items.*.special_instructions' => ['nullable', 'string'],
-        ])->safe()->array('items');
-
-        $rows = [];
-
-        foreach ($items as $row) {
-            if (! is_array($row)) {
-                throw new \LogicException('Validated quote item must be an array.');
-            }
-
-            $item = new ValidatedInput($row);
-
-            $rows[] = [
-                'id' => $item->filled('id') ? $item->integer('id') : null,
-                'name' => $item->string('name')->toString(),
-                'quantity' => $item->integer('quantity'),
-                'unit_price' => $item->float('unit_price'),
-                'special_instructions' => $item->filled('special_instructions')
-                    ? $item->string('special_instructions')->toString()
-                    : null,
-            ];
-        }
-
-        return $rows;
     }
 }
