@@ -115,7 +115,7 @@ test('dispatchForRecipient dispatches ReviewRequested event and marks order', fu
             'review_request_sent_at' => null,
         ]);
 
-    $recipient = new App\Contracts\Engagement\EngagementRecipient(
+    $recipient = new App\Services\Engagement\Contracts\EngagementRecipient(
         email: $customer->email,
         name: $customer->name,
         model: $order,

@@ -1,6 +1,6 @@
 <?php
 
-use App\Contracts\Tenants\LegacyCouponImporter;
+use App\Services\Tenants\Contracts\LegacyCouponImporter;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(fn () => setUpTenantTest());

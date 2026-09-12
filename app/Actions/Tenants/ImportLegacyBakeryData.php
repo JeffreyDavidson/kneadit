@@ -2,15 +2,15 @@
 
 namespace App\Actions\Tenants;
 
-use App\Contracts\Tenants\LegacyCatalogImporter;
-use App\Contracts\Tenants\LegacyCouponImporter;
-use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\Enums\Financial\CouponType;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Services\Settings\TenantSettingCipher;
+use App\Services\Tenants\Contracts\LegacyCatalogImporter;
+use App\Services\Tenants\Contracts\LegacyCouponImporter;
+use App\Services\Tenants\Contracts\LegacyCustomerImporter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;

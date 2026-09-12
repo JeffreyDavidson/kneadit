@@ -2,9 +2,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\Tenants\LegacyCatalogImporter;
-use App\Contracts\Tenants\LegacyCouponImporter;
-use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
@@ -23,6 +20,9 @@ use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\Contracts\LegacyCatalogImporter;
+use App\Services\Tenants\Contracts\LegacyCouponImporter;
+use App\Services\Tenants\Contracts\LegacyCustomerImporter;
 use App\Services\Tenants\DatabaseLegacyCatalogImporter;
 use App\Services\Tenants\DatabaseLegacyCouponImporter;
 use App\Services\Tenants\DatabaseLegacyCustomerImporter;

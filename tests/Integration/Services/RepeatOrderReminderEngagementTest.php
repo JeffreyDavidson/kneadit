@@ -1,11 +1,11 @@
 <?php
 
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
 use App\Models\Orders\Order;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\Engagements\RepeatOrderReminderEngagement;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
