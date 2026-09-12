@@ -21,7 +21,7 @@ test('renders the success view without finalizing checkout when no session_id is
     withoutMiddleware(tenantMiddleware())
         ->get(route('catering.stripe.success', ['inquiry' => $inquiry]))
         ->assertOk()
-        ->assertViewIs('storefront.catering.deposit-success')
+        ->assertViewIs('tenant.storefront.catering.deposit-success')
         ->assertViewHas('paid', false);
 });
 
@@ -35,7 +35,7 @@ test('skips the checkout finalize call when the inquiry already has a deposit_pa
     withoutMiddleware(tenantMiddleware())
         ->get(route('catering.stripe.success', ['inquiry' => $inquiry]) . '?session_id=cs_test_123')
         ->assertOk()
-        ->assertViewIs('storefront.catering.deposit-success')
+        ->assertViewIs('tenant.storefront.catering.deposit-success')
         ->assertViewHas('paid', true);
 });
 

@@ -14,7 +14,7 @@ Route::middleware('web')->group(function () {
     Route::redirect('login', '/')->name('login')->middleware('guest');
     Route::post('logout', LogoutController::class)->name('logout')->middleware('auth');
 
-    Route::view('email/verify', 'auth.verify-email')->middleware('auth')->name('verification.notice');
+    Route::view('email/verify', 'central.auth.verify-email')->middleware('auth')->name('verification.notice');
     Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)->middleware(['auth', 'signed'])->name('verification.verify');
     Route::post('email/verification-notification', SendVerificationNotificationController::class)->middleware(['auth', 'throttle:verification-resend'])->name('verification.send');
 

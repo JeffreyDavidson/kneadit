@@ -15,7 +15,7 @@ class ProfileController extends Controller
         /** @var Customer $customer */
         $customer = auth('customer')->user();
 
-        return view('storefront.account.profile', [
+        return view('tenant.storefront.account.profile', [
             'customer' => $customer,
         ]);
     }

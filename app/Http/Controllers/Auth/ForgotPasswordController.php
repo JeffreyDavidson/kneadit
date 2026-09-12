@@ -24,6 +24,6 @@ class ForgotPasswordController extends Controller
 
     public function show(): View
     {
-        return view('auth.forgot-password');
+        return view('central.auth.forgot-password');
     }
 }

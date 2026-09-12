@@ -22,7 +22,7 @@ class LoyaltyController extends Controller
             ? LoyaltyPageViewModel::forCustomer($settings, $customer, $customerLoyalty, $rewards)
             : LoyaltyPageViewModel::notFound($settings, $rewards);
 
-        return view('storefront.loyalty', [
+        return view('tenant.storefront.loyalty', [
             'vm' => $vm,
         ]);
     }
@@ -31,7 +31,7 @@ class LoyaltyController extends Controller
     {
         $rewards = LoyaltyReward::query()->forStorefront()->get();
 
-        return view('storefront.loyalty', [
+        return view('tenant.storefront.loyalty', [
             'vm' => LoyaltyPageViewModel::empty($settings, $rewards),
         ]);
     }

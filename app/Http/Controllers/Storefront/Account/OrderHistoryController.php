@@ -19,7 +19,7 @@ class OrderHistoryController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('storefront.account.orders', [
+        return view('tenant.storefront.account.orders', [
             'customer' => $customer,
             'orders' => $orders,
             'settings' => $settings,

@@ -32,7 +32,7 @@ class MenuController extends Controller
         $heroEyebrow = str_replace('{{store_name}}', $settings->store->name, is_string($configuredEyebrow) ? $configuredEyebrow : $settings->store->name);
         $ctaDesc = str_replace('{{lead_time}}', $leadTimeHours, is_string($configuredDescription) ? $configuredDescription : 'All orders need ' . $leadTimeHours . ' hours notice. Place yours now.');
 
-        return view('storefront.menu', [
+        return view('tenant.storefront.menu', [
             'settings' => $settings,
             'categories' => $categories,
             'content' => $content,

@@ -18,7 +18,7 @@ class BlogFeedController extends Controller
             ->get();
 
         return response()
-            ->view('storefront.blog.feed', [
+            ->view('tenant.storefront.blog.feed', [
                 'settings' => $settings,
                 'posts' => $posts,
             ])

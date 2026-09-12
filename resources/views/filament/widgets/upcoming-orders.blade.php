@@ -3,7 +3,7 @@
     $hasOrderRoute = \Illuminate\Support\Facades\Route::has('filament.admin.resources.orders.view');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Upcoming Orders" icon="heroicon-o-calendar-days">
+<x-tenant-admin.dashboard.preview-card heading="Upcoming Orders" icon="heroicon-o-calendar-days">
     @forelse ($groups as $date => $group)
         <div @class(['mt-3' => ! $loop->first])>
             <div class="pw-stat" style="margin-bottom: 4px">
@@ -11,7 +11,7 @@
                 <span style="font-size: 0.65rem; color: var(--pw-card-text-muted)">{{ count($group['orders']) }} order{{ count($group['orders']) === 1 ? '' : 's' }}</span>
             </div>
             @foreach ($group['orders'] as $order)
-                <x-admin.dashboard.list-row :value="$order['time']">
+                <x-tenant-admin.dashboard.list-row :value="$order['time']">
                     @if ($hasOrderRoute)
                         <a
                             href="{{ route('filament.admin.resources.orders.view', $order['id']) }}"
@@ -21,14 +21,14 @@
                         <span style="color: var(--pw-card-text)">{{ $order['customer'] }}</span>
                     @endif
                     <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $order['items'] }} item{{ $order['items'] === 1 ? '' : 's' }} · ${{ $order['total'] }}</span>
-                </x-admin.dashboard.list-row>
+                </x-tenant-admin.dashboard.list-row>
             @endforeach
         </div>
     @empty
-        <x-admin.dashboard.empty-state
+        <x-tenant-admin.dashboard.empty-state
             icon="heroicon-o-calendar"
             title="No upcoming orders"
             copy="Your near-term queue is clear. New confirmed orders will appear here by delivery date."
         />
     @endforelse
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

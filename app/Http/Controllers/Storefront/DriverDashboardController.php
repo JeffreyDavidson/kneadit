@@ -11,7 +11,7 @@ class DriverDashboardController extends Controller
 {
     public function __invoke(TenantSettings $settings): View
     {
-        return view('storefront.driver', [
+        return view('tenant.storefront.driver', [
             'settings' => $settings,
             'orders' => DriverDeliveryQuery::forDate(today()),
         ]);

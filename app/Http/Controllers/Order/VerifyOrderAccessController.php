@@ -34,7 +34,7 @@ class VerifyOrderAccessController extends Controller
 
     public function show(Order $order, TenantSettings $settings): View
     {
-        return view('storefront.order-verify', [
+        return view('tenant.storefront.order-verify', [
             'order' => $order,
             'settings' => $settings,
             'storefrontTheme' => $settings->branding->storefrontTheme,

@@ -18,7 +18,7 @@ class ResolveInvitation
             ->firstOrFail();
 
         if ($invitation->expires_at->isPast()) {
-            return response()->view('invitations.expired');
+            return response()->view('tenant.invitations.expired');
         }
 
         $request->attributes->set('invitation', $invitation);

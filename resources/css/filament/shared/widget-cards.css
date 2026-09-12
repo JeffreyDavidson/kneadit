@@ -2,7 +2,7 @@
    KneadIt — Dashboard widget card primitives
    ===================================================================
    Shared classes used by both the central WidgetCatalog page and the
-   tenant dashboard widgets via <x-admin.dashboard.*> components.
+   tenant dashboard widgets via <x-tenant-admin.dashboard.*> components.
 
    Tokens default to brand colors that work on either panel; central
    theme overrides are applied via --platform-* tokens when available.

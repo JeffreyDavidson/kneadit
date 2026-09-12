@@ -143,6 +143,18 @@ Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRec
 
 Blade, Livewire, Alpine.js, Filament, and Tailwind CSS make up the UI. Vite builds separate central/application, storefront, tenant Filament, and central Filament entry points defined in `vite.config.js`. Inline scripts and styles use the request-scoped CSP nonce directive.
 
+### View organization
+
+Blade views are organized by the application surface they serve:
+
+- `resources/views/central/` contains central application views, grouped into `auth`, `billing`, `blog`, `legal`, `marketing`, `platform`, and `seo`.
+- `resources/views/tenant/` contains tenant-facing views. `storefront/` holds public bakery pages and customer account flows, while `admin/` and `invitations/` hold tenant administration and staff invitation views.
+- `resources/views/components/` contains reusable Blade components. Storefront home components live under `storefront/home`, and tenant administration components live under `tenant-admin`; their Blade tags and PHP component namespaces mirror those paths.
+- `resources/views/shared/` contains cross-page includes that are not tied to a single surface, such as analytics and storefront order-form scripts.
+- `resources/views/filament/`, `emails/`, `errors/`, `vendor/`, and `reference/` remain specialized top-level trees for their respective rendering contexts.
+
+When adding a view, choose its location from the request surface first, then its feature. A view used by tenant models belongs under `tenant/` even if the controller is currently grouped in a central namespace. Component PHP classes and component integration tests should mirror the component's `resources/views/components/` path.
+
 ## Cross-cutting constraints
 
 - Authorization belongs in policies, gates, and route middleware. Protected Filament actions require server-side authorization.

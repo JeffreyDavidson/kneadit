@@ -27,7 +27,7 @@ class Onboarding extends Page
 
     protected static string|BackedEnum|null $navigationIcon = null;
 
-    protected string $view = 'filament.pages.platform.onboarding';
+    protected string $view = 'filament.pages.central.platform.onboarding';
 
     protected static ?string $title = 'Welcome to KneadIt';
 

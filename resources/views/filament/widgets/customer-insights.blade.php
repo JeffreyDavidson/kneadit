@@ -4,9 +4,9 @@
     $repeatRate = $this->getRepeatCustomerRate();
 @endphp
 
-<x-admin.dashboard.preview-card heading="Customer Insights" icon="heroicon-o-users">
-    <x-admin.dashboard.stat-row label="New This Week" :value="$newThisWeek" />
-    <x-admin.dashboard.stat-row label="Repeat Rate" :value="$repeatRate . '%'" class="mt-2" />
+<x-tenant-admin.dashboard.preview-card heading="Customer Insights" icon="heroicon-o-users">
+    <x-tenant-admin.dashboard.stat-row label="New This Week" :value="$newThisWeek" />
+    <x-tenant-admin.dashboard.stat-row label="Repeat Rate" :value="$repeatRate . '%'" class="mt-2" />
 
     @unless ($this->isSize('sm'))
         <div
@@ -28,4 +28,4 @@
             </span>
         </div>
     @endunless
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>
