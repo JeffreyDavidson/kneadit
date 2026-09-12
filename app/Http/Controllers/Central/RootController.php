@@ -17,7 +17,7 @@ class RootController extends Controller
         $tenant = tenant();
 
         if (! $tenant instanceof Tenant) {
-            return view('platform.welcome');
+            return view('central.marketing.welcome');
         }
 
         $externalUrl = $tenant->external_website;
@@ -29,7 +29,7 @@ class RootController extends Controller
         if (! $tenant->storefront_enabled) {
             $settings = resolve(TenantSettings::class);
 
-            return response()->view('platform.storefront-disabled', [
+            return response()->view('central.platform.storefront-disabled', [
                 'storeName' => $settings->store->name,
                 'tenant' => $tenant,
             ]);

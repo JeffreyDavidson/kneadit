@@ -28,7 +28,7 @@ class SurveyController extends Controller
     {
         $content = settingsPageContent('survey');
 
-        return view('storefront.survey', [
+        return view('tenant.storefront.survey', [
             'settings' => $settings,
             'survey' => $survey,
             'content' => $content,

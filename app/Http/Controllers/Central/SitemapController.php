@@ -13,7 +13,7 @@ class SitemapController extends Controller
         $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
         return response()
-            ->view('platform.sitemap', [
+            ->view('central.seo.sitemap', [
                 'posts' => $posts,
             ])
             ->header('Content-Type', 'text/xml');

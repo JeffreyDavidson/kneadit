@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Blade;
 
 test('preview-card renders heading and slot content', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.preview-card heading="Recent Orders" icon="heroicon-o-receipt-refund">Body content</x-admin.dashboard.preview-card>',
+        '<x-tenant-admin.dashboard.preview-card heading="Recent Orders" icon="heroicon-o-receipt-refund">Body content</x-tenant-admin.dashboard.preview-card>',
     );
 
     expect($html)
@@ -16,7 +16,7 @@ test('preview-card renders heading and slot content', function () {
 
 test('preview-card renders heroicon strings as svg icons', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.preview-card heading="Revenue" icon="heroicon-o-arrow-trending-up">Body content</x-admin.dashboard.preview-card>',
+        '<x-tenant-admin.dashboard.preview-card heading="Revenue" icon="heroicon-o-arrow-trending-up">Body content</x-tenant-admin.dashboard.preview-card>',
     );
 
     expect($html)
@@ -27,7 +27,7 @@ test('preview-card renders heroicon strings as svg icons', function () {
 
 test('stat-row renders label and value', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.stat-row label="Pending" value="12" />',
+        '<x-tenant-admin.dashboard.stat-row label="Pending" value="12" />',
     );
 
     expect($html)
@@ -38,7 +38,7 @@ test('stat-row renders label and value', function () {
 
 test('stat-card renders heroicon strings as svg icons', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.stat-card label="Storefront Views Today" icon="heroicon-o-building-storefront" value="10" />',
+        '<x-tenant-admin.dashboard.stat-card label="Storefront Views Today" icon="heroicon-o-building-storefront" value="10" />',
     );
 
     expect($html)
@@ -49,10 +49,10 @@ test('stat-card renders heroicon strings as svg icons', function () {
 
 test('list-row renders label, optional value, and optional dot', function () {
     $withDot = Blade::render(
-        '<x-admin.dashboard.list-row label="Order #100" value="$28" dot-color="#d4a574" />',
+        '<x-tenant-admin.dashboard.list-row label="Order #100" value="$28" dot-color="#d4a574" />',
     );
     $withoutDot = Blade::render(
-        '<x-admin.dashboard.list-row label="Order #100" />',
+        '<x-tenant-admin.dashboard.list-row label="Order #100" />',
     );
 
     expect($withDot)
@@ -69,7 +69,7 @@ test('list-row renders label, optional value, and optional dot', function () {
 
 test('list-row falls back to slot content when label is omitted', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.list-row value="$28"><a href="/foo">Order #100</a> — Sarah M.</x-admin.dashboard.list-row>',
+        '<x-tenant-admin.dashboard.list-row value="$28"><a href="/foo">Order #100</a> — Sarah M.</x-tenant-admin.dashboard.list-row>',
     );
 
     expect($html)
@@ -81,10 +81,10 @@ test('list-row falls back to slot content when label is omitted', function () {
 
 test('bar-row renders label with computed pct fallback or explicit value text', function () {
     $defaultValue = Blade::render(
-        '<x-admin.dashboard.bar-row label="Chocolate Cake" pct="85" />',
+        '<x-tenant-admin.dashboard.bar-row label="Chocolate Cake" pct="85" />',
     );
     $explicitValue = Blade::render(
-        '<x-admin.dashboard.bar-row label="Monthly Goal" pct="49" value="$2,450 / $5,000" />',
+        '<x-tenant-admin.dashboard.bar-row label="Monthly Goal" pct="49" value="$2,450 / $5,000" />',
     );
 
     expect($defaultValue)
@@ -101,7 +101,7 @@ test('bar-row renders label with computed pct fallback or explicit value text', 
 
 test('spark-bars renders one bar per data point with correct heights', function () {
     $html = Blade::render(
-        '<x-admin.dashboard.spark-bars :bars="[20, 35, 60]" :height="32" />',
+        '<x-tenant-admin.dashboard.spark-bars :bars="[20, 35, 60]" :height="32" />',
     );
 
     expect($html)

@@ -15,7 +15,7 @@ class ShowPlansController extends Controller
      */
     public function __invoke(#[CurrentUser] ?User $user): View
     {
-        return view('billing.plans', [
+        return view('central.billing.plans', [
             'plans' => config('kneadit.plans'),
             'currentPlan' => $user ? SubscriptionTier::resolve($user)?->value : null,
             'bakeryName' => session('bakery_name'),

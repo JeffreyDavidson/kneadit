@@ -23,7 +23,7 @@ test('dashboard renders with empty state and session status for a fresh customer
         ->get(route('account.dashboard', [], false))
         ->assertOk()
         ->assertSee('Welcome back.')
-        ->assertViewIs('storefront.account.dashboard')
+        ->assertViewIs('tenant.storefront.account.dashboard')
         ->assertViewHas('customer', fn (Customer $passed) => $passed->is($customer))
         ->assertViewHas('orders', fn ($orders) => $orders->isEmpty())
         ->assertViewHas('favorites', fn ($favorites) => $favorites->isEmpty());

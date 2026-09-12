@@ -4,7 +4,7 @@
     $trendIcon = $data['trend'] >= 0 ? '↑' : '↓';
 @endphp
 
-<x-admin.dashboard.stat-card
+<x-tenant-admin.dashboard.stat-card
     label="Storefront Views Today"
     icon="heroicon-o-building-storefront"
     :value="number_format($data['today'])"

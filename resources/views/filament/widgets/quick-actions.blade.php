@@ -1,5 +1,5 @@
 <div>
-    <x-admin.dashboard.preview-card heading="Quick Actions" icon="heroicon-o-bolt">
+    <x-tenant-admin.dashboard.preview-card heading="Quick Actions" icon="heroicon-o-bolt">
         <div class="grid grid-cols-2 gap-2.5">
             @foreach ($this->getQuickActions() as $action)
                 <a
@@ -13,5 +13,5 @@
                 </a>
             @endforeach
         </div>
-    </x-admin.dashboard.preview-card>
+    </x-tenant-admin.dashboard.preview-card>
 </div>

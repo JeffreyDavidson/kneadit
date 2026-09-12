@@ -1,0 +1,38 @@
+<?php
+
+namespace App\View\Components\Storefront\Home;
+
+use App\Models\Inventory\Product;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
+use Illuminate\View\Component;
+
+class FeaturedProducts extends Component
+{
+    /** @var Collection<int, Product> */
+    public Collection $featuredProducts;
+
+    public int $count;
+
+    public string $title;
+
+    public string $subtitle;
+
+    /** @param array<string, mixed> $config */
+    public function __construct(public array $config = [])
+    {
+        $this->count = is_int($config['count'] ?? null) ? $config['count'] : 6;
+        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'Our Favorites';
+        $this->subtitle = is_string($config['subtitle'] ?? null) ? $config['subtitle'] : 'Freshly made with love';
+        $this->featuredProducts = Product::query()
+            ->active()
+            ->with('category')
+            ->take($this->count)
+            ->get();
+    }
+
+    public function render(): View
+    {
+        return view('components.storefront.home.featured-products');
+    }
+}

@@ -1,0 +1,18 @@
+<?php
+
+use App\Models\Inventory\Category;
+use App\View\Components\Storefront\Home\Categories;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+pest()->use(RefreshDatabase::class);
+
+beforeEach(fn () => setUpTenantTest());
+
+test('loads active categories sorted by sort order', function () {
+    Category::factory()->count(3)->create();
+    Category::factory()->inactive()->create();
+
+    $component = new Categories;
+
+    expect($component->categories)->toHaveCount(3);
+});

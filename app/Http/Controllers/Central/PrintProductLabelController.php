@@ -12,7 +12,7 @@ class PrintProductLabelController extends Controller
 {
     public function __invoke(Product $product, TenantSettings $settings): View
     {
-        return view('admin.products.label', [
+        return view('tenant.admin.products.label', [
             'product' => $product,
             'settings' => $settings,
             'label' => ProductLabelPresenter::for($product),

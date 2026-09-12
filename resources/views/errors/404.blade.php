@@ -18,7 +18,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/errors.css') }}" />
-    @include('partials.fathom')
+    @include('shared.analytics.fathom')
 </head>
 <body>
     <div class="wrap">

@@ -42,7 +42,7 @@
         />
         @endif
         {{ $styles ?? "" }}
-        @include('partials.fathom')
+        @include('shared.analytics.fathom')
 </head>
 <body data-theme="{{ $storefrontTheme }}" {{ $bodyAttrs ?? "" }}>
     @php

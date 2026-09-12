@@ -81,7 +81,7 @@ test('reset-password GET renders the form with the token and email from the URL'
         ->get(route('account.password.reset', ['token' => 'abc123', 'email' => 'jane@example.com'], false));
 
     $response->assertOk()
-        ->assertViewIs('storefront.account.reset-password')
+        ->assertViewIs('tenant.storefront.account.reset-password')
         ->assertViewHas('token', 'abc123')
         ->assertViewHas('email', 'jane@example.com');
 });
