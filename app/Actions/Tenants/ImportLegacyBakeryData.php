@@ -5,13 +5,11 @@ namespace App\Actions\Tenants;
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
-use App\Enums\Financial\CouponType;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Services\Settings\TenantSettingCipher;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -19,6 +17,7 @@ use InvalidArgumentException;
 class ImportLegacyBakeryData
 {
     public function __construct(
+        private readonly LegacyBakeryDataValidator $validator,
         private readonly TenantSettingCipher $settingCipher,
         private readonly LegacyCatalogImporter $catalogImporter,
         private readonly LegacyCouponImporter $couponImporter,
@@ -31,7 +30,7 @@ class ImportLegacyBakeryData
      */
     public function __invoke(array $data): array
     {
-        $this->validateReferences($data);
+        $this->validator->validate($data);
 
         return DB::transaction(function () use ($data): array {
             $catalogIds = $this->catalogImporter->import(
@@ -78,200 +77,6 @@ class ImportLegacyBakeryData
                 'settings' => count($data['settings'] ?? []),
             ];
         });
-    }
-
-    /**
-     * Validate references before the transaction starts so malformed exports
-     * fail clearly without partially changing the tenant database.
-     *
-     * @param array<string, array<int, array<string, mixed>>> $data
-     */
-    private function validateReferences(array $data): void
-    {
-        $categoryIds = $this->legacyIds($data['categories'] ?? [], 'category');
-        $productIds = $this->legacyIds($data['products'] ?? [], 'product');
-        $couponIds = $this->legacyIds($data['coupons'] ?? [], 'coupon');
-        $recipeIds = $this->legacyIds($data['recipes'] ?? [], 'recipe');
-        $orderIds = $this->legacyIds($data['orders'] ?? [], 'order');
-
-        foreach ($data['coupons'] ?? [] as $index => $coupon) {
-            if (! array_key_exists('type', $coupon)) {
-                throw new InvalidArgumentException("Coupon at index {$index} is missing a type.");
-            }
-
-            if (! array_key_exists('code', $coupon)) {
-                throw new InvalidArgumentException("Coupon at index {$index} is missing a code.");
-            }
-
-            if (! array_key_exists('value', $coupon)) {
-                throw new InvalidArgumentException("Coupon at index {$index} is missing a value.");
-            }
-
-            $this->couponType($coupon['type']);
-            $this->stringValue($coupon['code']);
-            $this->floatValue($coupon['value']);
-        }
-
-        foreach ($data['products'] ?? [] as $index => $product) {
-            if (! array_key_exists('category_id', $product)) {
-                throw new InvalidArgumentException("Product at index {$index} is missing a category ID.");
-            }
-
-            $categoryId = $this->parseLegacyInteger($product['category_id']);
-            $this->assertReference($categoryIds, $categoryId, "Product at index {$index} references missing category ID {$categoryId}.");
-        }
-
-        foreach ($data['orders'] ?? [] as $index => $order) {
-            if (! array_key_exists('customer_email', $order)) {
-                throw new InvalidArgumentException("Order at index {$index} is missing a customer email.");
-            }
-
-            if (! array_key_exists('customer_name', $order)) {
-                throw new InvalidArgumentException("Order at index {$index} is missing a customer name.");
-            }
-
-            if (! array_key_exists('order_number', $order)) {
-                throw new InvalidArgumentException("Order at index {$index} is missing an order number.");
-            }
-
-            $this->orderStatus($order['status'] ?? OrderStatus::Pending->value);
-            $this->paymentStatus($order['payment_status'] ?? PaymentStatus::Unpaid->value);
-            $this->paymentMethod($order['payment_method'] ?? PaymentMethod::Other->value);
-            $this->deliveryType($order['fulfillment_type'] ?? DeliveryType::Pickup->value);
-            $this->stringValue($order['customer_name']);
-            $this->stringValue($order['order_number']);
-
-            if (array_key_exists('coupon_id', $order) && $order['coupon_id'] !== null) {
-                $couponId = $this->parseLegacyInteger($order['coupon_id']);
-                $this->assertReference($couponIds, $couponId, "Order at index {$index} references missing coupon ID {$couponId}.");
-            }
-        }
-
-        foreach ($data['order_items'] ?? [] as $index => $item) {
-            if (! array_key_exists('order_id', $item)) {
-                throw new InvalidArgumentException("Order item at index {$index} is missing an order ID.");
-            }
-
-            if (! array_key_exists('product_name', $item)) {
-                throw new InvalidArgumentException("Order item at index {$index} is missing a product name.");
-            }
-
-            if (! array_key_exists('quantity', $item)) {
-                throw new InvalidArgumentException("Order item at index {$index} is missing a quantity.");
-            }
-
-            if (! array_key_exists('unit_price', $item)) {
-                throw new InvalidArgumentException("Order item at index {$index} is missing a unit price.");
-            }
-
-            $orderId = $this->parseLegacyInteger($item['order_id']);
-            $this->assertReference($orderIds, $orderId, "Order item at index {$index} references missing order ID {$orderId}.");
-            $this->stringValue($item['product_name']);
-            $this->parseLegacyInteger($item['quantity']);
-            $this->floatValue($item['unit_price']);
-
-            if (array_key_exists('product_id', $item) && $item['product_id'] !== null) {
-                $productId = $this->parseLegacyInteger($item['product_id']);
-                $this->assertReference($productIds, $productId, "Order item at index {$index} references missing product ID {$productId}.");
-            }
-        }
-
-        foreach ($data['order_notes'] ?? [] as $index => $note) {
-            if (! array_key_exists('order_id', $note)) {
-                throw new InvalidArgumentException("Order note at index {$index} is missing an order ID.");
-            }
-
-            $orderId = $this->parseLegacyInteger($note['order_id']);
-            $this->assertReference($orderIds, $orderId, "Order note at index {$index} references missing order ID {$orderId}.");
-        }
-
-        foreach ($data['customer_favorites'] ?? [] as $index => $favorite) {
-            if (! array_key_exists('product_id', $favorite)) {
-                throw new InvalidArgumentException("Customer favorite at index {$index} is missing a product ID.");
-            }
-
-            $productId = $this->parseLegacyInteger($favorite['product_id']);
-            $this->assertReference($productIds, $productId, "Customer favorite at index {$index} references missing product ID {$productId}.");
-        }
-
-        $this->validateOptionalProductReferences($data['reviews'] ?? [], $productIds, 'Review');
-        $this->validateOptionalProductReferences($data['recipes'] ?? [], $productIds, 'Recipe');
-        $this->validateOptionalProductReferences($data['waitlist_entries'] ?? [], $productIds, 'Waitlist entry');
-
-        foreach (Arr::reject(
-            $data['reviews'] ?? [],
-            static fn (array $review): bool => ! array_key_exists('order_id', $review) || $review['order_id'] === null,
-        ) as $index => $review) {
-            $orderId = $this->parseLegacyInteger($review['order_id']);
-            $this->assertReference($orderIds, $orderId, "Review at index {$index} references missing order ID {$orderId}.");
-        }
-
-        $this->validateRecipeReferences($data['recipe_ingredients'] ?? [], $recipeIds, 'Recipe ingredient');
-        $this->validateRecipeReferences($data['recipe_stages'] ?? [], $recipeIds, 'Recipe stage');
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $records
-     * @param array<int, true> $productIds
-     */
-    private function validateOptionalProductReferences(array $records, array $productIds, string $dataset): void
-    {
-        foreach (Arr::reject(
-            $records,
-            static fn (array $record): bool => ! array_key_exists('product_id', $record) || $record['product_id'] === null,
-        ) as $index => $record) {
-            $productId = $this->parseLegacyInteger($record['product_id']);
-            $this->assertReference($productIds, $productId, "{$dataset} at index {$index} references missing product ID {$productId}.");
-        }
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $records
-     * @param array<int, true> $recipeIds
-     */
-    private function validateRecipeReferences(array $records, array $recipeIds, string $dataset): void
-    {
-        foreach ($records as $index => $record) {
-            if (! array_key_exists('recipe_id', $record)) {
-                throw new InvalidArgumentException("{$dataset} at index {$index} is missing a recipe ID.");
-            }
-
-            $recipeId = $this->parseLegacyInteger($record['recipe_id']);
-            $this->assertReference($recipeIds, $recipeId, "{$dataset} at index {$index} references missing recipe ID {$recipeId}.");
-        }
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $records
-     * @return array<int, true>
-     */
-    private function legacyIds(array $records, string $dataset): array
-    {
-        $ids = [];
-
-        foreach ($records as $index => $record) {
-            if (! array_key_exists('id', $record)) {
-                throw new InvalidArgumentException(ucfirst($dataset) . " at index {$index} is missing an ID.");
-            }
-
-            $id = $this->parseLegacyInteger($record['id']);
-
-            if (isset($ids[$id])) {
-                throw new InvalidArgumentException("Duplicate {$dataset} ID {$id} at index {$index}.");
-            }
-
-            $ids[$id] = true;
-        }
-
-        return $ids;
-    }
-
-    /** @param array<int, true> $references */
-    private function assertReference(array $references, int $id, string $message): void
-    {
-        if (! isset($references[$id])) {
-            throw new InvalidArgumentException($message);
-        }
     }
 
     /** @param array<int, array<string, mixed>> $orders
@@ -657,17 +462,6 @@ class ImportLegacyBakeryData
             ['key' => $key],
             ['value' => $value, 'updated_at' => now(), 'created_at' => now()],
         );
-    }
-
-    private function couponType(mixed $value): string
-    {
-        $normalized = Str::lower($this->stringValue($value));
-        $normalized = $normalized === 'fixed_amount' ? CouponType::Fixed->value : $normalized;
-
-        $type = CouponType::tryFrom($normalized);
-        throw_if($type === null, InvalidArgumentException::class, "Unsupported coupon type [{$normalized}].");
-
-        return $type->value;
     }
 
     private function orderStatus(mixed $value): string
