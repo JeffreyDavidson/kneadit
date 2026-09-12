@@ -37,8 +37,9 @@ class TenantSignupAnalyticsQuery
     {
         $signups = $this->byMonth();
         $growth = [];
+        $counter = count($signups);
 
-        for ($i = 1; $i < count($signups); $i++) {
+        for ($i = 1; $i < $counter; $i++) {
             $previous = $signups[$i - 1]['count'];
             $current = $signups[$i]['count'];
             $growth[] = [
