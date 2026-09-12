@@ -26,7 +26,7 @@ final class PreviewStep extends OnboardingStep
             ->icon(Heroicon::OutlinedEye)
             ->description('Review your storefront')
             ->schema([
-                View::make('filament.pages.central.platform.onboarding-preview')
+                View::make('filament.pages.platform.onboarding-preview')
                     ->viewData([
                         'page' => $page,
                     ]),
