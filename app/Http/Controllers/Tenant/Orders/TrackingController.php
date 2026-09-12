@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Order;
+namespace App\Http\Controllers\Tenant\Orders;
 
 use App\Enums\Orders\OrderStatus;
 use App\Http\Controllers\Controller;

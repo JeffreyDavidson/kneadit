@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Order;
+namespace App\Http\Controllers\Tenant\Orders;
 
 use App\Actions\Orders\SendOrderMessage;
 use App\Http\Controllers\Controller;

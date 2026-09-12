@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Order\ApplyCouponController;
-use App\Http\Controllers\Order\ApplyGiftCardController;
-use App\Http\Controllers\Order\AvailabilityController;
-use App\Http\Controllers\Order\CapacityController;
-use App\Http\Controllers\Order\MessageController;
-use App\Http\Controllers\Order\ModifyOrderController;
-use App\Http\Controllers\Order\PickupSlotsController;
-use App\Http\Controllers\Order\ReorderController;
-use App\Http\Controllers\Order\StripeCancelController;
-use App\Http\Controllers\Order\StripeSuccessController;
-use App\Http\Controllers\Order\TrackingController;
-use App\Http\Controllers\Order\VerifyOrderAccessController;
 use App\Http\Controllers\Storefront\ApplyReferralCodeController;
 use App\Http\Controllers\Storefront\PersistCartController;
 use App\Http\Controllers\Storefront\RecoverCartController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
+use App\Http\Controllers\Tenant\Orders\ApplyCouponController;
+use App\Http\Controllers\Tenant\Orders\ApplyGiftCardController;
+use App\Http\Controllers\Tenant\Orders\AvailabilityController;
+use App\Http\Controllers\Tenant\Orders\CapacityController;
+use App\Http\Controllers\Tenant\Orders\MessageController;
+use App\Http\Controllers\Tenant\Orders\ModifyOrderController;
+use App\Http\Controllers\Tenant\Orders\PickupSlotsController;
+use App\Http\Controllers\Tenant\Orders\ReorderController;
+use App\Http\Controllers\Tenant\Orders\StripeCancelController;
+use App\Http\Controllers\Tenant\Orders\StripeSuccessController;
+use App\Http\Controllers\Tenant\Orders\TrackingController;
+use App\Http\Controllers\Tenant\Orders\VerifyOrderAccessController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');

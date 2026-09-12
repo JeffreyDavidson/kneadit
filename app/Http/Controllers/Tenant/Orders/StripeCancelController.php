@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Order;
+namespace App\Http\Controllers\Tenant\Orders;
 
 use App\Actions\Stripe\CancelStripeCheckout;
 use App\Http\Controllers\Controller;
