@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Tenant\Api;
 
 use App\Enums\Financial\CouponType;
 use App\Http\Controllers\Controller;

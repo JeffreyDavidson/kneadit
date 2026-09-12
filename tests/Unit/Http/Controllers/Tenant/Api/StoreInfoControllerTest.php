@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\StoreInfoController;
+use App\Http\Controllers\Tenant\Api\StoreInfoController;
 
 test('it returns store info from TenantSettings', function () {
     $settings = makeTenantSettings(

@@ -85,6 +85,6 @@ Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey
 Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:form-write');
 
 // Campaign open tracking pixel — public, returns a 1x1 GIF.
-Route::get('track/email-open/{token}.gif', App\Http\Controllers\Marketing\TrackCampaignOpenController::class)
+Route::get('track/email-open/{token}.gif', App\Http\Controllers\Tenant\Marketing\TrackCampaignOpenController::class)
     ->name('campaign.track.open')
     ->where('token', '[A-Z0-9]{26}');

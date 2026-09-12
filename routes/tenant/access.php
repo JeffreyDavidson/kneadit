@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Central\ConsumeImpersonationController;
-use App\Http\Controllers\Marketing\PreviewCustomerCampaignController;
 use App\Http\Controllers\Storefront\AppIconController;
 use App\Http\Controllers\Storefront\DriverDashboardController;
 use App\Http\Controllers\Storefront\ManifestController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\Storefront\MarkOrderDeliveredController;
 use App\Http\Controllers\Stripe\StripeConnectController;
 use App\Http\Controllers\Tenant\Invitations\AcceptInvitationController;
 use App\Http\Controllers\Tenant\Invitations\ShowInvitationController;
+use App\Http\Controllers\Tenant\Marketing\PreviewCustomerCampaignController;
 use App\Http\Middleware\ResolveInvitation;
 use Illuminate\Support\Facades\Route;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Marketing;
+namespace App\Http\Controllers\Tenant\Marketing;
 
 use App\Http\Controllers\Controller;
 use App\Models\Engagement\CustomerCampaignLog;
