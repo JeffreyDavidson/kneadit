@@ -1,5 +1,9 @@
 # Deep application audit
 
+> Archived audit snapshot from August 31, 2026. Treat `docs/architecture.md`,
+> `docs/operations.md`, and the current codebase as authoritative. Revalidate
+> findings before turning any recommendation into implementation work.
+
 This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.5, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
 
 ## Executive summary
