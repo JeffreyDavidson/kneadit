@@ -16,6 +16,7 @@ The following focused slices from this audit are now complete:
 - Typed weekly digest data and event boundaries.
 - Settings form mapping and legacy settings import handling.
 - Legacy import validation and catering quote-item form mapping.
+- Legacy order-item, review, financial, scheduling, and engagement importers.
 
 The remaining recommendations below are intentionally still incremental; each should be implemented as a separate, tested slice.
 
