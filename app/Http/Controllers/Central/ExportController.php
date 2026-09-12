@@ -7,6 +7,7 @@ use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
+use Illuminate\Support\Facades\File;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -58,24 +59,50 @@ class ExportController extends Controller
 
         return response()->streamDownload(function () use ($tenant, $csvExport, $tenancyManager) {
             $tmpFile = tempnam(sys_get_temp_dir(), 'export_');
-            $zip = new ZipArchive;
-            $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            throw_if($tmpFile === false, RuntimeException::class, 'Failed to create temporary export file.');
 
-            try {
-                $tenancyManager->withinTenant($tenant, function () use ($csvExport, $zip) {
-                    foreach ($csvExport->validTypes() as $type) {
-                        $zip->addFromString("{$type}.csv", $csvExport->toString($type));
-                    }
-                });
-            } catch (Throwable $e) {
-                $zip->close();
-                @unlink($tmpFile);
-                throw $e;
+            $zip = new ZipArchive;
+            $openResult = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+            if ($openResult !== true) {
+                File::delete($tmpFile);
+
+                throw new RuntimeException("Failed to open temporary export archive (code {$openResult}).");
             }
 
-            $zip->close();
-            readfile($tmpFile);
-            @unlink($tmpFile);
+            try {
+                $tenancyManager->withinTenant($tenant, function () use ($csvExport, $zip): void {
+                    foreach ($csvExport->validTypes() as $type) {
+                        throw_unless(
+                            $zip->addFromString("{$type}.csv", $csvExport->toString($type)),
+                            RuntimeException::class,
+                            "Failed to add {$type} export to archive.",
+                        );
+                    }
+                });
+
+                throw_unless(
+                    $zip->close(),
+                    RuntimeException::class,
+                    'Failed to finalize temporary export archive.',
+                );
+
+                $handle = fopen($tmpFile, 'rb');
+                throw_if($handle === false, RuntimeException::class, 'Failed to open temporary export archive.');
+
+                try {
+                    $bytes = fpassthru($handle);
+                    throw_if($bytes < 1, RuntimeException::class, 'Failed to stream export archive.');
+                } finally {
+                    fclose($handle);
+                }
+            } catch (Throwable $e) {
+                $zip->close();
+
+                throw $e;
+            } finally {
+                File::delete($tmpFile);
+            }
         }, $filename, [
             'Content-Type' => 'application/zip',
         ]);

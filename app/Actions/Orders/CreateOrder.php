@@ -25,14 +25,19 @@ use App\Pipes\Orders\ValidateStockAvailability;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use UnexpectedValueException;
 
 class CreateOrder
 {
+    public function __construct(
+        private Pipeline $pipeline,
+    ) {}
+
     public function __invoke(CreateOrderData $data): ?Order
     {
         $payload = new OrderPipelineData($data);
 
-        $result = DB::transaction(fn () => resolve(Pipeline::class)
+        $result = DB::transaction(fn () => $this->pipeline
             ->send($payload)
             ->through([
                 CalculateOrderTotals::class,
@@ -55,7 +60,7 @@ class CreateOrder
             ->thenReturn());
 
         if (! $result instanceof OrderPipelineData) {
-            throw new \UnexpectedValueException('The order pipeline returned an invalid payload.');
+            throw new UnexpectedValueException('The order pipeline returned an invalid payload.');
         }
 
         if ($result->cancelled || ! $result->order) {

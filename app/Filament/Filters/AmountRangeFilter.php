@@ -6,6 +6,7 @@ use App\ValueObjects\Money;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 
 class AmountRangeFilter extends Filter
 {

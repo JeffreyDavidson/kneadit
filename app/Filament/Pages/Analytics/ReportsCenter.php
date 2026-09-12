@@ -64,11 +64,11 @@ class ReportsCenter extends Page
         $dateRange = DateRange::fromStrings($this->startDate, $this->endDate);
 
         $this->reportData = match ($type) {
-            'sales' => resolve(SalesReport::class)->generate($dateRange),
-            'customers' => resolve(CustomerReport::class)->generate($dateRange),
-            'products' => resolve(ProductReport::class)->generate($dateRange),
-            'financial' => resolve(FinancialReport::class)->generate($this->selectedYear),
-            'inventory' => resolve(InventoryReport::class)->generate(),
+            'sales' => resolve(SalesReport::class)->generate($dateRange)->toArray(),
+            'customers' => resolve(CustomerReport::class)->generate($dateRange)->toArray(),
+            'products' => resolve(ProductReport::class)->generate($dateRange)->toArray(),
+            'financial' => resolve(FinancialReport::class)->generate($this->selectedYear)->toArray(),
+            'inventory' => resolve(InventoryReport::class)->generate()->toArray(),
             default => [],
         };
     }

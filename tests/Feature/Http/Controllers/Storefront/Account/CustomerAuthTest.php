@@ -71,6 +71,15 @@ test('login rejects invalid credentials', function () {
     expect(auth('customer')->check())->toBeFalse();
 });
 
+test('login page displays its session status', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(['status' => 'Your password has been reset.'])
+        ->get(route('account.login.show', [], false));
+
+    $response->assertOk()
+        ->assertSee('Your password has been reset.');
+});
+
 test('dashboard redirects guests to the login page', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('account.dashboard', [], false));

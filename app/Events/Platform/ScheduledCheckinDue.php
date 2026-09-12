@@ -15,5 +15,7 @@ class ScheduledCheckinDue implements ShouldDispatchAfterCommit
         public readonly string $subject,
         public readonly ?string $bakerName = null,
         public readonly ?string $tenantId = null,
+        public readonly ?string $adminUrl = null,
+        public readonly ?string $helpUrl = null,
     ) {}
 }

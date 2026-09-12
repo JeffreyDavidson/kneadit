@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Exceptions;
 
 /**
  * @phpstan-type HomepageSection array{visible: bool, order: int, ...<string, mixed>}
@@ -181,9 +182,11 @@ class HomepageBuilder extends Page
                 ->success()
                 ->send();
         } catch (\Exception $e) {
+            Exceptions::report($e);
+
             Notification::make()
                 ->title('Error saving homepage sections')
-                ->body($e->getMessage())
+                ->body('Please try again. If the problem continues, contact support.')
                 ->danger()
                 ->send();
         }

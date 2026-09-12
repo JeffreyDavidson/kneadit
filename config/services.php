@@ -47,6 +47,7 @@ return [
 
     'forge' => [
         'token' => env('FORGE_API_TOKEN'),
+        'organization' => env('FORGE_ORGANIZATION', 'jeffrey-davidson'),
         'server_id' => env('FORGE_SERVER_ID', '753072'),
         'site_id' => env('FORGE_SITE_ID', '3062608'),
         'server_ip' => env('FORGE_SERVER_IP', '137.184.194.56'),

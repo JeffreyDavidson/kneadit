@@ -135,15 +135,17 @@ test('registering with a guest customer email claims their record and keeps thei
         ->and($claimed->orders)->toHaveCount(1);
 });
 
-test('verify-notice GET shows the notice view for an unverified customer', function () {
+test('verify-notice GET shows the notice view and session status for an unverified customer', function () {
     $customer = Customer::factory()->unverified()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
+        ->withSession(['status' => 'A fresh verification link has been sent.'])
         ->get(route('account.email.verify.notice', [], false));
 
     $response->assertOk()
-        ->assertViewIs('storefront.account.verify-notice');
+        ->assertViewIs('storefront.account.verify-notice')
+        ->assertSee('A fresh verification link has been sent.');
 });
 
 test('verify-notice GET redirects an already-verified customer to the dashboard', function () {

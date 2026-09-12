@@ -3,10 +3,12 @@
 use App\Http\Middleware\InitializeTenancyIfNeeded;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JMac\Testing\Double;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 test('passes through when tenancy is already initialized', function () {
-    $tenant = Mockery::mock(Stancl\Tenancy\Contracts\Tenant::class)->shouldIgnoreMissing();
-    app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
+    $tenant = Double::for(TenantContract::class);
+    app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
     $middleware = new InitializeTenancyIfNeeded;

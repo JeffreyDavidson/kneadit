@@ -8,7 +8,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -21,22 +20,23 @@ beforeEach(function () {
 test('can list social posts in the table', function () {
     $posts = SocialPost::factory()->count(3)->create();
 
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
 
-test('can render social post table columns', function (string $column) {
+test('can render social post table columns', function () {
     SocialPost::factory()->create();
 
-    Livewire::test(ListSocialPosts::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['platform', 'caption']);
+    livewire(ListSocialPosts::class)
+        ->assertCanRenderTableColumn('platform')
+        ->assertCanRenderTableColumn('caption');
+});
 
 test('can search social posts by caption', function () {
     $target = SocialPost::factory()->create(['caption' => 'Fresh sourdough baked today']);
     $other = SocialPost::factory()->create(['caption' => 'Holiday special cookies']);
 
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->searchTable('sourdough')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -45,7 +45,7 @@ test('can search social posts by caption', function () {
 test('can edit a social post via table action', function () {
     $post = SocialPost::factory()->create();
 
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->callAction(TestAction::make('edit')->table($post), data: [
             'platform' => $post->platform->value,
             'caption' => 'Updated caption for our bakery',
@@ -56,7 +56,7 @@ test('can edit a social post via table action', function () {
 });
 
 test('can create a social post via slide-over', function () {
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->callAction(CreateAction::class, data: [
             'platform' => SocialPlatform::Instagram->value,
             'caption' => 'Fresh bread straight from the oven!',
@@ -68,24 +68,28 @@ test('can create a social post via slide-over', function () {
     ]);
 });
 
-test('create social post validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListSocialPosts::class)
-        ->callAction(CreateAction::class, data: [
-            'platform' => SocialPlatform::Instagram->value,
-            'caption' => 'Test caption',
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'platform is required' => [['platform' => null], ['platform' => 'required']],
-    'caption is required' => [['caption' => null], ['caption' => 'required']],
-]);
+test('create social post validates required fields', function () {
+    $cases = [
+        [['platform' => null], ['platform' => 'required']],
+        [['caption' => null], ['caption' => 'required']],
+    ];
+
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListSocialPosts::class)
+            ->callAction(CreateAction::class, data: [
+                'platform' => SocialPlatform::Instagram->value,
+                'caption' => 'Test caption',
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can filter social posts by platform', function () {
     $instagram = SocialPost::factory()->create(['platform' => SocialPlatform::Instagram]);
     $facebook = SocialPost::factory()->create(['platform' => SocialPlatform::Facebook]);
 
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->filterTable('platform', SocialPlatform::Instagram->value)
         ->assertCanSeeTableRecords(collect([$instagram]))
         ->assertCanNotSeeTableRecords(collect([$facebook]));

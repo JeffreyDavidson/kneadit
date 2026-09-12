@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Operations;
 
+use App\Actions\Inventory\AddSeasonalItem;
+use App\Actions\Inventory\RemoveSeasonalItem;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -19,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\ValidatedInput;
 use Laravel\Pennant\Feature;
 
 class SeasonalItems extends Page
@@ -91,18 +94,18 @@ class SeasonalItems extends Page
 
     public function addSeasonalItem(): void
     {
-        $this->validate([
+        $seasonalItem = new ValidatedInput($this->validate([
             'product_id' => ['required', 'exists:products,id'],
             'available_from' => ['required', 'date'],
             'available_until' => ['required', 'date', 'after:available_from'],
-        ]);
+        ]));
 
-        SeasonalItem::query()->create([
-            'product_id' => $this->product_id,
-            'available_from' => $this->available_from,
-            'available_until' => $this->available_until,
-            'notes' => $this->notes,
-        ]);
+        resolve(AddSeasonalItem::class)(
+            productId: $seasonalItem->integer('product_id'),
+            availableFrom: $seasonalItem->string('available_from')->toString(),
+            availableUntil: $seasonalItem->string('available_until')->toString(),
+            notes: $this->notes,
+        );
 
         $this->reset(['product_id', 'available_from', 'available_until', 'notes']);
 
@@ -114,7 +117,7 @@ class SeasonalItems extends Page
 
     public function deleteSeasonalItem(int $id): void
     {
-        SeasonalItem::query()->findOrFail($id)->delete();
+        resolve(RemoveSeasonalItem::class)($id);
 
         Notification::make()
             ->title('Seasonal item removed.')

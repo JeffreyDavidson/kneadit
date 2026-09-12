@@ -40,7 +40,9 @@ class CustomerIntelligence
         return new CustomerMetrics(
             lifetimeValue: $lifetimeValue,
             orderCount: $orderCount,
-            averageOrderValue: $orderCount > 0 ? $lifetimeValue / $orderCount : 0,
+            averageOrderValue: $orderCount > 0
+                ? $lifetimeValue->multiply(1 / $orderCount)
+                : Money::zero(),
             lastOrderDate: $lastOrderDate,
             daysSinceLastOrder: $daysSinceLastOrder,
             isAtRisk: $isAtRisk,

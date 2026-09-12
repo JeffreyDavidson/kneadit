@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Config;
 
 class CustomDomainService
 {
+    public function __construct(
+        private ForgeService $forge,
+    ) {}
+
     public function serverIp(): string
     {
         return Config::string('services.forge.server_ip');
@@ -29,6 +33,6 @@ class CustomDomainService
             return null;
         }
 
-        return resolve(ForgeService::class)->obtainSslCertificate($domain);
+        return $this->forge->obtainSslCertificate($domain);
     }
 }

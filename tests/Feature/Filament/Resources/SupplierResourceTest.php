@@ -7,7 +7,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -20,12 +19,12 @@ beforeEach(function () {
 test('can list suppliers in the table', function () {
     $suppliers = Supplier::factory()->count(3)->create();
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->assertCanSeeTableRecords($suppliers);
 });
 
 test('can create a supplier via slide-over', function () {
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->callAction(CreateAction::class, data: [
             'name' => 'Flour Mill Co.',
             'contact_name' => 'John Miller',
@@ -42,7 +41,7 @@ test('can create a supplier via slide-over', function () {
 test('can edit a supplier via table action', function () {
     $supplier = Supplier::factory()->create();
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->callAction(TestAction::make('edit')->table($supplier), data: [
             'name' => 'Updated Supplier',
         ])
@@ -55,32 +54,35 @@ test('can search suppliers by name', function () {
     $target = Supplier::factory()->create(['name' => 'Flour Mill Co.']);
     $other = Supplier::factory()->create(['name' => 'Sugar Supply Inc.']);
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->searchTable('Flour')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
 
 test('create supplier validates name is required', function () {
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->callAction(CreateAction::class, data: [
             'name' => null,
         ])
         ->assertHasFormErrors(['name' => 'required']);
 });
 
-test('can render supplier table columns', function (string $column) {
+test('can render supplier table columns', function () {
     Supplier::factory()->create();
 
-    Livewire::test(ListSuppliers::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'contact_name', 'email', 'phone']);
+    livewire(ListSuppliers::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('contact_name')
+        ->assertCanRenderTableColumn('email')
+        ->assertCanRenderTableColumn('phone');
+});
 
 test('can sort suppliers by name', function () {
     $alpha = Supplier::factory()->create(['name' => 'Alpha Mills']);
     $zeta = Supplier::factory()->create(['name' => 'Zeta Supply']);
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
         ->sortTable('name', 'desc')
@@ -91,7 +93,7 @@ test('can filter suppliers by active status', function () {
     $active = Supplier::factory()->active()->create();
     $inactive = Supplier::factory()->inactive()->create();
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->filterTable('is_active', 1)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
@@ -101,7 +103,7 @@ test('owner can bulk-delete selected suppliers via the AuthorizedDeleteBulkActio
     $kept = Supplier::factory()->create();
     $doomed = Supplier::factory()->count(2)->create();
 
-    Livewire::test(ListSuppliers::class)
+    livewire(ListSuppliers::class)
         ->selectTableRecords($doomed)
         ->callAction(TestAction::make('delete')->table()->bulk());
 

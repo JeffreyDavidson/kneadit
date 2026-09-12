@@ -2,27 +2,35 @@
 
 namespace App\Reports\Customers;
 
+use App\DataTransferObjects\Customers\CustomerReportResult;
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
 
 class CustomerReport
 {
-    /** @return array<string, mixed> */
-    public function generate(DateRange $range): array
+    public function generate(DateRange $range): CustomerReportResult
     {
         $newCustomers = Customer::query()->whereBetween('created_at', $range->toArray())->count();
 
-        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', $range->toArray()))->count();
+        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q
+            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->where('payment_status', PaymentStatus::Paid)
+            ->whereBetween('delivery_date', $range->toArray()))->count();
 
-        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', $range->toArray()), '>=', 2)->count();
+        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q
+            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->where('payment_status', PaymentStatus::Paid)
+            ->whereBetween('delivery_date', $range->toArray()), '>=', 2)->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
-        $topCustomers = Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid)], 'total')
-            ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())])
+        $topCustomers = array_values(Customer::query()
+            ->withPaidOrderMetrics($range)
             ->orderByDesc('total_spend')
             ->get()
             ->filter(fn (Customer $c) => ((float) $c->total_spend) > 0)
@@ -32,19 +40,28 @@ class CustomerReport
                 'name' => $c->name,
                 'email' => $c->email,
                 // total_spend is SUM(orders.total) and orders.total is bigint cents
-                // (migration 2026_04_22_201500); divide back to dollars.
-                'total_spend' => (float) ((int) $c->total_spend / 100),
+                // (migration 2026_04_22_201500).
+                'total_spend' => Money::fromCents((int) $c->total_spend),
                 'order_count' => (int) $c->order_count,
             ])
-            ->all();
+            ->all());
 
         $acquisitionByMonth = Customer::query()->whereBetween('created_at', $range->toArray())
             ->get()
             ->groupBy(fn (Customer $c) => $c->created_at?->format('Y-m') ?? '')
-            ->map(fn (mixed $customers) => $customers->count())
+            ->mapWithKeys(fn (Collection $customers, int|string $month): array => [
+                (string) $month => $customers->count(),
+            ])
             ->sortKeys()
             ->all();
 
-        return ['newCustomers' => $newCustomers, 'repeatRate' => $repeatRate, 'repeatCustomers' => $repeatCustomers, 'totalCustomersWithOrders' => $totalCustomersWithOrders, 'topCustomers' => $topCustomers, 'acquisitionByMonth' => $acquisitionByMonth];
+        return new CustomerReportResult(
+            newCustomers: $newCustomers,
+            repeatRate: $repeatRate,
+            repeatCustomers: $repeatCustomers,
+            totalCustomersWithOrders: $totalCustomersWithOrders,
+            topCustomers: $topCustomers,
+            acquisitionByMonth: $acquisitionByMonth,
+        );
     }
 }

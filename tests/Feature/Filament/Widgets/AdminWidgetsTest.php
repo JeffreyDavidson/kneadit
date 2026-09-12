@@ -46,7 +46,9 @@ dataset('adminWidgets', [
     'RevenueChartWidget' => [App\Filament\Widgets\RevenueChartWidget::class],
 ]);
 
-test('admin widget can render', function (string $widgetClass) {
-    Livewire::test($widgetClass)
-        ->assertOk();
-})->with('adminWidgets');
+test('admin widgets can render', function (string ...$widgetClasses) {
+    foreach ($widgetClasses as $widgetClass) {
+        Livewire::test($widgetClass)
+            ->assertOk();
+    }
+})->with('adminWidgetGroups');

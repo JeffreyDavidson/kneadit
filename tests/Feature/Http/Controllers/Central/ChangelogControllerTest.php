@@ -39,5 +39,5 @@ test('changelog config has entries', function () {
 test('changelog link in footer', function () {
     $layout = file_get_contents(resource_path('views/central/blog/layout.blade.php'));
 
-    expect($layout)->toContain('/changelog');
+    expect($layout)->toContain("route('changelog')");
 });

@@ -3,6 +3,8 @@
 use App\Actions\Stripe\InitiateStripeConnect;
 use App\Http\Controllers\Stripe\StripeConnectController;
 use Illuminate\Http\RedirectResponse;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 test('stripe connect controller redirects to onboarding url', function () {
     $action = new class extends InitiateStripeConnect {

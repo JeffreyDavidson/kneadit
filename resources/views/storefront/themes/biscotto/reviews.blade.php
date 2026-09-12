@@ -21,7 +21,7 @@
             @endif
             <div class="biscotto-review-stars" aria-label="{{ $vm->featured()->rating }} out of 5 stars">
                 @for ($star = 1; $star <= 5; $star++)
-                    <span class="{{ $star <= $vm->featured()->rating ? 'filled' : '' }}" aria-hidden="true">★</span>
+                    <span @class(['filled' => $star <= $vm->featured()->rating]) aria-hidden="true">★</span>
                 @endfor
             </div>
             <p>{{ $vm->featured()->customer_name }}</p>
@@ -42,7 +42,7 @@
                 <article>
                     <div class="biscotto-review-stars" aria-label="{{ $review->rating }} out of 5 stars">
                         @for ($star = 1; $star <= 5; $star++)
-                            <span class="{{ $star <= $review->rating ? 'filled' : '' }}" aria-hidden="true">★</span>
+                            <span @class(['filled' => $star <= $review->rating]) aria-hidden="true">★</span>
                         @endfor
                     </div>
                     @if ($review->comment)

@@ -8,14 +8,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required top-level fields are enforced', function (string $field) {
-    $data = validApiOrderData();
-    unset($data[$field]);
+test('required top-level fields are enforced', function () {
+    $validator = validator([], (new StoreApiOrderRequest)->rules());
 
-    $validator = validator($data, (new StoreApiOrderRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type']);
+    foreach (['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('items must contain at least one row', function () {
     $validator = validator(
@@ -37,18 +36,21 @@ test('item product_id must reference an existing product', function () {
     expect($validator->errors()->has('items.0.product_id'))->toBeTrue();
 });
 
-test('item quantity bounded 1..20', function (int $qty) {
-    $product = Product::factory()->create();
+test('item quantity bounded 1..20', function () {
+    $data = validApiOrderData();
+    $productId = $data['items'][0]['product_id'];
 
-    $validator = validator(
-        array_merge(validApiOrderData(), [
-            'items' => [['product_id' => $product->id, 'quantity' => $qty]],
-        ]),
-        (new StoreApiOrderRequest)->rules(),
-    );
+    foreach ([0, 21, -1] as $quantity) {
+        $validator = validator(
+            array_merge($data, [
+                'items' => [['product_id' => $productId, 'quantity' => $quantity]],
+            ]),
+            (new StoreApiOrderRequest)->rules(),
+        );
 
-    expect($validator->errors()->has('items.0.quantity'))->toBeTrue();
-})->with([0, 21, -1]);
+        expect($validator->errors()->has('items.0.quantity'))->toBeTrue();
+    }
+});
 
 test('delivery_type must be pickup or delivery', function () {
     $validator = validator(
@@ -85,14 +87,18 @@ test('delivery_tier must match the enum', function () {
     expect($validator->errors()->has('delivery_tier'))->toBeTrue();
 });
 
-test('tip_amount bounded 0..1000', function (mixed $tip) {
-    $validator = validator(
-        array_merge(validApiOrderData(), ['tip_amount' => $tip]),
-        (new StoreApiOrderRequest)->rules(),
-    );
+test('tip_amount bounded 0..1000', function () {
+    $data = validApiOrderData();
 
-    expect($validator->errors()->has('tip_amount'))->toBeTrue();
-})->with([-1, 1001, 'abc']);
+    foreach ([-1, 1001, 'abc'] as $tip) {
+        $validator = validator(
+            array_merge($data, ['tip_amount' => $tip]),
+            (new StoreApiOrderRequest)->rules(),
+        );
+
+        expect($validator->errors()->has('tip_amount'))->toBeTrue();
+    }
+});
 
 test('valid pickup order passes', function () {
     $validator = validator(validApiOrderData(), (new StoreApiOrderRequest)->rules());

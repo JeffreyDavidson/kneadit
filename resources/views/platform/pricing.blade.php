@@ -13,9 +13,9 @@
         property="og:description"
         content="Simple, transparent pricing. 30-day free trial. No credit card required."
     />
-    <meta property="og:url" content="https://getkneadit.app/pricing" />
-    <link rel="canonical" href="https://getkneadit.app/pricing" />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <meta property="og:url" content="{{ route('pricing') }}" />
+    <link rel="canonical" href="{{ route('pricing') }}" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -27,12 +27,14 @@
 </head>
 <body>
     <nav class="nav">
-        <a href="/" class="nav-logo"><img src="/images/logo-transparent.png" alt="KneadIt" /></a>
+        <a href="{{ route('home') }}" class="nav-logo"
+            ><img src="{{ asset('images/logo-transparent.png') }}" alt="KneadIt"
+        /></a>
         <div class="nav-links">
-            <a href="/#features">Features</a>
-            <a href="/resources">Resources</a>
-            <a href="/changelog">Changelog</a>
-            <a href="/register" class="nav-cta">Start Free Trial</a>
+            <a href="{{ route('home') }}#features">Features</a>
+            <a href="{{ route('blog.index') }}">Resources</a>
+            <a href="{{ route('changelog') }}">Changelog</a>
+            <a href="{{ route('register') }}" class="nav-cta">Start Free Trial</a>
         </div>
     </nav>
 
@@ -64,7 +66,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card popular">
                 <span class="price-badge">Most Popular</span>
@@ -86,7 +88,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
             <div class="price-card">
                 <div class="price-tier">Pro</div>
@@ -112,7 +114,7 @@
                 <div style="font-size: var(--text-xs); color: var(--sage); margin-bottom: 1rem; font-weight: 600">
                     ✓ 30-day free trial · Cancel anytime
                 </div>
-                <a href="/register" class="price-btn">Start Free Trial</a>
+                <a href="{{ route('register') }}" class="price-btn">Start Free Trial</a>
             </div>
         </div>
     </section>
@@ -170,7 +172,8 @@
     </section>
 
     <div class="pricing-footer">
-        <a href="/">← Back to KneadIt</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
+        <a href="{{ route('home') }}">← Back to KneadIt</a> · <a href="{{ route('terms') }}">Terms</a> ·
+        <a href="{{ route('privacy') }}">Privacy</a>
     </div>
 </body>
 </html>

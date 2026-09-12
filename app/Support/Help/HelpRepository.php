@@ -2,8 +2,11 @@
 
 namespace App\Support\Help;
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
+use Symfony\Component\Finder\SplFileInfo;
 
 class HelpRepository
 {
@@ -32,7 +35,7 @@ class HelpRepository
     public function topics(): array
     {
         /** @var array<string, array{title: string, icon: mixed, color: string, sort: int}> $topics */
-        $topics = (array) config('help.topics', []);
+        $topics = Config::array('help.topics', []);
 
         $rows = [];
         foreach ($topics as $slug => $meta) {
@@ -66,7 +69,7 @@ class HelpRepository
 
         $file = "{$this->basePath}/{$topicSlug}/{$articleSlug}.md";
 
-        if (! is_file($file)) {
+        if (! File::isFile($file)) {
             return null;
         }
 
@@ -87,22 +90,24 @@ class HelpRepository
     {
         $dir = "{$this->basePath}/{$topicSlug}";
 
-        if (! is_dir($dir)) {
+        if (! File::isDirectory($dir)) {
             return [];
         }
 
-        $files = glob("{$dir}/*.md") ?: [];
-        sort($files);
+        return collect(File::files($dir))
+            ->filter(fn (SplFileInfo $file): bool => $file->getExtension() === 'md')
+            ->sortBy(fn (SplFileInfo $file): string => $file->getFilename())
+            ->map(function (SplFileInfo $file): array {
+                $parsed = $this->parse($file->getPathname());
 
-        return array_map(function (string $file): array {
-            $parsed = $this->parse($file);
-
-            return [
-                'title' => $parsed['title'],
-                'slug' => Str::beforeLast(basename($file), '.md'),
-                'content' => $parsed['content'],
-            ];
-        }, $files);
+                return [
+                    'title' => $parsed['title'],
+                    'slug' => Str::beforeLast($file->getFilename(), '.md'),
+                    'content' => $parsed['content'],
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /**
@@ -112,7 +117,7 @@ class HelpRepository
      */
     private function parse(string $file): array
     {
-        $raw = (string) file_get_contents($file);
+        $raw = File::get($file);
 
         // First H1 becomes the article title; strip it from the body so it
         // isn't duplicated when the converter renders the rest.

@@ -47,6 +47,10 @@ final readonly class CreateGiftCardData
             return null;
         }
 
+        if ($value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
+        }
+
         return self::stringValue($value, $key);
     }
 

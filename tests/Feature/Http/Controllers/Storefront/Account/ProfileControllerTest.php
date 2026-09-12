@@ -15,16 +15,18 @@ test('redirects unauthenticated visitors away from the profile form', function (
     $response->assertRedirect();
 });
 
-test('shows the profile form for an authenticated customer', function () {
+test('shows the profile form and session status for an authenticated customer', function () {
     $customer = Customer::factory()->create(['name' => 'Alice']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
+        ->withSession(['status' => 'Profile updated.'])
         ->get('/account/profile');
 
     $response->assertOk();
     $response->assertSee('Alice');
     $response->assertSee('Email:');
+    $response->assertSee('Profile updated.');
 });
 
 test('updates name + phone + birthday + address', function () {

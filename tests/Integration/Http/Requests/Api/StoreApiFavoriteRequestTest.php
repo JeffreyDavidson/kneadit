@@ -8,16 +8,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $product = Product::factory()->create();
+test('required fields are enforced', function () {
+    $validator = validator([], (new StoreApiFavoriteRequest)->rules());
 
-    $data = ['email' => 'fan@example.com', 'product_id' => $product->id];
-    unset($data[$field]);
-
-    $validator = validator($data, (new StoreApiFavoriteRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['email', 'product_id']);
+    foreach (['email', 'product_id'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('product_id must reference an existing product', function () {
     $validator = validator([

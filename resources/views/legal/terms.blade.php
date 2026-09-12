@@ -8,7 +8,7 @@
         name="description"
         content="KneadIt Terms of Service — the rules and guidelines for using our cottage food baker management platform."
     />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,15 +19,7 @@
     @include('partials.fathom')
 </head>
 <body>
-    <nav class="site-nav">
-        <a href="/" class="nav-brand">KneadIt</a>
-        <div class="nav-links">
-            <a href="/#features">Features</a>
-            <a href="/#pricing">Pricing</a>
-            <a href="/#contact">Contact</a>
-            <a href="/register" class="nav-cta">Get Started</a>
-        </div>
-    </nav>
+    <x-legal.navigation />
 
     <div class="legal-hero">
         <h1>Terms of Service</h1>
@@ -311,15 +303,6 @@
         </div>
     </div>
 
-    <footer>
-        <div class="footer-brand">KneadIt</div>
-        <div class="footer-tagline">Business management for cottage food bakers</div>
-        <div class="footer-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-            <a href="/#contact">Contact</a>
-        </div>
-        <div class="footer-made">© 2026 KneadIt · Created by Infinity Digital</div>
-    </footer>
+    <x-legal.footer />
 </body>
 </html>

@@ -4,7 +4,6 @@ use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -23,11 +22,22 @@ dataset('widgetsAtAllSizes', function (): array {
         }
     }
 
-    return $cases;
+    return $groups;
 });
 
-test('widget renders cleanly at each allowed size', function (string $class, string $size) {
+test('widgets render cleanly at each allowed size', function (string ...$widgetKeys) {
     // dashboardSize gets ignored by widgets that don't use the HasDashboardSize trait,
     // so passing it unconditionally is safe.
-    Livewire::test($class, ['dashboardSize' => $size])->assertOk();
-})->with('widgetsAtAllSizes');
+    foreach ($widgetKeys as $widgetKey) {
+        $widgetClass = WidgetMeta::classFor($widgetKey);
+
+        if ($widgetClass === null) {
+            throw new LogicException("Unknown widget key [{$widgetKey}].");
+        }
+
+        foreach (WidgetMeta::allowedSizesFor($widgetKey) as $size) {
+            livewire($widgetClass, ['dashboardSize' => $size->value])
+                ->assertOk();
+        }
+    }
+})->with('widgetSizeGroups');

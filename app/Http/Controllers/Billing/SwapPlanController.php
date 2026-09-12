@@ -21,8 +21,15 @@ class SwapPlanController extends Controller
         $priceId = Config::get("kneadit.stripe_prices.{$tier->value}");
         abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
+        $subscription = $user->subscription('default');
+
+        if ($subscription === null || ! $subscription->valid()) {
+            return to_route('billing.plans')
+                ->with('error', 'No active subscription found. Choose a plan to start billing.');
+        }
+
         try {
-            $user->subscription('default')?->swap($priceId);
+            $subscription->swap($priceId);
         } catch (Exception $e) {
             Log::error('Plan swap failed', [
                 'error' => $e->getMessage(),

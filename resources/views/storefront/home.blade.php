@@ -5,7 +5,7 @@
                 <x-home.hero />
                 @break
             @case ('about')
-                @include('partials.home.about')
+                <x-home.about />
                 @break
             @case ('featured_products')
                 <x-home.featured-products :config="$config" />
@@ -23,10 +23,10 @@
                 <x-home.blog-posts :config="$config" />
                 @break
             @case ('cta')
-                @include('partials.home.cta', ['config' => $config])
+                <x-home.cta :config="$config" />
                 @break
             @case ('social')
-                @include('partials.home.social', ['config' => $config])
+                <x-home.social />
                 @break
         @endswitch
     @endforeach
@@ -34,13 +34,13 @@
     {{-- Fallback: if no homepage_sections configured, show all sections with defaults --}}
     @if (empty($settings->homepage->sections))
         <x-home.hero />
-        @include('partials.home.about')
+        <x-home.about />
         <x-home.featured-products :config="['count' => 6, 'title' => 'Our Favorites', 'subtitle' => 'Freshly made']" />
         <x-home.categories :config="['title' => 'What We Bake', 'subtitle' => 'Something for everyone']" />
         <x-home.reviews :config="['count' => 3, 'title' => 'Kind Words', 'subtitle' => 'What our customers say']" />
         <x-home.gallery :config="['count' => 4, 'title' => 'Customer Gallery', 'subtitle' => 'Shared by our community']" />
         <x-home.blog-posts :config="['count' => 3, 'title' => 'Latest Updates', 'subtitle' => 'From our kitchen']" />
-        @include('partials.home.cta', ['config' => ['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']])
-        @include('partials.home.social', ['config' => []])
+        <x-home.cta :config="['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']" />
+        <x-home.social />
     @endif
 </x-layouts.storefront>

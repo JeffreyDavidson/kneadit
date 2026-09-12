@@ -10,6 +10,7 @@ use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 
 class ChurnAlertService
 {
@@ -35,10 +36,13 @@ class ChurnAlertService
             );
             $healthScore = $health->healthScore;
 
-            $this->checkTrialExpiring($tenant, $health, $daysSinceSignup, $alerts);
+            if ($health) {
+                $this->checkTrialExpiring($tenant, $health, $daysSinceSignup, $alerts);
+                $this->checkLowHealth($tenant, $health['health_score'], $daysSinceSignup, $alerts);
+            }
+
             $this->checkNoLogin($tenant, $daysSinceSignup, $alerts);
             $this->checkNoOrders($tenant, $daysSinceSignup, $alerts);
-            $this->checkLowHealth($tenant, $healthScore, $daysSinceSignup, $alerts);
         }
 
         return collect($alerts)->sortByDesc(fn (ChurnAlert $alert): int => $alert->severity->priority())->values();
@@ -90,7 +94,17 @@ class ChurnAlertService
         }
 
         $days = $this->configInt('monitoring.churn_no_orders_days', 30);
-        $recentOrders = $this->healthService->getRecentOrderCount($tenant, $days);
+        try {
+            $recentOrders = $this->healthService->getRecentOrderCount($tenant, $days);
+        } catch (\Throwable $exception) {
+            Log::warning('Unable to evaluate tenant order churn', [
+                'tenant_id' => $tenant->id,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return;
+        }
+
         if ($recentOrders > 0) {
             return;
         }

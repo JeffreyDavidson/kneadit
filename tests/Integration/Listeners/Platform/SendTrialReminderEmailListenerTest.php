@@ -27,8 +27,9 @@ test('it sends trial reminder email to the user', function () {
 test('failed method logs a warning with email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendTrialReminderEmailListener failed', Mockery::on(fn (array $context) => $context['email'] === 'baker@example.com'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendTrialReminderEmailListener failed'
+            && $context['email'] === 'baker@example.com'
+            && $context['error'] === 'SMTP timeout');
 
     $user = User::factory()->create(['email' => 'baker@example.com']);
     $event = new TrialReminding($user, 'Sweet Treats Bakery', 3);

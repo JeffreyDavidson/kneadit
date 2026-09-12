@@ -1,0 +1,103 @@
+name: Pest TIA Baseline
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: tia-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    name: Test Dependency Graph
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Attach baseline branch
+        run: git switch --force-create main "$GITHUB_SHA"
+
+      - name: Setup PHP and Composer with PCOV
+        uses: ./.github/actions/setup-php-composer
+        with:
+          coverage: pcov
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Resolve npm cache directory
+        id: npm-cache
+        shell: bash
+        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore npm cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.npm-cache.outputs.directory }}
+          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-node-24-
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Clear config cache
+        run: php artisan config:clear
+
+      - name: Verify PCOV
+        run: php --ri pcov
+
+      - name: Record test dependency graph
+        env:
+          HOME: ${{ runner.temp }}/pest-home
+        run: php -d memory_limit=4G vendor/bin/pest --ci --tia --fresh --configuration=.github/phpunit-ci.xml
+
+      - name: Resolve and validate TIA baseline path
+        id: baseline
+        env:
+          HOME: ${{ runner.temp }}/pest-home
+          PAO_DISABLE: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline_path="$(vendor/bin/pest --baseline)"
+
+          if [[ -z "$baseline_path" || ! -s "$baseline_path/graph.json" ]]; then
+            echo 'Pest did not produce a readable TIA graph.' >&2
+            exit 1
+          fi
+
+          php -r '$data = json_decode(file_get_contents($argv[1]), true); $baseline = is_array($data) ? ($data["baselines"]["main"] ?? null) : null; $valid = ($data["schema"] ?? null) === 1 && is_array($baseline) && is_string($baseline["sha"] ?? null) && $baseline["sha"] !== "" && is_array($baseline["tree"] ?? null) && count($baseline["tree"]) > 0 && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0; exit($valid ? 0 : 1);' "$baseline_path/graph.json"
+          echo "path=$baseline_path" >> "$GITHUB_OUTPUT"
+
+      - name: Upload TIA baseline
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-tia-baseline
+          path: ${{ steps.baseline.outputs.path }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30

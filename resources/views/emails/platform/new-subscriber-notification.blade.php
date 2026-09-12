@@ -8,8 +8,9 @@
 /** @var string|null $logoUrl */
 /** @var string $bakerName */
 /** @var string $bakerEmail */
-/** @var string $subdomain */
+/** @var string $storefrontHost */
 /** @var string $plan */
+/** @var string $centralAdminUrl */
 @endphp
 
 <!DOCTYPE html>
@@ -45,7 +46,7 @@
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #6b4c3b; font-size: 14px;">Subdomain</td>
-                        <td style="padding: 8px 0; color: #1c1410; font-size: 14px;">{{ $subdomain }}.getkneadit.app</td>
+                        <td style="padding: 8px 0; color: #1c1410; font-size: 14px;">{{ $storefrontHost }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #6b4c3b; font-size: 14px;">Plan</td>
@@ -55,7 +56,7 @@
             </div>
 
             <div style="text-align: center; margin: 24px 0 0;">
-                <a href="https://getkneadit.app/admin" style="display: inline-block; background: #d4920c; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a href="{{ $centralAdminUrl }}" style="display: inline-block; background: #d4920c; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
                     View in Central Admin →
                 </a>
             </div>

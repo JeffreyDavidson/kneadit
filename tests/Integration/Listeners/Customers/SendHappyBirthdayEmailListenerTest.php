@@ -29,8 +29,9 @@ test('it sends happy birthday email to the customer', function () {
 test('failed method logs a warning with customer name and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendHappyBirthdayEmailListener failed', Mockery::on(fn (array $context) => $context['customer'] === 'Jane Doe'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendHappyBirthdayEmailListener failed'
+            && $context['customer'] === 'Jane Doe'
+            && $context['error'] === 'SMTP timeout');
 
     $customer = Customer::factory()->create(['name' => 'Jane Doe']);
     $coupon = Coupon::factory()->create();

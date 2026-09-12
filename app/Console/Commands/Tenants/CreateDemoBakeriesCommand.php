@@ -89,6 +89,10 @@ class CreateDemoBakeriesCommand extends Command
             ));
 
             if ($result->successful()) {
+                Tenant::query()->whereKey($bakery['id'])->update(['is_demo' => true]);
+            }
+
+            if ($result->successful()) {
                 $domain = $bakery['id'] . '.kneadit.test';
                 $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
             } else {

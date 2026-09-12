@@ -8,6 +8,10 @@ use Stancl\Tenancy\Database\Models\Domain;
 
 class RemoveCustomDomain
 {
+    public function __construct(
+        private ForgeService $forge,
+    ) {}
+
     public function __invoke(Tenant $tenant): void
     {
         $oldDomain = $tenant->custom_domain;
@@ -16,7 +20,7 @@ class RemoveCustomDomain
             Domain::query()->where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
 
             if (ForgeService::isConfigured()) {
-                resolve(ForgeService::class)->removeDomainAlias($oldDomain);
+                $this->forge->removeDomainAlias($oldDomain);
             }
         }
 

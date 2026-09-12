@@ -12,8 +12,32 @@ test('has data returns false when no logs exist', function () {
     expect(testFixture('page', FeatureUsage::class)->getHasData())->toBeFalse();
 });
 
-test('has data returns true when logs exist', function () {
-    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5]);
+test('populated feature usage returns aggregated analytics', function () {
+    FeatureUsageLog::factory()->forFeature('orders')->create([
+        'usage_count' => 10,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('orders')->create([
+        'usage_count' => 5,
+        'tenant_id' => 'bakery-2',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('products')->create([
+        'usage_count' => 150,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('reviews')->create([
+        'usage_count' => 2,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->toDateString(),
+    ]);
+    FeatureUsageLog::factory()->forFeature('historical')->create([
+        'usage_count' => 99,
+        'tenant_id' => 'bakery-1',
+        'date' => now()->subMonth()->toDateString(),
+    ]);
 
     expect(testFixture('page', FeatureUsage::class)->getHasData())->toBeTrue();
 });

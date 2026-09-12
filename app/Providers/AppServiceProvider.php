@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Tenants\LegacyCatalogImporter;
+use App\Contracts\Tenants\LegacyCouponImporter;
+use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
@@ -20,6 +23,9 @@ use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\DatabaseLegacyCatalogImporter;
+use App\Services\Tenants\DatabaseLegacyCouponImporter;
+use App\Services\Tenants\DatabaseLegacyCustomerImporter;
 use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -28,6 +34,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -57,10 +64,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
+        $this->app->bind(LegacyCouponImporter::class, DatabaseLegacyCouponImporter::class);
+        $this->app->bind(LegacyCustomerImporter::class, DatabaseLegacyCustomerImporter::class);
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
-        $this->app->singleton(TenantSettingsRegistry::class);
-        $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
+        $this->app->scoped(TenantSettingsRegistry::class);
+        $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
         // Per-request scoped: SecurityHeaders middleware writes the nonce into
         // the CSP header, the @cspnonce Blade directive emits it on inline
@@ -80,6 +90,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Queue::createPayloadUsing(function (): array {
+            $tenant = tenancy()->initialized ? tenancy()->tenant : null;
+
+            if (! $tenant instanceof Tenant) {
+                return [];
+            }
+
+            return [
+                'tenant_id' => $tenant->getTenantKey(),
+                'is_demo' => (bool) $tenant->is_demo,
+            ];
+        });
+
         Cashier::useCustomerModel(User::class);
 
         Model::preventLazyLoading(! app()->isProduction());
@@ -169,8 +192,11 @@ class AppServiceProvider extends ServiceProvider
 
     private function tenantMeetsRequirement(SubscriptionTier $required): bool
     {
-        $tenant = tenancy()->tenant;
+        $tenant = app()->bound(\Stancl\Tenancy\Contracts\Tenant::class)
+            ? app(\Stancl\Tenancy\Contracts\Tenant::class)
+            : tenancy()->tenant;
+        $plan = data_get($tenant, 'plan');
 
-        return $tenant instanceof Tenant && $tenant->plan->meetsRequirement($required);
+        return $plan instanceof SubscriptionTier && $plan->meetsRequirement($required);
     }
 }

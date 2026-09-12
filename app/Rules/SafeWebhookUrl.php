@@ -39,8 +39,12 @@ class SafeWebhookUrl implements ValidationRule
             return null;
         }
 
-        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
-            return $this->isPublicIpAddress($host) ? $host : null;
+        $ipHost = str_starts_with($host, '[') && str_ends_with($host, ']')
+            ? substr($host, 1, -1)
+            : $host;
+
+        if (filter_var($ipHost, FILTER_VALIDATE_IP) !== false) {
+            return $this->isPublicIpAddress($ipHost) ? $ipHost : null;
         }
 
         $records = dns_get_record($host, DNS_A | DNS_AAAA);

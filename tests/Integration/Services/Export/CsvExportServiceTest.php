@@ -112,16 +112,25 @@ it('writes orders CSV with join to order_items', function () {
 
     $service = new CsvExportService;
     $content = $service->toString('orders');
+    $rows = array_values(array_filter(explode("\n", trim($content))));
 
-    expect($content)
-        ->toContain('Status,Total')
-        ->toContain('pending');
+    expect(str_getcsv($rows[0]))->toBe([
+        'Order ID',
+        'Customer ID',
+        'Status',
+        'Total',
+        'Item Product ID',
+        'Item Qty',
+        'Item Unit Price',
+        'Order Created At',
+    ])->and(str_getcsv($rows[1]))->toContain('1', '1', 'pending');
 });
 
-it('writes reviews CSV with fallback columns', function () {
+it('writes reviews CSV with customer and order identity', function () {
     DB::table('reviews')->insert([
         'id' => 1,
         'product_id' => null,
+        'order_id' => null,
         'customer_name' => 'Jane',
         'customer_email' => 'jane@example.com',
         'rating' => 5,
@@ -133,11 +142,19 @@ it('writes reviews CSV with fallback columns', function () {
 
     $service = new CsvExportService;
     $content = $service->toString('reviews');
+    $rows = array_values(array_filter(explode("\n", trim($content))));
 
-    expect($content)
-        ->toContain('Rating')
-        ->toContain('Comment')
-        ->toContain('Great product!');
+    expect(str_getcsv($rows[0]))->toBe([
+        'ID',
+        'Product ID',
+        'Order ID',
+        'Customer Name',
+        'Customer Email',
+        'Rating',
+        'Comment',
+        'Created At',
+        'Updated At',
+    ])->and(str_getcsv($rows[1]))->toContain('Jane', 'jane@example.com', 'Great product!');
 });
 
 it('generates CSV as a string via toString', function () {
@@ -148,8 +165,8 @@ it('generates CSV as a string via toString', function () {
     expect($content)->toContain('ID,Name,Slug,Description');
 });
 
-it('writes customers CSV with data from users table', function () {
-    DB::table('users')->insert([
+it('writes customers CSV with data from customers table', function () {
+    DB::table('customers')->insert([
         'id' => 1,
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',

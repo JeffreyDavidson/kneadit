@@ -1,5 +1,8 @@
 <?php
 
+use App\DataTransferObjects\Customers\CustomerReportResult;
+use App\DataTransferObjects\Inventory\InventoryReportResult;
+use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Enums\Financial\ExpenseCategory;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Expense;
@@ -14,6 +17,7 @@ use App\Reports\Inventory\InventoryReport;
 use App\Reports\Inventory\ProductReport;
 use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -41,8 +45,8 @@ test('sales report returns correct totals', function () {
 
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(2)
-        ->and((float) $report['totalRevenue'])->toBe(80.00);
+    expect($report->totalOrders)->toBe(2)
+        ->and($report->totalRevenue)->toEqual(Money::fromDollars(80));
 });
 
 test('sales report respects date range', function () {
@@ -51,14 +55,14 @@ test('sales report respects date range', function () {
 
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(1)
-        ->and((float) $report['totalRevenue'])->toBe(30.00);
+    expect($report->totalOrders)->toBe(1)
+        ->and($report->totalRevenue)->toEqual(Money::fromDollars(30));
 });
 
 test('customer report returns data for date range', function () {
     $report = resolve(CustomerReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report)->toBeArray();
+    expect($report)->toBeInstanceOf(CustomerReportResult::class);
 });
 
 test('product performance report returns data for date range', function () {
@@ -66,8 +70,8 @@ test('product performance report returns data for date range', function () {
 
     $report = resolve(ProductReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report)->toBeArray()
-        ->and($report)->toHaveKey('products');
+    expect($report)->toBeInstanceOf(ProductReportResult::class)
+        ->and($report->products)->toHaveCount(1);
 });
 
 test('financial summary calculates profit', function () {
@@ -81,10 +85,14 @@ test('financial summary calculates profit', function () {
     ]);
 
     $report = resolve(FinancialReport::class)->generate(2026);
+    $serialized = $report->toArray();
 
-    expect((float) $report['totalRevenue'])->toBe(100.00)
-        ->and((float) $report['totalExpenses'])->toBe(30.00)
-        ->and((float) $report['profit'])->toBe(70.00);
+    expect($report->totalRevenue)->toEqual(Money::fromDollars(100))
+        ->and($report->totalExpenses)->toEqual(Money::fromDollars(30))
+        ->and($report->profit)->toEqual(Money::fromDollars(70))
+        ->and($serialized['totalRevenue'])->toBe(100.0)
+        ->and($serialized['totalExpenses'])->toBe(30.0)
+        ->and($serialized['profit'])->toBe(70.0);
 });
 
 test('inventory report flags low stock', function () {
@@ -104,8 +112,14 @@ test('inventory report flags low stock', function () {
     ]);
 
     $report = resolve(InventoryReport::class)->generate();
+    $serialized = $report->toArray();
 
-    expect($report['lowStockItems'])->toBe(1);
-    $flour = collect($report['ingredients'])->firstWhere('name', 'Flour');
-    expect($flour['is_low'])->toBeTrue();
+    $flour = collect($report->ingredients)->firstWhere('name', 'Flour');
+    $serializedFlour = collect($serialized['ingredients'])->firstWhere('name', 'Flour');
+
+    expect($report)->toBeInstanceOf(InventoryReportResult::class)
+        ->and($report->lowStockItems)->toBe(1)
+        ->and($flour['is_low'])->toBeTrue()
+        ->and($flour['cost_per_unit'])->toEqual(Money::fromDollars(1.50))
+        ->and($serializedFlour['cost_per_unit'])->toBe(1.5);
 });

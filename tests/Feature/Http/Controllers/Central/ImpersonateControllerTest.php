@@ -3,6 +3,7 @@
 use App\Actions\Platform\CreateImpersonationToken;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();

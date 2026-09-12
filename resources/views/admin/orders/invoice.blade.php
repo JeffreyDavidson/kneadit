@@ -36,7 +36,7 @@
         </button>
     </div>
 
-    <main class="invoice {{ $isPaid ? 'invoice--paid' : '' }}">
+    <main @class(['invoice', 'invoice--paid' => $isPaid])>
         @if ($isPaid)
             <div class="invoice__paid-stamp" aria-hidden="true">PAID</div>
         @endif

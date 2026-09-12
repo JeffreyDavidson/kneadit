@@ -24,6 +24,7 @@ class CateringDepositCheckoutService
 
     public function __construct(
         private StripeSettingsReader $settings,
+        private RecordCateringDeposit $recordCateringDeposit,
     ) {
         $this->stripe = new StripeClient($this->configString('cashier.secret'));
     }
@@ -138,7 +139,7 @@ class CateringDepositCheckoutService
 
             $depositDollars = (int) ($session->amount_total ?? 0) / 100;
 
-            return resolve(RecordCateringDeposit::class)(
+            return ($this->recordCateringDeposit)(
                 $inquiry,
                 $depositDollars,
                 $paymentIntentId !== '' ? $paymentIntentId : null,

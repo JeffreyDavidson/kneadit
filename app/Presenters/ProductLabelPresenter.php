@@ -8,6 +8,7 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 /**
  * Formats a Product for a printable compliance label — ingredients ordered

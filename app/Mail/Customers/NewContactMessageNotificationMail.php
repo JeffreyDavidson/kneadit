@@ -35,7 +35,7 @@ class NewContactMessageNotificationMail extends BaseMailable
         return new Content(
             view: 'emails.customers.new-contact-message-notification',
             with: [
-                'message' => $this->message,
+                'contactMessage' => $this->message,
             ],
         );
     }

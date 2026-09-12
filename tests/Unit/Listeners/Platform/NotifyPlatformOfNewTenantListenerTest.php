@@ -5,6 +5,7 @@ use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,7 +20,8 @@ beforeEach(function () {
 
 test('it sends notification email to the platform admin', function () {
     Mail::fake();
-    config(['mail.platform_notify' => 'admin@kneadit.com']);
+    Config::set('app.url', 'https://kneadit.test');
+    Config::set('mail.platform_notify', 'admin@kneadit.com');
 
     $user = User::factory()->create(['name' => 'Jane Baker', 'email' => 'jane@example.com']);
     createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
@@ -27,17 +29,23 @@ test('it sends notification email to the platform admin', function () {
 
     $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
 
-    $listener = new NotifyPlatformOfNewTenantListener;
+    $listener = resolve(NotifyPlatformOfNewTenantListener::class);
     $listener->handle($event);
 
-    Mail::assertQueued(NewSubscriberNotificationMail::class, fn (NewSubscriberNotificationMail $mail) => $mail->hasTo('admin@kneadit.com'));
+    Mail::assertQueued(
+        NewSubscriberNotificationMail::class,
+        fn (NewSubscriberNotificationMail $mail) => $mail->hasTo('admin@kneadit.com')
+            && $mail->storefrontHost === 'janes-bakery.kneadit.test'
+            && str_ends_with($mail->centralAdminUrl, '/admin'),
+    );
 });
 
 test('failed method logs a warning with tenant id and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('NotifyPlatformOfNewTenantListener failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'NotifyPlatformOfNewTenantListener failed'
+            && $context['tenant'] === 'janes-bakery'
+            && $context['error'] === 'SMTP timeout');
 
     $user = User::factory()->create();
     createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
@@ -45,6 +53,6 @@ test('failed method logs a warning with tenant id and error message', function (
 
     $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
 
-    $listener = new NotifyPlatformOfNewTenantListener;
+    $listener = resolve(NotifyPlatformOfNewTenantListener::class);
     $listener->failed($event, new RuntimeException('SMTP timeout'));
 });

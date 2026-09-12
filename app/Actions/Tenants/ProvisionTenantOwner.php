@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class ProvisionTenantOwner
 {
+    public function __construct(
+        private SettingsManager $settingsManager,
+    ) {}
+
     public function __invoke(
         Tenant $tenant,
         User $user,
@@ -38,7 +42,7 @@ class ProvisionTenantOwner
                 $settings['external_website'] = $externalWebsite;
             }
 
-            resolve(SettingsManager::class)->setMany($settings);
+            $this->settingsManager->setMany($settings);
         });
     }
 }

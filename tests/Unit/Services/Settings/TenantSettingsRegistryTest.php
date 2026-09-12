@@ -31,6 +31,16 @@ test('all() caches the result within the same request', function () {
     expect($first)->toBe($second);
 });
 
+test('tenant settings are not shared across application lifecycles', function () {
+    $first = resolve(TenantSettings::class);
+
+    app()->forgetScopedInstances();
+
+    $second = resolve(TenantSettings::class);
+
+    expect($second)->not->toBe($first);
+});
+
 test('flush() resets the cached instance', function () {
     $registry = resolve(TenantSettingsRegistry::class);
 

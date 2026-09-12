@@ -5,10 +5,14 @@ namespace App\Listeners\Platform;
 use App\Events\Platform\ScheduledCheckinDue;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\ScheduledCheckinMail;
+use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Contracts\Mail\Mailable;
 
 class SendScheduledCheckinEmailListener extends SendEmailListener
 {
+    public function __construct(private readonly TenantUrlGenerator $tenantUrls) {}
+
     protected function getRecipient(object $event): ?string
     {
         /** @var ScheduledCheckinDue $event */
@@ -18,11 +22,22 @@ class SendScheduledCheckinEmailListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var ScheduledCheckinDue $event */
+        $adminUrl = $event->adminUrl;
+        $helpUrl = $event->helpUrl;
+
+        // Keep queued events created before generated URLs were added deploy-safe.
+        if (($adminUrl === null || $helpUrl === null) && $event->tenantId !== null) {
+            $tenant = new Tenant(['id' => $event->tenantId]);
+            $adminUrl ??= $this->tenantUrls->admin($tenant);
+            $helpUrl ??= $this->tenantUrls->helpCenter($tenant);
+        }
+
         return new ScheduledCheckinMail(
             body: $event->body,
             emailSubject: $event->subject,
             bakerName: $event->bakerName,
-            tenantId: $event->tenantId,
+            adminUrl: $adminUrl,
+            helpUrl: $helpUrl,
         );
     }
 

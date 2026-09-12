@@ -2,6 +2,7 @@
 
 use App\Support\Help\HelpRepository;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     test()->tmp = sys_get_temp_dir() . '/help-' . uniqid();
@@ -56,6 +57,18 @@ test('topics() returns config-ordered topics with discovered articles', function
         ->and($topics[0]['articles'][0]['title'])->toBe('Setup Guide')
         ->and($topics[0]['articles'][0]['content'])->toContain('<strong>Settings</strong>')
         ->and($topics[1]['slug'])->toBe('billing');
+});
+
+test('articles are alphabetized and limited to Markdown files', function () {
+    File::put(test()->tmp . '/billing/z-last.md', "# Last\n");
+    File::put(test()->tmp . '/billing/a-first.md', "# First\n");
+    File::put(test()->tmp . '/billing/ignored.txt', 'Not a help article');
+
+    $topics = (new HelpRepository(test()->tmp))->topics();
+
+    expect($topics[1]['articles'])->toHaveCount(3)
+        ->and(array_column($topics[1]['articles'], 'slug'))
+        ->toBe(['a-first', 'plans', 'z-last']);
 });
 
 test('find() returns parsed article or null', function () {

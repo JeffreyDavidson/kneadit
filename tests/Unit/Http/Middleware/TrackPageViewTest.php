@@ -4,9 +4,10 @@ use App\Http\Middleware\TrackPageView;
 use App\Services\Analytics\PageViewTracker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JMac\Testing\Double;
 
 test('tracks GET requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
+    $tracker = Double::for(PageViewTracker::class);
     $tracker->expects('track');
 
     $middleware = new TrackPageView($tracker);
@@ -16,8 +17,8 @@ test('tracks GET requests', function () {
 });
 
 test('skips POST requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
-    $tracker->shouldNotReceive('track');
+    $tracker = Double::for(PageViewTracker::class);
+    $tracker->expects('track')->never();
 
     $middleware = new TrackPageView($tracker);
     $request = Request::create('/storefront', 'POST');
@@ -26,8 +27,8 @@ test('skips POST requests', function () {
 });
 
 test('skips ajax requests', function () {
-    $tracker = Tests\Support\TypedMock::make(PageViewTracker::class);
-    $tracker->shouldNotReceive('track');
+    $tracker = Double::for(PageViewTracker::class);
+    $tracker->expects('track')->never();
 
     $middleware = new TrackPageView($tracker);
     $request = Request::create('/storefront', 'GET', [], [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);

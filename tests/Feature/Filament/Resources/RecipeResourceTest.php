@@ -6,7 +6,6 @@ use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,22 +18,23 @@ beforeEach(function () {
 test('can list recipes in the table', function () {
     $recipes = Recipe::factory()->count(3)->create();
 
-    Livewire::test(ListRecipes::class)
+    livewire(ListRecipes::class)
         ->assertCanSeeTableRecords($recipes);
 });
 
-test('can render recipe table columns', function (string $column) {
+test('can render recipe table columns', function () {
     Recipe::factory()->create();
 
-    Livewire::test(ListRecipes::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'prep_time_minutes']);
+    livewire(ListRecipes::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('prep_time_minutes');
+});
 
 test('can search recipes by name', function () {
     $target = Recipe::factory()->create(['name' => 'Sourdough Starter']);
     $other = Recipe::factory()->create(['name' => 'Chocolate Cake']);
 
-    Livewire::test(ListRecipes::class)
+    livewire(ListRecipes::class)
         ->searchTable('Sourdough')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
@@ -43,7 +43,7 @@ test('can search recipes by name', function () {
 test('can edit a recipe via table action', function () {
     $recipe = Recipe::factory()->create();
 
-    Livewire::test(ListRecipes::class)
+    livewire(ListRecipes::class)
         ->callAction(TestAction::make('edit')->table($recipe), data: [
             'name' => 'Updated Recipe',
             'prep_time_minutes' => $recipe->prep_time_minutes,
@@ -54,7 +54,7 @@ test('can edit a recipe via table action', function () {
 });
 
 test('can create a recipe with ingredients', function () {
-    $component = Livewire::test(ListRecipes::class)
+    $component = livewire(ListRecipes::class)
         ->mountAction('create')
         ->fillForm([
             'name' => 'Sourdough Bread',
@@ -85,7 +85,7 @@ test('can create a recipe with ingredients', function () {
 test('edit recipe validates name is required', function () {
     $recipe = Recipe::factory()->create();
 
-    Livewire::test(ListRecipes::class)
+    livewire(ListRecipes::class)
         ->callAction(TestAction::make('edit')->table($recipe), data: [
             'name' => null,
             'prep_time_minutes' => $recipe->prep_time_minutes,
@@ -97,7 +97,7 @@ test('can sort recipes by name', function () {
     $alpha = Recipe::factory()->create(['name' => 'Alpha Bread']);
     $zeta = Recipe::factory()->create(['name' => 'Zeta Cake']);
 
-    Livewire::test(ListRecipes::class)
+    livewire(ListRecipes::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
         ->sortTable('name', 'desc')

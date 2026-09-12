@@ -27,8 +27,9 @@ test('it sends staff invitation email to the invitee', function () {
 test('failed method logs a warning with email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendStaffInvitationEmailListener failed', Mockery::on(fn (array $context) => $context['email'] === 'newstaff@example.com'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendStaffInvitationEmailListener failed'
+            && $context['email'] === 'newstaff@example.com'
+            && $context['error'] === 'SMTP timeout');
 
     $invitation = StaffInvitation::factory()->create(['email' => 'newstaff@example.com']);
     $event = new StaffInvitationSent($invitation, 'Sweet Treats Bakery', 'https://example.com/accept/abc123');

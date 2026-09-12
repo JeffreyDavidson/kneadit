@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Central\SitemapController;
 use App\Models\Content\BlogPost;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 
 beforeEach(function () {
@@ -61,4 +62,25 @@ test('sitemap returns empty post list when no published posts exist', function (
     $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
     expect($posts)->toBeEmpty();
+});
+
+test('sitemap generates URLs from the application routes', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    $post = BlogPost::factory()->published()->create([
+        'slug' => 'fresh-bread',
+    ]);
+
+    $response = $this->get(route('sitemap'));
+
+    $response
+        ->assertOk()
+        ->assertSee(route('home'), escape: false)
+        ->assertSee(route('blog.index'), escape: false)
+        ->assertSee(route('pricing'), escape: false)
+        ->assertSee(route('register'), escape: false)
+        ->assertSee(route('changelog'), escape: false)
+        ->assertSee(route('blog.show', ['centralPost' => $post->slug]), escape: false)
+        ->assertDontSee('getkneadit.app');
 });

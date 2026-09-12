@@ -9,7 +9,7 @@
 <x-storefront.dark-section padding="py-24" radial-opacity="0.08">
     <div class="mx-auto max-w-2xl px-4 text-center">
         <p class="font-script text-warm-500 mb-4 text-2xl">{{ $scriptText }}</p>
-        <h2 class="font-display text-3xl md:text-5xl font-bold mb-{{ $description ? '6' : '8' }} text-warm-100">
+        <h2 @class(['font-display text-3xl md:text-5xl font-bold text-warm-100', 'mb-6' => $description, 'mb-8' => ! $description])>
             {{ $heading }}
         </h2>
         @if ($description)

@@ -32,8 +32,9 @@ test('new subscriber notification has correct subject', function () {
         bakerName: 'Jane',
         bakerEmail: 'jane@example.com',
         storeName: 'Sunrise Bakery',
-        subdomain: 'sunrise',
+        storefrontHost: 'sunrise.kneadit.test',
         plan: 'starter',
+        centralAdminUrl: 'https://kneadit.test/central',
     );
 
     expect($mail->envelope()->subject)->toBe('New KneadIt Signup — Sunrise Bakery');
@@ -44,9 +45,15 @@ test('new subscriber notification has correct properties', function () {
         bakerName: 'Jane',
         bakerEmail: 'jane@example.com',
         storeName: 'Sunrise Bakery',
-        subdomain: 'sunrise',
+        storefrontHost: 'sunrise.kneadit.test',
         plan: 'starter',
+        centralAdminUrl: 'https://kneadit.test/central',
     );
 
-    expect($mail->bakerName)->toBe('Jane')->and($mail->bakerEmail)->toBe('jane@example.com')->and($mail->storeName)->toBe('Sunrise Bakery')->and($mail->subdomain)->toBe('sunrise')->and($mail->plan)->toBe('starter');
+    expect($mail->bakerName)->toBe('Jane')
+        ->and($mail->bakerEmail)->toBe('jane@example.com')
+        ->and($mail->storeName)->toBe('Sunrise Bakery')
+        ->and($mail->storefrontHost)->toBe('sunrise.kneadit.test')
+        ->and($mail->plan)->toBe('starter')
+        ->and($mail->centralAdminUrl)->toBe('https://kneadit.test/central');
 });

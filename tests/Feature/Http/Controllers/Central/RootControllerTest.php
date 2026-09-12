@@ -5,6 +5,7 @@ use App\Http\Controllers\Storefront\HomeController;
 use App\Models\Platform\Tenant;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +29,26 @@ test('central requests render the platform welcome page', function () {
     throw_unless($response instanceof View, RuntimeException::class, 'Expected the platform welcome view.');
 
     expect($response->name())->toBe('platform.welcome');
+});
+
+test('central welcome uses application URLs', function () {
+    config(['tenancy.central_domains' => ['kneadit.test']]);
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    $response = get(route('home'));
+
+    $response
+        ->assertOk()
+        ->assertSeeHtml('<meta property="og:url" content="https://kneadit.test" />')
+        ->assertSeeHtml('<meta property="og:image" content="https://kneadit.test/og.svg" />')
+        ->assertSeeHtml('<link rel="icon" href="https://kneadit.test/images/logo-icon.png" type="image/png" />')
+        ->assertSeeHtml('<a href="https://kneadit.test/resources">Resources</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/privacy">Privacy</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/terms">Terms</a>')
+        ->assertDontSee('https://getkneadit.app');
+
+    expect(substr_count((string) $response->getContent(), 'href="https://kneadit.test/register"'))->toBe(6);
 });
 
 test('active tenant requests render the storefront home page', function () {

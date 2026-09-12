@@ -7,7 +7,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -20,12 +19,12 @@ beforeEach(function () {
 test('can list ingredients in the table', function () {
     $ingredients = Ingredient::factory()->count(3)->create();
 
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->assertCanSeeTableRecords($ingredients);
 });
 
 test('can create an ingredient via slide-over', function () {
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->callAction(CreateAction::class, data: [
             'name' => 'Bread Flour',
             'unit' => 'lbs',
@@ -41,43 +40,50 @@ test('can create an ingredient via slide-over', function () {
     ]);
 });
 
-test('create ingredient validates required fields', function (array $data, array $errors) {
-    Livewire::test(ListIngredients::class)
-        ->callAction(CreateAction::class, data: [
-            'name' => 'Test',
-            'unit' => 'lbs',
-            'current_stock' => 10,
-            'low_stock_threshold' => 5,
-            ...$data,
-        ])
-        ->assertHasFormErrors($errors);
-})->with([
-    'name is required' => [['name' => null], ['name' => 'required']],
-    'unit is required' => [['unit' => null], ['unit' => 'required']],
-    'current stock is required' => [['current_stock' => null], ['current_stock' => 'required']],
-]);
+test('create ingredient validates required fields', function () {
+    $cases = [
+        [['name' => null], ['name' => 'required']],
+        [['unit' => null], ['unit' => 'required']],
+        [['current_stock' => null], ['current_stock' => 'required']],
+    ];
+
+    foreach ($cases as [$data, $errors]) {
+        livewire(ListIngredients::class)
+            ->callAction(CreateAction::class, data: [
+                'name' => 'Test',
+                'unit' => 'lbs',
+                'current_stock' => 10,
+                'low_stock_threshold' => 5,
+                ...$data,
+            ])
+            ->assertHasFormErrors($errors);
+    }
+});
 
 test('can search ingredients by name', function () {
     $flour = Ingredient::factory()->create(['name' => 'Bread Flour']);
     $sugar = Ingredient::factory()->create(['name' => 'Brown Sugar']);
 
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->searchTable('Flour')
         ->assertCanSeeTableRecords(collect([$flour]))
         ->assertCanNotSeeTableRecords(collect([$sugar]));
 });
 
-test('can render ingredient table columns', function (string $column) {
+test('can render ingredient table columns', function () {
     Ingredient::factory()->create();
 
-    Livewire::test(ListIngredients::class)
-        ->assertCanRenderTableColumn($column);
-})->with(['name', 'current_stock', 'stock_status', 'cost_per_unit']);
+    livewire(ListIngredients::class)
+        ->assertCanRenderTableColumn('name')
+        ->assertCanRenderTableColumn('current_stock')
+        ->assertCanRenderTableColumn('stock_status')
+        ->assertCanRenderTableColumn('cost_per_unit');
+});
 
 test('can edit an ingredient via table action', function () {
     $ingredient = Ingredient::factory()->create(['unit' => 'lbs']);
 
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->callAction(TestAction::make('edit')->table($ingredient), data: [
             'name' => 'Updated Flour',
             'unit' => 'lbs',
@@ -93,7 +99,7 @@ test('can filter ingredients by low stock', function () {
     $lowStock = Ingredient::factory()->lowStock()->create();
     $normalStock = Ingredient::factory()->create(['current_stock' => 50]);
 
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->filterTable('stock_status', 'low')
         ->assertCanSeeTableRecords(collect([$lowStock]))
         ->assertCanNotSeeTableRecords(collect([$normalStock]));
@@ -103,7 +109,7 @@ test('can sort ingredients by name', function () {
     $butter = Ingredient::factory()->create(['name' => 'Butter']);
     $yeast = Ingredient::factory()->create(['name' => 'Yeast']);
 
-    Livewire::test(ListIngredients::class)
+    livewire(ListIngredients::class)
         ->sortTable('name')
         ->assertCanSeeTableRecords(collect([$butter, $yeast]), inOrder: true)
         ->sortTable('name', 'desc')

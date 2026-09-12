@@ -7,14 +7,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = validApiContactData();
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    $validator = validator([], (new StoreApiContactRequest)->rules());
 
-    $validator = validator($data, (new StoreApiContactRequest)->rules());
-
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['name', 'email', 'subject', 'message']);
+    foreach (['name', 'email', 'subject', 'message'] as $field) {
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('email must be valid', function () {
     $validator = validator(

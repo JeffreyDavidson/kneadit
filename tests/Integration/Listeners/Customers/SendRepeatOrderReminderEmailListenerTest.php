@@ -27,8 +27,9 @@ test('it sends repeat order reminder email to the customer', function () {
 test('failed method logs a warning with customer name and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendRepeatOrderReminderEmailListener failed', Mockery::on(fn (array $context) => $context['customer'] === 'Jane Doe'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendRepeatOrderReminderEmailListener failed'
+            && $context['customer'] === 'Jane Doe'
+            && $context['error'] === 'SMTP timeout');
 
     $customer = Customer::factory()->create(['name' => 'Jane Doe']);
     $event = new RepeatOrderReminderDue($customer, 30);

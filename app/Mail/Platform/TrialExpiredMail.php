@@ -6,12 +6,13 @@ use App\Mail\BaseMailable;
 use App\Models\Staff\User;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\URL;
 
 class TrialExpiredMail extends BaseMailable
 {
     public function __construct(
         public User $user,
-        public string $tenantId,
+        public string $adminUrl,
     ) {}
 
     public function envelope(): Envelope
@@ -25,6 +26,9 @@ class TrialExpiredMail extends BaseMailable
     {
         return new Content(
             text: 'emails.platform.trial-expired-text',
+            with: [
+                'billingPlansUrl' => URL::route('billing.plans'),
+            ],
         );
     }
 }

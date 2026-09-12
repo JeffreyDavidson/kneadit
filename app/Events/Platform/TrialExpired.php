@@ -13,5 +13,6 @@ class TrialExpired implements ShouldDispatchAfterCommit
     public function __construct(
         public readonly User $user,
         public readonly string $tenantId,
+        public readonly ?string $adminUrl = null,
     ) {}
 }

@@ -74,7 +74,6 @@ test('swap plan handles null subscription gracefully', function () {
     $controller = new SwapPlanController;
     $response = $controller($user, 'starter');
 
-    // null?->swap() is a no-op so success path
     expect($response)->toBeInstanceOf(RedirectResponse::class)
         ->and(session('success'))->toBe('Your plan has been updated!');
 });

@@ -11,19 +11,14 @@
     @hasSection('canonical')
         <link rel="canonical" href="@yield('canonical')" />
     @endif
-    <link
-        rel="alternate"
-        type="application/rss+xml"
-        title="KneadIt Resources"
-        href="{{ url('/resources/feed.xml') }}"
-    />
+    <link rel="alternate" type="application/rss+xml" title="KneadIt Resources" href="{{ route('blog.feed') }}" />
     <meta property="og:title" content="@yield('title', 'Blog — KneadIt')" />
     <meta property="og:description" content="@yield('meta_description', 'Resources for cottage food bakers')" />
     <meta property="og:type" content="@yield('og_type', 'website')" />
     <meta property="og:url" content="{{ url()->current() }}" />
-    <meta property="og:image" content="@yield('og_image', 'https://getkneadit.app/og.svg')" />
+    <meta property="og:image" content="@yield('og_image', asset('og.svg'))" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/images/logo-icon.png" type="image/png" />
+    <link rel="icon" href="{{ asset('images/logo-icon.png') }}" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -35,14 +30,14 @@
 </head>
 <body>
     <nav class="site-nav">
-        <a href="/" class="nav-brand">KneadIt</a>
+        <a href="{{ route('home') }}" class="nav-brand">KneadIt</a>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/#features">Features</a>
-            <a href="/#pricing">Pricing</a>
-            <a href="/#contact">Contact</a>
-            <a href="/resources">Resources</a>
-            <a href="/register" class="nav-cta">Get Started</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('home') }}#features">Features</a>
+            <a href="{{ route('home') }}#pricing">Pricing</a>
+            <a href="{{ route('home') }}#contact">Contact</a>
+            <a href="{{ route('blog.index') }}">Resources</a>
+            <a href="{{ route('register') }}" class="nav-cta">Get Started</a>
         </div>
     </nav>
 
@@ -62,8 +57,8 @@
         </p>
         <p>The bakery management platform for cottage food bakers.</p>
         <p style="margin-top: 1rem">
-            <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/resources">Resources</a> ·
-            <a href="/changelog">Changelog</a>
+            <a href="{{ route('terms') }}">Terms</a> · <a href="{{ route('privacy') }}">Privacy</a> ·
+            <a href="{{ route('blog.index') }}">Resources</a> · <a href="{{ route('changelog') }}">Changelog</a>
         </p>
         <p style="margin-top: 1rem; opacity: 0.4; font-size: 0.75rem">
             © {{ date('Y') }} KneadIt. All rights reserved.

@@ -15,6 +15,9 @@
     @session('success')
         <div class="success-banner">{{ $value }}</div>
     @endsession
+    @session('error')
+        <div class="error-banner">{{ $value }}</div>
+    @endsession
 
     <div class="container">
         <div class="header">
@@ -26,7 +29,7 @@
 
         <div class="plans-grid">
             @foreach (config('kneadit.plans') as $key => $plan)
-                <div class="plan-card {{ $key === 'growth' ? 'featured' : '' }}">
+                <div @class(['plan-card', 'featured' => $key === 'growth'])>
                     @if ($key === 'growth')
                         <div class="badge">Most Popular</div>
                     @endif
@@ -58,7 +61,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="plan-btn {{ $key === 'growth' ? 'plan-btn-primary' : 'plan-btn-outline' }}"
+                                @class(['plan-btn', 'plan-btn-primary' => $key === 'growth', 'plan-btn-outline' => $key !== 'growth'])
                             >
                                 Switch to {{ $plan['name'] }}
                             </button>
@@ -68,7 +71,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="plan-btn {{ $key === 'growth' ? 'plan-btn-primary' : 'plan-btn-outline' }}"
+                                @class(['plan-btn', 'plan-btn-primary' => $key === 'growth', 'plan-btn-outline' => $key !== 'growth'])
                             >
                                 Start Free Trial
                             </button>

@@ -9,6 +9,7 @@ use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 class ShoppingListService
 {

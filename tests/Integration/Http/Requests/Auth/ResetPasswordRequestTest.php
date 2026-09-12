@@ -7,14 +7,16 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = validAuthResetPasswordData();
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    foreach (['token', 'email', 'password'] as $field) {
+        $data = validAuthResetPasswordData();
+        unset($data[$field]);
 
-    $validator = validator($data, (new ResetPasswordRequest)->rules());
+        $validator = validator($data, (new ResetPasswordRequest)->rules());
 
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['token', 'email', 'password']);
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
 test('email must be valid', function () {
     $validator = validator(
@@ -25,21 +27,19 @@ test('email must be valid', function () {
     expect($validator->errors()->has('email'))->toBeTrue();
 });
 
-test('password must meet strength rules (>= 8 chars, letters + numbers)', function (string $password) {
-    $validator = validator(
-        array_merge(validAuthResetPasswordData(), [
-            'password' => $password,
-            'password_confirmation' => $password,
-        ]),
-        (new ResetPasswordRequest)->rules(),
-    );
+test('password must meet strength rules (>= 8 chars, letters + numbers)', function () {
+    foreach (['Ab1', 'Abcdefgh', '12345678'] as $password) {
+        $validator = validator(
+            array_merge(validAuthResetPasswordData(), [
+                'password' => $password,
+                'password_confirmation' => $password,
+            ]),
+            (new ResetPasswordRequest)->rules(),
+        );
 
-    expect($validator->errors()->has('password'))->toBeTrue();
-})->with([
-    'too short' => 'Ab1',
-    'no numbers' => 'Abcdefgh',
-    'no letters' => '12345678',
-]);
+        expect($validator->errors()->has('password'))->toBeTrue();
+    }
+});
 
 test('password confirmation must match', function () {
     $validator = validator(

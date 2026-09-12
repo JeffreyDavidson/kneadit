@@ -2,6 +2,7 @@
 
 use App\Models\Orders\Order;
 use App\Services\Stripe\StripeCheckoutService;
+use JMac\Testing\Double;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -28,7 +29,7 @@ test('calls handleCheckoutComplete when session_id is present', function () {
     $mock->expects('handleCheckoutComplete')
 
         ->with('cs_test_123');
-    app()->instance(StripeCheckoutService::class, $mock);
+    app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));

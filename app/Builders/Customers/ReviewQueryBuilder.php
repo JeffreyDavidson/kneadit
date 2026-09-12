@@ -5,6 +5,7 @@ namespace App\Builders\Customers;
 use App\Models\Engagement\Review;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 
 /** @extends Builder<Review> */
 class ReviewQueryBuilder extends Builder

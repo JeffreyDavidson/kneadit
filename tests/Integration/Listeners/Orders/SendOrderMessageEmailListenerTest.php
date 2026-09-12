@@ -107,8 +107,9 @@ test('it does not send email when customer sends message but no store email is c
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendOrderMessageEmailListener failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
-            && $context['error'] === 'SMTP timeout'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'SendOrderMessageEmailListener failed'
+            && $context['order'] === 'ORD-001'
+            && $context['error'] === 'SMTP timeout');
 
     $order = Order::factory()->create(['order_number' => 'ORD-001']);
     $message = OrderMessage::factory()->fromCustomer()->for($order)->create();

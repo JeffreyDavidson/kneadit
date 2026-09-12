@@ -8,30 +8,30 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('required fields are enforced', function (string $field) {
-    $data = validRegisterCustomerData();
-    unset($data[$field]);
+test('required fields are enforced', function () {
+    foreach (['name', 'email', 'password'] as $field) {
+        $data = validRegisterCustomerData();
+        unset($data[$field]);
 
-    $validator = validator($data, (new RegisterCustomerRequest)->rules());
+        $validator = validator($data, (new RegisterCustomerRequest)->rules());
 
-    expect($validator->errors()->has($field))->toBeTrue();
-})->with(['name', 'email', 'password']);
+        expect($validator->errors()->has($field))->toBeTrue();
+    }
+});
 
-test('password must be at least 8 chars and contain letters and numbers', function (string $password) {
-    $validator = validator(
-        array_merge(validRegisterCustomerData(), [
-            'password' => $password,
-            'password_confirmation' => $password,
-        ]),
-        (new RegisterCustomerRequest)->rules(),
-    );
+test('password must be at least 8 chars and contain letters and numbers', function () {
+    foreach (['Ab1', 'Abcdefgh', '12345678'] as $password) {
+        $validator = validator(
+            array_merge(validRegisterCustomerData(), [
+                'password' => $password,
+                'password_confirmation' => $password,
+            ]),
+            (new RegisterCustomerRequest)->rules(),
+        );
 
-    expect($validator->errors()->has('password'))->toBeTrue();
-})->with([
-    'too short' => ['Ab1'],
-    'no numbers' => ['Abcdefgh'],
-    'no letters' => ['12345678'],
-]);
+        expect($validator->errors()->has('password'))->toBeTrue();
+    }
+});
 
 test('email already used by an account with a password is rejected', function () {
     Customer::factory()->create([

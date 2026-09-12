@@ -4,6 +4,7 @@ namespace App\Console\Commands\Tenants;
 
 use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -24,18 +25,23 @@ class ImportLegacyBakeryCommand extends Command
         }
 
         try {
-            /** @var array<string, array<int, array<string, mixed>>> $data */
-            $data = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+            $decoded = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             $this->error("The import file is not valid JSON: {$exception->getMessage()}");
 
             return self::FAILURE;
         }
 
-        $counts = [];
-        foreach ($data as $name => $records) {
-            $counts[$name] = count($records);
+        try {
+            $importData = LegacyBakeryImportData::from($decoded);
+        } catch (\InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
         }
+
+        $data = $importData->toArray();
+        $counts = $importData->counts();
 
         if ($this->option('dry-run')) {
             $this->table(['Dataset', 'Records'], $this->tableRows($counts));
@@ -77,8 +83,15 @@ class ImportLegacyBakeryCommand extends Command
             'is_active' => true,
         ]);
 
-        /** @var array<string, int> $result */
-        $result = $tenant->run(fn (): array => $import($data));
+        try {
+            /** @var array<string, int> $result */
+            $result = $tenant->run(fn (): array => $import($data));
+        } catch (\InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
+
         $this->table(['Imported dataset', 'Records'], $this->tableRows($result));
 
         return self::SUCCESS;

@@ -3,11 +3,9 @@
 namespace App\Reports\Customers;
 
 use App\Enums\Customers\RfmSegment;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Services\Customers\RfmClassifier;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 /**
@@ -41,10 +39,7 @@ class RfmReport
     public function generate(): array
     {
         $rows = Customer::query()
-            ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
-            ->withCount(['orders as frequency' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)])
-            ->withSum(['orders as monetary_cents' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'total')
-            ->withMax(['orders as last_order_at' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'delivery_date')
+            ->withRfmMetrics()
             ->get();
 
         $now = now();

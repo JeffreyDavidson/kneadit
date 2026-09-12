@@ -2,27 +2,28 @@
 
 namespace App\Reports\Inventory;
 
+use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Product;
 use App\Support\ProfitMargin;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class ProductReport
 {
-    /** @return array<string, mixed> */
-    public function generate(DateRange $range): array
+    public function generate(DateRange $range): ProductReportResult
     {
-        $products = Product::query()->withSum(['orderItems as units_sold' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], 'quantity')
+        $products = array_values(Product::query()->withSum(['orderItems as units_sold' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], 'quantity')
             ->withSum(['orderItems as revenue' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))
             ->get()
             ->map(function (Product $p): array {
-                $price = $p->price?->dollars() ?? 0.0;
-                $cost = $p->cost?->dollars() ?? 0.0;
-                $margin = $cost > 0
-                    ? ProfitMargin::calculate($price, $cost, 1)
+                $price = $p->price ?? Money::zero();
+                $cost = $p->cost ?? Money::zero();
+                $margin = $cost->isPositive()
+                    ? ProfitMargin::calculate($price->dollars(), $cost->dollars(), 1)
                     : null;
 
                 return [
@@ -36,10 +37,10 @@ class ProductReport
                     'margin' => $margin,
                 ];
             })
-            ->sortByDesc('revenue')
+            ->sortByDesc(fn (array $product): int => $product['revenue']->cents())
             ->values()
-            ->all();
+            ->all());
 
-        return ['products' => $products];
+        return new ProductReportResult(products: $products);
     }
 }

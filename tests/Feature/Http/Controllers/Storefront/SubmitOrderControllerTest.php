@@ -9,6 +9,7 @@ use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\StripeCheckoutService;
+use JMac\Testing\Double;
 
 use function Pest\Laravel\withoutMiddleware;
 

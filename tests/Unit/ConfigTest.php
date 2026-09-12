@@ -21,3 +21,9 @@ test('app config has required values', function () {
     expect(config('app.name'))->toBeString()->not->toBeEmpty()
         ->and(config('app.timezone'))->toBeString();
 });
+
+test('sqlite config enables concurrent web and queue access', function () {
+    expect(config('database.connections.sqlite.busy_timeout'))->toBe(5000)
+        ->and(config('database.connections.sqlite.journal_mode'))->toBe('WAL')
+        ->and(config('database.connections.sqlite.synchronous'))->toBe('NORMAL');
+});

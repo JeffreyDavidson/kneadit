@@ -21,6 +21,7 @@ use App\Http\Controllers\Central\SitemapController;
 use App\Http\Controllers\CspReportController;
 use App\Routing\Resolvers\PublishedBlogPostResolver;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 Route::bind('centralPost', resolve(PublishedBlogPostResolver::class));
 
@@ -89,7 +90,7 @@ Route::view('privacy', 'legal.privacy')->name('privacy');
 
 // SEO
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
-Route::get('robots.txt', fn () => response("User-agent: *\nAllow: /\n\nSitemap: https://getkneadit.app/sitemap.xml\n", 200, ['Content-Type' => 'text/plain']))->name('robots');
+Route::get('robots.txt', fn () => response("User-agent: *\nAllow: /\n\nSitemap: " . URL::route('sitemap') . "\n", 200, ['Content-Type' => 'text/plain']))->name('robots');
 
 // Changelog
 Route::get('changelog', ChangelogController::class)->name('changelog');

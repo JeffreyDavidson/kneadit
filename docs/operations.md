@@ -4,7 +4,7 @@
 
 A production environment needs all of the following:
 
-- PHP 8.4 and the web server/PHP process manager
+- PHP 8.5 and the web server/PHP process manager
 - a central database plus writable storage for per-tenant SQLite databases
 - a long-running queue worker using the configured queue connection (database by default)
 - Laravel's scheduler invoked once per minute
@@ -12,6 +12,8 @@ A production environment needs all of the following:
 - configured mail and any enabled Stripe, Stripe Connect, PayPal, Resend, Fathom, AWS, or Sentry credentials
 
 Do not run tenant database files from ephemeral storage. `TENANT_DB_PATH` must resolve to durable storage shared by every process serving the application. Tenant database names are confined to that root, symlinked database files are refused, and newly provisioned files use owner-only permissions.
+
+Public uploads must also survive release replacement. On zero-downtime deployments, set `PUBLIC_STORAGE_PATH` to an absolute, writable directory outside the numbered release directories. Both the `public` filesystem disk and Laravel's `public/storage` link resolve to this path. Preserve and back up this directory with the tenant databases.
 
 ## Queue operations
 
@@ -82,7 +84,26 @@ The repository uses simplified gitflow:
 
 - `develop` deploys to staging.
 - `main` deploys to production through Laravel Forge.
-- release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`.
+- release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`; run `bin/sync-version` during deployment before caching configuration.
+
+The repository does not automatically back-merge `main` into `develop`. Prepare releases locally from a freshly pulled `develop` branch so release history stays linear and reviewable:
+
+```bash
+git fetch origin
+git switch develop
+git pull --ff-only origin develop
+git switch -c release/vX.Y.Z
+```
+
+If a release branch already exists, rebase it onto the pulled `develop` branch before opening or updating its release pull request:
+
+```bash
+git fetch origin
+git switch develop
+git pull --ff-only origin develop
+git switch release/vX.Y.Z
+git rebase develop
+```
 
 Before merging a release:
 
@@ -104,7 +125,34 @@ php artisan test --testsuite=Browser
 git diff --check
 ```
 
+After checking out a release, synchronize the deployed version before running `php artisan config:cache`:
+
+```bash
+bin/sync-version
+```
+
+The command reads the nearest reachable `vX.Y.Z` tag, rejects malformed versions, and writes the result to `VERSION`. Tag-triggered browser smoke runs pass the exact pushed tag explicitly.
+
 The full suite may be lengthy. Use bounded targeted tests during development, but do not replace release-level coverage with a narrow selection.
+
+### Forge PHP runtime
+
+The production site on `cold-moon` uses PHP 8.5. Keep the deployment script on Forge's version-aware `$FORGE_COMPOSER` and `$FORGE_PHP` variables so Composer and Artisan follow the PHP version configured for the site. Do not replace them with the server-wide `php` command, because other sites may intentionally use a different PHP version.
+
+Forge-managed processes do not automatically follow a later site PHP change. After changing the site's PHP version, update and restart the KneadIt queue worker so its command begins with `php8.5`, and ensure the KneadIt scheduler invokes `php8.5 artisan schedule:run` once per minute. Verify the deployed release and runtime with bounded, read-only checks:
+
+```bash
+cd /home/forge/getkneadit.app/current
+git rev-parse HEAD
+php8.5 artisan --version
+php8.5 /usr/local/bin/composer check-platform-reqs --no-dev
+systemctl is-active php8.5-fpm
+ps -eo args | grep '[p]hp8.5 .*getkneadit.app/current/artisan queue:work'
+crontab -l | grep '/home/forge/getkneadit.app/current.*php8.5 artisan schedule:run'
+curl --fail --silent --show-error --output /dev/null https://getkneadit.app/up
+```
+
+The retired Ondrej Nginx Launchpad source is disabled on `cold-moon` at `/etc/apt/sources.list.d/ondrej-ubuntu-nginx-jammy.list.disabled`. Do not re-enable it. Establish and validate a supported Nginx package source separately before attempting an Nginx package upgrade; changing the PHP repository does not replace the Nginx update channel.
 
 ## Testing
 
@@ -123,12 +171,16 @@ php artisan test --filter='descriptive test name'
 
 Tests default to in-memory SQLite, synchronous queues, array mail/cache/session drivers, and a placeholder Stripe secret via `phpunit.xml`. Feature helpers in `tests/Pest.php` create central tenant/domain records and initialize isolated tenant databases. Tests that exercise request tenancy should use a host/domain record rather than bypassing middleware.
 
+Quality workflows normally run for pull requests. If GitHub does not deliver a pull-request event, FilaCheck, PHPStan, Pint, Rector, Security Scan, Tests, and Type Coverage can each be dispatched manually from the Actions page or with `gh workflow run <workflow-file> --ref <branch>`. GitHub only exposes manual dispatch after the workflow definition containing `workflow_dispatch` is present on the default branch (`main`), so a newly added fallback becomes available after its next release. Confirm every expected run passes before merging; manual dispatch is a recovery path, not a substitute for the normal PR gate.
+
 ### Browser tests
 
 Browser tests use Pest Browser/Playwright against live local URLs. Defaults are:
 
 - `BROWSER_TEST_CENTRAL_URL=http://kneadit.test`
 - `BROWSER_TEST_STOREFRONT_URL=http://browser-test.kneadit.test`
+
+The Browser Smoke workflow starts and stops bounded Laravel servers on dynamically allocated ports. It uses the IPv4 loopback for the central app and the IPv6 loopback for the tenant, so the release gate does not depend on Herd, local DNS services, or fixed ports shared with other processes.
 
 They expect the central application and a `browser-test` tenant to be reachable, frontend assets to be available, and fixture records/authentication state required by admin tests to exist. `tests/Browser/Helpers/prepare-admin-session.mjs` creates browser authentication state used by authenticated central and tenant visits with the Playwright dependency declared in `package.json`.
 

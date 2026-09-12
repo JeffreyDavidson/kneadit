@@ -37,6 +37,18 @@ test('survey page loads for active survey', function () {
     $response->assertSee('Customer Satisfaction');
 });
 
+test('survey page displays its success state after submission', function () {
+    $survey = Survey::factory()->active()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(['survey_submitted' => true])
+        ->get(route('storefront.survey', $survey, false));
+
+    $response->assertOk()
+        ->assertSee('Thank You!')
+        ->assertSee('Your feedback has been submitted.');
+});
+
 test('survey returns 404 for inactive survey', function () {
     $survey = Survey::factory()->inactive()->create([
         'questions' => [['type' => 'text', 'question' => 'Feedback']],

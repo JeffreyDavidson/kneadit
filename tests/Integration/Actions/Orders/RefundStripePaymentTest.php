@@ -7,7 +7,8 @@ use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery\MockInterface;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 use Stripe\Exception\InvalidRequestException;
 use Stripe\Service\RefundService;
 use Stripe\StripeClient;
@@ -17,6 +18,11 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
 });
+
+final class FakeStripeRefundClient extends StripeClient
+{
+    public function __construct(public RefundService $refunds) {}
+}
 
 test('returns null when payment_status is not Paid', function () {
     $order = Order::factory()->unpaid()->create();
@@ -37,19 +43,14 @@ test('returns null when no Stripe payment intent is recorded', function () {
 test('refunds via Stripe, records a Refund row, and flips payment_status to Refunded', function () {
     $stripeRefundResource = (object) ['id' => 're_test_xyz123'];
 
-    $refundService = mock(RefundService::class, function (MockInterface $m) use ($stripeRefundResource): void {
-        $m->shouldReceive('create')
-            ->once()
-            ->with(Mockery::on(fn (array $payload): bool => $payload['payment_intent'] === 'pi_test_abc'))
-            ->andReturn($stripeRefundResource);
-    });
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')
+        ->with(Argument::satisfies(function (mixed $payload): bool {
+            return is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc';
+        }))
+        ->returns($stripeRefundResource);
 
-    app()->bind(StripeClient::class, function () use ($refundService): StripeClient {
-        $client = mock(StripeClient::class);
-        $client->refunds = $refundService;
-
-        return $client;
-    });
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
 
     $user = User::factory()->owner()->create();
     $order = Order::factory()->paid()->create([
@@ -71,16 +72,10 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
 test('throws StripeRefundFailedException when the Stripe API errors', function () {
     $stripeError = InvalidRequestException::factory('Charge has already been refunded.', 400, null, null);
 
-    $refundService = mock(RefundService::class, function (MockInterface $m) use ($stripeError): void {
-        $m->shouldReceive('create')->once()->andThrow($stripeError);
-    });
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')->throws($stripeError);
 
-    app()->bind(StripeClient::class, function () use ($refundService): StripeClient {
-        $client = mock(StripeClient::class);
-        $client->refunds = $refundService;
-
-        return $client;
-    });
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
 
     $order = Order::factory()->paid()->create([
         'stripe_payment_intent_id' => 'pi_already_refunded',

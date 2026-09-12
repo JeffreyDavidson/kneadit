@@ -6,6 +6,7 @@ use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Services\Customers\CustomerIntelligence;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,9 +32,9 @@ test('metrics returns correct values for customer with orders', function () {
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 
     expect($metrics)
-        ->lifetimeValue->toBe(150.00)
+        ->lifetimeValue->toEqual(Money::fromDollars(150))
         ->orderCount->toBe(3)
-        ->averageOrderValue->toBe(50.00)
+        ->averageOrderValue->toEqual(Money::fromDollars(50))
         ->lastOrderDate->not->toBeNull()
         ->isAtRisk->toBeFalse();
 });
@@ -44,9 +45,9 @@ test('metrics returns safe defaults for customer with no orders', function () {
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 
     expect($metrics)
-        ->lifetimeValue->toBe(0.0)
+        ->lifetimeValue->toEqual(Money::zero())
         ->orderCount->toBe(0)
-        ->averageOrderValue->toBe(0.0)
+        ->averageOrderValue->toEqual(Money::zero())
         ->lastOrderDate->toBeNull()
         ->daysSinceLastOrder->toBeNull()
         ->isAtRisk->toBeFalse()

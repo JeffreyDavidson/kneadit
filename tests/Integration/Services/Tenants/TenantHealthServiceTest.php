@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use App\Services\Tenants\TenantHealthService;
 use JMac\Testing\Double;
@@ -56,11 +57,16 @@ it('calculates health scores for tenants', function () {
         ->and($data->firstOrFail()->healthScore)->toBeGreaterThan(0);
 });
 
-it('handles tenant context failure gracefully', function () {
+it('omits unreadable tenants without preventing other health scores', function () {
     createTenant([
         'id' => 'error-tenant',
         'name' => 'Error Baker',
         'email' => 'error@test.com',
+    ]);
+    createTenant([
+        'id' => 'healthy-tenant',
+        'name' => 'Healthy Baker',
+        'email' => 'healthy@test.com',
     ]);
 
     $tenancyManager = Double::for(TenancyManager::class);
@@ -69,10 +75,16 @@ it('handles tenant context failure gracefully', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Unable to calculate tenant health', [
+            'tenant_id' => 'error-tenant',
+            'error' => 'DB connection failed',
+        ]);
+
     $service = resolve(TenantHealthService::class);
     $data = $service->getTenantHealthData();
 
-    // Should still have tenant but with zero scores
     expect($data)->toHaveCount(1)
         ->and($data->firstOrFail()->healthScore)->toBeGreaterThanOrEqual(0);
 });
@@ -89,7 +101,7 @@ it('returns zero summary stats when no tenants', function () {
 });
 
 it('gets last login for a tenant', function () {
-    $tenant = App\Models\Platform\Tenant::factory()->create();
+    $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
@@ -104,7 +116,7 @@ it('gets last login for a tenant', function () {
 });
 
 it('returns null for last login when tenant context fails', function () {
-    $tenant = App\Models\Platform\Tenant::factory()->create();
+    $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
@@ -119,7 +131,7 @@ it('returns null for last login when tenant context fails', function () {
 });
 
 it('gets recent order count for a tenant', function () {
-    $tenant = App\Models\Platform\Tenant::factory()->create();
+    $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
@@ -133,8 +145,8 @@ it('gets recent order count for a tenant', function () {
     expect($result)->toBe(15);
 });
 
-it('returns zero order count when tenant context fails', function () {
-    $tenant = App\Models\Platform\Tenant::factory()->create();
+it('preserves a successful zero recent order count', function () {
+    $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
@@ -142,8 +154,18 @@ it('returns zero order count when tenant context fails', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    $service = resolve(TenantHealthService::class);
-    $result = $service->getRecentOrderCount($tenant, 30);
+    expect(resolve(TenantHealthService::class)->getRecentOrderCount($tenant, 30))->toBe(0);
+});
 
-    expect($result)->toBe(0);
+it('propagates recent order read failures', function () {
+    $tenant = Tenant::factory()->create();
+
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->throws(new RuntimeException('DB error'));
+
+    app()->instance(TenancyManager::class, $tenancyManager);
+
+    expect(fn () => resolve(TenantHealthService::class)->getRecentOrderCount($tenant, 30))
+        ->toThrow(RuntimeException::class, 'DB error');
 });

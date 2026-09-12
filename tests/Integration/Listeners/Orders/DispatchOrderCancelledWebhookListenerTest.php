@@ -53,8 +53,9 @@ test('it does not dispatch webhook when no webhook url is configured', function 
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Order cancelled webhook dispatch failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-CANCEL-001'
-            && $context['error'] === 'Connection refused'));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'Order cancelled webhook dispatch failed'
+            && $context['order'] === 'ORD-CANCEL-001'
+            && $context['error'] === 'Connection refused');
 
     $order = Order::factory()->for(testFixture('customer', Customer::class))->recycle(testFixture('user', User::class))->create(['order_number' => 'ORD-CANCEL-001']);
     $event = new OrderCancelled($order, OrderStatus::Baking);

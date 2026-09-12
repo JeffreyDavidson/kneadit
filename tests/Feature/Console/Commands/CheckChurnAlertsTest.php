@@ -5,10 +5,19 @@ use App\Models\Platform\AdminAuditLog;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     setUpCentralTest();
 });
+
+function doubleCommandHealthService(array $healthData = [], int $recentOrders = 0): void
+{
+    $healthService = Double::for(TenantHealthService::class);
+    $healthService->allows('getTenantHealthData')->returns(collect($healthData));
+    $healthService->allows('getRecentOrderCount')->returns($recentOrders);
+    app()->instance(TenantHealthService::class, $healthService);
+}
 
 test('command runs without errors', function () {
     pendingArtisan('churn:check')->assertSuccessful();
@@ -24,6 +33,9 @@ test('trial expiring in 48h creates churn alert', function () {
         'data' => '{}',
         'created_at' => now(),
         'updated_at' => now(),
+    ]);
+    doubleCommandHealthService([
+        ['id' => 'expiring-bakery', 'health_score' => 30, 'setup_score' => 10],
     ]);
 
     pendingArtisan('churn:check')->assertSuccessful();
@@ -47,6 +59,7 @@ test('no login in 7+ days creates churn alert', function () {
         'created_at' => now(),
         'updated_at' => now(),
     ]);
+    doubleCommandHealthService();
 
     pendingArtisan('churn:check')->assertSuccessful();
 
@@ -67,6 +80,9 @@ test('zero orders creates churn alert for old tenants', function () {
         'store_name' => 'No Orders Bakery',
         'created_at' => now()->subDays($minAgeDays + 5),
         'updated_at' => now()->subDays($minAgeDays + 5),
+    ]);
+    doubleCommandHealthService([
+        ['id' => 'no-orders-bakery', 'health_score' => 80, 'setup_score' => 70],
     ]);
 
     pendingArtisan('churn:check')->assertSuccessful();

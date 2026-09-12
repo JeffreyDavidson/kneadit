@@ -6,11 +6,14 @@ use App\Events\Platform\ScheduledCheckinDue;
 use App\Models\Operations\CheckinLog;
 use App\Models\Operations\ScheduledCheckin;
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
 class ProcessScheduledCheckins
 {
+    public function __construct(private readonly TenantUrlGenerator $tenantUrls) {}
+
     /** @return array{sent: int, skipped_no_email: int, failures: int, no_active_checkins: bool} */
     public function __invoke(): array
     {
@@ -35,38 +38,42 @@ class ProcessScheduledCheckins
 
             /** @var Tenant $tenant */
             foreach ($tenants as $tenant) {
-                $alreadySent = CheckinLog::query()
-                    ->where('checkin_id', $checkin->id)
-                    ->where('tenant_id', $tenant->id)
-                    ->exists();
-
-                if ($alreadySent) {
-                    continue;
-                }
-
                 if (! $tenant->email) {
                     $skippedNoEmail++;
 
                     continue;
                 }
 
+                $log = null;
+
                 try {
+                    $log = CheckinLog::query()->createOrFirst([
+                        'checkin_id' => $checkin->id,
+                        'tenant_id' => $tenant->id,
+                    ], [
+                        'sent_at' => now(),
+                    ]);
+
+                    if (! $log->wasRecentlyCreated) {
+                        continue;
+                    }
+
                     event(new ScheduledCheckinDue(
                         tenantEmail: $tenant->email,
                         body: $checkin->body,
                         subject: $checkin->subject,
                         bakerName: $tenant->name,
                         tenantId: $tenant->id,
+                        adminUrl: $this->tenantUrls->admin($tenant),
+                        helpUrl: $this->tenantUrls->helpCenter($tenant),
                     ));
-
-                    CheckinLog::query()->create([
-                        'checkin_id' => $checkin->id,
-                        'tenant_id' => $tenant->id,
-                        'sent_at' => now(),
-                    ]);
 
                     $sent++;
                 } catch (\Exception $e) {
+                    if (isset($log) && $log->wasRecentlyCreated) {
+                        $log->delete();
+                    }
+
                     Log::error('Failed to send checkin to tenant', [
                         'tenant' => $tenant->id,
                         'error' => $e->getMessage(),

@@ -6,6 +6,7 @@ use App\Mail\BaseMailable;
 use App\Models\Staff\User;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\URL;
 
 class TrialReminderMail extends BaseMailable
 {
@@ -32,6 +33,9 @@ class TrialReminderMail extends BaseMailable
     {
         return new Content(
             text: 'emails.platform.trial-reminder-text',
+            with: [
+                'billingPlansUrl' => URL::route('billing.plans'),
+            ],
         );
     }
 }

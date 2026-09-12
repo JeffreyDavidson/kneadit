@@ -5,6 +5,7 @@ use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
 
@@ -47,8 +48,8 @@ test('it updates existing products on reimport', function () {
 });
 
 test('it skips rows with row-level errors from parser', function () {
-    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
-    $exporter->shouldReceive('parseForPreview')->andReturn([
+    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter->expects('parseForPreview')->returns([
         'rows' => [
             [
                 'name' => '',
@@ -98,8 +99,8 @@ test('it includes cost when provided in csv', function () {
 });
 
 test('it catches throwable during product save and records error', function () {
-    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
-    $exporter->shouldReceive('parseForPreview')->andReturn([
+    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter->expects('parseForPreview')->returns([
         'rows' => [
             [
                 'name' => 'Test Product',

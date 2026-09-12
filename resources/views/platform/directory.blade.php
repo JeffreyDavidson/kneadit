@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Find a Bakery | KneadIt</title>
     <meta name="description" content="Discover local cottage food bakeries on KneadIt" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,12 +18,12 @@
 </head>
 <body>
     <nav class="nav">
-        <a href="/" class="nav-brand">KneadIt</a>
+        <a href="{{ route('home') }}" class="nav-brand">KneadIt</a>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/directory" style="color: var(--honey)">Find a Bakery</a>
-            <a href="/#pricing">Pricing</a>
-            <a href="/#cta" class="nav-cta">Join Waitlist</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('directory') }}" style="color: var(--honey)">Find a Bakery</a>
+            <a href="{{ route('home') }}#pricing">Pricing</a>
+            <a href="{{ route('home') }}#cta" class="nav-cta">Join Waitlist</a>
         </div>
     </nav>
 
@@ -67,13 +67,16 @@
             <div class="empty-state">
                 <h2>🍞 Be the first baker on KneadIt!</h2>
                 <p>No bakeries have set up shop yet. Start your cottage food business with KneadIt today.</p>
-                <a href="/#cta" class="empty-cta">Get Started</a>
+                <a href="{{ route('home') }}#cta" class="empty-cta">Get Started</a>
             </div>
         @endif
     </div>
 
     <footer class="directory-footer">
-        <p>&copy; {{ date('Y') }} <a href="/">KneadIt</a> — Business management for cottage food bakers.</p>
+        <p>
+            &copy; {{ date('Y') }} <a href="{{ route('home') }}">KneadIt</a> — Business management for cottage food
+            bakers.
+        </p>
     </footer>
 </body>
 </html>

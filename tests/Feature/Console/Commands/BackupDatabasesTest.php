@@ -1,13 +1,26 @@
 <?php
 
 use App\Console\Commands\Operations\BackupDatabasesCommand;
+use App\Models\Platform\Tenant;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
     setUpCentralTest();
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    File::ensureDirectoryExists(dirname($centralDatabase));
+    File::put($centralDatabase, 'central database');
+    config(['database.connections.sqlite.database' => $centralDatabase]);
 });
 
 afterEach(function () {
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    File::delete($centralDatabase);
+    File::delete($centralDatabase . '-wal');
+    File::delete($centralDatabase . '-shm');
+
     // Clean up any backup directories created during tests
     $possibleDirs = [
         dirname(base_path()) . '/backups',
@@ -115,15 +128,102 @@ test('backup creates timestamped subdirectory', function () {
     expect($found)->toBeTrue('Timestamped backup subdirectory should be created');
 });
 
-test('backup handles missing central database gracefully', function () {
+test('backup secures the central database copy', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    File::put($centralDatabase, 'central database');
+    File::put($centralDatabase . '-wal', 'central wal');
+    File::put($centralDatabase . '-shm', 'central shm');
+    config(['database.connections.sqlite.database' => $centralDatabase]);
+
+    try {
+        $this->artisan('backup:databases')->assertSuccessful();
+
+        expect("{$backupDirectory}/central.sqlite")
+            ->toBeFile()
+            ->and(fileperms("{$backupDirectory}/central.sqlite") & 0777)->toBe(0600)
+            ->and("{$backupDirectory}/central.sqlite-wal")->toBeFile()
+            ->and("{$backupDirectory}/central.sqlite-shm")->toBeFile();
+    } finally {
+        Carbon::setTestNow();
+        File::delete($centralDatabase);
+        File::delete($centralDatabase . '-wal');
+        File::delete($centralDatabase . '-shm');
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
+test('backup fails when the central database is missing', function () {
     config(['database.connections.sqlite.database' => '/nonexistent/path/db.sqlite']);
 
     pendingArtisan('backup:databases')
         ->expectsOutputToContain('Central DB not found')
-        ->assertSuccessful();
+        ->expectsOutputToContain('Backup incomplete')
+        ->assertFailed();
+});
+
+test('backup fails when a tenant database is missing', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
+    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    File::put($centralDatabase, 'central database');
+    File::ensureDirectoryExists($tenantDbDirectory);
+    config([
+        'database.connections.sqlite.database' => $centralDatabase,
+        'tenancy.tenant_db_path' => $tenantDbDirectory,
+    ]);
+
+    try {
+        Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'missing-backup-tenant']));
+
+        $this->artisan('backup:databases')
+            ->expectsOutputToContain('Tenant DB not found')
+            ->expectsOutputToContain('Backup incomplete')
+            ->assertFailed();
+    } finally {
+        Carbon::setTestNow();
+        File::delete($centralDatabase);
+        File::deleteDirectory($tenantDbDirectory);
+        File::deleteDirectory($backupDirectory);
+    }
 });
 
 test('backup reports tenant database count or missing directory', function () {
     pendingArtisan('backup:databases')
         ->assertSuccessful();
+});
+
+test('backup includes extensionless tenant databases from the configured directory', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
+    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    File::ensureDirectoryExists($tenantDbDirectory);
+    config(['tenancy.tenant_db_path' => $tenantDbDirectory]);
+
+    try {
+        $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'backup-tenant']));
+        $databaseName = (string) $tenant->database()->getName();
+        File::put("{$tenantDbDirectory}/{$databaseName}", 'tenant database');
+        File::put("{$tenantDbDirectory}/{$databaseName}-wal", 'tenant wal');
+        File::put("{$tenantDbDirectory}/{$databaseName}-shm", 'tenant shm');
+
+        $this->artisan('backup:databases')
+            ->expectsOutputToContain('1 tenant database(s)')
+            ->assertSuccessful();
+
+        expect("{$backupDirectory}/{$databaseName}")
+            ->toBeFile()
+            ->and(fileperms("{$backupDirectory}/{$databaseName}") & 0777)->toBe(0600)
+            ->and("{$backupDirectory}/{$databaseName}-wal")->toBeFile()
+            ->and("{$backupDirectory}/{$databaseName}-shm")->toBeFile();
+    } finally {
+        Carbon::setTestNow();
+        File::deleteDirectory($tenantDbDirectory);
+        File::deleteDirectory($backupDirectory);
+    }
 });

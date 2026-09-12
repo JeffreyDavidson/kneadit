@@ -1,6 +1,7 @@
 <?php
 
 use App\Tenancy\TenantFilesystemBootstrapper;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Config;
 
 test('application filesystem disks fail loudly on storage errors', function (string $disk) {
@@ -17,4 +18,32 @@ test('CSV imports use a private non-servable tenant-aware disk', function () {
         ->toBe('%storage_path%/app/private/csv-imports/tenant%tenant%/')
         ->and(Config::array('tenancy.bootstrappers'))->toContain(TenantFilesystemBootstrapper::class)
         ->and(Config::get('tenancy.filesystem.suffix_storage_path'))->toBeFalse();
+});
+
+test('public storage link targets the configured public disk root', function () {
+    $publicStoragePath = Config::string('filesystems.disks.public.root');
+
+    expect(Config::get('filesystems.links.' . public_path('storage')))
+        ->toBe($publicStoragePath);
+});
+
+test('public storage can be placed outside the release directory', function () {
+    $publicStoragePath = '/srv/kneadit/public-storage';
+    $environment = Env::getRepository();
+    $previousPublicStoragePath = Env::get('PUBLIC_STORAGE_PATH');
+
+    $environment->set('PUBLIC_STORAGE_PATH', $publicStoragePath);
+
+    try {
+        $filesystems = require config_path('filesystems.php');
+
+        expect($filesystems['disks']['public']['root'])->toBe($publicStoragePath)
+            ->and($filesystems['links'][public_path('storage')])->toBe($publicStoragePath);
+    } finally {
+        if (is_string($previousPublicStoragePath)) {
+            $environment->set('PUBLIC_STORAGE_PATH', $previousPublicStoragePath);
+        } else {
+            $environment->clear('PUBLIC_STORAGE_PATH');
+        }
+    }
 });

@@ -19,6 +19,7 @@ class StripeCheckoutService
     public function __construct(
         private StripeSessionPayloadBuilder $payloadBuilder,
         private StripeSettingsReader $settings,
+        private HandleCheckoutComplete $handleCheckoutComplete,
     ) {
         $this->stripe = new StripeClient(Config::string('cashier.secret', ''));
     }
@@ -122,7 +123,7 @@ class StripeCheckoutService
             $paymentIntent = $session->payment_intent;
             $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : $paymentIntent;
 
-            return resolve(HandleCheckoutComplete::class)($order, (string) ($paymentIntentId ?? ''));
+            return ($this->handleCheckoutComplete)($order, (string) ($paymentIntentId ?? ''));
         } catch (\Exception $e) {
             Log::error('Failed to verify checkout session', [
                 'session_id' => $sessionId,

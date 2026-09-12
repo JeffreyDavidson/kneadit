@@ -22,8 +22,13 @@ test('get onboarding stats with no tenants returns zeros', function () {
         ->and($stats['percentage'])->toBe(0);
 });
 
-test('get onboarding stats counts tenants', function () {
-    Tenant::factory()->count(3)->create();
+test('onboarding stats count incomplete tenants without percentage progress', function () {
+    Tenant::factory()->count(3)->create([
+        'store_name' => null,
+        'store_logo' => null,
+        'storefront_enabled' => false,
+        'brand_color_primary' => '#d4920c',
+    ]);
 
     $stats = testFixture('widget', OnboardingProgress::class)->getOnboardingStats();
 
