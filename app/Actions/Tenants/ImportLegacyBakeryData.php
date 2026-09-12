@@ -2,20 +2,20 @@
 
 namespace App\Actions\Tenants;
 
-use App\Contracts\Tenants\LegacyCatalogImporter;
-use App\Contracts\Tenants\LegacyCouponImporter;
-use App\Contracts\Tenants\LegacyCustomerImporter;
-use App\Contracts\Tenants\LegacyEngagementImporter;
-use App\Contracts\Tenants\LegacyFinancialImporter;
-use App\Contracts\Tenants\LegacyOrderItemImporter;
-use App\Contracts\Tenants\LegacyRecipeImporter;
-use App\Contracts\Tenants\LegacyReviewImporter;
-use App\Contracts\Tenants\LegacySchedulingImporter;
-use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
+use App\Services\Tenants\Contracts\LegacyCatalogImporter;
+use App\Services\Tenants\Contracts\LegacyCouponImporter;
+use App\Services\Tenants\Contracts\LegacyCustomerImporter;
+use App\Services\Tenants\Contracts\LegacyEngagementImporter;
+use App\Services\Tenants\Contracts\LegacyFinancialImporter;
+use App\Services\Tenants\Contracts\LegacyOrderItemImporter;
+use App\Services\Tenants\Contracts\LegacyRecipeImporter;
+use App\Services\Tenants\Contracts\LegacyReviewImporter;
+use App\Services\Tenants\Contracts\LegacySchedulingImporter;
+use App\Services\Tenants\Contracts\LegacySettingsImporter;
 use App\Services\Tenants\LegacyImportValueParser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;

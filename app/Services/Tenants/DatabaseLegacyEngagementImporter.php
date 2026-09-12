@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacyEngagementImporter;
+use App\Services\Tenants\Contracts\LegacyEngagementImporter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

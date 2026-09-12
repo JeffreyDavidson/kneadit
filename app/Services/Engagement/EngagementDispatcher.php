@@ -2,8 +2,8 @@
 
 namespace App\Services\Engagement;
 
-use App\Contracts\Engagement\CustomerEngagement;
 use App\Models\Platform\Tenant;
+use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;

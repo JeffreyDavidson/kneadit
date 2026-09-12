@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Engagement;
+namespace App\Services\Engagement\Contracts;
 
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;

@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacyRecipeImporter;
+use App\Services\Tenants\Contracts\LegacyRecipeImporter;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseLegacyRecipeImporter implements LegacyRecipeImporter

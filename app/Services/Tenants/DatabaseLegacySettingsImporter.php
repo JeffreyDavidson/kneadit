@@ -2,8 +2,8 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Services\Settings\TenantSettingCipher;
+use App\Services\Tenants\Contracts\LegacySettingsImporter;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseLegacySettingsImporter implements LegacySettingsImporter

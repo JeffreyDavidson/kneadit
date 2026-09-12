@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacyFinancialImporter;
+use App\Services\Tenants\Contracts\LegacyFinancialImporter;
 use Illuminate\Support\Facades\DB;
 use UnexpectedValueException;
 

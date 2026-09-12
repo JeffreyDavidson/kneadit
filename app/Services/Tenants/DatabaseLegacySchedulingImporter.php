@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacySchedulingImporter;
+use App\Services\Tenants\Contracts\LegacySchedulingImporter;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseLegacySchedulingImporter implements LegacySchedulingImporter

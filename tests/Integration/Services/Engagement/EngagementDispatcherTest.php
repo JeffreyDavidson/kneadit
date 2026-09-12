@@ -1,8 +1,8 @@
 <?php
 
-use App\Contracts\Engagement\CustomerEngagement;
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Models\Customers\Customer;
+use App\Services\Engagement\Contracts\CustomerEngagement;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\EngagementDispatcher;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;

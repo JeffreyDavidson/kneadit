@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacyReviewImporter;
+use App\Services\Tenants\Contracts\LegacyReviewImporter;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseLegacyReviewImporter implements LegacyReviewImporter

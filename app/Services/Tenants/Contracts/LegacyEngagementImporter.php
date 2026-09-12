@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Tenants;
+namespace App\Services\Tenants\Contracts;
 
 interface LegacyEngagementImporter
 {
