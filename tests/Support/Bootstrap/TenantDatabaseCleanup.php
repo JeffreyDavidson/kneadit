@@ -13,7 +13,7 @@ function tenantDatabaseCleanup(): Closure
         'tenantdemo',
     ];
 
-    return static function () use ($persistentTenantDbs): void {
+    return function () use ($persistentTenantDbs): void {
         if (function_exists('tenancy') && tenancy()->initialized) {
             tenancy()->end();
         }

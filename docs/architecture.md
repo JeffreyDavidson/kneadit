@@ -93,6 +93,8 @@ Models, actions, services, enums, builders, queries, policies, factories, and te
 
 Application-wide framework wiring is split by responsibility in `app/Providers/`: `ApplicationBindingsServiceProvider` owns container bindings, `InfrastructureServiceProvider` owns queue, cache, tenancy, and payment infrastructure hooks, `RateLimitServiceProvider` owns named throttles, and `AppServiceProvider` owns application features and UI hooks. Keep new bootstrapping in the narrowest provider rather than expanding a catch-all provider.
 
+Shared test setup follows the same rule: `tests/Pest.php` keeps suite-wide lifecycle configuration, while domain or environment-specific fixtures belong in named files under `tests/Support/Bootstrap/` or `tests/Support/`. Tenant database cleanup is implemented there so feature and integration tests do not each need to know which persistent browser fixtures must be preserved.
+
 ## Major domains
 
 See [Domain ownership map](domain-ownership.md) for the ownership rules, current organization audit, and sequenced refactoring candidates.
