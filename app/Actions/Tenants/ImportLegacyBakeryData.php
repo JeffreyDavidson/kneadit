@@ -5,6 +5,7 @@ namespace App\Actions\Tenants;
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Contracts\Tenants\LegacyEngagementImporter;
 use App\Contracts\Tenants\LegacyFinancialImporter;
 use App\Contracts\Tenants\LegacyOrderItemImporter;
 use App\Contracts\Tenants\LegacyReviewImporter;
@@ -26,6 +27,7 @@ class ImportLegacyBakeryData
         private readonly LegacyCouponImporter $couponImporter,
         private readonly LegacyCustomerImporter $customerImporter,
         private readonly LegacyFinancialImporter $financialImporter,
+        private readonly LegacyEngagementImporter $engagementImporter,
         private readonly LegacyOrderItemImporter $orderItemImporter,
         private readonly LegacyReviewImporter $reviewImporter,
         private readonly LegacySchedulingImporter $schedulingImporter,
@@ -61,7 +63,7 @@ class ImportLegacyBakeryData
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->financialImporter->import($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->schedulingImporter->import($data['capacity_limits'] ?? [], $data['holidays'] ?? []);
-            $this->importEngagement($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
+            $this->engagementImporter->import($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
             $this->settingsImporter->import($data['settings'] ?? []);
 
             return [
@@ -197,53 +199,6 @@ class ImportLegacyBakeryData
                     'created_at' => $recipe['created_at'] ?? now(),
                     'updated_at' => $recipe['updated_at'] ?? now(),
                 ],
-            );
-        }
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $contactMessages
-     * @param array<int, array<string, mixed>> $waitlistEntries
-     * @param array<int, array<string, mixed>> $favorites
-     * @param array<int, int> $productIds
-     */
-    private function importEngagement(array $contactMessages, array $waitlistEntries, array $favorites, array $productIds): void
-    {
-        foreach ($contactMessages as $message) {
-            DB::table('contact_messages')->updateOrInsert(
-                ['email' => $message['email'], 'message' => $message['message']],
-                [
-                    'name' => $message['name'],
-                    'subject' => $message['subject'] ?? 'Legacy contact message',
-                    'is_read' => ($message['status'] ?? 'new') !== 'new',
-                    'created_at' => $message['created_at'] ?? now(),
-                    'updated_at' => $message['updated_at'] ?? now(),
-                ],
-            );
-        }
-
-        foreach ($waitlistEntries as $entry) {
-            $notes = collect([$entry['product_interest'] ?? null, $entry['notes'] ?? null])->filter()->implode("\n\n");
-            DB::table('waitlist_entries')->updateOrInsert(
-                ['customer_email' => $entry['customer_email'], 'requested_date' => $entry['requested_date']],
-                [
-                    'customer_name' => $entry['customer_name'],
-                    'customer_phone' => $entry['customer_phone'] ?? null,
-                    'product_id' => isset($entry['product_id']) ? ($productIds[$this->parseLegacyInteger($entry['product_id'])] ?? null) : null,
-                    'notes' => $notes ?: null,
-                    'status' => $entry['status'] ?? 'waiting',
-                    'created_at' => $entry['created_at'] ?? now(),
-                    'updated_at' => $entry['updated_at'] ?? now(),
-                ],
-            );
-        }
-
-        foreach ($favorites as $favorite) {
-            $productId = $this->parseLegacyInteger($favorite['product_id']);
-
-            DB::table('customer_favorites')->updateOrInsert(
-                ['customer_email' => Str::lower($this->stringValue($favorite['customer_email'])), 'product_id' => $productIds[$productId]],
-                ['created_at' => $favorite['created_at'] ?? now(), 'updated_at' => $favorite['updated_at'] ?? now()],
             );
         }
     }
