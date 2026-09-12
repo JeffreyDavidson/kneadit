@@ -19,6 +19,7 @@
 /docs/*
 !/docs/architecture.md
 !/docs/operations.md
+!/docs/sentry.md
 /auth.json
 /node_modules
 .venv/
