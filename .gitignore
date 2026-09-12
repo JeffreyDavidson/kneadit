@@ -21,6 +21,7 @@
 !/docs/operations.md
 /auth.json
 /node_modules
+.venv/
 /public/build
 /public/hot
 /public/storage
