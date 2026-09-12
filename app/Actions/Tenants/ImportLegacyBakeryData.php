@@ -6,6 +6,7 @@ use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\Contracts\Tenants\LegacyOrderItemImporter;
+use App\Contracts\Tenants\LegacyReviewImporter;
 use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -23,6 +24,7 @@ class ImportLegacyBakeryData
         private readonly LegacyCouponImporter $couponImporter,
         private readonly LegacyCustomerImporter $customerImporter,
         private readonly LegacyOrderItemImporter $orderItemImporter,
+        private readonly LegacyReviewImporter $reviewImporter,
         private readonly LegacySettingsImporter $settingsImporter,
     ) {}
 
@@ -51,7 +53,7 @@ class ImportLegacyBakeryData
             );
 
             $this->orderItemImporter->import($data['order_items'] ?? [], $orderIds, $productIds);
-            $this->importReviews($data['reviews'] ?? [], $productIds, $orderIds);
+            $this->reviewImporter->import($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->importCapacityLimits($data['capacity_limits'] ?? []);
@@ -154,30 +156,6 @@ class ImportLegacyBakeryData
         return $originalNotes !== ''
             ? "{$originalNotes}\n\n{$legacyHistory}"
             : $legacyHistory;
-    }
-
-    /** @param array<int, array<string, mixed>> $reviews
-     * @param array<int, int> $productIds
-     * @param array<int, int> $orderIds
-     */
-    private function importReviews(array $reviews, array $productIds, array $orderIds): void
-    {
-        foreach ($reviews as $review) {
-            $email = $review['email'] ?: 'legacy-review-' . $this->stringValue($review['id']) . '@migration.invalid';
-            DB::table('reviews')->updateOrInsert(
-                ['customer_email' => $email, 'comment' => $review['body']],
-                [
-                    'customer_name' => $review['name'],
-                    'product_id' => isset($review['product_id']) ? ($productIds[$this->parseLegacyInteger($review['product_id'])] ?? null) : null,
-                    'order_id' => isset($review['order_id']) ? ($orderIds[$this->parseLegacyInteger($review['order_id'])] ?? null) : null,
-                    'rating' => $review['rating'],
-                    'is_approved' => ($review['status'] ?? null) === 'approved',
-                    'is_featured' => $review['is_featured'] ?? false,
-                    'created_at' => $review['created_at'] ?? now(),
-                    'updated_at' => $review['updated_at'] ?? now(),
-                ],
-            );
-        }
     }
 
     /**
