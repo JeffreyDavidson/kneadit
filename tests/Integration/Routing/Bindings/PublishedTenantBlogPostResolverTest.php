@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Content\TenantBlogPost;
-use App\Routing\Resolvers\PublishedTenantBlogPostResolver;
+use App\Routing\Bindings\PublishedTenantBlogPostResolver;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

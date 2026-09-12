@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Engagement\Survey;
-use App\Routing\Resolvers\ActiveSurveyResolver;
+use App\Routing\Bindings\ActiveSurveyResolver;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

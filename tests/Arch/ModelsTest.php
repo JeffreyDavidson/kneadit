@@ -38,7 +38,7 @@ test('models must not declare resolveRouteBinding or getRouteKeyName', function 
         $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
 
         if (preg_match('/function\s+resolveRouteBinding\s*\(/', $contents)) {
-            $violations[] = "{$relative}: declares resolveRouteBinding (extract to app/Routing/Resolvers/)";
+            $violations[] = "{$relative}: declares resolveRouteBinding (extract to app/Routing/Bindings/)";
         }
         if (preg_match('/function\s+getRouteKeyName\s*\(/', $contents)) {
             $violations[] = "{$relative}: declares getRouteKeyName (use {model:column} in route definitions)";

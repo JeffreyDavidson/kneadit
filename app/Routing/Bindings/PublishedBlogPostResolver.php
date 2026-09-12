@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Routing\Resolvers;
+namespace App\Routing\Bindings;
 
 use App\Models\Content\BlogPost;
 

@@ -22,8 +22,8 @@ use App\Http\Controllers\Storefront\ShowReviewFormController;
 use App\Http\Controllers\Storefront\StoreReviewController;
 use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Storefront\SurveyController;
-use App\Routing\Resolvers\ActiveSurveyResolver;
-use App\Routing\Resolvers\PublishedTenantBlogPostResolver;
+use App\Routing\Bindings\ActiveSurveyResolver;
+use App\Routing\Bindings\PublishedTenantBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::bind('post', resolve(PublishedTenantBlogPostResolver::class));
