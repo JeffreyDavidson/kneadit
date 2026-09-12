@@ -8,6 +8,7 @@ use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\Contracts\Tenants\LegacyEngagementImporter;
 use App\Contracts\Tenants\LegacyFinancialImporter;
 use App\Contracts\Tenants\LegacyOrderItemImporter;
+use App\Contracts\Tenants\LegacyRecipeImporter;
 use App\Contracts\Tenants\LegacyReviewImporter;
 use App\Contracts\Tenants\LegacySchedulingImporter;
 use App\Contracts\Tenants\LegacySettingsImporter;
@@ -31,6 +32,7 @@ class ImportLegacyBakeryData
         private readonly LegacyEngagementImporter $engagementImporter,
         private readonly LegacyOrderItemImporter $orderItemImporter,
         private readonly LegacyReviewImporter $reviewImporter,
+        private readonly LegacyRecipeImporter $recipeImporter,
         private readonly LegacySchedulingImporter $schedulingImporter,
         private readonly LegacySettingsImporter $settingsImporter,
         private readonly LegacyImportValueParser $valueParser,
@@ -62,7 +64,7 @@ class ImportLegacyBakeryData
 
             $this->orderItemImporter->import($data['order_items'] ?? [], $orderIds, $productIds);
             $this->reviewImporter->import($data['reviews'] ?? [], $productIds, $orderIds);
-            $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
+            $this->recipeImporter->import($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->financialImporter->import($data['expenses'] ?? [], $data['incomes'] ?? []);
             $this->schedulingImporter->import($data['capacity_limits'] ?? [], $data['holidays'] ?? []);
             $this->engagementImporter->import($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
@@ -165,46 +167,6 @@ class ImportLegacyBakeryData
             : $legacyHistory;
     }
 
-    /**
-     * @param array<int, array<string, mixed>> $recipes
-     * @param array<int, array<string, mixed>> $ingredients
-     * @param array<int, array<string, mixed>> $stages
-     * @param array<int, int> $productIds
-     */
-    private function importRecipes(array $recipes, array $ingredients, array $stages, array $productIds): void
-    {
-        foreach ($recipes as $recipe) {
-            $recipeIngredients = array_values(array_map(
-                fn (array $ingredient): array => [
-                    'name' => $ingredient['name'],
-                    'quantity' => $this->floatValue($ingredient['quantity']),
-                    'unit' => $ingredient['unit'],
-                    'cost' => $this->floatValue($ingredient['cost_per_unit'] ?? 0),
-                ],
-                array_filter($ingredients, fn (array $ingredient): bool => $this->parseLegacyInteger($ingredient['recipe_id']) === $this->parseLegacyInteger($recipe['id'])),
-            ));
-            $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => $this->parseLegacyInteger($stage['recipe_id']) === $this->parseLegacyInteger($recipe['id'])));
-            usort($recipeStages, fn (array $first, array $second): int => ($first['sort_order'] ?? 0) <=> ($second['sort_order'] ?? 0));
-            $instructions = collect($recipeStages)
-                ->map(fn (array $stage): string => $this->stringValue($stage['name']) . "\n" . $this->stringValue($stage['instructions']))
-                ->implode("\n\n");
-            $cost = collect($recipeIngredients)->sum(fn (array $ingredient): float => $ingredient['quantity'] * $ingredient['cost']);
-
-            DB::table('recipes')->updateOrInsert(
-                ['name' => $recipe['name']],
-                [
-                    'product_id' => isset($recipe['product_id']) ? ($productIds[$this->parseLegacyInteger($recipe['product_id'])] ?? null) : null,
-                    'ingredients' => json_encode($recipeIngredients, JSON_THROW_ON_ERROR),
-                    'instructions' => $instructions ?: ($recipe['description'] ?? ''),
-                    'prep_time_minutes' => $recipe['prep_time_minutes'] ?? 0,
-                    'cost' => $this->cents($cost),
-                    'created_at' => $recipe['created_at'] ?? now(),
-                    'updated_at' => $recipe['updated_at'] ?? now(),
-                ],
-            );
-        }
-    }
-
     private function orderStatus(mixed $value): string
     {
         $normalized = Str::lower($this->stringValue($value));
@@ -258,10 +220,5 @@ class ImportLegacyBakeryData
     private function parseLegacyInteger(mixed $value): int
     {
         return $this->valueParser->integer($value);
-    }
-
-    private function floatValue(mixed $value): float
-    {
-        return $this->valueParser->number($value);
     }
 }
