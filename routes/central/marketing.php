@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('ref/{code}', ReferralController::class)->name('referral.track');
 Route::view('pricing', 'central.marketing.pricing')->name('pricing');
-Route::view('terms', 'legal.terms')->name('terms');
-Route::view('privacy', 'legal.privacy')->name('privacy');
+Route::view('terms', 'central.legal.terms')->name('terms');
+Route::view('privacy', 'central.legal.privacy')->name('privacy');
 Route::get('changelog', ChangelogController::class)->name('changelog');
 
 Route::get('resources', [BlogController::class, 'index'])->name('blog.index');
