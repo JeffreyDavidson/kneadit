@@ -5,6 +5,7 @@ namespace App\Actions\Tenants;
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Contracts\Tenants\LegacyOrderItemImporter;
 use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -21,6 +22,7 @@ class ImportLegacyBakeryData
         private readonly LegacyCatalogImporter $catalogImporter,
         private readonly LegacyCouponImporter $couponImporter,
         private readonly LegacyCustomerImporter $customerImporter,
+        private readonly LegacyOrderItemImporter $orderItemImporter,
         private readonly LegacySettingsImporter $settingsImporter,
     ) {}
 
@@ -48,7 +50,7 @@ class ImportLegacyBakeryData
                 $couponIds,
             );
 
-            $this->importOrderItems($data['order_items'] ?? [], $orderIds, $productIds);
+            $this->orderItemImporter->import($data['order_items'] ?? [], $orderIds, $productIds);
             $this->importReviews($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->importFinancials($data['expenses'] ?? [], $data['incomes'] ?? []);
@@ -152,30 +154,6 @@ class ImportLegacyBakeryData
         return $originalNotes !== ''
             ? "{$originalNotes}\n\n{$legacyHistory}"
             : $legacyHistory;
-    }
-
-    /** @param array<int, array<string, mixed>> $items
-     * @param array<int, int> $orderIds
-     * @param array<int, int> $productIds
-     */
-    private function importOrderItems(array $items, array $orderIds, array $productIds): void
-    {
-        DB::table('order_items')->whereIn('order_id', array_values($orderIds))->delete();
-
-        foreach ($items as $item) {
-            DB::table('order_items')->insert([
-                'order_id' => $orderIds[$this->parseLegacyInteger($item['order_id'])],
-                'name' => $item['product_name'],
-                'product_id' => isset($item['product_id'])
-                    ? ($productIds[$this->parseLegacyInteger($item['product_id'])] ?? null)
-                    : null,
-                'quantity' => $item['quantity'],
-                'unit_price' => $this->cents($item['unit_price'] ?? 0),
-                'special_instructions' => isset($item['selections']) ? json_encode($item['selections'], JSON_THROW_ON_ERROR) : null,
-                'created_at' => $item['created_at'] ?? now(),
-                'updated_at' => $item['updated_at'] ?? now(),
-            ]);
-        }
     }
 
     /** @param array<int, array<string, mixed>> $reviews
