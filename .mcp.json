@@ -9,7 +9,7 @@
     },
     "uidotsh": {
       "type": "http",
-      "url": "https://ui.sh/mcp?agent=claude",
+      "url": "https://ui.sh/mcp",
       "headers": {
         "Authorization": "Bearer ${UIDOTSH_TOKEN}"
       }

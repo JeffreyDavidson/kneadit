@@ -64,7 +64,7 @@ See [Architecture](docs/architecture.md) for request flow, domain boundaries, or
 
 ## Development rules
 
-Project conventions are documented in `CLAUDE.md` and any applicable repository agent skills. In particular:
+Project conventions are documented in `AGENTS.md` and the applicable repository skills under `.ai/skills/`. In particular:
 
 - Keep write logic in invokable action classes.
 - Keep tenant data access inside an initialized tenancy context.

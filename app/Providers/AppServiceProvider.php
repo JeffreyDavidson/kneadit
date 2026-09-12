@@ -109,12 +109,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Surface cache reads that returned __PHP_Incomplete_Class — usually
         // an Eloquent model/collection that was cached and then blocked by
-        // cache.serializable_classes on read (see CLAUDE.md). Always log;
+        // cache.serializable_classes on read (see .ai/skills/laravel-best-practices/rules/caching.md). Always log;
         // additionally throw in non-production so developers see the bad
         // write loudly during the read that exposes it.
         CacheRepository::handleUnserializableClassUsing(function (string $key, ?string $class): void {
             $message = sprintf(
-                'Cache returned __PHP_Incomplete_Class for key [%s] (original class: %s). Likely a model/collection cached against the project rule (CLAUDE.md: never cache Eloquent models).',
+                'Cache returned __PHP_Incomplete_Class for key [%s] (original class: %s). Likely a model/collection cached against the project rule (see .ai/skills/laravel-best-practices/rules/caching.md).',
                 $key,
                 $class ?? 'unknown',
             );
