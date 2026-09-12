@@ -51,9 +51,16 @@ The central database owns platform users, tenants, domains, subscriptions, and p
 
 Important entry points:
 
-- `routes/web.php` — central marketing, authentication, onboarding, and shared root routing
+- `routes/web.php` — central route composition entry point
+- `routes/central/` — central authentication, platform operations, marketing, and SEO routes
 - `routes/billing.php` — SaaS subscription checkout and Stripe webhooks
-- `routes/tenant.php` — tenant storefront, administration support, API, Stripe Connect, and invitations
+- `routes/tenant.php` — tenant middleware boundary and route composition
+- `routes/tenant/access.php` — tenant PWA, invitations, impersonation, driver, and integration routes
+- `routes/tenant/admin.php` — authenticated tenant admin utilities
+- `routes/tenant/account.php` — customer account authentication and profile routes
+- `routes/tenant/storefront.php` — tenant public storefront and content routes
+- `routes/tenant/orders.php` — tenant ordering, payment callbacks, cart, and order-access routes
+- `routes/tenant/api.php` — tenant JSON endpoints grouped by read/write throttling
 - `app/Actions` — single-purpose write operations
 - `app/Queries` and `app/Builders` — reusable read behavior
 - `app/Services/Settings` — tenant and platform settings access

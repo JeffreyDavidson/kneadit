@@ -2,17 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Auth\AcceptInvitationController;
-use App\Http\Controllers\Auth\ShowInvitationController;
-use App\Http\Controllers\Central\ConsumeImpersonationController;
-use App\Http\Controllers\Marketing\PreviewCustomerCampaignController;
-use App\Http\Controllers\Storefront\AppIconController;
-use App\Http\Controllers\Storefront\DriverDashboardController;
-use App\Http\Controllers\Storefront\ManifestController;
-use App\Http\Controllers\Storefront\MarkOrderDeliveredController;
-use App\Http\Controllers\Stripe\StripeConnectController;
 use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\ResolveInvitation;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
@@ -37,39 +27,16 @@ Route::middleware([
     // Note: The "/" route is handled by RootController in web.php
     // to avoid overriding the central domain landing page.
 
-    // PWA routes (outside storefront-enabled check so manifest/SW always work)
-    Route::get('manifest.json', ManifestController::class)->name('manifest');
-    // Service worker removed — was caching stale pages after deploys
-    Route::get('icons/icon-{size}.png', AppIconController::class)->name('app.icon');
-
-    // Impersonation token consumer (from central admin)
-    Route::get('impersonate/{token}', ConsumeImpersonationController::class)
-        ->name('impersonate.consume');
-
-    // Stripe Connect OAuth
-    Route::get('stripe/connect', StripeConnectController::class)
-        ->middleware('auth')
-        ->name('stripe.connect');
-
-    // Campaign browser preview — renders the mailable as HTML for the baker to review.
-    Route::get('admin/campaigns/{campaign}/preview', PreviewCustomerCampaignController::class)
-        ->middleware(['auth', 'can:manager-staff'])
-        ->name('campaign.preview');
-
-    // Driver view (no auth, shared via link)
-    Route::prefix('driver')->name('driver.')->group(function () {
-        Route::get('/', DriverDashboardController::class)->name('index');
-        Route::post('{order:order_number}/delivered', MarkOrderDeliveredController::class)->name('delivered')->middleware('auth');
-    });
-
-    // Staff invitation routes (outside auth & storefront middleware)
-    Route::get('invite/{token}', ShowInvitationController::class)->name('invitation.show')->middleware(ResolveInvitation::class);
-    Route::post('invite/{token}', AcceptInvitationController::class)->name('invitation.accept')->middleware([ResolveInvitation::class, 'throttle:sensitive-write']);
+    // PWA, invitations, impersonation, driver, and integration routes remain
+    // outside the storefront-enabled check.
+    require __DIR__ . '/tenant/access.php';
+    require __DIR__ . '/tenant/admin.php';
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
     Route::middleware([EnsureStorefrontEnabled::class, TrackPageView::class])->group(function () {
         require __DIR__ . '/tenant/storefront.php';
+        require __DIR__ . '/tenant/account.php';
         require __DIR__ . '/tenant/orders.php';
     });
 

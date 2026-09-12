@@ -44,6 +44,27 @@ An unknown tenant domain returns 404. If a central tenant record exists but its 
 
 The root URL is deliberately universal: the global middleware establishes central or tenant context once, then `RootController` serves the platform landing page or bakery storefront without re-running tenancy middleware.
 
+### Route organization
+
+`routes/web.php` is the central route composition entry point. It loads:
+
+- `routes/central/auth.php` for platform-user registration, login, email verification, and password reset.
+- `routes/central/platform.php` for onboarding, platform-admin exports, backups, maintenance previews, and impersonation.
+- `routes/central/marketing.php` for the central landing page, legal pages, directory, blog, referrals, contact, and CSP reports.
+- `routes/central/seo.php` for the sitemap and robots response.
+- `routes/billing.php` for subscription billing and Stripe webhooks.
+
+`routes/tenant.php` is the tenant route composition entry point. Its outer group owns tenant initialization and central-domain protection before loading:
+
+- `routes/tenant/access.php` for PWA metadata, invitations, tenant impersonation consumption, driver links, campaign previews, and Stripe Connect.
+- `routes/tenant/admin.php` for authenticated tenant admin utilities such as invoices and product labels.
+- `routes/tenant/storefront.php` for public bakery content and storefront commerce.
+- `routes/tenant/account.php` for customer account authentication, profile, orders, and email verification.
+- `routes/tenant/orders.php` for checkout, order access, payment callbacks, cart, capacity, and order-related AJAX endpoints.
+- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups.
+
+Routes that access tenant models belong under the tenant loader, even when their controllers are used by an admin-facing page. This keeps route middleware, model binding, and database tenancy context aligned.
+
 ## Application layers
 
 KneadIt favors explicit Laravel boundaries rather than a generic service/repository layer:
