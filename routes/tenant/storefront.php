@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Catering\CateringStripeCancelController;
-use App\Http\Controllers\Catering\CateringStripeSuccessController;
-use App\Http\Controllers\Catering\PayCateringDepositController;
 use App\Http\Controllers\Storefront\AboutController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
@@ -22,6 +19,9 @@ use App\Http\Controllers\Storefront\ShowReviewFormController;
 use App\Http\Controllers\Storefront\StoreReviewController;
 use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Storefront\SurveyController;
+use App\Http\Controllers\Tenant\Catering\CateringStripeCancelController;
+use App\Http\Controllers\Tenant\Catering\CateringStripeSuccessController;
+use App\Http\Controllers\Tenant\Catering\PayCateringDepositController;
 use App\Routing\Bindings\ActiveSurveyResolver;
 use App\Routing\Bindings\PublishedTenantBlogPostResolver;
 use Illuminate\Support\Facades\Route;

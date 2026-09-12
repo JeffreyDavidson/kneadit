@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Catering;
+namespace App\Http\Controllers\Tenant\Catering;
 
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Http\Controllers\Controller;

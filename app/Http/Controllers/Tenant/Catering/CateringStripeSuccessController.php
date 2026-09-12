@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Catering;
+namespace App\Http\Controllers\Tenant\Catering;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customers\CateringInquiry;
