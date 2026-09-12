@@ -5,11 +5,11 @@ namespace App\Actions\Tenants;
 use App\Contracts\Tenants\LegacyCatalogImporter;
 use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
-use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -18,10 +18,10 @@ class ImportLegacyBakeryData
 {
     public function __construct(
         private readonly LegacyBakeryDataValidator $validator,
-        private readonly TenantSettingCipher $settingCipher,
         private readonly LegacyCatalogImporter $catalogImporter,
         private readonly LegacyCouponImporter $couponImporter,
         private readonly LegacyCustomerImporter $customerImporter,
+        private readonly LegacySettingsImporter $settingsImporter,
     ) {}
 
     /**
@@ -55,7 +55,7 @@ class ImportLegacyBakeryData
             $this->importCapacityLimits($data['capacity_limits'] ?? []);
             $this->importHolidays($data['holidays'] ?? []);
             $this->importEngagement($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
-            $this->importSettings($data['settings'] ?? []);
+            $this->settingsImporter->import($data['settings'] ?? []);
 
             return [
                 'categories' => count($categoryIds),
@@ -369,99 +369,6 @@ class ImportLegacyBakeryData
                 ['created_at' => $favorite['created_at'] ?? now(), 'updated_at' => $favorite['updated_at'] ?? now()],
             );
         }
-    }
-
-    /** @param array<int, array<string, mixed>> $settings */
-    private function importSettings(array $settings): void
-    {
-        $keyMap = [
-            'business_name' => 'store_name',
-            'tagline' => 'store_tagline',
-            'default_prep_time_hours' => 'order_lead_time_hours',
-            'minimum_order_amount' => 'minimum_pickup_order_amount',
-            'delivery_radius_miles' => 'delivery_radius',
-            'send_review_followup_emails' => 'review_requests_enabled',
-        ];
-
-        foreach ($settings as $setting) {
-            $legacyKey = $this->stringValue($setting['key']);
-            $key = $keyMap[$legacyKey] ?? $legacyKey;
-            $value = $this->settingCipher->encrypt(
-                $key,
-                $this->normalizeSettingValue($key, $setting['value']),
-            );
-            DB::table('settings')->updateOrInsert(
-                ['key' => $key],
-                ['value' => $value, 'updated_at' => now(), 'created_at' => $setting['created_at'] ?? now()],
-            );
-
-            if ($legacyKey === 'default_prep_time_hours') {
-                $this->upsertSetting('minimum_order_lead_hours', $value);
-            }
-
-            if ($legacyKey === 'minimum_order_amount') {
-                $this->upsertSetting('minimum_delivery_order_amount', $value);
-            }
-        }
-
-        foreach (['storefront_theme' => 'biscotto', 'admin_theme' => 'honey', 'storefront_enabled' => '1'] as $key => $value) {
-            DB::table('settings')->updateOrInsert(
-                ['key' => $key],
-                ['value' => $value, 'updated_at' => now(), 'created_at' => now()],
-            );
-        }
-    }
-
-    private function normalizeSettingValue(string $key, mixed $value): mixed
-    {
-        if ($key === 'delivery_fee_tiers' && is_string($value) && ! str_starts_with(trim($value), '[')) {
-            return json_encode($this->deliveryFeeTiers($value), JSON_THROW_ON_ERROR);
-        }
-
-        if ($key === 'operating_hours' && is_string($value) && ! str_starts_with(trim($value), '{')) {
-            return json_encode([
-                'monday' => ['open' => '07:00', 'close' => '18:00'],
-                'tuesday' => ['open' => '07:00', 'close' => '18:00'],
-                'wednesday' => ['open' => '07:00', 'close' => '18:00'],
-                'thursday' => ['open' => '07:00', 'close' => '18:00'],
-                'friday' => ['open' => '07:00', 'close' => '18:00'],
-                'saturday' => ['open' => '08:00', 'close' => '16:00'],
-                'sunday' => [],
-            ], JSON_THROW_ON_ERROR);
-        }
-
-        return $value;
-    }
-
-    /** @return array<int, array{min_distance: int, max_distance: int, fee: string, description: string}> */
-    private function deliveryFeeTiers(string $value): array
-    {
-        $tiers = [];
-
-        foreach (explode(',', $value) as $tier) {
-            if (! preg_match('/^(\d+)(?:-(\d+)|\+):(\d+(?:\.\d+)?)$/', trim($tier), $matches)) {
-                continue;
-            }
-
-            $minimum = (int) $matches[1];
-            $maximum = $matches[2] !== '' ? (int) $matches[2] : 999;
-            $tiers[] = [
-                'min_distance' => $minimum,
-                'max_distance' => $maximum,
-                'fee' => number_format((float) $matches[3], 2, '.', ''),
-                'description' => $maximum === 999 ? "Delivery {$minimum}+ miles" : "Delivery {$minimum}–{$maximum} miles",
-            ];
-        }
-
-        return $tiers;
-    }
-
-    private function upsertSetting(string $key, mixed $value): void
-    {
-        DB::table('settings')->updateOrInsert(
-            ['key' => $key],
-            ['value' => $value, 'updated_at' => now(), 'created_at' => now()],
-        );
     }
 
     private function orderStatus(mixed $value): string
