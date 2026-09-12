@@ -8,6 +8,7 @@ use App\Contracts\Tenants\LegacyCustomerImporter;
 use App\Contracts\Tenants\LegacyFinancialImporter;
 use App\Contracts\Tenants\LegacyOrderItemImporter;
 use App\Contracts\Tenants\LegacyReviewImporter;
+use App\Contracts\Tenants\LegacySchedulingImporter;
 use App\Contracts\Tenants\LegacySettingsImporter;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
@@ -27,6 +28,7 @@ class ImportLegacyBakeryData
         private readonly LegacyFinancialImporter $financialImporter,
         private readonly LegacyOrderItemImporter $orderItemImporter,
         private readonly LegacyReviewImporter $reviewImporter,
+        private readonly LegacySchedulingImporter $schedulingImporter,
         private readonly LegacySettingsImporter $settingsImporter,
     ) {}
 
@@ -58,8 +60,7 @@ class ImportLegacyBakeryData
             $this->reviewImporter->import($data['reviews'] ?? [], $productIds, $orderIds);
             $this->importRecipes($data['recipes'] ?? [], $data['recipe_ingredients'] ?? [], $data['recipe_stages'] ?? [], $productIds);
             $this->financialImporter->import($data['expenses'] ?? [], $data['incomes'] ?? []);
-            $this->importCapacityLimits($data['capacity_limits'] ?? []);
-            $this->importHolidays($data['holidays'] ?? []);
+            $this->schedulingImporter->import($data['capacity_limits'] ?? [], $data['holidays'] ?? []);
             $this->importEngagement($data['contact_messages'] ?? [], $data['waitlist_entries'] ?? [], $data['customer_favorites'] ?? [], $productIds);
             $this->settingsImporter->import($data['settings'] ?? []);
 
@@ -195,48 +196,6 @@ class ImportLegacyBakeryData
                     'cost' => $this->cents($cost),
                     'created_at' => $recipe['created_at'] ?? now(),
                     'updated_at' => $recipe['updated_at'] ?? now(),
-                ],
-            );
-        }
-    }
-
-    /** @param array<int, array<string, mixed>> $capacityLimits */
-    private function importCapacityLimits(array $capacityLimits): void
-    {
-        foreach ($capacityLimits as $capacityLimit) {
-            $dayOfWeek = $capacityLimit['day_of_week'] ?? null;
-            $specificDate = $capacityLimit['specific_date'] ?? null;
-            $date = $specificDate ?? now()->startOfWeek()->addDays($this->parseLegacyInteger($dayOfWeek))->toDateString();
-
-            DB::table('capacity_limits')->updateOrInsert(
-                $specificDate ? ['specific_date' => $specificDate] : ['day_of_week' => $this->stringValue($dayOfWeek)],
-                [
-                    'date' => $date,
-                    'max_orders' => $capacityLimit['max_orders'],
-                    'is_blocked' => $capacityLimit['is_blocked'] ?? false,
-                    'notes' => $capacityLimit['notes'] ?? null,
-                    'created_at' => $capacityLimit['created_at'] ?? now(),
-                    'updated_at' => $capacityLimit['updated_at'] ?? now(),
-                ],
-            );
-        }
-    }
-
-    /** @param array<int, array<string, mixed>> $holidays */
-    private function importHolidays(array $holidays): void
-    {
-        foreach ($holidays as $holiday) {
-            DB::table('holidays')->updateOrInsert(
-                ['name' => $holiday['name'], 'date' => $holiday['date']],
-                [
-                    'lead_days' => $holiday['lead_days'] ?? 7,
-                    'order_deadline' => $holiday['order_deadline'] ?? null,
-                    'prep_start' => $holiday['prep_start'] ?? null,
-                    'max_orders' => $holiday['max_orders'] ?? null,
-                    'notes' => $holiday['notes'] ?? null,
-                    'is_active' => $holiday['is_active'] ?? true,
-                    'created_at' => $holiday['created_at'] ?? now(),
-                    'updated_at' => $holiday['updated_at'] ?? now(),
                 ],
             );
         }
