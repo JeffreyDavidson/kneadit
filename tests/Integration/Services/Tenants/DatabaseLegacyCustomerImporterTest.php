@@ -1,6 +1,6 @@
 <?php
 
-use App\Contracts\Tenants\LegacyCustomerImporter;
+use App\Services\Tenants\Contracts\LegacyCustomerImporter;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(fn () => setUpTenantTest());

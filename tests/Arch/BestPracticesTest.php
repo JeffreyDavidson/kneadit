@@ -13,7 +13,11 @@ arch('form requests should extend FormRequest')
 arch('services should be classes')
     ->expect('App\Services')
     ->toBeClasses()
-    ->ignoring('App\Services\Platform\HealthChecks\Contracts');
+    ->ignoring([
+        'App\Services\Engagement\Contracts',
+        'App\Services\Platform\HealthChecks\Contracts',
+        'App\Services\Tenants\Contracts',
+    ]);
 
 arch('observers should end with Observer')
     ->expect('App\Observers')

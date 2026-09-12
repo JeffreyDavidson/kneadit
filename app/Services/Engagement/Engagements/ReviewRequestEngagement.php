@@ -2,10 +2,10 @@
 
 namespace App\Services\Engagement\Engagements;
 
-use App\Contracts\Engagement\CustomerEngagement;
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Events\Customers\ReviewRequested;
 use App\Models\Orders\Order;
+use App\Services\Engagement\Contracts\CustomerEngagement;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

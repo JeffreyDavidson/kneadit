@@ -1,6 +1,6 @@
 <?php
 
-use App\Contracts\Engagement\EngagementRecipient;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use Illuminate\Database\Eloquent\Model;
 
 test('EngagementRecipient stores all properties', function () {
