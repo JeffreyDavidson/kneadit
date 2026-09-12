@@ -61,6 +61,9 @@ Important entry points:
 - `routes/tenant/storefront.php` — tenant public storefront and content routes
 - `routes/tenant/orders.php` — tenant ordering, payment callbacks, cart, and order-access routes
 - `routes/tenant/api.php` — tenant JSON endpoints grouped by read/write throttling
+- `app/Http/Controllers/Central` — platform-facing HTTP controllers grouped by central concern
+- `app/Http/Controllers/Tenant` — tenant HTTP controllers grouped by surface (`Admin`, `Api`, `Catering`, `Invitations`, `Marketing`, `Orders`, and `Storefront`)
+- `app/Providers` — framework wiring split into bindings, infrastructure, rate limits, and application/UI hooks
 - `app/Actions` — single-purpose write operations
 - `app/Queries` and `app/Builders` — reusable read behavior
 - `app/Services/Settings` — tenant and platform settings access
