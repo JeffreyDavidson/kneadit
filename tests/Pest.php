@@ -19,6 +19,8 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
 
+require_once __DIR__ . '/Support/Bootstrap/TenantDatabaseCleanup.php';
+
 /*
  * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
  * event, which runs CreateDatabase + MigrateDatabase jobs that write real
@@ -29,34 +31,7 @@ use Tests\TestCase;
  * Browser-test fixture tenants (provisioned by tenants:provision-test-tenant)
  * are persistent and must survive between test runs — those are skipped.
  */
-$persistentTenantDbs = [
-    'tenantbrowser-test',
-    'tenantdemo',
-];
-
-$cleanupTenantFiles = function () use ($persistentTenantDbs): void {
-    if (function_exists('tenancy') && tenancy()->initialized) {
-        tenancy()->end();
-    }
-
-    DB::purge('tenant');
-
-    gc_collect_cycles();
-    foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (! is_file($file)) {
-            continue;
-        }
-
-        if (in_array(basename($file), $persistentTenantDbs, true)) {
-            continue;
-        }
-
-        @unlink($file);
-        @unlink($file . '-journal');
-        @unlink($file . '-wal');
-        @unlink($file . '-shm');
-    }
-};
+$cleanupTenantFiles = tenantDatabaseCleanup();
 
 pest()->extend(TestCase::class)
     /*
