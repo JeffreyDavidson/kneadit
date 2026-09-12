@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Central;
 use App\Http\Controllers\Controller;
 use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
+use App\Services\Export\TenantArchiveExporter;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
-use ZipArchive;
 
 class ExportController extends Controller
 {
@@ -30,7 +29,7 @@ class ExportController extends Controller
         $tenant = Tenant::query()->findOrFail($tenantId);
 
         if ($type === 'all') {
-            return $this->exportAll($tenant, $csvExport, $tenancyManager);
+            return $this->exportAll($tenant, resolve(TenantArchiveExporter::class));
         }
 
         return $this->streamCsv($tenant, $type, $csvExport, $tenancyManager);
@@ -53,40 +52,13 @@ class ExportController extends Controller
         ]);
     }
 
-    private function exportAll(Tenant $tenant, CsvExportService $csvExport, TenancyManager $tenancyManager): StreamedResponse
+    private function exportAll(Tenant $tenant, TenantArchiveExporter $archiveExporter): StreamedResponse
     {
         $filename = "{$tenant->id}_all_data_" . now()->format('Y-m-d_His') . '.zip';
 
-        return response()->streamDownload(function () use ($tenant, $csvExport, $tenancyManager) {
-            $tmpFile = tempnam(sys_get_temp_dir(), 'export_');
-            throw_if($tmpFile === false, RuntimeException::class, 'Failed to create temporary export file.');
-
-            $zip = new ZipArchive;
-            $openResult = $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-
-            if ($openResult !== true) {
-                File::delete($tmpFile);
-
-                throw new RuntimeException("Failed to open temporary export archive (code {$openResult}).");
-            }
-
+        return response()->streamDownload(function () use ($tenant, $archiveExporter) {
+            $tmpFile = $archiveExporter->create($tenant);
             try {
-                $tenancyManager->withinTenant($tenant, function () use ($csvExport, $zip): void {
-                    foreach ($csvExport->validTypes() as $type) {
-                        throw_unless(
-                            $zip->addFromString("{$type}.csv", $csvExport->toString($type)),
-                            RuntimeException::class,
-                            "Failed to add {$type} export to archive.",
-                        );
-                    }
-                });
-
-                throw_unless(
-                    $zip->close(),
-                    RuntimeException::class,
-                    'Failed to finalize temporary export archive.',
-                );
-
                 $handle = fopen($tmpFile, 'rb');
                 throw_if($handle === false, RuntimeException::class, 'Failed to open temporary export archive.');
 
@@ -96,10 +68,6 @@ class ExportController extends Controller
                 } finally {
                     fclose($handle);
                 }
-            } catch (Throwable $e) {
-                $zip->close();
-
-                throw $e;
             } finally {
                 File::delete($tmpFile);
             }
