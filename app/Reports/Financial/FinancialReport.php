@@ -2,6 +2,8 @@
 
 namespace App\Reports\Financial;
 
+use App\DataTransferObjects\Financial\FinancialReportExpense;
+use App\DataTransferObjects\Financial\FinancialReportMonth;
 use App\DataTransferObjects\Financial\FinancialReportResult;
 use App\DataTransferObjects\Financial\MonthlyFinancials;
 use App\Models\Financial\Expense;
@@ -21,17 +23,17 @@ class FinancialReport
         // expenses.deductible_amount is bigint cents (migration 2026_04_22_230000).
         $deductible = Money::fromCents((int) Expense::query()->whereYear('date', $year)->sum('deductible_amount'));
 
-        $monthly = array_values($summary->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => [
-            'month' => substr($m->monthName, 0, 3),
-            'revenue' => Money::fromDollars($m->revenue),
-            'expenses' => Money::fromDollars($m->expenses),
-            'profit' => Money::fromDollars($m->net),
-        ])->all());
+        $monthly = array_values($summary->monthlyBreakdown->map(fn (MonthlyFinancials $m): FinancialReportMonth => new FinancialReportMonth(
+            month: substr($m->monthName, 0, 3),
+            revenue: Money::fromDollars($m->revenue),
+            expenses: Money::fromDollars($m->expenses),
+            profit: Money::fromDollars($m->net),
+        ))->all());
 
-        $expensesByCategory = array_values($summary->expenseBreakdown->map(fn (array $e): array => [
-            'category' => $e['category'],
-            'amount' => Money::fromDollars($e['amount']),
-        ])->all());
+        $expensesByCategory = array_values($summary->expenseBreakdown->map(fn (array $e): FinancialReportExpense => new FinancialReportExpense(
+            category: $e['category'],
+            amount: Money::fromDollars($e['amount']),
+        ))->all());
 
         return new FinancialReportResult(
             totalRevenue: Money::fromDollars($summary->totalRevenue),

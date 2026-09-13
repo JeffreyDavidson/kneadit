@@ -17,7 +17,7 @@ class ProcessScheduledCheckins
     /** @return array{sent: int, skipped_no_email: int, failures: int, no_active_checkins: bool} */
     public function __invoke(): array
     {
-        $checkins = ScheduledCheckin::query()->where('is_active', true)->get();
+        $checkins = ScheduledCheckin::query()->where('is_active', true)->cursor();
 
         if ($checkins->isEmpty()) {
             return [

@@ -26,6 +26,19 @@ test('topByRevenue returns products sorted by revenue', function () {
         ->and($result->first()['name'])->toBe($expensive->name);
 });
 
+test('aggregates shared product sales totals in cents for paid active orders', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->paid()->withDeliveryDate(now())->create();
+
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 3, 'unit_price' => 12.34]);
+
+    $aggregate = ProductSalesQuery::aggregates(new DateRange(now()->subDay(), now()->addDay()))->first();
+
+    expect($aggregate)->not->toBeNull()
+        ->and((int) $aggregate->units_sold)->toBe(3)
+        ->and((int) $aggregate->getRawOriginal('revenue_cents'))->toBe(3702);
+});
+
 test('topByQuantity returns products sorted by quantity sold', function () {
     $highQuantity = Product::factory()->create();
     $lowQuantity = Product::factory()->create();

@@ -59,7 +59,7 @@ class WidgetPreviewRenderer
         } catch (Throwable $e) {
             Log::warning('WidgetPreviewRenderer failed', [
                 'widget' => $widgetClass,
-                'error' => $e->getMessage(),
+                'exception' => $e,
             ]);
 
             return $this->placeholder('Widget preview is unavailable.');

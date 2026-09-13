@@ -2,12 +2,9 @@
 
 namespace App\Queries\Platform;
 
-use App\DataTransferObjects\Platform\TenantMetrics;
 use App\Models\Platform\Tenant;
-use App\Services\Tenants\TenancyManager;
 use App\ValueObjects\TenantHealthScore;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class TenantComparisonQuery
 {
@@ -35,7 +32,7 @@ class TenantComparisonQuery
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
-            $metrics = self::collectTenantMetrics($tenant);
+            $metrics = resolve(TenantComparisonMetricsQuery::class)->forTenant($tenant);
 
             $setupChecks = [
                 ! empty($tenant->store_name),
@@ -89,7 +86,7 @@ class TenantComparisonQuery
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
-            $metrics = self::collectTenantMetrics($tenant);
+            $metrics = resolve(TenantComparisonMetricsQuery::class)->forTenant($tenant);
 
             $results[] = [
                 'id' => $metrics->id,
@@ -147,33 +144,5 @@ class TenantComparisonQuery
         );
 
         return $healthScore->score;
-    }
-
-    private static function collectTenantMetrics(Tenant $tenant): TenantMetrics
-    {
-        try {
-            $metrics = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
-                'total_orders' => DB::table('orders')->count(),
-                'month_orders' => DB::table('orders')
-                    ->where('created_at', '>=', now()->startOfMonth())
-                    ->count(),
-                'total_products' => DB::table('products')->count(),
-                'total_categories' => DB::table('categories')->count(),
-                'avg_review' => round((float) DB::table('reviews')->avg('rating'), 1),
-            ]);
-        } catch (\Throwable) {
-            $metrics = [];
-        }
-
-        return new TenantMetrics(
-            id: $tenant->id,
-            name: $tenant->store_name ?? $tenant->name,
-            plan: $tenant->plan->value ?? 'trial',
-            totalOrders: $metrics['total_orders'] ?? 0,
-            monthOrders: $metrics['month_orders'] ?? 0,
-            totalProducts: $metrics['total_products'] ?? 0,
-            totalCategories: $metrics['total_categories'] ?? 0,
-            avgReview: $metrics['avg_review'] ?? 0,
-        );
     }
 }
