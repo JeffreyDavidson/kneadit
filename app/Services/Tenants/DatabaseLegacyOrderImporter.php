@@ -105,6 +105,6 @@ final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
 
         throw_if($enum === null, InvalidArgumentException::class, "Unsupported {$label} [{$normalized}].");
 
-        return $enum->value;
+        return (string) $enum->value;
     }
 }
