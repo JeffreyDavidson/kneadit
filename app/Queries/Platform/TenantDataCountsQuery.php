@@ -16,11 +16,11 @@ class TenantDataCountsQuery
         $overview = $this->overviewQuery->forTenant($tenant);
 
         return [
-            'products' => $overview['products'],
-            'categories' => $overview['categories'],
-            'orders' => $overview['orders'],
-            'customers' => $overview['customers'],
-            'reviews' => $overview['reviews'],
+            'products' => $overview->products,
+            'categories' => $overview->categories,
+            'orders' => $overview->orders,
+            'customers' => $overview->customers,
+            'reviews' => $overview->reviews,
         ];
     }
 }

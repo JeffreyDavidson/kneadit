@@ -16,12 +16,12 @@ final class TenantStatsQuery
         $overview = $this->overviewQuery->forTenant($tenant);
 
         return [
-            'products' => $overview['products'],
-            'orders' => $overview['orders'],
-            'revenue' => $overview['revenue'],
-            'customers' => $overview['customers'],
-            'reviews' => $overview['reviews'],
-            'last_order' => $overview['last_order'],
+            'products' => $overview->products,
+            'orders' => $overview->orders,
+            'revenue' => $overview->revenue,
+            'customers' => $overview->customers,
+            'reviews' => $overview->reviews,
+            'last_order' => $overview->lastOrder,
         ];
     }
 }

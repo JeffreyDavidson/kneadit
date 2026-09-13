@@ -2,6 +2,7 @@
 
 namespace App\Queries\Platform;
 
+use App\DataTransferObjects\Platform\TenantOverviewMetrics;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\DB;
@@ -10,10 +11,7 @@ final class TenantOverviewQuery
 {
     public function __construct(private readonly TenancyManager $tenancyManager) {}
 
-    /**
-     * @return array{products: int, categories: int, orders: int, customers: int, reviews: int, revenue: float, last_order: string|null}
-     */
-    public function forTenant(Tenant $tenant): array
+    public function forTenant(Tenant $tenant): TenantOverviewMetrics
     {
         /** @var array{products: int, categories: int, orders: int, customers: int, reviews: int, revenue: float, last_order: string|null} $overview */
         $overview = $this->tenancyManager->withinTenant($tenant, fn (): array => [
@@ -27,6 +25,14 @@ final class TenantOverviewQuery
             'last_order' => DB::table('orders')->max('created_at'),
         ]);
 
-        return $overview;
+        return new TenantOverviewMetrics(
+            products: $overview['products'],
+            categories: $overview['categories'],
+            orders: $overview['orders'],
+            customers: $overview['customers'],
+            reviews: $overview['reviews'],
+            revenue: $overview['revenue'],
+            lastOrder: $overview['last_order'],
+        );
     }
 }
