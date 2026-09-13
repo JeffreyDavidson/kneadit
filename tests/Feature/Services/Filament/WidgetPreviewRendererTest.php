@@ -51,15 +51,7 @@ test('central auth context survives a preview render', function () {
 
 test('does not expose widget exceptions in the placeholder and logs server-side context', function () {
     Tenant::factory()->onboarded()->create(['id' => Tenant::DEMO_ID]);
-    Log::spy();
-
-    $html = (new WidgetPreviewRenderer)->render(FailingWidgetPreview::class);
-
-    expect((string) $html)
-        ->toContain('Widget preview is unavailable.')
-        ->not->toContain('database password leaked');
-
-    Log::shouldHaveReceived('warning')
+    Log::shouldReceive('warning')
         ->once()
         ->withArgs(function (string $message, array $context): bool {
             return $message === 'WidgetPreviewRenderer failed'
@@ -67,4 +59,11 @@ test('does not expose widget exceptions in the placeholder and logs server-side 
                 && $context['exception'] instanceof RuntimeException
                 && $context['exception']->getMessage() === 'database password leaked';
         });
+
+    $html = (new WidgetPreviewRenderer)->render(FailingWidgetPreview::class);
+
+    expect((string) $html)
+        ->toContain('Widget preview is unavailable.')
+        ->not->toContain('database password leaked');
+
 });
