@@ -9,8 +9,8 @@ use Illuminate\Contracts\Support\Arrayable;
 final readonly class FinancialReportResult implements Arrayable
 {
     /**
-     * @param list<array{month: string, revenue: Money, expenses: Money, profit: Money}> $monthly
-     * @param list<array{category: string, amount: Money}> $expensesByCategory
+     * @param list<FinancialReportMonth> $monthly
+     * @param list<FinancialReportExpense> $expensesByCategory
      */
     public function __construct(
         public Money $totalRevenue,
@@ -38,15 +38,15 @@ final readonly class FinancialReportResult implements Arrayable
             'totalExpenses' => $this->totalExpenses->dollars(),
             'profit' => $this->profit->dollars(),
             'deductible' => $this->deductible->dollars(),
-            'monthly' => array_map(static fn (array $month): array => [
-                'month' => $month['month'],
-                'revenue' => $month['revenue']->dollars(),
-                'expenses' => $month['expenses']->dollars(),
-                'profit' => $month['profit']->dollars(),
+            'monthly' => array_map(static fn (FinancialReportMonth $month): array => [
+                'month' => $month->month,
+                'revenue' => $month->revenue->dollars(),
+                'expenses' => $month->expenses->dollars(),
+                'profit' => $month->profit->dollars(),
             ], $this->monthly),
-            'expensesByCategory' => array_map(static fn (array $category): array => [
-                'category' => $category['category'],
-                'amount' => $category['amount']->dollars(),
+            'expensesByCategory' => array_map(static fn (FinancialReportExpense $category): array => [
+                'category' => $category->category,
+                'amount' => $category->amount->dollars(),
             ], $this->expensesByCategory),
         ];
     }
