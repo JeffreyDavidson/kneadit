@@ -4,6 +4,7 @@ use App\Models\Platform\Tenant;
 use App\Queries\Platform\TenantComparisonMetricsQuery;
 use App\Services\Tenants\TenancyManager;
 use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -14,7 +15,7 @@ test('collects comparison metrics inside the requested tenant context', function
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->with($tenant, fn (Tenant $receivedTenant, callable $callback): mixed => $receivedTenant->is($tenant))
+        ->with($tenant, Argument::satisfies(fn (mixed $callback): bool => is_callable($callback)))
         ->resolves(fn (Tenant $receivedTenant, callable $callback): mixed => $callback($receivedTenant));
 
     app()->instance(TenancyManager::class, $tenancyManager);
