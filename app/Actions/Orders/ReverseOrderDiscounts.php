@@ -28,11 +28,21 @@ class ReverseOrderDiscounts
             return;
         }
 
+        $couponUsageAmount = CouponTransaction::query()
+            ->where('coupon_id', $order->coupon_id)
+            ->where('order_id', $order->id)
+            ->where('type', CouponTransactionType::Usage)
+            ->first()?->amount;
+
+        $couponDiscount = $couponUsageAmount instanceof \App\ValueObjects\Money
+            ? $couponUsageAmount->dollars()
+            : $order->discount_amount->dollars();
+
         try {
             CouponTransaction::query()->create([
                 'coupon_id' => $order->coupon_id,
                 'order_id' => $order->id,
-                'amount' => -$order->discount_amount->dollars(),
+                'amount' => -$couponDiscount,
                 'type' => CouponTransactionType::Reversal,
                 'notes' => $reason,
                 'created_at' => now(),

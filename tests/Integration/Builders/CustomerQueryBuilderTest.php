@@ -83,6 +83,41 @@ test('withPaidOrderMetrics aggregates only active paid orders in the date range'
         ->and($result->order_count)->toBe(1);
 });
 
+test('withOrderMetrics excludes cancelled orders from last order date', function () {
+    $customer = Customer::factory()->create();
+    $activeOrder = Order::factory()->for($customer)->create([
+        'created_at' => '2026-09-01 10:00:00',
+        'total' => 25.00,
+    ]);
+    Order::factory()->for($customer)->cancelled()->create([
+        'created_at' => '2026-09-10 10:00:00',
+        'total' => 75.00,
+    ]);
+
+    $result = Customer::query()
+        ->withOrderMetrics()
+        ->findOrFail($customer->id);
+
+    expect($result->orders_count)->toBe(1)
+        ->and((int) $result->orders_sum_total)->toBe(2500)
+        ->and((string) $result->last_order_date)->toContain('2026-09-01');
+});
+
+test('withOrderMetrics returns no last order date when all orders are cancelled', function () {
+    $customer = Customer::factory()->create();
+    Order::factory()->for($customer)->cancelled()->create([
+        'created_at' => '2026-09-10 10:00:00',
+    ]);
+
+    $result = Customer::query()
+        ->withOrderMetrics()
+        ->findOrFail($customer->id);
+
+    expect($result->orders_count)->toBe(0)
+        ->and((int) $result->orders_sum_total)->toBe(0)
+        ->and($result->last_order_date)->toBeNull();
+});
+
 test('withRfmMetrics projects lifetime paid order metrics', function () {
     $customer = Customer::factory()->create();
     Order::factory()->for($customer)->paid()->create([

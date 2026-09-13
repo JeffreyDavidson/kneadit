@@ -15,7 +15,7 @@ class RecordCouponUsage
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if (! $payload->couponId || $payload->discountAmount <= 0) {
+        if (! $payload->couponId || $payload->couponDiscount <= 0) {
             return $next($payload);
         }
 
@@ -27,7 +27,7 @@ class RecordCouponUsage
             ($this->applyCoupon)($coupon);
 
             $coupon->transactions()->create([
-                'amount' => $payload->discountAmount,
+                'amount' => $payload->couponDiscount,
                 'type' => CouponTransactionType::Usage,
                 'order_id' => $payload->order->id,
                 'notes' => "Applied to order #{$payload->order->order_number}",
