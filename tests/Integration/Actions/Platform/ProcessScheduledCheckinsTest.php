@@ -17,6 +17,14 @@ test('returns no_active_checkins flag when none are active', function () {
         ->and($summary['sent'])->toBe(0);
 });
 
+test('streams active checkins to keep scheduled processing memory bounded', function () {
+    $source = file_get_contents(app_path('Actions/Platform/ProcessScheduledCheckins.php'));
+
+    expect($source)
+        ->toContain("where('is_active', true)->cursor()")
+        ->not->toContain("where('is_active', true)->get()");
+});
+
 test('dispatches event and logs when a tenant matches a checkin', function () {
     Event::fake([ScheduledCheckinDue::class]);
     Config::set('app.url', 'http://kneadit.test:8000');
