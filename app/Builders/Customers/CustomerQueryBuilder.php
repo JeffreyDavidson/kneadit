@@ -38,6 +38,7 @@ class CustomerQueryBuilder extends Builder
             ->addSelect([
                 'last_order_date' => Order::query()->select('created_at')
                     ->whereColumn('customer_id', 'customers.id')
+                    ->active()
                     ->latest()
                     ->limit(1),
             ]);

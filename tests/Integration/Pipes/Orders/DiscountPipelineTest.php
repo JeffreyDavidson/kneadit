@@ -57,6 +57,28 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
         ->and($coupon->refresh()->used_count)->toBe(1);
 });
 
+test('coupon transaction records only the coupon discount when discounts stack', function () {
+    settings([
+        'sitewide_sale_enabled' => '1',
+        'sitewide_sale_percent' => '10',
+    ]);
+
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00]);
+
+    $order = createOrderWith(['coupon_id' => $coupon->id]);
+
+    expect($order)
+        ->not->toBeNull()
+        ->discount_amount->dollars()->toBe(9.00)
+        ->and($order->total->dollars())->toBe(31.00);
+
+    $transaction = CouponTransaction::query()
+        ->where('order_id', $order->id)
+        ->sole();
+
+    expect($transaction->amount->dollars())->toBe(5.00);
+});
+
 test('order with gift card stores gift_card_id and gift_card_amount', function () {
     $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 

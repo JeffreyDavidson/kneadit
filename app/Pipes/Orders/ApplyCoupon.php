@@ -23,6 +23,7 @@ class ApplyCoupon
 
         if ($this->couponService->isValid($coupon)) {
             $couponDiscount = $this->couponService->calculateDiscount($coupon, $payload->subtotal);
+            $payload->couponDiscount = $couponDiscount;
             $payload->discountAmount += $couponDiscount;
             $payload->couponId = $coupon->id;
             $payload->total = max(0, $payload->total - $couponDiscount);

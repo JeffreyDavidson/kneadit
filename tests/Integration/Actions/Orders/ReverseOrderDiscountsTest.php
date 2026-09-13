@@ -42,6 +42,33 @@ test('restores coupon used_count and creates reversal transaction', function () 
             ->where('type', CouponTransactionType::Reversal)->count())->toBe(1);
 });
 
+test('reverses only the coupon discount when the order has stacked discounts', function () {
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00, 'used_count' => 1]);
+    $order = Order::factory()
+        ->recycle(test()->user)
+        ->create([
+            'coupon_id' => $coupon->id,
+            'discount_amount' => 9.00,
+        ]);
+
+    CouponTransaction::factory()->create([
+        'coupon_id' => $coupon->id,
+        'order_id' => $order->id,
+        'amount' => 5.00,
+        'type' => CouponTransactionType::Usage,
+    ]);
+
+    resolve(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+
+    $reversal = CouponTransaction::query()
+        ->where('order_id', $order->id)
+        ->where('type', CouponTransactionType::Reversal)
+        ->sole();
+
+    expect($reversal->amount->dollars())->toBe(-5.00)
+        ->and($coupon->refresh()->used_count)->toBe(0);
+});
+
 test('restores gift card balance and creates refund transaction', function () {
     $giftCard = GiftCard::factory()->create([
         'initial_balance' => 50.00,
