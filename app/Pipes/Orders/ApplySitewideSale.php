@@ -3,6 +3,7 @@
 namespace App\Pipes\Orders;
 
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Percentage;
 use Closure;
 
 /**
@@ -24,15 +25,16 @@ class ApplySitewideSale
     {
         $sale = $this->settings->orders;
 
-        if (! $sale->sitewideSaleEnabled || $sale->sitewideSalePercent <= 0 || $payload->subtotal <= 0) {
+        if (! $sale->sitewideSaleEnabled || $sale->sitewideSalePercent <= 0 || ! $payload->subtotal->isPositive()) {
             return $next($payload);
         }
 
-        $percent = min(100, $sale->sitewideSalePercent);
-        $saleDiscount = round($payload->subtotal * $percent / 100, 2);
+        $percent = Percentage::fromInt(min(100, $sale->sitewideSalePercent));
+        $saleDiscount = $percent->applyTo($payload->subtotal);
 
-        $payload->discountAmount += $saleDiscount;
-        $payload->total = max(0.0, $payload->total - $saleDiscount);
+        $payload->sitewideSaleDiscount = $saleDiscount;
+        $payload->recalculateDiscountAmount();
+        $payload->recalculateTotal();
 
         return $next($payload);
     }

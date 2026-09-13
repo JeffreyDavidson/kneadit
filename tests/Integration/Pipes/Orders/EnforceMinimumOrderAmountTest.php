@@ -6,6 +6,7 @@ use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Pipes\Orders\EnforceMinimumOrderAmount;
 use App\Pipes\Orders\OrderPipelineData;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 
 function makeSettingsForMinimumPipeTest(string $pickupMin, string $deliveryMin): TenantSettings
 {
@@ -26,7 +27,7 @@ function runMinimumPipe(float $subtotal, string $deliveryType, string $pickupMin
     );
 
     $payload = new OrderPipelineData($data);
-    $payload->subtotal = $subtotal;
+    $payload->subtotal = Money::fromDollars($subtotal);
 
     $pipe = new EnforceMinimumOrderAmount(makeSettingsForMinimumPipeTest($pickupMin, $deliveryMin));
 

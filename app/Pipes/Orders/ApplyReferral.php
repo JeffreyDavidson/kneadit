@@ -5,6 +5,7 @@ namespace App\Pipes\Orders;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 use Closure;
 
 /**
@@ -46,16 +47,15 @@ class ApplyReferral
             return $next($payload);
         }
 
-        $discount = (float) $this->settings->engagement->customerReferralDiscountDollars;
-        if ($discount <= 0) {
+        $discount = Money::fromDollars($this->settings->engagement->customerReferralDiscountDollars);
+        if (! $discount->isPositive()) {
             return $next($payload);
         }
 
         $payload->referrer = $referrer;
-        $payload->discountAmount += $discount;
-
-        $afterDiscount = max(0.0, $payload->subtotal + $payload->deliveryFee - $payload->discountAmount);
-        $payload->total = max(0.0, $afterDiscount - $payload->giftCardAmount) + $payload->tipAmount;
+        $payload->referralDiscount = $discount;
+        $payload->recalculateDiscountAmount();
+        $payload->recalculateTotal();
 
         return $next($payload);
     }

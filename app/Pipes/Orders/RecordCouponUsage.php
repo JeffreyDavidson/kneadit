@@ -15,7 +15,7 @@ class RecordCouponUsage
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if (! $payload->couponId || $payload->couponDiscount <= 0) {
+        if (! $payload->couponId || ! $payload->couponDiscount->isPositive()) {
             return $next($payload);
         }
 
