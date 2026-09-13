@@ -76,7 +76,7 @@ class ImportLegacyBakeryCommand extends Command
 
         try {
             $assetImport = $importAssets($data, $assetDirectory, $tenant->id);
-            $data = $assetImport['data'];
+            $importData = LegacyBakeryImportData::from($assetImport['data']);
         } catch (\InvalidArgumentException $exception) {
             $this->error($exception->getMessage());
 
@@ -94,7 +94,7 @@ class ImportLegacyBakeryCommand extends Command
 
         try {
             /** @var array<string, int> $result */
-            $result = $tenant->run(fn (): array => $import($data));
+            $result = $tenant->run(fn (): array => $import($importData));
         } catch (\InvalidArgumentException $exception) {
             $this->error($exception->getMessage());
 
