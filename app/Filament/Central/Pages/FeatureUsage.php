@@ -2,6 +2,8 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\DataTransferObjects\Platform\FeatureTenantUsage;
+use App\DataTransferObjects\Platform\FeatureUsageBar;
 use App\Queries\Platform\FeatureUsageQuery;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -58,7 +60,7 @@ class FeatureUsage extends Page
     public function getFeatureUsageBars(): Collection
     {
         return resolve(FeatureUsageQuery::class)->featureUsageBars()->map(
-            static fn ($bar): array => $bar->toArray(),
+            static fn (FeatureUsageBar $bar): array => $bar->toArray(),
         );
     }
 
@@ -81,7 +83,7 @@ class FeatureUsage extends Page
         }
 
         return resolve(FeatureUsageQuery::class)->featureTenantBreakdown($this->selectedFeature)->map(
-            static fn ($row): array => $row->toArray(),
+            static fn (FeatureTenantUsage $row): array => $row->toArray(),
         );
     }
 
