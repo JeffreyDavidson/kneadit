@@ -44,24 +44,30 @@ class TenantComparison extends Page
     /** @return array<string, mixed> */
     public function getAllTenants(): array
     {
-        return TenantComparisonQuery::allTenants();
+        return resolve(TenantComparisonQuery::class)->allTenants();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getComparisonData(): array
     {
-        return TenantComparisonQuery::comparison($this->selectedTenants);
+        return array_map(
+            static fn ($result): array => $result->toArray(),
+            resolve(TenantComparisonQuery::class)->comparison(array_values($this->selectedTenants)),
+        );
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getLeaderboardData(): array
     {
-        return TenantComparisonQuery::leaderboard();
+        return array_map(
+            static fn ($entry): array => $entry->toArray(),
+            resolve(TenantComparisonQuery::class)->leaderboard(),
+        );
     }
 
     /** @return array<string, mixed> */
     public function getLeaderboardSummaryStats(): array
     {
-        return TenantComparisonQuery::leaderboardSummary();
+        return resolve(TenantComparisonQuery::class)->leaderboardSummary()->toArray();
     }
 }

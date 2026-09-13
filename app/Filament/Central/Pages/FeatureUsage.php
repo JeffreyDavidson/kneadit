@@ -26,44 +26,46 @@ class FeatureUsage extends Page
 
     public function getHasData(): bool
     {
-        return FeatureUsageQuery::hasData();
+        return resolve(FeatureUsageQuery::class)->hasData();
     }
 
     public function getMostUsedFeature(): ?string
     {
-        return FeatureUsageQuery::mostUsedFeature();
+        return resolve(FeatureUsageQuery::class)->mostUsedFeature();
     }
 
     public function getLeastUsedFeature(): ?string
     {
-        return FeatureUsageQuery::leastUsedFeature();
+        return resolve(FeatureUsageQuery::class)->leastUsedFeature();
     }
 
     public function getTotalInteractionsThisMonth(): int
     {
-        return FeatureUsageQuery::totalInteractionsThisMonth();
+        return resolve(FeatureUsageQuery::class)->totalInteractionsThisMonth();
     }
 
     public function getTotalInteractionsAllTime(): int
     {
-        return FeatureUsageQuery::totalInteractionsAllTime();
+        return resolve(FeatureUsageQuery::class)->totalInteractionsAllTime();
     }
 
     public function getFeatureTotalCount(?string $feature): int
     {
-        return FeatureUsageQuery::featureTotalCount($feature);
+        return resolve(FeatureUsageQuery::class)->featureTotalCount($feature);
     }
 
     /** @return Collection<int, array{feature: string, total: int, percent: float}> */
     public function getFeatureUsageBars(): Collection
     {
-        return FeatureUsageQuery::featureUsageBars();
+        return resolve(FeatureUsageQuery::class)->featureUsageBars()->map(
+            static fn ($bar): array => $bar->toArray(),
+        );
     }
 
     /** @return array<string, mixed> */
     public function getHeatmapData(): array
     {
-        return FeatureUsageQuery::heatmapData();
+        return resolve(FeatureUsageQuery::class)->heatmapData()->toArray();
     }
 
     public function selectFeature(?string $feature): void
@@ -78,7 +80,9 @@ class FeatureUsage extends Page
             return new Collection;
         }
 
-        return FeatureUsageQuery::featureTenantBreakdown($this->selectedFeature);
+        return resolve(FeatureUsageQuery::class)->featureTenantBreakdown($this->selectedFeature)->map(
+            static fn ($row): array => $row->toArray(),
+        );
     }
 
     public function formatFeatureName(string $feature): string
