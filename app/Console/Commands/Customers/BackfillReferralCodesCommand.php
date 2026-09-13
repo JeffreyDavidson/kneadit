@@ -15,20 +15,25 @@ use Illuminate\Console\Command;
 #[Description('Generate referral codes for any existing customers that pre-date the referral feature')]
 class BackfillReferralCodesCommand extends Command
 {
+    public function __construct(
+        private readonly GenerateCustomerReferralCode $generator,
+    ) {
+        parent::__construct();
+    }
+
     public function handle(TenancyManager $tenancyManager): int
     {
         $totalGenerated = 0;
 
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings) use (&$totalGenerated): void {
-                $generator = resolve(GenerateCustomerReferralCode::class);
                 $count = 0;
 
                 Customer::query()
                     ->whereNull('referral_code')
                     ->cursor()
-                    ->each(function (Customer $customer) use ($generator, &$count): void {
-                        $generator($customer);
+                    ->each(function (Customer $customer) use (&$count): void {
+                        ($this->generator)($customer);
                         $count++;
                     });
 

@@ -15,5 +15,6 @@ test('command source uses TenancyManager + GenerateCustomerReferralCode action',
         ->toContain('TenancyManager')
         ->toContain('forEachTenant')
         ->toContain('GenerateCustomerReferralCode')
-        ->toContain('whereNull(\'referral_code\')');
+        ->toContain('whereNull(\'referral_code\')')
+        ->not->toContain('resolve(GenerateCustomerReferralCode::class)');
 });
