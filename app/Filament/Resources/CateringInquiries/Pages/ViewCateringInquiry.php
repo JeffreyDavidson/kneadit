@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\CateringInquiries\Pages;
 
 use App\Actions\Customers\CancelCateringInquiry;
-use App\Actions\Customers\ConvertCateringInquiryToOrder;
+use App\Actions\Customers\ConfirmCateringInquiryBooking;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
@@ -258,7 +258,7 @@ class ViewCateringInquiry extends ViewRecord
             ->modalDescription('Creates an order so the rest of fulfillment (payment, messages, status) is tracked there.')
             ->action(function (): void {
                 try {
-                    $order = resolve(ConvertCateringInquiryToOrder::class)($this->record);
+                    $order = resolve(ConfirmCateringInquiryBooking::class)($this->record);
                 } catch (InquiryNotConvertibleException $e) {
                     Notification::make()->title($e->getMessage())->danger()->send();
 
