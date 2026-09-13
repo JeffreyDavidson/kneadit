@@ -4,6 +4,7 @@ namespace App\Pipes\Orders;
 
 use App\Models\Financial\Coupon;
 use App\Services\Coupon\CouponService;
+use App\ValueObjects\Money;
 use Closure;
 use Illuminate\Support\Str;
 
@@ -22,11 +23,11 @@ class ApplyCoupon
         }
 
         if ($this->couponService->isValid($coupon)) {
-            $couponDiscount = $this->couponService->calculateDiscount($coupon, $payload->subtotal);
+            $couponDiscount = Money::fromDollars($this->couponService->calculateDiscount($coupon, $payload->subtotal->dollars()));
             $payload->couponDiscount = $couponDiscount;
-            $payload->discountAmount += $couponDiscount;
+            $payload->recalculateDiscountAmount();
             $payload->couponId = $coupon->id;
-            $payload->total = max(0, $payload->total - $couponDiscount);
+            $payload->recalculateTotal();
         }
 
         return $next($payload);

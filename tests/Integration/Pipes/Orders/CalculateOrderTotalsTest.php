@@ -27,8 +27,8 @@ test('calculates subtotal and total for active products', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->subtotal)->toBe(30.0)
-        ->and($result->total)->toBe(30.0)
+    expect($result->subtotal->dollars())->toBe(30.0)
+        ->and($result->total->dollars())->toBe(30.0)
         ->and($result->orderItems)->toHaveCount(1)
         ->and($result->cancelled)->toBeFalse();
 });
@@ -53,7 +53,7 @@ test('skips inactive products', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->subtotal)->toBe(10.0)
+    expect($result->subtotal->dollars())->toBe(10.0)
         ->and($result->orderItems)->toHaveCount(1);
 });
 
@@ -96,8 +96,8 @@ test('adds delivery fee for delivery orders', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(5.0)
-        ->and($result->total)->toBe(25.0);
+    expect($result->deliveryFee->dollars())->toBe(5.0)
+        ->and($result->total->dollars())->toBe(25.0);
 });
 
 test('does not add delivery fee for pickup orders', function () {
@@ -116,8 +116,8 @@ test('does not add delivery fee for pickup orders', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(0.0)
-        ->and($result->total)->toBe(20.0);
+    expect($result->deliveryFee->dollars())->toBe(0.0)
+        ->and($result->total->dollars())->toBe(20.0);
 });
 
 test('adds tip to total when tipAmount is provided', function () {
@@ -137,8 +137,8 @@ test('adds tip to total when tipAmount is provided', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->tipAmount)->toBe(4.0)
-        ->and($result->total)->toBe(24.0);
+    expect($result->tipAmount->dollars())->toBe(4.0)
+        ->and($result->total->dollars())->toBe(24.0);
 });
 
 test('clamps negative tipAmount to zero', function () {
@@ -158,8 +158,8 @@ test('clamps negative tipAmount to zero', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->tipAmount)->toBe(0.0)
-        ->and($result->total)->toBe(20.0);
+    expect($result->tipAmount->dollars())->toBe(0.0)
+        ->and($result->total->dollars())->toBe(20.0);
 });
 
 test('tip stacks with delivery fee in total', function () {
@@ -182,8 +182,8 @@ test('tip stacks with delivery fee in total', function () {
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
-    expect($result->subtotal)->toBe(20.0)
-        ->and($result->deliveryFee)->toBe(5.0)
-        ->and($result->tipAmount)->toBe(3.0)
-        ->and($result->total)->toBe(28.0);
+    expect($result->subtotal->dollars())->toBe(20.0)
+        ->and($result->deliveryFee->dollars())->toBe(5.0)
+        ->and($result->tipAmount->dollars())->toBe(3.0)
+        ->and($result->total->dollars())->toBe(28.0);
 });

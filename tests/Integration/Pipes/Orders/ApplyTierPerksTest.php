@@ -6,6 +6,7 @@ use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Pipes\Orders\ApplyTierPerks;
 use App\Pipes\Orders\OrderPipelineData;
+use App\ValueObjects\Money;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -25,9 +26,9 @@ function makePerksPayload(?Customer $customer, float $deliveryFee = 5.0): OrderP
         deliveryType: DeliveryType::Delivery->value,
         items: [['product_id' => 1, 'quantity' => 1]],
     ));
-    $payload->subtotal = 30.0;
-    $payload->deliveryFee = $deliveryFee;
-    $payload->total = $payload->subtotal + $deliveryFee;
+    $payload->subtotal = Money::fromDollars(30.0);
+    $payload->deliveryFee = Money::fromDollars($deliveryFee);
+    $payload->recalculateTotal();
     $payload->customer = $customer;
 
     return $payload;
@@ -39,8 +40,8 @@ test('zeros out delivery fee for a Gold customer', function () {
 
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(0.0)
-        ->and($result->total)->toBe(30.0);
+    expect($result->deliveryFee->dollars())->toBe(0.0)
+        ->and($result->total->dollars())->toBe(30.0);
 });
 
 test('leaves the fee untouched for a Bronze customer', function () {
@@ -48,14 +49,14 @@ test('leaves the fee untouched for a Bronze customer', function () {
 
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(5.0)
-        ->and($result->total)->toBe(35.0);
+    expect($result->deliveryFee->dollars())->toBe(5.0)
+        ->and($result->total->dollars())->toBe(35.0);
 });
 
 test('skips when payload has no customer (defensive)', function () {
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload(null), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(5.0);
+    expect($result->deliveryFee->dollars())->toBe(5.0);
 });
 
 test('respects the global tierPerksEnabled toggle', function () {
@@ -65,5 +66,5 @@ test('respects the global tierPerksEnabled toggle', function () {
 
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(5.0);
+    expect($result->deliveryFee->dollars())->toBe(5.0);
 });

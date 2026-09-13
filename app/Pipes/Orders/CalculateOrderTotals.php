@@ -4,6 +4,7 @@ namespace App\Pipes\Orders;
 
 use App\Enums\Orders\DeliveryType;
 use App\Models\Inventory\Product;
+use App\ValueObjects\Money;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -24,9 +25,8 @@ class CalculateOrderTotals
                 continue;
             }
 
-            $unitPrice = $product->price?->dollars() ?? 0.0;
-            $lineTotal = $unitPrice * $item['quantity'];
-            $payload->subtotal += $lineTotal;
+            $unitPrice = $product->price ?? Money::zero();
+            $payload->subtotal = $payload->subtotal->add($unitPrice->multiply($item['quantity']));
 
             $payload->orderItems[] = [
                 'product_id' => $product->id,
@@ -42,16 +42,16 @@ class CalculateOrderTotals
         }
 
         if ($payload->data->deliveryType === DeliveryType::Delivery->value) {
-            $payload->deliveryFee = Arr::float(
+            $payload->deliveryFee = Money::fromDollars(Arr::float(
                 Config::array('kneadit.delivery_fees', []),
                 $payload->data->deliveryTier,
                 0.0,
-            );
+            ));
         }
 
-        $payload->tipAmount = max(0.0, $payload->data->tipAmount);
+        $payload->tipAmount = Money::fromDollars(max(0.0, $payload->data->tipAmount));
 
-        $payload->total = $payload->subtotal + $payload->deliveryFee + $payload->tipAmount;
+        $payload->recalculateTotal();
 
         return $next($payload);
     }

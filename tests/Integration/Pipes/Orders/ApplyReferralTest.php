@@ -7,6 +7,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
 use App\Pipes\Orders\ApplyReferral;
 use App\Pipes\Orders\OrderPipelineData;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
 
@@ -29,8 +30,8 @@ function makeReferralPayload(string $email = 'newcomer@example.com'): OrderPipel
         deliveryType: DeliveryType::Pickup->value,
         items: [['product_id' => 1, 'quantity' => 1]],
     ));
-    $payload->subtotal = 30.0;
-    $payload->total = 30.0;
+    $payload->subtotal = Money::fromDollars(30.0);
+    $payload->recalculateTotal();
 
     return $payload;
 }
@@ -43,8 +44,8 @@ test('applies the referral discount when a valid code is in session', function (
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
     expect($result->referrer?->is($referrer))->toBeTrue()
-        ->and($result->discountAmount)->toBe(10.0)
-        ->and($result->total)->toBe(20.0);
+        ->and($result->discountAmount->dollars())->toBe(10.0)
+        ->and($result->total->dollars())->toBe(20.0);
 });
 
 test('skips when feature is disabled', function () {
@@ -56,7 +57,7 @@ test('skips when feature is disabled', function () {
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
     expect($result->referrer)->toBeNull()
-        ->and($result->discountAmount)->toBe(0.0);
+        ->and($result->discountAmount->dollars())->toBe(0.0);
 });
 
 test('skips when no code is in session', function () {
@@ -76,7 +77,7 @@ test('rejects self-referral', function () {
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
     expect($result->referrer)->toBeNull()
-        ->and($result->discountAmount)->toBe(0.0);
+        ->and($result->discountAmount->dollars())->toBe(0.0);
 });
 
 test('rejects when the referee has already been referred before', function () {
@@ -94,5 +95,5 @@ test('rejects when the referee has already been referred before', function () {
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
     expect($result->referrer)->toBeNull()
-        ->and($result->discountAmount)->toBe(0.0);
+        ->and($result->discountAmount->dollars())->toBe(0.0);
 });
