@@ -26,8 +26,12 @@ use App\Routing\Bindings\ActiveSurveyResolver;
 use App\Routing\Bindings\PublishedTenantBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
-Route::bind('post', resolve(PublishedTenantBlogPostResolver::class));
-Route::bind('survey', resolve(ActiveSurveyResolver::class));
+Route::bind('post', function (string $slug) {
+    return resolve(PublishedTenantBlogPostResolver::class)($slug);
+});
+Route::bind('survey', function (int|string $id) {
+    return resolve(ActiveSurveyResolver::class)($id);
+});
 
 Route::get('menu', MenuController::class)->name('storefront.menu');
 Route::get('about', AboutController::class)->name('storefront.about');
