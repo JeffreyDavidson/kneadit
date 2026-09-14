@@ -13,6 +13,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 #[Signature('paypal:check-payments')]
 #[Description('Check PayPal invoice payment statuses and update orders across all tenants')]
@@ -25,9 +26,9 @@ class CheckPayPalPaymentsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $tenants = Tenant::query()->cursor();
+        $failures = 0;
 
-        foreach ($tenants as $tenant) {
+        foreach (Tenant::query()->cursor() as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
                     // Skip tenants without PayPal configured
@@ -38,13 +39,14 @@ class CheckPayPalPaymentsCommand extends Command
 
                     $this->processTenant($tenant);
                 });
-            } catch (\Exception $e) {
+            } catch (Throwable $e) {
+                $failures++;
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
                 Log::error("PayPal check failed for tenant {$tenant->id}", ['error' => $e->getMessage()]);
             }
         }
 
-        return Command::SUCCESS;
+        return $failures > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
     protected function processTenant(Tenant $tenant): void
