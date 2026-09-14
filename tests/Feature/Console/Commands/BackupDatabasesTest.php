@@ -182,6 +182,9 @@ test('backup fails when a tenant database is missing', function () {
             ->expectsOutputToContain('Tenant DB not found')
             ->expectsOutputToContain('Backup incomplete')
             ->assertFailed();
+
+        expect($backupDirectory)->not->toBeDirectory()
+            ->and(glob(dirname($backupDirectory) . '/*.in-progress-*') ?: [])->toBeEmpty();
     } finally {
         Carbon::setTestNow();
         File::delete($centralDatabase);
