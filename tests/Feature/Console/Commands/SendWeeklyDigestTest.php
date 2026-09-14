@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\Platform\WeeklyDigestRequested;
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -76,4 +77,13 @@ test('digest:weekly command source checks for owner users first', function () {
     expect($source)
         ->toContain('owners()')
         ->toContain('limit(1)');
+});
+
+test('digest:weekly command uses a per-user weekly idempotency key', function () {
+    $source = file_get_contents(app_path('Console/Commands/Platform/SendWeeklyDigestCommand.php'));
+
+    expect($source)
+        ->toContain(ScheduledNotificationRunTracker::class)
+        ->toContain('weekly-digest:')
+        ->toContain('startOfWeek()');
 });
