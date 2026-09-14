@@ -440,6 +440,7 @@
                 }
                 if (this.appliedGiftCard) {
                     formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
+                    formData.append('gift_card_code', this.giftCardCode);
                 }
                 if (this.tipAmount > 0) {
                     formData.append('tip_amount', this.tipAmount.toFixed(2));

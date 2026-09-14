@@ -3,6 +3,7 @@
 use App\Actions\Orders\CreateOrder;
 use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Models\Financial\GiftCard;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Platform\Setting;
@@ -115,6 +116,45 @@ test('validation fails when required fields are missing', function () {
         'delivery_date',
         'items',
     ]);
+});
+
+test('gift card redemption requires the matching gift card code', function () {
+    $product = Product::factory()->create();
+    $giftCard = GiftCard::factory()->withBalance(25.00)->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'pickup',
+            'delivery_date' => now()->addDays(2)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+            'gift_card_id' => $giftCard->id,
+        ]);
+
+    $response->assertSessionHasErrors('gift_card_code');
+});
+
+test('gift card redemption rejects a mismatched gift card code', function () {
+    $product = Product::factory()->create();
+    $giftCard = GiftCard::factory()->withBalance(25.00)->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'pickup',
+            'delivery_date' => now()->addDays(2)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+            'gift_card_id' => $giftCard->id,
+            'gift_card_code' => 'GIFT-WRONG-CODE',
+        ]);
+
+    $response->assertSessionHasErrors('gift_card_id');
 });
 
 test('returns error when order subtotal is below minimum', function () {

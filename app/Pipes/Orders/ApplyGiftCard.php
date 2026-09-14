@@ -13,7 +13,11 @@ class ApplyGiftCard
             return $next($payload);
         }
 
-        $giftCard = GiftCard::query()->lockForUpdate()->find($payload->data->giftCardId);
+        $giftCard = GiftCard::query()
+            ->lockForUpdate()
+            ->whereKey($payload->data->giftCardId)
+            ->where('code', $payload->data->giftCardCode)
+            ->first();
 
         if ($giftCard && $giftCard->is_usable) {
             $amount = $giftCard->current_balance->min($payload->total);
