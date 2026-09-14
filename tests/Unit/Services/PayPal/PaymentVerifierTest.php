@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\PayPal\HttpPayPalClient;
 use App\Services\PayPal\PaymentVerifier;
 use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
@@ -9,7 +10,7 @@ test('returns null when token manager has no access token', function () {
     $tokenManager = Double::for(TokenManager::class);
     $tokenManager->allows('getAccessToken')->returns(null);
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-001'))->toBeNull();
 });
@@ -23,7 +24,7 @@ test('returns status when API responds successfully', function () {
     $tokenManager->allows('getAccessToken')->returns('test-token');
     $tokenManager->allows('getBaseUrl')->returns('https://api-m.sandbox.paypal.com');
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-001'))->toBe('PAID');
 });
@@ -37,7 +38,7 @@ test('returns null and logs error when API fails', function () {
     $tokenManager->allows('getAccessToken')->returns('test-token');
     $tokenManager->allows('getBaseUrl')->returns('https://api-m.sandbox.paypal.com');
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-001'))->toBeNull();
 });
