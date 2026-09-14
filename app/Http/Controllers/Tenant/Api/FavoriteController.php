@@ -4,19 +4,23 @@ namespace App\Http\Controllers\Tenant\Api;
 
 use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\IndexFavoritesRequest;
 use App\Http\Requests\Api\StoreApiFavoriteRequest;
 use App\Http\Resources\FavoriteResource;
 use App\Http\Resources\FavoriteToggleResource;
+use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
-    public function index(IndexFavoritesRequest $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
+        $customer = Auth::guard('customer')->user();
+        abort_unless($customer instanceof Customer, 401);
+
         $favorites = CustomerFavorite::query()
-            ->forCustomer($request->string('email')->toString())
+            ->forCustomer($customer->email)
             ->with('product')
             ->get();
 
@@ -25,7 +29,10 @@ class FavoriteController extends Controller
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): FavoriteToggleResource
     {
-        $email = $request->string('email')->toString();
+        $customer = Auth::guard('customer')->user();
+        abort_unless($customer instanceof Customer, 401);
+
+        $email = $customer->email;
         $productId = $request->integer('product_id');
 
         $favorited = $toggleFavorite($email, $productId);

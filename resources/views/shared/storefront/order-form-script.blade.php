@@ -256,9 +256,9 @@
             },
 
             async loadFavorites() {
-                if (!this.form.customer_email) return;
+                if (!@json(auth('customer')->check())) return;
                 try {
-                    const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`, {
+                    const response = await fetch('{{ route('api.favorites.index') }}', {
                         headers: { Accept: 'application/vnd.api+json' },
                     });
                     const payload = await response.json();
@@ -273,8 +273,8 @@
             },
 
             async toggleFavorite(productId) {
-                if (!this.form.customer_email) {
-                    alert('Please enter your email to save favorites');
+                if (!@json(auth('customer')->check())) {
+                    alert('Please sign in to save favorites');
                     return;
                 }
                 try {
@@ -286,7 +286,6 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({
-                            email: this.form.customer_email,
                             product_id: productId,
                         }),
                     });
