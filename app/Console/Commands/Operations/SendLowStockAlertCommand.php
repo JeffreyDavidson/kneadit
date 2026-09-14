@@ -5,6 +5,7 @@ namespace App\Console\Commands\Operations;
 use App\Mail\Operations\LowStockAlertMail;
 use App\Models\Inventory\Ingredient;
 use App\Models\Platform\Tenant;
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Attributes\Description;
@@ -16,10 +17,10 @@ use Illuminate\Support\Facades\Mail;
 #[Description('Email each baker a daily digest of ingredients at or below their low-stock threshold')]
 class SendLowStockAlertCommand extends Command
 {
-    public function handle(TenancyManager $tenancyManager): int
+    public function handle(TenancyManager $tenancyManager, ScheduledNotificationRunTracker $runTracker): int
     {
         $failures = $tenancyManager->forEachTenant(
-            function (Tenant $tenant, TenantSettings $settings): void {
+            function (Tenant $tenant, TenantSettings $settings) use ($runTracker): void {
                 if (! $settings->inventory->lowStockAlertsEnabled) {
                     return;
                 }
@@ -37,6 +38,10 @@ class SendLowStockAlertCommand extends Command
                     ->get();
 
                 if ($ingredients->isEmpty()) {
+                    return;
+                }
+
+                if (! $runTracker->claim('low-stock:' . now()->toDateString())) {
                     return;
                 }
 

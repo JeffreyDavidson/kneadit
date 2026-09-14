@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(fn () => setUpCentralTest());
@@ -19,4 +20,13 @@ test('command source uses TenancyManager for tenant context', function () {
         ->toContain('TenancyManager')
         ->toContain('forEachTenant')
         ->toContain('lowStockAlertsEnabled');
+});
+
+test('command source uses a per-tenant daily idempotency key', function () {
+    $source = file_get_contents(app_path('Console/Commands/Operations/SendLowStockAlertCommand.php'));
+
+    expect($source)
+        ->toContain(ScheduledNotificationRunTracker::class)
+        ->toContain('low-stock:')
+        ->toContain('toDateString()');
 });
