@@ -83,6 +83,8 @@
         "filacheck": "vendor/bin/filacheck",
         "filacheck:fix": "vendor/bin/filacheck --fix",
         "rector": "@test:rector",
+        "lint:check": "vendor/bin/pint --blade --test",
+        "frontend:check": "npm run build",
         "rector:fix": [
             "vendor/bin/rector process",
             "@rector:pest:fix"
@@ -121,11 +123,13 @@
         ],
         "check": [
             "Composer\\Config::disableProcessTimeout",
-            "@lint",
+            "@lint:check",
             "@analyse",
             "@filacheck",
+            "@test:rector",
             "@types",
-            "@test"
+            "@test",
+            "@frontend:check"
         ]
     },
     "extra": {
