@@ -15,9 +15,9 @@ test('overall stats returns zero counts with no reviews', function () {
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
 
-    expect($stats['total_reviews'])->toBe(0)
-        ->and($stats['approved_reviews'])->toBe(0)
-        ->and($stats['average_rating'])->toBe(0);
+    expect($stats->totalReviews)->toBe(0)
+        ->and($stats->approvedReviews)->toBe(0)
+        ->and($stats->averageRating)->toBe(0.0);
 });
 
 test('overall stats calculates correctly with reviews', function () {
@@ -28,9 +28,9 @@ test('overall stats calculates correctly with reviews', function () {
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
 
-    expect($stats['total_reviews'])->toBe(3)
-        ->and($stats['approved_reviews'])->toBe(2)
-        ->and($stats['average_rating'])->toBe(4.0);
+    expect($stats->totalReviews)->toBe(3)
+        ->and($stats->approvedReviews)->toBe(2)
+        ->and($stats->averageRating)->toBe(4.0);
 });
 
 test('monthly trend aggregates the latest twelve calendar months', function () {
@@ -43,13 +43,13 @@ test('monthly trend aggregates the latest twelve calendar months', function () {
     Review::factory()->create(['rating' => 1, 'created_at' => Date::parse('2025-09-30')]);
 
     $trend = (new ReviewAnalyticsService)->getMonthlyTrend();
-    $months = collect($trend)->keyBy('month_key');
+    $months = collect($trend)->keyBy('monthKey');
 
     expect($trend)->toHaveCount(12)
-        ->and($trend[0]['month'])->toBe('Oct 2025')
-        ->and($months['2025-10']['count'])->toBe(1)
-        ->and($months['2026-08']['count'])->toBe(2)
-        ->and($months['2026-08']['avg_rating'])->toBe(3.5)
-        ->and($months['2026-09']['count'])->toBe(1)
+        ->and($trend[0]->month)->toBe('Oct 2025')
+        ->and($months['2025-10']->count)->toBe(1)
+        ->and($months['2026-08']->count)->toBe(2)
+        ->and($months['2026-08']->averageRating)->toBe(3.5)
+        ->and($months['2026-09']->count)->toBe(1)
         ->and($months)->not->toHaveKey('2025-09');
 });
