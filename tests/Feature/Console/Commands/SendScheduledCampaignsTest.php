@@ -15,6 +15,15 @@ test('campaigns:send-scheduled runs successfully with no tenants', function () {
     $this->artisan('campaigns:send-scheduled')->assertSuccessful();
 });
 
+test('campaigns:send-scheduled resets stale sending campaigns for retry', function () {
+    $source = file_get_contents(app_path('Console/Commands/Customers/SendScheduledCampaignsCommand.php'));
+
+    expect($source)
+        ->toContain('CustomerCampaignStatus::Sending')
+        ->toContain('now()->subHour()')
+        ->toContain('CustomerCampaignStatus::Scheduled');
+});
+
 test('only sends scheduled campaigns whose scheduled time has arrived', function () {
     $due = CustomerCampaign::factory()->create([
         'status' => CustomerCampaignStatus::Scheduled,

@@ -20,6 +20,11 @@ class SendScheduledCampaignsCommand extends Command
     {
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings): void {
+                CustomerCampaign::query()
+                    ->where('status', CustomerCampaignStatus::Sending)
+                    ->where('updated_at', '<=', now()->subHour())
+                    ->update(['status' => CustomerCampaignStatus::Scheduled]);
+
                 $due = CustomerCampaign::query()
                     ->where('status', CustomerCampaignStatus::Scheduled)
                     ->whereNotNull('scheduled_at')
