@@ -136,6 +136,8 @@ class CateringDepositCheckoutService
 
             $depositDollars = (int) ($session->amount_total ?? 0) / 100;
 
+            $inquiry->forceFill(['stripe_payment_intent_id' => $paymentIntentId !== '' ? $paymentIntentId : null])->save();
+
             return ($this->recordCateringDeposit)(
                 $inquiry,
                 $depositDollars,

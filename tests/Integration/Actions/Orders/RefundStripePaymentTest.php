@@ -89,3 +89,24 @@ test('throws StripeRefundFailedException when the Stripe API errors', function (
     expect(Refund::query()->count())->toBe(0)
         ->and($order->fresh()->payment_status)->toBe(PaymentStatus::Paid);
 });
+
+test('refunds connected payments through the tenant Stripe account', function () {
+    settings(['stripe_connect_id' => 'acct_test_connect']);
+
+    $stripeRefundResource = (object) ['id' => 're_test_connect'];
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')
+        ->with(
+            Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_connect'),
+            ['stripe_account' => 'acct_test_connect'],
+        )
+        ->returns($stripeRefundResource);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+
+    $order = Order::factory()->paid()->create(['stripe_payment_intent_id' => 'pi_test_connect']);
+
+    $refund = resolve(RefundStripePayment::class)($order);
+
+    expect($refund?->stripe_refund_id)->toBe('re_test_connect');
+});

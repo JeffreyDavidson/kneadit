@@ -7,6 +7,7 @@ use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Stripe\StripeSettingsReader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\ApiErrorException;
@@ -31,6 +32,7 @@ class RefundStripePayment
 {
     public function __construct(
         private StripeClient $stripe,
+        private StripeSettingsReader $settings,
     ) {}
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund
@@ -45,14 +47,19 @@ class RefundStripePayment
 
         return DB::transaction(function () use ($order, $initiatedBy, $reason): Refund {
             try {
-                $stripeRefund = $this->stripe->refunds->create([
+                $payload = [
                     'payment_intent' => $order->stripe_payment_intent_id,
                     'reason' => 'requested_by_customer',
                     'metadata' => [
                         'order_id' => (string) $order->id,
                         'order_number' => (string) $order->order_number,
                     ],
-                ]);
+                ];
+                $connectId = $this->settings->connectId();
+
+                $stripeRefund = $connectId
+                    ? $this->stripe->refunds->create($payload, ['stripe_account' => $connectId])
+                    : $this->stripe->refunds->create($payload);
             } catch (ApiErrorException $e) {
                 throw new StripeRefundFailedException(
                     order: $order,

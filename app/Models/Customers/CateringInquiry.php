@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property \Illuminate\Support\Carbon|null $deposit_paid_at
  * @property string|null $deposit_reference
  * @property string|null $stripe_checkout_session_id
+ * @property string|null $stripe_payment_intent_id
  *
  * @mixin \Eloquent
  */
