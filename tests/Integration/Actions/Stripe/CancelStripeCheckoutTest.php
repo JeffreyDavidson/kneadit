@@ -23,3 +23,14 @@ test('sets order payment status to unpaid', function () {
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid);
 });
+
+test('does not downgrade a paid order', function () {
+    $order = Order::factory()
+        ->for(test()->customer)
+        ->recycle(test()->user)
+        ->create(['payment_status' => PaymentStatus::Paid]);
+
+    resolve(CancelStripeCheckout::class)($order);
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
+});

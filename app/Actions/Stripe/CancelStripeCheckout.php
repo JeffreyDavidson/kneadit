@@ -9,6 +9,10 @@ class CancelStripeCheckout
 {
     public function __invoke(Order $order): void
     {
+        if ($order->payment_status !== PaymentStatus::Unpaid) {
+            return;
+        }
+
         $order->update([
             'payment_status' => PaymentStatus::Unpaid,
         ]);
