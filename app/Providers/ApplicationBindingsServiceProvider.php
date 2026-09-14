@@ -80,8 +80,8 @@ class ApplicationBindingsServiceProvider extends ServiceProvider
         $this->app->bind(LegacyRecipeImporter::class, DatabaseLegacyRecipeImporter::class);
         $this->app->bind(LegacySchedulingImporter::class, DatabaseLegacySchedulingImporter::class);
         $this->app->bind(LegacySettingsImporter::class, DatabaseLegacySettingsImporter::class);
-        $this->app->singleton(SettingsManager::class);
-        $this->app->singleton(PlatformSettingsManager::class);
+        $this->app->scoped(SettingsManager::class);
+        $this->app->scoped(PlatformSettingsManager::class);
         $this->app->scoped(TenantSettingsRegistry::class);
         $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 

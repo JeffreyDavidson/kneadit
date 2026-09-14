@@ -19,7 +19,8 @@ use App\DataTransferObjects\Settings\WebhookSettings;
  *
  * Consumers never interact with this directly — they type-hint the DTO
  * they need (e.g., OrderSettings) or the full TenantSettings object,
- * and the container resolves it through bindings registered in AppServiceProvider.
+ * and the container resolves it through bindings registered in
+ * ApplicationBindingsServiceProvider.
  */
 class TenantSettingsRegistry
 {
