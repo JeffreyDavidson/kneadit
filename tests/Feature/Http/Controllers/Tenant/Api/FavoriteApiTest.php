@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
 use App\Models\Inventory\Product;
 
@@ -8,13 +9,16 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(fn () => setUpTenantTest());
 
 test('favorites index returns favorites for customer email as JSON:API', function () {
+    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->recycle($product)->create([
         'customer_email' => 'alice@test.com',
     ]);
+    CustomerFavorite::factory()->recycle($product)->create(['customer_email' => 'other@test.com']);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->getJson('/api/favorites?email=alice@test.com');
+        ->actingAs($customer, 'customer')
+        ->getJson('/api/favorites?email=other@test.com');
 
     $response->assertOk()
         ->assertHeader('Content-Type', 'application/vnd.api+json')
@@ -24,20 +28,21 @@ test('favorites index returns favorites for customer email as JSON:API', functio
         ->assertJsonPath('data.0.attributes.product_id', $product->id);
 });
 
-test('favorites index validates email is required', function () {
+test('favorites endpoints require a customer account', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/favorites');
 
-    $response->assertUnprocessable()
-        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/email');
+    $response->assertUnauthorized();
 });
 
 test('favorites toggle adds product to favorites and returns JSON:API envelope', function () {
+    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
         ->postJson('/api/favorites/toggle', [
-            'email' => 'alice@test.com',
+            'email' => 'other@test.com',
             'product_id' => $product->id,
         ]);
 
@@ -52,4 +57,19 @@ test('favorites toggle adds product to favorites and returns JSON:API envelope',
         'customer_email' => 'alice@test.com',
         'product_id' => $product->id,
     ]);
+});
+
+test('favorites cannot be toggled for another customer', function () {
+    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
+    $product = Product::factory()->create();
+
+    withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
+        ->postJson('/api/favorites/toggle', [
+            'email' => 'other@test.com',
+            'product_id' => $product->id,
+        ])
+        ->assertJsonPath('data.attributes.customer_email', 'alice@test.com');
+
+    expect(CustomerFavorite::query()->where('customer_email', 'other@test.com')->exists())->toBeFalse();
 });

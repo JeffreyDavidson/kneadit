@@ -31,7 +31,7 @@ test('form requests reject empty data for required fields', function () {
         App\Http\Requests\Api\StoreApiWaitlistRequest::class => ['customer_name', 'customer_email', 'customer_phone', 'requested_date'],
         App\Http\Requests\Storefront\StoreReviewRequest::class => ['rating'],
         App\Http\Requests\Storefront\StoreProductWaitlistRequest::class => ['product_id', 'customer_email'],
-        App\Http\Requests\Api\StoreApiFavoriteRequest::class => ['email', 'product_id'],
+        App\Http\Requests\Api\StoreApiFavoriteRequest::class => ['product_id'],
         App\Http\Requests\Api\StoreApiOrderRequest::class => ['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type'],
         App\Http\Requests\Storefront\StoreOnboardingRequest::class => ['store_name', 'subdomain', 'storefront_choice'],
         App\Http\Requests\Storefront\StoreGalleryPhotoRequest::class => ['customer_name', 'customer_email', 'photo'],
@@ -68,7 +68,6 @@ test('form requests reject invalid email values', function () {
         App\Http\Requests\Api\StoreApiOrderRequest::class => 'customer_email',
         App\Http\Requests\Storefront\StoreProductWaitlistRequest::class => 'customer_email',
         App\Http\Requests\Storefront\StoreGalleryPhotoRequest::class => 'customer_email',
-        App\Http\Requests\Api\StoreApiFavoriteRequest::class => 'email',
     ];
 
     foreach ($requests as $requestClass => $emailField) {

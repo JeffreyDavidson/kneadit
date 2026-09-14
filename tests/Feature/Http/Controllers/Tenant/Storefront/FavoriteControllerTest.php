@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
 use App\Models\Inventory\Product;
 
@@ -8,6 +9,7 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(fn () => setUpTenantTest());
 
 test('can get favorites for an email', function () {
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->create([
         'customer_email' => 'jane@example.com',
@@ -15,6 +17,7 @@ test('can get favorites for an email', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
         ->getJson(route('api.favorites.index', ['email' => 'jane@example.com'], false));
 
     $response->assertOk()
@@ -22,9 +25,11 @@ test('can get favorites for an email', function () {
 });
 
 test('can toggle a favorite on', function () {
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
         ->postJson(route('api.favorites.toggle', [], false), [
             'email' => 'jane@example.com',
             'product_id' => $product->id,
@@ -37,6 +42,7 @@ test('can toggle a favorite on', function () {
 });
 
 test('can toggle a favorite off', function () {
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->create([
         'customer_email' => 'jane@example.com',
@@ -44,6 +50,7 @@ test('can toggle a favorite off', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
         ->postJson(route('api.favorites.toggle', [], false), [
             'email' => 'jane@example.com',
             'product_id' => $product->id,
