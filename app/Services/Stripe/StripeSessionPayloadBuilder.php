@@ -80,6 +80,17 @@ class StripeSessionPayloadBuilder
             ];
         }
 
+        if ($order->tip_amount->isPositive()) {
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => $currency,
+                    'product_data' => ['name' => 'Tip'],
+                    'unit_amount' => $order->tip_amount->cents(),
+                ],
+                'quantity' => 1,
+            ];
+        }
+
         return $lineItems;
     }
 
