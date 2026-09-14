@@ -6,6 +6,7 @@ use App\Mail\Customers\NewWaitlistJoinNotificationMail;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 pest()->use(RefreshDatabase::class);
@@ -35,6 +36,10 @@ test('queues notification to the configured store email', function () {
 
 test('skips when no store email is configured', function () {
     settings(['store_email' => '']);
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context): bool => str_contains($message, 'no store email')
+            && isset($context['waitlist_entry']));
     $product = Product::factory()->create();
     $entry = ProductWaitlist::query()->create([
         'product_id' => $product->id,
