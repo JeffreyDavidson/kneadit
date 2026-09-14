@@ -48,7 +48,7 @@ class StripeConnectWebhookController extends Controller
         $type = $event->type;
         $data = $event->data->object ?? null;
 
-        if ($this->eventAlreadyProcessed($event->id)) {
+        if (! $this->claimWebhookEvent($event->id)) {
             return response('Already processed', 200);
         }
 
@@ -56,11 +56,24 @@ class StripeConnectWebhookController extends Controller
             'type' => $type,
         ]);
 
-        match ($type) {
-            'account.updated' => resolve(HandleConnectAccountUpdated::class)($data),
-            'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)($data),
-            default => null,
-        };
+        try {
+            match ($type) {
+                'account.updated' => resolve(HandleConnectAccountUpdated::class)($data),
+                'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)($data),
+                default => null,
+            };
+
+            $this->completeWebhookEvent($event->id);
+        } catch (\Throwable $e) {
+            $this->releaseWebhookEvent($event->id);
+
+            Log::error('Stripe Connect webhook processing failed', [
+                'type' => $type,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response('Webhook processing failed', 500);
+        }
 
         return response('OK', 200);
     }

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
+use Illuminate\Support\Facades\Cache;
+
 use function Pest\Laravel\postJson;
 
 beforeEach(function () {
@@ -75,6 +78,41 @@ test('webhook controller implements idempotency via cache', function () {
         ->toContain('Already processed')
         ->and($traitSource)
         ->toContain('Cache::add("stripe_event:{$eventId}"');
+});
+
+test('failed webhook claims can be released for a retry', function () {
+    config(['cache.default' => 'array']);
+    Cache::flush();
+
+    $guard = new class {
+        use EnsuresWebhookIdempotency;
+
+        public function claim(?string $eventId): bool
+        {
+            return $this->claimWebhookEvent($eventId);
+        }
+
+        public function complete(?string $eventId): void
+        {
+            $this->completeWebhookEvent($eventId);
+        }
+
+        public function release(?string $eventId): void
+        {
+            $this->releaseWebhookEvent($eventId);
+        }
+    };
+
+    expect($guard->claim('evt_retry'))->toBeTrue()
+        ->and($guard->claim('evt_retry'))->toBeFalse();
+
+    $guard->release('evt_retry');
+
+    expect($guard->claim('evt_retry'))->toBeTrue();
+
+    $guard->complete('evt_retry');
+
+    expect($guard->claim('evt_retry'))->toBeFalse();
 });
 
 test('webhook controller verifies stripe signature', function () {
