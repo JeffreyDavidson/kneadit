@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\PayPal\HttpPayPalClient;
 use App\Services\PayPal\PaymentVerifier;
 use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
@@ -30,7 +31,7 @@ test('it returns invoice status on success', function () {
         ], 200),
     ]);
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-001'))->toBe('PAID');
 });
@@ -38,7 +39,7 @@ test('it returns invoice status on success', function () {
 test('it returns null when access token is unavailable', function () {
     $tokenManager = paymentVerifierTokenManager(null);
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-001'))->toBeNull();
 });
@@ -52,7 +53,7 @@ test('it returns null on api failure', function () {
         ], 404),
     ]);
 
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
 
     expect($verifier->getInvoiceStatus('INV-002'))->toBeNull();
 });

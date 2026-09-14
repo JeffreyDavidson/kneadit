@@ -13,6 +13,10 @@ use App\DataTransferObjects\Settings\PaymentSettings;
 use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
+use App\Services\PayPal\Contracts\PayPalClient;
+use App\Services\PayPal\HttpPayPalClient;
+use App\Services\Platform\Contracts\ForgeClient;
+use App\Services\Platform\HttpForgeClient;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
@@ -63,6 +67,8 @@ class ApplicationBindingsServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->bind(PayPalClient::class, HttpPayPalClient::class);
+        $this->app->bind(ForgeClient::class, HttpForgeClient::class);
         $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
         $this->app->bind(LegacyCouponImporter::class, DatabaseLegacyCouponImporter::class);
         $this->app->bind(LegacyCustomerImporter::class, DatabaseLegacyCustomerImporter::class);
