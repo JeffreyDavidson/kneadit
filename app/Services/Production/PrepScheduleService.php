@@ -2,26 +2,27 @@
 
 namespace App\Services\Production;
 
+use App\DataTransferObjects\Production\PrepTask;
+use App\DataTransferObjects\Production\PrepTimelineItem;
+use App\DataTransferObjects\Production\PrepWeekSummary;
+use App\DataTransferObjects\Production\ProductPreparationSummary;
+use App\DataTransferObjects\Production\WeeklyPrepData;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
 /**
  * @phpstan-type WeeklyOrders Collection<string, EloquentCollection<int, Order>>
- * @phpstan-type PrepTask array{date: string, order_number: string, customer_name: string, product_name: string, recipe_name: string, quantity: int, prep_time_minutes: int, delivery_time: string, prep_start_time: string, prep_start_datetime: Carbon}
  * @phpstan-type PrepSchedule Collection<string, Collection<int, PrepTask>>
  */
 class PrepScheduleService
 {
     /**
      * Load orders for the given week and generate day list.
-     *
-     * @return array{weeklyOrders: WeeklyOrders, weekDays: list<Carbon>, prepSchedule: PrepSchedule}
      */
-    public function loadWeeklyData(string $weekStart): array
+    public function loadWeeklyData(string $weekStart): WeeklyPrepData
     {
         $startDate = Date::parse($weekStart);
         $endDate = $startDate->copy()->endOfWeek();
@@ -43,11 +44,7 @@ class PrepScheduleService
 
         $prepSchedule = $this->generatePrepSchedule($weeklyOrders);
 
-        return [
-            'weeklyOrders' => $weeklyOrders,
-            'weekDays' => $weekDays,
-            'prepSchedule' => $prepSchedule,
-        ];
+        return new WeeklyPrepData($weeklyOrders, $weekDays, $prepSchedule);
     }
 
     /**
@@ -75,18 +72,18 @@ class PrepScheduleService
 
                         $prepStartTime = $requestedDateTime->copy()->subMinutes($prepTimeMinutes);
 
-                        $prepTasks[] = [
-                            'date' => $date,
-                            'order_number' => $order->order_number,
-                            'customer_name' => $order->customer->name ?? 'Unknown Customer',
-                            'product_name' => $product->name,
-                            'recipe_name' => $recipe->name,
-                            'quantity' => $quantity,
-                            'prep_time_minutes' => $prepTimeMinutes,
-                            'delivery_time' => $order->delivery_time ? Date::parse($order->delivery_time)->format('H:i') : 'Not specified',
-                            'prep_start_time' => $prepStartTime->format('H:i'),
-                            'prep_start_datetime' => $prepStartTime,
-                        ];
+                        $prepTasks[] = new PrepTask(
+                            date: $date,
+                            orderNumber: $order->order_number,
+                            customerName: $order->customer->name ?? 'Unknown Customer',
+                            productName: $product->name,
+                            recipeName: $recipe->name,
+                            quantity: $quantity,
+                            prepTimeMinutes: $prepTimeMinutes,
+                            deliveryTime: $order->delivery_time ? Date::parse($order->delivery_time)->format('H:i') : 'Not specified',
+                            prepStartTime: $prepStartTime->format('H:i'),
+                            prepStartDateTime: $prepStartTime,
+                        );
                     }
                 }
             }
@@ -97,7 +94,7 @@ class PrepScheduleService
 
     /**
      * @param WeeklyOrders $weeklyOrders
-     * @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}>
+     * @return Collection<string, ProductPreparationSummary>
      */
     public function getProductSummary(Collection $weeklyOrders): Collection
     {
@@ -111,40 +108,38 @@ class PrepScheduleService
 
                     if (isset($productSummary[$productName])) {
                         $existing = $productSummary[$productName];
-                        $existing['total_quantity'] += $quantity;
-                        $existing['orders_count'] += 1;
-                        $productSummary[$productName] = $existing;
+                        $productSummary[$productName] = new ProductPreparationSummary(
+                            productName: $existing->productName,
+                            totalQuantity: $existing->totalQuantity + $quantity,
+                            ordersCount: $existing->ordersCount + 1,
+                        );
                     } else {
-                        $productSummary[$productName] = [
-                            'product_name' => $productName,
-                            'total_quantity' => $quantity,
-                            'orders_count' => 1,
-                        ];
+                        $productSummary[$productName] = new ProductPreparationSummary($productName, $quantity, 1);
                     }
                 }
             }
         }
 
-        return collect($productSummary)->sortByDesc('total_quantity');
+        return collect($productSummary)->sortByDesc('totalQuantity');
     }
 
     /**
      * @param PrepSchedule $prepSchedule
-     * @return Collection<string, Collection<int, array{time: string, task: string, duration: int, order: string, delivery_time: string}>>
+     * @return Collection<string, Collection<int, PrepTimelineItem>>
      */
     public function getTimelineView(Collection $prepSchedule): Collection
     {
         $timeline = [];
 
         foreach ($prepSchedule as $date => $prepTasks) {
-            $dayTimeline = $prepTasks->sortBy('prep_start_datetime')->map(function (array $task) {
-                return [
-                    'time' => $task['prep_start_time'],
-                    'task' => "Start {$task['product_name']} (x{$task['quantity']}) for {$task['customer_name']}",
-                    'duration' => $task['prep_time_minutes'],
-                    'order' => $task['order_number'],
-                    'delivery_time' => $task['delivery_time'],
-                ];
+            $dayTimeline = $prepTasks->sortBy('prepStartDateTime')->map(function (PrepTask $task): PrepTimelineItem {
+                return new PrepTimelineItem(
+                    time: $task->prepStartTime,
+                    task: "Start {$task->productName} (x{$task->quantity}) for {$task->customerName}",
+                    duration: $task->prepTimeMinutes,
+                    order: $task->orderNumber,
+                    deliveryTime: $task->deliveryTime,
+                );
             });
 
             $timeline[$date] = $dayTimeline->values();
@@ -162,7 +157,7 @@ class PrepScheduleService
 
         foreach ($prepSchedule as $date => $prepTasks) {
             $totalMinutes += $prepTasks->sum(
-                fn (array $task): int => $task['prep_time_minutes'],
+                fn (PrepTask $task): int => $task->prepTimeMinutes,
             );
         }
 
@@ -172,9 +167,8 @@ class PrepScheduleService
     /**
      * @param WeeklyOrders $weeklyOrders
      * @param PrepSchedule $prepSchedule
-     * @return array{total_orders: int, total_items: int, total_revenue: float, total_prep_hours: float}
      */
-    public function getWeekSummary(Collection $weeklyOrders, Collection $prepSchedule): array
+    public function getWeekSummary(Collection $weeklyOrders, Collection $prepSchedule): PrepWeekSummary
     {
         $totalOrders = 0;
         $totalItems = 0;
@@ -190,11 +184,11 @@ class PrepScheduleService
             }
         }
 
-        return [
-            'total_orders' => $totalOrders,
-            'total_items' => $totalItems,
-            'total_revenue' => $totalRevenue,
-            'total_prep_hours' => $this->getTotalPrepHours($prepSchedule),
-        ];
+        return new PrepWeekSummary(
+            totalOrders: $totalOrders,
+            totalItems: $totalItems,
+            totalRevenue: $totalRevenue,
+            totalPrepHours: $this->getTotalPrepHours($prepSchedule),
+        );
     }
 }
