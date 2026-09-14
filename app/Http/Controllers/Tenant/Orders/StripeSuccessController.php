@@ -16,14 +16,18 @@ class StripeSuccessController extends Controller
      */
     public function __invoke(Request $request, Order $order, StripeCheckoutService $stripeService): RedirectResponse
     {
-        $sessionId = $request->query('session_id');
+        $sessionId = $request->string('session_id')->toString();
 
-        if ($sessionId) {
-            $stripeService->handleCheckoutComplete($sessionId);
+        if ($sessionId === '') {
+            abort(403);
         }
 
-        // Returning from Stripe checkout for THIS order is sufficient
-        // proof of ownership for this session.
+        $completedOrder = $stripeService->handleCheckoutComplete($sessionId);
+
+        if ($completedOrder === null || $completedOrder->isNot($order)) {
+            abort(403);
+        }
+
         OrderAccessGuard::grant($order);
 
         return to_route('order.confirmation', $order)

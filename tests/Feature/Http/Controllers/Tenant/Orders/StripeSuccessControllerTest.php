@@ -12,11 +12,11 @@ test('redirects to order confirmation with success message', function () {
     $order = Order::factory()->create();
 
     $stripeService = Double::for(StripeCheckoutService::class);
-    $stripeService->expects('handleCheckoutComplete')->never();
+    $stripeService->expects('handleCheckoutComplete')->with('cs_test_123')->returns($order);
     app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get(route('order.stripe.success', $order, false));
+        ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));
 
     $response->assertRedirect()
         ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
@@ -27,7 +27,8 @@ test('calls handleCheckoutComplete when session_id is present', function () {
 
     $stripeService = Double::for(StripeCheckoutService::class);
     $stripeService->expects('handleCheckoutComplete')
-        ->with('cs_test_123');
+        ->with('cs_test_123')
+        ->returns($order);
     app()->instance(StripeCheckoutService::class, $stripeService);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -37,7 +38,7 @@ test('calls handleCheckoutComplete when session_id is present', function () {
         ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
 });
 
-test('does not call handleCheckoutComplete when session_id is absent', function () {
+test('rejects a missing session id', function () {
     $order = Order::factory()->create();
 
     $stripeService = Double::for(StripeCheckoutService::class);
@@ -47,5 +48,21 @@ test('does not call handleCheckoutComplete when session_id is absent', function 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.stripe.success', $order, false));
 
-    $response->assertRedirect();
+    $response->assertForbidden();
+});
+
+test('rejects an unverified or mismatched checkout session', function () {
+    $order = Order::factory()->create();
+    $otherOrder = Order::factory()->create();
+
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('handleCheckoutComplete')
+        ->with('cs_test_123')
+        ->returns($otherOrder);
+    app()->instance(StripeCheckoutService::class, $stripeService);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));
+
+    $response->assertForbidden();
 });
