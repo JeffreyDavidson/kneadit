@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Operations;
 
+use App\DataTransferObjects\Production\PrepTimelineItem;
+use App\DataTransferObjects\Production\ProductPreparationSummary;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -74,21 +76,27 @@ class WeeklyPrepPlanner extends Page
 
         $data = resolve(PrepScheduleService::class)->loadWeeklyData($this->selectedWeekStart);
 
-        $this->weeklyOrders = $data['weeklyOrders'];
-        $this->weekDays = $data['weekDays'];
-        $this->prepSchedule = $data['prepSchedule'];
+        $this->weeklyOrders = $data->weeklyOrders;
+        $this->weekDays = $data->weekDays;
+        $this->prepSchedule = $data->prepSchedule;
     }
 
     /** @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}> */
     public function getProductSummary(): Collection
     {
-        return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders);
+        return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders)->map(
+            static fn (ProductPreparationSummary $summary): array => $summary->toArray(),
+        );
     }
 
     /** @return Collection<string, Collection<int, array{time: string, task: string, duration: int, order: string, delivery_time: string}>> */
     public function getTimelineView(): Collection
     {
-        return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule);
+        return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule)->map(
+            static fn (Collection $items): Collection => $items->map(
+                static fn (PrepTimelineItem $item): array => $item->toArray(),
+            ),
+        );
     }
 
     public function getTotalPrepHours(): float
@@ -99,6 +107,6 @@ class WeeklyPrepPlanner extends Page
     /** @return array{total_orders: int, total_items: int, total_revenue: float, total_prep_hours: float} */
     public function getWeekSummary(): array
     {
-        return resolve(PrepScheduleService::class)->getWeekSummary($this->weeklyOrders, $this->prepSchedule);
+        return resolve(PrepScheduleService::class)->getWeekSummary($this->weeklyOrders, $this->prepSchedule)->toArray();
     }
 }
