@@ -99,6 +99,7 @@ Shared test setup follows the same rule: `tests/Pest.php` keeps suite-wide lifec
 
 See [Domain ownership map](domain-ownership.md) for the ownership rules, current organization audit, and sequenced refactoring candidates.
 See [Deep application audit](deep-application-audit.md) for the broader Laravel, class-design, persistence, UI, testing, and operations review.
+See [Application refactoring roadmap](refactoring-roadmap.md) for the completed workstreams, delivery order, verification gates, and remaining documentation decisions.
 
 - **Platform and tenancy:** bakery registration, onboarding, domains, plans, trials, subscriptions, referrals, support, announcements, audits, impersonation, backups, and health.
 - **Storefront and content:** bakery home pages, menus, blogs, galleries, catering, gift cards, reviews, policies, branding, and PWA metadata.
