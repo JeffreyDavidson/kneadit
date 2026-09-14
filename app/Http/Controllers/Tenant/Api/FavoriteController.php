@@ -16,9 +16,11 @@ class FavoriteController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $email = $this->customerEmail();
+        $customer = Auth::guard('customer')->user();
+        abort_unless($customer instanceof Customer, 401);
+
         $favorites = CustomerFavorite::query()
-            ->forCustomer($email)
+            ->forCustomer($customer->email)
             ->with('product')
             ->get();
 
@@ -27,7 +29,10 @@ class FavoriteController extends Controller
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): FavoriteToggleResource
     {
-        $email = $this->customerEmail();
+        $customer = Auth::guard('customer')->user();
+        abort_unless($customer instanceof Customer, 401);
+
+        $email = $customer->email;
         $productId = $request->integer('product_id');
 
         $favorited = $toggleFavorite($email, $productId);
@@ -37,14 +42,5 @@ class FavoriteController extends Controller
             'product_id' => $productId,
             'favorited' => $favorited,
         ]);
-    }
-
-    private function customerEmail(): string
-    {
-        $customer = Auth::guard('customer')->user();
-
-        abort_unless($customer instanceof Customer, 401);
-
-        return $customer->email;
     }
 }
