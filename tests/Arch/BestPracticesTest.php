@@ -15,6 +15,8 @@ arch('services should be classes')
     ->toBeClasses()
     ->ignoring([
         'App\Services\Engagement\Contracts',
+        'App\Services\PayPal\Contracts',
+        'App\Services\Platform\Contracts',
         'App\Services\Platform\HealthChecks\Contracts',
         'App\Services\Tenants\Contracts',
     ]);
