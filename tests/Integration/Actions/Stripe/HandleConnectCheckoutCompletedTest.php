@@ -69,7 +69,7 @@ test('it processes checkout session within tenant context', function () {
     resolve(HandleConnectCheckoutCompleted::class)($session);
 });
 
-test('it catches exceptions during tenant context processing', function () {
+test('it propagates exceptions during tenant context processing for webhook retry', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
     $tenancyManager = Double::for(TenancyManager::class);
@@ -91,5 +91,6 @@ test('it catches exceptions during tenant context processing', function () {
         ],
     ];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    expect(fn () => resolve(HandleConnectCheckoutCompleted::class)($session))
+        ->toThrow(Exception::class, 'Processing failed');
 });

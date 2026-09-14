@@ -62,6 +62,8 @@ class HandleConnectCheckoutCompleted
                 'tenant' => $tenant->id,
                 'error' => $e->getMessage(),
             ]);
+
+            throw $e;
         }
     }
 }
