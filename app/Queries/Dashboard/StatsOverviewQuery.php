@@ -2,6 +2,7 @@
 
 namespace App\Queries\Dashboard;
 
+use App\DataTransferObjects\Analytics\DateSeries;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
@@ -35,7 +36,8 @@ class StatsOverviewQuery
         $lastWeekStart = $weekStart->copy()->subWeek();
         $lastWeekEnd = $weekEnd->copy()->subWeek();
 
-        $dates = $this->dateKeys($chartStart, $today);
+        $dateSeries = DateSeries::between($chartStart, $today);
+        $dates = $dateSeries->dates();
         $ordersByDate = $this->ordersByDeliveryDate($chartStart, $today);
         $pendingByDate = $this->pendingOrdersByCreatedDate($chartStart, $today);
         $viewsByDate = $this->storefrontViewsByDate($chartStart, $today);
@@ -44,9 +46,9 @@ class StatsOverviewQuery
             $weekEnd->toDateString(),
         ]);
 
-        $ordersChart = $this->integerChart($dates, $ordersByDate);
-        $pendingChart = $this->integerChart($dates, $pendingByDate);
-        $viewsChart = $this->integerChart($dates, $viewsByDate);
+        $ordersChart = $dateSeries->fillIntegers($ordersByDate);
+        $pendingChart = $dateSeries->fillIntegers($pendingByDate);
+        $viewsChart = $dateSeries->fillIntegers($viewsByDate);
         $revenueChart = array_map(
             fn (string $date): int => (int) ($revenueByDate[$date] ?? 0),
             $dates,
@@ -113,36 +115,12 @@ class StatsOverviewQuery
             ->all();
     }
 
-    /** @return list<string> */
-    private function dateKeys(Carbon $start, Carbon $end): array
-    {
-        $dates = [];
-        $date = $start->copy()->startOfDay();
-
-        while ($date->lte($end)) {
-            $dates[] = $date->toDateString();
-            $date->addDay();
-        }
-
-        return $dates;
-    }
-
-    /**
-     * @param list<string> $dates
-     * @param array<string, int> $values
-     * @return list<int>
-     */
-    private function integerChart(array $dates, array $values): array
-    {
-        return array_map(fn (string $date): int => $values[$date] ?? 0, $dates);
-    }
-
     /** @param array<string, float> $revenue */
     private function sumRange(array $revenue, Carbon $start, Carbon $end): float
     {
         return array_sum(array_map(
             fn (string $date): float => $revenue[$date] ?? 0.0,
-            $this->dateKeys($start, $end),
+            DateSeries::between($start, $end)->dates(),
         ));
     }
 }
