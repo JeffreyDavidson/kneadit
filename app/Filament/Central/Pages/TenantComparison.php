@@ -2,6 +2,8 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\DataTransferObjects\Platform\TenantComparisonResult;
+use App\DataTransferObjects\Platform\TenantLeaderboardEntry;
 use App\Queries\Platform\TenantComparisonQuery;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -44,24 +46,30 @@ class TenantComparison extends Page
     /** @return array<string, mixed> */
     public function getAllTenants(): array
     {
-        return TenantComparisonQuery::allTenants();
+        return resolve(TenantComparisonQuery::class)->allTenants();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getComparisonData(): array
     {
-        return TenantComparisonQuery::comparison($this->selectedTenants);
+        return array_map(
+            static fn (TenantComparisonResult $result): array => $result->toArray(),
+            resolve(TenantComparisonQuery::class)->comparison(array_values($this->selectedTenants)),
+        );
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getLeaderboardData(): array
     {
-        return TenantComparisonQuery::leaderboard();
+        return array_map(
+            static fn (TenantLeaderboardEntry $entry): array => $entry->toArray(),
+            resolve(TenantComparisonQuery::class)->leaderboard(),
+        );
     }
 
     /** @return array<string, mixed> */
     public function getLeaderboardSummaryStats(): array
     {
-        return TenantComparisonQuery::leaderboardSummary();
+        return resolve(TenantComparisonQuery::class)->leaderboardSummary()->toArray();
     }
 }

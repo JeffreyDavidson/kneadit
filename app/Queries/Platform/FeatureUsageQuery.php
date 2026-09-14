@@ -2,6 +2,9 @@
 
 namespace App\Queries\Platform;
 
+use App\DataTransferObjects\Platform\FeatureTenantUsage;
+use App\DataTransferObjects\Platform\FeatureUsageBar;
+use App\DataTransferObjects\Platform\FeatureUsageHeatmap;
 use App\Models\Platform\FeatureUsageLog;
 use App\Models\Platform\Tenant;
 use Carbon\Carbon;
@@ -11,12 +14,12 @@ use Illuminate\Support\Facades\Date;
 
 class FeatureUsageQuery
 {
-    public static function hasData(): bool
+    public function hasData(): bool
     {
         return FeatureUsageLog::query()->exists();
     }
 
-    public static function mostUsedFeature(): ?string
+    public function mostUsedFeature(): ?string
     {
         $feature = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
@@ -27,7 +30,7 @@ class FeatureUsageQuery
         return is_string($feature) ? $feature : null;
     }
 
-    public static function leastUsedFeature(): ?string
+    public function leastUsedFeature(): ?string
     {
         $feature = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
@@ -38,19 +41,19 @@ class FeatureUsageQuery
         return is_string($feature) ? $feature : null;
     }
 
-    public static function totalInteractionsThisMonth(): int
+    public function totalInteractionsThisMonth(): int
     {
         return (int) FeatureUsageLog::query()->whereMonth('date', Date::now()->month)
             ->whereYear('date', Date::now()->year)
             ->sum('usage_count');
     }
 
-    public static function totalInteractionsAllTime(): int
+    public function totalInteractionsAllTime(): int
     {
         return (int) FeatureUsageLog::query()->sum('usage_count');
     }
 
-    public static function featureTotalCount(?string $feature): int
+    public function featureTotalCount(?string $feature): int
     {
         if (! $feature) {
             return 0;
@@ -59,8 +62,8 @@ class FeatureUsageQuery
         return (int) FeatureUsageLog::query()->where('feature', $feature)->sum('usage_count');
     }
 
-    /** @return Collection<int, array{feature: string, total: int, percent: float}> */
-    public static function featureUsageBars(): Collection
+    /** @return Collection<int, FeatureUsageBar> */
+    public function featureUsageBars(): Collection
     {
         $data = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
@@ -71,19 +74,18 @@ class FeatureUsageQuery
         $maximumTotal = $data->max('total');
         $max = is_numeric($maximumTotal) ? (int) $maximumTotal : 1;
 
-        return $data->map(function (FeatureUsageLog $row) use ($max): array {
+        return $data->map(function (FeatureUsageLog $row) use ($max): FeatureUsageBar {
             $total = Arr::integer($row->getAttributes(), 'total', 0);
 
-            return [
-                'feature' => $row->feature,
-                'total' => $total,
-                'percent' => round(($total / max($max, 1)) * 100),
-            ];
+            return new FeatureUsageBar(
+                feature: $row->feature,
+                total: $total,
+                percent: round(($total / max($max, 1)) * 100),
+            );
         });
     }
 
-    /** @return array<string, mixed> */
-    public static function heatmapData(): array
+    public function heatmapData(): FeatureUsageHeatmap
     {
         $days = collect(range(6, 0))->map(fn (int $daysAgo): Carbon => Date::today()->subDays($daysAgo));
 
@@ -128,14 +130,14 @@ class FeatureUsageQuery
             ];
         }
 
-        return [
-            'days' => $days->map(fn (Carbon $d) => $d->format('M d'))->toArray(),
-            'rows' => $rows,
-        ];
+        return new FeatureUsageHeatmap(
+            days: array_values($days->map(fn (Carbon $d): string => $d->format('M d'))->all()),
+            rows: $rows,
+        );
     }
 
-    /** @return Collection<int, array{tenant_id: string, name: string, total: int}> */
-    public static function featureTenantBreakdown(string $feature): Collection
+    /** @return Collection<int, FeatureTenantUsage> */
+    public function featureTenantBreakdown(string $feature): Collection
     {
         $rows = FeatureUsageLog::query()->select('tenant_id')
             ->selectRaw('SUM(usage_count) as total')
@@ -153,14 +155,14 @@ class FeatureUsageQuery
             ->whereIn('id', $rows->pluck('tenant_id')->all())
             ->pluck('name', 'id');
 
-        return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames) {
-            return [
-                'tenant_id' => $row->tenant_id,
-                'name' => is_string($tenantNames[$row->tenant_id] ?? null)
+        return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames): FeatureTenantUsage {
+            return new FeatureTenantUsage(
+                tenantId: $row->tenant_id,
+                name: is_string($tenantNames[$row->tenant_id] ?? null)
                     ? $tenantNames[$row->tenant_id]
                     : (is_string($fallbackNames[$row->tenant_id] ?? null) ? $fallbackNames[$row->tenant_id] : $row->tenant_id),
-                'total' => (int) $row->total,
-            ];
+                total: (int) $row->total,
+            );
         });
     }
 }
