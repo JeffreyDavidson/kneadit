@@ -115,8 +115,11 @@ test('associative arrays in controllers should be multiline', function () {
 });
 
 test('model static calls in controllers must use explicit query()', function () {
-    $controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php') ?: [])
-        ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php') ?: [])
+    $controllerFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Http/Controllers', FilesystemIterator::SKIP_DOTS),
+    )))
+        ->filter(fn (SplFileInfo $file): bool => $file->getExtension() === 'php')
+        ->map(fn (SplFileInfo $file): string => $file->getPathname())
         ->reject(fn ($file) => str_ends_with($file, 'Controller.php') && basename($file) === 'Controller.php');
 
     $modelClasses = [];

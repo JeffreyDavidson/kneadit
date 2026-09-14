@@ -10,7 +10,7 @@ Prerequisites:
 
 - PHP 8.5 with the extensions required by Laravel and SQLite
 - Composer
-- Node.js and npm
+- Node.js 24+ and npm
 - A local domain that resolves `kneadit.test` and `*.kneadit.test` to the application (Laravel Herd supplies this on the primary development machine)
 
 Install the application:
