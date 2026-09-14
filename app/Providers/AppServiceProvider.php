@@ -2,24 +2,9 @@
 
 namespace App\Providers;
 
-use App\DataTransferObjects\Settings\BrandingSettings;
-use App\DataTransferObjects\Settings\CateringSettings;
-use App\DataTransferObjects\Settings\EngagementSettings;
-use App\DataTransferObjects\Settings\HomepageSettings;
-use App\DataTransferObjects\Settings\LoyaltySettings;
-use App\DataTransferObjects\Settings\OnboardingSettings;
-use App\DataTransferObjects\Settings\OrderSettings;
-use App\DataTransferObjects\Settings\PaymentSettings;
-use App\DataTransferObjects\Settings\PolicySettings;
-use App\DataTransferObjects\Settings\StoreInfo;
-use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
-use App\Services\Settings\PlatformSettingsManager;
-use App\Services\Settings\SettingsManager;
-use App\Services\Settings\TenantSettings;
-use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\Contracts\LegacyCatalogImporter;
 use App\Services\Tenants\Contracts\LegacyCouponImporter;
 use App\Services\Tenants\Contracts\LegacyCustomerImporter;
@@ -30,7 +15,6 @@ use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\Repository as CacheRepository;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -45,33 +29,11 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * @var array<class-string, string>
-     */
-    private const array TENANT_SETTING_DTOS = [
-        StoreInfo::class => 'store',
-        BrandingSettings::class => 'branding',
-        OrderSettings::class => 'orders',
-        PaymentSettings::class => 'payment',
-        LoyaltySettings::class => 'loyalty',
-        CateringSettings::class => 'catering',
-        EngagementSettings::class => 'engagement',
-        PolicySettings::class => 'policies',
-        WebhookSettings::class => 'webhooks',
-        HomepageSettings::class => 'homepage',
-        OnboardingSettings::class => 'onboarding',
-    ];
-
     public function register(): void
     {
         $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
         $this->app->bind(LegacyCouponImporter::class, DatabaseLegacyCouponImporter::class);
         $this->app->bind(LegacyCustomerImporter::class, DatabaseLegacyCustomerImporter::class);
-        $this->app->singleton(SettingsManager::class);
-        $this->app->singleton(PlatformSettingsManager::class);
-        $this->app->scoped(TenantSettingsRegistry::class);
-        $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
-
         // Per-request scoped: SecurityHeaders middleware writes the nonce into
         // the CSP header, the @cspnonce Blade directive emits it on inline
         // <script>/<style> tags. Same value flows through the request.
@@ -82,10 +44,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(
             Config::string('cashier.secret', ''),
         ));
-
-        foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
-            $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
-        }
     }
 
     public function boot(): void
