@@ -113,25 +113,49 @@ class InvoicePayloadBuilder
             ];
         }
 
+        if ($order->tip_amount->isPositive()) {
+            $items[] = [
+                'name' => 'Tip',
+                'description' => 'Tip for the bakery team',
+                'quantity' => '1',
+                'unit_amount' => [
+                    'currency_code' => $currency,
+                    'value' => number_format($order->tip_amount->dollars(), 2, '.', ''),
+                ],
+                'unit_of_measure' => 'QUANTITY',
+            ];
+        }
+
         return $items;
     }
 
     /** @return array<string, mixed> */
     private function buildAmountBreakdown(Order $order, string $currency): array
     {
+        $discount = $order->discount_amount->add($order->gift_card_amount);
+        $itemTotal = $order->subtotal
+            ->add($order->delivery_fee)
+            ->add($order->tip_amount);
+
         $amount = [
             'currency_code' => $currency,
+            'value' => number_format($order->total->dollars(), 2, '.', ''),
             'breakdown' => [
                 'item_total' => [
                     'currency_code' => $currency,
-                    'value' => number_format($order->subtotal->add($order->delivery_fee)->dollars(), 2, '.', ''),
+                    'value' => number_format($itemTotal->dollars(), 2, '.', ''),
                 ],
             ],
         ];
 
-        if ($order->discount_amount->isPositive()) {
+        if ($discount->isPositive()) {
             $amount['breakdown']['discount'] = [
-                'invoice_discount' => ['percent' => '0'],
+                'invoice_discount' => [
+                    'amount' => [
+                        'currency_code' => $currency,
+                        'value' => number_format($discount->dollars(), 2, '.', ''),
+                    ],
+                ],
             ];
         }
 

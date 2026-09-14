@@ -139,7 +139,7 @@ class StripeCheckoutService
         }
 
         $coupon = $this->stripe->coupons->create([
-            'amount_off' => $order->discount_amount->cents(),
+            'amount_off' => $order->discount_amount->add($order->gift_card_amount)->cents(),
             'currency' => Config::string('cashier.currency', 'usd'),
             'duration' => 'once',
             'name' => 'Order Discount',

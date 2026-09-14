@@ -25,6 +25,7 @@ test('builds payload with correct structure for a basic order', function () {
         ->and(data_get($payload, 'primary_recipients.0.billing_info.name.given_name'))->toBe('Jane')
         ->and(data_get($payload, 'primary_recipients.0.billing_info.name.surname'))->toBe('Doe')
         ->and(data_get($payload, 'items'))->toHaveCount(2)
+        ->and(data_get($payload, 'amount.value'))->toBe(number_format($order->total->dollars(), 2, '.', ''))
         ->and(data_get($payload, 'configuration.allow_tip'))->toBeFalse();
 });
 
@@ -51,6 +52,27 @@ test('excludes delivery fee line item when delivery fee is zero', function () {
     $payload = $builder->build($order);
 
     expect(data_get($payload, 'items'))->toHaveCount(1);
+});
+
+test('includes tip in items and keeps the amount breakdown aligned with the order total', function () {
+    $order = Order::factory()->withItems(1)->create([
+        'subtotal' => 20.00,
+        'delivery_fee' => 5.00,
+        'discount_amount' => 2.50,
+        'gift_card_amount' => 4.00,
+        'tip_amount' => 3.25,
+        'total' => 21.75,
+    ]);
+
+    $builder = resolve(InvoicePayloadBuilder::class);
+    $payload = $builder->build($order);
+
+    expect(data_get($payload, 'items'))->toHaveCount(3)
+        ->and(data_get($payload, 'items.2.name'))->toBe('Tip')
+        ->and(data_get($payload, 'items.2.unit_amount.value'))->toBe('3.25')
+        ->and(data_get($payload, 'amount.value'))->toBe('21.75')
+        ->and(data_get($payload, 'amount.breakdown.item_total.value'))->toBe('28.25')
+        ->and(data_get($payload, 'amount.breakdown.discount.invoice_discount.amount.value'))->toBe('6.50');
 });
 
 test('includes discount breakdown when discount amount is positive', function () {
