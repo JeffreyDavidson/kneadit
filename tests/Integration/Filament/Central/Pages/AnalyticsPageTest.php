@@ -107,12 +107,13 @@ test('get this month signups', function () {
 });
 
 test('get avg days on trial', function () {
-    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
-    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
+    $now = now();
+    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter, 'created_at' => $now->copy()->subDays(30), 'trial_ends_at' => $now->copy()->subDays(16)]);
+    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Starter, 'created_at' => $now->copy()->subDays(20), 'trial_ends_at' => $now->copy()->subDays(13)]);
 
     $result = test()->page->getAvgDaysOnTrial();
 
-    expect($result)->toBeFloat()->toBe(14.0);
+    expect($result)->toBeFloat()->toBe(10.5);
 });
 
 test('get avg days on trial returns zero when no trials', function () {
