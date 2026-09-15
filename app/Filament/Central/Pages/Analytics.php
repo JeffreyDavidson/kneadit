@@ -14,6 +14,10 @@ class Analytics extends Page
 {
     private ?TenantSignupAnalyticsQuery $signupAnalyticsQuery = null;
 
+    private ?TenantSubscriptionAnalyticsQuery $subscriptionAnalyticsQuery = null;
+
+    private ?TenantAnalyticsSummaryQuery $analyticsSummaryQuery = null;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
@@ -33,13 +37,13 @@ class Analytics extends Page
     /** @return array<string, mixed> */
     public function getPlanDistribution(): array
     {
-        return resolve(TenantSubscriptionAnalyticsQuery::class)->planDistribution();
+        return $this->subscriptionAnalytics()->planDistribution();
     }
 
     /** @return array<string, int> */
     public function getTrialConversion(): array
     {
-        return resolve(TenantSubscriptionAnalyticsQuery::class)->trialConversion();
+        return $this->subscriptionAnalytics()->trialConversion();
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -60,28 +64,38 @@ class Analytics extends Page
 
     public function getAvgDaysOnTrial(): float
     {
-        return resolve(TenantSubscriptionAnalyticsQuery::class)->averageTrialDays();
+        return $this->subscriptionAnalytics()->averageTrialDays();
     }
 
     public function getMostPopularPlan(): string
     {
-        return resolve(TenantSubscriptionAnalyticsQuery::class)->mostPopularPlan();
+        return $this->subscriptionAnalytics()->mostPopularPlan();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getKpis(): array
     {
-        return resolve(TenantAnalyticsSummaryQuery::class)->kpis();
+        return $this->analyticsSummary()->kpis();
     }
 
     /** @return array<string, int> */
     public function getTenantStatus(): array
     {
-        return resolve(TenantAnalyticsSummaryQuery::class)->tenantStatus();
+        return $this->analyticsSummary()->tenantStatus();
     }
 
     private function signupAnalytics(): TenantSignupAnalyticsQuery
     {
         return $this->signupAnalyticsQuery ??= resolve(TenantSignupAnalyticsQuery::class);
+    }
+
+    private function subscriptionAnalytics(): TenantSubscriptionAnalyticsQuery
+    {
+        return $this->subscriptionAnalyticsQuery ??= resolve(TenantSubscriptionAnalyticsQuery::class);
+    }
+
+    private function analyticsSummary(): TenantAnalyticsSummaryQuery
+    {
+        return $this->analyticsSummaryQuery ??= resolve(TenantAnalyticsSummaryQuery::class);
     }
 }
