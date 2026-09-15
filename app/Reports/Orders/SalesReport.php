@@ -43,20 +43,13 @@ class SalesReport
             ])
             ->all());
 
-        $revenueByDay = array_values((clone $orders)
-            ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue_cents'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->map(function (Order $row): array {
-                $date = $row->getAttribute('date');
-
-                return [
-                    'date' => is_string($date) ? $date : '',
-                    'revenue' => Money::fromCents(Arr::integer($row->getAttributes(), 'revenue_cents', 0)),
-                ];
-            })
-            ->all());
+        $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
+            ->map(static fn (float $revenue, string $date): array => [
+                'date' => $date,
+                'revenue' => Money::fromDollars($revenue),
+            ])
+            ->values()
+            ->all();
 
         return new SalesReportResult(
             totalOrders: $totalOrders,
