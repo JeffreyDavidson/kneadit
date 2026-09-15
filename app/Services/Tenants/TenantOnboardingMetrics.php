@@ -3,8 +3,10 @@
 namespace App\Services\Tenants;
 
 use App\DataTransferObjects\Settings\BrandingSettings;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
-use Illuminate\Support\Facades\DB;
 
 class TenantOnboardingMetrics
 {
@@ -37,9 +39,9 @@ class TenantOnboardingMetrics
     public function sync(Tenant $tenant): void
     {
         $counts = $this->tenancy->withinTenant($tenant, fn (): array => [
-            'onboarding_products_count' => DB::table('products')->count(),
-            'onboarding_categories_count' => DB::table('categories')->count(),
-            'onboarding_orders_count' => DB::table('orders')->count(),
+            'onboarding_products_count' => Product::query()->count(),
+            'onboarding_categories_count' => Category::query()->count(),
+            'onboarding_orders_count' => Order::query()->count(),
         ]);
 
         $tenant->forceFill([
