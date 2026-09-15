@@ -5,10 +5,10 @@ namespace App\Reports\Inventory;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Recipe;
 use App\ValueObjects\Money;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 
 class InventoryReport
 {
@@ -16,8 +16,8 @@ class InventoryReport
     {
         $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
 
-        $usageData = DB::table('recipe_ingredients')
-            ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
+        $usageData = Recipe::query()
+            ->join('recipe_ingredients', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
             ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.delivery_date', '>=', now()->subDays($usageWindowDays))
