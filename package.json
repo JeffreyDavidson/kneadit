@@ -6,6 +6,7 @@
         "node": ">=24"
     },
     "scripts": {
+        "prepare": "git config core.hooksPath .githooks",
         "build": "vite build",
         "dev": "vite"
     },

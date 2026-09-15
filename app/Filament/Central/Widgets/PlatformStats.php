@@ -57,12 +57,12 @@ class PlatformStats extends StatsOverviewWidget
      */
     private function loadData(): array
     {
-        $activeTenants = Tenant::query()->where('is_active', true)->get();
-        $mrr = (float) $activeTenants->sum(fn (Tenant $tenant): int => $tenant->plan->priceInDollars());
-        $totalTenants = Tenant::query()->count();
-        $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')->where('trial_ends_at', '>', now())->count();
-        $openTickets = SupportTicket::query()->open()->count();
         $allTenants = Tenant::query()->select('plan', 'is_active', 'created_at', 'trial_ends_at')->get();
+        $activeTenants = $allTenants->where('is_active', true);
+        $mrr = (float) $activeTenants->sum(fn (Tenant $tenant): int => $tenant->plan->priceInDollars());
+        $totalTenants = $allTenants->count();
+        $trialTenants = $allTenants->filter(fn (Tenant $tenant): bool => $tenant->trial_ends_at !== null && $tenant->trial_ends_at > now())->count();
+        $openTickets = SupportTicket::query()->open()->count();
         $mrrChart = [];
         $bakeryChart = [];
         $trialChart = [];
