@@ -32,12 +32,11 @@ class TenantSubscriptionAnalyticsQuery
             return $this->trialConversionMetrics;
         }
 
-        $now = now();
         $metrics = Tenant::query()
             ->toBase()
             ->selectRaw('COUNT(*) as total')
-            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at > ? THEN 1 ELSE 0 END), 0) as on_trial', [$now])
-            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at IS NOT NULL AND trial_ends_at <= ? THEN 1 ELSE 0 END), 0) as expired', [$now])
+            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at > CURRENT_TIMESTAMP THEN 1 ELSE 0 END), 0) as on_trial')
+            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at IS NOT NULL AND trial_ends_at <= CURRENT_TIMESTAMP THEN 1 ELSE 0 END), 0) as expired')
             ->first();
 
         $total = Arr::integer(['value' => $metrics->total ?? 0], 'value', 0);
