@@ -52,3 +52,13 @@ test('calculates current and previous month averages while excluding cancelled o
             'last_month' => 8000.0,
         ]);
 });
+
+test('returns zero averages when there are no active orders', function () {
+    $now = Carbon::create(2026, 9, 15, 12) ?? throw new RuntimeException('Unable to create test date.');
+
+    expect(resolve(CustomerInsightsQuery::class)->averageOrderValues($now))
+        ->toBe([
+            'this_month' => 0.0,
+            'last_month' => 0.0,
+        ]);
+});

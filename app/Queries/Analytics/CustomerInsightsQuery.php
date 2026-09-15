@@ -57,9 +57,12 @@ final class CustomerInsightsQuery
             )
             ->first();
 
+        $thisMonth = $averages->this_month ?? 0;
+        $lastMonth = $averages->last_month ?? 0;
+
         return [
-            'this_month' => Arr::float(['value' => $averages->this_month ?? 0], 'value', 0.0),
-            'last_month' => Arr::float(['value' => $averages->last_month ?? 0], 'value', 0.0),
+            'this_month' => is_numeric($thisMonth) ? (float) $thisMonth : 0.0,
+            'last_month' => is_numeric($lastMonth) ? (float) $lastMonth : 0.0,
         ];
     }
 }
