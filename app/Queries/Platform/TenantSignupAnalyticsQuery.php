@@ -3,7 +3,7 @@
 namespace App\Queries\Platform;
 
 use App\Models\Platform\Tenant;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class TenantSignupAnalyticsQuery
@@ -22,21 +22,23 @@ class TenantSignupAnalyticsQuery
             return $this->monthlySignups;
         }
 
-        $startDate = Date::now()->subMonths(11)->startOfMonth();
+        $now = Date::now();
+        $startDate = $now->copy()->subMonths(11)->startOfMonth();
 
         $counts = Tenant::query()
             ->where('created_at', '>=', $startDate)
-            ->get(['created_at'])
-            ->groupBy(fn (Tenant $tenant) => $tenant->created_at?->format('Y-m') ?? '')
-            ->map(fn (Collection $group) => $group->count());
+            ->selectRaw('SUBSTR(created_at, 1, 7) as month, COUNT(*) as aggregate')
+            ->groupBy('month')
+            ->pluck('aggregate', 'month')
+            ->all();
 
         $months = [];
         for ($i = 11; $i >= 0; $i--) {
-            $date = Date::now()->subMonths($i);
+            $date = $now->copy()->subMonths($i);
             $key = $date->format('Y-m');
             $months[] = [
                 'label' => $date->format('M Y'),
-                'count' => (int) ($counts[$key] ?? 0),
+                'count' => Arr::integer(['value' => $counts[$key] ?? 0], 'value', 0),
             ];
         }
 

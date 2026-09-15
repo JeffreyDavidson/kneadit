@@ -16,6 +16,19 @@ test('get signups by month returns 12 months', function () {
     expect($result)->toHaveCount(12)->and($result[0])->toHaveKeys(['label', 'count']);
 });
 
+test('get signups by month groups tenants in the database', function () {
+    $now = now();
+
+    createTenant(['id' => 'previous-1', 'name' => 'Previous 1', 'email' => 'previous-1@test.com', 'created_at' => $now->copy()->subMonth()->startOfMonth()->addDay()]);
+    createTenant(['id' => 'previous-2', 'name' => 'Previous 2', 'email' => 'previous-2@test.com', 'created_at' => $now->copy()->subMonth()->startOfMonth()->addDays(2)]);
+    createTenant(['id' => 'current-1', 'name' => 'Current 1', 'email' => 'current-1@test.com', 'created_at' => $now->copy()->startOfMonth()->addDay()]);
+
+    $result = test()->page->getSignupsByMonth();
+
+    expect($result[10]['count'])->toBe(2)
+        ->and($result[11]['count'])->toBe(1);
+});
+
 test('reuses signup analytics during one page render', function () {
     $queryCount = 0;
     DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
@@ -39,6 +52,20 @@ test('get plan distribution', function () {
 
     $result = test()->page->getPlanDistribution();
     expect($result)->toMatchArray(['starter' => 2, 'growth' => 1]);
+});
+
+test('reuses grouped plan analytics during one page render', function () {
+    $queryCount = 0;
+    DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
+        if (str_contains(strtolower($query->sql), 'group by')) {
+            $queryCount++;
+        }
+    });
+
+    test()->page->getPlanDistribution();
+    test()->page->getMostPopularPlan();
+
+    expect($queryCount)->toBe(1);
 });
 
 test('get trial conversion', function () {
@@ -80,12 +107,13 @@ test('get this month signups', function () {
 });
 
 test('get avg days on trial', function () {
-    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
-    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
+    $now = now();
+    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter, 'created_at' => $now->copy()->subDays(30), 'trial_ends_at' => $now->copy()->subDays(16)]);
+    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Starter, 'created_at' => $now->copy()->subDays(20), 'trial_ends_at' => $now->copy()->subDays(13)]);
 
     $result = test()->page->getAvgDaysOnTrial();
 
-    expect($result)->toBeFloat()->toBe(14.0);
+    expect($result)->toBeFloat()->toBe(10.5);
 });
 
 test('get avg days on trial returns zero when no trials', function () {
