@@ -3,11 +3,14 @@
 namespace App\Services\Tenants;
 
 use App\DataTransferObjects\Settings\BrandingSettings;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use App\ValueObjects\TenantHealthScore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /** @phpstan-type HealthData array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int} */
@@ -70,10 +73,10 @@ class TenantHealthService
     protected function getTenantMetrics(Tenant $tenant): array
     {
         return $this->tenancyManager->withinTenant($tenant, function () {
-            $lastLogin = DB::table('users')->max('updated_at');
-            $orderCount = DB::table('orders')->count();
-            $productCount = DB::table('products')->count();
-            $categoryCount = DB::table('categories')->count();
+            $lastLogin = User::query()->max('updated_at');
+            $orderCount = Order::query()->count();
+            $productCount = Product::query()->count();
+            $categoryCount = Category::query()->count();
 
             return [
                 'days_since_login' => is_string($lastLogin) ? (int) Date::parse($lastLogin)->diffInDays(now()) : null,
@@ -119,7 +122,7 @@ class TenantHealthService
     public function getLastLogin(Tenant $tenant): ?string
     {
         try {
-            $lastLogin = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
+            $lastLogin = $this->tenancyManager->withinTenant($tenant, fn () => User::query()->max('updated_at'));
 
             return is_string($lastLogin) ? $lastLogin : null;
         } catch (\Throwable) {
@@ -129,7 +132,7 @@ class TenantHealthService
 
     public function getRecentOrderCount(Tenant $tenant, int $days): int
     {
-        return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
+        return $this->tenancyManager->withinTenant($tenant, fn () => Order::query()
             ->where('created_at', '>=', now()->subDays($days))
             ->count());
     }
