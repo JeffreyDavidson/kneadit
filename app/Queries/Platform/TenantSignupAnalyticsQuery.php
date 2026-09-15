@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Date;
 
 class TenantSignupAnalyticsQuery
 {
+    /** @var array<int, array{label: string, count: int}>|null */
+    private ?array $monthlySignups = null;
+
+    private ?int $totalSignups = null;
+
+    private ?int $currentMonthSignups = null;
+
     /** @return array<int, array{label: string, count: int}> */
     public function byMonth(): array
     {
+        if ($this->monthlySignups !== null) {
+            return $this->monthlySignups;
+        }
+
         $startDate = Date::now()->subMonths(11)->startOfMonth();
 
         $counts = Tenant::query()
@@ -29,7 +40,7 @@ class TenantSignupAnalyticsQuery
             ];
         }
 
-        return $months;
+        return $this->monthlySignups = $months;
     }
 
     /** @return array<int, array{label: string, rate: float|int}> */
@@ -53,12 +64,12 @@ class TenantSignupAnalyticsQuery
 
     public function total(): int
     {
-        return Tenant::query()->count();
+        return $this->totalSignups ??= Tenant::query()->count();
     }
 
     public function thisMonth(): int
     {
-        return Tenant::query()->whereYear('created_at', now()->year)
+        return $this->currentMonthSignups ??= Tenant::query()->whereYear('created_at', now()->year)
             ->whereMonth('created_at', now()->month)
             ->count();
     }

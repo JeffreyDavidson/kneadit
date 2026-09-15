@@ -2,6 +2,8 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Central\Pages\Analytics;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -12,6 +14,22 @@ test('get signups by month returns 12 months', function () {
     $result = test()->page->getSignupsByMonth();
 
     expect($result)->toHaveCount(12)->and($result[0])->toHaveKeys(['label', 'count']);
+});
+
+test('reuses signup analytics during one page render', function () {
+    $queryCount = 0;
+    DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
+        if (str_contains(strtolower($query->sql), 'tenants')) {
+            $queryCount++;
+        }
+    });
+
+    test()->page->getSignupsByMonth();
+    test()->page->getMonthlyGrowth();
+    test()->page->getTotalSignups();
+    test()->page->getThisMonthSignups();
+
+    expect($queryCount)->toBe(3);
 });
 
 test('get plan distribution', function () {
