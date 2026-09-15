@@ -61,10 +61,18 @@ class TenantSubscriptionAnalyticsQuery
 
     public function averageTrialDays(): float
     {
-        $tenants = Tenant::query()->whereNotNull('trial_ends_at')->select('trial_ends_at', 'created_at')->get();
-        $average = $tenants->avg(fn (Tenant $tenant) => Date::parse($tenant->created_at)->diffInDays(Date::parse($tenant->trial_ends_at)));
+        $totalDays = 0.0;
+        $trialCount = 0;
 
-        return round($average ?? 0, 1);
+        foreach (Tenant::query()
+            ->whereNotNull('trial_ends_at')
+            ->select('trial_ends_at', 'created_at')
+            ->cursor() as $tenant) {
+            $totalDays += (float) Date::parse($tenant->created_at)->diffInDays(Date::parse($tenant->trial_ends_at));
+            $trialCount++;
+        }
+
+        return round($trialCount > 0 ? $totalDays / $trialCount : 0.0, 1);
     }
 
     public function mostPopularPlan(): string
