@@ -86,11 +86,11 @@ class StorefrontAnalyticsQuery
 
         return collect($counts)
             ->sortKeys()
-            ->values()
             ->map(fn (int $views, string $date): DailyPageViewCount => new DailyPageViewCount(
                 date: $date,
                 views: $views,
-            ));
+            ))
+            ->values();
     }
 
     /** @return Collection<int, TopViewedProduct> */
