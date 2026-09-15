@@ -71,28 +71,40 @@ class ReviewAnalyticsService
     {
         $startDate = Date::now()->subMonths(11)->startOfMonth();
 
-        /** @var Collection<string, object{month: string, count: int, avg_rating: float}> $monthlyData */
-        $monthlyData = Review::query()
+        /** @var Collection<string, object{day: string, count: int, rating_sum: int|float}> $dailyData */
+        $dailyData = Review::query()
             ->where('created_at', '>=', $startDate)
-            ->selectRaw("strftime('%Y-%m', created_at) AS month, COUNT(*) AS count, AVG(rating) AS avg_rating")
-            ->groupByRaw("strftime('%Y-%m', created_at)")
-            ->orderBy('month')
+            ->selectRaw('DATE(created_at) AS day, COUNT(*) AS count, SUM(rating) AS rating_sum')
+            ->groupBy('day')
+            ->orderBy('day')
             ->toBase()
             ->get()
-            ->keyBy('month');
+            ->keyBy('day');
+
+        /** @var array<string, array{count: int, rating_sum: float}> $monthlyData */
+        $monthlyData = [];
+
+        foreach ($dailyData as $row) {
+            $monthKey = substr($row->day, 0, 7);
+            $monthlyData[$monthKey] = [
+                'count' => ($monthlyData[$monthKey]['count'] ?? 0) + (int) $row->count,
+                'rating_sum' => ($monthlyData[$monthKey]['rating_sum'] ?? 0.0) + (float) $row->rating_sum,
+            ];
+        }
 
         $trend = [];
 
         for ($i = 0; $i < 12; $i++) {
             $month = $startDate->copy()->addMonths($i);
             $monthKey = $month->format('Y-m');
-            $monthData = $monthlyData->get($monthKey);
+            $monthData = $monthlyData[$monthKey] ?? null;
+            $count = $monthData['count'] ?? 0;
 
             $trend[] = new ReviewMonthlyTrend(
                 month: $month->format('M Y'),
                 monthKey: $monthKey,
-                count: $monthData ? (int) $monthData->count : 0,
-                averageRating: $monthData ? round($monthData->avg_rating ?? 0, 1) : 0,
+                count: $count,
+                averageRating: $count > 0 ? round($monthData['rating_sum'] / $count, 1) : 0,
             );
         }
 
