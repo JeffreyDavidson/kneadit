@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $last_activity_at
  * @property Carbon|null $expires_at
  * @property Carbon|null $recovery_sent_at
+ * @property Carbon|null $recovery_claimed_at
  * @property Carbon|null $converted_at
  * @property-read Collection<int, CartItem> $items
  *
@@ -30,7 +31,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('cart_token', 'customer_email', 'customer_name', 'last_activity_at', 'expires_at', 'recovery_sent_at', 'converted_at')]
+#[Fillable('cart_token', 'customer_email', 'customer_name', 'last_activity_at', 'expires_at', 'recovery_sent_at', 'recovery_claimed_at', 'converted_at')]
 #[UseEloquentBuilder(CartQueryBuilder::class)]
 #[UseFactory(CartFactory::class)]
 class Cart extends Model
@@ -44,6 +45,7 @@ class Cart extends Model
             'last_activity_at' => 'datetime',
             'expires_at' => 'datetime',
             'recovery_sent_at' => 'datetime',
+            'recovery_claimed_at' => 'datetime',
             'converted_at' => 'datetime',
         ];
     }
