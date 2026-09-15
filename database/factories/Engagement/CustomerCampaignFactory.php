@@ -37,4 +37,12 @@ class CustomerCampaignFactory extends Factory
             'recipient_count' => $count,
         ]);
     }
+
+    public function sending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => CustomerCampaignStatus::Sending,
+            'updated_at' => now(),
+        ]);
+    }
 }
