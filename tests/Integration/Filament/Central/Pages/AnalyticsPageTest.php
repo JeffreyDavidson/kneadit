@@ -51,6 +51,20 @@ test('get trial conversion', function () {
     expect($result)->toHaveKeys(['on_trial', 'expired', 'converted'])->toMatchArray(['on_trial' => 1, 'expired' => 1, 'converted' => 1]);
 });
 
+test('reuses trial conversion analytics during one page render', function () {
+    $queryCount = 0;
+    DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
+        if (str_contains(strtolower($query->sql), 'trial_ends_at')) {
+            $queryCount++;
+        }
+    });
+
+    test()->page->getTrialConversion();
+    test()->page->getTrialConversion();
+
+    expect($queryCount)->toBe(1);
+});
+
 test('get total signups', function () {
     createTenant(['id' => 's1', 'name' => 'S1', 'email' => 's1@test.com', 'plan' => SubscriptionTier::Starter]);
     createTenant(['id' => 's2', 'name' => 'S2', 'email' => 's2@test.com', 'plan' => SubscriptionTier::Growth]);
