@@ -6,10 +6,8 @@ use App\DataTransferObjects\Analytics\DateSeries;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
+use App\Queries\Analytics\DateCountQuery;
 use App\Queries\Financial\RevenueQuery;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -73,13 +71,13 @@ class StatsOverviewQuery
     /** @return array<string, int> */
     private function ordersByDeliveryDate(Carbon $start, Carbon $end): array
     {
-        return $this->countByDate(Order::query(), 'delivery_date', $start, $end);
+        return DateCountQuery::count(Order::query(), 'delivery_date', $start, $end);
     }
 
     /** @return array<string, int> */
     private function pendingOrdersByCreatedDate(Carbon $start, Carbon $end): array
     {
-        return $this->countByDate(
+        return DateCountQuery::count(
             Order::query()->where('status', OrderStatus::Pending),
             'created_at',
             $start,
@@ -90,37 +88,12 @@ class StatsOverviewQuery
     /** @return array<string, int> */
     private function storefrontViewsByDate(Carbon $start, Carbon $end): array
     {
-        return $this->countByDate(
+        return DateCountQuery::count(
             PageView::query()->whereNull('product_id'),
             'created_at',
             $start,
             $end,
         );
-    }
-
-    /**
-     * @param Builder<covariant Model> $query
-     * @return array<string, int>
-     */
-    private function countByDate(Builder $query, string $dateColumn, Carbon $start, Carbon $end): array
-    {
-        $query = $query
-            ->whereBetween($dateColumn, [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
-            ->toBase();
-
-        $query = match ($dateColumn) {
-            'delivery_date' => $query->selectRaw('DATE(delivery_date) as date, COUNT(*) as aggregate'),
-            'created_at' => $query->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate'),
-            default => throw new \InvalidArgumentException("Unsupported date column: {$dateColumn}"),
-        };
-
-        return $query
-            ->groupBy('date')
-            ->pluck('aggregate', 'date')
-            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
-                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
-            ])
-            ->all();
     }
 
     /** @param array<string, float> $revenue */
