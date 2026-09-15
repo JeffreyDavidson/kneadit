@@ -5,13 +5,11 @@ namespace App\Services\Reporting;
 use App\DataTransferObjects\Platform\WeeklyDigestData;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
 use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\AtRiskCustomersQuery;
+use App\Queries\Reporting\WeeklyDigestQuery;
 use App\Services\Settings\TenantSettings;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
@@ -42,14 +40,7 @@ class WeeklyDigestDataCollector
                 'new_customers' => $newCustomers,
                 'avg_order_value' => (string) Number::currency($avgOrderValue),
             ],
-            topProducts: OrderItem::query()
-                ->select('product_id', DB::raw('SUM(quantity) as total_qty'))
-                ->whereHas('order', fn (Builder $q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
-                ->groupBy('product_id')
-                ->orderByDesc('total_qty')
-                ->limit(5)
-                ->with('product')
-                ->get(),
+            topProducts: WeeklyDigestQuery::topProducts($weekStart, $weekEnd),
             atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
                 ->map(fn (Customer $customer) => [
                     'name' => $customer->name,
