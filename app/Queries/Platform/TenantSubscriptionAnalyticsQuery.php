@@ -7,20 +7,29 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class TenantSubscriptionAnalyticsQuery
 {
+    /** @var array<int, array{plan: mixed, count: mixed}>|null */
+    private ?array $planCounts = null;
+
     /** @var array{on_trial: int, expired: int, converted: int}|null */
     private ?array $trialConversionMetrics = null;
 
     /** @return array<string, mixed> */
     public function planDistribution(): array
     {
-        $plans = Tenant::query()->select('plan', DB::raw('count(*) as count'))
-            ->groupBy('plan')
-            ->pluck('count', 'plan')
-            ->all();
+        $plans = [];
+
+        foreach ($this->planCounts() as $row) {
+            $plan = $row['plan'] instanceof SubscriptionTier ? $row['plan']->value : $row['plan'];
+
+            if (! is_string($plan)) {
+                continue;
+            }
+
+            $plans[$plan] = Arr::integer(['value' => $row['count']], 'value', 0);
+        }
 
         return SettingValue::map($plans);
     }
@@ -60,9 +69,25 @@ class TenantSubscriptionAnalyticsQuery
 
     public function mostPopularPlan(): string
     {
-        $plan = Tenant::query()->select('plan', DB::raw('count(*) as count'))
-            ->groupBy('plan')->orderByDesc('count')->value('plan');
+        $plan = $this->planCounts()[0]['plan'] ?? null;
 
         return $plan instanceof SubscriptionTier ? $plan->value : (is_string($plan) ? $plan : 'N/A');
+    }
+
+    /** @return array<int, array{plan: mixed, count: mixed}> */
+    private function planCounts(): array
+    {
+        return $this->planCounts ??= Tenant::query()
+            ->select('plan')
+            ->selectRaw('count(*) as count')
+            ->groupBy('plan')
+            ->orderByDesc('count')
+            ->toBase()
+            ->get()
+            ->map(fn (object $row): array => [
+                'plan' => $row->plan,
+                'count' => $row->count,
+            ])
+            ->all();
     }
 }
