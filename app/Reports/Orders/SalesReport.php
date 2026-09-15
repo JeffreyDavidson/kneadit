@@ -43,6 +43,7 @@ class SalesReport
             ])
             ->all());
 
+        /** @var list<array{date: string, revenue: Money}> $revenueByDay */
         $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
             ->map(static fn (float $revenue, string $date): array => [
                 'date' => $date,
