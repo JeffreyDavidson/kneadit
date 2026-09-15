@@ -76,18 +76,21 @@ class StorefrontAnalyticsQuery
     /** @return Collection<int, DailyPageViewCount> */
     public function dailyTrend(int $days = 30): Collection
     {
-        return PageView::query()
-            ->where('created_at', '>=', now()->subDays($days)->startOfDay())
-            ->whereNull('product_id')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as views'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->toBase()
-            ->get()
-            ->map(fn (object $row): DailyPageViewCount => new DailyPageViewCount(
-                date: Arr::string(['date' => $row->date], 'date'),
-                views: Arr::integer(['views' => $row->views], 'views', 0),
-            ));
+        $start = now()->subDays($days);
+        $counts = DateCountQuery::count(
+            PageView::query()->whereNull('product_id'),
+            'created_at',
+            $start,
+            now(),
+        );
+
+        return collect($counts)
+            ->sortKeys()
+            ->map(fn (int $views, string $date): DailyPageViewCount => new DailyPageViewCount(
+                date: $date,
+                views: $views,
+            ))
+            ->values();
     }
 
     /** @return Collection<int, TopViewedProduct> */

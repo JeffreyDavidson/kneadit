@@ -5,6 +5,7 @@ namespace App\Filament\Central\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
+use App\Queries\Analytics\DateCountQuery;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -74,15 +75,16 @@ class PlatformStats extends StatsOverviewWidget
             $trialChart[] = (float) $allTenants->filter(fn (Tenant $tenant): bool => $tenant->trial_ends_at !== null && $tenant->trial_ends_at > $monthEnd && $tenant->created_at <= $monthEnd)->count();
         }
 
-        $ticketCounts = SupportTicket::query()
-            ->where('created_at', '>=', now()->subDays(5)->startOfDay())
-            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
-            ->groupBy('day')
-            ->pluck('total', 'day');
+        $ticketCounts = DateCountQuery::count(
+            SupportTicket::query(),
+            'created_at',
+            now()->subDays(5),
+            now(),
+        );
         $ticketChart = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $ticketChart[] = Arr::float($ticketCounts->all(), now()->subDays($i)->format('Y-m-d'), 0.0);
+            $ticketChart[] = Arr::float($ticketCounts, now()->subDays($i)->format('Y-m-d'), 0.0);
         }
 
         return [
