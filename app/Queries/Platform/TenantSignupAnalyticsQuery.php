@@ -3,8 +3,9 @@
 namespace App\Queries\Platform;
 
 use App\Models\Platform\Tenant;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 
 class TenantSignupAnalyticsQuery
 {
@@ -22,21 +23,31 @@ class TenantSignupAnalyticsQuery
             return $this->monthlySignups;
         }
 
-        $startDate = Date::now()->subMonths(11)->startOfMonth();
+        $now = Date::now();
+        $startDate = $now->copy()->subMonths(11)->startOfMonth();
 
-        $counts = Tenant::query()
+        $query = Tenant::query()
             ->where('created_at', '>=', $startDate)
-            ->get(['created_at'])
-            ->groupBy(fn (Tenant $tenant) => $tenant->created_at?->format('Y-m') ?? '')
-            ->map(fn (Collection $group) => $group->count());
+            ->selectRaw('COUNT(*) as aggregate');
+
+        $query = match (DB::getDriverName()) {
+            'sqlite' => $query->addSelect(DB::raw("strftime('%Y-%m', created_at) as month")),
+            'pgsql' => $query->addSelect(DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month")),
+            default => $query->addSelect(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month")),
+        };
+
+        $counts = $query
+            ->groupBy('month')
+            ->pluck('aggregate', 'month')
+            ->all();
 
         $months = [];
         for ($i = 11; $i >= 0; $i--) {
-            $date = Date::now()->subMonths($i);
+            $date = $now->copy()->subMonths($i);
             $key = $date->format('Y-m');
             $months[] = [
                 'label' => $date->format('M Y'),
-                'count' => (int) ($counts[$key] ?? 0),
+                'count' => Arr::integer(['value' => $counts[$key] ?? 0], 'value', 0),
             ];
         }
 

@@ -16,6 +16,19 @@ test('get signups by month returns 12 months', function () {
     expect($result)->toHaveCount(12)->and($result[0])->toHaveKeys(['label', 'count']);
 });
 
+test('get signups by month groups tenants in the database', function () {
+    $now = now();
+
+    createTenant(['id' => 'previous-1', 'name' => 'Previous 1', 'email' => 'previous-1@test.com', 'created_at' => $now->copy()->subMonth()->startOfMonth()->addDay()]);
+    createTenant(['id' => 'previous-2', 'name' => 'Previous 2', 'email' => 'previous-2@test.com', 'created_at' => $now->copy()->subMonth()->startOfMonth()->addDays(2)]);
+    createTenant(['id' => 'current-1', 'name' => 'Current 1', 'email' => 'current-1@test.com', 'created_at' => $now->copy()->startOfMonth()->addDay()]);
+
+    $result = test()->page->getSignupsByMonth();
+
+    expect($result[10]['count'])->toBe(2)
+        ->and($result[11]['count'])->toBe(1);
+});
+
 test('reuses signup analytics during one page render', function () {
     $queryCount = 0;
     DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
