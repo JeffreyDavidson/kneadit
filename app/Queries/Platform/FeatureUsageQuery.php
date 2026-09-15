@@ -147,20 +147,21 @@ class FeatureUsageQuery
             ->limit(20)
             ->get();
 
-        $tenantNames = Tenant::query()
+        $tenants = Tenant::query()
             ->whereIn('id', $rows->pluck('tenant_id')->all())
-            ->pluck('store_name', 'id');
+            ->get(['id', 'store_name', 'name'])
+            ->keyBy('id');
 
-        $fallbackNames = Tenant::query()
-            ->whereIn('id', $rows->pluck('tenant_id')->all())
-            ->pluck('name', 'id');
+        return $rows->map(function (FeatureUsageLog $row) use ($tenants): FeatureTenantUsage {
+            $tenant = $tenants->get($row->tenant_id);
+            $storeName = $tenant?->getAttribute('store_name');
+            $name = $tenant?->getAttribute('name');
 
-        return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames): FeatureTenantUsage {
             return new FeatureTenantUsage(
                 tenantId: $row->tenant_id,
-                name: is_string($tenantNames[$row->tenant_id] ?? null)
-                    ? $tenantNames[$row->tenant_id]
-                    : (is_string($fallbackNames[$row->tenant_id] ?? null) ? $fallbackNames[$row->tenant_id] : $row->tenant_id),
+                name: is_string($storeName)
+                    ? $storeName
+                    : (is_string($name) ? $name : $row->tenant_id),
                 total: (int) $row->total,
             );
         });
