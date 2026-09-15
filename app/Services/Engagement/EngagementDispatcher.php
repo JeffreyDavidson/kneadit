@@ -4,6 +4,8 @@ namespace App\Services\Engagement;
 
 use App\Models\Platform\Tenant;
 use App\Services\Engagement\Contracts\CustomerEngagement;
+use App\Services\Engagement\Contracts\EngagementRecipient;
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
@@ -13,6 +15,7 @@ class EngagementDispatcher
 {
     public function __construct(
         private TenancyManager $tenancyManager,
+        private ScheduledNotificationRunTracker $runTracker,
     ) {}
 
     /**
@@ -38,10 +41,17 @@ class EngagementDispatcher
                 $sent = 0;
 
                 foreach ($recipients as $recipient) {
+                    $notificationKey = $this->notificationKey($engagement, $recipient);
+
+                    if (! $this->runTracker->claim($notificationKey)) {
+                        continue;
+                    }
+
                     try {
                         $engagement->dispatchForRecipient($recipient, $settings);
                         $sent++;
                     } catch (\Throwable $e) {
+                        $this->runTracker->release($notificationKey);
                         $output->error("Failed for {$recipient->name}: {$e->getMessage()}");
                         $engagementClass = $engagement::class;
                         Log::warning("{$engagementClass} failed", [
@@ -64,6 +74,23 @@ class EngagementDispatcher
                     'error' => $e->getMessage(),
                 ]);
             },
+        );
+    }
+
+    private function notificationKey(CustomerEngagement $engagement, EngagementRecipient $recipient): string
+    {
+        $recipientId = $recipient->model->getKey();
+
+        if (! is_int($recipientId) && ! is_string($recipientId)) {
+            $recipientId = 'unsaved';
+        }
+
+        return sprintf(
+            'engagement:%s:%s:%s:%s',
+            $engagement::class,
+            $recipient->model->getTable(),
+            $recipientId,
+            now()->toDateString(),
         );
     }
 }
