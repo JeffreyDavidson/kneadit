@@ -99,7 +99,7 @@ class StatsOverviewQuery
     }
 
     /**
-     * @param Builder<Model> $query
+     * @param Builder<covariant Model> $query
      * @return array<string, int>
      */
     private function countByDate(Builder $query, string $dateColumn, Carbon $start, Carbon $end): array
