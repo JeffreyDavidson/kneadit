@@ -41,6 +41,20 @@ test('get plan distribution', function () {
     expect($result)->toMatchArray(['starter' => 2, 'growth' => 1]);
 });
 
+test('reuses grouped plan analytics during one page render', function () {
+    $queryCount = 0;
+    DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
+        if (str_contains(strtolower($query->sql), 'group by')) {
+            $queryCount++;
+        }
+    });
+
+    test()->page->getPlanDistribution();
+    test()->page->getMostPopularPlan();
+
+    expect($queryCount)->toBe(1);
+});
+
 test('get trial conversion', function () {
     createTenant(['id' => 't1', 'name' => 'T1', 'email' => 't1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(7)]);
     createTenant(['id' => 't2', 'name' => 'T2', 'email' => 't2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->subDays(7)]);
