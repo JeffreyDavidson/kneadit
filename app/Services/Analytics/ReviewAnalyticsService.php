@@ -98,13 +98,19 @@ class ReviewAnalyticsService
             $month = $startDate->copy()->addMonths($i);
             $monthKey = $month->format('Y-m');
             $monthData = $monthlyData[$monthKey] ?? null;
-            $count = $monthData['count'] ?? 0;
+            $count = 0;
+            $averageRating = 0;
+
+            if ($monthData !== null) {
+                $count = $monthData['count'];
+                $averageRating = $count > 0 ? round($monthData['rating_sum'] / $count, 1) : 0;
+            }
 
             $trend[] = new ReviewMonthlyTrend(
                 month: $month->format('M Y'),
                 monthKey: $monthKey,
                 count: $count,
-                averageRating: $count > 0 ? round($monthData['rating_sum'] / $count, 1) : 0,
+                averageRating: $averageRating,
             );
         }
 
