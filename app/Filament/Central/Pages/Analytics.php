@@ -12,6 +12,8 @@ use UnitEnum;
 
 class Analytics extends Page
 {
+    private ?TenantSignupAnalyticsQuery $signupAnalyticsQuery = null;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
@@ -25,7 +27,7 @@ class Analytics extends Page
     /** @return array<int, array<string, mixed>> */
     public function getSignupsByMonth(): array
     {
-        return resolve(TenantSignupAnalyticsQuery::class)->byMonth();
+        return $this->signupAnalytics()->byMonth();
     }
 
     /** @return array<string, mixed> */
@@ -43,17 +45,17 @@ class Analytics extends Page
     /** @return array<int, array<string, mixed>> */
     public function getMonthlyGrowth(): array
     {
-        return resolve(TenantSignupAnalyticsQuery::class)->monthlyGrowth();
+        return $this->signupAnalytics()->monthlyGrowth();
     }
 
     public function getTotalSignups(): int
     {
-        return resolve(TenantSignupAnalyticsQuery::class)->total();
+        return $this->signupAnalytics()->total();
     }
 
     public function getThisMonthSignups(): int
     {
-        return resolve(TenantSignupAnalyticsQuery::class)->thisMonth();
+        return $this->signupAnalytics()->thisMonth();
     }
 
     public function getAvgDaysOnTrial(): float
@@ -76,5 +78,10 @@ class Analytics extends Page
     public function getTenantStatus(): array
     {
         return resolve(TenantAnalyticsSummaryQuery::class)->tenantStatus();
+    }
+
+    private function signupAnalytics(): TenantSignupAnalyticsQuery
+    {
+        return $this->signupAnalyticsQuery ??= resolve(TenantSignupAnalyticsQuery::class);
     }
 }
