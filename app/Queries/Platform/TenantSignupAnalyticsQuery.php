@@ -5,7 +5,6 @@ namespace App\Queries\Platform;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class TenantSignupAnalyticsQuery
 {
@@ -26,17 +25,9 @@ class TenantSignupAnalyticsQuery
         $now = Date::now();
         $startDate = $now->copy()->subMonths(11)->startOfMonth();
 
-        $query = Tenant::query()
+        $counts = Tenant::query()
             ->where('created_at', '>=', $startDate)
-            ->selectRaw('COUNT(*) as aggregate');
-
-        $query = match (DB::getDriverName()) {
-            'sqlite' => $query->addSelect(DB::raw("strftime('%Y-%m', created_at) as month")),
-            'pgsql' => $query->addSelect(DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month")),
-            default => $query->addSelect(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month")),
-        };
-
-        $counts = $query
+            ->selectRaw('SUBSTR(created_at, 1, 7) as month, COUNT(*) as aggregate')
             ->groupBy('month')
             ->pluck('aggregate', 'month')
             ->all();
