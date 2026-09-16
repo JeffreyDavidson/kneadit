@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Stripe;
 
-use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use App\Services\Stripe\StripeWebhookEventHandler;
+use App\Services\Stripe\StripeWebhookIdempotency;
 use App\Services\Stripe\StripeWebhookPayloadParser;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
 class StripeWebhookController extends WebhookController
 {
-    use EnsuresWebhookIdempotency;
-
     public function __construct(
         private readonly StripeWebhookPayloadParser $payloadParser,
         private readonly StripeWebhookEventHandler $eventHandler,
+        private readonly StripeWebhookIdempotency $idempotency,
     ) {
         parent::__construct();
     }
@@ -24,7 +23,7 @@ class StripeWebhookController extends WebhookController
     {
         $eventId = $payload['id'] ?? null;
 
-        return $this->eventAlreadyProcessed(is_string($eventId) ? $eventId : null);
+        return $this->idempotency->alreadyProcessed(is_string($eventId) ? $eventId : null);
     }
 
     /** @param array<string, mixed> $payload */
