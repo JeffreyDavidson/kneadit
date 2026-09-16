@@ -90,7 +90,7 @@ class SendAbandonedCartRecoveryCommand extends Command
     private function mintCoupon(int $dollars): Coupon
     {
         do {
-            $code = 'BACK-' . strtoupper(Str::random(5));
+            $code = 'BACK-'.strtoupper(Str::random(5));
         } while (Coupon::query()->where('code', $code)->exists());
 
         return Coupon::query()->create([

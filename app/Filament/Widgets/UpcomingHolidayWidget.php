@@ -35,7 +35,7 @@ class UpcomingHolidayWidget extends Widget
     /** @return array<string, mixed>|null */
     public function getHolidayData(): ?array
     {
-        return $this->cached('data_' . now()->format('Y-m-d'), [1800, 3600], function (): ?array {
+        return $this->cached('data_'.now()->format('Y-m-d'), [1800, 3600], function (): ?array {
             try {
                 /** @var Holiday|null $holiday */
                 $holiday = Holiday::query()->active()->upcoming()->first();

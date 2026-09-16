@@ -93,10 +93,10 @@ class CreateDemoBakeriesCommand extends Command
             }
 
             if ($result->successful()) {
-                $domain = $bakery['id'] . '.kneadit.test';
+                $domain = $bakery['id'].'.kneadit.test';
                 $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
             } else {
-                $this->error('  ❌ Failed: ' . trim($result->errorOutput() ?: $result->output()));
+                $this->error('  ❌ Failed: '.trim($result->errorOutput() ?: $result->output()));
             }
         }
 

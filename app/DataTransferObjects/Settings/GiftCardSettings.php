@@ -5,7 +5,7 @@ namespace App\DataTransferObjects\Settings;
 final readonly class GiftCardSettings
 {
     /**
-     * @param array<int, int> $presetAmounts
+     * @param  array<int, int>  $presetAmounts
      */
     public function __construct(
         public array $presetAmounts,

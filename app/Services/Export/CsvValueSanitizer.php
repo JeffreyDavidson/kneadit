@@ -18,7 +18,7 @@ final class CsvValueSanitizer
     }
 
     /**
-     * @param array<int, mixed> $values
+     * @param  array<int, mixed>  $values
      * @return array<int, bool|float|int|string|null>
      */
     public static function row(array $values): array

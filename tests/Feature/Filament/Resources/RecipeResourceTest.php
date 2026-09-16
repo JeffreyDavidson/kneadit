@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
+use App\Filament\Resources\Recipes\RecipeResource;
 use App\Models\Inventory\Recipe;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
@@ -105,21 +106,21 @@ test('can sort recipes by name', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Recipes\RecipeResource::getGloballySearchableAttributes())
+    expect(RecipeResource::getGloballySearchableAttributes())
         ->toBe(['name']);
 });
 
 test('resource returns global search result title', function () {
     $recipe = Recipe::factory()->create(['name' => 'Sourdough Bread']);
 
-    expect(App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchResultTitle($recipe))
+    expect(RecipeResource::getGlobalSearchResultTitle($recipe))
         ->toBe('Sourdough Bread');
 });
 
 test('resource returns global search result details', function () {
     $recipe = Recipe::factory()->create(['prep_time_minutes' => 120]);
 
-    $details = App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchResultDetails($recipe);
+    $details = RecipeResource::getGlobalSearchResultDetails($recipe);
 
     expect($details)
         ->toHaveKey('Product')
@@ -127,7 +128,7 @@ test('resource returns global search result details', function () {
 });
 
 test('global search eloquent query eager loads product', function () {
-    $query = App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchEloquentQuery();
+    $query = RecipeResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('product');
 });

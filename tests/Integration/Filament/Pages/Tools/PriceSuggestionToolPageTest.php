@@ -3,6 +3,7 @@
 use App\Filament\Pages\Tools\PriceSuggestionTool;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -34,7 +35,7 @@ test('mount loads recipes with cost', function () {
 test('mount generates margin comparisons', function () {
     test()->page->mount();
 
-    expect(test()->page->marginComparisons)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->marginComparisons)->toBeInstanceOf(Collection::class);
 });
 
 test('updated selected recipe id loads recipe', function () {

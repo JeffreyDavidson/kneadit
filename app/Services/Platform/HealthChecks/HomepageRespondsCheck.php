@@ -17,7 +17,7 @@ class HomepageRespondsCheck implements HealthCheck
                 return HealthCheckResult::fail("Homepage returned status {$response->status()}");
             }
 
-            return HealthCheckResult::pass('Homepage responds (' . $response->status() . ')');
+            return HealthCheckResult::pass('Homepage responds ('.$response->status().')');
         } catch (\Exception $e) {
             return HealthCheckResult::fail("Homepage unreachable: {$e->getMessage()}");
         }

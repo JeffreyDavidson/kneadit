@@ -41,7 +41,7 @@ class SendLowStockAlertCommand extends Command
                     return;
                 }
 
-                if (! $runTracker->claim('low-stock:' . now()->toDateString())) {
+                if (! $runTracker->claim('low-stock:'.now()->toDateString())) {
                     return;
                 }
 

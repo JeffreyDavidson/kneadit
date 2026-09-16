@@ -87,7 +87,7 @@ class ProductsTable
                     ->url(fn (Product $record) => route('admin.products.label', $record))
                     ->openUrlInNewTab(),
                 Action::make('notifyWaitlist')
-                    ->label(fn (Product $record): string => 'Notify Waitlist (' . ($record->waitlist_entries_count ?? 0) . ')')
+                    ->label(fn (Product $record): string => 'Notify Waitlist ('.($record->waitlist_entries_count ?? 0).')')
                     ->icon(Heroicon::OutlinedBellAlert)
                     ->color('warning')
                     ->visible(fn (Product $record): bool => ($record->waitlist_entries_count ?? 0) > 0)

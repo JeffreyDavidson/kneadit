@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * pre-multiply existing values, change the column type, model cast switches
  * to MoneyCentsCast in the same release.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $columns = ['price', 'cost'];

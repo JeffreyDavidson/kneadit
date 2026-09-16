@@ -12,7 +12,7 @@ final class OrderTrackingPresenter
     public readonly int $currentStepIndex;
 
     /**
-     * @param array<int, OrderStatus> $trackableStatuses
+     * @param  array<int, OrderStatus>  $trackableStatuses
      */
     public function __construct(
         public readonly Order $order,

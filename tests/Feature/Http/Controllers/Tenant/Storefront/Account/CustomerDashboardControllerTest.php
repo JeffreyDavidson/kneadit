@@ -4,6 +4,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;
@@ -34,7 +35,7 @@ test('dashboard surfaces a customer\'s recent orders (capped at 10, latest first
     Order::factory()
         ->for($customer)
         ->count(12)
-        ->state(new Illuminate\Database\Eloquent\Factories\Sequence(...array_map(
+        ->state(new Sequence(...array_map(
             fn (int $i) => ['created_at' => now()->subDays($i)],
             range(0, 11),
         )))

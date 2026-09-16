@@ -74,7 +74,7 @@ class HolidaysTable
                             return 'Passed';
                         }
 
-                        return HolidayPresenter::for($record)->daysAway() . 'd';
+                        return HolidayPresenter::for($record)->daysAway().'d';
                     }),
 
                 IconColumn::make('is_active')

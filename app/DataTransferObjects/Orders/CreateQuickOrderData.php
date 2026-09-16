@@ -5,7 +5,7 @@ namespace App\DataTransferObjects\Orders;
 final readonly class CreateQuickOrderData
 {
     /**
-     * @param array<int, array{product_id: int, quantity: int, unit_price: float, special_instructions?: string|null}> $orderItems
+     * @param  array<int, array{product_id: int, quantity: int, unit_price: float, special_instructions?: string|null}>  $orderItems
      */
     public function __construct(
         public string $customerName,
@@ -21,7 +21,7 @@ final readonly class CreateQuickOrderData
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {

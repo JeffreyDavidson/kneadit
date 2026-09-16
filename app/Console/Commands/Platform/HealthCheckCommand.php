@@ -37,9 +37,9 @@ class HealthCheckCommand extends Command
             $result = resolve($class)->run();
 
             if ($result->passed) {
-                $this->info('✓ ' . $result->message);
+                $this->info('✓ '.$result->message);
             } else {
-                $this->error('✗ ' . $result->message);
+                $this->error('✗ '.$result->message);
                 $issues[] = $result->message;
             }
         }
@@ -59,7 +59,7 @@ class HealthCheckCommand extends Command
     protected function alertOnIssues(array $issues): void
     {
         $issueText = implode("\n- ", $issues);
-        $message = "KneadIt Health Check Alert\n\nIssues detected:\n- {$issueText}\n\nTime: " . now()->toDateTimeString();
+        $message = "KneadIt Health Check Alert\n\nIssues detected:\n- {$issueText}\n\nTime: ".now()->toDateTimeString();
 
         Log::critical('Health check failed', ['issues' => $issues]);
 

@@ -45,10 +45,10 @@ class AmountRangeFilter extends Filter
             $minimum = Number::parseFloat((string) (is_scalar($minimumValue) ? $minimumValue : 0)) ?: 0.0;
             $maximum = Number::parseFloat((string) (is_scalar($maximumValue) ? $maximumValue : 0)) ?: 0.0;
             if ($minimum > 0) {
-                $indicators[] = 'Min: $' . $minimum;
+                $indicators[] = 'Min: $'.$minimum;
             }
             if ($maximum > 0) {
-                $indicators[] = 'Max: $' . $maximum;
+                $indicators[] = 'Max: $'.$maximum;
             }
 
             return $indicators;

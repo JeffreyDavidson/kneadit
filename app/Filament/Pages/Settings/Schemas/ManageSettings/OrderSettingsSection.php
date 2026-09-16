@@ -71,10 +71,10 @@ class OrderSettingsSection
                         $fee = $state['fee'];
 
                         return (is_scalar($minDistance) ? (string) $minDistance : '')
-                            . '–'
-                            . (is_scalar($maxDistance) ? (string) $maxDistance : '')
-                            . ' mi · $'
-                            . (is_scalar($fee) ? (string) $fee : '');
+                            .'–'
+                            .(is_scalar($maxDistance) ? (string) $maxDistance : '')
+                            .' mi · $'
+                            .(is_scalar($fee) ? (string) $fee : '');
                     }),
 
                 Grid::make(2)

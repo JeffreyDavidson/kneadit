@@ -80,7 +80,7 @@ test('tracking shows correct status for each order stage', function (string $sta
         ->for($customer)
         ->recycle($user)
         ->create([
-            'order_number' => 'KN' . strtoupper($status),
+            'order_number' => 'KN'.strtoupper($status),
             'status' => $status,
             'subtotal' => 10.00,
             'total' => 10.00,

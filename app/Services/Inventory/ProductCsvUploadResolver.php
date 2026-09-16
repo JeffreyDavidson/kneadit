@@ -22,7 +22,7 @@ class ProductCsvUploadResolver
             return null;
         }
 
-        if (! Str::startsWith($resolvedPath, $importRoot . DIRECTORY_SEPARATOR) || ! is_file($resolvedPath)) {
+        if (! Str::startsWith($resolvedPath, $importRoot.DIRECTORY_SEPARATOR) || ! is_file($resolvedPath)) {
             return null;
         }
 

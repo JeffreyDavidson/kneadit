@@ -51,7 +51,7 @@ class TenantUsageService
                     $results[] = [
                         'tenant' => $tenant,
                         'name' => $tenant->store_name ?? $tenant->name ?? $tenant->id,
-                        'plan' => config('kneadit.plans.' . $plan . '.name', ucfirst($plan)),
+                        'plan' => config('kneadit.plans.'.$plan.'.name', ucfirst($plan)),
                         'plan_key' => $plan,
                         'product_count' => $productCount,
                         'product_limit' => $productLimit,

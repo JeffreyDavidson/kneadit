@@ -56,10 +56,10 @@ final class HolidayPresenter
         $days = $this->daysAway();
 
         return match (true) {
-            $days < 0 => 'Passed ' . abs($days) . ' days ago',
+            $days < 0 => 'Passed '.abs($days).' days ago',
             $days === 0 => 'Today!',
             $days === 1 => 'Tomorrow',
-            default => $days . ' days away',
+            default => $days.' days away',
         };
     }
 

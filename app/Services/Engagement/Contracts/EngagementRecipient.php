@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 final readonly class EngagementRecipient
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function __construct(
         public string $email,

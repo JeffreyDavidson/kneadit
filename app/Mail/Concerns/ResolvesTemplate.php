@@ -19,7 +19,7 @@ trait ResolvesTemplate
     private bool $resolvedTemplateLoaded = false;
 
     /**
-     * @param array<string, string> $placeholders
+     * @param  array<string, string>  $placeholders
      * @return array{subject: string, body: string|null}|null
      */
     protected function resolveTemplate(?EmailTemplateType $type, array $placeholders): ?array

@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\Tools\ShoppingListGenerator;
 use App\Services\Orders\OrderIngredientAggregator;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -64,5 +65,5 @@ test('generate shopping list populates list', function () {
     test()->page->mount();
     test()->page->generateShoppingList(resolve(OrderIngredientAggregator::class));
 
-    expect(test()->page->shoppingList)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->shoppingList)->toBeInstanceOf(Collection::class);
 });

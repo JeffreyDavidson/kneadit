@@ -25,7 +25,7 @@
                     <div class="space-y-1">
                         @foreach ($distribution->reverse() as $star => $count)
                             <x-tenant-admin.distribution-bar
-                                :label="$star . '/5'"
+                                :label="$star.'/5'"
                                 :percentage="($count / $maxCount) * 100"
                                 :count="$count"
                             />
@@ -49,7 +49,7 @@
                                 label-align="truncate"
                                 count-width="w-16"
                                 count-align="text-right"
-                                :count-suffix="round(($count / $total) * 100) . '% (' . $count . ')'"
+                                :count-suffix="round(($count / $total) * 100).'% ('.$count.')'"
                             />
                         @endforeach
                     </div>

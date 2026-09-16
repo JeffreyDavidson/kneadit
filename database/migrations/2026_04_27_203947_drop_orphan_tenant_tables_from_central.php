@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Schema;
  * files (categories, order_items, recipes, reviews, settings) from
  * database/migrations/ so a fresh setup doesn't recreate them in central.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     /** @var list<string> */
     private array $tables = [
         // Duplicated tenant migrations that mistakenly landed in central:

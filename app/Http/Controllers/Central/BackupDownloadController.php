@@ -16,10 +16,10 @@ class BackupDownloadController extends Controller
     {
         abort_unless(Backups::isSafeBackupName($name), 404);
 
-        $folder = Backups::backupDirectory() . '/' . $name;
+        $folder = Backups::backupDirectory().'/'.$name;
         abort_unless(is_dir($folder), 404, 'Backup not found.');
 
-        $zipPath = sys_get_temp_dir() . '/kneadit-backup-' . $name . '.zip';
+        $zipPath = sys_get_temp_dir().'/kneadit-backup-'.$name.'.zip';
 
         if (file_exists($zipPath)) {
             unlink($zipPath);

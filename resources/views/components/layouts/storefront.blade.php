@@ -357,7 +357,7 @@
     @endif
 
     @php
-        $pageTestId = 'page-' . str_replace(['storefront.', '.'], ['', '-'], request()->route()?->getName() ?? 'unknown');
+        $pageTestId = 'page-'.str_replace(['storefront.', '.'], ['', '-'], request()->route()?->getName() ?? 'unknown');
     @endphp
     <main @class(['min-h-screen', 'pt-24' => $storefrontTheme !== 'biscotto']) data-test="{{ $pageTestId }}">
         @php
@@ -365,7 +365,7 @@
             $announcementText = $settings->engagement->announcementText;
             $announcementType = $settings->engagement->announcementType;
             $announcementDismissKey = $announcementText
-                ? 'announcement_dismissed_' . hash('xxh128', $announcementText)
+                ? 'announcement_dismissed_'.hash('xxh128', $announcementText)
                 : null;
         @endphp
 

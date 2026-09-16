@@ -3,6 +3,7 @@
 namespace App\Filament\Concerns;
 
 use App\Enums\Staff\UserRole;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Auth;
 
 trait RequiresManagerRole
@@ -16,7 +17,7 @@ trait RequiresManagerRole
     {
         $user = Auth::guard('web')->user();
 
-        return $user instanceof \App\Models\Staff\User
+        return $user instanceof User
             && $user->role->meetsRequirement(UserRole::Manager);
     }
 }

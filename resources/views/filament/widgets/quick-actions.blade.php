@@ -7,7 +7,7 @@
                     class="flex flex-col items-center justify-center px-2.5 py-4 rounded-xl no-underline text-center transition-transform transition-shadow duration-150 hover:-translate-y-0.5 hover:shadow-md {{ $action['bgClass'] }}"
                 >
                     <div class="mb-1.5 {{ $action['textClass'] }}">
-                        <x-dynamic-component :component="'heroicon-' . $action['icon']->value" class="h-6 w-6" />
+                        <x-dynamic-component :component="'heroicon-'.$action['icon']->value" class="h-6 w-6" />
                     </div>
                     <span class="text-xs font-semibold {{ $action['textClass'] }}">{{ $action['label'] }}</span>
                 </a>

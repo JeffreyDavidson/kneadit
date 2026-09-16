@@ -14,7 +14,7 @@ class LowStockAlertMail extends BaseMailable
     use BakerBranded;
 
     /**
-     * @param Collection<int, Ingredient> $ingredients
+     * @param  Collection<int, Ingredient>  $ingredients
      */
     public function __construct(
         public Collection $ingredients,

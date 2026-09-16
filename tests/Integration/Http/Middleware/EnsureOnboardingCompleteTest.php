@@ -1,9 +1,14 @@
 <?php
 
+use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Http\Middleware\EnsureOnboardingComplete;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
 use JMac\Testing\Double;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
@@ -39,12 +44,12 @@ test('passes through for auth routes', function () {
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/auth/login');
-    $request->setRouteResolver(fn () => (new Illuminate\Routing\Route('GET', '/admin/auth/login', []))->name('filament.admin.auth.login'));
+    $request->setRouteResolver(fn () => (new Route('GET', '/admin/auth/login', []))->name('filament.admin.auth.login'));
 
     $response = $middleware->handle($request, fn () => new Response('OK'));
 
@@ -56,7 +61,7 @@ test('passes through when already on onboarding page', function () {
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
@@ -72,7 +77,7 @@ test('passes through for livewire update requests', function () {
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
@@ -88,7 +93,7 @@ test('passes through for livewire hashed paths', function () {
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $middleware = new EnsureOnboardingComplete;
@@ -105,13 +110,13 @@ test('passes through when onboarding is complete', function () {
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $settings = makeTenantSettings(
-        onboarding: new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: now()->toDateTimeString()),
+        onboarding: new OnboardingSettings(completedAt: now()->toDateTimeString()),
     );
-    app()->instance(App\Services\Settings\TenantSettings::class, $settings);
+    app()->instance(TenantSettings::class, $settings);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/dashboard');
@@ -127,10 +132,10 @@ test('passes through gracefully when TenantSettings throws exception', function 
     app()->instance(TenantContract::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
-    app()->bind(App\Services\Settings\TenantSettings::class, function () {
+    app()->bind(TenantSettings::class, function () {
         throw new RuntimeException('Settings unavailable');
     });
 
@@ -143,17 +148,17 @@ test('passes through gracefully when TenantSettings throws exception', function 
 });
 
 test('redirects to onboarding when onboardingCompletedAt is null using TenantSettings', function () {
-    $tenant = new App\Models\Platform\Tenant(['id' => 'onboarding-bakery']);
+    $tenant = new Tenant(['id' => 'onboarding-bakery']);
     tenancy()->getBootstrappersUsing = fn (): array => [];
     tenancy()->initialize($tenant);
 
-    $user = App\Models\Staff\User::factory()->create();
+    $user = User::factory()->create();
     actingAs($user);
 
     $settings = makeTenantSettings(
-        onboarding: new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: null),
+        onboarding: new OnboardingSettings(completedAt: null),
     );
-    app()->instance(App\Services\Settings\TenantSettings::class, $settings);
+    app()->instance(TenantSettings::class, $settings);
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/dashboard');

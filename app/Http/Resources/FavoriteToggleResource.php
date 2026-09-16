@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 class FavoriteToggleResource extends JsonApiResource
 {
     /**
-     * @param array{customer_email: string, product_id: int, favorited: bool} $resource
+     * @param  array{customer_email: string, product_id: int, favorited: bool}  $resource
      */
     public function __construct(array $resource)
     {

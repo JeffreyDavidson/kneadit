@@ -95,7 +95,7 @@ class StatsOverview extends Widget
     {
         $arrow = $delta >= 0 ? '↑' : '↓';
 
-        return "{$arrow} " . abs($delta) . "% {$suffix}";
+        return "{$arrow} ".abs($delta)."% {$suffix}";
     }
 
     private function trendTone(int $delta): string
@@ -113,7 +113,7 @@ class StatsOverview extends Widget
     }
 
     /**
-     * @param array<int, int> $values
+     * @param  array<int, int>  $values
      * @return array<int, int>
      */
     private function normaliseChart(array $values): array

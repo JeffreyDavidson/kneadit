@@ -14,9 +14,9 @@ class WeeklyDigestMail extends BaseMailable
     use BakerBranded;
 
     /**
-     * @param array<string, mixed> $stats
-     * @param Collection<int, OrderItem> $topProducts
-     * @param Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers
+     * @param  array<string, mixed>  $stats
+     * @param  Collection<int, OrderItem>  $topProducts
+     * @param  Collection<int, array{name: string, days_since_last_order: ?int}>  $atRiskCustomers
      */
     public function __construct(
         public array $stats,

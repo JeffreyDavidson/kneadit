@@ -23,7 +23,7 @@ class ModifyOrder
     /**
      * Modify quantities (and optionally tip) on an existing order.
      *
-     * @param array<int, array{order_item_id: int, quantity: int}> $items
+     * @param  array<int, array{order_item_id: int, quantity: int}>  $items
      */
     public function __invoke(Order $order, array $items, ?float $tipAmount = null): Order
     {

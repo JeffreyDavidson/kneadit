@@ -55,7 +55,7 @@ class SocialPostForm
                     ->required()
                     ->rows(4)
                     ->maxLength(fn (Get $get): int => self::platformFor($get)->maxChars())
-                    ->helperText(fn (Get $get): string => 'Max ' . Number::format(self::platformFor($get)->maxChars()) . ' characters for ' . self::platformFor($get)->getLabel())
+                    ->helperText(fn (Get $get): string => 'Max '.Number::format(self::platformFor($get)->maxChars()).' characters for '.self::platformFor($get)->getLabel())
                     ->hintAction(self::generateCaptionAction()),
 
                 FileUpload::make('image_path')

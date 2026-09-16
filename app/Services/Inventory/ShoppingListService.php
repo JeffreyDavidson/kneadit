@@ -50,8 +50,8 @@ class ShoppingListService
     }
 
     /**
-     * @param Collection<int, Ingredient> $lowStockIngredients
-     * @param array<int, float> $upcomingNeeds
+     * @param  Collection<int, Ingredient>  $lowStockIngredients
+     * @param  array<int, float>  $upcomingNeeds
      * @return array<int|string, array<string, mixed>>
      */
     private function groupBySupplier(Collection $lowStockIngredients, array $upcomingNeeds): array

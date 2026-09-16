@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -42,12 +43,12 @@ function uniqueSubdomain(): string
 {
     test()->subdomainCounter++;
 
-    return 'testbakery' . test()->subdomainCounter;
+    return 'testbakery'.test()->subdomainCounter;
 }
 
 /**
- * @param array<string, mixed> $data
- * @return TestResponse<Symfony\Component\HttpFoundation\Response>
+ * @param  array<string, mixed>  $data
+ * @return TestResponse<Response>
  */
 function submitOnboarding(User $user, array $data = []): TestResponse
 {
@@ -140,7 +141,7 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         ->and(auth()->check())->toBeFalse()
         ->and(csrf_token())->not->toBe($tokenBefore);
 
-    $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
+    $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
 
     Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
         return $event->user->is($user)
@@ -229,7 +230,7 @@ test('onboarding rejects invalid payloads', function () {
 test('subdomain is lowercased', function () {
     $user = createSignupUser();
     $this->subdomainCounter++;
-    $sub = 'MyBaKeRy' . $this->subdomainCounter;
+    $sub = 'MyBaKeRy'.$this->subdomainCounter;
     $lower = strtolower($sub);
 
     submitOnboarding($user, ['subdomain' => $sub]);

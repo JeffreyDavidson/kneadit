@@ -38,7 +38,7 @@ class CustomerPasswordResetNotification extends Notification
             ->subject("Reset your password — {$storeName}")
             ->line("You are receiving this email because a password reset was requested for your {$storeName} account.")
             ->action('Reset password', $url)
-            ->line('This link will expire in ' . Config::integer('auth.passwords.customers.expire', 60) . ' minutes.')
+            ->line('This link will expire in '.Config::integer('auth.passwords.customers.expire', 60).' minutes.')
             ->line('If you did not request a password reset, no further action is required.');
     }
 }

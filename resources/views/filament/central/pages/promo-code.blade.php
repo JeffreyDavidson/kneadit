@@ -96,11 +96,11 @@
                         @foreach ($codes as $code)
                             @php
                                 $discountText = $code->percent_off !== null
-                                    ? $code->percent_off . '% off'
-                                    : '$' . number_format(($code->amount_off_cents ?? 0) / 100, 2) . ' off';
+                                    ? $code->percent_off.'% off'
+                                    : '$'.number_format(($code->amount_off_cents ?? 0) / 100, 2).' off';
                                 $durationText = match ($code->duration) {
                                     'once' => 'Once',
-                                    'repeating' => $code->duration_in_months . ' months',
+                                    'repeating' => $code->duration_in_months.' months',
                                     'forever' => 'Forever',
                                     default => ucfirst($code->duration),
                                 };

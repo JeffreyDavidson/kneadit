@@ -31,9 +31,9 @@ function tenantDatabaseCleanup(): Closure
             }
 
             @unlink($file);
-            @unlink($file . '-journal');
-            @unlink($file . '-wal');
-            @unlink($file . '-shm');
+            @unlink($file.'-journal');
+            @unlink($file.'-wal');
+            @unlink($file.'-shm');
         }
     };
 }

@@ -1,12 +1,13 @@
 <?php
 
 use App\Actions\Tenants\ExtendTenantTrial;
+use App\Models\Platform\Tenant;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('extends tenant trial by specified days', function () {
     createTenant(['trial_ends_at' => now()->addDays(5)]);
-    $tenant = App\Models\Platform\Tenant::query()->find('test-bakery');
+    $tenant = Tenant::query()->find('test-bakery');
 
     $newEnd = resolve(ExtendTenantTrial::class)($tenant, 14);
 

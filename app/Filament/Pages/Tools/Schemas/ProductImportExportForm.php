@@ -45,7 +45,7 @@ class ProductImportExportForm
                         ->color('success')
                         ->action(function () {
                             $csv = resolve(ProductCsvExporter::class)->export();
-                            $filename = 'products-' . now()->format('Y-m-d') . '.csv';
+                            $filename = 'products-'.now()->format('Y-m-d').'.csv';
 
                             return response()->streamDownload(function () use ($csv) {
                                 echo $csv;
@@ -97,12 +97,12 @@ class ProductImportExportForm
 
                             if (empty($result['errors'])) {
                                 Notification::make()
-                                    ->title('Preview ready: ' . count($result['rows']) . ' rows found.')
+                                    ->title('Preview ready: '.count($result['rows']).' rows found.')
                                     ->success()
                                     ->send();
                             } else {
                                 Notification::make()
-                                    ->title('Preview has ' . count($result['errors']) . ' error(s). Fix before importing.')
+                                    ->title('Preview has '.count($result['errors']).' error(s). Fix before importing.')
                                     ->danger()
                                     ->send();
                             }
@@ -133,7 +133,7 @@ class ProductImportExportForm
                             } else {
                                 Notification::make()
                                     ->title('Import finished with errors')
-                                    ->body("{$livewire->importResults['created']} created, {$livewire->importResults['updated']} updated, " . count($livewire->importResults['errors']) . ' errors.')
+                                    ->body("{$livewire->importResults['created']} created, {$livewire->importResults['updated']} updated, ".count($livewire->importResults['errors']).' errors.')
                                     ->warning()
                                     ->send();
                             }

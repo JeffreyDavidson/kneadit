@@ -46,7 +46,7 @@ class IngredientFactory extends Factory
     /**
      * Tag the ingredient with the given allergens.
      *
-     * @param array<int, Allergen> $allergens
+     * @param  array<int, Allergen>  $allergens
      */
     public function withAllergens(array $allergens): static
     {

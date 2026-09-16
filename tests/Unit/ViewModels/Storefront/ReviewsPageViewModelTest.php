@@ -5,7 +5,7 @@ use App\ViewModels\Storefront\ReviewsPageViewModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @param list<int> $ratings
+ * @param  list<int>  $ratings
  * @return LengthAwarePaginator<int, Review>
  */
 function makeReviewCollection(array $ratings): LengthAwarePaginator
@@ -27,7 +27,7 @@ function makeStats(float $avgRating, int $totalCount): object
 }
 
 /**
- * @param list<int> $ratings
+ * @param  list<int>  $ratings
  * @return array<int, int>
  */
 function makeStarCounts(array $ratings): array

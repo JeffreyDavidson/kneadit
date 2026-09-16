@@ -9,7 +9,7 @@ if (! function_exists('settings')) {
     /**
      * Get or set a tenant setting value.
      *
-     * @param string|array<string, mixed> $key
+     * @param  string|array<string, mixed>  $key
      */
     function settings(string|array $key, mixed $default = null): mixed
     {
@@ -62,7 +62,7 @@ if (! function_exists('platformSettings')) {
     /**
      * Get or set a platform setting value.
      *
-     * @param string|array<string, mixed> $key
+     * @param  string|array<string, mixed>  $key
      */
     function platformSettings(string|array $key, mixed $default = null): mixed
     {

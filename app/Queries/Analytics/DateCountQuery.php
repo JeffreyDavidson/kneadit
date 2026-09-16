@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 final class DateCountQuery
 {
     /**
-     * @param Builder<covariant Model> $query
+     * @param  Builder<covariant Model>  $query
      * @return array<string, int>
      */
     public static function count(Builder $query, string $dateColumn, Carbon $start, Carbon $end): array

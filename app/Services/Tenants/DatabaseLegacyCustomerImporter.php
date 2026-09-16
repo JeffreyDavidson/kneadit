@@ -10,7 +10,7 @@ use UnexpectedValueException;
 final class DatabaseLegacyCustomerImporter implements LegacyCustomerImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $orders
+     * @param  array<int, array<string, mixed>>  $orders
      * @return array<string, int>
      */
     public function import(array $orders): array

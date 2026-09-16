@@ -5,6 +5,7 @@ namespace App\Models\Financial;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Database\Factories\Financial\CouponTransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -18,7 +19,7 @@ use Illuminate\Support\Carbon;
  * @property-read Coupon|null $coupon
  * @property-read Order|null $order
  * @property Carbon|null $created_at
- * @property \App\ValueObjects\Money $amount
+ * @property Money $amount
  *
  * @mixin \Eloquent
  */

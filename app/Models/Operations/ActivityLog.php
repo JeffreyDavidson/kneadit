@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read User|null $user
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  *
  * @property ActivityAction $action
- * @property \Illuminate\Support\Carbon $created_at
+ * @property Carbon $created_at
  */
 #[WithoutTimestamps]
 #[Fillable('user_id', 'user_name', 'action', 'model_type', 'model_id', 'description', 'properties', 'ip_address', 'created_at')]

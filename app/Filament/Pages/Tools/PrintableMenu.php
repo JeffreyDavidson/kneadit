@@ -88,7 +88,7 @@ class PrintableMenu extends Page
             throw new \LogicException('The tenant must have a domain to generate a printable menu.');
         }
 
-        return 'http://' . $domain->domain;
+        return 'http://'.$domain->domain;
     }
 
     public function getQrCode(): string

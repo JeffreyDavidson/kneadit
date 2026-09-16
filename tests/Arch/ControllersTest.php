@@ -1,20 +1,23 @@
 <?php
 
 declare(strict_types=1);
+use App\Http\Controllers\Central\ConsumeImpersonationController;
+use App\Http\Controllers\Central\ImpersonateController;
+use App\Http\Controllers\Controller;
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
 $controllerFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator(__DIR__ . '/../../app/Http/Controllers', FilesystemIterator::SKIP_DOTS),
+    new RecursiveDirectoryIterator(__DIR__.'/../../app/Http/Controllers', FilesystemIterator::SKIP_DOTS),
 )))
     ->filter(fn (SplFileInfo $file): bool => $file->getExtension() === 'php')
     ->map(fn (SplFileInfo $file): string => $file->getPathname())
     ->map(function (string $file): string {
-        $relative = str_replace(__DIR__ . '/../../app/', '', $file);
+        $relative = str_replace(__DIR__.'/../../app/', '', $file);
 
-        return str_replace(['/', '.php'], ['\\', ''], 'App\\' . $relative);
+        return str_replace(['/', '.php'], ['\\', ''], 'App\\'.$relative);
     })
-    ->reject(fn ($class) => $class === App\Http\Controllers\Controller::class)
+    ->reject(fn ($class) => $class === Controller::class)
     ->filter(fn ($class) => class_exists($class))
     ->reject(fn ($class): bool => (new ReflectionClass($class))->isAbstract())
     ->values();
@@ -37,7 +40,7 @@ foreach ($controllerFiles as $controllerClass) {
         $isResourceful = empty(array_diff($publicMethods, $resourceMethods));
 
         expect($isInvokable || $isResourceful)->toBeTrue(
-            'Must be invokable or resourceful. Found: ' . implode(', ', $publicMethods),
+            'Must be invokable or resourceful. Found: '.implode(', ', $publicMethods),
         );
     });
 }
@@ -51,8 +54,8 @@ arch('controllers should not use DB facade directly')
     ->expect('Illuminate\Support\Facades\DB')
     ->not->toBeUsedIn('App\Http\Controllers')
     ->ignoring([
-        App\Http\Controllers\Central\ImpersonateController::class,
-        App\Http\Controllers\Central\ConsumeImpersonationController::class,
+        ImpersonateController::class,
+        ConsumeImpersonationController::class,
     ]);
 
 arch('controllers should not invoke tenancy middleware directly')
@@ -84,7 +87,7 @@ foreach ($controllerFiles as $controllerClass) {
 
         expect($actualOrder)->toBe(
             $presentResourceMethods,
-            'Resource methods must follow standard order (index, create, store, show, edit, update, destroy). Found: ' . implode(', ', $actualOrder),
+            'Resource methods must follow standard order (index, create, store, show, edit, update, destroy). Found: '.implode(', ', $actualOrder),
         );
     });
 }

@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 class CapacityResource extends JsonApiResource
 {
     /**
-     * @param array{date: string, available: bool, remaining: int, max: int} $resource
+     * @param  array{date: string, available: bool, remaining: int, max: int}  $resource
      */
     public function __construct(array $resource)
     {

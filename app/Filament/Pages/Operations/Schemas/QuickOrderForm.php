@@ -89,7 +89,7 @@ class QuickOrderForm
                     $totalItems = count($items);
                     $subtotal = collect($items)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
 
-                    return $totalItems . ' items · Subtotal: $' . Number::currency($subtotal);
+                    return $totalItems.' items · Subtotal: $'.Number::currency($subtotal);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -104,7 +104,7 @@ class QuickOrderForm
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name . ' - ' . ($product->price?->formatted() ?? ''),
+                                            $product->id => $product->name.' - '.($product->price?->formatted() ?? ''),
                                         ]))
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {

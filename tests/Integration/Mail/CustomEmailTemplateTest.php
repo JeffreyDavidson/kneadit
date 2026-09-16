@@ -48,7 +48,7 @@ test('OrderPlacedMail resolves default, custom, and subject-only templates', fun
 
     $customMail = new OrderPlacedMail($order);
 
-    expect($customMail->envelope()->subject)->toContain('Order #' . $order->order_number . ' received')
+    expect($customMail->envelope()->subject)->toContain('Order #'.$order->order_number.' received')
         ->and($customMail->content()->view)->toBe('emails.custom-template');
 
     $template->update([

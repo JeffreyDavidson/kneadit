@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 final readonly class ProductCostAnalysis
 {
     /**
-     * @param Collection<int, array{name: string, quantity: float, unit: string, cost_per_unit: float, total_cost: float}> $ingredients
+     * @param  Collection<int, array{name: string, quantity: float, unit: string, cost_per_unit: float, total_cost: float}>  $ingredients
      */
     public function __construct(
         public float $cost,

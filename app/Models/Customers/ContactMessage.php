@@ -8,12 +8,13 @@ use Database\Factories\Customers\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ContactMessageReply> $replies
+ * @property-read Collection<int, ContactMessageReply> $replies
  *
  * @method static ContactMessageQueryBuilder|ContactMessage newModelQuery()
  * @method static ContactMessageQueryBuilder|ContactMessage newQuery()

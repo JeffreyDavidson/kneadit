@@ -15,7 +15,7 @@ trait ShowsUpgradeBadge
         $tenant = static::currentTenant();
         $tenantKey = $tenant instanceof Tenant ? $tenant->id : 'central';
 
-        return cache()->remember('navigation-badge:upgrade:' . static::class . ':' . $tenantKey . ':' . static::requiredTier()->value, 60, function () use ($tenant): ?string {
+        return cache()->remember('navigation-badge:upgrade:'.static::class.':'.$tenantKey.':'.static::requiredTier()->value, 60, function () use ($tenant): ?string {
             $current = data_get($tenant, 'plan');
 
             if ($current instanceof SubscriptionTier && $current->meetsRequirement(static::requiredTier())) {

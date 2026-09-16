@@ -31,11 +31,11 @@ class ViewContactMessage extends ViewRecord
                 ->label('Reply')
                 ->icon(Heroicon::OutlinedArrowUturnLeft)
                 ->color('primary')
-                ->modalHeading(fn (): string => 'Reply to ' . $this->record->name)
+                ->modalHeading(fn (): string => 'Reply to '.$this->record->name)
                 ->modalSubmitActionLabel('Send reply')
                 ->slideOver()
                 ->fillForm(fn (): array => [
-                    'subject' => 'Re: ' . $this->record->subject,
+                    'subject' => 'Re: '.$this->record->subject,
                     'body' => '',
                 ])
                 ->schema([
@@ -72,7 +72,7 @@ class ViewContactMessage extends ViewRecord
 
                     Notification::make()
                         ->title('Reply sent')
-                        ->body('Email sent to ' . $this->record->email)
+                        ->body('Email sent to '.$this->record->email)
                         ->success()
                         ->send();
                 }),

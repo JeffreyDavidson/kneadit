@@ -8,7 +8,7 @@ use Illuminate\Auth\Events\Registered;
 class CreateUser
 {
     /**
-     * @param array{name: string, email: string, password: string} $data
+     * @param  array{name: string, email: string, password: string}  $data
      */
     public function __invoke(array $data): User
     {

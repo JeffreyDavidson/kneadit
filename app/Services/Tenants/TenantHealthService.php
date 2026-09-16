@@ -104,7 +104,7 @@ class TenantHealthService
     }
 
     /**
-     * @param array{has_products: bool, has_categories: bool, has_orders: bool} $metrics
+     * @param  array{has_products: bool, has_categories: bool, has_orders: bool}  $metrics
      */
     protected function countSetupCompleted(Tenant $tenant, array $metrics): int
     {

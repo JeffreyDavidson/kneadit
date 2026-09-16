@@ -6,9 +6,9 @@
         // article query string. Each topic carries its own `color` token from
         // config/help.php — used for both the dot indicator and the tile.
         $cls = fn (array $topic): array => [
-            'dot' => 'bg-' . $topic['color'],
-            'text' => 'text-' . $topic['color'],
-            'tile' => 'bg-' . $topic['color'] . '/15',
+            'dot' => 'bg-'.$topic['color'],
+            'text' => 'text-'.$topic['color'],
+            'tile' => 'bg-'.$topic['color'].'/15',
         ];
     @endphp
 
@@ -138,7 +138,7 @@
                         @php
                             [$topicSlug] = explode('/', $pa['slug']);
                             $topicMeta = collect($topics)->firstWhere('slug', $topicSlug);
-                            $colorClass = $topicMeta ? 'bg-' . $topicMeta['color'] : 'bg-brand-600';
+                            $colorClass = $topicMeta ? 'bg-'.$topicMeta['color'] : 'bg-brand-600';
                             $idx = collect($topics)->search(fn ($t) => $t['slug'] === $topicSlug);
                         @endphp
                         <div

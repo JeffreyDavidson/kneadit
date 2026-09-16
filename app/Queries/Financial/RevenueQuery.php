@@ -14,7 +14,7 @@ class RevenueQuery
     /**
      * Get total revenue for a date range.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      */
     public static function total(DateRange|array $range): Money
     {
@@ -29,7 +29,7 @@ class RevenueQuery
     /**
      * Get daily revenue breakdown for a date range.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      * @return array<string, float>
      */
     public static function dailyBreakdown(DateRange|array $range): array
@@ -52,7 +52,7 @@ class RevenueQuery
     /**
      * Get order count for a date range.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      */
     public static function orderCount(DateRange|array $range): int
     {
@@ -65,7 +65,7 @@ class RevenueQuery
     }
 
     /**
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      * @return array{Carbon, Carbon}
      */
     private static function bounds(DateRange|array $range): array

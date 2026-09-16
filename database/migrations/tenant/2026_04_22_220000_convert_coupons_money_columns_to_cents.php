@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * column on coupons stays decimal — it's a percentage value (0–100,
  * fractional), not money.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $couponColumns = ['fixed_amount', 'min_order_amount'];

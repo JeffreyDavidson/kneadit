@@ -19,7 +19,7 @@
         </div>
         @if (count($recent) > 0)
             @foreach ($recent as $txn)
-                <x-tenant-admin.dashboard.list-row :value="'$' . number_format(abs($txn['amount_cents']) / 100, 2)">
+                <x-tenant-admin.dashboard.list-row :value="'$'.number_format(abs($txn['amount_cents']) / 100, 2)">
                     <span style="font-family: monospace; font-weight: 600; color: var(--pw-card-accent)">{{ $txn['code'] }}</span>
                     <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $txn['date'] }}</span>
                 </x-tenant-admin.dashboard.list-row>

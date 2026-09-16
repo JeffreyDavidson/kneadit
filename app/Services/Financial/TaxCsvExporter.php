@@ -19,10 +19,10 @@ class TaxCsvExporter
         fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method']);
 
         Order::with(['customer', 'orderItems.product'])
-            ->whereBetween('created_at', [$from, $to . ' 23:59:59'])->oldest()
+            ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
             ->chunk(100, function (Collection $orders) use ($handle) {
                 foreach ($orders as $order) {
-                    $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item') . ' x' . $i->quantity)->implode('; ');
+                    $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, CsvValueSanitizer::row([
                         $order->created_at?->format('Y-m-d'),
                         $order->order_number,
@@ -101,7 +101,7 @@ class TaxCsvExporter
     {
         // orders.total, incomes.amount, expenses.amount, expenses.deductible_amount
         // all bigint cents (migrations 2026_04_22_201500 + 2026_04_22_230000).
-        $totalOrderRevenue = (int) Order::query()->whereBetween('created_at', [$from, $to . ' 23:59:59'])
+        $totalOrderRevenue = (int) Order::query()->whereBetween('created_at', [$from, $to.' 23:59:59'])
             ->where('payment_status', PaymentStatus::Paid)
             ->sum('total') / 100;
 

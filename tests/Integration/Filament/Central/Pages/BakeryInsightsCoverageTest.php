@@ -2,6 +2,7 @@
 
 use App\Filament\Central\Pages\BakeryInsights;
 use App\Models\Platform\Tenant;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -11,19 +12,19 @@ beforeEach(function () {
 test('get tenant health data returns collection', function () {
     $result = test()->page->getTenantHealthData();
 
-    expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($result)->toBeInstanceOf(Collection::class);
 });
 
 test('get alerts returns collection', function () {
     $result = test()->page->getAlerts();
 
-    expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($result)->toBeInstanceOf(Collection::class);
 });
 
 test('get tenant usage data returns collection', function () {
     $result = test()->page->getTenantUsageData();
 
-    expect($result)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($result)->toBeInstanceOf(Collection::class);
 });
 
 test('extend trial with missing tenant does not record extension', function () {

@@ -35,7 +35,7 @@ class CateringDepositCheckoutService
         $session = $this->createCheckoutSession(
             $inquiry,
             $depositDollars,
-            route('catering.stripe.success', $inquiry) . '?session_id={CHECKOUT_SESSION_ID}',
+            route('catering.stripe.success', $inquiry).'?session_id={CHECKOUT_SESSION_ID}',
             route('catering.stripe.cancel', $inquiry),
         );
 
@@ -76,7 +76,7 @@ class CateringDepositCheckoutService
                             'unit_amount' => (int) round($depositDollars * 100),
                             'product_data' => [
                                 'name' => "Catering deposit — {$inquiry->event_type}",
-                                'description' => trim('Event date: ' . $inquiry->event_date?->format('M j, Y')),
+                                'description' => trim('Event date: '.$inquiry->event_date?->format('M j, Y')),
                             ],
                         ],
                     ]],

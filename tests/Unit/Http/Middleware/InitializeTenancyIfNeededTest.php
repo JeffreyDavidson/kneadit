@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JMac\Testing\Double;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
+use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 test('passes through when tenancy is already initialized', function () {
     $tenant = Double::for(TenantContract::class);
@@ -47,18 +50,19 @@ test('passes through for central domains', function () {
 test('returns 503 when central row exists but tenant SQLite file is missing', function () {
     config(['tenancy.central_domains' => ['getkneadit.app']]);
 
-    $stancl = new class extends Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain {
+    $stancl = new class extends InitializeTenancyByDomainOrSubdomain
+    {
         public function handle(mixed $request, Closure $next): never
         {
-            throw new Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException('tenantfoo');
+            throw new TenantDatabaseDoesNotExistException('tenantfoo');
         }
     };
-    app()->instance(Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class, $stancl);
+    app()->instance(InitializeTenancyByDomainOrSubdomain::class, $stancl);
 
     $middleware = new InitializeTenancyIfNeeded;
     $request = Request::create('https://foo.getkneadit.app/admin');
     $request->headers->set('HOST', 'foo.getkneadit.app');
 
     expect(fn () => $middleware->handle($request, fn () => new Response('OK')))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class, 'Bakery temporarily unavailable. Run `php artisan tenants:doctor --fix` to repair.');
+        ->toThrow(HttpException::class, 'Bakery temporarily unavailable. Run `php artisan tenants:doctor --fix` to repair.');
 });

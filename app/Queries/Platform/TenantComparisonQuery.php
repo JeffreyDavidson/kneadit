@@ -25,11 +25,11 @@ class TenantComparisonQuery
     }
 
     /**
-     * @param array<int, string> $tenantIds
+     * @param  array<int, string>  $tenantIds
      * @return array<int, array<string, mixed>>
      */
     /**
-     * @param list<string> $tenantIds
+     * @param  list<string>  $tenantIds
      * @return list<TenantComparisonResult>
      */
     public function comparison(array $tenantIds): array

@@ -18,7 +18,7 @@ class TopLoyaltyCustomersQuery
             ->groupBy('customers.id')
             ->selectRaw(
                 'SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) '
-                . '- SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) as balance',
+                .'- SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) as balance',
                 [LoyaltyPointType::Earned->value, LoyaltyPointType::Redeemed->value],
             )
             ->selectRaw(

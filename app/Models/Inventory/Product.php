@@ -10,6 +10,7 @@ use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
 use App\Observers\LogsActivityObserver;
+use App\ValueObjects\Money;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -48,8 +49,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $waitlist_entries_count
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until
- * @property \App\ValueObjects\Money|null $price
- * @property \App\ValueObjects\Money|null $cost
+ * @property Money|null $price
+ * @property Money|null $cost
  *
  * @mixin \Eloquent
  */

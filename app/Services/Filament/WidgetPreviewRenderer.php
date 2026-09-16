@@ -23,7 +23,7 @@ class WidgetPreviewRenderer
      * Render the widget identified by its FQN. Returns rendered HTML,
      * or a placeholder if the demo tenant is missing or the widget throws.
      *
-     * @param class-string $widgetClass
+     * @param  class-string  $widgetClass
      */
     public function render(string $widgetClass): HtmlString
     {
@@ -99,8 +99,8 @@ class WidgetPreviewRenderer
     {
         return new HtmlString(
             '<div class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">'
-            . $message
-            . '</div>',
+            .$message
+            .'</div>',
         );
     }
 }

@@ -7,7 +7,7 @@ use Livewire\Wireable;
 final readonly class PricingRecommendation implements Wireable
 {
     /**
-     * @param array<int, array{qty: int, label: string, unit_price: float, total: float}> $bulkTiers
+     * @param  array<int, array{qty: int, label: string, unit_price: float, total: float}>  $bulkTiers
      */
     public function __construct(
         public float $ingredientCost,

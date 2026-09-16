@@ -23,7 +23,7 @@ test('handleInvoicePaymentFailed dispatches PaymentFailed event', function () {
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
-        'id' => 'evt_test_' . uniqid(),
+        'id' => 'evt_test_'.uniqid(),
         'data' => [
             'object' => [
                 'customer' => 'cus_test123',
@@ -45,7 +45,7 @@ test('duplicate events are skipped via idempotency check', function () {
     $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
-    $eventId = 'evt_duplicate_' . uniqid();
+    $eventId = 'evt_duplicate_'.uniqid();
     $payload = [
         'id' => $eventId,
         'data' => ['object' => ['customer' => 'cus_test456', 'amount_due' => 1000]],
@@ -139,7 +139,7 @@ test('subscription update webhook persists the subscription and syncs the tenant
     $method = new ReflectionMethod($controller, 'handleCustomerSubscriptionUpdated');
 
     $method->invoke($controller, [
-        'id' => 'evt_subscription_update_' . uniqid(),
+        'id' => 'evt_subscription_update_'.uniqid(),
         'data' => [
             'object' => [
                 'id' => 'sub_growth_webhook',
@@ -217,7 +217,7 @@ test('handleInvoicePaymentFailed skips when no customer id in payload', function
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
-        'id' => 'evt_no_customer_' . uniqid(),
+        'id' => 'evt_no_customer_'.uniqid(),
         'data' => [
             'object' => [
                 'customer' => null,
@@ -236,7 +236,7 @@ test('handleInvoicePaymentFailed skips when user not found for customer', functi
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
-        'id' => 'evt_no_user_' . uniqid(),
+        'id' => 'evt_no_user_'.uniqid(),
         'data' => [
             'object' => [
                 'customer' => 'cus_does_not_exist',

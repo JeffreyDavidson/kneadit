@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\SenderType;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
@@ -25,7 +26,7 @@ test('sender_type cast resolves to SenderType enum for baker messages', function
         Order::factory()->recycle(test()->user)->create(),
     )->create();
 
-    expect($message->sender_type)->toBe(App\Enums\Orders\SenderType::Baker);
+    expect($message->sender_type)->toBe(SenderType::Baker);
 });
 
 test('sender_type cast resolves to SenderType enum for customer messages', function () {
@@ -33,5 +34,5 @@ test('sender_type cast resolves to SenderType enum for customer messages', funct
         Order::factory()->recycle(test()->user)->create(),
     )->create();
 
-    expect($message->sender_type)->toBe(App\Enums\Orders\SenderType::Customer);
+    expect($message->sender_type)->toBe(SenderType::Customer);
 });

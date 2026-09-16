@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Pages\Tools\QrCodeGenerator;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
@@ -18,7 +19,7 @@ beforeEach(function () {
     $fakeTenant = new Tenant;
     $fakeTenant->forceFill([
         'id' => 'test-bakery',
-        'plan' => App\Enums\Platform\SubscriptionTier::Pro,
+        'plan' => SubscriptionTier::Pro,
     ]);
     $fakeTenant->setRelation('domains', new Collection([
         new Domain(['domain' => 'test-bakery.getkneadit.test']),

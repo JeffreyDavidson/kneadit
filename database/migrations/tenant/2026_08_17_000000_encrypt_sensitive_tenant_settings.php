@@ -4,7 +4,8 @@ use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $cipher = resolve(TenantSettingCipher::class);

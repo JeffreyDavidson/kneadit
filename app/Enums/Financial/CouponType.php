@@ -27,8 +27,8 @@ enum CouponType: string implements HasColor, HasLabel
     public function formatDiscount(float $value): string
     {
         return match ($this) {
-            self::Percentage => Number::format($value) . '% off',
-            self::Fixed => Number::currency($value) . ' off',
+            self::Percentage => Number::format($value).'% off',
+            self::Fixed => Number::currency($value).' off',
         };
     }
 }

@@ -13,7 +13,7 @@ arch('no env calls outside config files')
 test('no MySQL-only SQL functions in application code', function () {
     $mysqlFunctions = ['DATE_FORMAT', 'YEAR(', 'MONTH(', 'DAY(', 'FIELD(', 'IFNULL('];
     $violations = [];
-    $appDir = __DIR__ . '/../../app';
+    $appDir = __DIR__.'/../../app';
 
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($appDir, FilesystemIterator::SKIP_DOTS),
@@ -36,13 +36,13 @@ test('no MySQL-only SQL functions in application code', function () {
 
         foreach ($mysqlFunctions as $fn) {
             if (str_contains($content, $fn)) {
-                $relative = str_replace($appDir . '/', '', $file->getPathname());
+                $relative = str_replace($appDir.'/', '', $file->getPathname());
                 $violations[] = "{$relative} uses MySQL-only function: {$fn}";
             }
         }
     }
 
     expect($violations)->toBeEmpty(
-        "MySQL-only SQL found:\n" . implode("\n", $violations),
+        "MySQL-only SQL found:\n".implode("\n", $violations),
     );
 });

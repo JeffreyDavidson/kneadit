@@ -45,7 +45,7 @@ class CouponService
             }
 
             if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount->dollars()) {
-                return CouponValidationResult::invalid('Minimum order of ' . $coupon->min_order_amount->formatted() . ' required for this coupon.');
+                return CouponValidationResult::invalid('Minimum order of '.$coupon->min_order_amount->formatted().' required for this coupon.');
             }
 
             $discount = $this->calculateDiscount($coupon, $subtotal);

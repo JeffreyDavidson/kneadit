@@ -3,6 +3,7 @@
 use App\Models\Inventory\Product;
 use App\Services\Export\ProductCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 
 pest()->use(RefreshDatabase::class);
 
@@ -31,7 +32,7 @@ test('exports products as csv', function () {
 
 test('parses valid csv for preview', function () {
     $csvContent = "name,price,category\nChocolate Cake,12.99,Cakes\nSourdough,8.50,Bread";
-    $file = Illuminate\Http\UploadedFile::fake()->createWithContent('products.csv', $csvContent);
+    $file = UploadedFile::fake()->createWithContent('products.csv', $csvContent);
 
     $exporter = new ProductCsvExporter;
     $result = $exporter->parseForPreview($file);
@@ -43,7 +44,7 @@ test('parses valid csv for preview', function () {
 
 test('reports missing required columns in csv', function () {
     $csvContent = "description,category\nA cake,Cakes";
-    $file = Illuminate\Http\UploadedFile::fake()->createWithContent('products.csv', $csvContent);
+    $file = UploadedFile::fake()->createWithContent('products.csv', $csvContent);
 
     $exporter = new ProductCsvExporter;
     $result = $exporter->parseForPreview($file);

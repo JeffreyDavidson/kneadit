@@ -27,7 +27,7 @@ class AnnouncementBanner extends Widget
 
         $planKey = $plan ? $plan->value : 'none';
 
-        $announcements = $this->cached('announcements_' . $planKey, [1800, 3600], fn (): array => PlatformAnnouncement::active()
+        $announcements = $this->cached('announcements_'.$planKey, [1800, 3600], fn (): array => PlatformAnnouncement::active()
             ->orderBy('created_at', 'desc')
             ->get()
             ->filter(function (PlatformAnnouncement $announcement) use ($plan) {

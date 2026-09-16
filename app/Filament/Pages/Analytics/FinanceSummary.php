@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Financial\MonthlyFinancials;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -75,7 +76,7 @@ class FinanceSummary extends Page
         $this->totalRevenue = $data->totalRevenue;
         $this->totalExpenses = $data->totalExpenses;
         $this->netProfit = $data->netProfit;
-        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (\App\DataTransferObjects\Financial\MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
+        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
         $this->expenseBreakdown = $data->expenseBreakdown;
         $this->cogsAmount = $data->cogsAmount;
         $this->cogsPercentage = $data->cogsPercentage;

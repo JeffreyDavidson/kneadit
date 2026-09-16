@@ -7,7 +7,7 @@
         </div>
     @else
         @foreach ($birthdays as $entry)
-            <x-tenant-admin.dashboard.list-row :value="$entry->is_today ? 'Today!' : 'in ' . $entry->days_until . ' ' . \Illuminate\Support\Str::plural('day', $entry->days_until)">
+            <x-tenant-admin.dashboard.list-row :value="$entry->is_today ? 'Today!' : 'in '.$entry->days_until.' '.\Illuminate\Support\Str::plural('day', $entry->days_until)">
                 <span
                     @if ($entry->is_today)
                         style="font-weight: 700; color: var(--pw-card-accent)"

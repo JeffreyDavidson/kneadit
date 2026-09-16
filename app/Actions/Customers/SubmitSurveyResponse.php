@@ -8,7 +8,7 @@ use App\Models\Engagement\SurveyResponse;
 class SubmitSurveyResponse
 {
     /**
-     * @param array<int, mixed> $answers
+     * @param  array<int, mixed>  $answers
      */
     public function __invoke(Survey $survey, array $answers, ?string $customerName = null, ?string $customerEmail = null): SurveyResponse
     {

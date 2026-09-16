@@ -7,6 +7,7 @@ use App\Casts\MoneyCentsCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
 use App\Observers\LogsActivityObserver;
+use App\ValueObjects\Money;
 use Database\Factories\Financial\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -29,8 +30,8 @@ use Illuminate\Support\Carbon;
  * @method static GiftCardQueryBuilder|GiftCard usable()
  *
  * @property Carbon|null $expires_at
- * @property \App\ValueObjects\Money $initial_balance
- * @property \App\ValueObjects\Money $current_balance
+ * @property Money $initial_balance
+ * @property Money $current_balance
  *
  * @mixin \Eloquent
  */

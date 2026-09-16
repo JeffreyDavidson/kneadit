@@ -101,9 +101,9 @@ class CustomerDirectory extends Page
 
         if ($this->search) {
             $query->where(function (Builder $q) {
-                $q->whereLike('name', '%' . $this->search . '%')
-                    ->orWhereLike('email', '%' . $this->search . '%')
-                    ->orWhereLike('phone', '%' . $this->search . '%');
+                $q->whereLike('name', '%'.$this->search.'%')
+                    ->orWhereLike('email', '%'.$this->search.'%')
+                    ->orWhereLike('phone', '%'.$this->search.'%');
             });
         }
 

@@ -15,7 +15,8 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
 
-    $tenancyManager = new class extends TenancyManager {
+    $tenancyManager = new class extends TenancyManager
+    {
         public function __construct()
         {
             parent::__construct(

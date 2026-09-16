@@ -20,7 +20,7 @@ class InvoiceService
         $invoiceData = $this->payloadBuilder->build($order);
 
         try {
-            $response = $this->client->createInvoice($invoiceData, "INVOICE-{$order->order_number}-" . time());
+            $response = $this->client->createInvoice($invoiceData, "INVOICE-{$order->order_number}-".time());
 
             if (! $response->successful) {
                 Log::error('Failed to create PayPal invoice', [

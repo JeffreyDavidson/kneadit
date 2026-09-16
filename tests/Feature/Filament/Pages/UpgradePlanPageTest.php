@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Pages\Platform\UpgradePlan;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
@@ -15,7 +16,7 @@ beforeEach(function () {
     $tenant = new Tenant;
     $tenant->forceFill([
         'id' => 'upgrade-test',
-        'plan' => App\Enums\Platform\SubscriptionTier::Starter,
+        'plan' => SubscriptionTier::Starter,
     ]);
     tenancy()->getBootstrappersUsing = fn (): array => [];
     tenancy()->initialize($tenant);

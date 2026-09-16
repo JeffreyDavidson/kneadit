@@ -22,7 +22,7 @@ class OnboardingFixtures
     {
         return [
             'owner_name' => $tenant->name,
-            'bakery_name' => $tenant->store_name ?: ($tenant->name . "'s Bakery"),
+            'bakery_name' => $tenant->store_name ?: ($tenant->name."'s Bakery"),
         ];
     }
 
@@ -62,7 +62,7 @@ class OnboardingFixtures
         return [
             'email' => $tenant->email ?: fake()->safeEmail(),
             'phone' => fake()->phoneNumber(),
-            'address' => fake()->streetAddress() . ', ' . fake()->city() . ', ' . fake()->stateAbbr() . ' ' . fake()->postcode(),
+            'address' => fake()->streetAddress().', '.fake()->city().', '.fake()->stateAbbr().' '.fake()->postcode(),
         ];
     }
 

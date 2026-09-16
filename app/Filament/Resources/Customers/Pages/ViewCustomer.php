@@ -88,7 +88,7 @@ class ViewCustomer extends ViewRecord
 
                     Notification::make()
                         ->title('Loyalty points adjusted')
-                        ->body(($points >= 0 ? '+' : '') . $points . ' points · ' . $description)
+                        ->body(($points >= 0 ? '+' : '').$points.' points · '.$description)
                         ->success()
                         ->send();
                 }),
@@ -125,7 +125,7 @@ class ViewCustomer extends ViewRecord
 
                     Notification::make()
                         ->title('Redemption recorded')
-                        ->body($points . ' points redeemed · ' . $description)
+                        ->body($points.' points redeemed · '.$description)
                         ->success()
                         ->send();
                 }),

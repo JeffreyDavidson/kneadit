@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Central\Resources\AnnouncementResource\Schemas\AnnouncementForm;
+use App\Filament\Central\Resources\BlogPostResource;
 use App\Filament\Central\Resources\BlogPostResource\Pages\EditBlogPost;
 use App\Filament\Central\Resources\BlogPostResource\Schemas\BlogPostForm;
 use App\Filament\Central\Resources\EmailCampaignResource\Schemas\EmailCampaignForm;
@@ -82,5 +83,5 @@ test('edit blog post references blog post resource', function () {
     expect(
         (new ReflectionClass(EditBlogPost::class))
             ->getStaticPropertyValue('resource'),
-    )->toBe(App\Filament\Central\Resources\BlogPostResource::class);
+    )->toBe(BlogPostResource::class);
 });

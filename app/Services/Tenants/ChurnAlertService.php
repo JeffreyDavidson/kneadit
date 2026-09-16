@@ -39,8 +39,8 @@ class ChurnAlertService
     }
 
     /**
-     * @param HealthData $health
-     * @param array<int, array<string, mixed>> $alerts
+     * @param  HealthData  $health
+     * @param  array<int, array<string, mixed>>  $alerts
      */
     private function checkTrialExpiring(Tenant $tenant, array $health, int $daysSinceSignup, array &$alerts): void
     {

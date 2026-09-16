@@ -1,5 +1,12 @@
 <?php
 
+use App\Filament\Central\Widgets\NeedsAttention;
+use App\Filament\Central\Widgets\OnboardingProgress;
+use App\Filament\Central\Widgets\PlatformStats;
+use App\Filament\Central\Widgets\QuickActions;
+use App\Filament\Central\Widgets\RecentAuditLog;
+use App\Filament\Central\Widgets\RecentTenants;
+use App\Filament\Central\Widgets\RevenueOverview;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
@@ -11,13 +18,13 @@ beforeEach(function () {
 });
 
 dataset('centralWidgets', [
-    'PlatformStats' => [App\Filament\Central\Widgets\PlatformStats::class],
-    'RecentTenants' => [App\Filament\Central\Widgets\RecentTenants::class],
-    'RecentAuditLog' => [App\Filament\Central\Widgets\RecentAuditLog::class],
-    'QuickActions' => [App\Filament\Central\Widgets\QuickActions::class],
-    'NeedsAttention' => [App\Filament\Central\Widgets\NeedsAttention::class],
-    'OnboardingProgress' => [App\Filament\Central\Widgets\OnboardingProgress::class],
-    'RevenueOverview' => [App\Filament\Central\Widgets\RevenueOverview::class],
+    'PlatformStats' => [PlatformStats::class],
+    'RecentTenants' => [RecentTenants::class],
+    'RecentAuditLog' => [RecentAuditLog::class],
+    'QuickActions' => [QuickActions::class],
+    'NeedsAttention' => [NeedsAttention::class],
+    'OnboardingProgress' => [OnboardingProgress::class],
+    'RevenueOverview' => [RevenueOverview::class],
 ]);
 
 test('central widget can render', function (string $widgetClass) {

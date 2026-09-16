@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\Stripe\CreateStripeProductsCommand;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Testing\PendingCommand;
 use JMac\Testing\Double;
@@ -38,7 +39,7 @@ function createStripeProductsCommand(): PendingCommand
 }
 
 test('stripe create-products command is registered and has correct signature', function () {
-    $command = new App\Console\Commands\Stripe\CreateStripeProductsCommand;
+    $command = new CreateStripeProductsCommand;
 
     expect($command->getName())->toBe('stripe:create-products')
         ->and($command->getDescription())->toContain('Stripe');

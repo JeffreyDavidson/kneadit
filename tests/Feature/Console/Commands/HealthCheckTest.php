@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\Platform\HealthCheckFailed;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -11,8 +12,8 @@ beforeEach(function () {
     config(['mail.platform_notify' => 'test@example.com']);
 
     // Point storage to a real writable temp directory so the health check passes
-    $tempStorage = sys_get_temp_dir() . '/kneadit_test_storage_' . getmypid();
-    @mkdir($tempStorage . '/logs', 0755, true);
+    $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
+    @mkdir($tempStorage.'/logs', 0755, true);
     $this->app->useStoragePath($tempStorage);
 
     // Ensure tenant DB directory exists and is writable for health check
@@ -21,8 +22,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    $tempStorage = sys_get_temp_dir() . '/kneadit_test_storage_' . getmypid();
-    @rmdir($tempStorage . '/logs');
+    $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
+    @rmdir($tempStorage.'/logs');
     @rmdir($tempStorage);
 });
 
@@ -95,7 +96,7 @@ test('health check dispatches event on failure', function () {
 
 test('health check detects homepage connection failure', function () {
     Http::preventStrayRequests();
-    Http::fake(['*' => fn () => throw new Illuminate\Http\Client\ConnectionException('Connection refused')]);
+    Http::fake(['*' => fn () => throw new ConnectionException('Connection refused')]);
 
     $this->artisan('health:check')
         ->expectsOutputToContain('Homepage unreachable')
@@ -117,7 +118,7 @@ test('health check detects non-writable storage logs', function () {
     Http::fake(['*' => Http::response('OK', 200)]);
 
     // Point storage to a non-existent directory
-    $nonExistentDir = sys_get_temp_dir() . '/kneadit_nonexistent_' . getmypid() . '_' . Str::random();
+    $nonExistentDir = sys_get_temp_dir().'/kneadit_nonexistent_'.getmypid().'_'.Str::random();
     $this->app->useStoragePath($nonExistentDir);
 
     $this->artisan('health:check')

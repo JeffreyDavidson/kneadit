@@ -1,13 +1,28 @@
 <?php
 
+use App\DataTransferObjects\Settings\BrandingSettings;
+use App\DataTransferObjects\Settings\CateringSettings;
+use App\DataTransferObjects\Settings\EngagementSettings;
+use App\DataTransferObjects\Settings\GiftCardSettings;
+use App\DataTransferObjects\Settings\HomepageSettings;
+use App\DataTransferObjects\Settings\InventorySettings;
+use App\DataTransferObjects\Settings\LoyaltySettings;
+use App\DataTransferObjects\Settings\OnboardingSettings;
+use App\DataTransferObjects\Settings\OrderSettings;
+use App\DataTransferObjects\Settings\PaymentSettings;
+use App\DataTransferObjects\Settings\PolicySettings;
+use App\DataTransferObjects\Settings\StoreInfo;
+use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Listeners\Platform\SendWelcomeBakerEmailListener;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
@@ -15,11 +30,13 @@ use Illuminate\Testing\TestResponse;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
+use Pest\Browser\Api\PendingAwaitablePage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-require_once __DIR__ . '/Support/Bootstrap/TenantDatabaseCleanup.php';
+require_once __DIR__.'/Support/Bootstrap/TenantDatabaseCleanup.php';
 
 /*
  * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
@@ -86,8 +103,8 @@ function setUpTenantTest(): void
 /**
  * @template TComponent of Component
  *
- * @param class-string<TComponent> $component
- * @param array<string, mixed> $parameters
+ * @param  class-string<TComponent>  $component
+ * @param  array<string, mixed>  $parameters
  * @return Testable<TComponent>
  */
 function livewire(string $component, array $parameters = []): Testable
@@ -110,13 +127,13 @@ function tenantMiddleware(): array
  * Session payload that grants the EnsureOrderAccess middleware permission
  * to view the given orders. Compose with ->withSession(...).
  *
- * @param array<int, App\Models\Orders\Order> $orders
+ * @param  array<int, Order>  $orders
  * @return array<string, array<int, string>>
  */
 function verifiedOrdersSession(array $orders): array
 {
     return [
-        'verified_order_numbers' => array_map(fn (App\Models\Orders\Order $order) => $order->order_number, $orders),
+        'verified_order_numbers' => array_map(fn (Order $order) => $order->order_number, $orders),
     ];
 }
 
@@ -134,17 +151,17 @@ function verifiedOrdersSession(array $orders): array
 | every subsequent test uses the warm session.
 */
 
-function authenticatedVisit(string $url): Pest\Browser\Api\PendingAwaitablePage
+function authenticatedVisit(string $url): PendingAwaitablePage
 {
     return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
 }
 
-function authenticatedCentralVisit(string $url): Pest\Browser\Api\PendingAwaitablePage
+function authenticatedCentralVisit(string $url): PendingAwaitablePage
 {
     return authenticatedVisitFor($url, 'tests/Browser/.central-admin-session.json');
 }
 
-function authenticatedVisitFor(string $url, string $relativeSessionPath): Pest\Browser\Api\PendingAwaitablePage
+function authenticatedVisitFor(string $url, string $relativeSessionPath): PendingAwaitablePage
 {
     ensureFreshAdminSessions(base_path($relativeSessionPath));
 
@@ -183,11 +200,11 @@ function ensureFreshAdminSessions(string $referencedPath): void
 
     $output = [];
     $exitCode = 0;
-    exec('node ' . escapeshellarg($script) . ' 2>&1', $output, $exitCode);
+    exec('node '.escapeshellarg($script).' 2>&1', $output, $exitCode);
 
     if ($exitCode !== 0) {
         throw new RuntimeException(
-            "Failed to refresh admin browser session (exit {$exitCode}):\n" . implode("\n", $output),
+            "Failed to refresh admin browser session (exit {$exitCode}):\n".implode("\n", $output),
         );
     }
 }
@@ -512,7 +529,7 @@ function createTenant(array $attributes = []): stdClass
  * Create a central tenant row plus its primary domain/subdomain record.
  * Use this in behavior tests instead of opaque Tenant::factory() arrays.
  *
- * @param array<string, mixed> $attributes
+ * @param  array<string, mixed>  $attributes
  */
 function createTenantWithDomain(
     string $tenantId = 'test-bakery',
@@ -543,8 +560,8 @@ function createTenantWithDomain(
  * Register a signup-style visitor as a tenant and queue the onboarding mail.
  * Returns the created central user, tenant model, and storefront domain.
  *
- * @param array<string, mixed> $userAttributes
- * @param array<string, mixed> $tenantAttributes
+ * @param  array<string, mixed>  $userAttributes
+ * @param  array<string, mixed>  $tenantAttributes
  * @return array{user: User, tenant: Tenant, domain: string, admin_url: string}
  */
 function registerVisitorAsTenant(
@@ -593,7 +610,7 @@ function registerVisitorAsTenant(
  * Create and authenticate a tenant-admin user in the current tenant test DB.
  * Call setUpTenantTest() first when the test is not bootstrapping tenancy via HTTP.
  *
- * @param array<string, mixed> $attributes
+ * @param  array<string, mixed>  $attributes
  */
 function actingAsTenantAdmin(?Tenant $tenant = null, array $attributes = []): User
 {
@@ -612,8 +629,8 @@ function actingAsTenantAdmin(?Tenant $tenant = null, array $attributes = []): Us
  * Visit a tenant storefront route with the correct Host header so feature tests
  * exercise domain/subdomain tenancy middleware instead of hard-coded URLs.
  *
- * @param array<string, string> $headers
- * @return TestResponse<Symfony\Component\HttpFoundation\Response>
+ * @param  array<string, string>  $headers
+ * @return TestResponse<Response>
  */
 function visitStorefrontAsTenant(Tenant $tenant, string $path = '/', array $headers = []): TestResponse
 {
@@ -624,7 +641,7 @@ function visitStorefrontAsTenant(Tenant $tenant, string $path = '/', array $head
         throw new RuntimeException('The tenant domain must be a string.');
     }
 
-    $url = "https://{$domain}/" . ltrim($path, '/');
+    $url = "https://{$domain}/".ltrim($path, '/');
 
     return test()->get($url, $headers);
 }
@@ -674,9 +691,9 @@ function assertNotificationQueued(string $mailableClass, ?callable $callback = n
 */
 
 /** @param array{name?: string, email?: ?string, phone?: ?string, address?: ?string, website?: ?string, photo?: ?string, logo?: ?string, tagline?: ?string} $overrides */
-function makeStoreInfo(array $overrides = []): App\DataTransferObjects\Settings\StoreInfo
+function makeStoreInfo(array $overrides = []): StoreInfo
 {
-    return new App\DataTransferObjects\Settings\StoreInfo(...array_merge([
+    return new StoreInfo(...array_merge([
         'name' => 'Test Bakery',
         'email' => null,
         'phone' => null,
@@ -689,11 +706,11 @@ function makeStoreInfo(array $overrides = []): App\DataTransferObjects\Settings\
 }
 
 /**
- * @param array{brandColorPrimary?: string, storefrontTheme?: string, businessTagline?: ?string, aboutUsText?: ?string, heroImage?: ?string, heroStyle?: string, heroTagline?: ?string, heroPrimaryCtaText?: string, heroSecondaryCtaText?: string, allergyDisclaimer?: ?string, cateringHeroImage?: ?string, loyaltyHeroImage?: ?string, giftCardsHeroImage?: ?string} $overrides
+ * @param  array{brandColorPrimary?: string, storefrontTheme?: string, businessTagline?: ?string, aboutUsText?: ?string, heroImage?: ?string, heroStyle?: string, heroTagline?: ?string, heroPrimaryCtaText?: string, heroSecondaryCtaText?: string, allergyDisclaimer?: ?string, cateringHeroImage?: ?string, loyaltyHeroImage?: ?string, giftCardsHeroImage?: ?string}  $overrides
  */
-function makeBrandingSettings(array $overrides = []): App\DataTransferObjects\Settings\BrandingSettings
+function makeBrandingSettings(array $overrides = []): BrandingSettings
 {
-    return new App\DataTransferObjects\Settings\BrandingSettings(...array_merge([
+    return new BrandingSettings(...array_merge([
         'brandColorPrimary' => '#d4920c',
         'storefrontTheme' => 'classic',
         'businessTagline' => null,
@@ -711,11 +728,11 @@ function makeBrandingSettings(array $overrides = []): App\DataTransferObjects\Se
 }
 
 /**
- * @param array{leadTimeHours?: int, deliveryEnabled?: bool, freeDeliveryMinimum?: string, minimumPickupOrderAmount?: string, minimumDeliveryOrderAmount?: string, deliveryFeeTiers?: array<int, array<string, mixed>>, defaultDailyCapacity?: int, modificationWindowMinutes?: int, pickupSlotsEnabled?: bool, pickupSlotIntervalMinutes?: int, pickupSlotMaxPerWindow?: int, sitewideSaleEnabled?: bool, sitewideSalePercent?: int, sitewideSaleLabel?: string} $overrides
+ * @param  array{leadTimeHours?: int, deliveryEnabled?: bool, freeDeliveryMinimum?: string, minimumPickupOrderAmount?: string, minimumDeliveryOrderAmount?: string, deliveryFeeTiers?: array<int, array<string, mixed>>, defaultDailyCapacity?: int, modificationWindowMinutes?: int, pickupSlotsEnabled?: bool, pickupSlotIntervalMinutes?: int, pickupSlotMaxPerWindow?: int, sitewideSaleEnabled?: bool, sitewideSalePercent?: int, sitewideSaleLabel?: string}  $overrides
  */
-function makeOrderSettings(array $overrides = []): App\DataTransferObjects\Settings\OrderSettings
+function makeOrderSettings(array $overrides = []): OrderSettings
 {
-    return new App\DataTransferObjects\Settings\OrderSettings(...array_merge([
+    return new OrderSettings(...array_merge([
         'leadTimeHours' => 24,
         'deliveryEnabled' => true,
         'freeDeliveryMinimum' => '50',
@@ -727,11 +744,11 @@ function makeOrderSettings(array $overrides = []): App\DataTransferObjects\Setti
 }
 
 /**
- * @param array{birthdayProgramEnabled?: bool, birthdayCouponEnabled?: bool, birthdayDiscountPercentage?: int, birthdayCouponValidDays?: int, reviewRequestsEnabled?: bool, reviewRequestDelayHours?: int, repeatRemindersEnabled?: bool, repeatReminderDays?: int, announcementEnabled?: bool, announcementText?: string, announcementType?: string, emailOrderPlacedEnabled?: bool, emailOrderConfirmedEnabled?: bool, emailOrderBakingEnabled?: bool, emailOrderReadyEnabled?: bool, emailOrderDeliveredEnabled?: bool, emailOrderCancelledEnabled?: bool, emailOrderMessageEnabled?: bool, emailProductAvailableEnabled?: bool, customerReferralProgramEnabled?: bool, customerReferralDiscountDollars?: int, abandonedCartRecoveryEnabled?: bool, abandonedCartRecoveryHours?: int, abandonedCartRecoveryCouponDollars?: int, lowReviewAlertThreshold?: int} $overrides
+ * @param  array{birthdayProgramEnabled?: bool, birthdayCouponEnabled?: bool, birthdayDiscountPercentage?: int, birthdayCouponValidDays?: int, reviewRequestsEnabled?: bool, reviewRequestDelayHours?: int, repeatRemindersEnabled?: bool, repeatReminderDays?: int, announcementEnabled?: bool, announcementText?: string, announcementType?: string, emailOrderPlacedEnabled?: bool, emailOrderConfirmedEnabled?: bool, emailOrderBakingEnabled?: bool, emailOrderReadyEnabled?: bool, emailOrderDeliveredEnabled?: bool, emailOrderCancelledEnabled?: bool, emailOrderMessageEnabled?: bool, emailProductAvailableEnabled?: bool, customerReferralProgramEnabled?: bool, customerReferralDiscountDollars?: int, abandonedCartRecoveryEnabled?: bool, abandonedCartRecoveryHours?: int, abandonedCartRecoveryCouponDollars?: int, lowReviewAlertThreshold?: int}  $overrides
  */
-function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\Settings\EngagementSettings
+function makeEngagementSettings(array $overrides = []): EngagementSettings
 {
-    return new App\DataTransferObjects\Settings\EngagementSettings(...array_merge([
+    return new EngagementSettings(...array_merge([
         'birthdayProgramEnabled' => false,
         'birthdayCouponEnabled' => false,
         'birthdayDiscountPercentage' => 15,
@@ -755,9 +772,9 @@ function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\
 }
 
 /** @param array{showOnStorefront?: bool, cancellation?: string, deposit?: string, refund?: string, pickup?: string, additionalTerms?: string} $overrides */
-function makePolicySettings(array $overrides = []): App\DataTransferObjects\Settings\PolicySettings
+function makePolicySettings(array $overrides = []): PolicySettings
 {
-    return new App\DataTransferObjects\Settings\PolicySettings(...array_merge([
+    return new PolicySettings(...array_merge([
         'showOnStorefront' => false,
         'cancellation' => '',
         'deposit' => '',
@@ -768,11 +785,11 @@ function makePolicySettings(array $overrides = []): App\DataTransferObjects\Sett
 }
 
 /**
- * @param array{socialMediaLinks?: array<string, string>, operatingHours?: array<string, mixed>, faqItems?: array<int, array<string, mixed>>, sections?: array<string, array<string, mixed>>} $overrides
+ * @param  array{socialMediaLinks?: array<string, string>, operatingHours?: array<string, mixed>, faqItems?: array<int, array<string, mixed>>, sections?: array<string, array<string, mixed>>}  $overrides
  */
-function makeHomepageSettings(array $overrides = []): App\DataTransferObjects\Settings\HomepageSettings
+function makeHomepageSettings(array $overrides = []): HomepageSettings
 {
-    return new App\DataTransferObjects\Settings\HomepageSettings(...array_merge([
+    return new HomepageSettings(...array_merge([
         'socialMediaLinks' => [],
         'operatingHours' => [],
         'faqItems' => [],
@@ -781,9 +798,9 @@ function makeHomepageSettings(array $overrides = []): App\DataTransferObjects\Se
 }
 
 /** @param array{enabled?: bool, minimumGuests?: string, leadTimeDays?: string, eventTypes?: array<int, string>, depositPercent?: int} $overrides */
-function makeCateringSettings(array $overrides = []): App\DataTransferObjects\Settings\CateringSettings
+function makeCateringSettings(array $overrides = []): CateringSettings
 {
-    return new App\DataTransferObjects\Settings\CateringSettings(...array_merge([
+    return new CateringSettings(...array_merge([
         'enabled' => false,
         'minimumGuests' => '10',
         'leadTimeDays' => '14',
@@ -792,11 +809,11 @@ function makeCateringSettings(array $overrides = []): App\DataTransferObjects\Se
 }
 
 /**
- * @param array{enabled?: bool, pointsPerDollar?: int, programName?: string, tiersEnabled?: bool, tierSilverThreshold?: int, tierGoldThreshold?: int, tierPlatinumThreshold?: int, tierPerksEnabled?: bool, tierSilverMultiplier?: float, tierSilverFreeDelivery?: bool, tierGoldMultiplier?: float, tierGoldFreeDelivery?: bool, tierPlatinumMultiplier?: float, tierPlatinumFreeDelivery?: bool} $overrides
+ * @param  array{enabled?: bool, pointsPerDollar?: int, programName?: string, tiersEnabled?: bool, tierSilverThreshold?: int, tierGoldThreshold?: int, tierPlatinumThreshold?: int, tierPerksEnabled?: bool, tierSilverMultiplier?: float, tierSilverFreeDelivery?: bool, tierGoldMultiplier?: float, tierGoldFreeDelivery?: bool, tierPlatinumMultiplier?: float, tierPlatinumFreeDelivery?: bool}  $overrides
  */
-function makeLoyaltySettings(array $overrides = []): App\DataTransferObjects\Settings\LoyaltySettings
+function makeLoyaltySettings(array $overrides = []): LoyaltySettings
 {
-    return new App\DataTransferObjects\Settings\LoyaltySettings(...array_merge([
+    return new LoyaltySettings(...array_merge([
         'enabled' => true,
         'pointsPerDollar' => 10,
         'programName' => 'Rewards',
@@ -808,36 +825,36 @@ function makeLoyaltySettings(array $overrides = []): App\DataTransferObjects\Set
  * sub-DTO you need to customize; the rest will use the default builders.
  */
 function makeTenantSettings(
-    ?App\DataTransferObjects\Settings\StoreInfo $store = null,
-    ?App\DataTransferObjects\Settings\BrandingSettings $branding = null,
-    ?App\DataTransferObjects\Settings\OrderSettings $orders = null,
-    ?App\DataTransferObjects\Settings\PaymentSettings $payment = null,
-    ?App\DataTransferObjects\Settings\CateringSettings $catering = null,
-    ?App\DataTransferObjects\Settings\LoyaltySettings $loyalty = null,
-    ?App\DataTransferObjects\Settings\EngagementSettings $engagement = null,
-    ?App\DataTransferObjects\Settings\PolicySettings $policies = null,
-    ?App\DataTransferObjects\Settings\HomepageSettings $homepage = null,
-    ?App\DataTransferObjects\Settings\OnboardingSettings $onboarding = null,
-    ?App\DataTransferObjects\Settings\GiftCardSettings $giftCards = null,
-    ?App\DataTransferObjects\Settings\InventorySettings $inventory = null,
-): App\Services\Settings\TenantSettings {
-    return new App\Services\Settings\TenantSettings(
+    ?StoreInfo $store = null,
+    ?BrandingSettings $branding = null,
+    ?OrderSettings $orders = null,
+    ?PaymentSettings $payment = null,
+    ?CateringSettings $catering = null,
+    ?LoyaltySettings $loyalty = null,
+    ?EngagementSettings $engagement = null,
+    ?PolicySettings $policies = null,
+    ?HomepageSettings $homepage = null,
+    ?OnboardingSettings $onboarding = null,
+    ?GiftCardSettings $giftCards = null,
+    ?InventorySettings $inventory = null,
+): TenantSettings {
+    return new TenantSettings(
         store: $store ?? makeStoreInfo(),
         branding: $branding ?? makeBrandingSettings(),
         orders: $orders ?? makeOrderSettings(),
-        payment: $payment ?? new App\DataTransferObjects\Settings\PaymentSettings(methodsAccepted: []),
+        payment: $payment ?? new PaymentSettings(methodsAccepted: []),
         catering: $catering ?? makeCateringSettings(),
         loyalty: $loyalty ?? makeLoyaltySettings(),
         engagement: $engagement ?? makeEngagementSettings(),
         policies: $policies ?? makePolicySettings(),
         homepage: $homepage ?? makeHomepageSettings(),
-        onboarding: $onboarding ?? new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: null),
-        webhooks: new App\DataTransferObjects\Settings\WebhookSettings,
-        giftCards: $giftCards ?? new App\DataTransferObjects\Settings\GiftCardSettings(
+        onboarding: $onboarding ?? new OnboardingSettings(completedAt: null),
+        webhooks: new WebhookSettings,
+        giftCards: $giftCards ?? new GiftCardSettings(
             presetAmounts: [10, 25, 50, 100],
             defaultAmount: 25,
         ),
-        inventory: $inventory ?? new App\DataTransferObjects\Settings\InventorySettings(
+        inventory: $inventory ?? new InventorySettings(
             lowStockAlertsEnabled: false,
         ),
     );

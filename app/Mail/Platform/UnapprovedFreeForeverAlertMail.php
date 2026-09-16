@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class UnapprovedFreeForeverAlertMail extends BaseMailable
 {
     /**
-     * @param array<int, array{id: string, name: string, email: string}> $unapproved
+     * @param  array<int, array{id: string, name: string, email: string}>  $unapproved
      */
     public function __construct(
         public array $unapproved,

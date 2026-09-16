@@ -22,7 +22,7 @@ class CreateOneTenantCommand extends Command
     public function handle(): int
     {
         $id = $this->argument('id');
-        $domain = $id . '.kneadit.test';
+        $domain = $id.'.kneadit.test';
 
         // Create tenant (triggers CreateDatabase + MigrateDatabase via events)
         $tenant = Tenant::query()->create([

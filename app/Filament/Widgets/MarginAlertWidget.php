@@ -51,7 +51,7 @@ class MarginAlertWidget extends Widget
                     'price' => $product->price?->formatted() ?? '—',
                     'cost' => $product->cost?->formatted() ?? '—',
                     'margin' => $margin,
-                    'margin_formatted' => Number::format($margin, 1) . '%',
+                    'margin_formatted' => Number::format($margin, 1).'%',
                 ];
             })
             ->filter()

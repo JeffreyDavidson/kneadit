@@ -29,7 +29,7 @@ final readonly class DateSeries
     }
 
     /**
-     * @param array<string, int> $values
+     * @param  array<string, int>  $values
      * @return list<int>
      */
     public function fillIntegers(array $values): array

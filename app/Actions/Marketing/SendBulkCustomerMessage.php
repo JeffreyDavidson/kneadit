@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Mail;
 class SendBulkCustomerMessage
 {
     /**
-     * @param iterable<Customer> $customers
+     * @param  iterable<Customer>  $customers
      */
     public function __invoke(iterable $customers, string $messageSubject, string $body): int
     {

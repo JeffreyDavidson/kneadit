@@ -190,7 +190,7 @@ class ManageSettings extends Page
     }
 
     /**
-     * @param array<string, mixed> $state
+     * @param  array<string, mixed>  $state
      */
     private function applySettings(array $state): void
     {

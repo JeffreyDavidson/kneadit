@@ -2,13 +2,21 @@
 
 use App\Http\Requests\Api\CheckGiftCardBalanceRequest;
 use App\Http\Requests\Api\StoreApiContactRequest;
+use App\Http\Requests\Api\StoreApiFavoriteRequest;
+use App\Http\Requests\Api\StoreApiOrderRequest;
+use App\Http\Requests\Api\StoreApiReviewRequest;
+use App\Http\Requests\Api\StoreApiWaitlistRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Requests\Order\PurchaseGiftCardRequest;
 use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
 use App\Http\Requests\Storefront\StoreContactMessageRequest;
+use App\Http\Requests\Storefront\StoreGalleryPhotoRequest;
+use App\Http\Requests\Storefront\StoreOnboardingRequest;
 use App\Http\Requests\Storefront\StoreOrderMessageRequest;
+use App\Http\Requests\Storefront\StoreProductWaitlistRequest;
+use App\Http\Requests\Storefront\StoreReviewRequest;
 use App\Http\Requests\Storefront\StoreSurveyResponseRequest;
 use App\Http\Requests\Storefront\TrackOrderRequest;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,14 +35,14 @@ test('form requests reject empty data for required fields', function () {
         StoreOrderMessageRequest::class => ['message', 'sender_name', 'sender_email'],
         StoreSurveyResponseRequest::class => ['answers'],
         PurchaseGiftCardRequest::class => ['purchaser_name', 'purchaser_email', 'initial_balance'],
-        App\Http\Requests\Api\StoreApiReviewRequest::class => ['customer_name', 'customer_email', 'product_id', 'rating', 'comment'],
-        App\Http\Requests\Api\StoreApiWaitlistRequest::class => ['customer_name', 'customer_email', 'customer_phone', 'requested_date'],
-        App\Http\Requests\Storefront\StoreReviewRequest::class => ['rating'],
-        App\Http\Requests\Storefront\StoreProductWaitlistRequest::class => ['product_id', 'customer_email'],
-        App\Http\Requests\Api\StoreApiFavoriteRequest::class => ['product_id'],
-        App\Http\Requests\Api\StoreApiOrderRequest::class => ['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type'],
-        App\Http\Requests\Storefront\StoreOnboardingRequest::class => ['store_name', 'subdomain', 'storefront_choice'],
-        App\Http\Requests\Storefront\StoreGalleryPhotoRequest::class => ['customer_name', 'customer_email', 'photo'],
+        StoreApiReviewRequest::class => ['customer_name', 'customer_email', 'product_id', 'rating', 'comment'],
+        StoreApiWaitlistRequest::class => ['customer_name', 'customer_email', 'customer_phone', 'requested_date'],
+        StoreReviewRequest::class => ['rating'],
+        StoreProductWaitlistRequest::class => ['product_id', 'customer_email'],
+        StoreApiFavoriteRequest::class => ['product_id'],
+        StoreApiOrderRequest::class => ['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type'],
+        StoreOnboardingRequest::class => ['store_name', 'subdomain', 'storefront_choice'],
+        StoreGalleryPhotoRequest::class => ['customer_name', 'customer_email', 'photo'],
         // StoreCateringInquiry excluded — rules() calls settings() which needs tenant DB
     ];
 
@@ -63,11 +71,11 @@ test('form requests reject invalid email values', function () {
         StoreApiContactRequest::class => 'email',
         StoreOrderMessageRequest::class => 'sender_email',
         PurchaseGiftCardRequest::class => 'purchaser_email',
-        App\Http\Requests\Api\StoreApiReviewRequest::class => 'customer_email',
-        App\Http\Requests\Api\StoreApiWaitlistRequest::class => 'customer_email',
-        App\Http\Requests\Api\StoreApiOrderRequest::class => 'customer_email',
-        App\Http\Requests\Storefront\StoreProductWaitlistRequest::class => 'customer_email',
-        App\Http\Requests\Storefront\StoreGalleryPhotoRequest::class => 'customer_email',
+        StoreApiReviewRequest::class => 'customer_email',
+        StoreApiWaitlistRequest::class => 'customer_email',
+        StoreApiOrderRequest::class => 'customer_email',
+        StoreProductWaitlistRequest::class => 'customer_email',
+        StoreGalleryPhotoRequest::class => 'customer_email',
     ];
 
     foreach ($requests as $requestClass => $emailField) {

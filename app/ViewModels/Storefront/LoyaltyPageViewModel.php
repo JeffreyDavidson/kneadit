@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 class LoyaltyPageViewModel
 {
     /**
-     * @param Collection<int, LoyaltyReward> $rewards
+     * @param  Collection<int, LoyaltyReward>  $rewards
      */
     public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty, Collection $rewards): self
     {
@@ -43,7 +43,7 @@ class LoyaltyPageViewModel
     }
 
     /**
-     * @param Collection<int, LoyaltyReward> $rewards
+     * @param  Collection<int, LoyaltyReward>  $rewards
      */
     public static function notFound(TenantSettings $settings, Collection $rewards): self
     {
@@ -62,7 +62,7 @@ class LoyaltyPageViewModel
     }
 
     /**
-     * @param Collection<int, LoyaltyReward> $rewards
+     * @param  Collection<int, LoyaltyReward>  $rewards
      */
     public static function empty(TenantSettings $settings, Collection $rewards): self
     {
@@ -126,10 +126,10 @@ class LoyaltyPageViewModel
     public readonly bool $hasCustomer;
 
     /**
-     * @param Collection<int, LoyaltyReward> $rewards
-     * @param Collection<int, LoyaltyPoint> $history
-     * @param array<string, string> $content
-     * @param array<int, array<string, string>> $howSteps
+     * @param  Collection<int, LoyaltyReward>  $rewards
+     * @param  Collection<int, LoyaltyPoint>  $history
+     * @param  array<string, string>  $content
+     * @param  array<int, array<string, string>>  $howSteps
      */
     public function __construct(
         public readonly TenantSettings $settings,

@@ -97,8 +97,8 @@ class DashboardConfig extends Page
      * default (a saved 'xl' for welcome_banner, e.g., gets clamped
      * to 'sm' since allowedSizes doesn't include xl).
      *
-     * @param SavedWidgetSettings $settings
-     * @param WidgetDetails $meta
+     * @param  SavedWidgetSettings  $settings
+     * @param  WidgetDetails  $meta
      */
     private function resolveSize(string $key, array $settings, array $meta): string
     {

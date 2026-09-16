@@ -15,7 +15,7 @@ class GenerateOrderNumber
     public function __invoke(): string
     {
         do {
-            $candidate = 'ORD-' . strtoupper(Str::random(10));
+            $candidate = 'ORD-'.strtoupper(Str::random(10));
         } while (Order::query()->where('order_number', $candidate)->exists());
 
         return $candidate;

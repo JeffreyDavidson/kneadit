@@ -10,6 +10,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ReviewAnalyticsService;
+use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -77,7 +78,7 @@ class ReviewAnalytics extends Page
         );
     }
 
-    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
+    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?Carbon}> */
     public function getRecentReviews(): Collection
     {
         return $this->service()->getRecentReviews()->map(

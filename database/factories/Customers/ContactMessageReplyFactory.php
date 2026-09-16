@@ -21,7 +21,7 @@ class ContactMessageReplyFactory extends Factory
         return [
             'contact_message_id' => ContactMessage::factory(),
             'user_id' => User::factory(),
-            'subject' => 'Re: ' . fake()->sentence(),
+            'subject' => 'Re: '.fake()->sentence(),
             'body' => fake()->paragraphs(2, true),
             'sent_at' => now(),
         ];

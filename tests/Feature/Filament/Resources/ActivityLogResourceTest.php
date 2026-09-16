@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Operations\ActivityAction;
+use App\Filament\Resources\ActivityLogs\ActivityLogResource;
 use App\Filament\Resources\ActivityLogs\Pages\ListActivityLogs;
 use App\Models\Operations\ActivityLog;
 use App\Models\Staff\User;
@@ -43,5 +44,5 @@ test('does not expose create/edit/delete affordances', function () {
     Livewire::test(ListActivityLogs::class)
         ->assertOk();
 
-    expect(App\Filament\Resources\ActivityLogs\ActivityLogResource::canCreate())->toBeFalse();
+    expect(ActivityLogResource::canCreate())->toBeFalse();
 });

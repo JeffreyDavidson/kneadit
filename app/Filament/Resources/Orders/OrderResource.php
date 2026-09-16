@@ -52,7 +52,7 @@ class OrderResource extends Resource
     /** @param Order $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return 'Order #' . $record->order_number;
+        return 'Order #'.$record->order_number;
     }
 
     /** @param Order $record */

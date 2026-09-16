@@ -25,7 +25,7 @@ abstract class OnboardingStep
     /**
      * Persist this step's data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     abstract public static function save(array $data): void;
 

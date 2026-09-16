@@ -23,7 +23,7 @@ class WebhookService
      * Records every attempt to webhook_deliveries so the baker can debug
      * failures from the admin UI.
      *
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function dispatch(string $event, array $payload): void
     {

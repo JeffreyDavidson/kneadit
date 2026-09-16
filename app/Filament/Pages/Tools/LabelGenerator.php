@@ -130,7 +130,7 @@ class LabelGenerator extends Page
             ->orderBy('name')
             ->get()
             ->mapWithKeys(fn (Product $p): array => [
-                $p->id => $p->name . ' — ' . ($p->price instanceof Money ? $p->price->formatted() : '$' . number_format((float) $p->price, 2)),
+                $p->id => $p->name.' — '.($p->price instanceof Money ? $p->price->formatted() : '$'.number_format((float) $p->price, 2)),
             ])
             ->all();
     }

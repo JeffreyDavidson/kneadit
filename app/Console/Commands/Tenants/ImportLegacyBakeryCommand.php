@@ -107,7 +107,7 @@ class ImportLegacyBakeryCommand extends Command
     }
 
     /**
-     * @param array<string, int> $counts
+     * @param  array<string, int>  $counts
      * @return array<int, array{string, int}>
      */
     private function tableRows(array $counts): array

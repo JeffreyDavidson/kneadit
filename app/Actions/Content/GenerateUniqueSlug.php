@@ -3,12 +3,13 @@
 namespace App\Actions\Content;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class GenerateUniqueSlug
 {
     /**
-     * @param class-string<\Illuminate\Database\Eloquent\Model> $modelClass
+     * @param  class-string<Model>  $modelClass
      */
     public function __invoke(string $modelClass, string $title, ?int $excludeId = null): string
     {

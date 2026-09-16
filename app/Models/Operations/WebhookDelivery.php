@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookDelivery newModelQuery()
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  *
  * @property array<string, mixed> $payload
- * @property \Illuminate\Support\Carbon $dispatched_at
+ * @property Carbon $dispatched_at
  */
 #[Fillable('event', 'url', 'payload', 'signature', 'status_code', 'response_body', 'attempt', 'succeeded', 'error', 'dispatched_at', 'responded_at')]
 #[UseEloquentBuilder(WebhookDeliveryQueryBuilder::class)]

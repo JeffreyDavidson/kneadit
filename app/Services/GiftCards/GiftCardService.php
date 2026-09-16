@@ -20,7 +20,7 @@ class GiftCardService
 
         for ($i = 0; $i < $maxAttempts; $i++) {
             $raw = Str::upper(Str::random(16));
-            $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw . Str::random(4));
+            $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
             $raw = substr($raw, 0, 16);
             $code = implode('-', str_split($raw, 4));
 
@@ -29,6 +29,6 @@ class GiftCardService
             }
         }
 
-        throw new RuntimeException('Unable to generate unique gift card code after ' . $maxAttempts . ' attempts.');
+        throw new RuntimeException('Unable to generate unique gift card code after '.$maxAttempts.' attempts.');
     }
 }

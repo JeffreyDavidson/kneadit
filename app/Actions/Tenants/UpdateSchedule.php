@@ -7,7 +7,7 @@ use App\Models\Operations\BusinessSchedule;
 class UpdateSchedule
 {
     /**
-     * @param array<int, array{is_open: bool, open_time: ?string, close_time: ?string, order_cutoff_time: ?string, max_orders: ?int}> $schedule
+     * @param  array<int, array{is_open: bool, open_time: ?string, close_time: ?string, order_cutoff_time: ?string, max_orders: ?int}>  $schedule
      */
     public function __invoke(array $schedule): void
     {

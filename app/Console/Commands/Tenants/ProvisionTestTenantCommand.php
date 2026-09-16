@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
+use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -43,7 +44,7 @@ class ProvisionTestTenantCommand extends Command
         $this->info('Seeding BrowserTestFixtureSeeder...');
         Artisan::call('tenants:seed', [
             '--tenants' => [self::TENANT_ID],
-            '--class' => \Database\Seeders\BrowserTestFixtureSeeder::class,
+            '--class' => BrowserTestFixtureSeeder::class,
             '--force' => true,
         ]);
 

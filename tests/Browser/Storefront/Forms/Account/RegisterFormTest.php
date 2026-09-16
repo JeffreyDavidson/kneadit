@@ -13,7 +13,7 @@ test('register form blocks empty submit via HTML5 required', function () use ($s
 test('register form server-side validation rejects mismatched password confirmation', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/account/register")
         ->fill('[data-test="register-form-name"]', 'Test User')
-        ->fill('[data-test="register-form-email"]', 'mismatch-' . uniqid() . '@example.com')
+        ->fill('[data-test="register-form-email"]', 'mismatch-'.uniqid().'@example.com')
         ->fill('[data-test="register-form-password"]', 'password1234')
         ->fill('[data-test="register-form-password-confirmation"]', 'different-password')
         ->click('[data-test="register-form-submit"]')

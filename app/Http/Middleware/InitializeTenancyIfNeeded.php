@@ -27,7 +27,7 @@ class InitializeTenancyIfNeeded
         $host = $request->getHost();
         if ($host === 'www.getkneadit.app') {
             return redirect()->to(
-                $request->getScheme() . '://getkneadit.app' . $request->getRequestUri(),
+                $request->getScheme().'://getkneadit.app'.$request->getRequestUri(),
                 301,
             );
         }

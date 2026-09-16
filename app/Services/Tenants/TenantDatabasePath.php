@@ -19,6 +19,6 @@ class TenantDatabasePath
             throw new InvalidArgumentException('Tenant database path is not configured.');
         }
 
-        return $root . DIRECTORY_SEPARATOR . $databaseName;
+        return $root.DIRECTORY_SEPARATOR.$databaseName;
     }
 }
