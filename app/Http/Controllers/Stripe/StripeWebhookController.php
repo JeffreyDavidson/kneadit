@@ -19,48 +19,40 @@ class StripeWebhookController extends WebhookController
     }
 
     /** @param array<string, mixed> $payload */
-    protected function alreadyProcessed(array $payload): bool
-    {
-        $eventId = $payload['id'] ?? null;
-
-        return $this->idempotency->alreadyProcessed(is_string($eventId) ? $eventId : null);
-    }
-
-    /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
-        if ($this->alreadyProcessed($payload)) {
-            return null;
-        }
+        $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;
 
-        $response = parent::handleCustomerSubscriptionUpdated($payload);
+        return $this->idempotency->process($eventId, function () use ($payload) {
+            $response = parent::handleCustomerSubscriptionUpdated($payload);
 
-        $this->eventHandler->handleSubscriptionUpdated($this->payloadParser->object($payload));
+            $this->eventHandler->handleSubscriptionUpdated($this->payloadParser->object($payload));
 
-        return $response;
+            return $response;
+        });
     }
 
     /** @param array<string, mixed> $payload */
     protected function handleInvoicePaymentFailed(array $payload): void
     {
-        if ($this->alreadyProcessed($payload)) {
-            return;
-        }
+        $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;
 
-        $this->eventHandler->handleInvoicePaymentFailed($this->payloadParser->object($payload));
+        $this->idempotency->process($eventId, function () use ($payload): void {
+            $this->eventHandler->handleInvoicePaymentFailed($this->payloadParser->object($payload));
+        });
     }
 
     /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionDeleted(array $payload): ?Response
     {
-        if ($this->alreadyProcessed($payload)) {
-            return null;
-        }
+        $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;
 
-        $response = parent::handleCustomerSubscriptionDeleted($payload);
+        return $this->idempotency->process($eventId, function () use ($payload) {
+            $response = parent::handleCustomerSubscriptionDeleted($payload);
 
-        $this->eventHandler->handleSubscriptionDeleted($this->payloadParser->object($payload));
+            $this->eventHandler->handleSubscriptionDeleted($this->payloadParser->object($payload));
 
-        return $response;
+            return $response;
+        });
     }
 }
