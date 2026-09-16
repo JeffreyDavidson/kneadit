@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Stripe;
 
-use App\Actions\Stripe\HandleConnectAccountUpdated;
-use App\Actions\Stripe\HandleConnectCheckoutCompleted;
 use App\Http\Controllers\Controller;
+use App\Services\Stripe\StripeConnectWebhookEventDispatcher;
 use App\Services\Stripe\StripeWebhookIdempotency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -20,8 +19,11 @@ class StripeConnectWebhookController extends Controller
      * This endpoint receives events about connected accounts
      * (separate from the Cashier webhook for platform subscriptions).
      */
-    public function __invoke(Request $request, StripeWebhookIdempotency $idempotency): Response
-    {
+    public function __invoke(
+        Request $request,
+        StripeWebhookIdempotency $idempotency,
+        StripeConnectWebhookEventDispatcher $dispatcher,
+    ): Response {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
         $secret = Config::string('kneadit.stripe_connect.webhook_secret');
@@ -55,11 +57,7 @@ class StripeConnectWebhookController extends Controller
         ]);
 
         try {
-            match ($type) {
-                'account.updated' => resolve(HandleConnectAccountUpdated::class)($data),
-                'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)($data),
-                default => null,
-            };
+            $dispatcher->dispatch($type, $data);
 
             $idempotency->complete($event->id);
         } catch (\Throwable $e) {
