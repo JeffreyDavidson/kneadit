@@ -7,7 +7,7 @@ use App\Services\Platform\WebhookService;
 class SendTestWebhook
 {
     public function __construct(
-        private WebhookService $webhookService,
+        private readonly WebhookService $webhookService,
     ) {}
 
     /**

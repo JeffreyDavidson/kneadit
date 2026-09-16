@@ -29,6 +29,7 @@ class FavoriteResource extends JsonApiResource
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function toAttributes(Request $request): array
     {
         return [

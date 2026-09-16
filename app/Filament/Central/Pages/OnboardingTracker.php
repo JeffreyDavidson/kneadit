@@ -15,14 +15,19 @@ use UnitEnum;
 /** @phpstan-type OnboardingRecord array{id: string, name: string, subdomain: string, owner: string, email: string, plan: string, created_at: \Illuminate\Support\Carbon|null, days_since_signup: int, checks: array<string, bool>, completed: int, total: int} */
 class OnboardingTracker extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected static ?string $title = 'Onboarding Tracker';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
     public string $filterStatus = 'all';
@@ -38,6 +43,7 @@ class OnboardingTracker extends Page
         'sort' => ['except' => 'progress_asc'],
     ];
 
+    #[\Override]
     public function getSubheading(): ?string
     {
         return 'Monitor which bakers have completed their setup.';

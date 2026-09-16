@@ -33,6 +33,7 @@ class CapacityLimit extends Model
     /** @use HasFactory<CapacityLimitFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

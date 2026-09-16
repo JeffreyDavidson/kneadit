@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 class HandleConnectAccountUpdated
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private SettingsManager $settings,
+        private readonly TenancyManager $tenancyManager,
+        private readonly SettingsManager $settings,
     ) {}
 
     public function __invoke(mixed $account): void

@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 class CustomerLoyalty
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     /**

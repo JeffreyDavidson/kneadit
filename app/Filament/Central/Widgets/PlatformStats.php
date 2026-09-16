@@ -16,10 +16,13 @@ class PlatformStats extends StatsOverviewWidget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected ?string $pollingInterval = null;
 
+    #[\Override]
     protected static ?int $sort = 0;
 
+    #[\Override]
     protected function getStats(): array
     {
         $data = $this->cached('main', [900, 1800], fn (): array => $this->loadData());

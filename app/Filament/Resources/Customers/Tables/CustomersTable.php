@@ -120,10 +120,8 @@ class CustomersTable
             ->filters([
                 Filter::make('at_risk')
                     ->label('At Risk')
-                    ->query(function (Builder $query) use ($atRiskDays) {
-                        return $query->whereHas('orders')
-                            ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)));
-                    }),
+                    ->query(fn(Builder $query) => $query->whereHas('orders')
+                        ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)))),
 
                 Filter::make('has_birthday_this_month')
                     ->label('Birthday This Month')

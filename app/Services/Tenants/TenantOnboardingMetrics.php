@@ -13,7 +13,7 @@ class TenantOnboardingMetrics
     public const int TOTAL_CHECKS = 7;
 
     public function __construct(
-        private TenancyManager $tenancy,
+        private readonly TenancyManager $tenancy,
     ) {}
 
     /** @return array<string, bool> */

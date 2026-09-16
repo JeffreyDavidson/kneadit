@@ -7,6 +7,7 @@ use Filament\Tables\Columns\TextColumn;
 
 class MoneyColumn extends TextColumn
 {
+    #[\Override]
     public static function make(?string $name = null): static
     {
         return parent::make($name)

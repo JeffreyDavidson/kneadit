@@ -14,10 +14,13 @@ class RevenueOverview extends StatsOverviewWidget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected ?string $pollingInterval = null;
 
+    #[\Override]
     protected static ?int $sort = 1;
 
+    #[\Override]
     protected function getStats(): array
     {
         $data = $this->cached('main', [900, 1800], function (): array {

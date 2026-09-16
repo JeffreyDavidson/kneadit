@@ -7,8 +7,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListWebhookDeliveries extends ListRecords
 {
+    #[\Override]
     protected static string $resource = WebhookDeliveryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

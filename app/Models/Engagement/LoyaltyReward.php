@@ -38,6 +38,7 @@ class LoyaltyReward extends Model
     /** @use HasFactory<LoyaltyRewardFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -29,6 +29,7 @@ class SeasonalItems extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -39,16 +40,22 @@ class SeasonalItems extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Seasonal Items';
 
+    #[\Override]
     protected static ?int $navigationSort = 12;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.seasonal-items';
 
+    #[\Override]
     protected static ?string $title = 'Seasonal Items';
 
     public ?int $product_id = null;
@@ -59,6 +66,7 @@ class SeasonalItems extends Page
 
     public ?string $notes = null;
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->schema([

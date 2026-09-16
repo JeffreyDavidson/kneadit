@@ -7,5 +7,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPost extends EditRecord
 {
+    #[\Override]
     protected static string $resource = BlogPostResource::class;
 }

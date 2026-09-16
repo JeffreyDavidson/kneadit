@@ -19,6 +19,7 @@ class StripeWebhookController extends WebhookController
     }
 
     /** @param array<string, mixed> $payload */
+    #[\Override]
     protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
         $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;
@@ -43,6 +44,7 @@ class StripeWebhookController extends WebhookController
     }
 
     /** @param array<string, mixed> $payload */
+    #[\Override]
     protected function handleCustomerSubscriptionDeleted(array $payload): ?Response
     {
         $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;

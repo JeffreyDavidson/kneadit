@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class SaveTenantSettings
 {
     public function __construct(
-        private SettingsManager $settings,
+        private readonly SettingsManager $settings,
     ) {}
 
     /** @param array<string, mixed> $data */

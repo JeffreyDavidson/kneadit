@@ -14,8 +14,10 @@ class UpcomingOrdersWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 6;
 
+    #[\Override]
     protected string $view = 'filament.widgets.upcoming-orders';
 
     /**
@@ -24,6 +26,7 @@ class UpcomingOrdersWidget extends Widget
      * Once an order with a delivery date in the next 7 days exists,
      * the widget reappears at its configured size.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return Order::query()

@@ -21,16 +21,22 @@ class ManageSettings extends Page
     use InteractsWithFormActions;
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.manage-settings';
 
+    #[\Override]
     protected static ?string $title = 'Manage Settings';
 
     // Form data properties
@@ -129,6 +135,7 @@ class ManageSettings extends Page
         $this->applySettings(resolve(TenantSettingsFormMapper::class)->fromSettings($values, $defaults));
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return ManageSettingsForm::configure($schema);
@@ -143,7 +150,7 @@ class ManageSettings extends Page
                 ->title('Settings saved successfully!')
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             Notification::make()
                 ->title('Error saving settings')
                 ->body('There was an error saving your settings. Please try again.')

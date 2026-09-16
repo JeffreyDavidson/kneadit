@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Date;
 class CustomerIntelligence
 {
     public function __construct(
-        private CustomerLoyalty $customerLoyalty,
+        private readonly CustomerLoyalty $customerLoyalty,
     ) {}
 
     public function metrics(Customer $customer): CustomerMetrics

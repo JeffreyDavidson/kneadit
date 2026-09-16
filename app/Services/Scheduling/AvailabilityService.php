@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Date;
 class AvailabilityService
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     /**

@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListBlockedDates extends ListRecords
 {
+    #[\Override]
     protected static string $resource = BlockedDateResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

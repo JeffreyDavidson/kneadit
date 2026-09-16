@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class RestockIngredientsForOrder
 {
     public function __construct(
-        private AdjustIngredientStock $adjustStock,
+        private readonly AdjustIngredientStock $adjustStock,
     ) {}
 
     public function __invoke(Order $order): void

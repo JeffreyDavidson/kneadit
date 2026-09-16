@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Log;
 
 class TokenManager
 {
-    private string $baseUrl;
+    private readonly string $baseUrl;
 
-    private ?string $clientId;
+    private readonly ?string $clientId;
 
-    private ?string $clientSecret;
+    private readonly ?string $clientSecret;
 
     private ?string $accessToken = null;
 

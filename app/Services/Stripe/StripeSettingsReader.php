@@ -22,7 +22,7 @@ class StripeSettingsReader
     private bool $connectIdLoaded = false;
 
     public function __construct(
-        private SettingsManager $settings,
+        private readonly SettingsManager $settings,
     ) {}
 
     public function isEnabled(): bool

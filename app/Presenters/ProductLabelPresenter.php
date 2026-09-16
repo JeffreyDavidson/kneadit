@@ -14,9 +14,9 @@ use Illuminate\Support\Number;
  * by weight descending (per FDA rules) and a "Contains: …" allergen statement
  * derived from the union of its recipe ingredients' allergen tags.
  */
-final class ProductLabelPresenter
+final readonly class ProductLabelPresenter
 {
-    public function __construct(public readonly Product $product) {}
+    public function __construct(public Product $product) {}
 
     public static function for(Product $product): self
     {

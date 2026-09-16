@@ -18,14 +18,19 @@ class BakingSheet extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPrinter;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Baking Sheet';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.baking-sheet';
 
     public string $selectedDate = '';
@@ -35,6 +40,7 @@ class BakingSheet extends Page
         $this->selectedDate = now()->format('Y-m-d');
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([
@@ -63,6 +69,7 @@ class BakingSheet extends Page
         return BakingSheetQuery::forDate($this->selectedDate);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

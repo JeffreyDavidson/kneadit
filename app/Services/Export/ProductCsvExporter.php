@@ -20,7 +20,7 @@ class ProductCsvExporter
     {
         $output = fopen('php://temp', 'r+');
         throw_if($output === false, \RuntimeException::class, 'Failed to open file');
-        fputcsv($output, $this->headers);
+        fputcsv($output, $this->headers, escape: '\\');
 
         Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
             fputcsv($output, CsvValueSanitizer::row([
@@ -31,7 +31,8 @@ class ProductCsvExporter
                 $product->cost?->dollars() ?? '',
                 $product->is_active ? '1' : '0',
                 $product->is_featured ? '1' : '0',
-            ]));
+            ]),
+            escape: '\\');
         });
 
         rewind($output);
@@ -51,7 +52,7 @@ class ProductCsvExporter
         if ($handle === false) {
             return ['rows' => [], 'errors' => ['Failed to read CSV file.']];
         }
-        $header = fgetcsv($handle);
+        $header = fgetcsv($handle, escape: '\\');
 
         if (! $header) {
             return ['rows' => [], 'errors' => ['CSV file is empty.']];
@@ -67,7 +68,7 @@ class ProductCsvExporter
         }
 
         $line = 1;
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, escape: '\\')) !== false) {
             $line++;
             if (count($row) !== count($header)) {
                 $errors[] = "Row {$line}: column count mismatch.";

@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Log;
 class EngagementDispatcher
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private ScheduledNotificationRunTracker $runTracker,
+        private readonly TenancyManager $tenancyManager,
+        private readonly ScheduledNotificationRunTracker $runTracker,
     ) {}
 
     /**

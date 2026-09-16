@@ -16,14 +16,19 @@ use UnitEnum;
 
 class Activity extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected static ?string $title = 'Activity';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.activity';
 
     public string $activeTab = 'platform';

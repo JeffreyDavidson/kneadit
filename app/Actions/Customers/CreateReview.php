@@ -11,7 +11,7 @@ use Illuminate\Http\UploadedFile;
 class CreateReview
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function __invoke(Order $order, int $rating, ?string $comment = null, ?UploadedFile $photo = null): Review

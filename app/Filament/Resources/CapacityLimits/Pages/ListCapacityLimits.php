@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListCapacityLimits extends ListRecords
 {
+    #[\Override]
     protected static string $resource = CapacityLimitResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

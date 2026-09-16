@@ -18,14 +18,18 @@ class RevenueChartWidget extends ChartWidget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 3;
 
+    #[\Override]
     protected ?string $heading = 'Revenue — Last 30 Days';
 
+    #[\Override]
     protected ?string $maxHeight = '280px';
 
     // Override Filament's default chart view so the chart renders inside our
     // <x-tenant-admin.dashboard.preview-card> shell instead of <x-filament::section>.
+    #[\Override]
     protected string $view = 'filament.widgets.revenue-chart';
 
     protected function getType(): string
@@ -33,6 +37,7 @@ class RevenueChartWidget extends ChartWidget
         return 'line';
     }
 
+    #[\Override]
     protected function getData(): array
     {
         $days = $this->windowDays();

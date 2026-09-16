@@ -17,8 +17,10 @@ class ReorderRemindersWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 20;
 
+    #[\Override]
     protected string $view = 'filament.widgets.reorder-reminders-widget';
 
     /**
@@ -26,6 +28,7 @@ class ReorderRemindersWidget extends Widget
      * empty state was dead space on a busy dashboard. Reappears the
      * moment a 2+-time customer goes 30+ days without ordering.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return self::lapsedCustomersQuery()->exists();
@@ -34,26 +37,22 @@ class ReorderRemindersWidget extends Widget
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
-        return $this->cached('lapsed_customers', [1800, 3600], function (): array {
-            return self::lapsedCustomersQuery()
-                ->withMax(['orders as last_order_at' => self::eligibleOrders(...)], 'created_at')
-                ->orderByDesc('last_order_at')
-                ->limit(10)
-                ->get()
-                ->map(fn (Customer $c) => [
-                    'name' => $c->name,
-                    'email' => $c->email,
-                    'last_order' => $c->last_order_at ? Date::parse($c->last_order_at)->diffForHumans() : 'N/A',
-                ])
-                ->all();
-        });
+        return $this->cached('lapsed_customers', [1800, 3600], fn(): array => self::lapsedCustomersQuery()
+            ->withMax(['orders as last_order_at' => self::eligibleOrders(...)], 'created_at')
+            ->orderByDesc('last_order_at')
+            ->limit(10)
+            ->get()
+            ->map(fn (Customer $c) => [
+                'name' => $c->name,
+                'email' => $c->email,
+                'last_order' => $c->last_order_at ? Date::parse($c->last_order_at)->diffForHumans() : 'N/A',
+            ])
+            ->all());
     }
 
     public function getLapsedCount(): int
     {
-        return $this->cached('lapsed_count', [1800, 3600], function (): int {
-            return self::lapsedCustomersQuery()->count();
-        });
+        return $this->cached('lapsed_count', [1800, 3600], fn(): int => self::lapsedCustomersQuery()->count());
     }
 
     /** @return Builder<Customer> */

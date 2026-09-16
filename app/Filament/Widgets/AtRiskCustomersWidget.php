@@ -16,8 +16,10 @@ class AtRiskCustomersWidget extends Widget
 {
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 10;
 
+    #[\Override]
     protected string $view = 'filament.widgets.at-risk-customers';
 
     /**
@@ -25,6 +27,7 @@ class AtRiskCustomersWidget extends Widget
      * recently active" empty state was just dead space. Reappears
      * the moment any customer crosses the inactivity threshold.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return AtRiskCustomersQuery::count(Config::integer('analytics.at_risk_threshold_days', 30)) > 0;

@@ -22,7 +22,7 @@ use Illuminate\Support\Collection;
 class ResolveCampaignRecipients
 {
     public function __construct(
-        private RfmClassifier $classifier,
+        private readonly RfmClassifier $classifier,
     ) {}
 
     /** @return Collection<int, Customer> */

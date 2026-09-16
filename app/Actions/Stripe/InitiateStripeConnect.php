@@ -10,10 +10,10 @@ use Stripe\StripeClient;
 
 class InitiateStripeConnect
 {
-    private StripeClient $stripe;
+    private readonly StripeClient $stripe;
 
     public function __construct(
-        private SettingsManager $settings,
+        private readonly SettingsManager $settings,
     ) {
         $secret = Config::string('cashier.secret');
 

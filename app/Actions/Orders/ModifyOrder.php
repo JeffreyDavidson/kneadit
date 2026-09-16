@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Log;
 class ModifyOrder
 {
     public function __construct(
-        private OrderModificationGuard $guard,
-        private CheckOrderStockAvailability $checkStock,
+        private readonly OrderModificationGuard $guard,
+        private readonly CheckOrderStockAvailability $checkStock,
     ) {}
 
     /**

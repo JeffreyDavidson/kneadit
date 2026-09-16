@@ -34,6 +34,7 @@ class CateringInquiryItem extends Model
     /** @use HasFactory<CateringInquiryItemFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

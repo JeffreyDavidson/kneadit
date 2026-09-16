@@ -13,10 +13,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NeedsAttention extends Widget
 {
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.central.widgets.needs-attention';
 
     /**

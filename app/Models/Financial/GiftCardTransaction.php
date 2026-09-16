@@ -36,6 +36,7 @@ class GiftCardTransaction extends Model
     /** @use HasFactory<GiftCardTransactionFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -18,7 +18,7 @@ use Illuminate\Support\Arr;
 class RfmReport
 {
     public function __construct(
-        private RfmClassifier $classifier,
+        private readonly RfmClassifier $classifier,
     ) {}
 
     /**

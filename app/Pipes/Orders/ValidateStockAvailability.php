@@ -16,7 +16,7 @@ use Closure;
  */
 class ValidateStockAvailability
 {
-    public function __construct(private IngredientDemandCalculator $calculator) {}
+    public function __construct(private readonly IngredientDemandCalculator $calculator) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {

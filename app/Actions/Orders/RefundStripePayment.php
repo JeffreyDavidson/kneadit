@@ -31,8 +31,8 @@ use Stripe\StripeClient;
 class RefundStripePayment
 {
     public function __construct(
-        private StripeClient $stripe,
-        private StripeSettingsReader $settings,
+        private readonly StripeClient $stripe,
+        private readonly StripeSettingsReader $settings,
     ) {}
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund

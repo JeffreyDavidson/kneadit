@@ -164,14 +164,14 @@ class SeedLocalCommand extends Command
      */
     private function generateTenantSpec(Generator $faker, int $index): array
     {
-        $storeName = ucfirst($faker->word).' '.collect(self::STORE_TYPES)->random();
+        $storeName = ucfirst($faker->word()).' '.collect(self::STORE_TYPES)->random();
         $id = Str::slug($storeName).'-'.($index + 1);
         $palette = collect(self::PALETTES)->random();
 
         return [
             'id' => $id,
-            'name' => $faker->name,
-            'email' => $faker->unique()->safeEmail,
+            'name' => $faker->name(),
+            'email' => $faker->unique()->safeEmail(),
             'store_name' => $storeName,
             'brand_primary' => $palette[0],
             'brand_secondary' => $palette[1],
@@ -245,11 +245,11 @@ class SeedLocalCommand extends Command
             AdminAuditLog::query()->create([
                 'admin_id' => $adminUser?->id,
                 'action' => $faker->randomElement($actions),
-                'description' => $faker->sentence,
+                'description' => $faker->sentence(),
                 'target_type' => 'tenant',
                 'target_id' => $tenantId,
                 'user_name' => $adminName,
-                'ip_address' => $faker->ipv4,
+                'ip_address' => $faker->ipv4(),
                 'created_at' => $faker->dateTimeBetween('-3 months', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
             ]);
@@ -278,12 +278,12 @@ class SeedLocalCommand extends Command
             ]);
 
             // 50% chance of an admin reply
-            if ($faker->boolean) {
+            if ($faker->boolean()) {
                 SupportReply::query()->create([
                     'ticket_id' => $ticket->id,
                     'author_type' => 'admin',
                     'author_name' => $adminName,
-                    'body' => $faker->paragraph,
+                    'body' => $faker->paragraph(),
                     'created_at' => $faker->dateTimeBetween($createdAt, 'now'),
                     'updated_at' => $faker->dateTimeBetween($createdAt, 'now'),
                 ]);

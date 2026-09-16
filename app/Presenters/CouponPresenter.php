@@ -5,10 +5,10 @@ namespace App\Presenters;
 use App\Enums\Financial\CouponType;
 use App\Models\Financial\Coupon;
 
-final class CouponPresenter
+final readonly class CouponPresenter
 {
     public function __construct(
-        public readonly Coupon $coupon,
+        public Coupon $coupon,
     ) {}
 
     public static function for(Coupon $coupon): self

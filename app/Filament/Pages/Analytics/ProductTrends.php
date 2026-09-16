@@ -18,12 +18,16 @@ class ProductTrends extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.product-trends';
 
+    #[\Override]
     protected static ?string $title = 'Product Trends';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Product Trends';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
     #[Url]
@@ -32,6 +36,7 @@ class ProductTrends extends Page
     #[Url]
     public int $year = 0;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -42,16 +47,19 @@ class ProductTrends extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getNavigationIcon(): string|BackedEnum|null
     {
         return Heroicon::OutlinedArrowTrendingUp;
     }
 
+    #[\Override]
     public static function getNavigationGroup(): string|\UnitEnum|null
     {
         return 'Tools';
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

@@ -13,8 +13,10 @@ class SeasonalItemsWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 22;
 
+    #[\Override]
     protected string $view = 'filament.widgets.seasonal-items-widget';
 
     public function getCurrentlyInSeasonCount(): int
@@ -25,37 +27,33 @@ class SeasonalItemsWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getComingSoon(): array
     {
-        return $this->cached('coming_'.now()->format('Y-m-d'), [3600, 7200], function (): array {
-            return SeasonalItem::with('product')
-                ->where('available_from', '>', Date::today())
-                ->where('available_from', '<=', Date::today()->addDays(14))
-                ->orderBy('available_from')
-                ->limit(5)
-                ->get()
-                ->map(fn (SeasonalItem $s) => [
-                    'name' => $s->product->name ?? 'Unknown',
-                    'date' => $s->available_from->format('M j'),
-                ])
-                ->all();
-        });
+        return $this->cached('coming_'.now()->format('Y-m-d'), [3600, 7200], fn(): array => SeasonalItem::with('product')
+            ->where('available_from', '>', Date::today())
+            ->where('available_from', '<=', Date::today()->addDays(14))
+            ->orderBy('available_from')
+            ->limit(5)
+            ->get()
+            ->map(fn (SeasonalItem $s) => [
+                'name' => $s->product->name ?? 'Unknown',
+                'date' => $s->available_from->format('M j'),
+            ])
+            ->all());
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getEndingSoon(): array
     {
-        return $this->cached('ending_'.now()->format('Y-m-d'), [3600, 7200], function (): array {
-            return SeasonalItem::with('product')
-                ->where('available_until', '>=', Date::today())
-                ->where('available_until', '<=', Date::today()->addDays(14))
-                ->orderBy('available_until')
-                ->limit(5)
-                ->get()
-                ->map(fn (SeasonalItem $s) => [
-                    'name' => $s->product->name ?? 'Unknown',
-                    'date' => $s->available_until->format('M j'),
-                ])
-                ->all();
-        });
+        return $this->cached('ending_'.now()->format('Y-m-d'), [3600, 7200], fn(): array => SeasonalItem::with('product')
+            ->where('available_until', '>=', Date::today())
+            ->where('available_until', '<=', Date::today()->addDays(14))
+            ->orderBy('available_until')
+            ->limit(5)
+            ->get()
+            ->map(fn (SeasonalItem $s) => [
+                'name' => $s->product->name ?? 'Unknown',
+                'date' => $s->available_until->format('M j'),
+            ])
+            ->all());
     }
 
     protected function cachePrefix(): string

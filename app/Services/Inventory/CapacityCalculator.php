@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Date;
 class CapacityCalculator
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function forDate(Carbon|string $date): ?CapacityLimit

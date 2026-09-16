@@ -31,16 +31,22 @@ class PromoCode extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $title = 'Promo Codes';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Promo Codes';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.promo-code';
 
     /** @var array<string, mixed> */

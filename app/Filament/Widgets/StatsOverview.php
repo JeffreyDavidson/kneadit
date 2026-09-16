@@ -13,8 +13,10 @@ class StatsOverview extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 1;
 
+    #[\Override]
     protected string $view = 'filament.widgets.stats-overview';
 
     /** @return array<int, array<string, mixed>> */

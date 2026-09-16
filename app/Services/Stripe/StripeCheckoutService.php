@@ -15,10 +15,10 @@ use Stripe\StripeClient;
 class StripeCheckoutService
 {
     public function __construct(
-        private StripeSessionPayloadBuilder $payloadBuilder,
-        private StripeSettingsReader $settings,
-        private HandleCheckoutComplete $handleCheckoutComplete,
-        private StripeClient $stripe,
+        private readonly StripeSessionPayloadBuilder $payloadBuilder,
+        private readonly StripeSettingsReader $settings,
+        private readonly HandleCheckoutComplete $handleCheckoutComplete,
+        private readonly StripeClient $stripe,
     ) {}
 
     public function redirectToCheckout(Order $order): ?string

@@ -13,8 +13,10 @@ class GiftCardBalanceWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 16;
 
+    #[\Override]
     protected string $view = 'filament.widgets.gift-card-balance-widget';
 
     public function getTotalOutstandingBalance(): float

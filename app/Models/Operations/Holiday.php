@@ -38,6 +38,7 @@ class Holiday extends Model
     /** @use HasFactory<HolidayFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

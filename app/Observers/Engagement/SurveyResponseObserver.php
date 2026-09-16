@@ -15,6 +15,6 @@ class SurveyResponseObserver
 {
     public function creating(SurveyResponse $response): void
     {
-        $response->created_at = $response->created_at ?? now();
+        $response->created_at ??= now();
     }
 }

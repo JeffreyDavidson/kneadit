@@ -16,8 +16,10 @@ use Filament\Tables\Table;
 
 class IngredientsRelationManager extends RelationManager
 {
+    #[\Override]
     protected static string $relationship = 'ingredients';
 
+    #[\Override]
     public function form(Schema $form): Schema
     {
         return $form

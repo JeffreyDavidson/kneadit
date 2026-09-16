@@ -13,8 +13,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListImpersonationTokens extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ImpersonationTokenResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

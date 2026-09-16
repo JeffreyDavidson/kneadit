@@ -24,8 +24,8 @@ class TransitionOrderStatus
     ];
 
     public function __construct(
-        private InventoryManager $inventoryManager,
-        private ReverseOrderDiscounts $reverseOrderDiscounts,
+        private readonly InventoryManager $inventoryManager,
+        private readonly ReverseOrderDiscounts $reverseOrderDiscounts,
     ) {}
 
     public function __invoke(Order $order, OrderStatus $to): Order
@@ -84,6 +84,6 @@ class TransitionOrderStatus
     {
         $allowed = self::TRANSITIONS[$order->status->value] ?? [];
 
-        return array_map(fn (string $s) => OrderStatus::from($s), $allowed);
+        return array_map(OrderStatus::from(...), $allowed);
     }
 }

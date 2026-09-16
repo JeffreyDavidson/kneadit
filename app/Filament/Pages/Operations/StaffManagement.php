@@ -25,6 +25,7 @@ use UnitEnum;
 
 class StaffManagement extends Page
 {
+    #[\Override]
     public static function canAccess(): bool
     {
         $user = Auth::user();
@@ -36,16 +37,22 @@ class StaffManagement extends Page
         return true;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Admin';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Staff';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.staff-management';
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'Team Management';
@@ -63,6 +70,7 @@ class StaffManagement extends Page
         return resolve(StaffDirectoryQuery::class)->pendingInvitations();
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

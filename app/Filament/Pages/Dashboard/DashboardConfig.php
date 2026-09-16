@@ -20,18 +20,25 @@ class DashboardConfig extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Dashboard Configuration';
 
+    #[\Override]
     protected static ?string $title = 'Customize Dashboard';
 
+    #[\Override]
     protected static ?string $slug = 'dashboard-config';
 
+    #[\Override]
     protected static \UnitEnum|string|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
+    #[\Override]
     protected string $view = 'filament.pages.dashboard.dashboard-config';
 
     /** @var list<ConfigurableWidget> */

@@ -17,6 +17,7 @@ use Stripe\StripeClient;
 
 class InfrastructureServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->app->scoped(CspNonce::class);

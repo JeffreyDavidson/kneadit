@@ -20,30 +20,40 @@ class GiftCardResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = GiftCard::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'code';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGiftTop;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 11;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Gift Cards';
 
+    #[\Override]
     protected static ?string $pluralModelLabel = 'Gift Cards';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return GiftCardForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return GiftCardsTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('growth-features');
@@ -54,23 +64,27 @@ class GiftCardResource extends Resource
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['code', 'purchaser_name', 'recipient_name'];
     }
 
     /** @param GiftCard $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Gift Card: '.$record->code;
     }
 
     /** @param GiftCard $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -80,6 +94,7 @@ class GiftCardResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

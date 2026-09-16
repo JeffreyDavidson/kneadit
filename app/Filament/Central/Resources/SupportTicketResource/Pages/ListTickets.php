@@ -11,8 +11,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListTickets extends ListRecords
 {
+    #[\Override]
     protected static string $resource = SupportTicketResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

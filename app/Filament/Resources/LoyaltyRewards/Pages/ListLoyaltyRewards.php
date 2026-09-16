@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListLoyaltyRewards extends ListRecords
 {
+    #[\Override]
     protected static string $resource = LoyaltyRewardResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

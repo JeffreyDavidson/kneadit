@@ -15,28 +15,37 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactMessageResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = ContactMessage::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Messages';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ContactMessageForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ContactMessagesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -44,18 +53,21 @@ class ContactMessageResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'email', 'subject'];
     }
 
     /** @param ContactMessage $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->subject ?? 'Message from '.$record->name;
     }
 
     /** @param ContactMessage $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -65,6 +77,7 @@ class ContactMessageResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

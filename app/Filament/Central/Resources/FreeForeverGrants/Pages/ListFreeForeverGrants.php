@@ -12,8 +12,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListFreeForeverGrants extends ListRecords
 {
+    #[\Override]
     protected static string $resource = FreeForeverGrantResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

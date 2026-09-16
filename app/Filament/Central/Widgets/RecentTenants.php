@@ -13,12 +13,16 @@ use Filament\Widgets\TableWidget;
 
 class RecentTenants extends TableWidget
 {
+    #[\Override]
     protected static ?int $sort = 4;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected static ?string $heading = 'Recent Signups';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

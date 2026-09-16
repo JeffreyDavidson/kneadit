@@ -39,6 +39,7 @@ class CustomerReferral extends Model
     /** @use HasFactory<CustomerReferralFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -29,16 +29,22 @@ class ManagePageContent extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Page Content';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.manage-page-content';
 
+    #[\Override]
     protected static ?string $title = 'Page Content';
 
     /** @var array<string, mixed> */
@@ -67,6 +73,7 @@ class ManagePageContent extends Page
         );
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -101,6 +108,7 @@ class ManagePageContent extends Page
         ];
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema

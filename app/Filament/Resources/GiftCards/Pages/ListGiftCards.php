@@ -9,8 +9,10 @@ use Illuminate\Support\Str;
 
 class ListGiftCards extends ListRecords
 {
+    #[\Override]
     protected static string $resource = GiftCardResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -62,6 +62,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public const string CENTRAL_PANEL_ID = 'central';
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -9,7 +9,7 @@ use Closure;
 class ValidateCapacity
 {
     public function __construct(
-        private InventoryManager $inventory,
+        private readonly InventoryManager $inventory,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

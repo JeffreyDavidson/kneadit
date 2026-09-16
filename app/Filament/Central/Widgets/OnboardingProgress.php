@@ -8,10 +8,13 @@ use Filament\Widgets\Widget;
 
 class OnboardingProgress extends Widget
 {
+    #[\Override]
     protected static ?int $sort = 3;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.central.widgets.onboarding-progress';
 
     /** @return array<string, mixed> */

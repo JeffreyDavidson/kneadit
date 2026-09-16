@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 class SendEmailCampaign
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
+        private readonly TenancyManager $tenancyManager,
     ) {}
 
     public function __invoke(EmailCampaign $campaign): void

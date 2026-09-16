@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListAnnouncements extends ListRecords
 {
+    #[\Override]
     protected static string $resource = AnnouncementResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

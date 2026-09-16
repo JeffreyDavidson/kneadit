@@ -8,7 +8,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
-final class HttpPayPalClient implements PayPalClient
+final readonly class HttpPayPalClient implements PayPalClient
 {
     public function __construct(private TokenManager $tokenManager) {}
 

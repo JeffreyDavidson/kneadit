@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListRecipes extends ListRecords
 {
+    #[\Override]
     protected static string $resource = RecipeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -19,6 +19,7 @@ class FinanceSummary extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -29,14 +30,19 @@ class FinanceSummary extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Finance Summary';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.finance-summary';
 
     public int $selectedYear;
@@ -91,6 +97,7 @@ class FinanceSummary extends Page
         $this->loadFinancialData();
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

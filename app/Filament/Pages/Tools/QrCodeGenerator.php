@@ -26,6 +26,7 @@ class QrCodeGenerator extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -36,14 +37,19 @@ class QrCodeGenerator extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQrCode;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'QR Code';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 15;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.qr-code-generator';
 
     /** @var array<string, mixed> */
@@ -65,6 +71,7 @@ class QrCodeGenerator extends Page
         $this->generateQrCode();
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([

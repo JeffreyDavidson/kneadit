@@ -22,14 +22,19 @@ class LabelGenerator extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Labels';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 13;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.label-generator';
 
     /** @var array<int, int> */
@@ -57,6 +62,7 @@ class LabelGenerator extends Page
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([

@@ -25,6 +25,7 @@ class EmailTemplate extends Model
     /** @use HasFactory<EmailTemplateFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

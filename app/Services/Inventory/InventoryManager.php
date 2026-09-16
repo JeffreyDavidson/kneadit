@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Date;
 class InventoryManager
 {
     public function __construct(
-        private CapacityCalculator $capacityCalculator,
-        private DeductIngredientsForOrder $deductIngredients,
-        private RestockIngredientsForOrder $restockIngredients,
+        private readonly CapacityCalculator $capacityCalculator,
+        private readonly DeductIngredientsForOrder $deductIngredients,
+        private readonly RestockIngredientsForOrder $restockIngredients,
     ) {}
 
     /**

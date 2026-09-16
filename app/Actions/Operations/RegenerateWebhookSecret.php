@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class RegenerateWebhookSecret
 {
     public function __construct(
-        private SettingsManager $settings,
+        private readonly SettingsManager $settings,
     ) {}
 
     /**

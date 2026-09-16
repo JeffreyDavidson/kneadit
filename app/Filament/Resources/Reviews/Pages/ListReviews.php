@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListReviews extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ReviewResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

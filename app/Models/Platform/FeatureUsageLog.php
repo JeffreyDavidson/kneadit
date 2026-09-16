@@ -39,6 +39,7 @@ class FeatureUsageLog extends Model
     /** @use HasFactory<FeatureUsageLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

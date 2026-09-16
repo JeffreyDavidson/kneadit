@@ -47,6 +47,7 @@ class PlatformMessage extends Model
     /** @use HasFactory<PlatformMessageFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

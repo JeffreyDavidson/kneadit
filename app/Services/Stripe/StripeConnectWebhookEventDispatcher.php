@@ -8,8 +8,8 @@ use App\Actions\Stripe\HandleConnectCheckoutCompleted;
 class StripeConnectWebhookEventDispatcher
 {
     public function __construct(
-        private HandleConnectAccountUpdated $handleAccountUpdated,
-        private HandleConnectCheckoutCompleted $handleCheckoutCompleted,
+        private readonly HandleConnectAccountUpdated $handleAccountUpdated,
+        private readonly HandleConnectCheckoutCompleted $handleCheckoutCompleted,
     ) {}
 
     public function dispatch(string $type, mixed $data): void

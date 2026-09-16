@@ -12,8 +12,10 @@ use Filament\Schemas\Schema;
 
 class ViewSurvey extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = SurveyResource::class;
 
+    #[\Override]
     public function infolist(Schema $infolist): Schema
     {
         return $infolist->schema([

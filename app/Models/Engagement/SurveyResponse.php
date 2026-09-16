@@ -32,6 +32,7 @@ class SurveyResponse extends Model
     /** @use HasFactory<SurveyResponseFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -33,6 +33,7 @@ class FreeForeverGrant extends Model
     /** @use HasFactory<FreeForeverGrantFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -34,6 +34,7 @@ class ImpersonationToken extends Model
     /** @use HasFactory<ImpersonationTokenFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

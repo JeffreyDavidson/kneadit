@@ -21,16 +21,22 @@ class HomepageBuilder extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Homepage';
 
+    #[\Override]
     protected static ?int $navigationSort = 10;
 
+    #[\Override]
     protected static ?string $title = 'Homepage Builder';
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.homepage-builder';
 
     /** @var array<string, HomepageSection> */
@@ -100,6 +106,7 @@ class HomepageBuilder extends Page
         }
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->schema([]);

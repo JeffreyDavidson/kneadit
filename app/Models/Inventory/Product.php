@@ -63,6 +63,7 @@ class Product extends Model
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

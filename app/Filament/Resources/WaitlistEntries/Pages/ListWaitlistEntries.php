@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListWaitlistEntries extends ListRecords
 {
+    #[\Override]
     protected static string $resource = WaitlistEntryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -13,8 +13,8 @@ class TenancyManager
     private const int TENANT_CHUNK_SIZE = 100;
 
     public function __construct(
-        private SettingsManager $settingsManager,
-        private TenantSettingsRegistry $tenantSettingsRegistry,
+        private readonly SettingsManager $settingsManager,
+        private readonly TenantSettingsRegistry $tenantSettingsRegistry,
     ) {}
 
     /**

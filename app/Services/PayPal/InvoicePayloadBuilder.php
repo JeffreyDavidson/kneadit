@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Date;
 class InvoicePayloadBuilder
 {
     public function __construct(
-        private TenantSettings $settings,
-        private SettingsManager $manager,
+        private readonly TenantSettings $settings,
+        private readonly SettingsManager $manager,
     ) {}
 
     /** @return array<string, mixed> */

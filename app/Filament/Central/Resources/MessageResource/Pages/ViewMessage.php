@@ -14,17 +14,21 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ViewMessage extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = MessageResource::class;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.view-message';
 
     public string $replyBody = '';
 
+    #[\Override]
     public function resolveRecord(int|string $key): Model
     {
         return PlatformMessage::query()->findOrFail($key);
     }
 
+    #[\Override]
     public function mount(int|string $record): void
     {
         parent::mount($record);
@@ -38,6 +42,7 @@ class ViewMessage extends ViewRecord
         }
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return $this->record->subject;

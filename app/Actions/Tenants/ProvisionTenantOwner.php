@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class ProvisionTenantOwner
 {
     public function __construct(
-        private SettingsManager $settingsManager,
+        private readonly SettingsManager $settingsManager,
     ) {}
 
     public function __invoke(

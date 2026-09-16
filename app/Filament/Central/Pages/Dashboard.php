@@ -7,10 +7,13 @@ use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
+    #[\Override]
     protected static ?string $title = 'Dashboard';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Dashboard';
 
+    #[\Override]
     public function getWidgets(): array
     {
         return [

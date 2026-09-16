@@ -14,7 +14,7 @@ use Closure;
 class ApplyTierPerks
 {
     public function __construct(
-        private CustomerLoyalty $customerLoyalty,
+        private readonly CustomerLoyalty $customerLoyalty,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

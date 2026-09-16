@@ -29,6 +29,7 @@ class WebhookDelivery extends Model
     /** @use HasFactory<WebhookDeliveryFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

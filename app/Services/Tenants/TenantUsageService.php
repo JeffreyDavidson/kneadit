@@ -32,15 +32,13 @@ class TenantUsageService
             }
 
             try {
-                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, function () {
-                    return [
-                        Product::query()->count(),
-                        Order::query()
-                            ->whereMonth('created_at', Date::now()->month)
-                            ->whereYear('created_at', Date::now()->year)
-                            ->count(),
-                    ];
-                });
+                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, fn() => [
+                    Product::query()->count(),
+                    Order::query()
+                        ->whereMonth('created_at', Date::now()->month)
+                        ->whereYear('created_at', Date::now()->year)
+                        ->count(),
+                ]);
 
                 $productLimit = $limits['products'];
                 $orderLimit = $limits['orders_per_month'];

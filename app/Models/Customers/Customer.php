@@ -83,6 +83,7 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
         $this->notify(new CustomerVerifyEmailNotification);
     }
 
+    #[\Override]
     protected function casts(): array
     {
         return [

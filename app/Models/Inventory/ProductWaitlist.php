@@ -29,6 +29,7 @@ class ProductWaitlist extends Model
     /** @use HasFactory<ProductWaitlistFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

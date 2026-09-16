@@ -50,6 +50,7 @@ class SupportTicket extends Model
     /** @use HasFactory<SupportTicketFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

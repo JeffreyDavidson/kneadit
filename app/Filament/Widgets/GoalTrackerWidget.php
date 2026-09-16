@@ -12,8 +12,10 @@ class GoalTrackerWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected string $view = 'filament.widgets.goal-tracker';
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
     public bool $showEditModal = false;

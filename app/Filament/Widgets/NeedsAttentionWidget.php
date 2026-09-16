@@ -28,10 +28,13 @@ class NeedsAttentionWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = -10;
 
+    #[\Override]
     protected string $view = 'filament.widgets.needs-attention';
 
+    #[\Override]
     public static function canView(): bool
     {
         return Order::query()->where('status', OrderStatus::Pending)->exists()

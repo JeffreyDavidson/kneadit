@@ -7,5 +7,6 @@ use App\Policies\Platform\RolePolicy;
 
 class OrderPolicy extends RolePolicy
 {
+    #[\Override]
     protected UserRole $minimumRole = UserRole::Staff;
 }

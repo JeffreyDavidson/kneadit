@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class StorefrontAnalyticsQuery
 {
     public function __construct(
-        private ?Carbon $startDate = null,
+        private readonly ?Carbon $startDate = null,
     ) {}
 
     public function totalViews(): int

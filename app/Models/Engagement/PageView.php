@@ -30,6 +30,7 @@ class PageView extends Model
     /** @use HasFactory<PageViewFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

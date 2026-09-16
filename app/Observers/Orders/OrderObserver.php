@@ -8,7 +8,7 @@ use App\Models\Orders\Order;
 class OrderObserver
 {
     public function __construct(
-        private GenerateOrderNumber $generateOrderNumber,
+        private readonly GenerateOrderNumber $generateOrderNumber,
     ) {}
 
     public function creating(Order $order): void

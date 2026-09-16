@@ -10,7 +10,7 @@ use Closure;
 class RecordCouponUsage
 {
     public function __construct(
-        private ApplyCoupon $applyCoupon,
+        private readonly ApplyCoupon $applyCoupon,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

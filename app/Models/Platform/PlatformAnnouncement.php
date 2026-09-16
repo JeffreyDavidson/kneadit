@@ -41,6 +41,7 @@ class PlatformAnnouncement extends Model
     /** @use HasFactory<PlatformAnnouncementFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

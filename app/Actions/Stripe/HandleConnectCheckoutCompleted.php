@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Log;
 class HandleConnectCheckoutCompleted
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private MarkOrderPaid $markOrderPaid,
-        private RecordCateringDeposit $recordCateringDeposit,
+        private readonly TenancyManager $tenancyManager,
+        private readonly MarkOrderPaid $markOrderPaid,
+        private readonly RecordCateringDeposit $recordCateringDeposit,
     ) {}
 
     public function __invoke(mixed $session): void

@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListPlatformSettings extends ListRecords
 {
+    #[\Override]
     protected static string $resource = PlatformSettingResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

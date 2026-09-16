@@ -34,6 +34,7 @@ class SeasonalItem extends Model
     /** @use HasFactory<SeasonalItemFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

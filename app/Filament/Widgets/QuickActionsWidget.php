@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Route;
 
 class QuickActionsWidget extends Widget
 {
+    #[\Override]
     protected static ?int $sort = 9;
 
+    #[\Override]
     protected int|string|array $columnSpan = 1;
 
+    #[\Override]
     protected string $view = 'filament.widgets.quick-actions';
 
     /** @return array<int, array<string, string|Heroicon>> */

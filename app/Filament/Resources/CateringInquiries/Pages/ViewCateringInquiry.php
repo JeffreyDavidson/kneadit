@@ -38,10 +38,13 @@ use Illuminate\Support\ValidatedInput;
  */
 class ViewCateringInquiry extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = CateringInquiryResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.catering-inquiries.view-catering-inquiry';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

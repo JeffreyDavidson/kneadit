@@ -14,40 +14,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class WaitlistEntryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = WaitlistEntry::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'email';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Waitlist';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return WaitlistEntryForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return WaitlistEntriesTable::configure($table);
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['customer_email', 'customer_name'];
     }
 
     /** @param WaitlistEntry $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->customer_name ?? $record->customer_email;
     }
 
     /** @param WaitlistEntry $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -56,6 +67,7 @@ class WaitlistEntryResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -63,6 +75,7 @@ class WaitlistEntryResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

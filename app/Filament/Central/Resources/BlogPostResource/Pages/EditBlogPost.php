@@ -8,8 +8,10 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPost extends EditRecord
 {
+    #[\Override]
     protected static string $resource = BlogPostResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [DeleteAction::make()];

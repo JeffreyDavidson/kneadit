@@ -24,6 +24,7 @@ class TaxExport extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -34,16 +35,22 @@ class TaxExport extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.tax-export';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentArrowDown;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
+    #[\Override]
     protected static ?string $title = 'Tax Export';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Tax Export';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
     public ?int $selectedYear = null;
@@ -72,6 +79,7 @@ class TaxExport extends Page
             ->statePath('data');
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([
@@ -106,21 +114,21 @@ class TaxExport extends Page
             if (in_array($type, [TaxExportType::All, TaxExportType::Orders])) {
                 $exporter->writeOrdersCsv($handle, $dateFrom, $dateTo);
                 if ($type === TaxExportType::All) {
-                    fputcsv($handle, []);
+                    fputcsv($handle, [], escape: '\\');
                 }
             }
 
             if (in_array($type, [TaxExportType::All, TaxExportType::Expenses])) {
                 $exporter->writeExpensesCsv($handle, $dateFrom, $dateTo);
                 if ($type === TaxExportType::All) {
-                    fputcsv($handle, []);
+                    fputcsv($handle, [], escape: '\\');
                 }
             }
 
             if (in_array($type, [TaxExportType::All, TaxExportType::Income])) {
                 $exporter->writeIncomeCsv($handle, $dateFrom, $dateTo);
                 if ($type === TaxExportType::All) {
-                    fputcsv($handle, []);
+                    fputcsv($handle, [], escape: '\\');
                 }
             }
 

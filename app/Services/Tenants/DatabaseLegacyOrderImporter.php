@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
+final readonly class DatabaseLegacyOrderImporter implements LegacyOrderImporter
 {
-    public function __construct(private readonly LegacyImportValueParser $parser) {}
+    public function __construct(private LegacyImportValueParser $parser) {}
 
     /**
      * @param  array<int, array<string, mixed>>  $orders

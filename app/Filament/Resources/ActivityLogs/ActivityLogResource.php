@@ -23,43 +23,55 @@ class ActivityLogResource extends Resource
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static ?string $model = ActivityLog::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'description';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Activity Log';
 
+    #[\Override]
     protected static ?int $navigationSort = 99;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess();
     }
 
+    #[\Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function canEdit(Model $record): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function canDelete(Model $record): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ActivityLogsTable::configure($table);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

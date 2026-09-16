@@ -21,6 +21,7 @@ class ProductImportExport extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -31,16 +32,22 @@ class ProductImportExport extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.product-import-export';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?string $title = 'Import / Export';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Import / Export';
 
+    #[\Override]
     protected static ?int $navigationSort = 15;
 
     /** @var array<string, mixed> */
@@ -66,6 +73,7 @@ class ProductImportExport extends Page
             ->statePath('data');
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([
@@ -73,6 +81,7 @@ class ProductImportExport extends Page
         ]);
     }
 
+    #[\Override]
     protected function getViewData(): array
     {
         return [

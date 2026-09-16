@@ -42,6 +42,7 @@ class AdminAuditLog extends Model
     /** @use HasFactory<AdminAuditLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

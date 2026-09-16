@@ -7,6 +7,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 
 class MoneyInput extends TextInput
 {
+    #[\Override]
     public static function make(?string $name = null): static
     {
         $static = parent::make($name);
@@ -20,6 +21,7 @@ class MoneyInput extends TextInput
     }
 
     /** @return array<int, StateCast> */
+    #[\Override]
     public function getDefaultStateCasts(): array
     {
         return array_values([

@@ -14,7 +14,7 @@ final class CustomerPresenter
 {
     private ?CustomerMetrics $memo = null;
 
-    private CustomerIntelligence $intelligence;
+    private readonly CustomerIntelligence $intelligence;
 
     public function __construct(
         public readonly Customer $customer,

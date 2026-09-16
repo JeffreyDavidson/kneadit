@@ -25,16 +25,22 @@ class CustomDomain extends Page
     use InteractsWithFormActions;
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Custom Domain';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.custom-domain';
 
+    #[\Override]
     protected static ?string $title = 'Custom Domain';
 
     public ?string $custom_domain = '';
@@ -51,6 +57,7 @@ class CustomDomain extends Page
         }
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->schema([

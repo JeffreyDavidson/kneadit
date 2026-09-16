@@ -15,7 +15,7 @@ use Illuminate\Support\Number;
 class WeeklyDigestDataCollector
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function collect(): WeeklyDigestData

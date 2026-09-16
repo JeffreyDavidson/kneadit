@@ -49,16 +49,14 @@ class GiftCardsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(GiftCardStatus::class)
-                    ->query(function (Builder $query, array $state) {
-                        return match ($state['value'] ?? null) {
-                            GiftCardStatus::Active->value => $query->where('is_active', true)
-                                ->where('current_balance', '>', 0)
-                                ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),
-                            GiftCardStatus::Inactive->value => $query->where('is_active', false),
-                            GiftCardStatus::Depleted->value => $query->where('current_balance', '<=', 0),
-                            GiftCardStatus::Expired->value => $query->whereNotNull('expires_at')->where('expires_at', '<', now()),
-                            default => $query,
-                        };
+                    ->query(fn(Builder $query, array $state) => match ($state['value'] ?? null) {
+                        GiftCardStatus::Active->value => $query->where('is_active', true)
+                            ->where('current_balance', '>', 0)
+                            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),
+                        GiftCardStatus::Inactive->value => $query->where('is_active', false),
+                        GiftCardStatus::Depleted->value => $query->where('current_balance', '<=', 0),
+                        GiftCardStatus::Expired->value => $query->whereNotNull('expires_at')->where('expires_at', '<', now()),
+                        default => $query,
                     }),
             ])
             ->recordActions([

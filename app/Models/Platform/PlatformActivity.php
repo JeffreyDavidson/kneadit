@@ -36,6 +36,7 @@ class PlatformActivity extends Model
     /** @use HasFactory<PlatformActivityFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

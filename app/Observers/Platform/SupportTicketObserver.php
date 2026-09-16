@@ -8,7 +8,7 @@ use App\Models\Platform\SupportTicket;
 class SupportTicketObserver
 {
     public function __construct(
-        private LogAuditEntry $logAuditEntry,
+        private readonly LogAuditEntry $logAuditEntry,
     ) {}
 
     public function created(SupportTicket $ticket): void

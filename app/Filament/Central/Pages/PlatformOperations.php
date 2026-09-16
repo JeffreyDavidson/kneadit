@@ -13,16 +13,22 @@ use UnitEnum;
 
 class PlatformOperations extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBolt;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Operations';
 
+    #[\Override]
     protected static ?string $title = 'Platform Operations';
 
+    #[\Override]
     protected static ?int $navigationSort = 50;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.platform-operations';
 
     /**

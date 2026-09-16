@@ -10,9 +10,9 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class HelpRepository
 {
-    private string $basePath;
+    private readonly string $basePath;
 
-    private GithubFlavoredMarkdownConverter $converter;
+    private readonly GithubFlavoredMarkdownConverter $converter;
 
     public function __construct(?string $basePath = null, ?GithubFlavoredMarkdownConverter $converter = null)
     {

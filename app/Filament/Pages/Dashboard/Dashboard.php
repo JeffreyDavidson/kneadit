@@ -46,10 +46,13 @@ use Illuminate\Contracts\Support\Htmlable;
  */
 class Dashboard extends BaseDashboard
 {
+    #[\Override]
     protected static ?string $navigationLabel = 'Dashboard';
 
+    #[\Override]
     protected static ?string $title = 'Dashboard';
 
+    #[\Override]
     public function getColumns(): int|array
     {
         return [
@@ -58,6 +61,7 @@ class Dashboard extends BaseDashboard
         ];
     }
 
+    #[\Override]
     public function getHeading(): string|Htmlable
     {
         return 'Dashboard';
@@ -101,6 +105,7 @@ class Dashboard extends BaseDashboard
     }
 
     /** @return array<class-string<Widget>|WidgetConfiguration> */
+    #[\Override]
     public function getWidgets(): array
     {
         $registry = $this->getWidgetRegistry();

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-final class HttpForgeClient implements ForgeClient
+final readonly class HttpForgeClient implements ForgeClient
 {
     private string $token;
 

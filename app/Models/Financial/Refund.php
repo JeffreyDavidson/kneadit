@@ -39,6 +39,7 @@ class Refund extends Model
     /** @use HasFactory<RefundFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

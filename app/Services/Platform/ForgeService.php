@@ -6,7 +6,7 @@ use App\Services\Platform\Contracts\ForgeClient;
 
 class ForgeService
 {
-    public function __construct(private ForgeClient $client) {}
+    public function __construct(private readonly ForgeClient $client) {}
 
     public static function isConfigured(): bool
     {

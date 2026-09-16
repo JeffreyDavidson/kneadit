@@ -14,8 +14,10 @@ class UpcomingHolidayWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected string $view = 'filament.widgets.upcoming-holiday';
 
     /**
@@ -23,6 +25,7 @@ class UpcomingHolidayWidget extends Widget
      * empty-div pattern as InboxWidget. Without this, the widget
      * renders an empty grid cell between visible siblings.
      */
+    #[\Override]
     public static function canView(): bool
     {
         try {

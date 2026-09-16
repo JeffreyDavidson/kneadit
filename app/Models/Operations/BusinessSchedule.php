@@ -25,6 +25,7 @@ class BusinessSchedule extends Model
     /** @use HasFactory<BusinessScheduleFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

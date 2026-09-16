@@ -26,7 +26,6 @@ class AppIconGeneratorService
         ob_start();
         imagepng($img);
         $data = ob_get_clean();
-        imagedestroy($img);
 
         return (string) $data;
     }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 class CustomDomainService
 {
     public function __construct(
-        private ForgeService $forge,
+        private readonly ForgeService $forge,
     ) {}
 
     public function serverIp(): string

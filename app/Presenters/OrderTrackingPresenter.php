@@ -5,18 +5,18 @@ namespace App\Presenters;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 
-final class OrderTrackingPresenter
+final readonly class OrderTrackingPresenter
 {
-    public readonly bool $isCancelled;
+    public bool $isCancelled;
 
-    public readonly int $currentStepIndex;
+    public int $currentStepIndex;
 
     /**
      * @param  array<int, OrderStatus>  $trackableStatuses
      */
     public function __construct(
-        public readonly Order $order,
-        private readonly array $trackableStatuses,
+        public Order $order,
+        private array $trackableStatuses,
     ) {
         $this->isCancelled = $order->status === OrderStatus::Cancelled;
 

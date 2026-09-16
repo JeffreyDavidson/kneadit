@@ -8,6 +8,6 @@ class LoyaltyPointObserver
 {
     public function creating(LoyaltyPoint $model): void
     {
-        $model->created_at = $model->created_at ?? now();
+        $model->created_at ??= now();
     }
 }

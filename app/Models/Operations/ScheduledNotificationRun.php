@@ -22,6 +22,7 @@ class ScheduledNotificationRun extends Model
     /** @use HasFactory<ScheduledNotificationRunFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -16,16 +16,22 @@ use UnitEnum;
 
 class Backups extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Backups';
 
+    #[\Override]
     protected static ?string $title = 'Database Backups';
 
+    #[\Override]
     protected static ?int $navigationSort = 60;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.backups';
 
     /**

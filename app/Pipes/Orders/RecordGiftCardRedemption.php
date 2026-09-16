@@ -9,7 +9,7 @@ use Closure;
 class RecordGiftCardRedemption
 {
     public function __construct(
-        private RedeemGiftCard $redeemGiftCard,
+        private readonly RedeemGiftCard $redeemGiftCard,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

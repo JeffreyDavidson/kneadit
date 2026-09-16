@@ -36,6 +36,7 @@ class ActivityLog extends Model
     /** @use HasFactory<ActivityLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListCoupons extends ListRecords
 {
+    #[\Override]
     protected static string $resource = CouponResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

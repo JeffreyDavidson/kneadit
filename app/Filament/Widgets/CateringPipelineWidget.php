@@ -12,8 +12,10 @@ class CateringPipelineWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 18;
 
+    #[\Override]
     protected string $view = 'filament.widgets.catering-pipeline-widget';
 
     /**
@@ -22,6 +24,7 @@ class CateringPipelineWidget extends Widget
      * dead space for bakeries that don't do catering yet. Reappears
      * the moment any inquiry lands or moves to quoted.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return CateringInquiry::query()->openFunnel()->exists()

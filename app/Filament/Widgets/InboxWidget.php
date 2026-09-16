@@ -13,8 +13,10 @@ class InboxWidget extends Widget
 {
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = -5;
 
+    #[\Override]
     protected string $view = 'filament.widgets.inbox-widget';
 
     /**
@@ -22,6 +24,7 @@ class InboxWidget extends Widget
      * previously rendering an empty <div></div> that still took a
      * dashboard grid cell, leaving a visible gap between siblings.
      */
+    #[\Override]
     public static function canView(): bool
     {
         $tenant = Filament::getTenant();

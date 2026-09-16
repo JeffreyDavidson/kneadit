@@ -34,6 +34,7 @@ class Supplier extends Model
     /** @use HasFactory<SupplierFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

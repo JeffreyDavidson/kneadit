@@ -29,8 +29,10 @@ use Livewire\Attributes\Rule;
  */
 class ViewCustomer extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = CustomerResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.customers.pages.view-customer';
 
     /** Inline note-add form state — mirrors the ViewTenant pattern. */
@@ -44,6 +46,7 @@ class ViewCustomer extends ViewRecord
      * render, including post-Livewire-action re-renders where the model
      * is hydrated fresh without its prior relations.
      */
+    #[\Override]
     public function getRecord(): Model
     {
         return parent::getRecord()->loadMissing([
@@ -53,6 +56,7 @@ class ViewCustomer extends ViewRecord
         ]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -133,6 +137,7 @@ class ViewCustomer extends ViewRecord
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function getViewData(): array
     {
         return [

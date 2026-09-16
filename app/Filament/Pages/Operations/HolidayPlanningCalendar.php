@@ -17,6 +17,7 @@ class HolidayPlanningCalendar extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -27,14 +28,19 @@ class HolidayPlanningCalendar extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Holidays';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.holiday-planning-calendar';
 
     /** @var Collection<int, Holiday> */
@@ -75,9 +81,7 @@ class HolidayPlanningCalendar extends Page
 
                 return $year === $currentYear || $year === $nextYear;
             })
-            ->groupBy(function (Holiday $holiday) {
-                return $holiday->date->format('Y-m');
-            })
+            ->groupBy(fn(Holiday $holiday) => $holiday->date->format('Y-m'))
             ->sortKeys();
     }
 }

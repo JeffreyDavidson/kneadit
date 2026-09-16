@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListEmailCampaigns extends ListRecords
 {
+    #[\Override]
     protected static string $resource = EmailCampaignResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

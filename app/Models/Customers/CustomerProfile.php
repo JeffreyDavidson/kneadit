@@ -25,6 +25,7 @@ class CustomerProfile extends Model
     /** @use HasFactory<CustomerProfileFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

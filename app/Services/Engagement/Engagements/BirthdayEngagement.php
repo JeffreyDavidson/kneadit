@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Date;
 class BirthdayEngagement implements CustomerEngagement
 {
     public function __construct(
-        private CreateBirthdayCoupon $createBirthdayCoupon,
+        private readonly CreateBirthdayCoupon $createBirthdayCoupon,
     ) {}
 
     public function isEnabled(TenantSettings $settings): bool

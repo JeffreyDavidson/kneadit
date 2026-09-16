@@ -9,7 +9,7 @@ use Throwable;
 class ScheduledTaskMonitor
 {
     public function __construct(
-        private PlatformSettingsManager $settings,
+        private readonly PlatformSettingsManager $settings,
     ) {}
 
     public function started(string $task): void

@@ -45,6 +45,7 @@ class BlogPost extends Model
     /** @use HasFactory<BlogPostFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

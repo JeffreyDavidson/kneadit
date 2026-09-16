@@ -28,6 +28,7 @@ class GalleryPhoto extends Model
     /** @use HasFactory<GalleryPhotoFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

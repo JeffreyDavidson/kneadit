@@ -15,8 +15,10 @@ use Filament\Support\Icons\Heroicon;
 
 class ListMessages extends ListRecords
 {
+    #[\Override]
     protected static string $resource = MessageResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

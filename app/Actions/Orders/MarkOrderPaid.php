@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class MarkOrderPaid
 {
     public function __construct(
-        private TransitionOrderStatus $transitionOrderStatus,
+        private readonly TransitionOrderStatus $transitionOrderStatus,
     ) {}
 
     public function __invoke(Order $order): Order

@@ -28,6 +28,7 @@ class StockAdjustment extends Model
     /** @use HasFactory<StockAdjustmentFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

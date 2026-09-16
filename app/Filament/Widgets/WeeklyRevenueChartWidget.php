@@ -16,12 +16,15 @@ class WeeklyRevenueChartWidget extends ChartWidget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 5;
 
+    #[\Override]
     protected ?string $heading = 'Weekly Financial Overview';
 
     // Override Filament's default chart view so the chart renders inside our
     // <x-tenant-admin.dashboard.preview-card> shell instead of <x-filament::section>.
+    #[\Override]
     protected string $view = 'filament.widgets.weekly-revenue';
 
     protected function getType(): string
@@ -29,6 +32,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
         return 'bar';
     }
 
+    #[\Override]
     protected function getData(): array
     {
         $cacheKey = $this->isSize('lg') ? 'main_compare' : 'main';

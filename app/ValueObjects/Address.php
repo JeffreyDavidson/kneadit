@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects;
 
-final readonly class Address
+final readonly class Address implements \Stringable
 {
     public function __construct(
         public ?string $street = null,

@@ -25,6 +25,7 @@ class BlockedDate extends Model
     /** @use HasFactory<BlockedDateFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListSuppliers extends ListRecords
 {
+    #[\Override]
     protected static string $resource = SupplierResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

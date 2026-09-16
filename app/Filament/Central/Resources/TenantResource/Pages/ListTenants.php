@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListTenants extends ListRecords
 {
+    #[\Override]
     protected static string $resource = TenantResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 class ProductAnalysisService
 {
     public function __construct(
-        private ProductCostResolver $costResolver,
+        private readonly ProductCostResolver $costResolver,
     ) {}
 
     /**

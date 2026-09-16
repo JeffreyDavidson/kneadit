@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListBlogPosts extends ListRecords
 {
+    #[\Override]
     protected static string $resource = BlogPostResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

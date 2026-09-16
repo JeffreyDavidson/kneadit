@@ -19,8 +19,10 @@ use Illuminate\Support\Arr;
  */
 class ViewGiftCard extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = GiftCardResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -57,6 +59,7 @@ class ViewGiftCard extends ViewRecord
         ];
     }
 
+    #[\Override]
     public function getSubNavigation(): array
     {
         return [];

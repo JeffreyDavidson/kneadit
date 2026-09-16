@@ -20,16 +20,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class TenantResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Tenant::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'store_name';
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['store_name', 'name', 'email', 'id'];
     }
 
     /** @param Tenant $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -38,29 +42,37 @@ class TenantResource extends Resource
         ];
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Bakeries';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $form): Schema
     {
         return TenantForm::configure($form);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return TenantsTable::configure($table);
     }
 
+    #[\Override]
     public static function infolist(Schema $infolist): Schema
     {
         return TenantInfolist::configure($infolist);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -68,6 +80,7 @@ class TenantResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

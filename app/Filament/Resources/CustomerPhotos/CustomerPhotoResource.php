@@ -19,26 +19,34 @@ class CustomerPhotoResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = CustomerPhoto::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Customer Photos';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return CustomerPhotoForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return CustomerPhotosTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('pro-features');
@@ -49,11 +57,13 @@ class CustomerPhotoResource extends Resource
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

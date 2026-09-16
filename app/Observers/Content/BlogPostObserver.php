@@ -8,7 +8,7 @@ use App\Models\Content\BlogPost;
 class BlogPostObserver
 {
     public function __construct(
-        private GenerateUniqueSlug $generateSlug,
+        private readonly GenerateUniqueSlug $generateSlug,
     ) {}
 
     public function creating(BlogPost $post): void

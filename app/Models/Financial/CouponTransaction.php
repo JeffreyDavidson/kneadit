@@ -31,6 +31,7 @@ class CouponTransaction extends Model
     /** @use HasFactory<CouponTransactionFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

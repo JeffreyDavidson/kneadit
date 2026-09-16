@@ -18,6 +18,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         return $this->databasePath->resolve($name);
     }
 
+    #[\Override]
     public function createDatabase(TenantWithDatabase $tenant): bool
     {
         $databaseName = $tenant->database()->getName();
@@ -52,6 +53,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         return true;
     }
 
+    #[\Override]
     public function deleteDatabase(TenantWithDatabase $tenant): bool
     {
         $databaseName = $tenant->database()->getName();
@@ -155,6 +157,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         );
     }
 
+    #[\Override]
     public function databaseExists(string $name): bool
     {
         $path = $this->tenantDbPath($name);
@@ -166,6 +169,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
      * @param  array<string, mixed>  $baseConfig
      * @return array<string, mixed>
      */
+    #[\Override]
     public function makeConnectionConfig(array $baseConfig, string $databaseName): array
     {
         $path = $this->tenantDbPath($databaseName);

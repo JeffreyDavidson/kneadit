@@ -8,8 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListIncomes extends ListRecords
 {
+    #[\Override]
     protected static string $resource = IncomeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

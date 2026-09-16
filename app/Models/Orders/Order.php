@@ -87,6 +87,7 @@ class Order extends Model
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $attributes = [
         'status' => OrderStatus::Pending,
         'payment_status' => PaymentStatus::Unpaid,
@@ -98,6 +99,7 @@ class Order extends Model
         'tip_amount' => 0,
     ];
 
+    #[\Override]
     protected function casts(): array
     {
         return [

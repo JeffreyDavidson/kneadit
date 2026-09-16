@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class AwardLoyaltyPointsListener extends QueuedListener
 {
     public function __construct(
-        private LoyaltyLedger $loyaltyLedger,
+        private readonly LoyaltyLedger $loyaltyLedger,
     ) {}
 
     public function handle(OrderDelivered $event): void

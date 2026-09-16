@@ -13,8 +13,10 @@ class CouponUsageWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 15;
 
+    #[\Override]
     protected string $view = 'filament.widgets.coupon-usage-widget';
 
     public function getActiveCouponsCount(): int

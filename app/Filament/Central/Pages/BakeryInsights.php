@@ -18,14 +18,19 @@ use UnitEnum;
 
 class BakeryInsights extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Insights';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected static ?string $title = 'Bakery Insights';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.bakery-insights';
 
     public string $activeTab = 'health';

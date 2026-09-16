@@ -23,6 +23,7 @@ class CheckCapacityRequest extends FormRequest
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function validationData(): array
     {
         return array_merge(SettingValue::map(parent::validationData()), [

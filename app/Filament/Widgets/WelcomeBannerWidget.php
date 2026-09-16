@@ -18,6 +18,7 @@ use Filament\Widgets\Widget;
  */
 class WelcomeBannerWidget extends Widget
 {
+    #[\Override]
     protected static ?int $sort = 0;
 
     /**
@@ -27,7 +28,9 @@ class WelcomeBannerWidget extends Widget
      * visual by claiming a full-width slot here and constraining the card
      * width inside the view, leaving empty space to the right.
      */
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.widgets.welcome-banner';
 }

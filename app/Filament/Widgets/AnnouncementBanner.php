@@ -12,10 +12,13 @@ class AnnouncementBanner extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = -10;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.widgets.announcement-banner';
 
     /** @return list<mixed> */

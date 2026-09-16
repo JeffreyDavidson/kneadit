@@ -14,7 +14,7 @@ class DispatchOrderWebhookListener extends QueuedListener implements ShouldBeUni
     public int $timeout = 30;
 
     public function __construct(
-        private WebhookService $webhookService,
+        private readonly WebhookService $webhookService,
     ) {}
 
     /** @return array<int, object> */

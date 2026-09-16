@@ -9,7 +9,7 @@ namespace App\Support\Csp;
  * every Blade @cspnonce directive call (which writes it into <script>/<style>
  * tags).
  */
-final class CspNonce
+final readonly class CspNonce
 {
     private string $value;
 
