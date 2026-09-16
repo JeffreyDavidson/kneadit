@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class TenancyManager
 {
+    private const int TENANT_CHUNK_SIZE = 100;
+
     public function __construct(
         private SettingsManager $settingsManager,
         private TenantSettingsRegistry $tenantSettingsRegistry,
@@ -51,7 +53,7 @@ class TenancyManager
     {
         $failures = 0;
 
-        foreach (Tenant::query()->cursor() as $tenant) {
+        foreach (Tenant::query()->lazyById(self::TENANT_CHUNK_SIZE) as $tenant) {
             try {
                 $this->withinTenant($tenant, function () use ($tenant, $callback) {
                     $settings = $this->tenantSettingsRegistry->all();
