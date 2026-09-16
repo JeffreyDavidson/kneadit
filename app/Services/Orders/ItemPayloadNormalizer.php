@@ -10,10 +10,13 @@ final class ItemPayloadNormalizer
      */
     public function products(array $items): array
     {
-        /** @var list<array{product_id: int, quantity: int}> $normalized */
-        $normalized = $this->normalize($items, 'product_id');
-
-        return $normalized;
+        return array_map(
+            fn (array $item): array => [
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+            ],
+            $this->normalize($items, 'product_id'),
+        );
     }
 
     /**
@@ -22,15 +25,18 @@ final class ItemPayloadNormalizer
      */
     public function orderItems(array $items): array
     {
-        /** @var list<array{order_item_id: int, quantity: int}> $normalized */
-        $normalized = $this->normalize($items, 'order_item_id');
-
-        return $normalized;
+        return array_map(
+            fn (array $item): array => [
+                'order_item_id' => $item['order_item_id'],
+                'quantity' => $item['quantity'],
+            ],
+            $this->normalize($items, 'order_item_id'),
+        );
     }
 
     /**
      * @param array<mixed> $items
-     * @return list<array{product_id?: int, order_item_id?: int, quantity: int}>
+     * @return list<array<string, int>>
      */
     private function normalize(array $items, string $identifierKey): array
     {
