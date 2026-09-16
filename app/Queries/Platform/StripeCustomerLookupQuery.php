@@ -12,7 +12,7 @@ class StripeCustomerLookupQuery
      *
      * @return array{user: User|null, tenant: Tenant|null}
      */
-    public static function find(string $stripeCustomerId): array
+    public function find(string $stripeCustomerId): array
     {
         $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
 

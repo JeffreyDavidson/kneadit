@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\PayPal\HttpPayPalClient;
 use App\Services\PayPal\PaymentVerifier;
 use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
@@ -51,7 +52,7 @@ it('logs structured context on invoice status check exception', function () {
     ]);
 
     $tokenManager = resolve(TokenManager::class);
-    $verifier = new PaymentVerifier($tokenManager);
+    $verifier = new PaymentVerifier(new HttpPayPalClient($tokenManager));
     $result = $verifier->getInvoiceStatus('INV-456');
 
     expect($result)->toBeNull();

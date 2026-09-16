@@ -20,14 +20,11 @@ use Stripe\StripeClient;
  */
 class CateringDepositCheckoutService
 {
-    private StripeClient $stripe;
-
     public function __construct(
         private StripeSettingsReader $settings,
         private RecordCateringDeposit $recordCateringDeposit,
-    ) {
-        $this->stripe = new StripeClient($this->configString('cashier.secret'));
-    }
+        private StripeClient $stripe,
+    ) {}
 
     public function redirectToCheckout(CateringInquiry $inquiry, float $depositDollars): ?string
     {
@@ -138,6 +135,8 @@ class CateringDepositCheckoutService
             $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : (string) $paymentIntent;
 
             $depositDollars = (int) ($session->amount_total ?? 0) / 100;
+
+            $inquiry->forceFill(['stripe_payment_intent_id' => $paymentIntentId !== '' ? $paymentIntentId : null])->save();
 
             return ($this->recordCateringDeposit)(
                 $inquiry,

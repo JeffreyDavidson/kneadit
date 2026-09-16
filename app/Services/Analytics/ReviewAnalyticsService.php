@@ -2,37 +2,43 @@
 
 namespace App\Services\Analytics;
 
+use App\DataTransferObjects\Analytics\RatingDistributionEntry;
+use App\DataTransferObjects\Analytics\RecentReview;
+use App\DataTransferObjects\Analytics\ReviewAnalyticsSummary;
+use App\DataTransferObjects\Analytics\ReviewMonthlyTrend;
+use App\DataTransferObjects\Analytics\SentimentAnalysis;
+use App\DataTransferObjects\Analytics\TopReviewedProduct;
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ReviewAnalyticsService
 {
-    /** @return array<string, mixed> */
-    public function getOverallStats(): array
+    public function getOverallStats(): ReviewAnalyticsSummary
     {
         $totalReviews = Review::query()->count();
 
         if ($totalReviews === 0) {
-            return ['total_reviews' => 0, 'average_rating' => 0, 'approval_rate' => 0, 'approved_reviews' => 0];
+            return new ReviewAnalyticsSummary(0, 0, 0, 0);
         }
 
         $averageRating = (float) Review::query()->avg('rating');
         $approvedReviews = Review::query()->approved()->count();
         $approvalRate = ($approvedReviews / $totalReviews) * 100;
 
-        return [
-            'total_reviews' => $totalReviews,
-            'average_rating' => round($averageRating, 1),
-            'approval_rate' => round($approvalRate, 1),
-            'approved_reviews' => $approvedReviews,
-        ];
+        return new ReviewAnalyticsSummary(
+            totalReviews: $totalReviews,
+            averageRating: round($averageRating, 1),
+            approvalRate: round($approvalRate, 1),
+            approvedReviews: $approvedReviews,
+        );
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<RatingDistributionEntry> */
     public function getRatingDistribution(): array
     {
         $distribution = Review::query()->select('rating', DB::raw('count(*) as count'))
@@ -50,51 +56,68 @@ class ReviewAnalyticsService
             $count = is_int($count) ? $count : 0;
             $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
 
-            $ratingStats[] = [
-                'rating' => $i,
-                'count' => $count,
-                'percentage' => round($percentage, 1),
-            ];
+            $ratingStats[] = new RatingDistributionEntry(
+                rating: $i,
+                count: $count,
+                percentage: round($percentage, 1),
+            );
         }
 
         return $ratingStats;
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<ReviewMonthlyTrend> */
     public function getMonthlyTrend(): array
     {
-        $monthlyData = Review::query()
-            ->where('created_at', '>=', now()->subMonths(12))
+        $startDate = Date::now()->subMonths(11)->startOfMonth();
+
+        /** @var Collection<string, object{day: string, count: int, rating_sum: int|float}> $dailyData */
+        $dailyData = Review::query()
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) AS day, COUNT(*) AS count, SUM(rating) AS rating_sum')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->toBase()
             ->get()
-            ->groupBy(fn (Review $review) => $review->created_at?->format('Y-m') ?? '')
-            ->map(fn (Collection $reviews, string $month) => (object) [
-                'month' => $month,
-                'count' => $reviews->count(),
-                'avg_rating' => $reviews->avg('rating'),
-            ])
-            ->sortKeys()
-            ->values();
+            ->keyBy('day');
+
+        /** @var array<string, array{count: int, rating_sum: float}> $monthlyData */
+        $monthlyData = [];
+
+        foreach ($dailyData as $row) {
+            $monthKey = substr($row->day, 0, 7);
+            $monthlyData[$monthKey] = [
+                'count' => ($monthlyData[$monthKey]['count'] ?? 0) + (int) $row->count,
+                'rating_sum' => ($monthlyData[$monthKey]['rating_sum'] ?? 0.0) + (float) $row->rating_sum,
+            ];
+        }
 
         $trend = [];
-        $startDate = now()->subMonths(11)->startOfMonth();
 
         for ($i = 0; $i < 12; $i++) {
             $month = $startDate->copy()->addMonths($i);
             $monthKey = $month->format('Y-m');
-            $monthData = $monthlyData->firstWhere('month', $monthKey);
+            $monthData = $monthlyData[$monthKey] ?? null;
+            $count = 0;
+            $averageRating = 0;
 
-            $trend[] = [
-                'month' => $month->format('M Y'),
-                'month_key' => $monthKey,
-                'count' => $monthData ? $monthData->count : 0,
-                'avg_rating' => $monthData ? round($monthData->avg_rating ?? 0, 1) : 0,
-            ];
+            if ($monthData !== null) {
+                $count = $monthData['count'];
+                $averageRating = $count > 0 ? round($monthData['rating_sum'] / $count, 1) : 0;
+            }
+
+            $trend[] = new ReviewMonthlyTrend(
+                month: $month->format('M Y'),
+                monthKey: $monthKey,
+                count: $count,
+                averageRating: $averageRating,
+            );
         }
 
         return $trend;
     }
 
-    /** @return Collection<int, array{id: int, name: string, reviews_count: ?int, average_rating: float|0}> */
+    /** @return Collection<int, TopReviewedProduct> */
     public function getTopReviewedProducts(): Collection
     {
         return Product::query()
@@ -104,34 +127,33 @@ class ReviewAnalyticsService
             ->orderByDesc('reviews_count')
             ->limit(10)
             ->get()
-            ->map(fn (Product $product) => [
-                'id' => $product->id,
-                'name' => $product->name,
-                'reviews_count' => $product->reviews_count,
-                'average_rating' => $product->reviews_avg_rating ? round((float) $product->reviews_avg_rating, 1) : 0,
-            ]);
+            ->map(fn (Product $product): TopReviewedProduct => new TopReviewedProduct(
+                id: $product->id,
+                name: $product->name,
+                reviewsCount: $product->reviews_count,
+                averageRating: $product->reviews_avg_rating ? round((float) $product->reviews_avg_rating, 1) : 0,
+            ));
     }
 
-    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
+    /** @return Collection<int, RecentReview> */
     public function getRecentReviews(): Collection
     {
         return Review::with('product')->latest()
             ->limit(10)
             ->get()
-            ->map(fn (Review $review) => [
-                'id' => $review->id,
-                'customer_name' => $review->customer_name,
-                'product_name' => $review->product ? $review->product->name : 'Unknown Product',
-                'rating' => $review->rating,
-                'comment' => $review->comment,
-                'is_approved' => $review->is_approved,
-                'is_featured' => $review->is_featured,
-                'created_at' => $review->created_at,
-            ]);
+            ->map(fn (Review $review): RecentReview => new RecentReview(
+                id: $review->id,
+                customerName: $review->customer_name,
+                productName: $review->product ? $review->product->name : 'Unknown Product',
+                rating: $review->rating,
+                comment: $review->comment,
+                isApproved: $review->is_approved,
+                isFeatured: $review->is_featured,
+                createdAt: $review->created_at,
+            ));
     }
 
-    /** @return array<string, float> */
-    public function getSentimentAnalysis(): array
+    public function getSentimentAnalysis(): SentimentAnalysis
     {
         $reviews = Review::query()->whereNotNull('comment')
             ->where('comment', '!=', '')
@@ -161,10 +183,10 @@ class ReviewAnalyticsService
 
         $total = $positive + $neutral + $negative;
 
-        return [
-            'positive' => $total > 0 ? round(($positive / $total) * 100, 1) : 0,
-            'neutral' => $total > 0 ? round(($neutral / $total) * 100, 1) : 0,
-            'negative' => $total > 0 ? round(($negative / $total) * 100, 1) : 0,
-        ];
+        return new SentimentAnalysis(
+            positive: $total > 0 ? round(($positive / $total) * 100, 1) : 0,
+            neutral: $total > 0 ? round(($neutral / $total) * 100, 1) : 0,
+            negative: $total > 0 ? round(($negative / $total) * 100, 1) : 0,
+        );
     }
 }

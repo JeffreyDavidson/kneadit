@@ -4,6 +4,7 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
 use App\Queries\Platform\TenantDataCountsQuery;
+use App\Queries\Platform\TenantExportOptionsQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -29,10 +30,7 @@ class DataExport extends Page
     /** @return array<string, mixed> */
     public function getTenants(): array
     {
-        return Tenant::query()->orderBy('store_name')
-            ->get()
-            ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
-            ->all();
+        return resolve(TenantExportOptionsQuery::class)->all();
     }
 
     public function updatedSelectedTenant(?string $value): void

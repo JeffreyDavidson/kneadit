@@ -2,11 +2,16 @@
 
 namespace App\Queries\Analytics;
 
+use App\DataTransferObjects\Analytics\ConversionFunnelStep;
+use App\DataTransferObjects\Analytics\DailyPageViewCount;
+use App\DataTransferObjects\Analytics\PageViewCount;
+use App\DataTransferObjects\Analytics\TopViewedProduct;
 use App\Models\Engagement\PageView;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -53,29 +58,42 @@ class StorefrontAnalyticsQuery
         return round(($ordersQuery->count() / $orderPageViews) * 100, 1);
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, PageViewCount> */
     public function pageViewsByPage(): Collection
     {
         return $this->baseQuery()
             ->select('page', DB::raw('COUNT(*) as views'))
             ->groupBy('page')
             ->orderByDesc('views')
-            ->get();
+            ->toBase()
+            ->get()
+            ->map(fn (object $row): PageViewCount => new PageViewCount(
+                page: Arr::string(['page' => $row->page], 'page'),
+                views: Arr::integer(['views' => $row->views], 'views', 0),
+            ));
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, DailyPageViewCount> */
     public function dailyTrend(int $days = 30): Collection
     {
-        return PageView::query()
-            ->where('created_at', '>=', now()->subDays($days)->startOfDay())
-            ->whereNull('product_id')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as views'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        $start = now()->subDays($days);
+        $counts = DateCountQuery::count(
+            PageView::query()->whereNull('product_id'),
+            'created_at',
+            $start,
+            now(),
+        );
+
+        return collect($counts)
+            ->sortKeys()
+            ->map(fn (int $views, string $date): DailyPageViewCount => new DailyPageViewCount(
+                date: $date,
+                views: $views,
+            ))
+            ->values();
     }
 
-    /** @return Collection<int, object{name: string, views: int}&\stdClass> */
+    /** @return Collection<int, TopViewedProduct> */
     public function topProducts(int $limit = 10): Collection
     {
         $data = $this->productQuery()
@@ -88,14 +106,14 @@ class StorefrontAnalyticsQuery
         $products = Product::query()->whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
 
         return $data->map(
-            fn (PageView $row) => (object) [
-                'name' => is_string($products[$row->product_id] ?? null) ? $products[$row->product_id] : 'Unknown',
-                'views' => (int) $row->views,
-            ],
+            fn (PageView $row): TopViewedProduct => new TopViewedProduct(
+                name: is_string($products[$row->product_id] ?? null) ? $products[$row->product_id] : 'Unknown',
+                views: (int) $row->views,
+            ),
         );
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<ConversionFunnelStep> */
     public function conversionFunnel(): array
     {
         $homeViews = $this->uniqueSessionsForPage('home');
@@ -108,20 +126,27 @@ class StorefrontAnalyticsQuery
         }
         $completedOrders = $ordersQuery->count();
 
-        $funnel = [
+        $counts = [
             ['label' => 'Home', 'count' => $homeViews],
             ['label' => 'Menu', 'count' => $menuViews],
             ['label' => 'Order Page', 'count' => $orderViews],
             ['label' => 'Orders Placed', 'count' => $completedOrders],
         ];
 
-        $maxVal = max(1, max(array_column($funnel, 'count')) ?: 1);
+        $maxVal = max(1, max(array_column($counts, 'count')) ?: 1);
+        $funnel = [];
 
-        foreach ($funnel as $i => &$step) {
-            $step['percentage'] = round(($step['count'] / $maxVal) * 100);
-            $step['dropoff'] = $i > 0 && $funnel[$i - 1]['count'] > 0
-                ? max(0, round((1 - $step['count'] / $funnel[$i - 1]['count']) * 100, 1))
+        foreach ($counts as $i => $step) {
+            $dropoff = $i > 0 && $counts[$i - 1]['count'] > 0
+                ? max(0, round((1 - $step['count'] / $counts[$i - 1]['count']) * 100, 1))
                 : null;
+
+            $funnel[] = new ConversionFunnelStep(
+                label: $step['label'],
+                count: $step['count'],
+                percentage: round(($step['count'] / $maxVal) * 100),
+                dropoff: $dropoff,
+            );
         }
 
         return $funnel;

@@ -1,10 +1,12 @@
 <?php
 
+use App\DataTransferObjects\Customers\CustomerReportResult;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Reports\Customers\CustomerReport;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Spatie\Snapshots\assertMatchesSnapshot;
@@ -18,8 +20,8 @@ test('generates customer report for a date range', function () {
     $report = new CustomerReport;
     $result = $report->generate($range);
 
-    expect($result)->toBeArray()
-        ->toHaveKeys(['newCustomers', 'repeatRate', 'topCustomers', 'acquisitionByMonth']);
+    expect($result)->toBeInstanceOf(CustomerReportResult::class)
+        ->and($result->toArray())->toHaveKeys(['newCustomers', 'repeatRate', 'topCustomers', 'acquisitionByMonth']);
 });
 
 test('report shape matches the recorded snapshot for known inputs', function () {
@@ -58,7 +60,7 @@ test('report shape matches the recorded snapshot for known inputs', function () 
 
     $report = (new CustomerReport)->generate(DateRange::forMonth(2026, 3));
 
-    assertMatchesSnapshot($report);
+    assertMatchesSnapshot($report->toArray());
 });
 
 test('only active paid orders contribute to customer metrics', function () {
@@ -83,11 +85,13 @@ test('only active paid orders contribute to customer metrics', function () {
     ]);
 
     $result = (new CustomerReport)->generate(DateRange::forMonth(2026, 3));
+    $serialized = $result->toArray();
 
-    expect($result['totalCustomersWithOrders'])->toBe(1)
-        ->and($result['repeatCustomers'])->toBe(0)
-        ->and($result['repeatRate'])->toBe(0.0)
-        ->and($result['topCustomers'])->toHaveCount(1)
-        ->and($result['topCustomers'][0]['total_spend'])->toBe(100.0)
-        ->and($result['topCustomers'][0]['order_count'])->toBe(1);
+    expect($result->totalCustomersWithOrders)->toBe(1)
+        ->and($result->repeatCustomers)->toBe(0)
+        ->and($result->repeatRate)->toBe(0.0)
+        ->and($result->topCustomers)->toHaveCount(1)
+        ->and($result->topCustomers[0]['total_spend'])->toEqual(Money::fromDollars(100))
+        ->and($result->topCustomers[0]['order_count'])->toBe(1)
+        ->and($serialized['topCustomers'][0]['total_spend'])->toBe(100.0);
 });

@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Analytics;
 
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Engagement\Survey;
+use App\Services\Export\CsvValueSanitizer;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -49,9 +50,7 @@ class SurveyResults extends Page
         }
 
         return response()->streamDownload(static function () use ($survey) {
-            $csvValue = static fn (mixed $value): bool|float|int|string|null => is_scalar($value) || $value === null
-                ? $value
-                : '';
+            $csvValue = CsvValueSanitizer::sanitize(...);
             $handle = fopen('php://output', 'w');
             throw_if($handle === false, \RuntimeException::class, 'Failed to open file');
             $questions = $survey->questions;

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\CapacityController as ApiCapacityController;
-use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
-use App\Http\Controllers\Api\ContactController as ApiContactController;
-use App\Http\Controllers\Api\CouponValidationController;
-use App\Http\Controllers\Api\FavoriteController as ApiFavoriteController;
-use App\Http\Controllers\Api\GalleryController as ApiGalleryController;
-use App\Http\Controllers\Api\MenuController as ApiMenuController;
-use App\Http\Controllers\Api\OrderController as ApiOrderController;
-use App\Http\Controllers\Api\ProductController as ApiProductController;
-use App\Http\Controllers\Api\ReviewController as ApiReviewController;
-use App\Http\Controllers\Api\StoreInfoController;
-use App\Http\Controllers\Api\WaitlistController as ApiWaitlistController;
+use App\Http\Controllers\Tenant\Api\CapacityController as ApiCapacityController;
+use App\Http\Controllers\Tenant\Api\CategoryController as ApiCategoryController;
+use App\Http\Controllers\Tenant\Api\ContactController as ApiContactController;
+use App\Http\Controllers\Tenant\Api\CouponValidationController;
+use App\Http\Controllers\Tenant\Api\FavoriteController as ApiFavoriteController;
+use App\Http\Controllers\Tenant\Api\GalleryController as ApiGalleryController;
+use App\Http\Controllers\Tenant\Api\MenuController as ApiMenuController;
+use App\Http\Controllers\Tenant\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\Tenant\Api\ProductController as ApiProductController;
+use App\Http\Controllers\Tenant\Api\ReviewController as ApiReviewController;
+use App\Http\Controllers\Tenant\Api\StoreInfoController;
+use App\Http\Controllers\Tenant\Api\WaitlistController as ApiWaitlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->group(function () {

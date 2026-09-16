@@ -1,8 +1,8 @@
 <?php
 
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Events\Customers\CustomerBirthday;
 use App\Models\Customers\Customer;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\Engagements\BirthdayEngagement;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -4,7 +4,6 @@ namespace App\Services\Inventory;
 
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 
@@ -13,10 +12,7 @@ class ShoppingListService
     /** @return array<int|string, array<string, mixed>> */
     public function generate(bool $includeUpcoming = false, ?string $startDate = null, ?string $endDate = null): array
     {
-        $lowStockIngredients = Ingredient::query()->where(function (Builder $q) {
-            $q->where('current_stock', '<=', 0)
-                ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-        })->with('suppliers')->get();
+        $lowStockIngredients = Ingredient::query()->lowStock()->with('suppliers')->get();
 
         $upcomingNeeds = $this->calculateUpcomingNeeds($includeUpcoming, $startDate, $endDate);
 

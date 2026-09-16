@@ -2,17 +2,18 @@
 
 namespace App\Reports\Orders;
 
+use App\DataTransferObjects\Orders\SalesReportResult;
 use App\Models\Orders\Order;
 use App\Queries\Financial\ProductSalesQuery;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class SalesReport
 {
-    /** @return array<string, mixed> */
-    public function generate(DateRange $range): array
+    public function generate(DateRange $range): SalesReportResult
     {
         $orders = Order::query()
             ->active()
@@ -21,33 +22,43 @@ class SalesReport
 
         $totalOrders = $orders->count();
         $totalRevenue = RevenueQuery::total($range);
-        $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+        $averageOrderValue = $totalOrders > 0
+            ? $totalRevenue->multiply(1 / $totalOrders)
+            : Money::zero();
 
         $ordersByStatus = (clone $orders)
             ->select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
             ->pluck('count', 'status')
-            ->toArray();
-
-        $topProducts = ProductSalesQuery::topByRevenue($range)->all();
-
-        // orders.total is bigint cents (migration 2026_04_22_201500); divide back
-        // to dollars for the row payload.
-        $revenueByDay = (clone $orders)
-            ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue_cents'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->map(function (Order $row): array {
-                $date = $row->getAttribute('date');
-
-                return [
-                    'date' => is_string($date) ? $date : '',
-                    'revenue' => Arr::integer($row->getAttributes(), 'revenue_cents', 0) / 100,
-                ];
-            })
+            ->mapWithKeys(static fn (mixed $count, mixed $status): array => [
+                Arr::string(['status' => $status], 'status') => Arr::integer(['count' => $count], 'count'),
+            ])
             ->all();
 
-        return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];
+        $topProducts = array_values(ProductSalesQuery::topByRevenue($range)
+            ->map(static fn (array $product): array => [
+                'name' => $product['name'],
+                'units_sold' => $product['units_sold'],
+                'revenue' => Money::fromDollars($product['revenue']),
+            ])
+            ->all());
+
+        /** @var list<array{date: string, revenue: Money}> $revenueByDay */
+        $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
+            ->map(static fn (float $revenue, string $date): array => [
+                'date' => $date,
+                'revenue' => Money::fromDollars($revenue),
+            ])
+            ->values()
+            ->all();
+
+        return new SalesReportResult(
+            totalOrders: $totalOrders,
+            totalRevenue: $totalRevenue,
+            averageOrderValue: $averageOrderValue,
+            ordersByStatus: $ordersByStatus,
+            topProducts: $topProducts,
+            revenueByDay: $revenueByDay,
+        );
     }
 }

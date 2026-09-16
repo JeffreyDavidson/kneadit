@@ -4,6 +4,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -17,7 +18,7 @@ test('total returns revenue for date range', function () {
 
     $range = [now()->startOfWeek(), now()->endOfWeek()];
 
-    expect(RevenueQuery::total($range))->toBe(80.0);
+    expect(RevenueQuery::total($range))->toEqual(Money::fromDollars(80));
 });
 
 test('orderCount returns number of active orders in date range', function () {

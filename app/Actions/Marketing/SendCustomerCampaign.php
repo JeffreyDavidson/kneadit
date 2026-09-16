@@ -31,7 +31,19 @@ class SendCustomerCampaign
             return 0;
         }
 
-        $campaign->forceFill(['status' => CustomerCampaignStatus::Sending])->save();
+        $claimed = CustomerCampaign::query()
+            ->whereKey($campaign->getKey())
+            ->whereIn('status', [CustomerCampaignStatus::Draft, CustomerCampaignStatus::Scheduled])
+            ->update([
+                'status' => CustomerCampaignStatus::Sending,
+                'updated_at' => now(),
+            ]);
+
+        if ($claimed !== 1) {
+            return 0;
+        }
+
+        $campaign->refresh();
 
         $recipients = ($this->resolveRecipients)($campaign->target_segment);
 

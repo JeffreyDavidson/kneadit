@@ -37,7 +37,15 @@ test('generate report sets active report type', function () {
     test()->page->mount();
     test()->page->generateReport('sales');
 
-    expect(test()->page->activeReport)->toBe('sales');
+    expect(test()->page->activeReport)->toBe('sales')
+        ->and(test()->page->reportData)->toHaveKeys([
+            'totalOrders',
+            'totalRevenue',
+            'avgOrderValue',
+            'ordersByStatus',
+            'topProducts',
+            'revenueByDay',
+        ]);
 });
 
 test('generate report with inventory type', function () {
@@ -76,5 +84,12 @@ test('generate report with financial type', function () {
     test()->page->generateReport('financial');
 
     expect(test()->page->activeReport)->toBe('financial')
-        ->and(test()->page->reportData)->toBeArray();
+        ->and(test()->page->reportData)->toHaveKeys([
+            'totalRevenue',
+            'totalExpenses',
+            'profit',
+            'deductible',
+            'monthly',
+            'expensesByCategory',
+        ]);
 });

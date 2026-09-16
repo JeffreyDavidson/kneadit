@@ -2,11 +2,12 @@
 
 namespace App\Queries\Dashboard;
 
+use App\DataTransferObjects\Analytics\DateSeries;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
+use App\Queries\Analytics\DateCountQuery;
 use App\Queries\Financial\RevenueQuery;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -35,7 +36,8 @@ class StatsOverviewQuery
         $lastWeekStart = $weekStart->copy()->subWeek();
         $lastWeekEnd = $weekEnd->copy()->subWeek();
 
-        $dates = $this->dateKeys($chartStart, $today);
+        $dateSeries = DateSeries::between($chartStart, $today);
+        $dates = $dateSeries->dates();
         $ordersByDate = $this->ordersByDeliveryDate($chartStart, $today);
         $pendingByDate = $this->pendingOrdersByCreatedDate($chartStart, $today);
         $viewsByDate = $this->storefrontViewsByDate($chartStart, $today);
@@ -44,9 +46,9 @@ class StatsOverviewQuery
             $weekEnd->toDateString(),
         ]);
 
-        $ordersChart = $this->integerChart($dates, $ordersByDate);
-        $pendingChart = $this->integerChart($dates, $pendingByDate);
-        $viewsChart = $this->integerChart($dates, $viewsByDate);
+        $ordersChart = $dateSeries->fillIntegers($ordersByDate);
+        $pendingChart = $dateSeries->fillIntegers($pendingByDate);
+        $viewsChart = $dateSeries->fillIntegers($viewsByDate);
         $revenueChart = array_map(
             fn (string $date): int => (int) ($revenueByDate[$date] ?? 0),
             $dates,
@@ -69,72 +71,29 @@ class StatsOverviewQuery
     /** @return array<string, int> */
     private function ordersByDeliveryDate(Carbon $start, Carbon $end): array
     {
-        return Order::query()
-            ->whereBetween('delivery_date', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
-            ->toBase()
-            ->selectRaw('DATE(delivery_date) as date, COUNT(*) as aggregate')
-            ->groupBy('date')
-            ->pluck('aggregate', 'date')
-            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
-                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
-            ])
-            ->all();
+        return DateCountQuery::count(Order::query(), 'delivery_date', $start, $end);
     }
 
     /** @return array<string, int> */
     private function pendingOrdersByCreatedDate(Carbon $start, Carbon $end): array
     {
-        return Order::query()
-            ->where('status', OrderStatus::Pending)
-            ->whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
-            ->toBase()
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
-            ->groupBy('date')
-            ->pluck('aggregate', 'date')
-            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
-                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
-            ])
-            ->all();
+        return DateCountQuery::count(
+            Order::query()->where('status', OrderStatus::Pending),
+            'created_at',
+            $start,
+            $end,
+        );
     }
 
     /** @return array<string, int> */
     private function storefrontViewsByDate(Carbon $start, Carbon $end): array
     {
-        return PageView::query()
-            ->whereNull('product_id')
-            ->whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
-            ->toBase()
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as aggregate')
-            ->groupBy('date')
-            ->pluck('aggregate', 'date')
-            ->mapWithKeys(fn (mixed $count, mixed $date): array => [
-                Arr::string(['date' => $date], 'date') => Arr::integer(['count' => $count], 'count', 0),
-            ])
-            ->all();
-    }
-
-    /** @return list<string> */
-    private function dateKeys(Carbon $start, Carbon $end): array
-    {
-        $dates = [];
-        $date = $start->copy()->startOfDay();
-
-        while ($date->lte($end)) {
-            $dates[] = $date->toDateString();
-            $date->addDay();
-        }
-
-        return $dates;
-    }
-
-    /**
-     * @param list<string> $dates
-     * @param array<string, int> $values
-     * @return list<int>
-     */
-    private function integerChart(array $dates, array $values): array
-    {
-        return array_map(fn (string $date): int => $values[$date] ?? 0, $dates);
+        return DateCountQuery::count(
+            PageView::query()->whereNull('product_id'),
+            'created_at',
+            $start,
+            $end,
+        );
     }
 
     /** @param array<string, float> $revenue */
@@ -142,7 +101,7 @@ class StatsOverviewQuery
     {
         return array_sum(array_map(
             fn (string $date): float => $revenue[$date] ?? 0.0,
-            $this->dateKeys($start, $end),
+            DateSeries::between($start, $end)->dates(),
         ));
     }
 }

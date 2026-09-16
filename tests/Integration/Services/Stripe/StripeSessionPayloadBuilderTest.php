@@ -61,6 +61,23 @@ test('lineItems omits delivery fee when zero', function () {
     expect(test()->builder->lineItems($order->fresh()))->toHaveCount(1);
 });
 
+test('lineItems appends a fixed tip entry when tip_amount is positive', function () {
+    $order = Order::factory()->create([
+        'tip_amount' => Money::fromDollars(3.25),
+    ]);
+    OrderItem::factory()->for($order)->create([
+        'quantity' => 1,
+        'unit_price' => Money::fromDollars(10.00),
+    ]);
+
+    $items = test()->builder->lineItems($order->fresh());
+
+    expect($items)->toHaveCount(2)
+        ->and($items[1]['price_data']['product_data']['name'])->toBe('Tip')
+        ->and($items[1]['price_data']['unit_amount'])->toBe(325)
+        ->and($items[1]['quantity'])->toBe(1);
+});
+
 test('build assembles full session params with metadata', function () {
     $customer = Customer::factory()->create(['email' => 'baker@example.com']);
     $order = Order::factory()->for($customer)->create([

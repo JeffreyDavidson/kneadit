@@ -2,6 +2,7 @@
 
 use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
@@ -61,7 +62,7 @@ it('imports a legacy catalog and order history idempotently while converting dol
     ];
 
     $import = resolve(ImportLegacyBakeryData::class);
-    $firstResult = $import($data);
+    $firstResult = $import(LegacyBakeryImportData::from($data));
     $secondResult = $import($data);
 
     expect($firstResult)->toMatchArray(['categories' => 1, 'products' => 1, 'customers' => 1, 'orders' => 1, 'order_notes' => 2, 'order_items' => 1, 'reviews' => 1, 'settings' => 6])

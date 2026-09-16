@@ -1,6 +1,49 @@
 # Deep application audit
 
-This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.4, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
+> Audit baseline from August 31, 2026. The implementation status below was
+> updated on September 14, 2026. Treat `docs/architecture.md`,
+> `docs/operations.md`, and the current codebase as authoritative. Revalidate
+> remaining recommendations before turning any one into implementation work.
+
+This audit is based on the current `develop` tree (Laravel 13.23, PHP 8.5, Filament 5.3) and is intended to guide small, reviewable improvements. It identifies opportunities; it does not authorize a wholesale rewrite or a mass file move.
+
+## Refactoring program status
+
+The original focused slices from `refactor/application-boundaries` and the
+follow-up application refactoring roadmap are complete through Workstream 7.
+The implementation pull requests merged into `develop` are:
+
+| Workstream | Result | Pull request |
+| --- | --- | --- |
+| Regression coverage and confirmed defects | Corrected stacked discount accounting and cancelled-order customer metrics | [#1017](https://github.com/JeffreyDavidson/kneadit/pull/1017) |
+| Money-safe order pipeline | Replaced mutable floating-point monetary state with money-safe values | [#1018](https://github.com/JeffreyDavidson/kneadit/pull/1018) |
+| Typed platform read models | Introduced typed tenant comparison and feature-usage boundaries | [#1019](https://github.com/JeffreyDavidson/kneadit/pull/1019) |
+| Analytics projections | Typed analytics projections and date-series results | [#1020](https://github.com/JeffreyDavidson/kneadit/pull/1020) |
+| External provider contracts | Isolated Forge, Stripe, and PayPal provider clients behind focused adapters | [#1021](https://github.com/JeffreyDavidson/kneadit/pull/1021) |
+| Prep scheduling and abstraction hygiene | Added typed prep schedule boundaries and shared ingredient-demand calculation | [#1022](https://github.com/JeffreyDavidson/kneadit/pull/1022) |
+
+Earlier completed slices include:
+
+- Central and tenant route/view/controller boundaries, including architecture coverage.
+- Service-provider and tenant-test bootstrap boundaries.
+- Tenant analytics, activity, staff-directory, tenant-statistics, and tenant-archive queries/services.
+- Typed weekly digest data and event boundaries.
+- Settings form mapping and legacy settings import handling.
+- Legacy import validation and catering quote-item form mapping.
+- Legacy order-item, review, financial, scheduling, and engagement importers.
+
+Workstream 8 is the documentation closeout represented by
+`docs/refactoring-roadmap.md`. The priority findings below are now a backlog
+of optional, incremental improvements rather than unfinished commitments from
+the completed program. Each future change should be implemented as a separate,
+tested slice based on the current codebase.
+
+The legacy-import finding has been revalidated against the current tree. The
+import now uses `LegacyBakeryImportData`, validates dataset shape and foreign-key
+references before the transaction, delegates persistence through per-domain
+importer contracts, supports a command-level dry run, and has an idempotency
+integration test. It is therefore closed as an audit finding; future import
+work should target a newly demonstrated gap rather than repeat that extraction.
 
 ## Executive summary
 
@@ -18,7 +61,7 @@ The largest opportunities are not framework replacement. They are reducing orche
 
 | Priority | Finding | Evidence | Recommended first slice |
 | --- | --- | --- | --- |
-| P0 | Legacy import is a 602-line all-domain transaction using raw tables and unvalidated arrays | `app/Actions/Tenants/ImportLegacyBakeryData.php` | Introduce a validated import DTO/schema and per-domain importer contracts; retain one transaction and idempotency tests |
+| Closed | Legacy import was a large all-domain transaction using raw tables and unvalidated arrays | `app/Actions/Tenants/ImportLegacyBakeryData.php`, `app/DataTransferObjects/Tenants/LegacyBakeryImportData.php`, `app/Actions/Tenants/LegacyBakeryDataValidator.php` | Completed through the legacy importer extraction slices; retain the transaction and regression coverage |
 | P1 | Several Filament pages and widgets contain substantial queries, mutation workflows, and formatting | `app/Filament/Resources/CateringInquiries/Pages/ViewCateringInquiry.php`, `app/Filament/Pages/Settings/ManageSettings.php`, `app/Filament/Pages/Operations/StaffManagement.php` | Extract one use case or query at a time into Actions/Queries; leave Filament as an adapter |
 | P1 | Reporting returns mixed currencies, arrays, raw aggregates, and formatted strings | `app/Reports/*`, `app/Services/Reporting/WeeklyDigestDataCollector.php` | Define report result DTOs and a single money presentation boundary |
 | P1 | Provider and command code still resolves application actions in a few delivery adapters | `app/Console/Commands/PayPal/CheckPayPalPaymentsCommand.php`, `app/Http/Controllers/Stripe/StripeWebhookController.php` | Inject actions into commands/controllers where direct construction is practical; keep container resolution only at framework entry points |
@@ -126,18 +169,15 @@ Use an Action for one business command or state transition, a Query for reusable
 - Replace test doubles consistently with `JMac\\Testing\\Double` for typed collaborators, retaining Mockery only where its partial/mock behavior is specifically needed.
 - Add regression tests before extracting importers, report DTOs, or Filament mutations. Snapshot tests should cover stable output contracts, not implementation details.
 
-## Sequenced implementation plan
+## Future implementation candidates
 
-1. Finish the current small dependency-injection cleanup and keep every PR based on the latest `develop` tip.
-2. Extract one `ViewCateringInquiry` mutation into an Action with an integration test.
-3. Extract central tenant export aggregation into a named Query/Service with bounded iteration tests.
-4. Introduce a typed report result for one report (Sales or Financial) and normalize money at serialization.
-5. Split `ImportLegacyBakeryData` behind per-domain importer contracts without changing its public command behavior.
-6. Add import dry-run, idempotency, and foreign-key diagnostics.
-7. Consolidate repeated analytics aggregates into Queries/Builders.
-8. Replace unsafe user-facing exception rendering with stable placeholders and structured logs.
-9. Audit queued tenant-wide tasks for idempotency, retries, and bounded work.
-10. Reassess namespace moves only after the above contracts and architecture tests have stabilized.
+1. Extract one `ViewCateringInquiry` mutation into an Action with an integration test.
+2. Extract central tenant export aggregation into a named Query/Service with bounded iteration tests.
+3. Introduce a typed report result for one report (Sales or Financial) and normalize money at serialization.
+4. Consolidate any newly repeated analytics aggregates into Queries/Builders.
+5. Replace unsafe user-facing exception rendering with stable placeholders and structured logs.
+6. Audit queued tenant-wide tasks for idempotency, retries, and bounded work.
+7. Reassess namespace moves only after these contracts and architecture tests have stabilized.
 
 ## Changes deliberately deferred
 

@@ -22,11 +22,9 @@ class ApplyTierPerks
             return $next($payload);
         }
 
-        if ($payload->deliveryFee > 0 && $this->customerLoyalty->qualifiesForFreeDelivery($payload->customer)) {
-            $payload->deliveryFee = 0;
-
-            $afterDiscount = max(0.0, $payload->subtotal + $payload->deliveryFee - $payload->discountAmount);
-            $payload->total = max(0.0, $afterDiscount - $payload->giftCardAmount) + $payload->tipAmount;
+        if ($payload->deliveryFee->isPositive() && $this->customerLoyalty->qualifiesForFreeDelivery($payload->customer)) {
+            $payload->deliveryFee = \App\ValueObjects\Money::zero();
+            $payload->recalculateTotal();
         }
 
         return $next($payload);

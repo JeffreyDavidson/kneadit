@@ -23,7 +23,7 @@ class ProductCsvExporter
         fputcsv($output, $this->headers);
 
         Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
-            fputcsv($output, [
+            fputcsv($output, CsvValueSanitizer::row([
                 $product->name,
                 $product->category->name ?? '',
                 $product->description ?? '',
@@ -31,7 +31,7 @@ class ProductCsvExporter
                 $product->cost?->dollars() ?? '',
                 $product->is_active ? '1' : '0',
                 $product->is_featured ? '1' : '0',
-            ]);
+            ]));
         });
 
         rewind($output);

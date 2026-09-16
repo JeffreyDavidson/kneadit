@@ -19,6 +19,8 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
 
+require_once __DIR__ . '/Support/Bootstrap/TenantDatabaseCleanup.php';
+
 /*
  * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
  * event, which runs CreateDatabase + MigrateDatabase jobs that write real
@@ -29,34 +31,7 @@ use Tests\TestCase;
  * Browser-test fixture tenants (provisioned by tenants:provision-test-tenant)
  * are persistent and must survive between test runs — those are skipped.
  */
-$persistentTenantDbs = [
-    'tenantbrowser-test',
-    'tenantdemo',
-];
-
-$cleanupTenantFiles = function () use ($persistentTenantDbs): void {
-    if (function_exists('tenancy') && tenancy()->initialized) {
-        tenancy()->end();
-    }
-
-    DB::purge('tenant');
-
-    gc_collect_cycles();
-    foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (! is_file($file)) {
-            continue;
-        }
-
-        if (in_array(basename($file), $persistentTenantDbs, true)) {
-            continue;
-        }
-
-        @unlink($file);
-        @unlink($file . '-journal');
-        @unlink($file . '-wal');
-        @unlink($file . '-shm');
-    }
-};
+$cleanupTenantFiles = tenantDatabaseCleanup();
 
 pest()->extend(TestCase::class)
     /*
@@ -141,7 +116,7 @@ function tenantMiddleware(): array
 function verifiedOrdersSession(array $orders): array
 {
     return [
-        'verified_order_numbers' => array_map(fn ($order) => $order->order_number, $orders),
+        'verified_order_numbers' => array_map(fn (App\Models\Orders\Order $order) => $order->order_number, $orders),
     ];
 }
 
@@ -159,10 +134,7 @@ function verifiedOrdersSession(array $orders): array
 | every subsequent test uses the warm session.
 */
 
-/**
- * @return Pest\Browser\Api\PendingAwaitablePage
- */
-function authenticatedVisit(string $url)
+function authenticatedVisit(string $url): Pest\Browser\Api\PendingAwaitablePage
 {
     return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
 }
@@ -463,6 +435,7 @@ function createCentralTables(): void
             $table->string('tenant_id');
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
+            $table->unique(['checkin_id', 'tenant_id']);
         },
         'referrals' => function ($table) {
             $table->id();
@@ -674,7 +647,7 @@ function queueTenantOnboardingNotifications(User $user, Tenant $tenant, ?string 
     );
 
     (new SendWelcomeBakerEmailListener)->handle($event);
-    (new NotifyPlatformOfNewTenantListener)->handle($event);
+    resolve(NotifyPlatformOfNewTenantListener::class)->handle($event);
 }
 
 /**

@@ -14,15 +14,12 @@ use Stripe\StripeClient;
 
 class StripeCheckoutService
 {
-    protected StripeClient $stripe;
-
     public function __construct(
         private StripeSessionPayloadBuilder $payloadBuilder,
         private StripeSettingsReader $settings,
         private HandleCheckoutComplete $handleCheckoutComplete,
-    ) {
-        $this->stripe = new StripeClient(Config::string('cashier.secret', ''));
-    }
+        private StripeClient $stripe,
+    ) {}
 
     public function redirectToCheckout(Order $order): ?string
     {
@@ -142,17 +139,12 @@ class StripeCheckoutService
         }
 
         $coupon = $this->stripe->coupons->create([
-            'amount_off' => $order->discount_amount->cents(),
-            'currency' => $this->currency(),
+            'amount_off' => $order->discount_amount->add($order->gift_card_amount)->cents(),
+            'currency' => Config::string('cashier.currency', 'usd'),
             'duration' => 'once',
             'name' => 'Order Discount',
         ], ['stripe_account' => $connectId]);
 
         return [['coupon' => $coupon->id]];
-    }
-
-    private function currency(): string
-    {
-        return Config::string('cashier.currency', 'usd');
     }
 }

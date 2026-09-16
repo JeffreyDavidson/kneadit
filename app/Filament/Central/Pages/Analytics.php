@@ -2,7 +2,9 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Queries\Platform\TenantAnalyticsQuery;
+use App\Queries\Platform\TenantAnalyticsSummaryQuery;
+use App\Queries\Platform\TenantSignupAnalyticsQuery;
+use App\Queries\Platform\TenantSubscriptionAnalyticsQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -10,6 +12,12 @@ use UnitEnum;
 
 class Analytics extends Page
 {
+    private ?TenantSignupAnalyticsQuery $signupAnalyticsQuery = null;
+
+    private ?TenantSubscriptionAnalyticsQuery $subscriptionAnalyticsQuery = null;
+
+    private ?TenantAnalyticsSummaryQuery $analyticsSummaryQuery = null;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
@@ -23,56 +31,71 @@ class Analytics extends Page
     /** @return array<int, array<string, mixed>> */
     public function getSignupsByMonth(): array
     {
-        return TenantAnalyticsQuery::signupsByMonth();
+        return $this->signupAnalytics()->byMonth();
     }
 
     /** @return array<string, mixed> */
     public function getPlanDistribution(): array
     {
-        return TenantAnalyticsQuery::planDistribution();
+        return $this->subscriptionAnalytics()->planDistribution();
     }
 
     /** @return array<string, int> */
     public function getTrialConversion(): array
     {
-        return TenantAnalyticsQuery::trialConversion();
+        return $this->subscriptionAnalytics()->trialConversion();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getMonthlyGrowth(): array
     {
-        return TenantAnalyticsQuery::monthlyGrowth();
+        return $this->signupAnalytics()->monthlyGrowth();
     }
 
     public function getTotalSignups(): int
     {
-        return TenantAnalyticsQuery::totalSignups();
+        return $this->signupAnalytics()->total();
     }
 
     public function getThisMonthSignups(): int
     {
-        return TenantAnalyticsQuery::thisMonthSignups();
+        return $this->signupAnalytics()->thisMonth();
     }
 
     public function getAvgDaysOnTrial(): float
     {
-        return TenantAnalyticsQuery::avgDaysOnTrial();
+        return $this->subscriptionAnalytics()->averageTrialDays();
     }
 
     public function getMostPopularPlan(): string
     {
-        return TenantAnalyticsQuery::mostPopularPlan();
+        return $this->subscriptionAnalytics()->mostPopularPlan();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getKpis(): array
     {
-        return TenantAnalyticsQuery::kpis();
+        return $this->analyticsSummary()->kpis();
     }
 
     /** @return array<string, int> */
     public function getTenantStatus(): array
     {
-        return TenantAnalyticsQuery::tenantStatus();
+        return $this->analyticsSummary()->tenantStatus();
+    }
+
+    private function signupAnalytics(): TenantSignupAnalyticsQuery
+    {
+        return $this->signupAnalyticsQuery ??= resolve(TenantSignupAnalyticsQuery::class);
+    }
+
+    private function subscriptionAnalytics(): TenantSubscriptionAnalyticsQuery
+    {
+        return $this->subscriptionAnalyticsQuery ??= resolve(TenantSubscriptionAnalyticsQuery::class);
+    }
+
+    private function analyticsSummary(): TenantAnalyticsSummaryQuery
+    {
+        return $this->analyticsSummaryQuery ??= resolve(TenantAnalyticsSummaryQuery::class);
     }
 }

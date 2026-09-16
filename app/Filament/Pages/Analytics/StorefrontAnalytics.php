@@ -2,10 +2,13 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Analytics\ConversionFunnelStep;
+use App\DataTransferObjects\Analytics\DailyPageViewCount;
+use App\DataTransferObjects\Analytics\PageViewCount;
+use App\DataTransferObjects\Analytics\TopViewedProduct;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Engagement\PageView;
 use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Carbon\Carbon;
 use Filament\Pages\Page;
@@ -66,28 +69,31 @@ class StorefrontAnalytics extends Page
         return $this->query()->conversionRate();
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, PageViewCount> */
     public function getPageViewsChart(): Collection
     {
         return $this->query()->pageViewsByPage();
     }
 
-    /** @return Collection<int, PageView> */
+    /** @return Collection<int, DailyPageViewCount> */
     public function getDailyTrend(): Collection
     {
         return $this->query()->dailyTrend(Config::integer('analytics.trend_days', 30));
     }
 
-    /** @return Collection<int, object{name: string, views: int}&\stdClass> */
+    /** @return Collection<int, TopViewedProduct> */
     public function getTopProducts(): Collection
     {
         return $this->query()->topProducts();
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<array{label: string, count: int, percentage: float, dropoff: float|null}> */
     public function getConversionFunnel(): array
     {
-        return $this->query()->conversionFunnel();
+        return array_map(
+            static fn (ConversionFunnelStep $step): array => $step->toArray(),
+            $this->query()->conversionFunnel(),
+        );
     }
 
     public function setPeriod(string $period): void

@@ -3,6 +3,7 @@
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use App\Services\Tenants\TenantHealthService;
+use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
 
 beforeEach(function () {
@@ -57,25 +58,50 @@ it('calculates health scores for tenants', function () {
         ->and($data->first()['health_score'])->toBeGreaterThan(0);
 });
 
-it('handles tenant context failure gracefully', function () {
+it('omits unreadable tenants without preventing other health scores', function () {
     createTenant([
         'id' => 'error-tenant',
         'name' => 'Error Baker',
         'email' => 'error@test.com',
     ]);
+    createTenant([
+        'id' => 'healthy-tenant',
+        'name' => 'Healthy Baker',
+        'email' => 'healthy@test.com',
+    ]);
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->throws(new RuntimeException('DB connection failed'));
+        ->times(2)
+        ->resolves(function (Tenant $tenant): array {
+            if ($tenant->id === 'error-tenant') {
+                throw new RuntimeException('DB connection failed');
+            }
+
+            return [
+                'days_since_login' => 1,
+                'total_orders' => 50,
+                'total_products' => 20,
+                'has_products' => true,
+                'has_categories' => true,
+                'has_orders' => true,
+            ];
+        });
 
     app()->instance(TenancyManager::class, $tenancyManager);
+
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Unable to calculate tenant health', [
+            'tenant_id' => 'error-tenant',
+            'error' => 'DB connection failed',
+        ]);
 
     $service = resolve(TenantHealthService::class);
     $data = $service->getTenantHealthData();
 
-    // Should still have tenant but with zero scores
     expect($data)->toHaveCount(1)
-        ->and($data->first()['health_score'])->toBeGreaterThanOrEqual(0);
+        ->and($data->first()['id'])->toBe('healthy-tenant');
 });
 
 it('returns zero summary stats when no tenants', function () {
@@ -134,7 +160,18 @@ it('gets recent order count for a tenant', function () {
     expect($result)->toBe(15);
 });
 
-it('returns zero order count when tenant context fails', function () {
+it('preserves a successful zero recent order count', function () {
+    $tenant = Tenant::factory()->create();
+
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')->returns(0);
+
+    app()->instance(TenancyManager::class, $tenancyManager);
+
+    expect(resolve(TenantHealthService::class)->getRecentOrderCount($tenant, 30))->toBe(0);
+});
+
+it('propagates recent order read failures', function () {
     $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
@@ -143,8 +180,6 @@ it('returns zero order count when tenant context fails', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    $service = resolve(TenantHealthService::class);
-    $result = $service->getRecentOrderCount($tenant, 30);
-
-    expect($result)->toBe(0);
+    expect(fn () => resolve(TenantHealthService::class)->getRecentOrderCount($tenant, 30))
+        ->toThrow(RuntimeException::class, 'DB error');
 });

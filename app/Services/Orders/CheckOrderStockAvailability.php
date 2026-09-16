@@ -2,8 +2,11 @@
 
 namespace App\Services\Orders;
 
+use App\DataTransferObjects\Inventory\IngredientDemandItem;
 use App\Exceptions\Orders\InsufficientStockException;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Services\Inventory\IngredientDemandCalculator;
 
 /**
  * Checks whether an order's projected ingredient consumption fits inside
@@ -17,6 +20,8 @@ use App\Models\Orders\Order;
  */
 class CheckOrderStockAvailability
 {
+    public function __construct(private IngredientDemandCalculator $calculator) {}
+
     /**
      * @throws InsufficientStockException when any ingredient's projected
      *                                    demand exceeds its current stock.
@@ -25,38 +30,18 @@ class CheckOrderStockAvailability
     {
         $order->loadMissing('orderItems.product.recipes.inventoryIngredients');
 
-        /** @var array<int, array{name: string, demand: float, available: float}> $byIngredientId */
-        $byIngredientId = [];
+        $items = [];
 
         foreach ($order->orderItems as $orderItem) {
-            $product = $orderItem->product;
-
-            if (! $product) {
-                continue;
-            }
-
-            foreach ($product->recipes as $recipe) {
-                foreach ($recipe->inventoryIngredients as $ingredient) {
-                    /** @var object{quantity: string, unit: string} $pivot */
-                    $pivot = $ingredient->pivot;
-                    $draw = (float) $pivot->quantity * $orderItem->quantity;
-
-                    $existing = $byIngredientId[$ingredient->id] ?? null;
-                    $byIngredientId[$ingredient->id] = [
-                        'name' => $ingredient->name,
-                        'demand' => ($existing['demand'] ?? 0.0) + $draw,
-                        'available' => (float) $ingredient->current_stock,
-                    ];
-                }
+            if ($orderItem->product instanceof Product) {
+                $items[] = new IngredientDemandItem(
+                    product: $orderItem->product,
+                    quantity: $orderItem->quantity,
+                );
             }
         }
 
-        $shortages = [];
-        foreach ($byIngredientId as $row) {
-            if ($row['demand'] > $row['available']) {
-                $shortages[] = $row['name'];
-            }
-        }
+        $shortages = $this->calculator->shortages($items);
 
         throw_if($shortages !== [], InsufficientStockException::class, shortages: $shortages, order: $order);
     }

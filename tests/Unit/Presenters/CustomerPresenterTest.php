@@ -4,14 +4,15 @@ use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Models\Customers\Customer;
 use App\Presenters\CustomerPresenter;
 use App\Services\Customers\CustomerIntelligence;
+use App\ValueObjects\Money;
 use JMac\Testing\Double;
 
 function makeCustomerMetrics(): CustomerMetrics
 {
     return new CustomerMetrics(
-        lifetimeValue: 150.00,
+        lifetimeValue: Money::fromDollars(150),
         orderCount: 3,
-        averageOrderValue: 50.00,
+        averageOrderValue: Money::fromDollars(50),
         lastOrderDate: now()->subDays(2),
         daysSinceLastOrder: 2,
         isAtRisk: false,

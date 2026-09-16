@@ -4,7 +4,7 @@
     $isLarge = $this->isSize('lg');
 @endphp
 
-<x-admin.dashboard.preview-card heading="Today's Orders" icon="heroicon-o-clipboard-document-list">
+<x-tenant-admin.dashboard.preview-card heading="Today's Orders" icon="heroicon-o-clipboard-document-list">
     <x-slot:actions>
         <a href="{{ $this->getViewAllUrl() }}" class="pw-card-action">View all</a>
     </x-slot:actions>
@@ -21,7 +21,7 @@
         @if ($isLarge)
             {{-- LG: full list with status, customer, link to order --}}
             @foreach ($rows as $row)
-                <x-admin.dashboard.list-row :dot-color="$row['dot_color']" :value="$row['total']">
+                <x-tenant-admin.dashboard.list-row :dot-color="$row['dot_color']" :value="$row['total']">
                     <span style="color: var(--pw-card-text); font-weight: 600">{{ $row['time'] }}</span>
                     @if ($hasViewRoute)
                         <a
@@ -32,7 +32,7 @@
                         <span style="margin-left: 8px">{{ $row['order_number'] }}</span>
                     @endif
                     <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $row['customer'] }}</span>
-                </x-admin.dashboard.list-row>
+                </x-tenant-admin.dashboard.list-row>
             @endforeach
         @else
             {{-- MD: compact time-slot grid --}}
@@ -73,10 +73,10 @@
             </div>
         @endif
     @else
-        <x-admin.dashboard.empty-state
+        <x-tenant-admin.dashboard.empty-state
             icon="heroicon-o-calendar-days"
             title="No pickups or deliveries today"
             copy="Use the quiet window to prep tomorrow's queue or add a walk-up order."
         />
     @endif
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

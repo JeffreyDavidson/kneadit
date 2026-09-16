@@ -9,11 +9,14 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\URL;
 
 #[Tries(3)]
 #[Backoff([10, 60, 300])]
+#[Timeout(60)]
 abstract class BaseMailable extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -36,6 +39,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
             'storePhone' => $store->phone ?? '',
             'storeAddress' => $store->address ?? '',
             'logoUrl' => $store->logoUrl(),
+            'platformHomeUrl' => URL::route('home'),
         ]);
     }
 }

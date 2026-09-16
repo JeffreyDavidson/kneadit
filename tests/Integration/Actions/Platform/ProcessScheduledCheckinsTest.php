@@ -2,6 +2,8 @@
 
 use App\Actions\Platform\ProcessScheduledCheckins;
 use App\Events\Platform\ScheduledCheckinDue;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -15,8 +17,17 @@ test('returns no_active_checkins flag when none are active', function () {
         ->and($summary['sent'])->toBe(0);
 });
 
+test('streams active checkins to keep scheduled processing memory bounded', function () {
+    $source = file_get_contents(app_path('Actions/Platform/ProcessScheduledCheckins.php'));
+
+    expect($source)
+        ->toContain("where('is_active', true)->cursor()")
+        ->not->toContain("where('is_active', true)->get()");
+});
+
 test('dispatches event and logs when a tenant matches a checkin', function () {
     Event::fake([ScheduledCheckinDue::class]);
+    Config::set('app.url', 'http://kneadit.test:8000');
 
     $daysAgo = 7;
 
@@ -44,7 +55,9 @@ test('dispatches event and logs when a tenant matches a checkin', function () {
     expect($summary['sent'])->toBe(1);
 
     Event::assertDispatched(fn (ScheduledCheckinDue $event): bool => $event->tenantEmail === 'matching@test.com'
-        && $event->subject === 'How is it going?');
+        && $event->subject === 'How is it going?'
+        && $event->adminUrl === 'http://matching-bakery.kneadit.test:8000/admin'
+        && $event->helpUrl === 'http://matching-bakery.kneadit.test:8000/admin/help-center');
 
     $log = DB::table('checkin_logs')
         ->where('checkin_id', 10)
@@ -90,6 +103,24 @@ test('skips tenant that was already sent the same checkin', function () {
 
     expect($summary['sent'])->toBe(0);
     Event::assertNotDispatched(ScheduledCheckinDue::class);
+});
+
+test('enforces one log per checkin and tenant', function () {
+    DB::table('checkin_logs')->insert([
+        'checkin_id' => 50,
+        'tenant_id' => 'already-sent-bakery',
+        'sent_at' => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    expect(fn () => DB::table('checkin_logs')->insert([
+        'checkin_id' => 50,
+        'tenant_id' => 'already-sent-bakery',
+        'sent_at' => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]))->toThrow(UniqueConstraintViolationException::class);
 });
 
 test('skips tenant with empty email and increments counter', function () {
@@ -212,5 +243,6 @@ test('catches dispatch exceptions and counts them as failures', function () {
     $summary = resolve(ProcessScheduledCheckins::class)();
 
     expect($summary['sent'])->toBe(0)
-        ->and($summary['failures'])->toBe(1);
+        ->and($summary['failures'])->toBe(1)
+        ->and(DB::table('checkin_logs')->count())->toBe(0);
 });

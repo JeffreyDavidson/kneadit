@@ -44,6 +44,37 @@ An unknown tenant domain returns 404. If a central tenant record exists but its 
 
 The root URL is deliberately universal: the global middleware establishes central or tenant context once, then `RootController` serves the platform landing page or bakery storefront without re-running tenancy middleware.
 
+### Route organization
+
+`routes/web.php` is the central route composition entry point. It loads:
+
+- `routes/central/auth.php` for platform-user registration, login, email verification, and password reset.
+- `routes/central/platform.php` for onboarding, platform-admin exports, backups, maintenance previews, and impersonation.
+- `routes/central/marketing.php` for the central landing page, legal pages, directory, blog, referrals, contact, and CSP reports.
+- `routes/central/seo.php` for the sitemap and robots response.
+- `routes/billing.php` for subscription billing and Stripe webhooks.
+
+`routes/tenant.php` is the tenant route composition entry point. Its outer group owns tenant initialization and central-domain protection before loading:
+
+- `routes/tenant/access.php` for PWA metadata, invitations, tenant impersonation consumption, driver links, campaign previews, and Stripe Connect.
+- `routes/tenant/admin.php` for authenticated tenant admin utilities such as invoices and product labels.
+- `routes/tenant/storefront.php` for public bakery content and storefront commerce.
+- `routes/tenant/account.php` for customer account authentication, profile, orders, and email verification.
+- `routes/tenant/orders.php` for checkout, order access, payment callbacks, cart, capacity, and order-related AJAX endpoints.
+- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups.
+
+Routes that access tenant models belong under the tenant loader, even when their controllers are used by an admin-facing page. This keeps route middleware, model binding, and database tenancy context aligned.
+
+### HTTP controller organization
+
+HTTP controllers are grouped first by application surface and then by concern:
+
+- `app/Http/Controllers/Central/` contains platform-facing controllers. `Auth/` and `Onboarding/` hold the central authentication and signup lifecycle; other controllers remain at the central surface root when they span a single platform concern.
+- `app/Http/Controllers/Tenant/` contains tenant-bound controllers. `Storefront/` owns public bakery pages and customer account flows, while `Admin/`, `Api/`, `Catering/`, `Invitations/`, `Marketing/`, and `Orders/` make their route surface explicit.
+- `app/Http/Controllers/Billing/` and `app/Http/Controllers/Stripe/` are provider or subscription boundaries. They may invoke domain actions but do not define tenant presentation ownership.
+
+The controller namespace should match the route surface and the mirrored `tests/Feature/Http/Controllers/` path. New tenant controllers belong under `Tenant/<Surface>/`; do not add new top-level tenant controller directories.
+
 ## Application layers
 
 KneadIt favors explicit Laravel boundaries rather than a generic service/repository layer:
@@ -60,10 +91,15 @@ KneadIt favors explicit Laravel boundaries rather than a generic service/reposit
 
 Models, actions, services, enums, builders, queries, policies, factories, and tests are grouped by domain. Tests mirror the `app` structure across the applicable unit, integration, and feature suites.
 
+Application-wide framework wiring is split by responsibility in `app/Providers/`: `ApplicationBindingsServiceProvider` owns container bindings, `InfrastructureServiceProvider` owns queue, cache, tenancy, and payment infrastructure hooks, `RateLimitServiceProvider` owns named throttles, and `AppServiceProvider` owns application features and UI hooks. Keep new bootstrapping in the narrowest provider rather than expanding a catch-all provider.
+
+Shared test setup follows the same rule: `tests/Pest.php` keeps suite-wide lifecycle configuration, while domain or environment-specific fixtures belong in named files under `tests/Support/Bootstrap/` or `tests/Support/`. Tenant database cleanup is implemented there so feature and integration tests do not each need to know which persistent browser fixtures must be preserved.
+
 ## Major domains
 
 See [Domain ownership map](domain-ownership.md) for the ownership rules, current organization audit, and sequenced refactoring candidates.
 See [Deep application audit](deep-application-audit.md) for the broader Laravel, class-design, persistence, UI, testing, and operations review.
+See [Application refactoring roadmap](refactoring-roadmap.md) for the completed workstreams, delivery order, verification gates, and remaining documentation decisions.
 
 - **Platform and tenancy:** bakery registration, onboarding, domains, plans, trials, subscriptions, referrals, support, announcements, audits, impersonation, backups, and health.
 - **Storefront and content:** bakery home pages, menus, blogs, galleries, catering, gift cards, reviews, policies, branding, and PWA metadata.
@@ -121,6 +157,18 @@ Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRec
 ## Frontend
 
 Blade, Livewire, Alpine.js, Filament, and Tailwind CSS make up the UI. Vite builds separate central/application, storefront, tenant Filament, and central Filament entry points defined in `vite.config.js`. Inline scripts and styles use the request-scoped CSP nonce directive.
+
+### View organization
+
+Blade views are organized by the application surface they serve:
+
+- `resources/views/central/` contains central application views, grouped into `auth`, `billing`, `blog`, `legal`, `marketing`, `platform`, and `seo`.
+- `resources/views/tenant/` contains tenant-facing views. `storefront/` holds public bakery pages and customer account flows, while `admin/` and `invitations/` hold tenant administration and staff invitation views.
+- `resources/views/components/` contains reusable Blade components. Storefront home components live under `storefront/home`, and tenant administration components live under `tenant-admin`; their Blade tags and PHP component namespaces mirror those paths.
+- `resources/views/shared/` contains cross-page includes that are not tied to a single surface, such as analytics and storefront order-form scripts.
+- `resources/views/filament/`, `emails/`, `errors/`, `vendor/`, and `reference/` remain specialized top-level trees for their respective rendering contexts.
+
+When adding a view, choose its location from the request surface first, then its feature. A view used by tenant models belongs under `tenant/` even if the controller is currently grouped in a central namespace. Component PHP classes and component integration tests should mirror the component's `resources/views/components/` path.
 
 ## Cross-cutting constraints
 

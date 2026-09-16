@@ -20,7 +20,7 @@ KneadIt has two deployment/data contexts and several business domains. A domain 
 
 ## Current code organization
 
-The codebase already groups most Actions, Builders, DTOs, Enums, Models, Policies, Queries, Reports, and Services by domain. The top-level `Http`, `Filament`, `Console`, `Mail`, and `Notifications` trees are delivery adapters and should remain organized by surface or framework concern rather than becoming a second business taxonomy.
+The codebase groups most Actions, Builders, DTOs, Enums, Models, Policies, Queries, Reports, and Services by domain. The top-level `Http`, `Filament`, `Console`, `Mail`, and `Notifications` trees are delivery adapters and should remain organized by surface or framework concern rather than becoming a second business taxonomy. HTTP controllers now make the two application surfaces explicit under `Central/` and `Tenant/`; tenant controllers are further grouped by route surface.
 
 The following existing placements are intentional and should be preserved:
 
@@ -29,6 +29,7 @@ The following existing placements are intentional and should be preserved:
 - `app/Services/Stripe` and `app/Services/PayPal` translate provider payloads; they delegate state changes to Orders, Financial, or Platform actions.
 - `app/Services/Tenants` owns tenancy initialization and database lifecycle; it is infrastructure for all tenant domains, not a replacement for a business domain.
 - `app/Services/Settings` owns settings storage and typed settings composition. Consumers should depend on the typed settings contract rather than reaching into setting records.
+- `app/Providers/ApplicationBindingsServiceProvider`, `InfrastructureServiceProvider`, and `RateLimitServiceProvider` own distinct framework wiring concerns; `AppServiceProvider` is reserved for application feature and UI hooks.
 
 ## Refactoring rules
 
@@ -47,6 +48,7 @@ These are follow-up slices, not a mandate for a bulk move:
 - Review `Products` actions alongside `Inventory` actions. Product catalog state belongs to Inventory; keep compatibility namespaces only while callers are migrated.
 - Review `Services/Reporting` and `Reports/*` for a single reporting boundary, separating read projections from export/delivery adapters.
 - Review `Services/Platform` for classes that are actually operational infrastructure or integrations; move only when ownership and tests are unambiguous.
-- Add architecture tests or static rules for forbidden central-to-tenant database access and provider-to-domain direction before large reorganizations.
+- `tests/Arch/SurfaceBoundariesTest.php` guards route/controller surface placement and static route view targets. Extend it when a new central or tenant surface is introduced.
+- Add static rules for provider-to-domain direction before moving more integration code.
 
 The next implementation work should take one candidate at a time, add or adjust tests, and use a focused pull request. This map is the source of truth for deciding where that slice belongs.

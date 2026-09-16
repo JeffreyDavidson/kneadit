@@ -3,6 +3,7 @@
     /** @var string $emailSubject */
     /** @var string|null $bakerName */
     /** @var string $adminUrl */
+    /** @var string $helpUrl */
 @endphp
 
 <!DOCTYPE html>
@@ -46,7 +47,7 @@
             </p>
             <p style="margin: 0; color: #6b4c3b; font-size: 12px;">
                 Questions? Reply to this email or visit
-                <a href="https://getkneadit.app/help" style="color: #8b5e3c;">getkneadit.app/help</a>.
+                <a href="{{ $helpUrl }}" style="color: #8b5e3c;">the Help Center</a>.
             </p>
         </div>
     </div>

@@ -5,7 +5,10 @@ use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Filament\WidgetPreviewRenderer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
+use RuntimeException;
+use Tests\Support\Filament\FailingWidgetPreview;
 
 use function Pest\Laravel\actingAs;
 
@@ -44,4 +47,23 @@ test('central auth context survives a preview render', function () {
     (new WidgetPreviewRenderer)->render(RecentOrdersWidget::class);
 
     expect(Auth::user()?->id)->toBe($user->id);
+});
+
+test('does not expose widget exceptions in the placeholder and logs server-side context', function () {
+    Tenant::factory()->onboarded()->create(['id' => Tenant::DEMO_ID]);
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(function (string $message, array $context): bool {
+            return $message === 'WidgetPreviewRenderer failed'
+                && $context['widget'] === FailingWidgetPreview::class
+                && $context['exception'] instanceof RuntimeException
+                && $context['exception']->getMessage() === 'database password leaked';
+        });
+
+    $html = (new WidgetPreviewRenderer)->render(FailingWidgetPreview::class);
+
+    expect((string) $html)
+        ->toContain('Widget preview is unavailable.')
+        ->not->toContain('database password leaked');
+
 });

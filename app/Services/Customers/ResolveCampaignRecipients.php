@@ -3,10 +3,8 @@
 namespace App\Services\Customers;
 
 use App\Enums\Customers\RfmSegment;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -31,10 +29,7 @@ class ResolveCampaignRecipients
     public function __invoke(string $targetSegment): Collection
     {
         $rows = Customer::query()
-            ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
-            ->withCount(['orders as frequency' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)])
-            ->withSum(['orders as monetary_cents' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'total')
-            ->withMax(['orders as last_order_at' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'delivery_date')
+            ->withRfmMetrics()
             ->whereNotNull('email')
             ->get();
 

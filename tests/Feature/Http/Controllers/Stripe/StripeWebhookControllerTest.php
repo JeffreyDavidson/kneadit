@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\StripeWebhookController;
@@ -18,7 +19,7 @@ test('handleInvoicePaymentFailed dispatches PaymentFailed event', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test123']);
     Tenant::factory()->create(['email' => $user->email]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -41,7 +42,7 @@ test('duplicate events are skipped via idempotency check', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test456']);
     Tenant::factory()->create(['email' => $user->email]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $eventId = 'evt_duplicate_' . uniqid();
@@ -56,6 +57,65 @@ test('duplicate events are skipped via idempotency check', function () {
     Event::fake([PaymentFailed::class]);
     $method->invoke($controller, $payload);
     Event::assertNotDispatched(PaymentFailed::class);
+});
+
+test('failed webhook requests can retry and successful duplicates are acknowledged', function () {
+    config(['cache.default' => 'array']);
+    config(['cashier.webhook.secret' => 'whsec_test_secret']);
+    config(['kneadit.stripe_prices' => ['growth' => 'price_retry_request']]);
+
+    $user = User::factory()->owner()->create(['stripe_id' => 'cus_retry_request']);
+    $attempts = 0;
+    $syncSubscriptionPlan = Mockery::mock(SyncSubscriptionPlan::class);
+    $syncSubscriptionPlan->shouldReceive('__invoke')
+        ->twice()
+        ->andReturnUsing(function () use (&$attempts): void {
+            $attempts++;
+
+            if ($attempts === 1) {
+                throw new RuntimeException('temporary event handling failure');
+            }
+        });
+    app()->instance(SyncSubscriptionPlan::class, $syncSubscriptionPlan);
+
+    $payload = json_encode([
+        'id' => 'evt_retry_request',
+        'type' => 'customer.subscription.updated',
+        'data' => [
+            'object' => [
+                'id' => 'sub_retry_request',
+                'customer' => $user->stripe_id,
+                'status' => 'active',
+                'metadata' => ['type' => 'default'],
+                'items' => [
+                    'data' => [[
+                        'id' => 'si_retry_request',
+                        'quantity' => 1,
+                        'price' => [
+                            'id' => 'price_retry_request',
+                            'product' => 'prod_retry_request',
+                        ],
+                    ]],
+                ],
+            ],
+        ],
+    ], JSON_THROW_ON_ERROR);
+    $secret = 'whsec_test_secret';
+    $timestamp = time();
+    $signature = hash_hmac('sha256', "{$timestamp}.{$payload}", $secret);
+    $headers = [
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_STRIPE_SIGNATURE' => "t={$timestamp},v1={$signature}",
+    ];
+
+    $firstResponse = test()->call('POST', '/stripe/webhook', [], [], [], $headers, $payload);
+    $retryResponse = test()->call('POST', '/stripe/webhook', [], [], [], $headers, $payload);
+    $duplicateResponse = test()->call('POST', '/stripe/webhook', [], [], [], $headers, $payload);
+
+    $firstResponse->assertServerError();
+    $retryResponse->assertSuccessful();
+    $duplicateResponse->assertSuccessful();
+    expect($attempts)->toBe(2);
 });
 
 test('SubscriptionTier::fromPriceId maps stripe price to tier', function () {
@@ -75,7 +135,7 @@ test('subscription update webhook persists the subscription and syncs the tenant
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleCustomerSubscriptionUpdated');
 
     $method->invoke($controller, [
@@ -117,7 +177,7 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
 
     $priceMap = array_flip(config('kneadit.stripe_prices'));
 
-    resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+    resolve(SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
         stripePriceId: 'price_growth_id',
         priceMap: $priceMap,
@@ -132,7 +192,7 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_unknown_price']);
     $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
-    resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+    resolve(SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
         stripePriceId: 'price_nonexistent',
         priceMap: array_flip(config('kneadit.stripe_prices')),
@@ -147,14 +207,13 @@ test('handleCustomerSubscriptionDeleted calls parent and logs', function () {
     expect($source)
         ->toContain('handleCustomerSubscriptionDeleted')
         ->toContain('parent::handleCustomerSubscriptionDeleted')
-        ->toContain('subscription fully canceled')
-        ->toContain('StripeCustomerLookupQuery::find');
+        ->toContain('handleSubscriptionDeleted');
 });
 
 test('handleInvoicePaymentFailed skips when no customer id in payload', function () {
     Event::fake([PaymentFailed::class]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -173,7 +232,7 @@ test('handleInvoicePaymentFailed skips when no customer id in payload', function
 test('handleInvoicePaymentFailed skips when user not found for customer', function () {
     Event::fake([PaymentFailed::class]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -187,11 +246,4 @@ test('handleInvoicePaymentFailed skips when user not found for customer', functi
     ]);
 
     Event::assertNotDispatched(PaymentFailed::class);
-});
-
-test('alreadyProcessed returns false for missing event id', function () {
-    $controller = new StripeWebhookController;
-    $method = new ReflectionMethod($controller, 'alreadyProcessed');
-
-    expect($method->invoke($controller, []))->toBeFalse();
 });

@@ -66,12 +66,12 @@ test('conversion funnel returns all steps with percentages and dropoff', functio
     $funnel = $query->conversionFunnel();
 
     expect($funnel)->toHaveCount(4)
-        ->and($funnel[0]['label'])->toBe('Home')
-        ->and($funnel[0]['count'])->toBe(2)
-        ->and($funnel[0]['percentage'])->toBe(100.0)
-        ->and($funnel[0]['dropoff'])->toBeNull()
-        ->and($funnel[1]['label'])->toBe('Menu')
-        ->and($funnel[1]['dropoff'])->toBe(50.0);
+        ->and($funnel[0]->label)->toBe('Home')
+        ->and($funnel[0]->count)->toBe(2)
+        ->and($funnel[0]->percentage)->toBe(100.0)
+        ->and($funnel[0]->dropoff)->toBeNull()
+        ->and($funnel[1]->label)->toBe('Menu')
+        ->and($funnel[1]->dropoff)->toBe(50.0);
 });
 
 test('conversion funnel counts unique sessions and excludes confirmation reloads from order starts', function () {
@@ -84,6 +84,6 @@ test('conversion funnel counts unique sessions and excludes confirmation reloads
 
     $funnel = (new StorefrontAnalyticsQuery(now()->startOfWeek()))->conversionFunnel();
 
-    expect($funnel[2])
+    expect($funnel[2]->toArray())
         ->toMatchArray(['label' => 'Order Page', 'count' => 1]);
 });

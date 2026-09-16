@@ -24,6 +24,7 @@ test('it does nothing when tenant id is missing from metadata', function () {
 
     $session = [
         'id' => 'cs_test_456',
+        'payment_status' => 'paid',
         'metadata' => ['order_id' => 1],
     ];
 
@@ -38,6 +39,7 @@ test('it does nothing when tenant is not found', function () {
 
     $session = [
         'id' => 'cs_test_789',
+        'payment_status' => 'paid',
         'metadata' => [
             'order_id' => 1,
             'tenant_id' => 'nonexistent-tenant',
@@ -60,6 +62,8 @@ test('it processes checkout session within tenant context', function () {
 
     $session = [
         'id' => 'cs_test_success',
+        'payment_status' => 'paid',
+        'payment_intent' => 'pi_test_success',
         'metadata' => [
             'order_id' => 1,
             'tenant_id' => 'checkout-tenant',
@@ -69,7 +73,7 @@ test('it processes checkout session within tenant context', function () {
     resolve(HandleConnectCheckoutCompleted::class)($session);
 });
 
-test('it catches exceptions during tenant context processing', function () {
+test('it propagates exceptions during tenant context processing for webhook retry', function () {
     $tenant = createTenant(['id' => 'error-tenant', 'email' => 'error@test.com']);
 
     $tenancyManager = Double::for(TenancyManager::class);
@@ -85,11 +89,13 @@ test('it catches exceptions during tenant context processing', function () {
 
     $session = [
         'id' => 'cs_test_error',
+        'payment_status' => 'paid',
         'metadata' => [
             'order_id' => 1,
             'tenant_id' => 'error-tenant',
         ],
     ];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    expect(fn () => resolve(HandleConnectCheckoutCompleted::class)($session))
+        ->toThrow(Exception::class, 'Processing failed');
 });

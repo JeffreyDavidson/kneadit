@@ -2,17 +2,14 @@
 
 namespace App\Services\Reporting;
 
+use App\DataTransferObjects\Platform\WeeklyDigestData;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
 use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\AtRiskCustomersQuery;
+use App\Queries\Reporting\WeeklyDigestQuery;
 use App\Services\Settings\TenantSettings;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
@@ -21,8 +18,7 @@ class WeeklyDigestDataCollector
         private TenantSettings $settings,
     ) {}
 
-    /** @return array{stats: array<string, mixed>, topProducts: Collection<int, OrderItem>, atRiskCustomers: SupportCollection<int, array{name: string, days_since_last_order: ?int}>, upcomingCount: int, storeName: string, adminUrl: string} */
-    public function collect(): array
+    public function collect(): WeeklyDigestData
     {
         $weekStart = now()->subWeek()->startOfWeek();
         $weekEnd = now()->subWeek()->endOfWeek();
@@ -37,32 +33,25 @@ class WeeklyDigestDataCollector
         $newCustomers = Customer::query()->whereBetween('created_at', [$weekStart, $weekEnd])->count();
         $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
 
-        return [
-            'stats' => [
+        return new WeeklyDigestData(
+            stats: [
                 'total_orders' => $totalOrders,
-                'total_revenue' => Number::currency((float) $totalRevenue),
+                'total_revenue' => (string) Number::currency((float) $totalRevenue),
                 'new_customers' => $newCustomers,
-                'avg_order_value' => Number::currency($avgOrderValue),
+                'avg_order_value' => (string) Number::currency($avgOrderValue),
             ],
-            'topProducts' => OrderItem::query()
-                ->select('product_id', DB::raw('SUM(quantity) as total_qty'))
-                ->whereHas('order', fn (Builder $q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
-                ->groupBy('product_id')
-                ->orderByDesc('total_qty')
-                ->limit(5)
-                ->with('product')
-                ->get(),
-            'atRiskCustomers' => AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
+            topProducts: WeeklyDigestQuery::topProducts($weekStart, $weekEnd),
+            atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
                 ->map(fn (Customer $customer) => [
                     'name' => $customer->name,
                     'days_since_last_order' => CustomerPresenter::for($customer)->daysSinceLastOrder(),
                 ]),
-            'upcomingCount' => Order::query()
+            upcomingCount: Order::query()
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()
                 ->count(),
-            'storeName' => $this->settings->store->name,
-            'adminUrl' => url('/admin'),
-        ];
+            storeName: $this->settings->store->name,
+            adminUrl: url('/admin'),
+        );
     }
 }

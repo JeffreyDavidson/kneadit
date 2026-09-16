@@ -1,5 +1,9 @@
 <?php
 
+use App\Services\Stripe\StripeConnectWebhookEventDispatcher;
+use App\Services\Stripe\StripeWebhookIdempotency;
+use Illuminate\Support\Facades\Cache;
+
 use function Pest\Laravel\postJson;
 
 beforeEach(function () {
@@ -57,24 +61,41 @@ test('webhook returns 500 for unknown event type without secret', function () {
     $response->assertStatus(500);
 });
 
-test('webhook controller routes account.updated to HandleConnectAccountUpdated', function () {
+test('webhook controller delegates event routing to the dispatcher', function () {
     $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
 
     expect($source)
-        ->toContain("'account.updated' => resolve(HandleConnectAccountUpdated::class)")
-        ->toContain("'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)")
-        ->toContain('default => null');
+        ->toContain(StripeConnectWebhookEventDispatcher::class)
+        ->toContain('$dispatcher->dispatch($type, $data)');
 });
 
 test('webhook controller implements idempotency via cache', function () {
     $controllerSource = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
-    $traitSource = file_get_contents(app_path('Http/Controllers/Stripe/Concerns/EnsuresWebhookIdempotency.php'));
+    $serviceSource = file_get_contents(app_path('Services/Stripe/StripeWebhookIdempotency.php'));
 
     expect($controllerSource)
-        ->toContain('EnsuresWebhookIdempotency')
+        ->toContain('StripeWebhookIdempotency')
         ->toContain('Already processed')
-        ->and($traitSource)
-        ->toContain('Cache::add("stripe_event:{$eventId}"');
+        ->and($serviceSource)
+        ->toContain('Cache::add($this->key($eventId)');
+});
+
+test('failed webhook claims can be released for a retry', function () {
+    config(['cache.default' => 'array']);
+    Cache::flush();
+
+    $guard = resolve(StripeWebhookIdempotency::class);
+
+    expect($guard->claim('evt_retry'))->toBeTrue()
+        ->and($guard->claim('evt_retry'))->toBeFalse();
+
+    $guard->release('evt_retry');
+
+    expect($guard->claim('evt_retry'))->toBeTrue();
+
+    $guard->complete('evt_retry');
+
+    expect($guard->claim('evt_retry'))->toBeFalse();
 });
 
 test('webhook controller verifies stripe signature', function () {

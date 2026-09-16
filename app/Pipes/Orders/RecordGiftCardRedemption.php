@@ -14,7 +14,7 @@ class RecordGiftCardRedemption
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if (! $payload->giftCardId || $payload->giftCardAmount <= 0) {
+        if (! $payload->giftCardId || ! $payload->giftCardAmount->isPositive()) {
             return $next($payload);
         }
 
@@ -23,7 +23,7 @@ class RecordGiftCardRedemption
         $giftCard = GiftCard::query()->find($payload->giftCardId);
 
         if ($giftCard) {
-            ($this->redeemGiftCard)($giftCard->code, $payload->giftCardAmount, $payload->order->id);
+            ($this->redeemGiftCard)($giftCard->code, $payload->giftCardAmount->dollars(), $payload->order->id);
         }
 
         return $next($payload);

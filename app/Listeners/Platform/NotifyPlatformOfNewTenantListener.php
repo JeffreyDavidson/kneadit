@@ -6,11 +6,15 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
 use App\Listeners\SendEmailListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
+use App\Services\Tenants\TenantUrlGenerator;
+use Filament\Facades\Filament;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Support\Facades\Config;
 
 class NotifyPlatformOfNewTenantListener extends SendEmailListener
 {
+    public function __construct(private readonly TenantUrlGenerator $tenantUrls) {}
+
     protected function getRecipient(object $event): ?string
     {
         $recipient = Config::get('mail.platform_notify');
@@ -21,12 +25,19 @@ class NotifyPlatformOfNewTenantListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var TenantOnboarded $event */
+        $centralAdminUrl = Filament::getPanel('central')->getUrl();
+
+        if ($centralAdminUrl === null) {
+            throw new \UnexpectedValueException('The central admin panel must have a URL.');
+        }
+
         return new NewSubscriberNotificationMail(
             bakerName: $event->user->name,
             bakerEmail: $event->user->email,
             storeName: $event->tenant->store_name ?? $event->tenant->name,
-            subdomain: (string) $event->tenant->id,
+            storefrontHost: $this->tenantUrls->storefrontHost($event->tenant),
             plan: SubscriptionTier::Starter->value,
+            centralAdminUrl: $centralAdminUrl,
         );
     }
 

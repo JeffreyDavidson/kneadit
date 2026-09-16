@@ -24,7 +24,7 @@ class EnsureStorefrontEnabled
             $settings = resolve(TenantSettings::class);
 
             // Otherwise show disabled page
-            return response()->view('platform.storefront-disabled', [
+            return response()->view('central.platform.storefront-disabled', [
                 'storeName' => $settings->store->name,
                 'tenant' => $tenant,
             ]);

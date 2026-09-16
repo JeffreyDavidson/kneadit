@@ -1,8 +1,12 @@
+@inject('tenantUrls', 'App\Services\Tenants\TenantUrlGenerator')
+
 @php
     use Carbon\Carbon;
 
     $stats = $this->getTenantStats();
     $tenant = $record;
+    $storefrontUrl = $tenantUrls->storefront($tenant);
+    $storefrontHost = $tenantUrls->storefrontHost($tenant);
 
     $planValue = $tenant->plan instanceof \BackedEnum ? $tenant->plan->value : ($tenant->plan ?? null);
     $trialEnd = $tenant->trial_ends_at;
@@ -21,7 +25,7 @@
 
     $storeRows = [
         $row('Bakery Name', $tenant->store_name ?: '—'),
-        $row('Subdomain', $tenant->id . '.getkneadit.app', mono: true),
+        $row('Subdomain', $storefrontHost, mono: true),
         $row('Custom Domain', $tenant->custom_domain ?: '—', mono: (bool) $tenant->custom_domain),
         $row('External Website', $tenant->external_website ?: '—'),
     ];
@@ -48,12 +52,12 @@
                     </h2>
                 </div>
                 <a
-                    href="https://{{ $tenant->id }}.getkneadit.app"
+                    href="{{ $storefrontUrl }}"
                     target="_blank"
                     rel="noopener"
                     class="text-cinnamon hover:text-honey inline-flex items-center gap-1.5 font-mono text-[0.85rem] transition-colors"
                 >
-                    {{ $tenant->id }}.getkneadit.app
+                    {{ $storefrontHost }}
                     <x-heroicon-o-arrow-top-right-on-square class="h-3.5 w-3.5" />
                 </a>
             </div>

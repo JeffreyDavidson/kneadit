@@ -13,7 +13,7 @@ it('summarizes a valid export without requiring a tenant during a dry run', func
     $path = Storage::disk('local')->path('bakery-on-biscotto.json');
     file_put_contents($path, json_encode([
         'categories' => [['id' => 1, 'name' => 'Bread']],
-        'products' => [['id' => 1, 'name' => 'Sourdough']],
+        'products' => [['id' => 1, 'category_id' => 1, 'name' => 'Sourdough']],
     ], JSON_THROW_ON_ERROR));
 
     $this->artisan('tenant:import-legacy-bakery', [
@@ -21,6 +21,21 @@ it('summarizes a valid export without requiring a tenant during a dry run', func
         'file' => $path,
         '--dry-run' => true,
     ])->assertSuccessful();
+});
+
+it('rejects semantically invalid records during a dry run', function () {
+    Storage::fake('local');
+    $path = Storage::disk('local')->path('invalid-reference.json');
+    file_put_contents($path, json_encode([
+        'products' => [['id' => 1, 'category_id' => 999, 'name' => 'Sourdough']],
+    ], JSON_THROW_ON_ERROR));
+
+    $this->artisan('tenant:import-legacy-bakery', [
+        'tenant' => 'bakery-on-biscotto',
+        'file' => $path,
+        '--dry-run' => true,
+    ])->expectsOutput('Product at index 0 references missing category ID 999.')
+        ->assertFailed();
 });
 
 it('rejects a valid JSON document with an invalid dataset shape', function () {

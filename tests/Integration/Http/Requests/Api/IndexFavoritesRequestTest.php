@@ -7,19 +7,19 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('email is required', function () {
+test('does not accept an email identity from the request', function () {
     $validator = validator([], (new IndexFavoritesRequest)->rules());
 
-    expect($validator->errors()->has('email'))->toBeTrue();
+    expect($validator->passes())->toBeTrue();
 });
 
-test('email must be valid', function () {
+test('request email does not affect validation', function () {
     $validator = validator(['email' => 'not-email'], (new IndexFavoritesRequest)->rules());
 
-    expect($validator->errors()->has('email'))->toBeTrue();
+    expect($validator->passes())->toBeTrue();
 });
 
-test('valid email passes', function () {
+test('request remains valid with extra input', function () {
     $validator = validator(['email' => 'fan@example.com'], (new IndexFavoritesRequest)->rules());
 
     expect($validator->passes())->toBeTrue();

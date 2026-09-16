@@ -3,10 +3,11 @@
 namespace App\Services\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class TenantUsageService
 {
@@ -33,8 +34,8 @@ class TenantUsageService
             try {
                 [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, function () {
                     return [
-                        DB::table('products')->count(),
-                        DB::table('orders')
+                        Product::query()->count(),
+                        Order::query()
                             ->whereMonth('created_at', Date::now()->month)
                             ->whereYear('created_at', Date::now()->year)
                             ->count(),

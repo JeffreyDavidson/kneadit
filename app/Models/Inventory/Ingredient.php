@@ -2,12 +2,14 @@
 
 namespace App\Models\Inventory;
 
+use App\Builders\Inventory\IngredientQueryBuilder;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Inventory\Allergen;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\IngredientFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 #[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes', 'allergens')]
 #[ObservedBy(LogsActivityObserver::class)]
+#[UseEloquentBuilder(IngredientQueryBuilder::class)]
 #[UseFactory(IngredientFactory::class)]
 class Ingredient extends Model
 {

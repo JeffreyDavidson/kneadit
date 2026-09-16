@@ -5,7 +5,9 @@ namespace App\Http\Requests\Storefront;
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -39,7 +41,12 @@ class StoreOrderRequest extends FormRequest
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
-            'gift_card_id' => ['nullable', 'integer', 'exists:gift_cards,id'],
+            'gift_card_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('gift_cards', 'id')->where(fn (Builder $query) => $query->where('code', $this->input('gift_card_code'))),
+            ],
+            'gift_card_code' => ['required_with:gift_card_id', 'nullable', 'string', 'max:50'],
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'pickup_contact_name' => ['nullable', 'string', 'max:255'],
             'pickup_contact_phone' => ['nullable', 'string', 'max:20'],

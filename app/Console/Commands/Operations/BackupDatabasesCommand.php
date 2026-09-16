@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Throwable;
 
 #[Signature('backup:databases {--keep=7 : Number of days to retain backups}')]
 #[Description('Backup central and all tenant SQLite databases')]
@@ -23,60 +24,99 @@ class BackupDatabasesCommand extends Command
         $backupDir = $this->getBackupDir();
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupPath = "{$backupDir}/{$timestamp}";
+        $stagingPath = "{$backupPath}.in-progress-" . Str::random(12);
 
-        File::ensureDirectoryExists($backupPath, 0755);
+        File::ensureDirectoryExists($stagingPath, 0755);
 
         $this->info("Backing up to: {$backupPath}");
+        $backupComplete = true;
 
-        // 1. Backup central database
-        $centralDb = Config::string('database.connections.sqlite.database');
-        if ($centralDb !== '' && file_exists($centralDb)) {
-            $dest = "{$backupPath}/central.sqlite";
-            $this->copyDatabase($centralDb, $dest);
-            $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
-        } else {
-            $this->warn("  ⚠ Central DB not found at: {$centralDb}");
-        }
-
-        // 2. Backup all tenant databases
-        $tenantDbDir = Config::string('tenancy.tenant_db_path', database_path());
-        if (is_dir($tenantDbDir)) {
-            $count = 0;
-
-            foreach (Tenant::all() as $tenant) {
-                $databaseName = (string) $tenant->database()->getName();
-                $tenantDb = $tenantDatabasePath->resolve($databaseName);
-
-                if (! is_file($tenantDb) || is_link($tenantDb)) {
-                    $this->warn("  ⚠ Tenant DB not found: {$databaseName}");
-
-                    continue;
-                }
-
-                $filename = basename($tenantDb);
-                $destination = "{$backupPath}/{$filename}";
-                $this->copyDatabase($tenantDb, $destination);
-                $count++;
+        try {
+            // 1. Backup central database
+            $centralDb = Config::string('database.connections.sqlite.database');
+            if ($centralDb !== '' && file_exists($centralDb)) {
+                $dest = "{$stagingPath}/central.sqlite";
+                $this->copyDatabase($centralDb, $dest);
+                $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
+            } else {
+                $this->warn("  ⚠ Central DB not found at: {$centralDb}");
+                $backupComplete = false;
             }
 
-            $this->info("  ✓ {$count} tenant database(s)");
-        } else {
-            $this->info('  - No tenant DB directory found');
+            // 2. Backup all tenant databases
+            $tenants = Tenant::all();
+            $tenantDbDir = Config::string('tenancy.tenant_db_path', database_path());
+            if (is_dir($tenantDbDir)) {
+                $count = 0;
+
+                foreach ($tenants as $tenant) {
+                    $databaseName = (string) $tenant->database()->getName();
+                    $tenantDb = $tenantDatabasePath->resolve($databaseName);
+
+                    if (! is_file($tenantDb) || is_link($tenantDb)) {
+                        $this->warn("  ⚠ Tenant DB not found: {$databaseName}");
+                        $backupComplete = false;
+
+                        continue;
+                    }
+
+                    $filename = basename($tenantDb);
+                    $destination = "{$stagingPath}/{$filename}";
+                    $this->copyDatabase($tenantDb, $destination);
+                    $count++;
+                }
+
+                $this->info("  ✓ {$count} tenant database(s)");
+            } elseif ($tenants->isNotEmpty()) {
+                $this->warn("  ⚠ Tenant DB directory not found at: {$tenantDbDir}");
+                $backupComplete = false;
+            } else {
+                $this->info('  - No tenant DB directory found');
+            }
+
+            $totalSize = $this->dirSize($stagingPath);
+
+            if (! $backupComplete) {
+                $this->error("Backup incomplete ({$this->formatSize($totalSize)})");
+
+                Log::error('Database backup incomplete', [
+                    'path' => $backupPath,
+                    'size' => $totalSize,
+                ]);
+
+                return Command::FAILURE;
+            }
+
+            if (! rename($stagingPath, $backupPath)) {
+                throw new RuntimeException("Failed to publish database backup at {$backupPath}.");
+            }
+
+            // 3. Clean old backups
+            $keep = (int) $this->option('keep');
+            $this->cleanOldBackups($backupDir, $keep);
+
+            $this->info("Backup complete ({$this->formatSize($totalSize)})");
+
+            Log::info('Database backup completed', [
+                'path' => $backupPath,
+                'size' => $totalSize,
+            ]);
+
+            return Command::SUCCESS;
+        } catch (Throwable $e) {
+            $this->error("Backup failed: {$e->getMessage()}");
+
+            Log::error('Database backup failed', [
+                'path' => $backupPath,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Command::FAILURE;
+        } finally {
+            if (is_dir($stagingPath)) {
+                File::deleteDirectory($stagingPath);
+            }
         }
-
-        // 3. Clean old backups
-        $keep = (int) $this->option('keep');
-        $this->cleanOldBackups($backupDir, $keep);
-
-        $totalSize = $this->dirSize($backupPath);
-        $this->info("Backup complete ({$this->formatSize($totalSize)})");
-
-        Log::info('Database backup completed', [
-            'path' => $backupPath,
-            'size' => $totalSize,
-        ]);
-
-        return Command::SUCCESS;
     }
 
     protected function getBackupDir(): string

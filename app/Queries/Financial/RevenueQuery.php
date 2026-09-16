@@ -4,6 +4,7 @@ namespace App\Queries\Financial;
 
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
@@ -15,16 +16,14 @@ class RevenueQuery
      *
      * @param DateRange|array<int, string> $range
      */
-    public static function total(DateRange|array $range): float
+    public static function total(DateRange|array $range): Money
     {
         $dates = self::bounds($range);
 
-        // orders.total is now bigint cents (see migration 2026_04_22_201500);
-        // convert the aggregate back to dollars for callers that still expect a float.
-        return (int) Order::query()
+        return Money::fromCents((int) Order::query()
             ->active()->paid()
             ->whereBetween('delivery_date', $dates)
-            ->sum('total') / 100;
+            ->sum('total'));
     }
 
     /**

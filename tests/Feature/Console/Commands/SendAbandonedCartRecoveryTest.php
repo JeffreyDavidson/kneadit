@@ -20,5 +20,15 @@ test('command source uses TenancyManager + abandonedCartRecoveryEnabled', functi
         ->toContain('forEachTenant')
         ->toContain('abandonedCartRecoveryEnabled')
         ->toContain('recovery_sent_at')
+        ->toContain('recovery_claimed_at')
         ->toContain('converted_at');
+});
+
+test('command source atomically claims carts before queueing recovery mail', function () {
+    $source = file_get_contents(app_path('Console/Commands/Customers/SendAbandonedCartRecoveryCommand.php'));
+
+    expect($source)
+        ->toContain("whereNull('recovery_claimed_at')")
+        ->toContain("update(['recovery_claimed_at' => now()])")
+        ->toContain('now()->subHour()');
 });

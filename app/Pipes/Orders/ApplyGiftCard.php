@@ -13,15 +13,19 @@ class ApplyGiftCard
             return $next($payload);
         }
 
-        $giftCard = GiftCard::query()->lockForUpdate()->find($payload->data->giftCardId);
+        $giftCard = GiftCard::query()
+            ->lockForUpdate()
+            ->whereKey($payload->data->giftCardId)
+            ->where('code', $payload->data->giftCardCode)
+            ->first();
 
         if ($giftCard && $giftCard->is_usable) {
-            $amount = min($giftCard->current_balance->dollars(), $payload->total);
+            $amount = $giftCard->current_balance->min($payload->total);
 
-            if ($amount > 0) {
+            if ($amount->isPositive()) {
                 $payload->giftCardId = $giftCard->id;
                 $payload->giftCardAmount = $amount;
-                $payload->total = max(0, $payload->total - $amount);
+                $payload->recalculateTotal();
             }
         }
 

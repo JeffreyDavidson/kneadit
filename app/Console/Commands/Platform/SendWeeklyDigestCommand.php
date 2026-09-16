@@ -5,6 +5,7 @@ namespace App\Console\Commands\Platform;
 use App\Events\Platform\WeeklyDigestRequested;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Reporting\WeeklyDigestDataCollector;
 use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
@@ -17,14 +18,14 @@ use Illuminate\Support\Facades\Log;
 #[Description('Send weekly digest email to bakery owners')]
 class SendWeeklyDigestCommand extends Command
 {
-    public function handle(TenancyManager $tenancyManager): int
+    public function handle(TenancyManager $tenancyManager, ScheduledNotificationRunTracker $runTracker): int
     {
         $tenants = Tenant::query()->cursor();
         $failures = 0;
 
         foreach ($tenants as $tenant) {
             try {
-                $tenancyManager->withinTenant($tenant, function () use ($tenant) {
+                $tenancyManager->withinTenant($tenant, function () use ($tenant, $runTracker) {
                     if (resolve(SettingsManager::class)->get('weekly_digest_enabled', '1') !== '1') {
                         $this->info("Skipping {$tenant->id} — digest disabled");
 
@@ -37,10 +38,19 @@ class SendWeeklyDigestCommand extends Command
                         $users = User::query()->limit(1)->get();
                     }
 
+                    $week = now()->startOfWeek()->toDateString();
+                    $users = $users->filter(
+                        fn (User $user): bool => $runTracker->claim("weekly-digest:{$week}:{$user->id}"),
+                    )->values();
+
+                    if ($users->isEmpty()) {
+                        return;
+                    }
+
                     $data = resolve(WeeklyDigestDataCollector::class)->collect();
 
                     foreach ($users as $user) {
-                        event(new WeeklyDigestRequested($user, $data['stats'], $data['topProducts'], $data['atRiskCustomers'], $data['upcomingCount'], $data['storeName'], $data['adminUrl']));
+                        event(new WeeklyDigestRequested($user, $data));
                     }
 
                     $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");

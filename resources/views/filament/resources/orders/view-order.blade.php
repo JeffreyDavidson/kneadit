@@ -398,8 +398,8 @@
                     <div class="max-h-96 space-y-3 overflow-y-auto">
                         @foreach ($messages as $msg)
                             @php $isBaker = $msg->sender_type->isBaker(); @endphp
-                            <div class="flex {{ $isBaker ? 'justify-end' : 'justify-start' }}">
-                                <div class="max-w-md rounded-lg px-4 py-3 {{ $isBaker ? 'bg-brand-700 border border-brand-600' : 'bg-brand-800 border border-brand-700' }}">
+                            <div @class(['flex', 'justify-end' => $isBaker, 'justify-start' => ! $isBaker])>
+                                <div @class(['max-w-md rounded-lg border px-4 py-3', 'bg-brand-700 border-brand-600' => $isBaker, 'bg-brand-800 border-brand-700' => ! $isBaker])>
                                     <div class="mb-1.5 flex items-center gap-2">
                                         <span class="text-brand-200 text-[0.75rem] font-semibold">{{ $msg->sender_name }}</span>
                                         @if ($isBaker)

@@ -2,15 +2,15 @@
 
 KneadIt is a multi-tenant SaaS application for independent bakeries. It provides each bakery with a public storefront and a Filament administration panel for orders, products, customers, operations, marketing, and reporting. The central application handles registration, onboarding, subscriptions, platform administration, and public marketing content.
 
-KneadIt runs on PHP 8.4, Laravel 13, Filament 5, Livewire 4, Tailwind CSS 4, Vite 7, Pest 5, PHPUnit 13, and `stancl/tenancy` 3.
+KneadIt runs on PHP 8.5, Laravel 13, Filament 5, Livewire 4, Tailwind CSS 4, Vite 7, Pest 5, PHPUnit 13, and `stancl/tenancy` 3.
 
 ## Local setup
 
 Prerequisites:
 
-- PHP 8.4 with the extensions required by Laravel and SQLite
+- PHP 8.5 with the extensions required by Laravel and SQLite
 - Composer
-- Node.js and npm
+- Node.js 24+ and npm
 - A local domain that resolves `kneadit.test` and `*.kneadit.test` to the application (Laravel Herd supplies this on the primary development machine)
 
 Install the application:
@@ -51,20 +51,34 @@ The central database owns platform users, tenants, domains, subscriptions, and p
 
 Important entry points:
 
-- `routes/web.php` — central marketing, authentication, onboarding, and shared root routing
+- `routes/web.php` — central route composition entry point
+- `routes/central/` — central authentication, platform operations, marketing, and SEO routes
 - `routes/billing.php` — SaaS subscription checkout and Stripe webhooks
-- `routes/tenant.php` — tenant storefront, administration support, API, Stripe Connect, and invitations
+- `routes/tenant.php` — tenant middleware boundary and route composition
+- `routes/tenant/access.php` — tenant PWA, invitations, impersonation, driver, and integration routes
+- `routes/tenant/admin.php` — authenticated tenant admin utilities
+- `routes/tenant/account.php` — customer account authentication and profile routes
+- `routes/tenant/storefront.php` — tenant public storefront and content routes
+- `routes/tenant/orders.php` — tenant ordering, payment callbacks, cart, and order-access routes
+- `routes/tenant/api.php` — tenant JSON endpoints grouped by read/write throttling
+- `app/Http/Controllers/Central` — platform-facing HTTP controllers grouped by central concern
+- `app/Http/Controllers/Tenant` — tenant HTTP controllers grouped by surface (`Admin`, `Api`, `Catering`, `Invitations`, `Marketing`, `Orders`, and `Storefront`)
+- `app/Providers` — framework wiring split into bindings, infrastructure, rate limits, and application/UI hooks
 - `app/Actions` — single-purpose write operations
 - `app/Queries` and `app/Builders` — reusable read behavior
 - `app/Services/Settings` — tenant and platform settings access
 - `app/Filament` — tenant administration
 - `app/Filament/Central` — platform administration
+- `resources/views/central` — central application views by concern
+- `resources/views/tenant` — tenant storefront, account, admin, and invitation views
+- `resources/views/components` — reusable Blade components grouped by surface
+- `resources/views/shared` — shared Blade includes such as analytics and order-form scripts
 
 See [Architecture](docs/architecture.md) for request flow, domain boundaries, order/payment behavior, and settings design. See [Operations](docs/operations.md) for queues, scheduling, deployment, testing, security, and monitoring.
 
 ## Development rules
 
-Project conventions are documented in `CLAUDE.md` and any applicable repository agent skills. In particular:
+Project conventions are documented in `AGENTS.md` and the applicable repository skills under `.ai/skills/`. In particular:
 
 - Keep write logic in invokable action classes.
 - Keep tenant data access inside an initialized tenancy context.

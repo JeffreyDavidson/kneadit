@@ -7,6 +7,7 @@ use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Services\Export\CsvValueSanitizer;
 use Illuminate\Database\Eloquent\Collection;
 
 class TaxCsvExporter
@@ -22,7 +23,7 @@ class TaxCsvExporter
             ->chunk(100, function (Collection $orders) use ($handle) {
                 foreach ($orders as $order) {
                     $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item') . ' x' . $i->quantity)->implode('; ');
-                    fputcsv($handle, [
+                    fputcsv($handle, CsvValueSanitizer::row([
                         $order->created_at?->format('Y-m-d'),
                         $order->order_number,
                         $order->customer->name ?? 'N/A',
@@ -33,7 +34,7 @@ class TaxCsvExporter
                         number_format($order->total->dollars(), 2, '.', ''),
                         $order->payment_status->value,
                         $order->payment_method->value,
-                    ]);
+                    ]));
                 }
             });
     }
@@ -61,7 +62,7 @@ class TaxCsvExporter
             ->orderBy('date')
             ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
                 foreach ($expenses as $expense) {
-                    fputcsv($handle, [
+                    fputcsv($handle, CsvValueSanitizer::row([
                         $expense->date?->format('Y-m-d'),
                         $categoryMap[$expense->category->value],
                         $expense->description,
@@ -69,7 +70,7 @@ class TaxCsvExporter
                         $expense->business_percentage->value(),
                         $expense->deductible_amount->dollars(),
                         $expense->notes ?? '',
-                    ]);
+                    ]));
                 }
             });
     }
@@ -84,13 +85,13 @@ class TaxCsvExporter
             ->orderBy('date')
             ->chunk(100, function (Collection $incomes) use ($handle) {
                 foreach ($incomes as $income) {
-                    fputcsv($handle, [
+                    fputcsv($handle, CsvValueSanitizer::row([
                         $income->date?->format('Y-m-d'),
                         $income->source->getLabel(),
                         $income->description,
                         $income->amount->dollars(),
                         'Gross Receipts (Schedule C Line 1)',
-                    ]);
+                    ]));
                 }
             });
     }

@@ -12,6 +12,14 @@ beforeEach(function () {
     resolve(SettingsManager::class)->flushCache();
 });
 
+test('settings manager is request scoped', function () {
+    $first = resolve(SettingsManager::class);
+
+    app()->forgetScopedInstances();
+
+    expect(resolve(SettingsManager::class))->not->toBe($first);
+});
+
 test('setMany saves multiple settings in a single transaction', function () {
     $manager = resolve(SettingsManager::class);
 

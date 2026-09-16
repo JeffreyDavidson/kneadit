@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Platform\WeeklyDigestData;
 use App\Events\Platform\WeeklyDigestRequested;
 use App\Listeners\Platform\SendWeeklyDigestEmailListener;
 use App\Mail\Platform\WeeklyDigestMail;
@@ -19,12 +20,14 @@ test('it sends weekly digest email to the user', function () {
     $user = User::factory()->create(['email' => 'baker@example.com']);
     $event = new WeeklyDigestRequested(
         user: $user,
-        stats: ['orders' => 12, 'revenue' => 450.00],
-        topProducts: new Collection,
-        atRiskCustomers: new Collection,
-        upcomingCount: 3,
-        storeName: 'Sweet Treats Bakery',
-        adminUrl: 'https://sweet-treats.kneadit.test/admin',
+        data: new WeeklyDigestData(
+            stats: ['total_orders' => 12, 'total_revenue' => '$450.00', 'new_customers' => 2, 'avg_order_value' => '$37.50'],
+            topProducts: new Collection,
+            atRiskCustomers: new Collection,
+            upcomingCount: 3,
+            storeName: 'Sweet Treats Bakery',
+            adminUrl: 'https://sweet-treats.kneadit.test/admin',
+        ),
     );
 
     $listener = new SendWeeklyDigestEmailListener;
@@ -43,12 +46,14 @@ test('failed method logs a warning with user email and error message', function 
     $user = User::factory()->create(['email' => 'baker@example.com']);
     $event = new WeeklyDigestRequested(
         user: $user,
-        stats: ['orders' => 12, 'revenue' => 450.00],
-        topProducts: new Collection,
-        atRiskCustomers: new Collection,
-        upcomingCount: 3,
-        storeName: 'Sweet Treats Bakery',
-        adminUrl: 'https://sweet-treats.kneadit.test/admin',
+        data: new WeeklyDigestData(
+            stats: ['total_orders' => 12, 'total_revenue' => '$450.00', 'new_customers' => 2, 'avg_order_value' => '$37.50'],
+            topProducts: new Collection,
+            atRiskCustomers: new Collection,
+            upcomingCount: 3,
+            storeName: 'Sweet Treats Bakery',
+            adminUrl: 'https://sweet-treats.kneadit.test/admin',
+        ),
     );
 
     $listener = new SendWeeklyDigestEmailListener;

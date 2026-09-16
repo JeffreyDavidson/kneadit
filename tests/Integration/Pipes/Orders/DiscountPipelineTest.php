@@ -57,10 +57,35 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
         ->and($coupon->refresh()->used_count)->toBe(1);
 });
 
+test('coupon transaction records only the coupon discount when discounts stack', function () {
+    settings([
+        'sitewide_sale_enabled' => '1',
+        'sitewide_sale_percent' => '10',
+    ]);
+
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00]);
+
+    $order = createOrderWith(['coupon_id' => $coupon->id]);
+
+    expect($order)
+        ->not->toBeNull()
+        ->discount_amount->dollars()->toBe(9.00)
+        ->and($order->total->dollars())->toBe(31.00);
+
+    $transaction = CouponTransaction::query()
+        ->where('order_id', $order->id)
+        ->sole();
+
+    expect($transaction->amount->dollars())->toBe(5.00);
+});
+
 test('order with gift card stores gift_card_id and gift_card_amount', function () {
     $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 
-    $order = createOrderWith(['gift_card_id' => $giftCard->id]);
+    $order = createOrderWith([
+        'gift_card_id' => $giftCard->id,
+        'gift_card_code' => $giftCard->code,
+    ]);
 
     expect($order)
         ->not->toBeNull()
@@ -81,6 +106,7 @@ test('order with both coupon and gift card applies coupon first then gift card',
     $order = createOrderWith([
         'coupon_id' => $coupon->id,
         'gift_card_id' => $giftCard->id,
+        'gift_card_code' => $giftCard->code,
     ]);
 
     // Subtotal: 2 * $20 = $40
@@ -100,7 +126,10 @@ test('order with both coupon and gift card applies coupon first then gift card',
 test('gift card with insufficient balance applies partial amount', function () {
     $giftCard = GiftCard::factory()->withBalance(15.00)->create();
 
-    $order = createOrderWith(['gift_card_id' => $giftCard->id]);
+    $order = createOrderWith([
+        'gift_card_id' => $giftCard->id,
+        'gift_card_code' => $giftCard->code,
+    ]);
 
     // Subtotal: $40, gift card: $15, remaining: $25
     expect($order->gift_card_amount->dollars())->toBe(15.00);
@@ -123,7 +152,10 @@ test('order without discounts has zero discount and gift card amounts', function
 test('expired gift card is not applied', function () {
     $giftCard = GiftCard::factory()->expired()->create(['initial_balance' => 50.00, 'current_balance' => 50.00]);
 
-    $order = createOrderWith(['gift_card_id' => $giftCard->id]);
+    $order = createOrderWith([
+        'gift_card_id' => $giftCard->id,
+        'gift_card_code' => $giftCard->code,
+    ]);
 
     expect($order)
         ->gift_card_id->toBeNull()
@@ -135,7 +167,10 @@ test('expired gift card is not applied', function () {
 test('depleted gift card is not applied', function () {
     $giftCard = GiftCard::factory()->depleted()->create(['initial_balance' => 50.00]);
 
-    $order = createOrderWith(['gift_card_id' => $giftCard->id]);
+    $order = createOrderWith([
+        'gift_card_id' => $giftCard->id,
+        'gift_card_code' => $giftCard->code,
+    ]);
 
     expect($order)
         ->gift_card_id->toBeNull()

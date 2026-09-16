@@ -10,7 +10,7 @@ class DirectoryController extends Controller
 {
     public function __invoke(): View
     {
-        return view('platform.directory', [
+        return view('central.marketing.directory', [
             'bakeries' => ActiveBakeriesQuery::get(),
         ]);
     }

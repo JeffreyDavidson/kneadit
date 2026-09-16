@@ -2,12 +2,12 @@
 
 namespace App\Services\Engagement\Engagements;
 
-use App\Contracts\Engagement\CustomerEngagement;
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
+use App\Services\Engagement\Contracts\CustomerEngagement;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Collection;

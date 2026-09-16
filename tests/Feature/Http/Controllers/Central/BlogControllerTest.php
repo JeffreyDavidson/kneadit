@@ -2,6 +2,7 @@
 
 use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
+use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
 
@@ -11,7 +12,51 @@ beforeEach(function () {
 });
 
 test('blog index page renders', function () {
-    get(route('blog.index'))->assertOk();
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test/register">Start Your Free Trial →</a>');
+});
+
+test('blog index metadata uses application URLs', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<meta property="og:image" content="https://kneadit.test/og.svg" />')
+        ->assertSeeHtml('<link rel="icon" href="https://kneadit.test/images/logo-icon.png" type="image/png" />')
+        ->assertSeeHtml('href="https://kneadit.test/resources/feed.xml"')
+        ->assertDontSee('https://getkneadit.app/og.svg');
+});
+
+test('blog header navigation uses application routes', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test" class="nav-brand">KneadIt</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test">Home</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#features">Features</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#pricing">Pricing</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test#contact">Contact</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/resources">Resources</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/register" class="nav-cta">Get Started</a>');
+});
+
+test('blog footer navigation uses application routes', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('<a href="https://kneadit.test/terms">Terms</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/privacy">Privacy</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/resources">Resources</a>')
+        ->assertSeeHtml('<a href="https://kneadit.test/changelog">Changelog</a>');
 });
 
 test('index validates category against allowed values', function () {
@@ -20,6 +65,9 @@ test('index validates category against allowed values', function () {
 });
 
 test('blog show renders a central post by slug', function () {
+    URL::forceRootUrl('https://kneadit.test');
+    URL::forceScheme('https');
+
     $post = BlogPost::factory()
         ->published()
         ->create([
@@ -29,7 +77,8 @@ test('blog show renders a central post by slug', function () {
 
     get(route('blog.show', $post->slug))
         ->assertOk()
-        ->assertSee('Central Resource Article');
+        ->assertSee('Central Resource Article')
+        ->assertSeeHtml('<a href="https://kneadit.test/register">Start Your Free Trial →</a>');
 });
 
 test('blog show ignores related published posts without routable slugs', function () {

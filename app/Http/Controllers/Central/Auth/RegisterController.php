@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Controllers\Central\Auth;
+
+use App\Actions\Staff\CreateUser;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+
+class RegisterController extends Controller
+{
+    public function store(RegisterRequest $request, CreateUser $createUser): RedirectResponse
+    {
+        /** @var array{name: string, email: string, password: string} $data */
+        $data = $request->validated();
+        $user = $createUser($data);
+
+        session([
+            'bakery_name' => $request->validated('bakery_name'),
+        ]);
+
+        Auth::login($user);
+
+        return to_route('billing.plans');
+    }
+
+    public function show(): View
+    {
+        return view('central.auth.register');
+    }
+}

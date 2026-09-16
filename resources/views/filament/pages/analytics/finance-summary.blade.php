@@ -29,7 +29,7 @@
 
                 <div class="rounded-lg bg-blue-50 p-6">
                     <div class="text-sm font-medium text-blue-600">Net Profit</div>
-                    <div class="text-3xl font-bold {{ $netProfit >= 0 ? 'text-green-900' : 'text-red-900' }}">
+                    <div @class(['text-3xl font-bold', 'text-green-900' => $netProfit >= 0, 'text-red-900' => $netProfit < 0])>
                         @money($netProfit)
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                                     <td class="px-4 py-3 font-medium">{{ $month['month_name'] }}</td>
                                     <td class="px-4 py-3 text-right text-green-600">@money($month['revenue'])</td>
                                     <td class="px-4 py-3 text-right text-red-600">@money($month['expenses'])</td>
-                                    <td class="px-4 py-3 text-right font-medium {{ $month['net'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                    <td @class(['px-4 py-3 text-right font-medium', 'text-green-600' => $month['net'] >= 0, 'text-red-600' => $month['net'] < 0])>
                                         @money($month['net'])
                                     </td>
                                 </tr>

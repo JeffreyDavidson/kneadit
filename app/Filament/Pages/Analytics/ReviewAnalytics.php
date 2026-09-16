@@ -2,6 +2,10 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Analytics\RatingDistributionEntry;
+use App\DataTransferObjects\Analytics\RecentReview;
+use App\DataTransferObjects\Analytics\ReviewMonthlyTrend;
+use App\DataTransferObjects\Analytics\TopReviewedProduct;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -41,39 +45,49 @@ class ReviewAnalytics extends Page
         return resolve(ReviewAnalyticsService::class);
     }
 
-    /** @return array<string, mixed> */
+    /** @return array{total_reviews: int, average_rating: float, approval_rate: float, approved_reviews: int} */
     public function getOverallStats(): array
     {
-        return $this->service()->getOverallStats();
+        return $this->service()->getOverallStats()->toArray();
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<array{rating: int, count: int, percentage: float}> */
     public function getRatingDistribution(): array
     {
-        return $this->service()->getRatingDistribution();
+        return array_map(
+            static fn (RatingDistributionEntry $entry): array => $entry->toArray(),
+            $this->service()->getRatingDistribution(),
+        );
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<array{month: string, month_key: string, count: int, avg_rating: float}> */
     public function getMonthlyTrend(): array
     {
-        return $this->service()->getMonthlyTrend();
+        return array_map(
+            static fn (ReviewMonthlyTrend $trend): array => $trend->toArray(),
+            $this->service()->getMonthlyTrend(),
+        );
     }
 
-    /** @return Collection<int, array{id: int, name: string, reviews_count: ?int, average_rating: float|0}> */
+    /** @return Collection<int, array{id: int, name: string, reviews_count: int|null, average_rating: float}> */
     public function getTopReviewedProducts(): Collection
     {
-        return $this->service()->getTopReviewedProducts();
+        return $this->service()->getTopReviewedProducts()->map(
+            static fn (TopReviewedProduct $product): array => $product->toArray(),
+        );
     }
 
     /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
     public function getRecentReviews(): Collection
     {
-        return $this->service()->getRecentReviews();
+        return $this->service()->getRecentReviews()->map(
+            static fn (RecentReview $review): array => $review->toArray(),
+        );
     }
 
-    /** @return array<string, float> */
+    /** @return array{positive: float, neutral: float, negative: float} */
     public function getSentimentAnalysis(): array
     {
-        return $this->service()->getSentimentAnalysis();
+        return $this->service()->getSentimentAnalysis()->toArray();
     }
 }

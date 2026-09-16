@@ -63,7 +63,7 @@ test('command handles tenant processing exceptions gracefully', function () {
 
     $this->artisan('paypal:check-payments')
         ->expectsOutputToContain('Error processing')
-        ->assertSuccessful();
+        ->assertFailed();
 });
 
 test('command source uses TenancyManager for tenant context', function () {

@@ -4,6 +4,7 @@ namespace App\Console\Commands\Tenants;
 
 use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
+use App\Actions\Tenants\LegacyBakeryDataValidator;
 use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Description;
@@ -14,7 +15,7 @@ use Illuminate\Console\Command;
 #[Description('Import a legacy Bakery on Biscotto dataset into an existing KneadIt tenant')]
 class ImportLegacyBakeryCommand extends Command
 {
-    public function handle(ImportLegacyBakeryData $import, ImportLegacyBakeryAssets $importAssets): int
+    public function handle(ImportLegacyBakeryData $import, ImportLegacyBakeryAssets $importAssets, LegacyBakeryDataValidator $validator): int
     {
         $path = realpath($this->argument('file'));
 
@@ -44,6 +45,14 @@ class ImportLegacyBakeryCommand extends Command
         $counts = $importData->counts();
 
         if ($this->option('dry-run')) {
+            try {
+                $validator($data);
+            } catch (\InvalidArgumentException $exception) {
+                $this->error($exception->getMessage());
+
+                return self::FAILURE;
+            }
+
             $this->table(['Dataset', 'Records'], $this->tableRows($counts));
 
             return self::SUCCESS;
@@ -67,7 +76,7 @@ class ImportLegacyBakeryCommand extends Command
 
         try {
             $assetImport = $importAssets($data, $assetDirectory, $tenant->id);
-            $data = $assetImport['data'];
+            $importData = LegacyBakeryImportData::from($assetImport['data']);
         } catch (\InvalidArgumentException $exception) {
             $this->error($exception->getMessage());
 
@@ -85,7 +94,7 @@ class ImportLegacyBakeryCommand extends Command
 
         try {
             /** @var array<string, int> $result */
-            $result = $tenant->run(fn (): array => $import($data));
+            $result = $tenant->run(fn (): array => $import($importData));
         } catch (\InvalidArgumentException $exception) {
             $this->error($exception->getMessage());
 

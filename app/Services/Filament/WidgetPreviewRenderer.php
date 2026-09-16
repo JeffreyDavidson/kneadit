@@ -59,10 +59,10 @@ class WidgetPreviewRenderer
         } catch (Throwable $e) {
             Log::warning('WidgetPreviewRenderer failed', [
                 'widget' => $widgetClass,
-                'error' => $e->getMessage(),
+                'exception' => $e,
             ]);
 
-            return $this->placeholder('Widget render failed: ' . e($e->getMessage()));
+            return $this->placeholder('Widget preview is unavailable.');
         } finally {
             foreach ($snapshot as $property => $value) {
                 $this->restore($factory, $property, $value);

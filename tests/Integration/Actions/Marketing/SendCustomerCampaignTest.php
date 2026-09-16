@@ -48,6 +48,15 @@ test('refuses to re-send a campaign that is already Sent', function () {
     expect($campaign->fresh()->recipient_count)->toBe(50);
 });
 
+test('refuses to send a campaign claimed by another worker', function () {
+    $campaign = CustomerCampaign::factory()->sending()->create();
+
+    $sent = resolve(SendCustomerCampaign::class)($campaign);
+
+    expect($sent)->toBe(0);
+    Mail::assertNothingQueued();
+});
+
 test('queues nothing when there are no recipients in the segment', function () {
     $campaign = CustomerCampaign::factory()->create(['target_segment' => 'all']);
 

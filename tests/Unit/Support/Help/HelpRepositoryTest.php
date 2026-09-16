@@ -2,13 +2,14 @@
 
 use App\Support\Help\HelpRepository;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     test()->tmp = sys_get_temp_dir() . '/help-' . uniqid();
-    mkdir(test()->tmp . '/getting-started', 0755, true);
-    mkdir(test()->tmp . '/billing', 0755, true);
+    File::ensureDirectoryExists(test()->tmp . '/getting-started');
+    File::ensureDirectoryExists(test()->tmp . '/billing');
 
-    file_put_contents(test()->tmp . '/getting-started/setup.md', <<<'MD'
+    File::put(test()->tmp . '/getting-started/setup.md', <<<'MD'
 # Setup Guide
 
 Welcome! Open **Settings** to begin.
@@ -17,7 +18,7 @@ Welcome! Open **Settings** to begin.
 - Step two
 MD);
 
-    file_put_contents(test()->tmp . '/billing/plans.md', "# Plans\n\nWe have three.\n");
+    File::put(test()->tmp . '/billing/plans.md', "# Plans\n\nWe have three.\n");
 
     config()->set('help.topics', [
         'getting-started' => [
@@ -36,9 +37,7 @@ MD);
 });
 
 afterEach(function () {
-    array_map('unlink', glob(test()->tmp . '/*/*.md') ?: []);
-    array_map('rmdir', glob(test()->tmp . '/*') ?: []);
-    @rmdir(test()->tmp);
+    File::deleteDirectory(test()->tmp);
 });
 
 test('topics() returns config-ordered topics with discovered articles', function () {
@@ -54,6 +53,18 @@ test('topics() returns config-ordered topics with discovered articles', function
         ->and($topics[0]['articles'][0]['title'])->toBe('Setup Guide')
         ->and($topics[0]['articles'][0]['content'])->toContain('<strong>Settings</strong>')
         ->and($topics[1]['slug'])->toBe('billing');
+});
+
+test('articles are alphabetized and limited to Markdown files', function () {
+    File::put(test()->tmp . '/billing/z-last.md', "# Last\n");
+    File::put(test()->tmp . '/billing/a-first.md', "# First\n");
+    File::put(test()->tmp . '/billing/ignored.txt', 'Not a help article');
+
+    $topics = (new HelpRepository(test()->tmp))->topics();
+
+    expect($topics[1]['articles'])->toHaveCount(3)
+        ->and(array_column($topics[1]['articles'], 'slug'))
+        ->toBe(['a-first', 'plans', 'z-last']);
 });
 
 test('find() returns parsed article or null', function () {
@@ -73,7 +84,7 @@ test('find() returns parsed article or null', function () {
 });
 
 test('articles missing an H1 fall back to a slug-derived title', function () {
-    file_put_contents(test()->tmp . '/billing/no-heading.md', "Just a paragraph, no heading.\n");
+    File::put(test()->tmp . '/billing/no-heading.md', "Just a paragraph, no heading.\n");
 
     $repo = new HelpRepository(test()->tmp);
     $article = $repo->find('billing/no-heading');

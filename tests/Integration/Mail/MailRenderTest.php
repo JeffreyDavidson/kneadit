@@ -9,6 +9,7 @@ use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 
 pest()->use(RefreshDatabase::class);
 
@@ -22,33 +23,54 @@ test('HealthAlertMail has correct subject and renders', function () {
 });
 
 test('PaymentFailedMail has correct subject and renders', function () {
+    URL::forceRootUrl('https://mail.kneadit.test');
+    URL::forceScheme('https');
     $user = User::factory()->owner()->create();
     $mail = new PaymentFailedMail($user);
 
     $mail->assertHasSubject('⚠️ Payment failed — action needed');
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://mail.kneadit.test/billing/portal');
 });
 
 test('ScheduledCheckinMail has correct subject and renders', function () {
-    $mail = new ScheduledCheckinMail('Check-in body text', 'How is your bakery going?');
+    $mail = new ScheduledCheckinMail(
+        body: 'Check-in body text',
+        emailSubject: 'How is your bakery going?',
+        adminUrl: 'https://test-bakery.kneadit.test/admin',
+        helpUrl: 'https://test-bakery.kneadit.test/admin/help-center',
+    );
 
     $mail->assertHasSubject('How is your bakery going?');
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://test-bakery.kneadit.test/admin')
+        ->toContain('https://test-bakery.kneadit.test/admin/help-center');
 });
 
 test('TrialExpiredMail has correct subject and renders', function () {
+    URL::forceRootUrl('https://mail.kneadit.test');
+    URL::forceScheme('https');
     $user = User::factory()->owner()->create();
-    $mail = new TrialExpiredMail($user, 'test-tenant');
+    $mail = new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin');
 
     $mail->assertHasSubject('Your KneadIt trial has expired');
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://mail.kneadit.test/billing/plans')
+        ->toContain('https://test-tenant.kneadit.test/admin');
 });
 
 test('TrialReminderMail has correct subject for 7 days and renders', function () {
+    URL::forceRootUrl('https://mail.kneadit.test');
+    URL::forceScheme('https');
     $user = User::factory()->owner()->create();
     $mail = new TrialReminderMail($user, 'Test Bakery', 7);
 
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('https://mail.kneadit.test/billing/plans');
 });
 
 test('WelcomeBaker has correct subject and renders', function () {
@@ -59,8 +81,18 @@ test('WelcomeBaker has correct subject and renders', function () {
 });
 
 test('NewSubscriberNotification has correct subject and renders', function () {
-    $mail = new NewSubscriberNotificationMail('Jane', 'jane@test.com', 'Jane\'s Bakery', 'janes-bakery', 'starter');
+    $mail = new NewSubscriberNotificationMail(
+        'Jane',
+        'jane@test.com',
+        'Jane\'s Bakery',
+        'janes-bakery.kneadit.test',
+        'starter',
+        'https://kneadit.test/central',
+    );
 
     $mail->assertHasSubject("New KneadIt Signup — Jane's Bakery");
-    expect($mail->render())->toBeString();
+    expect($mail->render())
+        ->toBeString()
+        ->toContain('janes-bakery.kneadit.test')
+        ->toContain('https://kneadit.test/central');
 });

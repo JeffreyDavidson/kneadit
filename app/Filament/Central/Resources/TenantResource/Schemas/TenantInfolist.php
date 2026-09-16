@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -25,8 +26,8 @@ class TenantInfolist
                                 ->placeholder('Not set'),
                             TextEntry::make('id')
                                 ->label('Subdomain URL')
-                                ->formatStateUsing(fn (string $state) => $state . '.getkneadit.app')
-                                ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                                ->formatStateUsing(fn (Tenant $record, TenantUrlGenerator $urls): string => $urls->storefrontHost($record))
+                                ->url(fn (Tenant $record, TenantUrlGenerator $urls): string => $urls->storefront($record))
                                 ->openUrlInNewTab(),
                             TextEntry::make('custom_domain')
                                 ->label('Custom Domain')

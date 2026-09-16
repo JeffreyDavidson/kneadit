@@ -5,13 +5,13 @@ namespace App\Filament\Central\Pages;
 use App\Enums\Platform\PlatformEventType;
 use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\PlatformActivity;
+use App\Queries\Platform\AdminAuditLogQuery;
+use App\Queries\Platform\PlatformActivityQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class Activity extends Page
@@ -70,49 +70,27 @@ class Activity extends Page
     /** @return Collection<int, PlatformActivity> */
     public function getActivities(): Collection
     {
-        $query = PlatformActivity::query()->latest('created_at');
-
-        if ($this->filterEvent) {
-            $query->where('event', $this->filterEvent);
-        }
-
-        if ($this->filterEventSearch) {
-            $query->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
-                $q->whereLike('description', '%' . $this->filterEventSearch . '%')
-                    ->orWhereLike('tenant_id', '%' . $this->filterEventSearch . '%');
-            });
-        }
-
-        if ($this->filterEventDateFrom) {
-            $query->where('created_at', '>=', Date::parse($this->filterEventDateFrom)->startOfDay());
-        }
-
-        if ($this->filterEventDateTo) {
-            $query->where('created_at', '<=', Date::parse($this->filterEventDateTo)->endOfDay());
-        }
-
-        return $query->limit(100)->get();
+        return resolve(PlatformActivityQuery::class)->get([
+            'event' => $this->filterEvent,
+            'search' => $this->filterEventSearch,
+            'date_from' => $this->filterEventDateFrom,
+            'date_to' => $this->filterEventDateTo,
+        ]);
     }
 
     public function getEventTodayCountProperty(): int
     {
-        return PlatformActivity::query()->where('created_at', '>=', today())->count();
+        return resolve(PlatformActivityQuery::class)->todayCount();
     }
 
     public function getEventWeekCountProperty(): int
     {
-        return PlatformActivity::query()->where('created_at', '>=', now()->startOfWeek())->count();
+        return resolve(PlatformActivityQuery::class)->weekCount();
     }
 
     public function getMostCommonEventProperty(): string
     {
-        $row = PlatformActivity::query()->select('event', DB::raw('count(*) as cnt'))
-            ->where('created_at', '>=', now()->startOfWeek())
-            ->groupBy('event')
-            ->orderByDesc('cnt')
-            ->first();
-
-        return $row->event ?? '—';
+        return resolve(PlatformActivityQuery::class)->mostCommonEvent();
     }
 
     public function resetEventFilters(): void
@@ -161,46 +139,27 @@ class Activity extends Page
     /** @return LengthAwarePaginator<int, AdminAuditLog> */
     public function getLogsProperty(): LengthAwarePaginator
     {
-        $query = AdminAuditLog::query()->latest();
-
-        if ($this->filterAction) {
-            $query->forAction($this->filterAction);
-        }
-
-        if ($this->filterSearch) {
-            $query->whereLike('description', '%' . $this->filterSearch . '%');
-        }
-
-        if ($this->filterDateFrom) {
-            $query->where('created_at', '>=', Date::parse($this->filterDateFrom)->startOfDay());
-        }
-
-        if ($this->filterDateTo) {
-            $query->where('created_at', '<=', Date::parse($this->filterDateTo)->endOfDay());
-        }
-
-        return $query->paginate($this->perPage, ['*'], 'page', $this->page);
+        return resolve(AdminAuditLogQuery::class)->paginate([
+            'action' => $this->filterAction,
+            'search' => $this->filterSearch,
+            'date_from' => $this->filterDateFrom,
+            'date_to' => $this->filterDateTo,
+        ], $this->perPage, $this->page);
     }
 
     public function getTodayCountProperty(): int
     {
-        return AdminAuditLog::query()->where('created_at', '>=', today())->count();
+        return resolve(AdminAuditLogQuery::class)->todayCount();
     }
 
     public function getWeekCountProperty(): int
     {
-        return AdminAuditLog::query()->where('created_at', '>=', now()->startOfWeek())->count();
+        return resolve(AdminAuditLogQuery::class)->weekCount();
     }
 
     public function getMostCommonActionProperty(): string
     {
-        $action = AdminAuditLog::query()->select('action', DB::raw('count(*) as cnt'))
-            ->where('created_at', '>=', now()->startOfWeek())
-            ->groupBy('action')
-            ->orderByDesc('cnt')
-            ->first();
-
-        return $action->action ?? '—';
+        return resolve(AdminAuditLogQuery::class)->mostCommonAction();
     }
 
     public function previousPage(): void

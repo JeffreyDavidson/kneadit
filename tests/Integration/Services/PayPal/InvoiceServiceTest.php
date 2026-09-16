@@ -2,6 +2,7 @@
 
 use App\Actions\Orders\RecordPayPalInvoice;
 use App\Models\Orders\Order;
+use App\Services\PayPal\HttpPayPalClient;
 use App\Services\PayPal\InvoicePayloadBuilder;
 use App\Services\PayPal\InvoiceService;
 use App\Services\PayPal\TokenManager;
@@ -52,7 +53,7 @@ test('creates and sends invoice successfully', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $invoiceId = $service->createAndSend($order);
 
     expect($invoiceId)->toBe('INV-123')
@@ -64,7 +65,7 @@ test('returns null when no access token', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -78,7 +79,7 @@ test('cancels an invoice successfully', function () {
 
     $tokenManager = invoiceServiceTokenManager('test-token');
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->cancel('INV-456');
 
     expect($result)->toBeTrue();
@@ -94,7 +95,7 @@ test('returns null when create invoice API call fails', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -111,7 +112,7 @@ test('returns null when send invoice API call fails', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -120,7 +121,7 @@ test('returns null when send invoice API call fails', function () {
 test('cancel returns false when no access token', function () {
     $tokenManager = invoiceServiceTokenManager(null);
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->cancel('INV-123');
 
     expect($result)->toBeFalse();
@@ -134,7 +135,7 @@ test('cancel returns false when API call fails', function () {
 
     $tokenManager = invoiceServiceTokenManager('test-token');
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->cancel('INV-999');
 
     expect($result)->toBeFalse();
@@ -156,7 +157,7 @@ test('creates invoice with delivery fee and discount', function () {
         'total' => 22.50,
     ]);
 
-    $service = new InvoiceService($tokenManager, invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
+    $service = new InvoiceService(new HttpPayPalClient($tokenManager), invoiceServicePayloadBuilder(), new RecordPayPalInvoice);
     $result = $service->createAndSend($order);
 
     expect($result)->toBe('INV-DELIVERY');

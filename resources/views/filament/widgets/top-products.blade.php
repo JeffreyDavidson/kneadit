@@ -1,8 +1,8 @@
 @php $products = $this->getProducts(); @endphp
 
-<x-admin.dashboard.preview-card heading="Top Products This Month" icon="heroicon-o-star">
+<x-tenant-admin.dashboard.preview-card heading="Top Products This Month" icon="heroicon-o-star">
     @forelse ($products as $product)
-        <x-admin.dashboard.bar-row
+        <x-tenant-admin.dashboard.bar-row
             :label="$product['name']"
             :pct="$product['percentage']"
             :value="$product['revenue_formatted'] . ' · ' . $product['units_sold'] . ' sold'"
@@ -12,4 +12,4 @@
             No sales yet this month
         </div>
     @endforelse
-</x-admin.dashboard.preview-card>
+</x-tenant-admin.dashboard.preview-card>

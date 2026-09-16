@@ -1,9 +1,10 @@
 <?php
 
-use App\Contracts\Engagement\CustomerEngagement;
-use App\Contracts\Engagement\EngagementRecipient;
 use App\Models\Customers\Customer;
+use App\Services\Engagement\Contracts\CustomerEngagement;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\EngagementDispatcher;
+use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
@@ -12,6 +13,15 @@ use JMac\Testing\Double;
 function makeFakeTenantSettings(): TenantSettings
 {
     return makeTenantSettings();
+}
+
+function makeRunTracker(): ScheduledNotificationRunTracker
+{
+    $tracker = Double::for(ScheduledNotificationRunTracker::class);
+    $tracker->allows('claim')->returns(true);
+    $tracker->allows('release');
+
+    return $tracker;
 }
 
 test('dispatches engagement to recipients across tenants', function () {
@@ -49,7 +59,7 @@ test('dispatches engagement to recipients across tenants', function () {
     $output->allows('info')->returns($output);
     $output->allows('error')->returns($output);
 
-    $dispatcher = new EngagementDispatcher($tenancyManager);
+    $dispatcher = new EngagementDispatcher($tenancyManager, makeRunTracker());
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(0);
@@ -76,7 +86,7 @@ test('skips disabled engagements', function () {
     $output = Double::for(Command::class);
     $output->allows('info')->returns($output);
 
-    $dispatcher = new EngagementDispatcher($tenancyManager);
+    $dispatcher = new EngagementDispatcher($tenancyManager, makeRunTracker());
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(0);
@@ -104,7 +114,7 @@ test('skips when no recipients found', function () {
     $output = Double::for(Command::class);
     $output->expects('info')->never();
 
-    $dispatcher = new EngagementDispatcher($tenancyManager);
+    $dispatcher = new EngagementDispatcher($tenancyManager, makeRunTracker());
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(0);
@@ -143,7 +153,7 @@ test('handles recipient dispatch failure gracefully', function () {
     $output = Double::for(Command::class);
     $output->expects('error');
 
-    $dispatcher = new EngagementDispatcher($tenancyManager);
+    $dispatcher = new EngagementDispatcher($tenancyManager, makeRunTracker());
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(0);
@@ -166,7 +176,7 @@ test('calls error callback when tenant processing fails', function () {
     $output = Double::for(Command::class);
     $output->expects('error');
 
-    $dispatcher = new EngagementDispatcher($tenancyManager);
+    $dispatcher = new EngagementDispatcher($tenancyManager, makeRunTracker());
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(1);

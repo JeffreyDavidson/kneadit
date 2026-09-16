@@ -2,8 +2,8 @@
 
 namespace App\Services\Tenants;
 
-use App\Contracts\Tenants\LegacyCouponImporter;
 use App\Enums\Financial\CouponType;
+use App\Services\Tenants\Contracts\LegacyCouponImporter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;

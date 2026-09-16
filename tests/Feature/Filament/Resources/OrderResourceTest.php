@@ -5,6 +5,7 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -42,9 +43,15 @@ test('can render table columns', function () {
 
 test('can render the view order page', function () {
     $order = Order::factory()->recycle(test()->customer)->create();
+    OrderMessage::factory()->for($order)->fromBaker()->create(['message' => 'Your bread is ready.']);
+    OrderMessage::factory()->for($order)->fromCustomer()->create(['message' => 'Thank you, see you soon.']);
 
     livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
-        ->assertOk();
+        ->assertOk()
+        ->assertSee('Your bread is ready.')
+        ->assertSee('Thank you, see you soon.')
+        ->assertSee('flex justify-end', false)
+        ->assertSee('flex justify-start', false);
 });
 
 test('view order page renders the Catering section when the order is linked to an inquiry', function () {

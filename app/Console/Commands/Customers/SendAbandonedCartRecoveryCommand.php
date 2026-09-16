@@ -15,6 +15,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Throwable;
 
 #[Signature('carts:send-abandonment-emails')]
 #[Description('Email customers who left items in their cart and did not check out')]
@@ -32,9 +33,16 @@ class SendAbandonedCartRecoveryCommand extends Command
 
                 $cutoff = now()->subHours($engagement->abandonedCartRecoveryHours);
 
+                Cart::query()
+                    ->whereNotNull('recovery_claimed_at')
+                    ->where('recovery_claimed_at', '<=', now()->subHour())
+                    ->whereNull('recovery_sent_at')
+                    ->update(['recovery_claimed_at' => null]);
+
                 $carts = Cart::query()
                     ->whereNotNull('customer_email')
                     ->whereNull('recovery_sent_at')
+                    ->whereNull('recovery_claimed_at')
                     ->whereNull('converted_at')
                     ->where('last_activity_at', '<=', $cutoff)
                     ->whereHas('items')
@@ -42,13 +50,32 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->get();
 
                 foreach ($carts as $cart) {
+                    $claimed = Cart::query()
+                        ->whereKey($cart->getKey())
+                        ->whereNull('recovery_sent_at')
+                        ->whereNull('recovery_claimed_at')
+                        ->update(['recovery_claimed_at' => now()]);
+
+                    if ($claimed !== 1) {
+                        continue;
+                    }
+
                     $coupon = $engagement->abandonedCartRecoveryCouponDollars > 0
                         ? $this->mintCoupon($engagement->abandonedCartRecoveryCouponDollars)
                         : null;
 
-                    Mail::to($cart->customer_email)->queue(new AbandonedCartRecoveryMail($cart, $coupon));
+                    try {
+                        Mail::to($cart->customer_email)->queue(new AbandonedCartRecoveryMail($cart, $coupon));
 
-                    $cart->forceFill(['recovery_sent_at' => now()])->save();
+                        $cart->forceFill([
+                            'recovery_sent_at' => now(),
+                            'recovery_claimed_at' => null,
+                        ])->save();
+                    } catch (Throwable $exception) {
+                        $cart->forceFill(['recovery_claimed_at' => null])->save();
+
+                        throw $exception;
+                    }
                 }
 
                 if ($carts->isNotEmpty()) {

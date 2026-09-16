@@ -17,7 +17,6 @@ class StoreApiFavoriteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
             'product_id' => ['required', 'exists:products,id'],
         ];
     }

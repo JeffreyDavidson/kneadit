@@ -102,7 +102,14 @@ test('platform account mail classes render without errors', function () {
         ->toBeString()
         ->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\NewSubscriberNotificationMail('Jane', 'jane@example.com', 'Sweet Bakery', 'sweet-bakery', 'starter'))->render())
+    expect((new App\Mail\Platform\NewSubscriberNotificationMail(
+        'Jane',
+        'jane@example.com',
+        'Sweet Bakery',
+        'sweet-bakery.kneadit.test',
+        'starter',
+        'https://kneadit.test/central',
+    ))->render())
         ->toBeString()
         ->not->toBeEmpty();
 
@@ -116,7 +123,7 @@ test('platform account mail classes render without errors', function () {
         ->toBeString()
         ->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\TrialExpiredMail($user, 'test-tenant'))->render())
+    expect((new App\Mail\Platform\TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin'))->render())
         ->toBeString()
         ->not->toBeEmpty();
 });

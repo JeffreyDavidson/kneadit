@@ -21,11 +21,12 @@ class EnforceMinimumOrderAmount
         $minimum = (float) ($isDelivery
             ? $orders->minimumDeliveryOrderAmount
             : $orders->minimumPickupOrderAmount);
+        $minimumMoney = \App\ValueObjects\Money::fromDollars($minimum);
 
-        if ($minimum > 0 && $payload->subtotal < $minimum) {
+        if ($minimumMoney->isPositive() && $minimumMoney->greaterThan($payload->subtotal)) {
             throw new MinimumOrderAmountNotMetException(
                 deliveryType: $payload->data->deliveryType,
-                subtotal: $payload->subtotal,
+                subtotal: $payload->subtotal->dollars(),
                 minimum: $minimum,
             );
         }
