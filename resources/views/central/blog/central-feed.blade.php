@@ -1,20 +1,20 @@
 @php echo '<?xml version="1.0" encoding="UTF-8"?>'; @endphp
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>KneadIt — Resources for Cottage Food Bakers</title>
-        <link />{{ route('blog.index') }}</link>
-        <description>Guides, tips, and resources for cottage food bakers.</description>
-        <language>en-us</language>
-        <atom:link href="{{ route('blog.feed') }}" rel="self" type="application/rss+xml" />
-        @foreach ($posts as $post)
-            <item>
-                <title>{{ htmlspecialchars($post->title) }}</title>
-                <link />{{ route('blog.show', ['centralPost' => $post->slug]) }}</link>
-                <guid isPermaLink="true">{{ route('blog.show', ['centralPost' => $post->slug]) }}</guid>
-                <description>{{ htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))) }}</description>
-                <pubDate>{{ $post->published_at?->toRfc2822String() }}</pubDate>
-                <category>{{ $post->category?->getLabel() ?? 'Uncategorized' }}</category>
-            </item>
-        @endforeach
-    </channel>
+<channel>
+    <title>KneadIt — Resources for Cottage Food Bakers</title>
+    <link>{{ route('blog.index') }}</link>
+    <description>Guides, tips, and resources for cottage food bakers.</description>
+    <language>en-us</language>
+    <atom:link href="{{ route('blog.feed') }}" rel="self" type="application/rss+xml"/>
+    @foreach ($posts as $post)
+    <item>
+        <title>{{ htmlspecialchars($post->title) }}</title>
+        <link>{{ route('blog.show', ['centralPost' => $post->slug]) }}</link>
+        <guid isPermaLink="true">{{ route('blog.show', ['centralPost' => $post->slug]) }}</guid>
+        <description>{{ htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))) }}</description>
+        <pubDate>{{ $post->published_at?->toRfc2822String() }}</pubDate>
+        <category>{{ $post->category?->getLabel() ?? 'Uncategorized' }}</category>
+    </item>
+    @endforeach
+</channel>
 </rss>

@@ -2,5 +2,9 @@
     "preset": "laravel",
     "rules": {
         "Pint/laravel_blade": true
-    }
+    },
+    "notPath": [
+        "resources/views/central/blog/central-feed.blade.php",
+        "resources/views/tenant/storefront/blog/feed.blade.php"
+    ]
 }
