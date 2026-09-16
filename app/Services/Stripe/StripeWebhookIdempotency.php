@@ -2,7 +2,9 @@
 
 namespace App\Services\Stripe;
 
+use Closure;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 final class StripeWebhookIdempotency
 {
@@ -29,13 +31,28 @@ final class StripeWebhookIdempotency
         }
     }
 
-    public function alreadyProcessed(?string $eventId): bool
+    /**
+     * @template TResult
+     *
+     * @param Closure(): TResult $callback
+     * @return TResult|null
+     */
+    public function process(?string $eventId, Closure $callback): mixed
     {
-        if (! $eventId) {
-            return false;
+        if (! $this->claim($eventId)) {
+            return null;
         }
 
-        return ! Cache::add($this->key($eventId), true, now()->addHours(24));
+        try {
+            $result = $callback();
+            $this->complete($eventId);
+
+            return $result;
+        } catch (Throwable $exception) {
+            $this->release($eventId);
+
+            throw $exception;
+        }
     }
 
     private function key(string $eventId): string

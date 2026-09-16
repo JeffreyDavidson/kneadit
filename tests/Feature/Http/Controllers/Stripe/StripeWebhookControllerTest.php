@@ -187,10 +187,3 @@ test('handleInvoicePaymentFailed skips when user not found for customer', functi
 
     Event::assertNotDispatched(PaymentFailed::class);
 });
-
-test('alreadyProcessed returns false for missing event id', function () {
-    $controller = app(StripeWebhookController::class);
-    $method = new ReflectionMethod($controller, 'alreadyProcessed');
-
-    expect($method->invoke($controller, []))->toBeFalse();
-});
