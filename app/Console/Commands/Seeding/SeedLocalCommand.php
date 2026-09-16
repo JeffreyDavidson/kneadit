@@ -11,6 +11,7 @@ use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Faker\Factory as Faker;
+use Faker\Generator;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -129,7 +130,7 @@ class SeedLocalCommand extends Command
 
             if (! $result->successful()) {
                 $this->newLine();
-                $this->error("Failed to create {$spec['id']}: " . trim($result->errorOutput() ?: $result->output()));
+                $this->error("Failed to create {$spec['id']}: ".trim($result->errorOutput() ?: $result->output()));
                 $bar->advance();
 
                 continue;
@@ -161,10 +162,10 @@ class SeedLocalCommand extends Command
     /**
      * @return array<string, string>
      */
-    private function generateTenantSpec(\Faker\Generator $faker, int $index): array
+    private function generateTenantSpec(Generator $faker, int $index): array
     {
-        $storeName = ucfirst($faker->word) . ' ' . collect(self::STORE_TYPES)->random();
-        $id = Str::slug($storeName) . '-' . ($index + 1);
+        $storeName = ucfirst($faker->word).' '.collect(self::STORE_TYPES)->random();
+        $id = Str::slug($storeName).'-'.($index + 1);
         $palette = collect(self::PALETTES)->random();
 
         return [
@@ -177,7 +178,7 @@ class SeedLocalCommand extends Command
         ];
     }
 
-    private function randomizeTenantAttributes(Tenant $tenant, \Faker\Generator $faker, ?int $grantedByUserId = null): void
+    private function randomizeTenantAttributes(Tenant $tenant, Generator $faker, ?int $grantedByUserId = null): void
     {
         $createdAt = $faker->dateTimeBetween('-6 months', 'now');
 
@@ -226,9 +227,9 @@ class SeedLocalCommand extends Command
     }
 
     /**
-     * @param array<int, string> $tenantIds
+     * @param  array<int, string>  $tenantIds
      */
-    private function seedCentralActivity(array $tenantIds, \Faker\Generator $faker): void
+    private function seedCentralActivity(array $tenantIds, Generator $faker): void
     {
         if ($tenantIds === []) {
             return;

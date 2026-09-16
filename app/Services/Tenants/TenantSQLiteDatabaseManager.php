@@ -123,7 +123,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
             foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
                 $class = $frame['class'] ?? null;
                 if ($class && str_contains($class, 'Tests\\')) {
-                    return $class . '::' . $frame['function'];
+                    return $class.'::'.$frame['function'];
                 }
             }
         } catch (Throwable) {
@@ -148,7 +148,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
                 $f['class'] ?? '',
                 $f['type'] ?? (isset($f['class']) ? '::' : ''),
                 $f['function'],
-                isset($f['file']) ? str_replace(base_path() . '/', '', $f['file']) : '?',
+                isset($f['file']) ? str_replace(base_path().'/', '', $f['file']) : '?',
                 $f['line'] ?? 0,
             ),
             array_slice($frames, 2),
@@ -163,7 +163,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
     }
 
     /**
-     * @param array<string, mixed> $baseConfig
+     * @param  array<string, mixed>  $baseConfig
      * @return array<string, mixed>
      */
     public function makeConnectionConfig(array $baseConfig, string $databaseName): array

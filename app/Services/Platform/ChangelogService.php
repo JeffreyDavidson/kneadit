@@ -42,7 +42,7 @@ class ChangelogService
                 $request = $request->withToken($token);
             }
 
-            $response = $request->get('https://api.github.com/repos/' . self::REPO . '/releases', [
+            $response = $request->get('https://api.github.com/repos/'.self::REPO.'/releases', [
                 'per_page' => 30,
             ]);
 

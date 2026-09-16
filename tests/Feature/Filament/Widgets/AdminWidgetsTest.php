@@ -1,5 +1,34 @@
 <?php
 
+use App\Filament\Widgets\AtRiskCustomersWidget;
+use App\Filament\Widgets\BakingSheetWidget;
+use App\Filament\Widgets\BirthdayWidget;
+use App\Filament\Widgets\CapacityTodayWidget;
+use App\Filament\Widgets\CateringPipelineWidget;
+use App\Filament\Widgets\CouponUsageWidget;
+use App\Filament\Widgets\CustomerInsightsWidget;
+use App\Filament\Widgets\GiftCardBalanceWidget;
+use App\Filament\Widgets\GoalTrackerWidget;
+use App\Filament\Widgets\InboxWidget;
+use App\Filament\Widgets\LowStockWidget;
+use App\Filament\Widgets\LoyaltyLeadersWidget;
+use App\Filament\Widgets\MarginAlertWidget;
+use App\Filament\Widgets\OrderFunnelWidget;
+use App\Filament\Widgets\QuickActionsWidget;
+use App\Filament\Widgets\RecentActivityWidget;
+use App\Filament\Widgets\RecentOrdersWidget;
+use App\Filament\Widgets\ReorderRemindersWidget;
+use App\Filament\Widgets\RevenueChartWidget;
+use App\Filament\Widgets\ReviewSummaryWidget;
+use App\Filament\Widgets\SeasonalItemsWidget;
+use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\StorefrontViewsWidget;
+use App\Filament\Widgets\TodaysOrdersWidget;
+use App\Filament\Widgets\TopProductsWidget;
+use App\Filament\Widgets\UpcomingHolidayWidget;
+use App\Filament\Widgets\UpcomingOrdersWidget;
+use App\Filament\Widgets\WeeklyRevenueChartWidget;
+use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
@@ -16,53 +45,53 @@ beforeEach(function () {
 
 dataset('adminWidgetGroups', [
     'Core widgets' => [
-        App\Filament\Widgets\StatsOverview::class,
-        App\Filament\Widgets\QuickActionsWidget::class,
-        App\Filament\Widgets\WelcomeBannerWidget::class,
+        StatsOverview::class,
+        QuickActionsWidget::class,
+        WelcomeBannerWidget::class,
     ],
     'Revenue widgets' => [
-        App\Filament\Widgets\WeeklyRevenueChartWidget::class,
-        App\Filament\Widgets\MarginAlertWidget::class,
-        App\Filament\Widgets\RevenueChartWidget::class,
+        WeeklyRevenueChartWidget::class,
+        MarginAlertWidget::class,
+        RevenueChartWidget::class,
     ],
     'Order widgets' => [
-        App\Filament\Widgets\RecentOrdersWidget::class,
-        App\Filament\Widgets\TodaysOrdersWidget::class,
-        App\Filament\Widgets\UpcomingOrdersWidget::class,
-        App\Filament\Widgets\OrderFunnelWidget::class,
+        RecentOrdersWidget::class,
+        TodaysOrdersWidget::class,
+        UpcomingOrdersWidget::class,
+        OrderFunnelWidget::class,
     ],
     'Product and prep widgets' => [
-        App\Filament\Widgets\LowStockWidget::class,
-        App\Filament\Widgets\TopProductsWidget::class,
-        App\Filament\Widgets\BakingSheetWidget::class,
+        LowStockWidget::class,
+        TopProductsWidget::class,
+        BakingSheetWidget::class,
     ],
     'Customer widgets' => [
-        App\Filament\Widgets\CustomerInsightsWidget::class,
-        App\Filament\Widgets\BirthdayWidget::class,
-        App\Filament\Widgets\AtRiskCustomersWidget::class,
+        CustomerInsightsWidget::class,
+        BirthdayWidget::class,
+        AtRiskCustomersWidget::class,
     ],
     'Communication widgets' => [
-        App\Filament\Widgets\RecentActivityWidget::class,
-        App\Filament\Widgets\InboxWidget::class,
+        RecentActivityWidget::class,
+        InboxWidget::class,
     ],
     'Planning widgets' => [
-        App\Filament\Widgets\GoalTrackerWidget::class,
-        App\Filament\Widgets\UpcomingHolidayWidget::class,
-        App\Filament\Widgets\StorefrontViewsWidget::class,
+        GoalTrackerWidget::class,
+        UpcomingHolidayWidget::class,
+        StorefrontViewsWidget::class,
     ],
     'Promotion and loyalty widgets' => [
-        App\Filament\Widgets\GiftCardBalanceWidget::class,
-        App\Filament\Widgets\LoyaltyLeadersWidget::class,
-        App\Filament\Widgets\CouponUsageWidget::class,
+        GiftCardBalanceWidget::class,
+        LoyaltyLeadersWidget::class,
+        CouponUsageWidget::class,
     ],
     'Operations widgets' => [
-        App\Filament\Widgets\CapacityTodayWidget::class,
-        App\Filament\Widgets\SeasonalItemsWidget::class,
-        App\Filament\Widgets\CateringPipelineWidget::class,
+        CapacityTodayWidget::class,
+        SeasonalItemsWidget::class,
+        CateringPipelineWidget::class,
     ],
     'Feedback widgets' => [
-        App\Filament\Widgets\ReviewSummaryWidget::class,
-        App\Filament\Widgets\ReorderRemindersWidget::class,
+        ReviewSummaryWidget::class,
+        ReorderRemindersWidget::class,
     ],
 ]);
 

@@ -14,7 +14,7 @@ test('creates birthday coupon for customer', function () {
 
     expect($coupon)
         ->toBeInstanceOf(Coupon::class)
-        ->code->toBe("BDAY-{$customer->id}-" . now()->year)
+        ->code->toBe("BDAY-{$customer->id}-".now()->year)
         ->type->toBe(CouponType::Percentage)
         ->max_uses->toBe(1)
         ->used_count->toBe(0)

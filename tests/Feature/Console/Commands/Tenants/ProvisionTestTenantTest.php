@@ -9,7 +9,7 @@ use Stancl\Tenancy\Database\Models\Domain;
 test('browser test tenant can use a DNS-free domain', function () {
     test()->artisan('migrate:fresh', ['--database' => 'central'])->assertSuccessful();
 
-    $tenantDatabasePath = storage_path('framework/testing/browser-test-tenant-databases-' . getmypid());
+    $tenantDatabasePath = storage_path('framework/testing/browser-test-tenant-databases-'.getmypid());
     File::ensureDirectoryExists($tenantDatabasePath);
     config(['tenancy.tenant_db_path' => $tenantDatabasePath]);
 

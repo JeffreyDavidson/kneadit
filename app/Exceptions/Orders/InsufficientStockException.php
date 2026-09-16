@@ -9,11 +9,11 @@ use RuntimeException;
 class InsufficientStockException extends RuntimeException implements ShouldntReport
 {
     /**
-     * @param array<int, string> $shortages Names of ingredients whose projected
-     *                                      demand would exceed current stock.
-     * @param ?Order $order Set when the failure attaches to a persisted order
-     *                      (the modification path); null at placement time
-     *                      where the order doesn't exist yet.
+     * @param  array<int, string>  $shortages  Names of ingredients whose projected
+     *                                         demand would exceed current stock.
+     * @param  ?Order  $order  Set when the failure attaches to a persisted order
+     *                         (the modification path); null at placement time
+     *                         where the order doesn't exist yet.
      */
     public function __construct(
         public readonly array $shortages,

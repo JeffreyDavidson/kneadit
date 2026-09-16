@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -36,8 +37,8 @@ test('products endpoint filters by featured', function () {
 });
 
 test('products endpoint filters by category slug', function () {
-    $bread = App\Models\Inventory\Category::factory()->active()->create(['slug' => 'breads']);
-    $cake = App\Models\Inventory\Category::factory()->active()->create(['slug' => 'cakes']);
+    $bread = Category::factory()->active()->create(['slug' => 'breads']);
+    $cake = Category::factory()->active()->create(['slug' => 'cakes']);
 
     Product::factory()->active()->recycle($bread)->count(2)->create();
     Product::factory()->active()->recycle($cake)->count(3)->create();

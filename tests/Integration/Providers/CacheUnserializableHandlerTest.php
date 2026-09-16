@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Orders\Order;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,7 @@ test('handler throws in non-production when an unserializable class is read from
 
     expect($handler)->not->toBeNull('AppServiceProvider should register the handler.');
 
-    expect(fn () => $handler('orders.dashboard.cards', App\Models\Orders\Order::class))
+    expect(fn () => $handler('orders.dashboard.cards', Order::class))
         ->toThrow(RuntimeException::class, 'Cache returned __PHP_Incomplete_Class for key [orders.dashboard.cards]');
 
     $logger->shouldHaveReceived('error')

@@ -61,7 +61,7 @@ class RevenueOverview extends StatsOverviewWidget
 
         return [
             Stat::make('ARPU', Number::currency($data['arpu']))
-                ->description('Avg revenue per bakery · ' . $data['activePayingCount'] . ' paying')
+                ->description('Avg revenue per bakery · '.$data['activePayingCount'].' paying')
                 ->color('success')
                 ->icon(Heroicon::OutlinedUserCircle),
 
@@ -70,13 +70,13 @@ class RevenueOverview extends StatsOverviewWidget
                 ->color('success')
                 ->icon(Heroicon::OutlinedBanknotes),
 
-            Stat::make('Trial Conversion', $data['trialConversion'] . '%')
-                ->description($data['convertedFromTrial'] . ' of ' . $data['totalTrialed'] . ' converted')
+            Stat::make('Trial Conversion', $data['trialConversion'].'%')
+                ->description($data['convertedFromTrial'].' of '.$data['totalTrialed'].' converted')
                 ->color($data['trialConversion'] >= 50 ? 'success' : 'warning')
                 ->icon(Heroicon::OutlinedArrowPath),
 
-            Stat::make('Churn Rate', $data['churnRate'] . '%')
-                ->description($data['inactive'] . ' inactive of ' . $data['totalEver'])
+            Stat::make('Churn Rate', $data['churnRate'].'%')
+                ->description($data['inactive'].' inactive of '.$data['totalEver'])
                 ->color($data['churnRate'] <= 10 ? 'success' : 'danger')
                 ->icon(Heroicon::OutlinedArrowTrendingDown),
         ];

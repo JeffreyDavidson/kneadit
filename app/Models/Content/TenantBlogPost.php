@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -21,9 +22,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property array<int, string>|null $tags
  * @property string|null $author_name
  * @property bool $is_published
- * @property \Illuminate\Support\Carbon|null $published_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $published_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newQuery()

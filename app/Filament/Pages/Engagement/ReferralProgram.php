@@ -35,7 +35,7 @@ class ReferralProgram extends Page
 
     public function getReferralLink(): string
     {
-        return Config::string('app.url') . '/ref/' . $this->getReferralCode();
+        return Config::string('app.url').'/ref/'.$this->getReferralCode();
     }
 
     public function getTotalReferrals(): int

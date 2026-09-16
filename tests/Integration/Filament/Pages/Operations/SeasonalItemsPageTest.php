@@ -3,6 +3,9 @@
 use App\Filament\Pages\Operations\SeasonalItems;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\SeasonalItem;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -23,7 +26,7 @@ test('available until defaults to null', function () {
 
 test('add seasonal item validates required fields', function () {
     expect(fn () => test()->page->addSeasonalItem())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
+        ->toThrow(ValidationException::class);
 });
 
 test('add seasonal item validates date order', function () {
@@ -34,7 +37,7 @@ test('add seasonal item validates date order', function () {
     test()->page->available_until = '2026-05-01'; // before from
 
     expect(fn () => test()->page->addSeasonalItem())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
+        ->toThrow(ValidationException::class);
 });
 
 test('add seasonal item creates record', function () {
@@ -80,17 +83,17 @@ test('delete seasonal item removes record', function () {
 
 test('delete nonexistent seasonal item throws exception', function () {
     expect(fn () => test()->page->deleteSeasonalItem(99999))
-        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 });
 
 test('current items property returns collection', function () {
-    expect(test()->page->getCurrentItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(test()->page->getCurrentItemsProperty())->toBeInstanceOf(Collection::class);
 });
 
 test('upcoming items property returns collection', function () {
-    expect(test()->page->getUpcomingItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(test()->page->getUpcomingItemsProperty())->toBeInstanceOf(Collection::class);
 });
 
 test('expired items property returns collection', function () {
-    expect(test()->page->getExpiredItemsProperty())->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect(test()->page->getExpiredItemsProperty())->toBeInstanceOf(Collection::class);
 });

@@ -7,8 +7,8 @@
     @php
         $bakeryPhotos = $photos->count() > 0
             ? $photos->map(fn ($photo) => [
-                'src' => asset('storage/customer-photos/' . basename($photo->photo_path)),
-                'alt' => 'Photo by ' . $photo->customer_name,
+                'src' => asset('storage/customer-photos/'.basename($photo->photo_path)),
+                'alt' => 'Photo by '.$photo->customer_name,
                 'caption' => $photo->caption ?: ($photo->product?->name ?? 'Fresh from the oven'),
                 'author' => $photo->customer_name,
             ])

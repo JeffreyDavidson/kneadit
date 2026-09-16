@@ -161,7 +161,7 @@ class Dashboard extends BaseDashboard
      * Widgets that don't use the HasDashboardSize trait pass through
      * untouched.
      *
-     * @param class-string<Widget> $class
+     * @param  class-string<Widget>  $class
      * @return class-string<Widget>|WidgetConfiguration
      */
     private function wrapWithSize(string $class, string $key, ?string $savedSize): string|WidgetConfiguration

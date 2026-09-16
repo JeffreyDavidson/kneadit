@@ -37,7 +37,7 @@ class UpcomingOrdersWidget extends Widget
     {
         $daysAhead = $this->daysAhead();
 
-        return $this->cached("upcoming_{$daysAhead}_" . Date::today()->toDateString(), [600, 1200], function () use ($daysAhead): array {
+        return $this->cached("upcoming_{$daysAhead}_".Date::today()->toDateString(), [600, 1200], function () use ($daysAhead): array {
             $today = Date::today();
             $endDate = $today->copy()->addDays($daysAhead);
 

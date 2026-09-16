@@ -21,8 +21,8 @@ class WebhookDeliveryFactory extends Factory
 
         return [
             'event' => fake()->randomElement(['order.created', 'order.updated', 'order.cancelled', 'order.delivered']),
-            'url' => 'https://hooks.example.com/' . fake()->uuid(),
-            'payload' => ['order_number' => 'ORD-' . fake()->numberBetween(1, 9999)],
+            'url' => 'https://hooks.example.com/'.fake()->uuid(),
+            'payload' => ['order_number' => 'ORD-'.fake()->numberBetween(1, 9999)],
             'signature' => hash_hmac('sha256', 'test', 'secret'),
             'status_code' => 200,
             'response_body' => 'ok',

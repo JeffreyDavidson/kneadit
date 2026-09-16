@@ -2,6 +2,7 @@
 
 use App\Actions\Staff\SendStaffInvitation;
 use App\Enums\Staff\UserRole;
+use App\Exceptions\Staff\StaffInvitationException;
 use App\Mail\Platform\StaffInvitationMail;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
@@ -41,7 +42,7 @@ it('throws when user is already a team member', function () {
         role: UserRole::Staff,
         invitedBy: $inviter->id,
     );
-})->throws(App\Exceptions\Staff\StaffInvitationException::class, 'already a team member');
+})->throws(StaffInvitationException::class, 'already a team member');
 
 it('throws when a pending invitation already exists', function () {
     $inviter = User::factory()->owner()->create();
@@ -59,4 +60,4 @@ it('throws when a pending invitation already exists', function () {
         role: UserRole::Staff,
         invitedBy: $inviter->id,
     );
-})->throws(App\Exceptions\Staff\StaffInvitationException::class, 'already pending');
+})->throws(StaffInvitationException::class, 'already pending');

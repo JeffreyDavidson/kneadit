@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 test('Unit tests must not use RefreshDatabase', function () {
-    $unitDir = dirname(__DIR__) . '/Unit';
+    $unitDir = dirname(__DIR__).'/Unit';
     $violations = [];
 
     $iterator = new RecursiveIteratorIterator(
@@ -26,11 +26,11 @@ test('Unit tests must not use RefreshDatabase', function () {
         }
 
         if (str_contains($contents, 'Illuminate\Foundation\Testing\RefreshDatabase')) {
-            $violations[] = str_replace(dirname(__DIR__) . '/', '', $file->getPathname());
+            $violations[] = str_replace(dirname(__DIR__).'/', '', $file->getPathname());
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Unit tests must not touch the DB. Move these to tests/Integration/:\n" . implode("\n", $violations),
+        "Unit tests must not touch the DB. Move these to tests/Integration/:\n".implode("\n", $violations),
     );
 });

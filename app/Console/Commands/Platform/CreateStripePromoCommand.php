@@ -41,7 +41,7 @@ class CreateStripePromoCommand extends Command
 
             return self::FAILURE;
         } catch (ApiErrorException $e) {
-            $this->error('Stripe rejected the request: ' . $e->getMessage());
+            $this->error('Stripe rejected the request: '.$e->getMessage());
 
             return self::FAILURE;
         }

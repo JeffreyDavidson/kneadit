@@ -22,7 +22,7 @@ test('tenants:doctor reports clean when no tenants and no files exist', function
     // tenantbrowser-test / tenantdemo SQLite files.
     $original = app()->databasePath();
     $originalTenantDbPath = config('tenancy.tenant_db_path');
-    $isolated = sys_get_temp_dir() . '/kneadit-doctor-test-' . uniqid();
+    $isolated = sys_get_temp_dir().'/kneadit-doctor-test-'.uniqid();
     File::ensureDirectoryExists($isolated);
     app()->useDatabasePath($isolated);
     config(['tenancy.tenant_db_path' => $isolated]);

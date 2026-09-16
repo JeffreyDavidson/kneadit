@@ -33,7 +33,7 @@ test('skips the checkout finalize call when the inquiry already has a deposit_pa
     app()->instance(CateringDepositCheckoutService::class, $checkoutService);
 
     withoutMiddleware(tenantMiddleware())
-        ->get(route('catering.stripe.success', ['inquiry' => $inquiry]) . '?session_id=cs_test_123')
+        ->get(route('catering.stripe.success', ['inquiry' => $inquiry]).'?session_id=cs_test_123')
         ->assertOk()
         ->assertViewIs('tenant.storefront.catering.deposit-success')
         ->assertViewHas('paid', true);
@@ -53,7 +53,7 @@ test('finalizes the checkout via the service when session_id is provided and dep
     app()->instance(CateringDepositCheckoutService::class, $checkoutService);
 
     withoutMiddleware(tenantMiddleware())
-        ->get(route('catering.stripe.success', ['inquiry' => $inquiry]) . '?session_id=cs_test_abc')
+        ->get(route('catering.stripe.success', ['inquiry' => $inquiry]).'?session_id=cs_test_abc')
         ->assertOk()
         ->assertViewHas('paid', true);
 });

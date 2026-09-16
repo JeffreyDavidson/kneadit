@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Models\Inventory\Ingredient;
 use App\Models\Staff\User;
@@ -117,14 +118,14 @@ test('can sort ingredients by name', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Ingredients\IngredientResource::getGloballySearchableAttributes())
+    expect(IngredientResource::getGloballySearchableAttributes())
         ->toBe(['name', 'supplier']);
 });
 
 test('resource returns global search result title', function () {
     $ingredient = Ingredient::factory()->create(['name' => 'Bread Flour']);
 
-    expect(App\Filament\Resources\Ingredients\IngredientResource::getGlobalSearchResultTitle($ingredient))
+    expect(IngredientResource::getGlobalSearchResultTitle($ingredient))
         ->toBe('Bread Flour');
 });
 
@@ -135,7 +136,7 @@ test('resource returns global search result details', function () {
         'unit' => 'lbs',
     ]);
 
-    $details = App\Filament\Resources\Ingredients\IngredientResource::getGlobalSearchResultDetails($ingredient);
+    $details = IngredientResource::getGlobalSearchResultDetails($ingredient);
 
     expect($details)
         ->toHaveKey('Supplier', 'King Arthur')

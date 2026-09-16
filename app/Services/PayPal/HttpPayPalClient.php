@@ -4,6 +4,7 @@ namespace App\Services\PayPal;
 
 use App\DataTransferObjects\PayPal\PayPalResponse;
 use App\Services\PayPal\Contracts\PayPalClient;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -41,7 +42,7 @@ final class HttpPayPalClient implements PayPalClient
             ]));
     }
 
-    private function request(): \Illuminate\Http\Client\PendingRequest
+    private function request(): PendingRequest
     {
         $accessToken = $this->tokenManager->getAccessToken();
 

@@ -62,8 +62,8 @@ class CentralPanelProvider extends PanelProvider
             ->renderHook('panels::head.end', fn () => new HtmlString(
                 // Inject the theme palette BEFORE the stylesheet so the CSS variables
                 // are defined when central-admin.css references them.
-                '<style>' . PanelThemes::rootCss() . '</style>'
-                . '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . filemtime(public_path('css/central-admin.css')) . '">',
+                '<style>'.PanelThemes::rootCss().'</style>'
+                .'<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.filemtime(public_path('css/central-admin.css')).'">',
             ))
             ->renderHook('panels::body.end', fn () => new HtmlString('
                 <script>

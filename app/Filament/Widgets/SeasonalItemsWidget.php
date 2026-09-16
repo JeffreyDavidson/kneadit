@@ -19,13 +19,13 @@ class SeasonalItemsWidget extends Widget
 
     public function getCurrentlyInSeasonCount(): int
     {
-        return $this->cached('in_season_' . now()->format('Y-m-d'), [3600, 7200], fn (): int => SeasonalItem::current()->count());
+        return $this->cached('in_season_'.now()->format('Y-m-d'), [3600, 7200], fn (): int => SeasonalItem::current()->count());
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getComingSoon(): array
     {
-        return $this->cached('coming_' . now()->format('Y-m-d'), [3600, 7200], function (): array {
+        return $this->cached('coming_'.now()->format('Y-m-d'), [3600, 7200], function (): array {
             return SeasonalItem::with('product')
                 ->where('available_from', '>', Date::today())
                 ->where('available_from', '<=', Date::today()->addDays(14))
@@ -43,7 +43,7 @@ class SeasonalItemsWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getEndingSoon(): array
     {
-        return $this->cached('ending_' . now()->format('Y-m-d'), [3600, 7200], function (): array {
+        return $this->cached('ending_'.now()->format('Y-m-d'), [3600, 7200], function (): array {
             return SeasonalItem::with('product')
                 ->where('available_until', '>=', Date::today())
                 ->where('available_until', '<=', Date::today()->addDays(14))

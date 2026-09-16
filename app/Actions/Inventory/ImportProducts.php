@@ -33,7 +33,7 @@ class ImportProducts
             $rowErrors = $this->stringList($row['_errors'] ?? []);
 
             if ($rowErrors !== []) {
-                $errors[] = "Row {$line}: " . implode(', ', $rowErrors);
+                $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
 
                 continue;
             }

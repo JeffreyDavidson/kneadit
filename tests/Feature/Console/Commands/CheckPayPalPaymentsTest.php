@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
@@ -48,7 +49,7 @@ test('command handles tenant processing exceptions gracefully', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function ($callback, $onError) {
-            $onError(new App\Models\Platform\Tenant(['id' => 'error-bakery']), new Exception('Database connection failed'));
+            $onError(new Tenant(['id' => 'error-bakery']), new Exception('Database connection failed'));
 
             return 1;
         });

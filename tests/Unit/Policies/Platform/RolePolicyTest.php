@@ -1,7 +1,61 @@
 <?php
 
 use App\Enums\Staff\UserRole;
+use App\Models\Content\BlogPost;
+use App\Models\Content\GalleryPhoto;
+use App\Models\Content\SocialPost;
+use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\ContactMessage;
+use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerPhoto;
+use App\Models\Customers\WaitlistEntry;
+use App\Models\Engagement\CustomerCampaign;
+use App\Models\Engagement\EmailCampaign;
+use App\Models\Engagement\LoyaltyReward;
+use App\Models\Engagement\Review;
+use App\Models\Engagement\Survey;
+use App\Models\Financial\Coupon;
+use App\Models\Financial\Expense;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\Income;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
+use App\Models\Inventory\Supplier;
+use App\Models\Operations\BlockedDate;
+use App\Models\Operations\CapacityLimit;
+use App\Models\Operations\Holiday;
+use App\Models\Orders\Order;
+use App\Models\Platform\Setting;
 use App\Models\Staff\User;
+use App\Policies\Content\BlogPostPolicy;
+use App\Policies\Content\CustomerPhotoPolicy;
+use App\Policies\Content\GalleryPhotoPolicy;
+use App\Policies\Customers\CateringInquiryPolicy;
+use App\Policies\Customers\ContactMessagePolicy;
+use App\Policies\Customers\CustomerPolicy;
+use App\Policies\Customers\ReviewPolicy;
+use App\Policies\Customers\WaitlistEntryPolicy;
+use App\Policies\Engagement\CouponPolicy;
+use App\Policies\Engagement\CustomerCampaignPolicy;
+use App\Policies\Engagement\LoyaltyRewardPolicy;
+use App\Policies\Engagement\SocialPostPolicy;
+use App\Policies\Engagement\SurveyPolicy;
+use App\Policies\Financial\ExpensePolicy;
+use App\Policies\Financial\GiftCardPolicy;
+use App\Policies\Financial\IncomePolicy;
+use App\Policies\Inventory\CategoryPolicy;
+use App\Policies\Inventory\IngredientPolicy;
+use App\Policies\Inventory\ProductPolicy;
+use App\Policies\Inventory\RecipePolicy;
+use App\Policies\Inventory\SupplierPolicy;
+use App\Policies\Operations\BlockedDatePolicy;
+use App\Policies\Operations\CapacityLimitPolicy;
+use App\Policies\Operations\HolidayPolicy;
+use App\Policies\Operations\SettingPolicy;
+use App\Policies\Orders\OrderPolicy;
+use App\Policies\Platform\EmailCampaignPolicy;
 
 function rolePolicyResult(string $policyClass, string $ability, User $user, ?object $model = null): bool
 {
@@ -24,44 +78,44 @@ function rolePolicyResult(string $policyClass, string $ability, User $user, ?obj
 
 dataset('managerRolePolicyGroups', [
     'Operations policies' => [[
-        [App\Policies\Operations\BlockedDatePolicy::class, App\Models\Operations\BlockedDate::class],
-        [App\Policies\Operations\CapacityLimitPolicy::class, App\Models\Operations\CapacityLimit::class],
-        [App\Policies\Operations\HolidayPolicy::class, App\Models\Operations\Holiday::class],
-        [App\Policies\Operations\SettingPolicy::class, App\Models\Platform\Setting::class],
+        [BlockedDatePolicy::class, BlockedDate::class],
+        [CapacityLimitPolicy::class, CapacityLimit::class],
+        [HolidayPolicy::class, Holiday::class],
+        [SettingPolicy::class, Setting::class],
     ]],
     'Customer and content policies' => [[
-        [App\Policies\Customers\CateringInquiryPolicy::class, App\Models\Customers\CateringInquiry::class],
-        [App\Policies\Customers\ContactMessagePolicy::class, App\Models\Customers\ContactMessage::class],
-        [App\Policies\Content\CustomerPhotoPolicy::class, App\Models\Customers\CustomerPhoto::class],
-        [App\Policies\Customers\CustomerPolicy::class, App\Models\Customers\Customer::class],
-        [App\Policies\Content\GalleryPhotoPolicy::class, App\Models\Content\GalleryPhoto::class],
-        [App\Policies\Customers\ReviewPolicy::class, App\Models\Engagement\Review::class],
-        [App\Policies\Customers\WaitlistEntryPolicy::class, App\Models\Customers\WaitlistEntry::class],
+        [CateringInquiryPolicy::class, CateringInquiry::class],
+        [ContactMessagePolicy::class, ContactMessage::class],
+        [CustomerPhotoPolicy::class, CustomerPhoto::class],
+        [CustomerPolicy::class, Customer::class],
+        [GalleryPhotoPolicy::class, GalleryPhoto::class],
+        [ReviewPolicy::class, Review::class],
+        [WaitlistEntryPolicy::class, WaitlistEntry::class],
     ]],
     'Financial and inventory policies' => [[
-        [App\Policies\Inventory\CategoryPolicy::class, App\Models\Inventory\Category::class],
-        [App\Policies\Financial\ExpensePolicy::class, App\Models\Financial\Expense::class],
-        [App\Policies\Financial\GiftCardPolicy::class, App\Models\Financial\GiftCard::class],
-        [App\Policies\Financial\IncomePolicy::class, App\Models\Financial\Income::class],
-        [App\Policies\Inventory\IngredientPolicy::class, App\Models\Inventory\Ingredient::class],
-        [App\Policies\Inventory\RecipePolicy::class, App\Models\Inventory\Recipe::class],
-        [App\Policies\Inventory\SupplierPolicy::class, App\Models\Inventory\Supplier::class],
+        [CategoryPolicy::class, Category::class],
+        [ExpensePolicy::class, Expense::class],
+        [GiftCardPolicy::class, GiftCard::class],
+        [IncomePolicy::class, Income::class],
+        [IngredientPolicy::class, Ingredient::class],
+        [RecipePolicy::class, Recipe::class],
+        [SupplierPolicy::class, Supplier::class],
     ]],
     'Engagement and campaign policies' => [[
-        [App\Policies\Engagement\CouponPolicy::class, App\Models\Financial\Coupon::class],
-        [App\Policies\Engagement\CustomerCampaignPolicy::class, App\Models\Engagement\CustomerCampaign::class],
-        [App\Policies\Platform\EmailCampaignPolicy::class, App\Models\Engagement\EmailCampaign::class],
-        [App\Policies\Engagement\LoyaltyRewardPolicy::class, App\Models\Engagement\LoyaltyReward::class],
-        [App\Policies\Engagement\SocialPostPolicy::class, App\Models\Content\SocialPost::class],
-        [App\Policies\Engagement\SurveyPolicy::class, App\Models\Engagement\Survey::class],
+        [CouponPolicy::class, Coupon::class],
+        [CustomerCampaignPolicy::class, CustomerCampaign::class],
+        [EmailCampaignPolicy::class, EmailCampaign::class],
+        [LoyaltyRewardPolicy::class, LoyaltyReward::class],
+        [SocialPostPolicy::class, SocialPost::class],
+        [SurveyPolicy::class, Survey::class],
     ]],
 ]);
 
 dataset('staffRolePolicyGroups', [
     'Staff policies' => [[
-        [App\Policies\Content\BlogPostPolicy::class, App\Models\Content\BlogPost::class],
-        [App\Policies\Orders\OrderPolicy::class, App\Models\Orders\Order::class],
-        [App\Policies\Inventory\ProductPolicy::class, App\Models\Inventory\Product::class],
+        [BlogPostPolicy::class, BlogPost::class],
+        [OrderPolicy::class, Order::class],
+        [ProductPolicy::class, Product::class],
     ]],
 ]);
 

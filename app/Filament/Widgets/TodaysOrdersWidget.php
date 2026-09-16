@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
@@ -27,10 +28,10 @@ class TodaysOrdersWidget extends Widget
         return Order::query()->whereDate('delivery_date', Date::today())->exists();
     }
 
-    /** @return array<int, array{id: int, order_number: string, time: string, customer: string, total: string, total_cents: int, status: \App\Enums\Orders\OrderStatus, dot_color: string}> */
+    /** @return array<int, array{id: int, order_number: string, time: string, customer: string, total: string, total_cents: int, status: OrderStatus, dot_color: string}> */
     public function getOrderRows(): array
     {
-        return $this->cached('main_' . Date::today()->toDateString(), [60, 120], fn (): array => Order::query()
+        return $this->cached('main_'.Date::today()->toDateString(), [60, 120], fn (): array => Order::query()
             ->whereDate('delivery_date', Date::today())
             ->orderBy('delivery_time')
             ->get()
@@ -51,7 +52,7 @@ class TodaysOrdersWidget extends Widget
     {
         $cents = array_sum(array_column($this->getOrderRows(), 'total_cents'));
 
-        return '$' . number_format($cents / 100, 2);
+        return '$'.number_format($cents / 100, 2);
     }
 
     public function getViewAllUrl(): string

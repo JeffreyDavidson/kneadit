@@ -12,7 +12,7 @@ use UnexpectedValueException;
 final class DatabaseLegacyCouponImporter implements LegacyCouponImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $coupons
+     * @param  array<int, array<string, mixed>>  $coupons
      * @return array<int, int>
      */
     public function import(array $coupons): array

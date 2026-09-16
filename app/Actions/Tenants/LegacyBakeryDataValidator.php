@@ -16,7 +16,7 @@ final class LegacyBakeryDataValidator
     /**
      * Validate references and scalar values before the import transaction.
      *
-     * @param array<string, array<int, array<string, mixed>>> $data
+     * @param  array<string, array<int, array<string, mixed>>>  $data
      */
     public function __invoke(array $data): void
     {
@@ -118,8 +118,8 @@ final class LegacyBakeryDataValidator
     }
 
     /**
-     * @param array<int, array<string, mixed>> $records
-     * @param array<int, true> $productIds
+     * @param  array<int, array<string, mixed>>  $records
+     * @param  array<int, true>  $productIds
      */
     private function validateOptionalProductReferences(array $records, array $productIds, string $dataset): void
     {
@@ -130,8 +130,8 @@ final class LegacyBakeryDataValidator
     }
 
     /**
-     * @param array<int, array<string, mixed>> $records
-     * @param array<int, true> $recipeIds
+     * @param  array<int, array<string, mixed>>  $records
+     * @param  array<int, true>  $recipeIds
      */
     private function validateRecipeReferences(array $records, array $recipeIds, string $dataset): void
     {
@@ -146,7 +146,7 @@ final class LegacyBakeryDataValidator
     }
 
     /**
-     * @param array<int, array<string, mixed>> $records
+     * @param  array<int, array<string, mixed>>  $records
      * @return array<int, true>
      */
     private function legacyIds(array $records, string $dataset): array
@@ -154,7 +154,7 @@ final class LegacyBakeryDataValidator
         $ids = [];
         foreach ($records as $index => $record) {
             if (! array_key_exists('id', $record)) {
-                throw new InvalidArgumentException(ucfirst($dataset) . " at index {$index} is missing an ID.");
+                throw new InvalidArgumentException(ucfirst($dataset)." at index {$index} is missing an ID.");
             }
 
             $id = $this->parseLegacyInteger($record['id']);

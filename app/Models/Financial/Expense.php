@@ -7,6 +7,8 @@ use App\Casts\MoneyCentsCast;
 use App\Casts\PercentageCast;
 use App\Enums\Financial\ExpenseCategory;
 use App\Observers\Financial\ExpenseObserver;
+use App\ValueObjects\Money;
+use App\ValueObjects\Percentage;
 use Database\Factories\Financial\ExpenseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -17,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * @property \App\ValueObjects\Money $amount
- * @property \App\ValueObjects\Money $deductible_amount
- * @property \App\ValueObjects\Percentage $business_percentage
+ * @property Money $amount
+ * @property Money $deductible_amount
+ * @property Percentage $business_percentage
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newQuery()

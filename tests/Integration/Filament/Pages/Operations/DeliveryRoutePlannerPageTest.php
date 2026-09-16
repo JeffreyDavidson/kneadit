@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Operations\DeliveryRoutePlanner;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -22,7 +23,7 @@ test('mount loads store address', function () {
 test('mount loads orders', function () {
     test()->page->mount();
 
-    expect(test()->page->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->deliveryOrders)->toBeInstanceOf(Collection::class);
 });
 
 test('load orders with null date sets empty collection', function () {
@@ -38,7 +39,7 @@ test('load orders with valid date populates collection', function () {
 
     test()->page->loadOrders();
 
-    expect(test()->page->deliveryOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->deliveryOrders)->toBeInstanceOf(Collection::class);
 });
 
 test('get route stats returns array', function () {

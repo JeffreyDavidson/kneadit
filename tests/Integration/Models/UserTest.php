@@ -3,6 +3,8 @@
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Staff\User;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use JMac\Testing\Double;
 
@@ -45,7 +47,7 @@ test('SubscriptionTier::resolve returns tier matching stripe price', function ()
 
     $user = User::factory()->owner()->create();
 
-    Illuminate\Support\Facades\DB::table('subscriptions')->insert([
+    DB::table('subscriptions')->insert([
         'user_id' => $user->id,
         'type' => 'default',
         'stripe_id' => 'sub_test_123',
@@ -63,7 +65,7 @@ test('SubscriptionTier::resolve returns null for unknown stripe price', function
 
     $user = User::factory()->owner()->create();
 
-    Illuminate\Support\Facades\DB::table('subscriptions')->insert([
+    DB::table('subscriptions')->insert([
         'user_id' => $user->id,
         'type' => 'default',
         'stripe_id' => 'sub_test_456',
@@ -97,9 +99,9 @@ test('tenants relationship returns related tenants', function () {
 
     createTenant(['id' => 'user-tenant-1', 'email' => 'user1@test.com']);
 
-    Illuminate\Support\Facades\DB::table('tenants')
+    DB::table('tenants')
         ->where('id', 'user-tenant-1')
         ->update(['user_id' => $user->id]);
 
-    expect($user->tenants)->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
+    expect($user->tenants)->toBeInstanceOf(Collection::class);
 });

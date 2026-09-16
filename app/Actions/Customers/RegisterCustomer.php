@@ -11,7 +11,7 @@ class RegisterCustomer
      * (matched by email, no password yet). In the claim case any pre-existing
      * orders stay linked via customer_id and surface once the email is verified.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __invoke(array $data): Customer
     {

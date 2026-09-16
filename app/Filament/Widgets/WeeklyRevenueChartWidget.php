@@ -9,6 +9,7 @@ use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class WeeklyRevenueChartWidget extends ChartWidget
 {
@@ -76,8 +77,8 @@ class WeeklyRevenueChartWidget extends ChartWidget
         });
     }
 
-    /** @return \Illuminate\Support\Collection<string, float> */
-    private function expensesByDay(DateRange $range): \Illuminate\Support\Collection
+    /** @return Collection<string, float> */
+    private function expensesByDay(DateRange $range): Collection
     {
         $values = Expense::query()
             ->whereBetween('date', $range->toArray())

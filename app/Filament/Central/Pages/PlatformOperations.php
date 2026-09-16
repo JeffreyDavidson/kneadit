@@ -96,7 +96,7 @@ class PlatformOperations extends Page
 
     public function getLastRun(string $key): ?string
     {
-        $value = $this->getTaskStatus($key)['finished_at'] ?? platformSettings('last_run_' . $key);
+        $value = $this->getTaskStatus($key)['finished_at'] ?? platformSettings('last_run_'.$key);
 
         return is_string($value) && $value !== '' ? $value : null;
     }
@@ -123,7 +123,7 @@ class PlatformOperations extends Page
             $exit = Artisan::call($key);
             $output = trim(Artisan::output());
 
-            platformSettings(['last_run_' . $key => now()->toIso8601String()]);
+            platformSettings(['last_run_'.$key => now()->toIso8601String()]);
             resolve(ScheduledTaskMonitor::class)->succeeded($key, microtime(true) - $startedAt, $exit);
 
             if ($exit === 0) {

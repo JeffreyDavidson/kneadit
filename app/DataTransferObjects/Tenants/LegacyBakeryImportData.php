@@ -10,7 +10,7 @@ use InvalidArgumentException;
 final readonly class LegacyBakeryImportData
 {
     /**
-     * @param array<string, DatasetRecords> $datasets
+     * @param  array<string, DatasetRecords>  $datasets
      */
     private function __construct(
         private array $datasets,

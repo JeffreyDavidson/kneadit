@@ -7,6 +7,8 @@ use App\Casts\MoneyCentsCast;
 use App\Casts\PercentageCast;
 use App\Enums\Engagement\RewardType;
 use App\Models\Inventory\Product;
+use App\ValueObjects\Money;
+use App\ValueObjects\Percentage;
 use Database\Factories\Engagement\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -23,8 +25,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward query()
  *
- * @property \App\ValueObjects\Money|null $discount_amount
- * @property \App\ValueObjects\Percentage|null $discount_percentage
+ * @property Money|null $discount_amount
+ * @property Percentage|null $discount_percentage
  *
  * @mixin \Eloquent
  */

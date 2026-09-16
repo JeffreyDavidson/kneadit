@@ -93,7 +93,7 @@ final class ProductLabelPresenter
 
         $labels = Collection::make($allergens)->map(fn (Allergen $a) => $a->getLabel())->all();
 
-        return 'Contains: ' . implode(', ', $labels) . '.';
+        return 'Contains: '.implode(', ', $labels).'.';
     }
 
     /** @return list<string> */

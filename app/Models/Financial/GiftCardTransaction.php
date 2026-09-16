@@ -5,6 +5,7 @@ namespace App\Models\Financial;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Database\Factories\Financial\GiftCardTransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -23,7 +24,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction query()
  *
  * @property Carbon|null $created_at
- * @property \App\ValueObjects\Money $amount
+ * @property Money $amount
  *
  * @mixin \Eloquent
  */

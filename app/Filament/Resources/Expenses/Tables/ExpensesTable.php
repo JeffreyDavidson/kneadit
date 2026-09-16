@@ -8,6 +8,7 @@ use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Tables\Columns\MoneyColumn;
+use App\ValueObjects\Percentage;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -36,7 +37,7 @@ class ExpensesTable
 
                 TextColumn::make('business_percentage')
                     ->label('Business %')
-                    ->formatStateUsing(fn (\App\ValueObjects\Percentage $state) => $state->formatted())
+                    ->formatStateUsing(fn (Percentage $state) => $state->formatted())
                     ->sortable(),
 
                 MoneyColumn::make('deductible_amount')

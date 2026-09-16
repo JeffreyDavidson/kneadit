@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Convert expenses + incomes money columns to bigint cents. Phase 5 of N.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $expenseColumns = ['amount', 'deductible_amount'];

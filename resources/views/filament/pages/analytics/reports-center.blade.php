@@ -211,7 +211,7 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 @foreach ([
                     ['New Customers', number_format($reportData['newCustomers'])],
-                    ['Repeat Rate', $reportData['repeatRate'] . '%'],
+                    ['Repeat Rate', $reportData['repeatRate'].'%'],
                     ['Active Customers', number_format($reportData['totalCustomersWithOrders'])],
                 ] as [$label, $value])
                     <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">

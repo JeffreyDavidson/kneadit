@@ -1,12 +1,15 @@
 <?php
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Pages\Dashboard\Dashboard;
 use App\Filament\Pages\Dashboard\DashboardConfig;
+use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Filament\Widgets\RecentOrdersWidget;
 use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -72,15 +75,15 @@ test('setSize accepts t-shirt size strings, ignores unknown values, and rejects 
 });
 
 test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and standard sizes for unconstrained widgets', function () {
-    expect(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('welcome_banner'))
-        ->toBe([App\Enums\Filament\WidgetSize::Small, App\Enums\Filament\WidgetSize::Medium])
-        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('storefront_views'))
-        ->toBe([App\Enums\Filament\WidgetSize::Small])
-        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('revenue_chart'))
-        ->toBe([App\Enums\Filament\WidgetSize::Medium, App\Enums\Filament\WidgetSize::Large, App\Enums\Filament\WidgetSize::ExtraLarge])
+    expect(WidgetMeta::allowedSizesFor('welcome_banner'))
+        ->toBe([WidgetSize::Small, WidgetSize::Medium])
+        ->and(WidgetMeta::allowedSizesFor('storefront_views'))
+        ->toBe([WidgetSize::Small])
+        ->and(WidgetMeta::allowedSizesFor('revenue_chart'))
+        ->toBe([WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge])
         // recent_orders has no allowedSizes key — defaults to standard sizes (sm/md/lg, no XL).
-        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('recent_orders'))
-        ->toBe(App\Enums\Filament\WidgetSize::standardSizes());
+        ->and(WidgetMeta::allowedSizesFor('recent_orders'))
+        ->toBe(WidgetSize::standardSizes());
 });
 
 test('saved sizes that violate allowedSizes are clamped to the widget default on load', function () {
@@ -156,7 +159,7 @@ test('Dashboard::getWidgets pipes the saved size into widgets that use HasDashbo
 
     $widgets = (new Dashboard)->getWidgets();
 
-    expect($widgets[0])->toBeInstanceOf(Filament\Widgets\WidgetConfiguration::class)
+    expect($widgets[0])->toBeInstanceOf(WidgetConfiguration::class)
         ->and($widgets[0]->widget)->toBe(TodaysOrdersWidget::class)
         ->and($widgets[0]->getProperties())->toBe(['dashboardSize' => 'lg']);
 });

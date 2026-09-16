@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Tenant\Catering\CateringStripeCancelController;
 use App\Http\Controllers\Tenant\Catering\CateringStripeSuccessController;
 use App\Http\Controllers\Tenant\Catering\PayCateringDepositController;
+use App\Http\Controllers\Tenant\Marketing\TrackCampaignOpenController;
 use App\Http\Controllers\Tenant\Storefront\AboutController;
 use App\Http\Controllers\Tenant\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Tenant\Storefront\BlogFeedController as StorefrontBlogFeedController;
@@ -89,6 +90,6 @@ Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey
 Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:form-write');
 
 // Campaign open tracking pixel — public, returns a 1x1 GIF.
-Route::get('track/email-open/{token}.gif', App\Http\Controllers\Tenant\Marketing\TrackCampaignOpenController::class)
+Route::get('track/email-open/{token}.gif', TrackCampaignOpenController::class)
     ->name('campaign.track.open')
     ->where('token', '[A-Z0-9]{26}');

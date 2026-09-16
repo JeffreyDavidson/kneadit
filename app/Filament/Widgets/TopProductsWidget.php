@@ -32,7 +32,7 @@ class TopProductsWidget extends Widget
                 'units_sold' => $p['units_sold'],
                 'revenue' => $p['revenue'],
                 'percentage' => (int) round(($p['revenue'] / $maxRevenue) * 100),
-                'revenue_formatted' => '$' . number_format((float) $p['revenue'], 0),
+                'revenue_formatted' => '$'.number_format((float) $p['revenue'], 0),
             ])->all();
         });
     }

@@ -19,17 +19,17 @@ class SeedDemoTenantCommand extends Command
         $existing = Tenant::query()->find(Tenant::DEMO_ID);
 
         if ($existing && ! $this->option('fresh')) {
-            $this->info("Demo tenant '" . Tenant::DEMO_ID . "' already exists. Pass --fresh to recreate.");
+            $this->info("Demo tenant '".Tenant::DEMO_ID."' already exists. Pass --fresh to recreate.");
 
             return self::SUCCESS;
         }
 
         if ($existing) {
-            $this->info("Recreating demo tenant '" . Tenant::DEMO_ID . "'…");
+            $this->info("Recreating demo tenant '".Tenant::DEMO_ID."'…");
             $manager->deleteDatabase($existing);
             $existing->delete();
         } else {
-            $this->info("Creating demo tenant '" . Tenant::DEMO_ID . "'…");
+            $this->info("Creating demo tenant '".Tenant::DEMO_ID."'…");
         }
 
         $tenant = Tenant::factory()
@@ -51,10 +51,10 @@ class SeedDemoTenantCommand extends Command
         // Matches the pattern in CreateOneTenantCommand used by kneadit:seed-local.
         $centralDomains = Config::array('tenancy.central_domains', []);
         $centralDomain = is_string($centralDomains[0] ?? null) ? $centralDomains[0] : '';
-        Domain::query()->updateOrCreate(['domain' => Tenant::DEMO_ID . '.' . $centralDomain], ['tenant_id' => $tenant->id]);
+        Domain::query()->updateOrCreate(['domain' => Tenant::DEMO_ID.'.'.$centralDomain], ['tenant_id' => $tenant->id]);
         Domain::query()->updateOrCreate(['domain' => Tenant::DEMO_ID], ['tenant_id' => $tenant->id]);
 
-        $this->info('✅ Demo tenant ready at https://' . Tenant::DEMO_ID . '.' . $centralDomain);
+        $this->info('✅ Demo tenant ready at https://'.Tenant::DEMO_ID.'.'.$centralDomain);
 
         return self::SUCCESS;
     }

@@ -59,7 +59,7 @@ class ViewMessage extends ViewRecord
         PlatformMessage::query()->create([
             'tenant_id' => $this->record->tenant_id,
             'sender_type' => PlatformSenderType::Admin,
-            'subject' => 'Re: ' . $this->record->subject,
+            'subject' => 'Re: '.$this->record->subject,
             'body' => $this->replyBody,
             'parent_id' => $this->record->id,
         ]);

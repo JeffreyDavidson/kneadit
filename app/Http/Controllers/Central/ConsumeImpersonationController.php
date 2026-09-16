@@ -25,6 +25,6 @@ class ConsumeImpersonationController extends Controller
 
         Auth::login($user);
 
-        return redirect()->to('/' . ltrim(Filament::getPanel('admin')->getPath(), '/'));
+        return redirect()->to('/'.ltrim(Filament::getPanel('admin')->getPath(), '/'));
     }
 }

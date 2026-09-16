@@ -15,7 +15,8 @@ beforeEach(fn () => setUpTenantTest());
 
 function invoiceServiceTokenManager(?string $accessToken): TokenManager
 {
-    return new class($accessToken) extends TokenManager {
+    return new class($accessToken) extends TokenManager
+    {
         public function __construct(private ?string $accessToken) {}
 
         public function getAccessToken(): ?string
@@ -32,7 +33,8 @@ function invoiceServiceTokenManager(?string $accessToken): TokenManager
 
 function invoiceServicePayloadBuilder(): InvoicePayloadBuilder
 {
-    return new class extends InvoicePayloadBuilder {
+    return new class extends InvoicePayloadBuilder
+    {
         public function __construct() {}
 
         public function build(Order $order): array

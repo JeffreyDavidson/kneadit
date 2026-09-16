@@ -26,7 +26,7 @@ class StoreApiOrderRequest extends FormRequest
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'items.*.special_instructions' => ['nullable', 'string', 'max:500'],
-            'delivery_date' => ['required', 'date', 'after_or_equal:' . $this->minimumDeliveryDate()],
+            'delivery_date' => ['required', 'date', 'after_or_equal:'.$this->minimumDeliveryDate()],
             'delivery_time' => ['nullable', 'string', 'max:20'],
             'delivery_type' => ['required', 'in:pickup,delivery'],
             'delivery_address' => ['required_if:delivery_type,delivery', 'nullable', 'string', 'max:500'],

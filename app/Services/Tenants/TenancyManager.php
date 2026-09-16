@@ -22,7 +22,7 @@ class TenancyManager
      *
      * @template TReturn
      *
-     * @param callable(Tenant): TReturn $callback
+     * @param  callable(Tenant): TReturn  $callback
      * @return TReturn
      */
     public function withinTenant(Tenant $tenant, callable $callback): mixed
@@ -46,8 +46,8 @@ class TenancyManager
      * Returns the number of tenants that failed. The callback receives
      * the Tenant and its TenantSettings (already resolved within context).
      *
-     * @param callable(Tenant, TenantSettings): void $callback
-     * @param callable(Tenant, \Throwable): void|null $onError
+     * @param  callable(Tenant, TenantSettings): void  $callback
+     * @param  callable(Tenant, \Throwable): void|null  $onError
      */
     public function forEachTenant(callable $callback, ?callable $onError = null): int
     {

@@ -74,7 +74,7 @@ class RecipeResource extends Resource
     {
         return [
             'Product' => $record->product->name ?? 'N/A',
-            'Prep Time' => ($record->prep_time_minutes ?? 0) . ' min',
+            'Prep Time' => ($record->prep_time_minutes ?? 0).' min',
         ];
     }
 

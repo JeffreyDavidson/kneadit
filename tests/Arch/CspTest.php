@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 test('inline script and style blocks carry a CSP nonce', function () {
-    $viewRoot = dirname(__DIR__, 2) . '/resources/views';
+    $viewRoot = dirname(__DIR__, 2).'/resources/views';
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($viewRoot, FilesystemIterator::SKIP_DOTS),
     );
@@ -31,13 +31,13 @@ test('inline script and style blocks carry a CSP nonce', function () {
                 continue;
             }
 
-            $relative = str_replace($viewRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
+            $relative = str_replace($viewRoot.DIRECTORY_SEPARATOR, '', $file->getPathname());
             $line = substr_count(substr($contents, 0, $offset), "\n") + 1;
             $violations[] = "{$relative}:{$line}";
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Inline script and style blocks require @cspnonce:\n" . implode("\n", $violations),
+        "Inline script and style blocks require @cspnonce:\n".implode("\n", $violations),
     );
 });

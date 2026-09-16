@@ -3,6 +3,7 @@
 use App\Filament\Pages\Tools\InstagramCaptionGenerator;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -21,7 +22,7 @@ test('generate captions validates required fields', function () {
     test()->page->data = [];
 
     expect(fn () => test()->page->generateCaptions())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
+        ->toThrow(ValidationException::class);
 });
 
 test('generate captions produces three variations', function () {
@@ -131,5 +132,5 @@ test('generate captions with nonexistent product does nothing', function () {
     ];
 
     expect(fn () => test()->page->generateCaptions())
-        ->toThrow(Illuminate\Validation\ValidationException::class);
+        ->toThrow(ValidationException::class);
 });

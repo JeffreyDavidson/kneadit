@@ -34,7 +34,7 @@ final class StripeWebhookIdempotency
     /**
      * @template TResult
      *
-     * @param Closure(): TResult $callback
+     * @param  Closure(): TResult  $callback
      * @return TResult|null
      */
     public function process(?string $eventId, Closure $callback): mixed

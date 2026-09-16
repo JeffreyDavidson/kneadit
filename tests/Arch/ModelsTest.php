@@ -13,7 +13,7 @@ arch('models should extend eloquent model')
     ->ignoring('App\Models\Concerns');
 
 test('models must not declare resolveRouteBinding or getRouteKeyName', function () {
-    $modelsDir = dirname(__DIR__, 2) . '/app/Models';
+    $modelsDir = dirname(__DIR__, 2).'/app/Models';
     $violations = [];
 
     $iterator = new RecursiveIteratorIterator(
@@ -35,7 +35,7 @@ test('models must not declare resolveRouteBinding or getRouteKeyName', function 
             throw new RuntimeException("Unable to read {$file->getPathname()}.");
         }
 
-        $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
+        $relative = str_replace(dirname(__DIR__, 2).'/', '', $file->getPathname());
 
         if (preg_match('/function\s+resolveRouteBinding\s*\(/', $contents)) {
             $violations[] = "{$relative}: declares resolveRouteBinding (extract to app/Routing/Bindings/)";
@@ -46,6 +46,6 @@ test('models must not declare resolveRouteBinding or getRouteKeyName', function 
     }
 
     expect($violations)->toBeEmpty(
-        "Routing concerns must live in the routing layer, not on models:\n" . implode("\n", $violations),
+        "Routing concerns must live in the routing layer, not on models:\n".implode("\n", $violations),
     );
 });

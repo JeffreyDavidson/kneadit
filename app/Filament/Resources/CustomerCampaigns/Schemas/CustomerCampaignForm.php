@@ -59,7 +59,7 @@ class CustomerCampaignForm
         $options = ['all' => 'All paid customers'];
 
         foreach (RfmSegment::cases() as $segment) {
-            $options[$segment->value] = $segment->getLabel() . ' — ' . $segment->description();
+            $options[$segment->value] = $segment->getLabel().' — '.$segment->description();
         }
 
         return $options;

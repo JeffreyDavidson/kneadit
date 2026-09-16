@@ -3,6 +3,7 @@
 use App\Models\Operations\WebhookDelivery;
 use App\Services\Platform\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 pest()->use(RefreshDatabase::class);
@@ -46,7 +47,7 @@ test('failed http response records a failed delivery row', function () {
 });
 
 test('connection exception records an error delivery row', function () {
-    Http::fake(fn () => throw new Illuminate\Http\Client\ConnectionException('Connection refused'));
+    Http::fake(fn () => throw new ConnectionException('Connection refused'));
 
     resolve(WebhookService::class)->dispatch('order.cancelled', ['order_number' => 'ORD-003']);
 

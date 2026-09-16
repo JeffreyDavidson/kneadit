@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Orders\OrderStatus;
+use Filament\Support\Icons\Heroicon;
 
 test('OrderStatus has a label method', function () {
     expect(OrderStatus::Pending->getLabel())->toBe('Pending')
@@ -13,5 +14,5 @@ test('OrderStatus has a color for every case', function (OrderStatus $case) {
 })->with(OrderStatus::cases());
 
 test('OrderStatus has an icon for every case', function (OrderStatus $case) {
-    expect($case->getIcon())->toBeInstanceOf(Filament\Support\Icons\Heroicon::class);
+    expect($case->getIcon())->toBeInstanceOf(Heroicon::class);
 })->with(OrderStatus::cases());

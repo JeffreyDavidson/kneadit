@@ -7,6 +7,7 @@ use App\Services\Tenants\TenantOnboardingMetrics;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use UnitEnum;
@@ -79,7 +80,7 @@ class OnboardingTracker extends Page
      *     owner: string,
      *     email: string,
      *     plan: string,
-     *     created_at: \Illuminate\Support\Carbon|null,
+     *     created_at: Carbon|null,
      *     days_since_signup: int,
      *     checks: array<string, bool>,
      *     completed: int,
@@ -106,7 +107,7 @@ class OnboardingTracker extends Page
     }
 
     /**
-     * @param OnboardingRecord $tenant
+     * @param  OnboardingRecord  $tenant
      */
     private function matchesStatus(array $tenant, string $status): bool
     {

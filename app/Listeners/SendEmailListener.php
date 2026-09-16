@@ -34,7 +34,7 @@ abstract class SendEmailListener extends QueuedListener
 
     final public function failed(object $event, \Throwable $exception): void
     {
-        Log::warning(class_basename($this) . ' failed', [
+        Log::warning(class_basename($this).' failed', [
             ...$this->getFailureContext($event),
             'error' => $exception->getMessage(),
         ]);

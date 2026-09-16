@@ -52,7 +52,7 @@ class AtRiskCustomersWidget extends Widget
                     'name' => $customer->name,
                     'last_order' => $lastOrder,
                     'days_inactive' => Arr::integer($attributes, 'days_since_last_order', 0),
-                    'lifetime_value' => '$' . number_format(Arr::float($attributes, 'lifetime_value', 0.0), 0),
+                    'lifetime_value' => '$'.number_format(Arr::float($attributes, 'lifetime_value', 0.0), 0),
                 ];
             })
             ->all();

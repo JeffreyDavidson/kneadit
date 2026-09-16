@@ -14,7 +14,7 @@ use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/tests',
+        __DIR__.'/tests',
     ])
     ->withRules([
         TapToDeferRector::class,

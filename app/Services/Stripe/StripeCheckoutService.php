@@ -29,7 +29,7 @@ class StripeCheckoutService
 
         $session = $this->createCheckoutSession(
             $order,
-            route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',
+            route('order.stripe.success', $order).'?session_id={CHECKOUT_SESSION_ID}',
             route('order.stripe.cancel', $order),
         );
 

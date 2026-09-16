@@ -24,7 +24,7 @@ class RefundFactory extends Factory
             'user_id' => null,
             'amount' => Money::fromDollars(fake()->randomFloat(2, 1, 100)),
             'reason' => fake()->sentence(),
-            'stripe_refund_id' => 're_' . fake()->unique()->bothify('??##??##??##'),
+            'stripe_refund_id' => 're_'.fake()->unique()->bothify('??##??##??##'),
         ];
     }
 }

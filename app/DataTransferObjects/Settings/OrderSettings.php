@@ -5,7 +5,7 @@ namespace App\DataTransferObjects\Settings;
 final readonly class OrderSettings
 {
     /**
-     * @param array<int, array<string, mixed>> $deliveryFeeTiers
+     * @param  array<int, array<string, mixed>>  $deliveryFeeTiers
      */
     public function __construct(
         public int $leadTimeHours,

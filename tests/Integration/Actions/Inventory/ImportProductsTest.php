@@ -3,6 +3,7 @@
 use App\Actions\Inventory\ImportProducts;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Services\Export\ProductCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use JMac\Testing\Double;
@@ -13,8 +14,8 @@ beforeEach(fn () => setUpTenantTest());
 
 test('it imports new products from csv', function () {
     $csv = "name,description,price,category,is_active\n"
-        . "Sourdough Loaf,Fresh baked daily,8.50,Breads,1\n"
-        . "Chocolate Cake,Rich and decadent,25.00,Cakes,1\n";
+        ."Sourdough Loaf,Fresh baked daily,8.50,Breads,1\n"
+        ."Chocolate Cake,Rich and decadent,25.00,Cakes,1\n";
 
     $file = UploadedFile::fake()->createWithContent('products.csv', $csv);
 
@@ -36,7 +37,7 @@ test('it updates existing products on reimport', function () {
     ]);
 
     $csv = "name,description,price,category,is_active\n"
-        . "Sourdough Loaf,Updated description,9.00,Breads,1\n";
+        ."Sourdough Loaf,Updated description,9.00,Breads,1\n";
 
     $file = UploadedFile::fake()->createWithContent('products.csv', $csv);
 
@@ -48,7 +49,7 @@ test('it updates existing products on reimport', function () {
 });
 
 test('it skips rows with row-level errors from parser', function () {
-    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter = Double::for(ProductCsvExporter::class);
     $exporter->expects('parseForPreview')->returns([
         'rows' => [
             [
@@ -85,7 +86,7 @@ test('it skips rows with row-level errors from parser', function () {
 
 test('it includes cost when provided in csv', function () {
     $csv = "name,description,price,cost,category,is_active\n"
-        . "Sourdough Loaf,Fresh baked,8.50,3.50,Breads,1\n";
+        ."Sourdough Loaf,Fresh baked,8.50,3.50,Breads,1\n";
 
     $file = UploadedFile::fake()->createWithContent('products.csv', $csv);
 
@@ -99,7 +100,7 @@ test('it includes cost when provided in csv', function () {
 });
 
 test('it catches throwable during product save and records error', function () {
-    $exporter = Double::for(App\Services\Export\ProductCsvExporter::class);
+    $exporter = Double::for(ProductCsvExporter::class);
     $exporter->expects('parseForPreview')->returns([
         'rows' => [
             [

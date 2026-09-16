@@ -4,6 +4,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Events\Customers\ReviewRequested;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\Engagements\ReviewRequestEngagement;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -115,7 +116,7 @@ test('dispatchForRecipient dispatches ReviewRequested event and marks order', fu
             'review_request_sent_at' => null,
         ]);
 
-    $recipient = new App\Services\Engagement\Contracts\EngagementRecipient(
+    $recipient = new EngagementRecipient(
         email: $customer->email,
         name: $customer->name,
         model: $order,

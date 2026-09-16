@@ -26,6 +26,6 @@ test('all named routes can be generated without errors', function () {
     }
 
     expect($failures)->toBeEmpty(
-        "Route generation failures:\n" . implode("\n", $failures),
+        "Route generation failures:\n".implode("\n", $failures),
     );
 });

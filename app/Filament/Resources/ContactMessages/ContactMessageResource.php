@@ -52,7 +52,7 @@ class ContactMessageResource extends Resource
     /** @param ContactMessage $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return $record->subject ?? 'Message from ' . $record->name;
+        return $record->subject ?? 'Message from '.$record->name;
     }
 
     /** @param ContactMessage $record */

@@ -3,6 +3,7 @@
 use App\Filament\Pages\Operations\HolidayPlanningCalendar;
 use App\Models\Operations\Holiday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 
 pest()->use(RefreshDatabase::class);
 
@@ -31,9 +32,9 @@ test('mount sets upcoming holidays', function () {
 test('load holidays populates all collections', function () {
     test()->page->loadHolidays();
 
-    expect(test()->page->holidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->upcomingHolidays)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->inPrepPeriod)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->holidays)->toBeInstanceOf(Collection::class)
+        ->and(test()->page->upcomingHolidays)->toBeInstanceOf(Collection::class)
+        ->and(test()->page->inPrepPeriod)->toBeInstanceOf(Collection::class);
 });
 
 test('get holidays by month groups holidays', function () {
@@ -43,5 +44,5 @@ test('get holidays by month groups holidays', function () {
     test()->page->loadHolidays();
     $grouped = test()->page->getHolidaysByMonth();
 
-    expect($grouped)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($grouped)->toBeInstanceOf(Collection::class);
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Production\PrepTimelineItem;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
@@ -196,7 +197,7 @@ test('getTimelineView formats prep tasks for display', function () {
 
     expect($timeline)->toHaveCount(1)
         ->and($timeline[$monday]->first())
-        ->toBeInstanceOf(App\DataTransferObjects\Production\PrepTimelineItem::class)
+        ->toBeInstanceOf(PrepTimelineItem::class)
         ->duration->toBe(30)
         ->deliveryTime->toBe('10:00');
 });

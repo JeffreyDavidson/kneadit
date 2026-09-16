@@ -40,10 +40,10 @@ class DateRangeFilter extends Filter
             $from = is_string($data['from'] ?? null) ? $data['from'] : '';
             $until = is_string($data['until'] ?? null) ? $data['until'] : '';
             if ($from !== '') {
-                $indicators[] = 'From ' . Date::parse($from)->toFormattedDateString();
+                $indicators[] = 'From '.Date::parse($from)->toFormattedDateString();
             }
             if ($until !== '') {
-                $indicators[] = 'Until ' . Date::parse($until)->toFormattedDateString();
+                $indicators[] = 'Until '.Date::parse($until)->toFormattedDateString();
             }
 
             return $indicators;

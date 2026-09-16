@@ -1,11 +1,12 @@
 <?php
 
+use App\Console\Commands\Tenants\CreateDemoBakeriesCommand;
 use Illuminate\Support\Facades\Process;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('bakeries command exists and is registered', function () {
-    $command = new App\Console\Commands\Tenants\CreateDemoBakeriesCommand;
+    $command = new CreateDemoBakeriesCommand;
 
     expect($command->getName())->toBe('tenant:bakeries');
 });

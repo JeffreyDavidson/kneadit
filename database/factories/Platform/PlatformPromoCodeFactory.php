@@ -20,8 +20,8 @@ class PlatformPromoCodeFactory extends Factory
     {
         return [
             'code' => strtoupper(fake()->bothify('PROMO-####')),
-            'coupon_id' => 'coupon_' . fake()->unique()->bothify('????????'),
-            'promotion_code_id' => 'promo_' . fake()->unique()->bothify('????????'),
+            'coupon_id' => 'coupon_'.fake()->unique()->bothify('????????'),
+            'promotion_code_id' => 'promo_'.fake()->unique()->bothify('????????'),
             'percent_off' => fake()->numberBetween(5, 50),
             'amount_off_cents' => null,
             'duration' => fake()->randomElement(['once', 'repeating', 'forever']),

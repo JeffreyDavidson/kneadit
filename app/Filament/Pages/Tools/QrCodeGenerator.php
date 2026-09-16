@@ -140,7 +140,7 @@ class QrCodeGenerator extends Page
 
         if ($options['format'] === 'png') {
             $content = $service->generatePng($url, $options['size'], $options['color']);
-            $filename = 'qr-code.' . ($options['page'] ?: 'home') . '.png';
+            $filename = 'qr-code.'.($options['page'] ?: 'home').'.png';
 
             return Response::streamDownload(fn () => print ($content), $filename, [
                 'Content-Type' => 'image/png',
@@ -148,7 +148,7 @@ class QrCodeGenerator extends Page
         }
 
         $content = $service->generateSvg($url, $options['size'], $options['color']);
-        $filename = 'qr-code.' . ($options['page'] ?: 'home') . '.svg';
+        $filename = 'qr-code.'.($options['page'] ?: 'home').'.svg';
 
         return Response::streamDownload(fn () => print ($content), $filename, [
             'Content-Type' => 'image/svg+xml',
@@ -169,9 +169,9 @@ class QrCodeGenerator extends Page
             throw new \LogicException('The tenant must have a domain to generate a QR code.');
         }
 
-        $baseUrl = 'http://' . $domain->domain;
+        $baseUrl = 'http://'.$domain->domain;
 
-        return $baseUrl . ($page ? "/{$page}" : '');
+        return $baseUrl.($page ? "/{$page}" : '');
     }
 
     /** @return array{page: string, size: int, color: string, format: 'png'|'svg'} */

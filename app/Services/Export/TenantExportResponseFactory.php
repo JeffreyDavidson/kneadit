@@ -18,7 +18,7 @@ final class TenantExportResponseFactory
 
     public function csv(Tenant $tenant, string $type): StreamedResponse
     {
-        $filename = "{$tenant->id}_{$type}_" . now()->format('Y-m-d_His') . '.csv';
+        $filename = "{$tenant->id}_{$type}_".now()->format('Y-m-d_His').'.csv';
 
         return response()->streamDownload(function () use ($tenant, $type): void {
             $this->tenancyManager->withinTenant($tenant, function () use ($type): void {
@@ -35,7 +35,7 @@ final class TenantExportResponseFactory
 
     public function archive(Tenant $tenant): StreamedResponse
     {
-        $filename = "{$tenant->id}_all_data_" . now()->format('Y-m-d_His') . '.zip';
+        $filename = "{$tenant->id}_all_data_".now()->format('Y-m-d_His').'.zip';
 
         return response()->streamDownload(function () use ($tenant): void {
             $tmpFile = $this->archiveExporter->create($tenant);

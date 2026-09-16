@@ -3,6 +3,7 @@
 namespace App\Pipes\Orders;
 
 use App\Services\Loyalty\CustomerLoyalty;
+use App\ValueObjects\Money;
 use Closure;
 
 /**
@@ -23,7 +24,7 @@ class ApplyTierPerks
         }
 
         if ($payload->deliveryFee->isPositive() && $this->customerLoyalty->qualifiesForFreeDelivery($payload->customer)) {
-            $payload->deliveryFee = \App\ValueObjects\Money::zero();
+            $payload->deliveryFee = Money::zero();
             $payload->recalculateTotal();
         }
 

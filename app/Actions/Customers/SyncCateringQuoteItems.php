@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class SyncCateringQuoteItems
 {
     /**
-     * @param list<array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}> $rows
+     * @param  list<array{id: int|null, name: string, quantity: int, unit_price: float, special_instructions: string|null}>  $rows
      */
     public function __invoke(CateringInquiry $inquiry, array $rows): void
     {

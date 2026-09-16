@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
 use RuntimeException;
+use Stripe\StripeClient;
 
 class InfrastructureServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->scoped(CspNonce::class);
-        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(
+        $this->app->bind(StripeClient::class, fn () => new StripeClient(
             Config::string('cashier.secret', ''),
         ));
     }

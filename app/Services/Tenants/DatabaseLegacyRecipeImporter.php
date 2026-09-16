@@ -19,7 +19,7 @@ class DatabaseLegacyRecipeImporter implements LegacyRecipeImporter
             ));
             $recipeStages = array_values(array_filter($stages, fn (array $stage): bool => $this->parser->integer($stage['recipe_id']) === $this->parser->integer($recipe['id'])));
             usort($recipeStages, fn (array $first, array $second): int => ($first['sort_order'] ?? 0) <=> ($second['sort_order'] ?? 0));
-            $instructions = collect($recipeStages)->map(fn (array $stage): string => $this->parser->string($stage['name']) . "\n" . $this->parser->string($stage['instructions']))->implode("\n\n");
+            $instructions = collect($recipeStages)->map(fn (array $stage): string => $this->parser->string($stage['name'])."\n".$this->parser->string($stage['instructions']))->implode("\n\n");
             $cost = collect($recipeIngredients)->sum(fn (array $ingredient): float => $ingredient['quantity'] * $ingredient['cost']);
 
             DB::table('recipes')->updateOrInsert(

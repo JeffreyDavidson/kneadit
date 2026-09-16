@@ -1,10 +1,16 @@
 <?php
 
+use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Financial\CouponType;
 use App\Enums\Marketing\EmailCampaignStatus;
 use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Enums\Platform\AnnouncementType;
+use App\Enums\Platform\PlatformSenderType;
+use App\Enums\Platform\SupportReplyAuthorType;
+use App\Enums\Platform\SupportTicketPriority;
+use App\Enums\Platform\SupportTicketStatus;
 
 test('PaymentStatus has a label method', function () {
     expect(PaymentStatus::Paid->getLabel())->toBe('Paid');
@@ -27,25 +33,25 @@ test('SocialPlatform has a label method', function () {
 });
 
 test('PlatformSenderType has a label method', function () {
-    expect(App\Enums\Platform\PlatformSenderType::Admin->getLabel())->toBe('Admin');
+    expect(PlatformSenderType::Admin->getLabel())->toBe('Admin');
 });
 
 test('LoyaltyPointType has a label method', function () {
-    expect(App\Enums\Engagement\LoyaltyPointType::Earned->getLabel())->toBe('Earned');
+    expect(LoyaltyPointType::Earned->getLabel())->toBe('Earned');
 });
 
 test('SupportTicketStatus has a label method', function () {
-    expect(App\Enums\Platform\SupportTicketStatus::Open->getLabel())->toBe('Open');
+    expect(SupportTicketStatus::Open->getLabel())->toBe('Open');
 });
 
 test('SupportTicketPriority has a label method', function () {
-    expect(App\Enums\Platform\SupportTicketPriority::High->getLabel())->toBe('High');
+    expect(SupportTicketPriority::High->getLabel())->toBe('High');
 });
 
 test('AnnouncementType has a label method', function () {
-    expect(App\Enums\Platform\AnnouncementType::Info->getLabel())->toBe('Info (Gold)');
+    expect(AnnouncementType::Info->getLabel())->toBe('Info (Gold)');
 });
 
 test('SupportReplyAuthorType has a label method', function () {
-    expect(App\Enums\Platform\SupportReplyAuthorType::Admin->getLabel())->toBe('Admin');
+    expect(SupportReplyAuthorType::Admin->getLabel())->toBe('Admin');
 });

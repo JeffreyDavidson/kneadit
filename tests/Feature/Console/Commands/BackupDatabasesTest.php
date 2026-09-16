@@ -18,13 +18,13 @@ beforeEach(function () {
 afterEach(function () {
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     File::delete($centralDatabase);
-    File::delete($centralDatabase . '-wal');
-    File::delete($centralDatabase . '-shm');
+    File::delete($centralDatabase.'-wal');
+    File::delete($centralDatabase.'-shm');
 
     // Clean up any backup directories created during tests
     $possibleDirs = [
-        dirname(base_path()) . '/backups',
-        base_path() . '/../backups',
+        dirname(base_path()).'/backups',
+        base_path().'/../backups',
     ];
 
     foreach ($possibleDirs as $dir) {
@@ -58,8 +58,8 @@ test('backup creates backup directory', function () {
     $this->artisan('backup:databases');
 
     $possibleDirs = [
-        dirname(base_path()) . '/backups',
-        base_path() . '/../backups',
+        dirname(base_path()).'/backups',
+        base_path().'/../backups',
     ];
 
     $found = false;
@@ -105,8 +105,8 @@ test('backup creates timestamped subdirectory', function () {
     $this->artisan('backup:databases');
 
     $possibleDirs = [
-        dirname(base_path()) . '/backups',
-        base_path() . '/../backups',
+        dirname(base_path()).'/backups',
+        base_path().'/../backups',
     ];
 
     $found = false;
@@ -130,10 +130,10 @@ test('backup secures the central database copy', function () {
     Carbon::setTestNow('2026-08-25 15:00:00');
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
-    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
     File::put($centralDatabase, 'central database');
-    File::put($centralDatabase . '-wal', 'central wal');
-    File::put($centralDatabase . '-shm', 'central shm');
+    File::put($centralDatabase.'-wal', 'central wal');
+    File::put($centralDatabase.'-shm', 'central shm');
     config(['database.connections.sqlite.database' => $centralDatabase]);
 
     try {
@@ -147,8 +147,8 @@ test('backup secures the central database copy', function () {
     } finally {
         Carbon::setTestNow();
         File::delete($centralDatabase);
-        File::delete($centralDatabase . '-wal');
-        File::delete($centralDatabase . '-shm');
+        File::delete($centralDatabase.'-wal');
+        File::delete($centralDatabase.'-shm');
         File::deleteDirectory($backupDirectory);
     }
 });
@@ -167,7 +167,7 @@ test('backup fails when a tenant database is missing', function () {
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
-    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
     File::put($centralDatabase, 'central database');
     File::ensureDirectoryExists($tenantDbDirectory);
     config([
@@ -184,7 +184,7 @@ test('backup fails when a tenant database is missing', function () {
             ->assertFailed();
 
         expect($backupDirectory)->not->toBeDirectory()
-            ->and(glob(dirname($backupDirectory) . '/*.in-progress-*') ?: [])->toBeEmpty();
+            ->and(glob(dirname($backupDirectory).'/*.in-progress-*') ?: [])->toBeEmpty();
     } finally {
         Carbon::setTestNow();
         File::delete($centralDatabase);
@@ -202,7 +202,7 @@ test('backup includes extensionless tenant databases from the configured directo
     Carbon::setTestNow('2026-08-25 15:00:00');
 
     $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
-    $backupDirectory = dirname(base_path()) . '/backups/2026-08-25_15-00-00';
+    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
     File::ensureDirectoryExists($tenantDbDirectory);
     config(['tenancy.tenant_db_path' => $tenantDbDirectory]);
 

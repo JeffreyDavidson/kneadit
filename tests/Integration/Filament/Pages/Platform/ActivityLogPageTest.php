@@ -2,7 +2,10 @@
 
 use App\Enums\Operations\ActivityAction;
 use App\Filament\Pages\Platform\ActivityLogPage;
+use App\Models\Inventory\Product;
 use App\Models\Operations\ActivityLog;
+use App\Models\Orders\Order;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -23,7 +26,7 @@ test('get activities property returns paginator', function () {
 
     $result = test()->page->getActivitiesProperty();
 
-    expect($result)->toBeInstanceOf(Illuminate\Contracts\Pagination\LengthAwarePaginator::class)
+    expect($result)->toBeInstanceOf(LengthAwarePaginator::class)
         ->and($result->total())->toBe(3);
 });
 
@@ -39,10 +42,10 @@ test('get activities property filters by action', function () {
 });
 
 test('get activities property filters by model type', function () {
-    ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
-    ActivityLog::factory()->create(['model_type' => App\Models\Inventory\Product::class]);
+    ActivityLog::factory()->create(['model_type' => Order::class]);
+    ActivityLog::factory()->create(['model_type' => Product::class]);
 
-    test()->page->filterModelType = App\Models\Orders\Order::class;
+    test()->page->filterModelType = Order::class;
     $result = test()->page->getActivitiesProperty();
 
     expect($result->total())->toBe(1);
@@ -82,14 +85,14 @@ test('get action options returns value→label pairs for the filter Select', fun
 });
 
 test('get model type options returns value→class-basename pairs for the filter Select', function () {
-    ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
+    ActivityLog::factory()->create(['model_type' => Order::class]);
 
     $options = test()->page->getModelTypeOptions();
 
     expect($options)
         ->toBeArray()
-        ->toHaveKey(App\Models\Orders\Order::class)
-        ->and($options[App\Models\Orders\Order::class])->toBe('Order');
+        ->toHaveKey(Order::class)
+        ->and($options[Order::class])->toBe('Order');
 });
 
 test('toggle expanded sets and clears the same id', function () {

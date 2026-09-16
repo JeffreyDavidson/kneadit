@@ -7,7 +7,7 @@
         {{-- Photo-Forward Hero --}}
         <x-storefront.hero-section
             :image="$settings->heroImageUrl()"
-            :image-alt="$settings->store->name . ' gallery'"
+            :image-alt="$settings->store->name.' gallery'"
             image-class="hero-img"
         >
             <div class="relative z-10 flex min-h-[55vh] flex-col items-center justify-end px-4 pb-20 text-center">
@@ -32,7 +32,7 @@
                             <div class="mb-6 break-inside-avoid">
                                 <div
                                     class="gallery-item bg-warm-200"
-                                    @click="show(@js(asset('storage/customer-photos/' . basename($photo->photo_path))), @js($photo->caption ?? ''), @js($photo->customer_name))"
+                                    @click="show(@js(asset('storage/customer-photos/'.basename($photo->photo_path))), @js($photo->caption ?? ''), @js($photo->customer_name))"
                                 >
                                     @if ($photo->is_featured)
                                         <x-storefront.pill

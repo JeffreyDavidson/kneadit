@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
+use App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket;
 use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
@@ -44,7 +46,7 @@ test('can render the view ticket page', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticket])
+    livewire(ViewTicket::class, ['record' => $ticket])
         ->assertOk();
 });
 
@@ -71,7 +73,7 @@ test('can render the view message page', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
+    livewire(ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 });
 
@@ -98,7 +100,7 @@ test('viewing an unread message marks it as read', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::class, ['record' => $messageId])
+    livewire(ViewMessage::class, ['record' => $messageId])
         ->assertOk();
 
     $message = DB::table('platform_messages')->where('id', $messageId)->first();
@@ -115,7 +117,7 @@ test('can add reply to support ticket', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(ViewTicket::class, ['record' => $ticketId])
         ->set('replyBody', 'We are looking into this.')
         ->call('addReply');
 
@@ -135,7 +137,7 @@ test('can update support ticket status', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'in_progress');
 
     $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();
@@ -152,7 +154,7 @@ test('resolving ticket sets resolved_at timestamp', function () {
         'updated_at' => now(),
     ]);
 
-    livewire(App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket::class, ['record' => $ticketId])
+    livewire(ViewTicket::class, ['record' => $ticketId])
         ->call('updateStatus', 'resolved');
 
     $ticket = DB::table('support_tickets')->where('id', $ticketId)->first();

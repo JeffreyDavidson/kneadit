@@ -63,7 +63,7 @@ class CreateDemoTenantCommand extends Command
         Domain::query()->create(['domain' => $subdomain, 'tenant_id' => $tenant->id]);
 
         // Verify tenant database was created
-        $dbName = 'tenant' . $subdomain;
+        $dbName = 'tenant'.$subdomain;
         $dbPath = database_path($dbName);
 
         if (! file_exists($dbPath)) {

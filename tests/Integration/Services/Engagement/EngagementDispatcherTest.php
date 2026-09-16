@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customers\Customer;
+use App\Models\Platform\Tenant;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\EngagementDispatcher;
@@ -45,7 +46,7 @@ test('dispatches engagement to recipients across tenants', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback, ?callable $onError) use ($settings) {
-            $tenant = new App\Models\Platform\Tenant;
+            $tenant = new Tenant;
             $tenant->id = 'test-bakery';
 
             app()->instance(TenantSettings::class, $settings);
@@ -75,7 +76,7 @@ test('skips disabled engagements', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback) use ($settings) {
-            $tenant = new App\Models\Platform\Tenant;
+            $tenant = new Tenant;
             $tenant->id = 'test-bakery';
 
             $callback($tenant, $settings);
@@ -103,7 +104,7 @@ test('skips when no recipients found', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback) use ($settings) {
-            $tenant = new App\Models\Platform\Tenant;
+            $tenant = new Tenant;
             $tenant->id = 'test-bakery';
 
             $callback($tenant, $settings);
@@ -142,7 +143,7 @@ test('handles recipient dispatch failure gracefully', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback) use ($settings) {
-            $tenant = new App\Models\Platform\Tenant;
+            $tenant = new Tenant;
             $tenant->id = 'test-bakery';
 
             $callback($tenant, $settings);
@@ -165,7 +166,7 @@ test('calls error callback when tenant processing fails', function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback, ?callable $onError) {
-            $tenant = new App\Models\Platform\Tenant;
+            $tenant = new Tenant;
             $tenant->id = 'failing-bakery';
 
             $onError($tenant, new RuntimeException('DB connection failed'));

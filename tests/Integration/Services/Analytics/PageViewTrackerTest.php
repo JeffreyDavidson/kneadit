@@ -8,6 +8,7 @@ use App\Services\Analytics\VisitorIdentifier;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Schema;
 use JMac\Testing\Double;
@@ -83,7 +84,7 @@ test('track creates a PageView record for known pages', function () {
     $request = Request::create('/menu', 'GET');
     $request->setLaravelSession(resolve('session.store'));
     $request->setRouteResolver(function () {
-        $route = new Illuminate\Routing\Route('GET', '/menu', []);
+        $route = new Route('GET', '/menu', []);
         $route->name('storefront.menu');
 
         return $route;
@@ -105,7 +106,8 @@ test('track reports recording failures without breaking the request', function (
     $exceptionHandler = Double::for(ExceptionHandler::class);
     $exceptionHandler->expects('report')->with($exception);
     Exceptions::swap($exceptionHandler);
-    $recordPageView = new class($exception) extends RecordPageView {
+    $recordPageView = new class($exception) extends RecordPageView
+    {
         public bool $invoked = false;
 
         public function __construct(private readonly Throwable $exception) {}
@@ -127,7 +129,7 @@ test('track reports recording failures without breaking the request', function (
     $request = Request::create('/about', 'GET');
     $request->setLaravelSession(resolve('session.store'));
     $request->setRouteResolver(function () {
-        $route = new Illuminate\Routing\Route('GET', '/about', []);
+        $route = new Route('GET', '/about', []);
         $route->name('storefront.about');
 
         return $route;
@@ -144,7 +146,7 @@ test('track does not create record for unknown pages', function () {
     $request = Request::create('/admin/dashboard', 'GET');
     $request->setLaravelSession(resolve('session.store'));
     $request->setRouteResolver(function () {
-        $route = new Illuminate\Routing\Route('GET', '/admin/dashboard', []);
+        $route = new Route('GET', '/admin/dashboard', []);
         $route->name('admin.dashboard');
 
         return $route;
@@ -163,7 +165,7 @@ test('track throttles duplicate views within 60 minutes', function () {
     $request = Request::create('/menu', 'GET');
     $request->setLaravelSession($session);
     $request->setRouteResolver(function () {
-        $route = new Illuminate\Routing\Route('GET', '/menu', []);
+        $route = new Route('GET', '/menu', []);
         $route->name('storefront.menu');
 
         return $route;

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Config;
 final class StripeWebhookPayloadParser
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     public function object(array $payload): array

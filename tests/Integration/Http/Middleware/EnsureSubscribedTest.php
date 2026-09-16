@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use JMac\Testing\Double;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -77,5 +78,5 @@ test('aborts with 403 for wrong plan when plan parameter specified', function ()
     $middleware = new EnsureSubscribed;
 
     expect(fn () => $middleware->handle($request, fn () => new Response('OK'), 'pro'))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });

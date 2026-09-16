@@ -3,7 +3,7 @@
     $title = $get('meta_title') ?: $get('title') ?: 'Post title goes here';
     $description = $get('meta_description') ?: $get('excerpt') ?: 'Your meta description will appear here. Write something compelling that summarizes the post — Google and social platforms use this when showing your page.';
     $slug = $get('slug') ?: 'post-slug';
-    $fullUrl = url('/blog/' . $slug);
+    $fullUrl = url('/blog/'.$slug);
 
     $displayTitle = \Illuminate\Support\Str::limit($title, 60, '…');
 

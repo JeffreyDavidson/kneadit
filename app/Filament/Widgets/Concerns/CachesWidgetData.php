@@ -11,8 +11,8 @@ trait CachesWidgetData
     /**
      * @template TValue
      *
-     * @param array{int, int} $ttl [fresh_seconds, stale_seconds]
-     * @param Closure(): TValue $resolver
+     * @param  array{int, int}  $ttl  [fresh_seconds, stale_seconds]
+     * @param  Closure(): TValue  $resolver
      * @return TValue
      */
     protected function cached(string $segment, array $ttl, Closure $resolver): mixed
@@ -25,7 +25,7 @@ trait CachesWidgetData
         $tenant = tenancy()->tenant;
         $tenantKey = $tenant instanceof Tenant ? $tenant->getTenantKey() : null;
 
-        return $this->cachePrefix() . "_{$segment}_" . (is_scalar($tenantKey) ? (string) $tenantKey : 'none');
+        return $this->cachePrefix()."_{$segment}_".(is_scalar($tenantKey) ? (string) $tenantKey : 'none');
     }
 
     abstract protected function cachePrefix(): string;

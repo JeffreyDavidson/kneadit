@@ -44,7 +44,7 @@ class SendCustomerReferralRewardEmailListener extends SendEmailListener
     private function mintRewardCoupon(int $referrerId, float $rewardDollars): Coupon
     {
         do {
-            $code = 'REF-' . strtoupper(Str::random(6));
+            $code = 'REF-'.strtoupper(Str::random(6));
         } while (Coupon::query()->where('code', $code)->exists());
 
         return Coupon::query()->create([

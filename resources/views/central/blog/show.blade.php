@@ -1,6 +1,6 @@
 @extends('central.blog.layout')
 
-@section('title', ($post->meta_title ?: $post->title) . ' — KneadIt')
+@section('title', ($post->meta_title ?: $post->title).' — KneadIt')
 @section('meta_description', $post->meta_description ?: Str::limit(strip_tags($post->body), 155))
 @section('og_type', 'article')
 @section('canonical', route('blog.show', $post->slug))

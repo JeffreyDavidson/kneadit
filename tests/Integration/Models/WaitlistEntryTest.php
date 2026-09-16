@@ -5,6 +5,7 @@ use App\Models\Customers\WaitlistEntry;
 use App\Models\Inventory\Product;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -58,7 +59,7 @@ test('for date scope accepts Carbon instance', function () {
         'requested_date' => '2026-07-04',
     ]);
 
-    $results = WaitlistEntry::query()->forDate(Illuminate\Support\Facades\Date::parse('2026-07-04'))->get();
+    $results = WaitlistEntry::query()->forDate(Date::parse('2026-07-04'))->get();
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($entry->id);

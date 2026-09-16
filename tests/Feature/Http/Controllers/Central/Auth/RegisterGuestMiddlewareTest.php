@@ -23,7 +23,7 @@ test('POST /register is rejected when the user is already authenticated', functi
 
     $response = actingAs($user)->post(route('register'), [
         'name' => 'Already Authed',
-        'email' => 'authed-' . uniqid() . '@example.com',
+        'email' => 'authed-'.uniqid().'@example.com',
         'password' => 'SecurePass123!',
         'password_confirmation' => 'SecurePass123!',
         'bakery_name' => 'Already Authed Bakery',

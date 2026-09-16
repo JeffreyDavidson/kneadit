@@ -15,7 +15,7 @@
     @forelse ($rows as $row)
         <x-tenant-admin.dashboard.list-row
             :dot-color="$row['status_color']"
-            :value="'Reorder ' . $row['reorder_qty'] . ' ' . $row['unit']"
+            :value="'Reorder '.$row['reorder_qty'].' '.$row['unit']"
         >
             <span style="color: var(--pw-card-text); font-weight: 600">{{ $row['name'] }}</span>
             <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $row['current_stock'] }} {{ $row['unit'] }}</span>

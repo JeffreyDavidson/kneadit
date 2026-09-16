@@ -13,7 +13,7 @@ beforeEach(function () {
 test('sitemap returns response with xml content type', function () {
     // Stub the view to avoid Blade XML-declaration compilation issue (short_open_tag)
     View::addNamespace('test', sys_get_temp_dir());
-    $tmpView = sys_get_temp_dir() . '/sitemap-stub.php';
+    $tmpView = sys_get_temp_dir().'/sitemap-stub.php';
     file_put_contents($tmpView, '<urlset></urlset>');
 
     View::composer('central.seo.sitemap', function ($view) use ($tmpView) {

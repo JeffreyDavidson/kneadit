@@ -18,7 +18,7 @@ dataset('widgetSizeGroups', function (): array {
     $groups = [];
 
     foreach (array_chunk(array_keys(WidgetMeta::all()), 5) as $index => $widgetKeys) {
-        $groups['Widget group ' . ($index + 1)] = $widgetKeys;
+        $groups['Widget group '.($index + 1)] = $widgetKeys;
     }
 
     return $groups;

@@ -16,7 +16,7 @@ beforeEach(function () {
 test('edit blog post page renders with existing record', function () {
     $id = DB::table('blog_posts')->insertGetId([
         'title' => 'Original Title',
-        'slug' => 'original-title-' . uniqid(),
+        'slug' => 'original-title-'.uniqid(),
         'body' => 'Body content here.',
         'is_published' => true,
         'published_at' => now()->subDay(),
@@ -34,7 +34,7 @@ test('edit blog post page renders with existing record', function () {
 test('edit blog post page exposes a delete header action', function () {
     $id = DB::table('blog_posts')->insertGetId([
         'title' => 'Deletable',
-        'slug' => 'deletable-' . uniqid(),
+        'slug' => 'deletable-'.uniqid(),
         'body' => 'Body content here.',
         'is_published' => true,
         'published_at' => now()->subDay(),

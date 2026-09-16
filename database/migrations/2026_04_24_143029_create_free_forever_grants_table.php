@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * any tenant flagged free without an active grant alerts the platform
  * admin (someone bypassed the admin UI, e.g. direct DB write).
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('free_forever_grants', function (Blueprint $table): void {

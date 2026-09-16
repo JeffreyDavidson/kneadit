@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Convert catering_inquiries money columns to bigint cents. Phase 6 of N.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $columns = ['budget', 'quoted_amount'];

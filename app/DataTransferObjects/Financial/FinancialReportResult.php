@@ -9,8 +9,8 @@ use Illuminate\Contracts\Support\Arrayable;
 final readonly class FinancialReportResult implements Arrayable
 {
     /**
-     * @param list<FinancialReportMonth> $monthly
-     * @param list<FinancialReportExpense> $expensesByCategory
+     * @param  list<FinancialReportMonth>  $monthly
+     * @param  list<FinancialReportExpense>  $expensesByCategory
      */
     public function __construct(
         public Money $totalRevenue,

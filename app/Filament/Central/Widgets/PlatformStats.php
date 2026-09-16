@@ -26,13 +26,13 @@ class PlatformStats extends StatsOverviewWidget
 
         return [
             Stat::make('MRR', Number::currency($data['mrr']))
-                ->description($data['activePaying'] . ' paying')
+                ->description($data['activePaying'].' paying')
                 ->color('success')
                 ->icon(Heroicon::OutlinedCurrencyDollar)
                 ->chart($data['mrrChart'])
                 ->chartColor('success'),
             Stat::make('Total Bakeries', $data['totalTenants'])
-                ->description($data['activePaying'] . ' active')
+                ->description($data['activePaying'].' active')
                 ->color('success')
                 ->icon(Heroicon::OutlinedBuildingStorefront)
                 ->chart($data['bakeryChart'])

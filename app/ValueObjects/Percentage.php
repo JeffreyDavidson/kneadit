@@ -70,7 +70,7 @@ final readonly class Percentage implements JsonSerializable, Stringable, Wireabl
 
     public function formatted(int $precision = 0): string
     {
-        return number_format($this->value(), $precision) . '%';
+        return number_format($this->value(), $precision).'%';
     }
 
     /** Apply this percentage to a Money amount and return the resulting Money. */

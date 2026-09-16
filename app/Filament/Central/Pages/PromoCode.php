@@ -152,7 +152,7 @@ class PromoCode extends Page implements HasForms
                             ->placeholder('— None —')
                             ->options(fn () => Tenant::query()->orderBy('store_name')
                                 ->get()
-                                ->mapWithKeys(fn (Tenant $t) => [$t->id => ($t->store_name ?: $t->name) . ' (' . $t->id . ')'])
+                                ->mapWithKeys(fn (Tenant $t) => [$t->id => ($t->store_name ?: $t->name).' ('.$t->id.')'])
                                 ->all())
                             ->searchable()
                             ->helperText('Stamps tenant_id into the Stripe coupon metadata for later reconciliation.'),

@@ -31,16 +31,13 @@
             <div class="mx-auto max-w-5xl px-4 py-12">
                 <div class="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
                     @if ($orderCount > 0)
-                        <x-storefront.stat-display :value="number_format($orderCount) . '+'" label="Orders Fulfilled" />
+                        <x-storefront.stat-display :value="number_format($orderCount).'+'" label="Orders Fulfilled" />
                     @endif
                     @if ($avgRating)
-                        <x-storefront.stat-display :value="number_format($avgRating, 1) . '★'" label="Average Rating" />
+                        <x-storefront.stat-display :value="number_format($avgRating, 1).'★'" label="Average Rating" />
                     @endif
                     @if ($customerCount > 0)
-                        <x-storefront.stat-display
-                            :value="number_format($customerCount) . '+'"
-                            label="Happy Customers"
-                        />
+                        <x-storefront.stat-display :value="number_format($customerCount).'+'" label="Happy Customers" />
                     @endif
                     <x-storefront.stat-display value="Fresh" label="Baked Daily" />
                 </div>

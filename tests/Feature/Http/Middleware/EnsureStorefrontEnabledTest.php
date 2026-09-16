@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Models\Platform\Tenant;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Http\Request;
 
 test('middleware passes when no tenant context', function () {
@@ -40,7 +41,7 @@ test('disabled storefront view receives storeName from TenantSettings', function
     tenancy()->initialize($tenant);
 
     $settings = makeTenantSettings(store: makeStoreInfo(['name' => 'Mock Bakery']));
-    app()->instance(App\Services\Settings\TenantSettings::class, $settings);
+    app()->instance(TenantSettings::class, $settings);
 
     $middleware = new EnsureStorefrontEnabled;
     $request = Request::create('/');

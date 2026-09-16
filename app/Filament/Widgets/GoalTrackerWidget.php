@@ -51,7 +51,7 @@ class GoalTrackerWidget extends Widget
     /** @return array<string, mixed> */
     public function getMonthlyDataProperty(): array
     {
-        return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
+        return $this->cached('monthly_'.now()->format('Y-m'), [900, 1800], function (): array {
             $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
             $range = DateRange::thisMonth();
@@ -75,7 +75,7 @@ class GoalTrackerWidget extends Widget
     /** @return array<string, mixed> */
     public function getYearlyDataProperty(): array
     {
-        return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
+        return $this->cached('yearly_'.now()->format('Y'), [1800, 3600], function (): array {
             $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
             $range = DateRange::thisYear();

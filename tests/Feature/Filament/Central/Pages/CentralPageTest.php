@@ -1,5 +1,14 @@
 <?php
 
+use App\Filament\Central\Pages\Activity;
+use App\Filament\Central\Pages\Analytics;
+use App\Filament\Central\Pages\BakeryInsights;
+use App\Filament\Central\Pages\Dashboard;
+use App\Filament\Central\Pages\DataExport;
+use App\Filament\Central\Pages\FeatureUsage;
+use App\Filament\Central\Pages\MaintenanceMode;
+use App\Filament\Central\Pages\OnboardingTracker;
+use App\Filament\Central\Pages\TenantComparison;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 
@@ -11,19 +20,19 @@ beforeEach(function () {
 
 dataset('centralPageGroups', [
     'Insights pages' => [
-        App\Filament\Central\Pages\Dashboard::class,
-        App\Filament\Central\Pages\Analytics::class,
-        App\Filament\Central\Pages\BakeryInsights::class,
+        Dashboard::class,
+        Analytics::class,
+        BakeryInsights::class,
     ],
     'Operations pages' => [
-        App\Filament\Central\Pages\Activity::class,
-        App\Filament\Central\Pages\DataExport::class,
-        App\Filament\Central\Pages\MaintenanceMode::class,
+        Activity::class,
+        DataExport::class,
+        MaintenanceMode::class,
     ],
     'Platform pages' => [
-        App\Filament\Central\Pages\FeatureUsage::class,
-        App\Filament\Central\Pages\OnboardingTracker::class,
-        App\Filament\Central\Pages\TenantComparison::class,
+        FeatureUsage::class,
+        OnboardingTracker::class,
+        TenantComparison::class,
     ],
 ]);
 

@@ -8,7 +8,7 @@ use InvalidArgumentException;
 class ImportLegacyBakeryAssets
 {
     /**
-     * @param array<string, array<int, array<string, mixed>>> $data
+     * @param  array<string, array<int, array<string, mixed>>>  $data
      * @return array{data: array<string, array<int, array<string, mixed>>>, store_logo: string}
      */
     public function __invoke(array $data, string $assetDirectory, string $tenantId): array
@@ -39,7 +39,7 @@ class ImportLegacyBakeryAssets
 
         $destinations = [];
         foreach ($sources as $key => $source) {
-            $destination = "tenants/{$tenantId}/bakery-on-biscotto/" . basename($source);
+            $destination = "tenants/{$tenantId}/bakery-on-biscotto/".basename($source);
             $contents = file_get_contents($source);
             throw_if($contents === false, InvalidArgumentException::class, "The legacy asset [{$source}] could not be read.");
 
@@ -98,9 +98,9 @@ class ImportLegacyBakeryAssets
 
     private function resolveSource(string $root, string $relativePath): string
     {
-        $source = realpath($root . DIRECTORY_SEPARATOR . ltrim($relativePath, DIRECTORY_SEPARATOR));
+        $source = realpath($root.DIRECTORY_SEPARATOR.ltrim($relativePath, DIRECTORY_SEPARATOR));
 
-        if ($source === false || ! is_file($source) || ! str_starts_with($source, $root . DIRECTORY_SEPARATOR)) {
+        if ($source === false || ! is_file($source) || ! str_starts_with($source, $root.DIRECTORY_SEPARATOR)) {
             throw new InvalidArgumentException("The legacy asset [{$relativePath}] is missing or outside the asset directory.");
         }
 

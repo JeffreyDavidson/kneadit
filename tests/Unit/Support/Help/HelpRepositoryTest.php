@@ -5,11 +5,11 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
-    test()->tmp = sys_get_temp_dir() . '/help-' . uniqid();
-    File::ensureDirectoryExists(test()->tmp . '/getting-started');
-    File::ensureDirectoryExists(test()->tmp . '/billing');
+    test()->tmp = sys_get_temp_dir().'/help-'.uniqid();
+    File::ensureDirectoryExists(test()->tmp.'/getting-started');
+    File::ensureDirectoryExists(test()->tmp.'/billing');
 
-    File::put(test()->tmp . '/getting-started/setup.md', <<<'MD'
+    File::put(test()->tmp.'/getting-started/setup.md', <<<'MD'
 # Setup Guide
 
 Welcome! Open **Settings** to begin.
@@ -18,7 +18,7 @@ Welcome! Open **Settings** to begin.
 - Step two
 MD);
 
-    File::put(test()->tmp . '/billing/plans.md', "# Plans\n\nWe have three.\n");
+    File::put(test()->tmp.'/billing/plans.md', "# Plans\n\nWe have three.\n");
 
     config()->set('help.topics', [
         'getting-started' => [
@@ -56,9 +56,9 @@ test('topics() returns config-ordered topics with discovered articles', function
 });
 
 test('articles are alphabetized and limited to Markdown files', function () {
-    File::put(test()->tmp . '/billing/z-last.md', "# Last\n");
-    File::put(test()->tmp . '/billing/a-first.md', "# First\n");
-    File::put(test()->tmp . '/billing/ignored.txt', 'Not a help article');
+    File::put(test()->tmp.'/billing/z-last.md', "# Last\n");
+    File::put(test()->tmp.'/billing/a-first.md', "# First\n");
+    File::put(test()->tmp.'/billing/ignored.txt', 'Not a help article');
 
     $topics = (new HelpRepository(test()->tmp))->topics();
 
@@ -84,7 +84,7 @@ test('find() returns parsed article or null', function () {
 });
 
 test('articles missing an H1 fall back to a slug-derived title', function () {
-    File::put(test()->tmp . '/billing/no-heading.md', "Just a paragraph, no heading.\n");
+    File::put(test()->tmp.'/billing/no-heading.md', "Just a paragraph, no heading.\n");
 
     $repo = new HelpRepository(test()->tmp);
     $article = $repo->find('billing/no-heading');

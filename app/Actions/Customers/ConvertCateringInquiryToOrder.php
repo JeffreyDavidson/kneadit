@@ -65,7 +65,7 @@ class ConvertCateringInquiryToOrder
                 // Graceful fallback for inquiries quoted before the line-items
                 // editor existed: collapse the whole quote into one summary line.
                 $order->orderItems()->create([
-                    'name' => "Catering — {$inquiry->event_type}, " . number_format($inquiry->guest_count) . ' guests',
+                    'name' => "Catering — {$inquiry->event_type}, ".number_format($inquiry->guest_count).' guests',
                     'unit_price' => $inquiry->quoted_amount,
                     'quantity' => 1,
                 ]);

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Session\ArraySessionHandler;
 use Illuminate\Session\Store;
 use JMac\Testing\Double;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 function impersonationRequest(string $path): Request
 {
@@ -69,11 +70,11 @@ test('consume impersonation aborts for invalid token', function () {
     $action = Double::for(ConsumeImpersonationToken::class);
     $action->expects('__invoke')
         ->throws(
-            new Symfony\Component\HttpKernel\Exception\HttpException(403, 'Invalid or expired impersonation token.'),
+            new HttpException(403, 'Invalid or expired impersonation token.'),
         );
 
     $controller = new ConsumeImpersonationController;
 
     expect(fn () => $controller('bad-token', $request, $action))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });

@@ -48,7 +48,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
+     * @param  WeeklyOrders  $weeklyOrders
      * @return PrepSchedule
      */
     public function generatePrepSchedule(Collection $weeklyOrders): Collection
@@ -93,7 +93,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
+     * @param  WeeklyOrders  $weeklyOrders
      * @return Collection<string, ProductPreparationSummary>
      */
     public function getProductSummary(Collection $weeklyOrders): Collection
@@ -124,7 +124,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param PrepSchedule $prepSchedule
+     * @param  PrepSchedule  $prepSchedule
      * @return Collection<string, Collection<int, PrepTimelineItem>>
      */
     public function getTimelineView(Collection $prepSchedule): Collection
@@ -149,7 +149,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param PrepSchedule $prepSchedule
+     * @param  PrepSchedule  $prepSchedule
      */
     public function getTotalPrepHours(Collection $prepSchedule): float
     {
@@ -165,8 +165,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
-     * @param PrepSchedule $prepSchedule
+     * @param  WeeklyOrders  $weeklyOrders
+     * @param  PrepSchedule  $prepSchedule
      */
     public function getWeekSummary(Collection $weeklyOrders, Collection $prepSchedule): PrepWeekSummary
     {

@@ -9,8 +9,8 @@ use Illuminate\Contracts\Support\Arrayable;
 final readonly class CustomerReportResult implements Arrayable
 {
     /**
-     * @param list<array{name: string, email: string, total_spend: Money, order_count: int}> $topCustomers
-     * @param array<string, int> $acquisitionByMonth
+     * @param  list<array{name: string, email: string, total_spend: Money, order_count: int}>  $topCustomers
+     * @param  array<string, int>  $acquisitionByMonth
      */
     public function __construct(
         public int $newCustomers,
