@@ -65,9 +65,9 @@ class ViewCateringInquiry extends ViewRecord
                     ->label('Reason (optional, recorded in notes)')
                     ->rows(3),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, CancelCateringInquiry $cancelInquiry): void {
                 $reason = Arr::string($data, 'reason', '');
-                resolve(CancelCateringInquiry::class)($this->record, $reason !== '' ? $reason : null);
+                $cancelInquiry($this->record, $reason !== '' ? $reason : null);
 
                 $this->record->refresh();
 
