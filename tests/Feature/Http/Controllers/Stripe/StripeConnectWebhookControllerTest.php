@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\Stripe\StripeConnectWebhookEventDispatcher;
 use App\Services\Stripe\StripeWebhookIdempotency;
 use Illuminate\Support\Facades\Cache;
 
@@ -60,13 +61,12 @@ test('webhook returns 500 for unknown event type without secret', function () {
     $response->assertStatus(500);
 });
 
-test('webhook controller routes account.updated to HandleConnectAccountUpdated', function () {
+test('webhook controller delegates event routing to the dispatcher', function () {
     $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
 
     expect($source)
-        ->toContain("'account.updated' => resolve(HandleConnectAccountUpdated::class)")
-        ->toContain("'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)")
-        ->toContain('default => null');
+        ->toContain(StripeConnectWebhookEventDispatcher::class)
+        ->toContain('$dispatcher->dispatch($type, $data)');
 });
 
 test('webhook controller implements idempotency via cache', function () {
