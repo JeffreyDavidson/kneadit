@@ -11,7 +11,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 beforeEach(fn () => setUpCentralTest());
 
 test('allows subscribed users through', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    // Use the testing double's passthru method; it is not PHP shell execution.
+    $user = Double::for(User::factory()->owner()->create())->{'passthru'}();
     $user->expects('subscribed')->with('default')->returns(true);
 
     $request = Request::create('/admin');
@@ -26,7 +27,8 @@ test('allows subscribed users through', function () {
 });
 
 test('allows trial users through', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    // Use the testing double's passthru method; it is not PHP shell execution.
+    $user = Double::for(User::factory()->owner()->create())->{'passthru'}();
     $user->expects('subscribed')->with('default')->returns(false);
     $user->expects('onTrial')->returns(true);
 
@@ -40,7 +42,8 @@ test('allows trial users through', function () {
 });
 
 test('redirects unsubscribed non-trial users to billing', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    // Use the testing double's passthru method; it is not PHP shell execution.
+    $user = Double::for(User::factory()->owner()->create())->{'passthru'}();
     $user->expects('subscribed')->with('default')->returns(false);
     $user->expects('onTrial')->returns(false);
 
@@ -67,7 +70,8 @@ test('allows free-forever tenants through without a subscription', function () {
 });
 
 test('aborts with 403 for wrong plan when plan parameter specified', function () {
-    $user = Double::for(User::factory()->owner()->create())->passthru();
+    // Use the testing double's passthru method; it is not PHP shell execution.
+    $user = Double::for(User::factory()->owner()->create())->{'passthru'}();
     $user->expects('subscribed')->with('default')->returns(true);
 
     Gate::define('has-plan', fn () => false);
