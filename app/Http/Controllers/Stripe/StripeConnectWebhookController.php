@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Stripe;
 
-use App\Actions\Stripe\HandleConnectAccountUpdated;
-use App\Actions\Stripe\HandleConnectCheckoutCompleted;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
+use App\Services\Stripe\StripeConnectWebhookEventDispatcher;
+use App\Services\Stripe\StripeWebhookIdempotency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
@@ -14,16 +13,17 @@ use Stripe\Webhook;
 
 class StripeConnectWebhookController extends Controller
 {
-    use EnsuresWebhookIdempotency;
-
     /**
      * Handle Stripe Connect webhook events.
      *
      * This endpoint receives events about connected accounts
      * (separate from the Cashier webhook for platform subscriptions).
      */
-    public function __invoke(Request $request): Response
-    {
+    public function __invoke(
+        Request $request,
+        StripeWebhookIdempotency $idempotency,
+        StripeConnectWebhookEventDispatcher $dispatcher,
+    ): Response {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
         $secret = Config::string('kneadit.stripe_connect.webhook_secret');
@@ -48,7 +48,7 @@ class StripeConnectWebhookController extends Controller
         $type = $event->type;
         $data = $event->data->object ?? null;
 
-        if (! $this->claimWebhookEvent($event->id)) {
+        if (! $idempotency->claim($event->id)) {
             return response('Already processed', 200);
         }
 
@@ -57,15 +57,11 @@ class StripeConnectWebhookController extends Controller
         ]);
 
         try {
-            match ($type) {
-                'account.updated' => resolve(HandleConnectAccountUpdated::class)($data),
-                'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)($data),
-                default => null,
-            };
+            $dispatcher->dispatch($type, $data);
 
-            $this->completeWebhookEvent($event->id);
+            $idempotency->complete($event->id);
         } catch (\Throwable $e) {
-            $this->releaseWebhookEvent($event->id);
+            $idempotency->release($event->id);
 
             Log::error('Stripe Connect webhook processing failed', [
                 'type' => $type,

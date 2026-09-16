@@ -54,3 +54,11 @@ it('passes the tenant to the callback', function () {
 
     expect($receivedTenant)->toBe($tenant);
 });
+
+it('iterates tenants in bounded primary-key chunks', function () {
+    $source = file_get_contents(app_path('Services/Tenants/TenancyManager.php'));
+
+    expect($source)
+        ->toContain('lazyById(self::TENANT_CHUNK_SIZE)')
+        ->not->toContain('Tenant::query()->cursor()');
+});
