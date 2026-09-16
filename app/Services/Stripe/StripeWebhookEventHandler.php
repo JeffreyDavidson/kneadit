@@ -12,6 +12,7 @@ final class StripeWebhookEventHandler
     public function __construct(
         private readonly StripeWebhookPayloadParser $payloadParser,
         private readonly SyncSubscriptionPlan $syncSubscriptionPlan,
+        private readonly StripeCustomerLookupQuery $customerLookup,
     ) {}
 
     /** @param array<string, mixed> $subscription */
@@ -24,7 +25,7 @@ final class StripeWebhookEventHandler
             return;
         }
 
-        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
+        $lookup = $this->customerLookup->find($stripeCustomerId);
 
         if ($lookup['user'] === null) {
             return;
@@ -46,7 +47,7 @@ final class StripeWebhookEventHandler
             return;
         }
 
-        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
+        $lookup = $this->customerLookup->find($stripeCustomerId);
 
         if ($lookup['user'] === null) {
             return;
@@ -73,7 +74,7 @@ final class StripeWebhookEventHandler
             return;
         }
 
-        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
+        $lookup = $this->customerLookup->find($stripeCustomerId);
 
         if ($lookup['tenant']) {
             Log::info("Tenant {$lookup['tenant']->id} subscription fully canceled");
