@@ -22,11 +22,7 @@ test('command skips tenants without paypal configured', function () {
     config(['services.paypal.client_id' => 'test-client-id']);
 
     $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->resolves(function ($tenant, $callback) {
-            // Simulate settings('paypal_client_id') returning null
-            return null;
-        });
+    $tenancyManager->expects('forEachTenant')->resolves(fn () => 0);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -50,8 +46,12 @@ test('command handles tenant processing exceptions gracefully', function () {
     ]);
 
     $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->throws(new Exception('Database connection failed'));
+    $tenancyManager->expects('forEachTenant')
+        ->resolves(function ($callback, $onError) {
+            $onError(new App\Models\Platform\Tenant(['id' => 'error-bakery']), new Exception('Database connection failed'));
+
+            return 1;
+        });
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -70,7 +70,7 @@ test('command source uses TenancyManager for tenant context', function () {
     $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
-        ->toContain('withinTenant')
+        ->toContain('forEachTenant')
         ->toContain('TenancyManager')
         ->toContain('PaymentVerifier');
 });
@@ -96,26 +96,24 @@ test('command processes tenant with unpaid paypal orders', function () {
     ]);
 
     $tenancyManager = Double::for(TenancyManager::class);
-    $tenancyManager->expects('withinTenant')
-        ->resolves(function ($tenant, $callback) {
-            return $callback();
-        });
+    $tenancyManager->expects('forEachTenant')->resolves(fn () => 0);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    // Since this runs within a tenant context and we haven't set up tenant tables,
-    // it will skip due to settings('paypal_client_id') returning null
     $this->artisan('paypal:check-payments')
         ->assertSuccessful();
 });
 
-test('command source resolves PaymentVerifier per tenant', function () {
+test('command injects payment collaborators', function () {
     $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
-        ->toContain('resolve(PaymentVerifier::class)')
+        ->toContain('PaymentVerifier $paymentVerifier')
+        ->toContain('MarkOrderPaid $markOrderPaid')
+        ->not->toContain('resolve(PaymentVerifier::class)')
+        ->not->toContain('resolve(MarkOrderPaid::class)')
         ->toContain("'paypal_client_id'")
-        ->toContain('SettingsManager::class');
+        ->toContain('SettingsManager $settingsManager');
 });
 
 test('command source skips orders without paypal invoice id', function () {
