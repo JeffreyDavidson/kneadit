@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
-use App\DataTransferObjects\Settings\SettingValue;
 use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use App\Queries\Platform\StripeCustomerLookupQuery;
-use Illuminate\Support\Facades\Config;
+use App\Services\Stripe\StripeWebhookPayloadParser;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
 class StripeWebhookController extends WebhookController
 {
     use EnsuresWebhookIdempotency;
+
+    public function __construct(private readonly StripeWebhookPayloadParser $payloadParser)
+    {
+        parent::__construct();
+    }
 
     /** @param array<string, mixed> $payload */
     protected function alreadyProcessed(array $payload): bool
@@ -33,9 +37,9 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionUpdated($payload);
 
-        $subscription = $this->stripeObject($payload);
-        $stripeCustomerId = $this->stringValue($subscription['customer'] ?? null);
-        $stripePriceId = $this->stringValue(data_get($subscription, 'items.data.0.price.id'));
+        $subscription = $this->payloadParser->object($payload);
+        $stripeCustomerId = $this->payloadParser->stringValue($subscription['customer'] ?? null);
+        $stripePriceId = $this->payloadParser->stringValue(data_get($subscription, 'items.data.0.price.id'));
 
         if ($stripeCustomerId && $stripePriceId) {
             $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
@@ -44,7 +48,7 @@ class StripeWebhookController extends WebhookController
                 resolve(SyncSubscriptionPlan::class)(
                     tenantEmail: $lookup['user']->email,
                     stripePriceId: $stripePriceId,
-                    priceMap: $this->stripePriceMap(),
+                    priceMap: $this->payloadParser->priceMap(),
                 );
             }
         }
@@ -59,8 +63,8 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        $invoice = $this->stripeObject($payload);
-        $stripeCustomerId = $this->stringValue($invoice['customer'] ?? null);
+        $invoice = $this->payloadParser->object($payload);
+        $stripeCustomerId = $this->payloadParser->stringValue($invoice['customer'] ?? null);
 
         if (! $stripeCustomerId) {
             return;
@@ -93,8 +97,8 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionDeleted($payload);
 
-        $subscription = $this->stripeObject($payload);
-        $stripeCustomerId = $this->stringValue($subscription['customer'] ?? null);
+        $subscription = $this->payloadParser->object($payload);
+        $stripeCustomerId = $this->payloadParser->stringValue($subscription['customer'] ?? null);
 
         if ($stripeCustomerId === null) {
             return $response;
@@ -107,43 +111,5 @@ class StripeWebhookController extends WebhookController
         }
 
         return $response;
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     * @return array<string, mixed>
-     */
-    private function stripeObject(array $payload): array
-    {
-        $data = $payload['data'] ?? null;
-
-        if (! is_array($data)) {
-            return [];
-        }
-
-        $object = $data['object'] ?? null;
-
-        return SettingValue::map($object);
-    }
-
-    private function stringValue(mixed $value): ?string
-    {
-        return is_string($value) && $value !== '' ? $value : null;
-    }
-
-    /** @return array<string, string> */
-    private function stripePriceMap(): array
-    {
-        $configuredPrices = Config::array('kneadit.stripe_prices', []);
-
-        $priceMap = [];
-
-        foreach ($configuredPrices as $plan => $priceId) {
-            if (is_string($plan) && is_string($priceId)) {
-                $priceMap[$priceId] = $plan;
-            }
-        }
-
-        return $priceMap;
     }
 }

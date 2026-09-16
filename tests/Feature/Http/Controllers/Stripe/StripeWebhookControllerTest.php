@@ -18,7 +18,7 @@ test('handleInvoicePaymentFailed dispatches PaymentFailed event', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test123']);
     Tenant::factory()->create(['email' => $user->email]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -41,7 +41,7 @@ test('duplicate events are skipped via idempotency check', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test456']);
     Tenant::factory()->create(['email' => $user->email]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $eventId = 'evt_duplicate_' . uniqid();
@@ -75,7 +75,7 @@ test('subscription update webhook persists the subscription and syncs the tenant
         'plan' => SubscriptionTier::Starter,
     ]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleCustomerSubscriptionUpdated');
 
     $method->invoke($controller, [
@@ -154,7 +154,7 @@ test('handleCustomerSubscriptionDeleted calls parent and logs', function () {
 test('handleInvoicePaymentFailed skips when no customer id in payload', function () {
     Event::fake([PaymentFailed::class]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -173,7 +173,7 @@ test('handleInvoicePaymentFailed skips when no customer id in payload', function
 test('handleInvoicePaymentFailed skips when user not found for customer', function () {
     Event::fake([PaymentFailed::class]);
 
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
 
     $method->invoke($controller, [
@@ -190,7 +190,7 @@ test('handleInvoicePaymentFailed skips when user not found for customer', functi
 });
 
 test('alreadyProcessed returns false for missing event id', function () {
-    $controller = new StripeWebhookController;
+    $controller = app(StripeWebhookController::class);
     $method = new ReflectionMethod($controller, 'alreadyProcessed');
 
     expect($method->invoke($controller, []))->toBeFalse();
