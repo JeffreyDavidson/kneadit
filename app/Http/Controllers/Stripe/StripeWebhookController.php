@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Stripe;
 
-use App\Actions\Stripe\SyncSubscriptionPlan;
-use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
-use App\Queries\Platform\StripeCustomerLookupQuery;
+use App\Services\Stripe\StripeWebhookEventHandler;
 use App\Services\Stripe\StripeWebhookPayloadParser;
-use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,8 +12,10 @@ class StripeWebhookController extends WebhookController
 {
     use EnsuresWebhookIdempotency;
 
-    public function __construct(private readonly StripeWebhookPayloadParser $payloadParser)
-    {
+    public function __construct(
+        private readonly StripeWebhookPayloadParser $payloadParser,
+        private readonly StripeWebhookEventHandler $eventHandler,
+    ) {
         parent::__construct();
     }
 
@@ -37,21 +36,7 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionUpdated($payload);
 
-        $subscription = $this->payloadParser->object($payload);
-        $stripeCustomerId = $this->payloadParser->stringValue($subscription['customer'] ?? null);
-        $stripePriceId = $this->payloadParser->stringValue(data_get($subscription, 'items.data.0.price.id'));
-
-        if ($stripeCustomerId && $stripePriceId) {
-            $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
-
-            if ($lookup['user']) {
-                resolve(SyncSubscriptionPlan::class)(
-                    tenantEmail: $lookup['user']->email,
-                    stripePriceId: $stripePriceId,
-                    priceMap: $this->payloadParser->priceMap(),
-                );
-            }
-        }
+        $this->eventHandler->handleSubscriptionUpdated($this->payloadParser->object($payload));
 
         return $response;
     }
@@ -63,29 +48,7 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        $invoice = $this->payloadParser->object($payload);
-        $stripeCustomerId = $this->payloadParser->stringValue($invoice['customer'] ?? null);
-
-        if (! $stripeCustomerId) {
-            return;
-        }
-
-        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
-
-        if (! $lookup['user']) {
-            return;
-        }
-
-        $amountDue = $invoice['amount_due'] ?? 0;
-        $amountDueInDollars = is_int($amountDue) ? $amountDue / 100 : 0.0;
-
-        Log::warning('Payment failed', [
-            'tenant' => $lookup['tenant']?->id,
-            'email' => $lookup['user']->email,
-            'amount' => $amountDueInDollars,
-        ]);
-
-        event(new PaymentFailed($lookup['user'], $lookup['tenant'], $amountDueInDollars));
+        $this->eventHandler->handleInvoicePaymentFailed($this->payloadParser->object($payload));
     }
 
     /** @param array<string, mixed> $payload */
@@ -97,18 +60,7 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionDeleted($payload);
 
-        $subscription = $this->payloadParser->object($payload);
-        $stripeCustomerId = $this->payloadParser->stringValue($subscription['customer'] ?? null);
-
-        if ($stripeCustomerId === null) {
-            return $response;
-        }
-
-        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
-
-        if ($lookup['tenant']) {
-            Log::info("Tenant {$lookup['tenant']->id} subscription fully canceled");
-        }
+        $this->eventHandler->handleSubscriptionDeleted($this->payloadParser->object($payload));
 
         return $response;
     }

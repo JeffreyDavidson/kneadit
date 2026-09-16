@@ -147,8 +147,7 @@ test('handleCustomerSubscriptionDeleted calls parent and logs', function () {
     expect($source)
         ->toContain('handleCustomerSubscriptionDeleted')
         ->toContain('parent::handleCustomerSubscriptionDeleted')
-        ->toContain('subscription fully canceled')
-        ->toContain('StripeCustomerLookupQuery::find');
+        ->toContain('handleSubscriptionDeleted');
 });
 
 test('handleInvoicePaymentFailed skips when no customer id in payload', function () {
