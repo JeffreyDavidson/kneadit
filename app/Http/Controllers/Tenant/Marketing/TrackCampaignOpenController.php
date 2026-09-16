@@ -8,6 +8,8 @@ use Illuminate\Http\Response;
 
 class TrackCampaignOpenController extends Controller
 {
+    private const string TRANSPARENT_GIF_BASE64 = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
     /**
      * Stamps opened_at on the matching log row (idempotent — only the
      * first hit wins) and returns a 1x1 transparent GIF. Always returns
@@ -23,17 +25,11 @@ class TrackCampaignOpenController extends Controller
                 'opened_at' => now(),
             ]);
 
-        return response($this->transparentGif(), 200, [
+        return response(base64_decode(self::TRANSPARENT_GIF_BASE64), 200, [
             'Content-Type' => 'image/gif',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
-    }
-
-    private function transparentGif(): string
-    {
-        // 1x1 transparent GIF89a, 43 bytes.
-        return base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
     }
 }
