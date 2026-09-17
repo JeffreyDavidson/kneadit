@@ -13,6 +13,8 @@
         "filament/filament": "^5.3",
         "laravel/cashier": "^16.5",
         "laravel/framework": "^13.23",
+        "laravel/head": "^0.2.1",
+        "laravel/nightwatch": "^1.30",
         "laravel/pennant": "^1.22",
         "laravel/tinker": "^3.0",
         "resend/resend-laravel": "^1.3",
@@ -21,6 +23,7 @@
         "stancl/tenancy": "^3.10"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^4.0",
         "barryvdh/laravel-ide-helper": "^3.7",
         "christophrumpel/missing-livewire-assertions": "^4.0",
         "driftingly/rector-laravel": "^2.1",
