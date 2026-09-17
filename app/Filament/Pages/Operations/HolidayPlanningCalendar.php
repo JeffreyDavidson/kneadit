@@ -81,7 +81,7 @@ class HolidayPlanningCalendar extends Page
 
                 return $year === $currentYear || $year === $nextYear;
             })
-            ->groupBy(fn(Holiday $holiday) => $holiday->date->format('Y-m'))
+            ->groupBy(fn (Holiday $holiday) => $holiday->date->format('Y-m'))
             ->sortKeys();
     }
 }

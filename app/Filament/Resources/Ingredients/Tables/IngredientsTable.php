@@ -57,7 +57,7 @@ class IngredientsTable
                         'low' => 'Low Stock',
                         'out' => 'Out of Stock',
                     ])
-                    ->query(fn(Builder $query, array $data) => match ($data['value'] ?? null) {
+                    ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
                         'low' => $query->where('current_stock', '>', 0)
                             ->whereColumn('current_stock', '<=', 'low_stock_threshold'),
                         'out' => $query->where('current_stock', '<=', 0),

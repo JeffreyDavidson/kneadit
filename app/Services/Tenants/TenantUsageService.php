@@ -32,7 +32,7 @@ class TenantUsageService
             }
 
             try {
-                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, fn() => [
+                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, fn () => [
                     Product::query()->count(),
                     Order::query()
                         ->whereMonth('created_at', Date::now()->month)

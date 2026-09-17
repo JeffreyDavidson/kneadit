@@ -37,7 +37,7 @@ class ReorderRemindersWidget extends Widget
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
-        return $this->cached('lapsed_customers', [1800, 3600], fn(): array => self::lapsedCustomersQuery()
+        return $this->cached('lapsed_customers', [1800, 3600], fn (): array => self::lapsedCustomersQuery()
             ->withMax(['orders as last_order_at' => self::eligibleOrders(...)], 'created_at')
             ->orderByDesc('last_order_at')
             ->limit(10)
@@ -52,7 +52,7 @@ class ReorderRemindersWidget extends Widget
 
     public function getLapsedCount(): int
     {
-        return $this->cached('lapsed_count', [1800, 3600], fn(): int => self::lapsedCustomersQuery()->count());
+        return $this->cached('lapsed_count', [1800, 3600], fn (): int => self::lapsedCustomersQuery()->count());
     }
 
     /** @return Builder<Customer> */

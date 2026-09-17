@@ -94,7 +94,7 @@ final readonly class SettingValue
     public static function stringMapList(mixed $value): array
     {
         return array_values(collect(self::mapList($value))
-            ->map(fn(array $item): array => collect($item)
+            ->map(fn (array $item): array => collect($item)
                 ->filter(fn (mixed $mapValue): bool => is_string($mapValue))
                 ->all())
             ->filter(fn (array $item): bool => $item !== [])

@@ -35,7 +35,7 @@ class TaxCsvExporter
                         $order->payment_status->value,
                         $order->payment_method->value,
                     ]),
-                    escape: '\\');
+                        escape: '\\');
                 }
             });
     }
@@ -72,7 +72,7 @@ class TaxCsvExporter
                         $expense->deductible_amount->dollars(),
                         $expense->notes ?? '',
                     ]),
-                    escape: '\\');
+                        escape: '\\');
                 }
             });
     }
@@ -94,7 +94,7 @@ class TaxCsvExporter
                         $income->amount->dollars(),
                         'Gross Receipts (Schedule C Line 1)',
                     ]),
-                    escape: '\\');
+                        escape: '\\');
                 }
             });
     }

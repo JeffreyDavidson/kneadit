@@ -27,7 +27,7 @@ class DeliveryRouteService
             ->where('delivery_address', '!=', '')
             ->orderBy('delivery_time')
             ->get()
-            ->map(fn(Order $order) => [
+            ->map(fn (Order $order) => [
                 'id' => $order->id,
                 'order_number' => $order->order_number,
                 'customer_name' => $order->customer->name ?? 'Unknown Customer',
@@ -70,12 +70,12 @@ class DeliveryRouteService
     {
         $totalOrders = $deliveryOrders->count();
         $totalRevenue = $deliveryOrders->sum(fn (array $order): float => $order['total']);
-        $averageDistance = $deliveryOrders->avg(fn(array $order): int => $order['distance_tier']['estimated_minutes']);
+        $averageDistance = $deliveryOrders->avg(fn (array $order): int => $order['distance_tier']['estimated_minutes']);
 
         return [
             'total_orders' => $totalOrders,
             'total_revenue' => $totalRevenue,
-            'estimated_total_time' => $deliveryOrders->sum(fn(array $order): int => $order['distance_tier']['estimated_minutes']),
+            'estimated_total_time' => $deliveryOrders->sum(fn (array $order): int => $order['distance_tier']['estimated_minutes']),
             'average_distance_time' => round($averageDistance ?? 0, 1),
         ];
     }

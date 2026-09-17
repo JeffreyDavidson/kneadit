@@ -49,7 +49,7 @@ class GiftCardsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(GiftCardStatus::class)
-                    ->query(fn(Builder $query, array $state) => match ($state['value'] ?? null) {
+                    ->query(fn (Builder $query, array $state) => match ($state['value'] ?? null) {
                         GiftCardStatus::Active->value => $query->where('is_active', true)
                             ->where('current_balance', '>', 0)
                             ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),

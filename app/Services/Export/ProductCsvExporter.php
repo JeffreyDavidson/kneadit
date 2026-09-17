@@ -32,7 +32,7 @@ class ProductCsvExporter
                 $product->is_active ? '1' : '0',
                 $product->is_featured ? '1' : '0',
             ]),
-            escape: '\\');
+                escape: '\\');
         });
 
         rewind($output);

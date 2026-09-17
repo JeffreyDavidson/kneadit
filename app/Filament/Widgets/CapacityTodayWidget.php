@@ -62,7 +62,7 @@ class CapacityTodayWidget extends Widget
     /** @return array<int, array<string, string>> */
     public function getBlockedDaysWarning(): array
     {
-        return $this->cached('blocked_days_'.Date::today()->toDateString(), [1800, 3600], fn(): array => BlockedDate::query()->where('date', '>=', Date::today())
+        return $this->cached('blocked_days_'.Date::today()->toDateString(), [1800, 3600], fn (): array => BlockedDate::query()->where('date', '>=', Date::today())
             ->where('date', '<=', Date::today()->addDays(7))
             ->where('is_all_day', true)
             ->orderBy('date')

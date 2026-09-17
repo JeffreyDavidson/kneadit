@@ -115,7 +115,7 @@ class CustomerDirectory extends Page
             });
         }
 
-        return $query->orderBy('name')->get()->map(fn(Customer $customer) => [
+        return $query->orderBy('name')->get()->map(fn (Customer $customer) => [
             'id' => $customer->id,
             'name' => $customer->name,
             'email' => $customer->email,

@@ -120,7 +120,7 @@ class CustomersTable
             ->filters([
                 Filter::make('at_risk')
                     ->label('At Risk')
-                    ->query(fn(Builder $query) => $query->whereHas('orders')
+                    ->query(fn (Builder $query) => $query->whereHas('orders')
                         ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)))),
 
                 Filter::make('has_birthday_this_month')
