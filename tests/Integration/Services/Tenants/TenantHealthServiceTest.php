@@ -37,16 +37,14 @@ it('calculates health scores for tenants', function () {
 
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('withinTenant')
-        ->resolves(function (Tenant $tenant, callable $callback): array {
-            return [
-                'days_since_login' => 1,
-                'total_orders' => 50,
-                'total_products' => 20,
-                'has_products' => true,
-                'has_categories' => true,
-                'has_orders' => true,
-            ];
-        });
+        ->resolves(fn(Tenant $tenant, callable $callback): array => [
+            'days_since_login' => 1,
+            'total_orders' => 50,
+            'total_products' => 20,
+            'has_products' => true,
+            'has_categories' => true,
+            'has_orders' => true,
+        ]);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 

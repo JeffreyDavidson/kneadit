@@ -135,7 +135,7 @@ test('passes through gracefully when TenantSettings throws exception', function 
     $user = User::factory()->create();
     actingAs($user);
 
-    app()->bind(TenantSettings::class, function () {
+    app()->bind(function (): \App\Services\Settings\TenantSettings {
         throw new RuntimeException('Settings unavailable');
     });
 

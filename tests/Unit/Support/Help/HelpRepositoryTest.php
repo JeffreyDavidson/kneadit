@@ -77,10 +77,9 @@ test('find() returns parsed article or null', function () {
     }
 
     expect($hit['title'])->toBe('Plans')
-        ->and($hit['topicSlug'])->toBe('billing');
-
-    expect($repo->find('billing/missing'))->toBeNull();
-    expect($repo->find('nonsense'))->toBeNull();
+        ->and($hit['topicSlug'])->toBe('billing')
+        ->and($repo->find('billing/missing'))->toBeNull()
+        ->and($repo->find('nonsense'))->toBeNull();
 });
 
 test('articles missing an H1 fall back to a slug-derived title', function () {

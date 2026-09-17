@@ -13,7 +13,7 @@ test('it generates an ORD-prefixed order number with a 10-character random suffi
 
     expect($number)
         ->toStartWith('ORD-')
-        ->and(strlen($number))->toBe(14)
+        ->and($number)->toHaveLength(14)
         ->and($number)->toMatch('/^ORD-[A-Z0-9]{10}$/');
 });
 

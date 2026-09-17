@@ -28,7 +28,6 @@ test('it generates icon using brandColorPrimary from TenantSettings', function (
     $r = ($rgb >> 16) & 0xFF;
     $g = ($rgb >> 8) & 0xFF;
     $b = $rgb & 0xFF;
-    imagedestroy($img);
 
     expect($r)->toBe(255)
         ->and($g)->toBe(85)

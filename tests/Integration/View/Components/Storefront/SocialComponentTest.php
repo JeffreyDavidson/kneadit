@@ -24,5 +24,5 @@ test('omits the section when social links are empty', function () {
 
     $html = Blade::render('<x-storefront.home.social />');
 
-    expect(trim($html))->toBe('');
+    expect(trim($html))->toBeEmpty();
 });

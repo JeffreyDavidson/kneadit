@@ -9,19 +9,18 @@ beforeEach(function () {
 });
 
 test('empty feature usage returns default analytics', function () {
-    expect(test()->page->getHasData())->toBeFalse();
-    expect(test()->page->getMostUsedFeature())->toBeNull();
-    expect(test()->page->getLeastUsedFeature())->toBeNull();
-    expect(test()->page->getTotalInteractionsThisMonth())->toBe(0);
-    expect(test()->page->getFeatureUsageBars())->toBeEmpty();
+    expect(test()->page->getHasData())->toBeFalse()
+        ->and(test()->page->getMostUsedFeature())->toBeNull()
+        ->and(test()->page->getLeastUsedFeature())->toBeNull()
+        ->and(test()->page->getTotalInteractionsThisMonth())->toBe(0)
+        ->and(test()->page->getFeatureUsageBars())->toBeEmpty();
 
     $heatmap = test()->page->getHeatmapData();
 
     expect($heatmap['days'])->toHaveCount(7)
-        ->and($heatmap['rows'])->toBeEmpty();
-
-    expect(test()->page->getFeatureTenantBreakdown())->toBeEmpty();
-    expect(test()->page->selectedFeature)->toBeNull();
+        ->and($heatmap['rows'])->toBeEmpty()
+        ->and(test()->page->getFeatureTenantBreakdown())->toBeEmpty()
+        ->and(test()->page->selectedFeature)->toBeNull();
 });
 
 test('populated feature usage returns aggregated analytics', function () {
@@ -51,10 +50,10 @@ test('populated feature usage returns aggregated analytics', function () {
         'date' => now()->subMonth()->toDateString(),
     ]);
 
-    expect(test()->page->getHasData())->toBeTrue();
-    expect(test()->page->getMostUsedFeature())->toBe('products');
-    expect(test()->page->getLeastUsedFeature())->toBe('reviews');
-    expect(test()->page->getTotalInteractionsThisMonth())->toBe(167);
+    expect(test()->page->getHasData())->toBeTrue()
+        ->and(test()->page->getMostUsedFeature())->toBe('products')
+        ->and(test()->page->getLeastUsedFeature())->toBe('reviews')
+        ->and(test()->page->getTotalInteractionsThisMonth())->toBe(167);
 
     $bars = test()->page->getFeatureUsageBars();
 
@@ -86,8 +85,7 @@ test('feature usage selection and labels update locally', function () {
     expect(test()->page->selectedFeature)->toBeNull();
 
     test()->page->selectFeature('products');
-    expect(test()->page->selectedFeature)->toBe('products');
-
-    expect(test()->page->formatFeatureName('shopping_list'))->toBe('Shopping list')
+    expect(test()->page->selectedFeature)->toBe('products')
+        ->and(test()->page->formatFeatureName('shopping_list'))->toBe('Shopping list')
         ->and(test()->page->formatFeatureName('orders'))->toBe('Orders');
 });

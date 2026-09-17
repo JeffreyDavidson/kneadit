@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 arch('view models must not use the DB facade')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(\Illuminate\Support\Facades\DB::class)
     ->not->toBeUsedIn('App\ViewModels');
 
 test('view models must not call Model::query() statically', function () {

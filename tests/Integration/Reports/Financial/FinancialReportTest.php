@@ -23,7 +23,7 @@ test('generates financial report for a year', function () {
         ->and($result->profit)->toEqual(Money::zero())
         ->and($result->deductible)->toEqual(Money::zero())
         ->and($result->monthly[0])->toBeInstanceOf(FinancialReportMonth::class)
-        ->and($result->expensesByCategory)->toBe([])
+        ->and($result->expensesByCategory)->toBeEmpty()
         ->and($result->toArray())->toHaveKeys([
             'totalRevenue',
             'totalExpenses',

@@ -12,7 +12,7 @@ test('regenerate writes a fresh 40-char secret to settings and returns it', func
 
     $newSecret = resolve(RegenerateWebhookSecret::class)();
 
-    expect(strlen($newSecret))->toBe(40)
+    expect($newSecret)->toHaveLength(40)
         ->and($newSecret)->not->toBe('old-secret')
         ->and(settings('webhook_secret'))->toBe($newSecret);
 });

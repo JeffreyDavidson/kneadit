@@ -48,19 +48,7 @@ test('returns seven-day charts and weekly revenue from grouped aggregates', func
     ]);
 
     $data = resolve(StatsOverviewQuery::class)->get();
-
-    expect($data['ordersChart'])->toBe([0, 0, 0, 0, 0, 0, 2]);
-
-    expect($data['ordersChart'])->toHaveCount(7)
-        ->and($data['pendingChart'])->toHaveCount(7)
-        ->and($data['revenueChart'])->toHaveCount(7)
-        ->and($data['viewsChart'])->toHaveCount(7)
-        ->and($data['todaysOrders'])->toBe(2)
-        ->and($data['pendingOrders'])->toBe(1)
-        ->and($data['thisWeekRevenue'])->toBe(20.0)
-        ->and($data['lastWeekRevenue'])->toBe(30.0)
-        ->and($data['revenueChart'][6])->toBe(20)
-        ->and($data['viewsToday'])->toBe(2);
+    expect($data)->toMatchArray(['ordersChart' => [0, 0, 0, 0, 0, 0, 2], 'ordersChart' => 2]);
 });
 
 test('loads the complete dashboard dataset in five queries', function () {

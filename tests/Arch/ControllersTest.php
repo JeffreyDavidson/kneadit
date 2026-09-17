@@ -51,7 +51,7 @@ arch('controllers should be classes')
     ->ignoring('App\Http\Controllers\Stripe\Concerns');
 
 arch('controllers should not use DB facade directly')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(\Illuminate\Support\Facades\DB::class)
     ->not->toBeUsedIn('App\Http\Controllers')
     ->ignoring([
         ImpersonateController::class,
@@ -59,7 +59,7 @@ arch('controllers should not use DB facade directly')
     ]);
 
 arch('controllers should not invoke tenancy middleware directly')
-    ->expect('Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain')
+    ->expect(\Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class)
     ->not->toBeUsedIn('App\Http\Controllers');
 
 foreach ($controllerFiles as $controllerClass) {

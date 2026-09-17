@@ -82,11 +82,9 @@ test('reply action sends the email, persists the reply, and marks the message as
             'body' => 'Thanks for reaching out — happy to help with that.',
         ]);
 
-    Mail::assertQueued(ContactMessageReplyMail::class, function (ContactMessageReplyMail $mail) use ($message): bool {
-        return $mail->hasTo($message->email)
-            && $mail->replySubject === 'Re: Custom cake'
-            && str_contains($mail->replyBody, 'Thanks for reaching out');
-    });
+    Mail::assertQueued(ContactMessageReplyMail::class, fn(ContactMessageReplyMail $mail): bool => $mail->hasTo($message->email)
+        && $mail->replySubject === 'Re: Custom cake'
+        && str_contains($mail->replyBody, 'Thanks for reaching out'));
 
     expect($message->fresh()->is_read)->toBeTrue();
 

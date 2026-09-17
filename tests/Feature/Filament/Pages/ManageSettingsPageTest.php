@@ -100,7 +100,6 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
     $page = Livewire::test(ManageSettings::class)->instance();
 
     $reflection = new ReflectionMethod($page, 'toSettingsArray');
-    $reflection->setAccessible(true);
     $sentKeys = array_keys($reflection->invoke($page));
 
     Livewire::test(ManageSettings::class)->call('save');
@@ -110,8 +109,5 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
     // We want "did a row land for this key" not "is the value non-null."
     $persistedKeys = Setting::query()->pluck('key')->all();
 
-    foreach ($sentKeys as $key) {
-        expect(in_array($key, $persistedKeys, true))
-            ->toBeTrue("settings('{$key}') was sent by ManageSettings::toSettingsArray() but never persisted by SaveTenantSettings — likely a silent-drop bug.");
-    }
+    expect($sentKeys)->each->toBeIn($persistedKeys);
 });

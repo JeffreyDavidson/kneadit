@@ -11,7 +11,7 @@ arch('actions should be invokable')
 
 arch('form requests should extend FormRequest')
     ->expect('App\Http\Requests')
-    ->toExtend('Illuminate\Foundation\Http\FormRequest');
+    ->toExtend(\Illuminate\Foundation\Http\FormRequest::class);
 
 arch('services should be classes')
     ->expect('App\Services')
@@ -37,7 +37,7 @@ arch('controllers should not use env() directly')
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('models should not use DB facade')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(\Illuminate\Support\Facades\DB::class)
     ->not->toBeUsedIn('App\Models');
 
 arch('exceptions should be classes')
@@ -169,7 +169,7 @@ test('model static calls in controllers must use explicit query()', function () 
 });
 
 arch('controllers should not use Mail facade directly')
-    ->expect('Illuminate\Support\Facades\Mail')
+    ->expect(\Illuminate\Support\Facades\Mail::class)
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('mail classes should not call settings() directly')

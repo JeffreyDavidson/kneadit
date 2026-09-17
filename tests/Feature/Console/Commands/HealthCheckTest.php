@@ -89,9 +89,7 @@ test('health check dispatches event on failure', function () {
         ->expectsOutputToContain('alert dispatched')
         ->assertFailed();
 
-    Event::assertDispatched(function (HealthCheckFailed $event) {
-        return str_contains($event->message, 'Health Check Alert');
-    });
+    Event::assertDispatched(fn(HealthCheckFailed $event) => str_contains($event->message, 'Health Check Alert'));
 });
 
 test('health check detects homepage connection failure', function () {

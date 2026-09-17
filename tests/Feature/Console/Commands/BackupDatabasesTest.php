@@ -31,7 +31,7 @@ afterEach(function () {
         if (is_dir($dir)) {
             $subdirs = glob("{$dir}/20*", GLOB_ONLYDIR) ?: [];
             foreach ($subdirs as $subdir) {
-                array_map('unlink', glob("{$subdir}/*") ?: []);
+                array_map(unlink(...), glob("{$subdir}/*") ?: []);
                 @rmdir($subdir);
             }
         }
@@ -61,14 +61,7 @@ test('backup creates backup directory', function () {
         dirname(base_path()).'/backups',
         base_path().'/../backups',
     ];
-
-    $found = false;
-    foreach ($possibleDirs as $dir) {
-        if (is_dir($dir)) {
-            $found = true;
-            break;
-        }
-    }
+    $found = array_any($possibleDirs, fn($dir) => is_dir($dir));
 
     expect($found)->toBeTrue('Backup directory should be created');
 });
@@ -83,11 +76,9 @@ test('backup outputs progress messages', function () {
 test('backup logs completion', function () {
     Log::shouldReceive('info')
         ->once()
-        ->withArgs(function ($message, $context) {
-            return str_contains($message, 'Database backup completed')
-                && isset($context['path'])
-                && isset($context['size']);
-        });
+        ->withArgs(fn($message, $context) => str_contains($message, 'Database backup completed')
+            && isset($context['path'])
+            && isset($context['size']));
 
     $this->artisan('backup:databases')
         ->assertSuccessful();

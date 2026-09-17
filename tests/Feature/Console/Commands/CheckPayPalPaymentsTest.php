@@ -58,9 +58,7 @@ test('command handles tenant processing exceptions gracefully', function () {
 
     Log::shouldReceive('error')
         ->once()
-        ->withArgs(function ($message) {
-            return str_contains($message, 'PayPal check failed');
-        });
+        ->withArgs(fn($message) => str_contains($message, 'PayPal check failed'));
 
     $this->artisan('paypal:check-payments')
         ->expectsOutputToContain('Error processing')

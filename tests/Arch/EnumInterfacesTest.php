@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 arch('enums should implement HasLabel for Filament')
     ->expect('App\Enums')
-    ->toImplement('Filament\Support\Contracts\HasLabel');
+    ->toImplement(\Filament\Support\Contracts\HasLabel::class);
 
 arch('custom query builders should extend Eloquent Builder')
     ->expect('App\Builders')
-    ->toExtend('Illuminate\Database\Eloquent\Builder');
+    ->toExtend(\Illuminate\Database\Eloquent\Builder::class);
 
 arch('custom casts should implement CastsAttributes')
     ->expect('App\Casts')
-    ->toImplement('Illuminate\Contracts\Database\Eloquent\CastsAttributes');
+    ->toImplement(\Illuminate\Contracts\Database\Eloquent\CastsAttributes::class);
 
 arch('value objects should be final readonly')
     ->expect('App\ValueObjects')

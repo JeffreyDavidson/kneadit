@@ -29,11 +29,8 @@ test('biscotto contact page uses the themed contact and faq presentation', funct
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('contact.show', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-contact-hero', false)
-        ->assertSee('Frequently Asked')
-        ->assertSee('How do I order?')
-        ->assertSee('data-test="contact-form"', false);
+    $response->assertOk()->assertSeeHtml('biscotto-contact-hero')
+        ->assertSee('Frequently Asked')->assertSee('How do I order?')->assertSeeHtml('data-test="contact-form"');
 });
 
 test('show returns the contact view with tenant settings', function () {

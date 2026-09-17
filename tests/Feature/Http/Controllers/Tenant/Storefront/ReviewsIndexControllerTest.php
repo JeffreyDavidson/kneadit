@@ -53,8 +53,7 @@ test('biscotto reviews page uses the themed customer stories presentation', func
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.reviews', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-reviews-hero', false)
+    $response->assertOk()->assertSeeHtml('biscotto-reviews-hero')
         ->assertSee('Kind Words')
         ->assertSee('The best sourdough in town.')
         ->assertSee('Leave a Review');

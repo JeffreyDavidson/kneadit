@@ -7,7 +7,6 @@ test('SlideOverEditAction wires the update authorization ability', function () {
 
     $reflection = new ReflectionClass($action);
     $property = $reflection->getProperty('authorization');
-    $property->setAccessible(true);
 
     expect($property->getValue($action))
         ->toMatchArray([

@@ -17,7 +17,7 @@ function invoiceServiceTokenManager(?string $accessToken): TokenManager
 {
     return new class($accessToken) extends TokenManager
     {
-        public function __construct(private ?string $accessToken) {}
+        public function __construct(private readonly ?string $accessToken) {}
 
         public function getAccessToken(): ?string
         {

@@ -25,7 +25,7 @@ test('Unit tests must not use RefreshDatabase', function () {
             throw new RuntimeException("Unable to read {$file->getPathname()}.");
         }
 
-        if (str_contains($contents, 'Illuminate\Foundation\Testing\RefreshDatabase')) {
+        if (str_contains($contents, \Illuminate\Foundation\Testing\RefreshDatabase::class)) {
             $violations[] = str_replace(dirname(__DIR__).'/', '', $file->getPathname());
         }
     }

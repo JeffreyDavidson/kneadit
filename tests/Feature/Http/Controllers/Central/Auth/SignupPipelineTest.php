@@ -52,9 +52,7 @@ function uniqueSubdomain(): string
  */
 function submitOnboarding(User $user, array $data = []): TestResponse
 {
-    if (! isset($data['subdomain'])) {
-        $data['subdomain'] = uniqueSubdomain();
-    }
+    $data['subdomain'] ??= uniqueSubdomain();
 
     $payload = array_merge([
         'store_name' => 'My Test Bakery',
@@ -143,12 +141,10 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
 
     $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
 
-    Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
-        return $event->user->is($user)
-            && $event->tenant->id === $sub
-            && str_contains($event->adminUrl, "{$sub}.")
-            && str_ends_with($event->adminUrl, '/admin');
-    });
+    Event::assertDispatched(TenantOnboarded::class, fn(TenantOnboarded $event) => $event->user->is($user)
+        && $event->tenant->id === $sub
+        && str_contains($event->adminUrl, "{$sub}.")
+        && str_ends_with($event->adminUrl, '/admin'));
 });
 
 test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {
