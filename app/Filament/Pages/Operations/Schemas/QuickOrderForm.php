@@ -87,7 +87,7 @@ class QuickOrderForm
                     /** @var array<int, array{quantity: int, unit_price: float}> $items */
                     $items = $get('order_items') ?? [];
                     $totalItems = count($items);
-                    $subtotal = collect($items)->sum(fn (array $item): int|float => $item['quantity'] * $item['unit_price']);
+                    $subtotal = collect($items)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
 
                     return $totalItems.' items · Subtotal: $'.Number::currency($subtotal);
                 })

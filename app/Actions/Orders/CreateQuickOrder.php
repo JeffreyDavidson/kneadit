@@ -20,7 +20,7 @@ class CreateQuickOrder
         $order = DB::transaction(function () use ($data) {
             $customer = $this->findOrCreateCustomer($data);
 
-            $subtotal = collect($data->orderItems)->sum(fn (array $item): int|float => $item['quantity'] * $item['unit_price']);
+            $subtotal = collect($data->orderItems)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
             $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value)
                 ? Config::float('kneadit.delivery_fees.5to10', 5.0)
                 : 0.00;
