@@ -3,7 +3,13 @@
 declare(strict_types=1);
 
 use Pest\Rector\Set\PestSetList;
+use Rector\CodeQuality\Rector\If_\ObjectExplicitBoolCompareRector;
 use Rector\Config\RectorConfig;
+use Rector\Php74\Rector\If_\IfToNullCoalescingAssignRector;
+use Rector\Renaming\Rector\Class_\RenameAttributeRector;
+use Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector;
+use RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector;
+use RectorLaravel\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -13,4 +19,12 @@ return RectorConfig::configure()
     ->withSets([
         PestSetList::CODING_STYLE,
     ])
-    ->withComposerBased(laravel: true);
+    ->withComposerBased(laravel: true)
+    ->withSkip([
+        BinaryOpNullableToInstanceofRector::class,
+        IfToNullCoalescingAssignRector::class,
+        LivewireComponentComputedMethodToComputedAttributeRector::class,
+        LivewireComponentQueryStringToUrlAttributeRector::class,
+        ObjectExplicitBoolCompareRector::class,
+        RenameAttributeRector::class,
+    ]);
