@@ -99,7 +99,7 @@ class ProvisionTestTenantCommand extends Command
                 'store_email' => $tenant->email,
             ]);
 
-            Artisan::call('db:seed', ['--force' => true]);
+            resolve(BrowserTestFixtureSeeder::class)->run();
         });
 
         return $tenant;
