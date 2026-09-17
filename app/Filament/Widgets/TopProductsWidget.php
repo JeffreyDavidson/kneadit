@@ -14,8 +14,10 @@ class TopProductsWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 7;
 
+    #[\Override]
     protected string $view = 'filament.widgets.top-products';
 
     /** @return array<int, array<string, mixed>> */

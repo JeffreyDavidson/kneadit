@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\BlockedDateFactory;
@@ -25,6 +27,7 @@ class BlockedDate extends Model
     /** @use HasFactory<BlockedDateFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

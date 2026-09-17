@@ -18,7 +18,7 @@ use Closure;
 class ApplySitewideSale
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

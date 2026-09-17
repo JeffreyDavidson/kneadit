@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Tenant\Orders;
 
 use App\Http\Controllers\Controller;
@@ -14,7 +16,7 @@ class ReorderController extends Controller
     {
         $order->load('orderItems.product');
 
-        $items = $order->orderItems->map(fn (OrderItem $item) => [
+        $items = $order->orderItems->map(fn (OrderItem $item): array => [
             'product_id' => $item->product_id,
             'product_name' => $item->product->name ?? 'Unknown',
             'price' => $item->unit_price->dollars(),

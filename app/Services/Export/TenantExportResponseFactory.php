@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\File;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-final class TenantExportResponseFactory
+final readonly class TenantExportResponseFactory
 {
     public function __construct(
-        private readonly CsvExportService $csvExport,
-        private readonly TenantArchiveExporter $archiveExporter,
-        private readonly TenancyManager $tenancyManager,
+        private CsvExportService $csvExport,
+        private TenantArchiveExporter $archiveExporter,
+        private TenancyManager $tenancyManager,
     ) {}
 
     public function csv(Tenant $tenant, string $type): StreamedResponse

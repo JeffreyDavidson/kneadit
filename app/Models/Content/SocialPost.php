@@ -36,6 +36,7 @@ class SocialPost extends Model
     /** @use HasFactory<SocialPostFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

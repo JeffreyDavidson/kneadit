@@ -21,28 +21,37 @@ class SupplierResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Supplier::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Suppliers';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return SupplierForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return SuppliersTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('pro-features');
@@ -53,6 +62,7 @@ class SupplierResource extends Resource
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -60,11 +70,13 @@ class SupplierResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'contact_name', 'email'];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

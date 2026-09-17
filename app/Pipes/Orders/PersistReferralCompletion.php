@@ -4,7 +4,9 @@ namespace App\Pipes\Orders;
 
 use App\Enums\Customers\CustomerReferralStatus;
 use App\Events\Customers\CustomerReferralCompleted;
+use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
+use App\Models\Orders\Order;
 use Closure;
 
 /**
@@ -15,7 +17,7 @@ class PersistReferralCompletion
 {
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if ($payload->referrer === null || $payload->customer === null || $payload->order === null) {
+        if (! $payload->referrer instanceof Customer || ! $payload->customer instanceof Customer || ! $payload->order instanceof Order) {
             return $next($payload);
         }
 

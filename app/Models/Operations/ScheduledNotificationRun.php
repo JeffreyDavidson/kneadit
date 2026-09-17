@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\ScheduledNotificationRunFactory;
@@ -22,6 +24,7 @@ class ScheduledNotificationRun extends Model
     /** @use HasFactory<ScheduledNotificationRunFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

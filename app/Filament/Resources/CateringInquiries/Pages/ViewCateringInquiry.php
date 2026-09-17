@@ -38,10 +38,13 @@ use Illuminate\Support\ValidatedInput;
  */
 class ViewCateringInquiry extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = CateringInquiryResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.catering-inquiries.view-catering-inquiry';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -126,7 +129,7 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema([
                 Select::make('event_type')
-                    ->options(function () {
+                    ->options(function (): array {
                         $types = resolve(TenantSettings::class)->catering->eventTypes;
 
                         return array_combine($types, $types);

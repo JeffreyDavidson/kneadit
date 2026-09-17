@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class HandleCheckoutComplete
 {
     public function __construct(
-        private MarkOrderPaid $markOrderPaid,
+        private readonly MarkOrderPaid $markOrderPaid,
     ) {}
 
     public function __invoke(Order $order, string $paymentIntentId): Order

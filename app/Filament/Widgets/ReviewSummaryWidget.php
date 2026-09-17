@@ -13,8 +13,10 @@ class ReviewSummaryWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 19;
 
+    #[\Override]
     protected string $view = 'filament.widgets.review-summary-widget';
 
     public function getAverageRating(): float

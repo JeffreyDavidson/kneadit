@@ -22,22 +22,22 @@ use Illuminate\Support\Collection;
  * Each sub-DTO owns its own resolve() factory; TenantSettings::resolve() is
  * a thin composer.
  */
-final class TenantSettings
+final readonly class TenantSettings
 {
     public function __construct(
-        public readonly StoreInfo $store,
-        public readonly BrandingSettings $branding,
-        public readonly OrderSettings $orders,
-        public readonly PaymentSettings $payment,
-        public readonly CateringSettings $catering,
-        public readonly LoyaltySettings $loyalty,
-        public readonly EngagementSettings $engagement,
-        public readonly PolicySettings $policies,
-        public readonly HomepageSettings $homepage,
-        public readonly OnboardingSettings $onboarding,
-        public readonly WebhookSettings $webhooks,
-        public readonly GiftCardSettings $giftCards,
-        public readonly InventorySettings $inventory,
+        public StoreInfo $store,
+        public BrandingSettings $branding,
+        public OrderSettings $orders,
+        public PaymentSettings $payment,
+        public CateringSettings $catering,
+        public LoyaltySettings $loyalty,
+        public EngagementSettings $engagement,
+        public PolicySettings $policies,
+        public HomepageSettings $homepage,
+        public OnboardingSettings $onboarding,
+        public WebhookSettings $webhooks,
+        public GiftCardSettings $giftCards,
+        public InventorySettings $inventory,
     ) {}
 
     public static function resolve(): self

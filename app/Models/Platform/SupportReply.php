@@ -39,6 +39,7 @@ class SupportReply extends Model
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

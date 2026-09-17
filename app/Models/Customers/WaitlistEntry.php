@@ -37,6 +37,7 @@ class WaitlistEntry extends Model
     /** @use HasFactory<WaitlistEntryFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

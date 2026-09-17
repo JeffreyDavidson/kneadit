@@ -18,26 +18,34 @@ class ExpenseResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Expense::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'description';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingDown;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ExpenseForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ExpensesTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('growth-features');
@@ -48,6 +56,7 @@ class ExpenseResource extends Resource
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -55,6 +64,7 @@ class ExpenseResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

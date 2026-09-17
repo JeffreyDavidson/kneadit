@@ -16,21 +16,28 @@ class Onboarding extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static ?string $navigationLabel = null;
 
+    #[\Override]
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = null;
 
+    #[\Override]
     protected string $view = 'filament.pages.central.platform.onboarding';
 
+    #[\Override]
     protected static ?string $title = 'Welcome to KneadIt';
 
+    #[\Override]
     protected static ?string $slug = 'onboarding';
 
     /** @var array<string, mixed> */
@@ -74,6 +81,7 @@ class Onboarding extends Page
         }
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([

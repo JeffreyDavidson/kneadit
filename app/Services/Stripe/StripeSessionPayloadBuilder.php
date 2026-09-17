@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Stripe;
 
 use App\Models\Orders\Order;
@@ -36,7 +38,7 @@ class StripeSessionPayloadBuilder
             $params['customer_email'] = $customerEmail;
         }
 
-        if (! empty($discounts)) {
+        if ($discounts !== []) {
             $params['discounts'] = $discounts;
         }
 

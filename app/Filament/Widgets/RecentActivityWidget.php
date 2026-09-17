@@ -11,8 +11,10 @@ class RecentActivityWidget extends Widget
 {
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 13;
 
+    #[\Override]
     protected string $view = 'filament.widgets.recent-activity';
 
     /** @return array<int, array<string, mixed>> */

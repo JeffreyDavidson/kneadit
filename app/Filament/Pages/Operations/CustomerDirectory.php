@@ -30,6 +30,7 @@ class CustomerDirectory extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -40,18 +41,25 @@ class CustomerDirectory extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 12;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Customer Directory';
 
+    #[\Override]
     protected static ?string $title = 'Customer Directory';
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.customer-directory';
 
     public string $search = '';
@@ -100,26 +108,24 @@ class CustomerDirectory extends Page
             }]);
 
         if ($this->search) {
-            $query->where(function (Builder $q) {
+            $query->where(function (Builder $q): void {
                 $q->whereLike('name', '%'.$this->search.'%')
                     ->orWhereLike('email', '%'.$this->search.'%')
                     ->orWhereLike('phone', '%'.$this->search.'%');
             });
         }
 
-        return $query->orderBy('name')->get()->map(function (Customer $customer) {
-            return [
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'email' => $customer->email,
-                'phone' => $customer->phone ?? 'N/A',
-                'total_orders' => $customer->orders_count,
-                // orders.total is bigint cents (migration 2026_04_22_201500); withSum bypasses
-                // MoneyCentsCast and returns the raw cents, so divide back to dollars here.
-                'total_spent' => Number::currency(((int) ($customer->orders_sum_total ?? 0)) / 100),
-                'last_order_date' => $customer->orders->first()?->created_at?->format('M j, Y') ?? 'Never',
-            ];
-        });
+        return $query->orderBy('name')->get()->map(fn (Customer $customer): array => [
+            'id' => $customer->id,
+            'name' => $customer->name,
+            'email' => $customer->email,
+            'phone' => $customer->phone ?? 'N/A',
+            'total_orders' => $customer->orders_count,
+            // orders.total is bigint cents (migration 2026_04_22_201500); withSum bypasses
+            // MoneyCentsCast and returns the raw cents, so divide back to dollars here.
+            'total_spent' => Number::currency(((int) ($customer->orders_sum_total ?? 0)) / 100),
+            'last_order_date' => $customer->orders->first()?->created_at?->format('M j, Y') ?? 'Never',
+        ]);
     }
 
     /** @return array<string, mixed> */
@@ -174,6 +180,7 @@ class CustomerDirectory extends Page
         $this->dispatch('searchUpdated');
     }
 
+    #[\Override]
     protected function getViewData(): array
     {
         return [

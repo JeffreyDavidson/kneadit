@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Financial;
 
 use App\Builders\Financial\ExpenseQueryBuilder;
@@ -42,6 +44,7 @@ class Expense extends Model
     /** @use HasFactory<ExpenseFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

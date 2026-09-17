@@ -28,6 +28,7 @@ class OrderMessage extends Model
     /** @use HasFactory<OrderMessageFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

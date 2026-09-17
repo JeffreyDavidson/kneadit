@@ -2,6 +2,7 @@
 
 namespace App\Pipes\Orders;
 
+use App\Models\Customers\Customer;
 use App\Services\Loyalty\CustomerLoyalty;
 use App\ValueObjects\Money;
 use Closure;
@@ -14,12 +15,12 @@ use Closure;
 class ApplyTierPerks
 {
     public function __construct(
-        private CustomerLoyalty $customerLoyalty,
+        private readonly CustomerLoyalty $customerLoyalty,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if ($payload->customer === null) {
+        if (! $payload->customer instanceof Customer) {
             return $next($payload);
         }
 

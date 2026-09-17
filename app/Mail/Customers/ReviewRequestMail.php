@@ -19,8 +19,6 @@ class ReviewRequestMail extends BaseMailable
     use BakerBranded;
     use ResolvesTemplate;
 
-    public Order $order;
-
     public string $storeName;
 
     public string $reviewUrl;
@@ -28,9 +26,8 @@ class ReviewRequestMail extends BaseMailable
     /** @var Collection<int, OrderItem> */
     public Collection $orderItems;
 
-    public function __construct(Order $order)
+    public function __construct(public Order $order)
     {
-        $this->order = $order;
         $this->storeName = resolve(TenantSettings::class)->store->name;
         // Signed URL — the email link itself is the proof of order ownership, so the
         // route bypasses the session-based order.access gate. Signature ensures the
@@ -39,9 +36,9 @@ class ReviewRequestMail extends BaseMailable
         $this->reviewUrl = URL::temporarySignedRoute(
             'storefront.submitReview',
             now()->addDays(60),
-            ['order' => $order->order_number],
+            ['order' => $this->order->order_number],
         );
-        $this->orderItems = $order->orderItems()->with('product')->get();
+        $this->orderItems = $this->order->orderItems()->with('product')->get();
     }
 
     public function envelope(): Envelope

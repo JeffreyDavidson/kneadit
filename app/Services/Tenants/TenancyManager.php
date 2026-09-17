@@ -13,8 +13,8 @@ class TenancyManager
     private const int TENANT_CHUNK_SIZE = 100;
 
     public function __construct(
-        private SettingsManager $settingsManager,
-        private TenantSettingsRegistry $tenantSettingsRegistry,
+        private readonly SettingsManager $settingsManager,
+        private readonly TenantSettingsRegistry $tenantSettingsRegistry,
     ) {}
 
     /**
@@ -55,7 +55,7 @@ class TenancyManager
 
         foreach (Tenant::query()->lazyById(self::TENANT_CHUNK_SIZE) as $tenant) {
             try {
-                $this->withinTenant($tenant, function () use ($tenant, $callback) {
+                $this->withinTenant($tenant, function () use ($tenant, $callback): void {
                     $settings = $this->tenantSettingsRegistry->all();
                     $callback($tenant, $settings);
                 });

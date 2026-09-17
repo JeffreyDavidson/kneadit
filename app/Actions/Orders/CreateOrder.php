@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Orders;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
@@ -30,7 +32,7 @@ use UnexpectedValueException;
 class CreateOrder
 {
     public function __construct(
-        private Pipeline $pipeline,
+        private readonly Pipeline $pipeline,
     ) {}
 
     public function __invoke(CreateOrderData $data): ?Order

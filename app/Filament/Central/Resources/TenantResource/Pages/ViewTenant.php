@@ -21,13 +21,16 @@ use Livewire\Attributes\Rule;
  */
 class ViewTenant extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = TenantResource::class;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.view-tenant';
 
     #[Rule(['required', 'min:3'])]
     public string $noteBody = '';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -53,7 +56,7 @@ class ViewTenant extends ViewRecord
     {
         try {
             return resolve(TenantStatsQuery::class)->forTenant($this->record);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->emptyStats();
         }
     }
@@ -87,6 +90,7 @@ class ViewTenant extends ViewRecord
     }
 
     /** Suppress auto-render of relation managers; we render Notes inside the Notes tab manually. */
+    #[\Override]
     public function getAllRelationManagers(): array
     {
         return [];

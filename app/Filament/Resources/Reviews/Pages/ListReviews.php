@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Reviews\Pages;
 
 use App\Filament\Resources\Reviews\ReviewResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListReviews extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ReviewResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -17,6 +17,7 @@ class HolidayPlanningCalendar extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -27,14 +28,19 @@ class HolidayPlanningCalendar extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Holidays';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.holiday-planning-calendar';
 
     /** @var Collection<int, Holiday> */
@@ -56,11 +62,11 @@ class HolidayPlanningCalendar extends Page
         $this->holidays = Holiday::query()->orderBy('date')->get();
 
         $this->upcomingHolidays = $this->holidays
-            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isUpcoming())
+            ->filter(fn (Holiday $holiday): bool => HolidayPresenter::for($holiday)->isUpcoming())
             ->take(10);
 
         $this->inPrepPeriod = $this->holidays
-            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isInPrepPeriod());
+            ->filter(fn (Holiday $holiday): bool => HolidayPresenter::for($holiday)->isInPrepPeriod());
     }
 
     /** @return Collection<string, Collection<int, Holiday>> */
@@ -70,14 +76,12 @@ class HolidayPlanningCalendar extends Page
         $nextYear = $currentYear + 1;
 
         return $this->holidays
-            ->filter(function (Holiday $holiday) use ($currentYear, $nextYear) {
+            ->filter(function (Holiday $holiday) use ($currentYear, $nextYear): bool {
                 $year = $holiday->date->year;
 
                 return $year === $currentYear || $year === $nextYear;
             })
-            ->groupBy(function (Holiday $holiday) {
-                return $holiday->date->format('Y-m');
-            })
+            ->groupBy(fn (Holiday $holiday) => $holiday->date->format('Y-m'))
             ->sortKeys();
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Console\Events\ScheduledTaskStarting;
 class RecordScheduledTaskStatusListener
 {
     public function __construct(
-        private ScheduledTaskMonitor $monitor,
+        private readonly ScheduledTaskMonitor $monitor,
     ) {}
 
     public function handle(ScheduledTaskStarting|ScheduledTaskFinished|ScheduledTaskFailed $event): void

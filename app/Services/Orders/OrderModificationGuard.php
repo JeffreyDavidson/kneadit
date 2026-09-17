@@ -14,7 +14,7 @@ use App\Services\Settings\TenantSettings;
  * the order to still be pending and unpaid, and the elapsed time since
  * placement to be within the configured window.
  */
-final class OrderModificationGuard
+final readonly class OrderModificationGuard
 {
     public function __construct(
         private TenantSettings $settings,

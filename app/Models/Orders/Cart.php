@@ -39,6 +39,7 @@ class Cart extends Model
     /** @use HasFactory<CartFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

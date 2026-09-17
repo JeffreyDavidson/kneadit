@@ -26,6 +26,7 @@ class ScheduleManager extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -36,16 +37,22 @@ class ScheduleManager extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Schedule Manager';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.schedule-manager';
 
+    #[\Override]
     protected static ?string $title = 'Business Schedule';
 
     // Day properties
@@ -72,6 +79,7 @@ class ScheduleManager extends Page
         }
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         $daySchemas = [];

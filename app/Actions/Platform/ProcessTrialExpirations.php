@@ -12,8 +12,8 @@ class ProcessTrialExpirations
     private const array REMINDER_DAYS = [7, 3, 1];
 
     public function __construct(
-        private TrialExpirationReader $reader,
-        private TrialExpirationNotifier $notifier,
+        private readonly TrialExpirationReader $reader,
+        private readonly TrialExpirationNotifier $notifier,
     ) {}
 
     /** @return array{reminders: int, pausings: int, failures: int} */

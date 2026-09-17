@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tenancy;
 
 use InvalidArgumentException;
@@ -8,6 +10,7 @@ use Stancl\Tenancy\Contracts\Tenant;
 
 class TenantFilesystemBootstrapper extends FilesystemTenancyBootstrapper
 {
+    #[\Override]
     public function bootstrap(Tenant $tenant): void
     {
         $tenantKey = $tenant->getTenantKey();

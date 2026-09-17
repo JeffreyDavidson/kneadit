@@ -21,26 +21,34 @@ class RecipeResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Recipe::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return RecipeForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return RecipesTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('growth-features');
@@ -51,6 +59,7 @@ class RecipeResource extends Resource
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -58,18 +67,21 @@ class RecipeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['name'];
     }
 
     /** @param Recipe $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
     /** @param Recipe $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -78,11 +90,13 @@ class RecipeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()->with('product');
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

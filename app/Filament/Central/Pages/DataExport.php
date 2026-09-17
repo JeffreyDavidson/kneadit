@@ -12,14 +12,19 @@ use UnitEnum;
 
 class DataExport extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected static ?string $title = 'Data Export';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.data-export';
 
     public ?string $selectedTenant = null;

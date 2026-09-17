@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Date;
 class BirthdayEngagement implements CustomerEngagement
 {
     public function __construct(
-        private CreateBirthdayCoupon $createBirthdayCoupon,
+        private readonly CreateBirthdayCoupon $createBirthdayCoupon,
     ) {}
 
     public function isEnabled(TenantSettings $settings): bool
@@ -33,7 +33,7 @@ class BirthdayEngagement implements CustomerEngagement
             ->whereMonth('birthday', $today->month)
             ->whereDay('birthday', $today->day)
             ->get()
-            ->map(fn (Customer $customer) => new EngagementRecipient(
+            ->map(fn (Customer $customer): EngagementRecipient => new EngagementRecipient(
                 email: $customer->email,
                 name: $customer->name,
                 model: $customer,

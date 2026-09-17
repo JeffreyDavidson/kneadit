@@ -43,7 +43,7 @@ class CapacityLimitForm
                             }
                         })
                         ->dehydrated(false)
-                        ->afterStateUpdated(function (?string $state, Set $set) {
+                        ->afterStateUpdated(function (?string $state, Set $set): void {
                             if ($state === 'specific') {
                                 $set('day_of_week', null);
                             } else {
@@ -54,8 +54,8 @@ class CapacityLimitForm
 
                     DatePicker::make('specific_date')
                         ->label('Date')
-                        ->visible(fn (Get $get) => $get('day_type') === 'specific')
-                        ->required(fn (Get $get) => $get('day_type') === 'specific')
+                        ->visible(fn (Get $get): bool => $get('day_type') === 'specific')
+                        ->required(fn (Get $get): bool => $get('day_type') === 'specific')
                         ->native(false),
 
                     Hidden::make('day_of_week'),

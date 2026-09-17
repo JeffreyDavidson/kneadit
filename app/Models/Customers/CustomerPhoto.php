@@ -33,6 +33,7 @@ class CustomerPhoto extends Model
     /** @use HasFactory<CustomerPhotoFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

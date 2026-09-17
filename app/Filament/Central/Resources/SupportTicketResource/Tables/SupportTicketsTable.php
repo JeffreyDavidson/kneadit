@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\SupportTicketResource\Tables;
 
 use App\Enums\Platform\SupportTicketPriority;

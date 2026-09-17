@@ -24,7 +24,7 @@ class ProductSalesQuery
             ->orderByDesc('revenue_cents')
             ->limit($limit)
             ->get()
-            ->map(fn (OrderItem $item) => [
+            ->map(fn (OrderItem $item): array => [
                 'name' => $item->product->name ?? 'Deleted Product',
                 'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
                 'revenue' => Arr::integer($item->getAttributes(), 'revenue_cents', 0) / 100.0,
@@ -44,7 +44,7 @@ class ProductSalesQuery
             ->orderByDesc('units_sold')
             ->limit($limit)
             ->get()
-            ->map(fn (OrderItem $item) => [
+            ->map(fn (OrderItem $item): array => [
                 'name' => $item->product->name ?? 'Deleted Product',
                 'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
                 'revenue' => Arr::integer($item->getAttributes(), 'revenue_cents', 0) / 100.0,

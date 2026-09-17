@@ -57,26 +57,26 @@ final class DeliveryStep extends OnboardingStep
                                 ->label('Delivery Radius (miles)')
                                 ->numeric()
                                 ->placeholder('15')
-                                ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
+                                ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                             MoneyInput::make('delivery.delivery_fee')
                                 ->label('Flat Delivery Fee')
                                 ->placeholder('5.00')
-                                ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
+                                ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                         ]),
                         Grid::make(2)->schema([
                             Toggle::make('delivery.free_delivery_over')
                                 ->label('Free delivery over a certain amount?')
                                 ->live()
-                                ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
+                                ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                             MoneyInput::make('delivery.free_delivery_threshold')
                                 ->label('Free Delivery Threshold')
                                 ->placeholder('50.00')
-                                ->visible(fn (Get $get) => $get('delivery.delivery_enabled') && $get('delivery.free_delivery_over')),
+                                ->visible(fn (Get $get): bool => $get('delivery.delivery_enabled') && $get('delivery.free_delivery_over')),
                         ]),
                         MoneyInput::make('delivery.delivery_minimum_order')
                             ->label('Minimum Order for Delivery')
                             ->placeholder('20.00')
-                            ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
 
                         Toggle::make('delivery.pickup_enabled')
                             ->label('Do you offer pickup?')
@@ -86,12 +86,12 @@ final class DeliveryStep extends OnboardingStep
                             ->label('Pickup Instructions')
                             ->placeholder('e.g. Pick up at the side door, ring the bell...')
                             ->rows(3)
-                            ->required(fn (Get $get) => $get('delivery.pickup_enabled'))
-                            ->visible(fn (Get $get) => $get('delivery.pickup_enabled'))
+                            ->required(fn (Get $get): mixed => $get('delivery.pickup_enabled'))
+                            ->visible(fn (Get $get): mixed => $get('delivery.pickup_enabled'))
                             ->columnSpanFull(),
                     ]),
             ])
-            ->afterValidation(function () use ($page) {
+            ->afterValidation(function () use ($page): void {
                 if (! $page->delivery['delivery_enabled'] && ! $page->delivery['pickup_enabled']) {
                     throw ValidationException::withMessages([
                         'delivery.pickup_enabled' => 'You must enable at least one option: pickup or delivery.',

@@ -13,8 +13,8 @@ use Illuminate\Support\Uri;
 class WebhookService
 {
     public function __construct(
-        private WebhookSettings $webhooks,
-        private SafeWebhookUrl $safeWebhookUrl,
+        private readonly WebhookSettings $webhooks,
+        private readonly SafeWebhookUrl $safeWebhookUrl,
     ) {}
 
     /**

@@ -14,8 +14,10 @@ use Livewire\Attributes\Rule;
  */
 class ViewTicket extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = SupportTicketResource::class;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.view-ticket';
 
     #[Rule(['required', 'min:3'])]
@@ -23,6 +25,7 @@ class ViewTicket extends ViewRecord
 
     public string $adminNotesDraft = '';
 
+    #[\Override]
     public function mount(int|string $record): void
     {
         parent::mount($record);

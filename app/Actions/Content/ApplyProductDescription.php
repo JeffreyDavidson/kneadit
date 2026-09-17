@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Content;
 
 use App\Models\Inventory\Product;

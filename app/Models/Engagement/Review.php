@@ -41,6 +41,7 @@ class Review extends Model
     /** @use HasFactory<ReviewFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\DB;
 class DeductIngredientsForOrder
 {
     public function __construct(
-        private AdjustIngredientStock $adjustStock,
+        private readonly AdjustIngredientStock $adjustStock,
     ) {}
 
     public function __invoke(Order $order): void
     {
         $order->loadMissing('orderItems.product.recipes.inventoryIngredients');
 
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order): void {
             foreach ($order->orderItems as $orderItem) {
                 $product = $orderItem->product;
 

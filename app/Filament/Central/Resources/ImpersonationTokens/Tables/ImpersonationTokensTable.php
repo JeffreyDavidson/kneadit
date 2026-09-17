@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\ImpersonationTokens\Tables;
 
 use App\Models\Platform\ImpersonationToken;
@@ -40,7 +42,7 @@ class ImpersonationTokensTable
 
                         return 'pending';
                     })
-                    ->color(fn (string $state) => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'consumed' => 'success',
                         'pending' => 'info',
                         'expired' => 'gray',

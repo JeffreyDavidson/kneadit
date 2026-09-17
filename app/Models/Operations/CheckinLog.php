@@ -34,6 +34,7 @@ class CheckinLog extends Model
     /** @use HasFactory<CheckinLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

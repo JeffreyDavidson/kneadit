@@ -17,7 +17,7 @@ class ReverseOrderDiscounts
 {
     public function __invoke(Order $order, string $reason): void
     {
-        DB::transaction(function () use ($order, $reason) {
+        DB::transaction(function () use ($order, $reason): void {
             $this->reverseCoupon($order, $reason);
             $this->reverseGiftCard($order, $reason);
         });

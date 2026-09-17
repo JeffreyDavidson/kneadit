@@ -31,6 +31,7 @@ class CustomerCampaignLog extends Model
     /** @use HasFactory<CustomerCampaignLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

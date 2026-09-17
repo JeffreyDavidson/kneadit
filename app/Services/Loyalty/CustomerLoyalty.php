@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Loyalty;
 
 use App\Enums\Engagement\LoyaltyPointType;
@@ -14,7 +16,7 @@ use Illuminate\Support\Arr;
 class CustomerLoyalty
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     /**
@@ -74,7 +76,7 @@ class CustomerLoyalty
         $current = $this->tier($customer);
         $next = $current->next();
 
-        if ($next === null) {
+        if (! $next instanceof LoyaltyTier) {
             return ['next' => null, 'pointsToNext' => 0];
         }
 

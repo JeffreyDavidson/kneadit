@@ -28,7 +28,7 @@ class CateringInquiryForm
                 ->columns(2)
                 ->schema([
                     Select::make('event_type')
-                        ->options(function () {
+                        ->options(function (): array {
                             $types = resolve(TenantSettings::class)->catering->eventTypes;
 
                             return array_combine($types, $types);

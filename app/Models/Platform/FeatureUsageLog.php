@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\FeatureUsageLogFactory;
@@ -39,6 +41,7 @@ class FeatureUsageLog extends Model
     /** @use HasFactory<FeatureUsageLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

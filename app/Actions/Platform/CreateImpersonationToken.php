@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class CreateImpersonationToken
 {
     public function __construct(
-        private TenantUrlGenerator $tenantUrlGenerator,
+        private readonly TenantUrlGenerator $tenantUrlGenerator,
     ) {}
 
     public function __invoke(Tenant $tenant, ?int $createdByUserId = null): string

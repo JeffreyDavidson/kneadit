@@ -20,9 +20,9 @@ class ProductCsvExporter
     {
         $output = fopen('php://temp', 'r+');
         throw_if($output === false, \RuntimeException::class, 'Failed to open file');
-        fputcsv($output, $this->headers);
+        fputcsv($output, $this->headers, escape: '\\');
 
-        Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
+        Product::with('category')->orderBy('name')->each(function (Product $product) use ($output): void {
             fputcsv($output, CsvValueSanitizer::row([
                 $product->name,
                 $product->category->name ?? '',
@@ -31,7 +31,8 @@ class ProductCsvExporter
                 $product->cost?->dollars() ?? '',
                 $product->is_active ? '1' : '0',
                 $product->is_featured ? '1' : '0',
-            ]));
+            ]),
+                escape: '\\');
         });
 
         rewind($output);
@@ -51,7 +52,7 @@ class ProductCsvExporter
         if ($handle === false) {
             return ['rows' => [], 'errors' => ['Failed to read CSV file.']];
         }
-        $header = fgetcsv($handle);
+        $header = fgetcsv($handle, escape: '\\');
 
         if (! $header) {
             return ['rows' => [], 'errors' => ['CSV file is empty.']];
@@ -60,14 +61,14 @@ class ProductCsvExporter
         $header = array_map(fn (?string $h) => Str::lower(trim($h ?? '')), $header);
         $missing = array_diff(['name', 'price'], $header);
 
-        if (! empty($missing)) {
+        if ($missing !== []) {
             fclose($handle);
 
             return ['rows' => [], 'errors' => ['Missing required columns: '.implode(', ', $missing)]];
         }
 
         $line = 1;
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, escape: '\\')) !== false) {
             $line++;
             if (count($row) !== count($header)) {
                 $errors[] = "Row {$line}: column count mismatch.";
@@ -77,7 +78,7 @@ class ProductCsvExporter
             $mapped = array_combine($header, $row);
             $rowErrors = [];
 
-            if (empty(trim($mapped['name'] ?? ''))) {
+            if (in_array(trim($mapped['name'] ?? ''), ['', '0'], true)) {
                 $rowErrors[] = 'Name is required';
             }
             $price = $mapped['price'] ?? '';
@@ -92,7 +93,7 @@ class ProductCsvExporter
             $mapped['_errors'] = $rowErrors;
             $rows[] = $mapped;
 
-            if (! empty($rowErrors)) {
+            if ($rowErrors !== []) {
                 $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
             }
         }

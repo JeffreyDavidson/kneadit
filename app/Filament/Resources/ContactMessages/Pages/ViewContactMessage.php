@@ -20,10 +20,13 @@ use Illuminate\Support\Facades\Mail;
  */
 class ViewContactMessage extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = ContactMessageResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.contact-messages.view-contact-message';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

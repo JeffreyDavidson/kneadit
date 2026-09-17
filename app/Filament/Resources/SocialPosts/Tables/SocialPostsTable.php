@@ -64,14 +64,14 @@ class SocialPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Schedule Post')
                     ->modalDescription('Mark this post as scheduled?')
-                    ->action(function (SocialPost $record) {
+                    ->action(function (SocialPost $record): void {
                         resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Scheduled);
                         Notification::make()
                             ->title('Post scheduled')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Draft),
+                    ->visible(fn (SocialPost $record): bool => $record->status === SocialPostStatus::Draft),
 
                 Action::make('mark_posted')
                     ->label('Mark Posted')
@@ -81,14 +81,14 @@ class SocialPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Mark as Posted')
                     ->modalDescription('Mark this post as posted?')
-                    ->action(function (SocialPost $record) {
+                    ->action(function (SocialPost $record): void {
                         resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Posted);
                         Notification::make()
                             ->title('Post marked as posted')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Scheduled),
+                    ->visible(fn (SocialPost $record): bool => $record->status === SocialPostStatus::Scheduled),
 
                 Action::make('revert_to_draft')
                     ->label('Revert to Draft')
@@ -98,14 +98,14 @@ class SocialPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Revert to Draft')
                     ->modalDescription('Move this post back to draft status?')
-                    ->action(function (SocialPost $record) {
+                    ->action(function (SocialPost $record): void {
                         resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Draft);
                         Notification::make()
                             ->title('Post reverted to draft')
                             ->warning()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Scheduled),
+                    ->visible(fn (SocialPost $record): bool => $record->status === SocialPostStatus::Scheduled),
 
                 SlideOverEditAction::make(),
             ])

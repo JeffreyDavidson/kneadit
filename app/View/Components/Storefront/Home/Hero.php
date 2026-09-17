@@ -48,7 +48,7 @@ class Hero extends Component
         $this->secondaryCtaText = $branding->heroSecondaryCtaText;
 
         $this->customerCount = Cache::flexible('hero_customer_count', [3600, 7200], fn () => Customer::query()->count());
-        $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function () {
+        $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function (): ?float {
             $avg = Review::query()->approved()->avg('rating');
 
             return $avg !== null ? (float) $avg : null;

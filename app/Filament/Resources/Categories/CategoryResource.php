@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Categories;
 
 use App\Filament\Resources\Categories\Pages\ListCategories;
@@ -14,26 +16,34 @@ use Filament\Tables\Table;
 
 class CategoryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Category::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return CategoryForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return CategoriesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -41,6 +51,7 @@ class CategoryResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -32,15 +32,13 @@ class TenantUsageService
             }
 
             try {
-                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, function () {
-                    return [
-                        Product::query()->count(),
-                        Order::query()
-                            ->whereMonth('created_at', Date::now()->month)
-                            ->whereYear('created_at', Date::now()->year)
-                            ->count(),
-                    ];
-                });
+                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, fn (): array => [
+                    Product::query()->count(),
+                    Order::query()
+                        ->whereMonth('created_at', Date::now()->month)
+                        ->whereYear('created_at', Date::now()->year)
+                        ->count(),
+                ]);
 
                 $productLimit = $limits['products'];
                 $orderLimit = $limits['orders_per_month'];
@@ -68,7 +66,7 @@ class TenantUsageService
             }
         }
 
-        return collect($results)->sortByDesc(fn (array $tenant) => max($tenant['product_percent'], $tenant['order_percent']))->values();
+        return collect($results)->sortByDesc(fn (array $tenant): float|int => max($tenant['product_percent'], $tenant['order_percent']))->values();
     }
 
     public function getNextPlan(string $currentPlan): ?SubscriptionTier

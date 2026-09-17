@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 class SendEmailCampaign
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
+        private readonly TenancyManager $tenancyManager,
     ) {}
 
     public function __invoke(EmailCampaign $campaign): void
@@ -61,7 +61,7 @@ class SendEmailCampaign
         $emails = [];
 
         foreach ($this->filteredTenants($segment) as $tenant) {
-            $this->tenancyManager->withinTenant($tenant, function () use (&$emails) {
+            $this->tenancyManager->withinTenant($tenant, function () use (&$emails): void {
                 array_push($emails, ...$this->currentTenantEmails()->all());
             });
         }

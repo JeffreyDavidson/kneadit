@@ -67,11 +67,11 @@ final class BusinessHoursStep extends OnboardingStep
                 TimePicker::make("hours.{$day->value}_open")
                     ->label('Open')
                     ->seconds(false)
-                    ->visible(fn (Get $get) => $get("hours.{$day->value}")),
+                    ->visible(fn (Get $get): mixed => $get("hours.{$day->value}")),
                 TimePicker::make("hours.{$day->value}_close")
                     ->label('Close')
                     ->seconds(false)
-                    ->visible(fn (Get $get) => $get("hours.{$day->value}")),
+                    ->visible(fn (Get $get): mixed => $get("hours.{$day->value}")),
             ]);
         }
 

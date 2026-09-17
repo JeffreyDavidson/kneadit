@@ -4,12 +4,13 @@ namespace App\Pipes\Orders;
 
 use App\Actions\GiftCards\RedeemGiftCard;
 use App\Models\Financial\GiftCard;
+use App\Models\Orders\Order;
 use Closure;
 
 class RecordGiftCardRedemption
 {
     public function __construct(
-        private RedeemGiftCard $redeemGiftCard,
+        private readonly RedeemGiftCard $redeemGiftCard,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
@@ -18,7 +19,7 @@ class RecordGiftCardRedemption
             return $next($payload);
         }
 
-        assert($payload->order !== null, 'Order must be persisted before RecordGiftCardRedemption');
+        assert($payload->order instanceof Order, 'Order must be persisted before RecordGiftCardRedemption');
 
         $giftCard = GiftCard::query()->find($payload->giftCardId);
 

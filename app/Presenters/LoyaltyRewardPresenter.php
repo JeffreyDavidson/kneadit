@@ -5,10 +5,10 @@ namespace App\Presenters;
 use App\Enums\Engagement\RewardType;
 use App\Models\Engagement\LoyaltyReward;
 
-final class LoyaltyRewardPresenter
+final readonly class LoyaltyRewardPresenter
 {
     public function __construct(
-        public readonly LoyaltyReward $reward,
+        public LoyaltyReward $reward,
     ) {}
 
     public static function for(LoyaltyReward $reward): self

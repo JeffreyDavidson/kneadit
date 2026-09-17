@@ -12,12 +12,16 @@ use Filament\Widgets\TableWidget;
 
 class RecentOrdersWidget extends TableWidget
 {
+    #[\Override]
     protected static ?int $sort = 4;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected static ?string $heading = 'Recent Orders';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

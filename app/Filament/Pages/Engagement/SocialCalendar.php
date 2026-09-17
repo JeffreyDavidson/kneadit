@@ -17,6 +17,7 @@ class SocialCalendar extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -27,14 +28,19 @@ class SocialCalendar extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Social Calendar';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 8;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.social-calendar';
 
     public int $year;

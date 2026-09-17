@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Marketing;
 
 use App\Enums\Marketing\EmailTemplateType;

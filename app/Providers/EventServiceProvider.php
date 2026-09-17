@@ -170,6 +170,7 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+    #[\Override]
     public function register(): void
     {
         $events = $this->app->make('events');

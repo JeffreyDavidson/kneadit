@@ -148,7 +148,7 @@ class LoyaltyPageViewModel
     ) {
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
-        $this->hasCustomer = $customer !== null;
+        $this->hasCustomer = $customer instanceof Customer;
 
         $this->nextReward = $rewards
             ->where('points_required', '>', $this->totalPoints)

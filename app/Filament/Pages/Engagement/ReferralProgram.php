@@ -16,16 +16,22 @@ class ReferralProgram extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Referral Program';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.referral-program';
 
+    #[\Override]
     protected static ?string $title = 'Referral Program';
 
     public function getReferralCode(): string

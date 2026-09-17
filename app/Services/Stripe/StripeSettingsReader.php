@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Stripe;
 
 use App\Services\Settings\SettingsManager;
@@ -22,7 +24,7 @@ class StripeSettingsReader
     private bool $connectIdLoaded = false;
 
     public function __construct(
-        private SettingsManager $settings,
+        private readonly SettingsManager $settings,
     ) {}
 
     public function isEnabled(): bool

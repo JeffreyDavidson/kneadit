@@ -19,28 +19,37 @@ class IngredientResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Ingredient::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 10;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Ingredients';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return IngredientForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return IngredientsTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('pro-features');
@@ -51,23 +60,27 @@ class IngredientResource extends Resource
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'supplier'];
     }
 
     /** @param Ingredient $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
     /** @param Ingredient $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -76,6 +89,7 @@ class IngredientResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

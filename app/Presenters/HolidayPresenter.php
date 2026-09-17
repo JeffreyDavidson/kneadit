@@ -6,10 +6,10 @@ use App\Models\Operations\Holiday;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
-final class HolidayPresenter
+final readonly class HolidayPresenter
 {
     public function __construct(
-        public readonly Holiday $holiday,
+        public Holiday $holiday,
     ) {}
 
     public static function for(Holiday $holiday): self

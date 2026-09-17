@@ -20,26 +20,34 @@ class CouponResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Coupon::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'code';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return CouponForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return CouponsTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('growth-features');
@@ -50,6 +58,7 @@ class CouponResource extends Resource
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -57,18 +66,21 @@ class CouponResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['code'];
     }
 
     /** @param Coupon $record */
+    #[\Override]
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->code;
     }
 
     /** @param Coupon $record */
+    #[\Override]
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -78,6 +90,7 @@ class CouponResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

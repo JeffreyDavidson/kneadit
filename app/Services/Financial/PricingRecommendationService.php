@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Financial;
 
 use App\DataTransferObjects\Financial\PricingRecommendation;

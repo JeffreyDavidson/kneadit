@@ -10,9 +10,9 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 
-final class TenantComparisonMetricsQuery
+final readonly class TenantComparisonMetricsQuery
 {
-    public function __construct(private readonly TenancyManager $tenancyManager) {}
+    public function __construct(private TenancyManager $tenancyManager) {}
 
     public function forTenant(Tenant $tenant): TenantMetrics
     {

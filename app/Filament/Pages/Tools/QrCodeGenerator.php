@@ -26,6 +26,7 @@ class QrCodeGenerator extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -36,14 +37,19 @@ class QrCodeGenerator extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQrCode;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'QR Code';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 15;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.qr-code-generator';
 
     /** @var array<string, mixed> */
@@ -65,6 +71,7 @@ class QrCodeGenerator extends Page
         $this->generateQrCode();
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([
@@ -142,7 +149,7 @@ class QrCodeGenerator extends Page
             $content = $service->generatePng($url, $options['size'], $options['color']);
             $filename = 'qr-code.'.($options['page'] ?: 'home').'.png';
 
-            return Response::streamDownload(fn () => print ($content), $filename, [
+            return Response::streamDownload(fn (): int => print ($content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
         }
@@ -150,7 +157,7 @@ class QrCodeGenerator extends Page
         $content = $service->generateSvg($url, $options['size'], $options['color']);
         $filename = 'qr-code.'.($options['page'] ?: 'home').'.svg';
 
-        return Response::streamDownload(fn () => print ($content), $filename, [
+        return Response::streamDownload(fn (): int => print ($content), $filename, [
             'Content-Type' => 'image/svg+xml',
         ]);
     }

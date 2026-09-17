@@ -12,10 +12,13 @@ class AnnouncementBanner extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = -10;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.widgets.announcement-banner';
 
     /** @return list<mixed> */
@@ -30,7 +33,7 @@ class AnnouncementBanner extends Widget
         $announcements = $this->cached('announcements_'.$planKey, [1800, 3600], fn (): array => PlatformAnnouncement::active()
             ->orderBy('created_at', 'desc')
             ->get()
-            ->filter(function (PlatformAnnouncement $announcement) use ($plan) {
+            ->filter(function (PlatformAnnouncement $announcement) use ($plan): bool {
                 $targets = $announcement->target_plans;
 
                 return empty($targets) || in_array($plan, $targets);

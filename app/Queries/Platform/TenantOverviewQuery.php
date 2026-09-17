@@ -11,9 +11,9 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 
-final class TenantOverviewQuery
+final readonly class TenantOverviewQuery
 {
-    public function __construct(private readonly TenancyManager $tenancyManager) {}
+    public function __construct(private TenancyManager $tenancyManager) {}
 
     public function forTenant(Tenant $tenant): TenantOverviewMetrics
     {

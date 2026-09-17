@@ -34,13 +34,13 @@ class IngredientsTable
 
                 TextColumn::make('current_stock')
                     ->label('Stock')
-                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock.' '.$record->unit)
+                    ->formatStateUsing(fn (Ingredient $record): string => $record->current_stock.' '.$record->unit)
                     ->sortable(),
 
                 TextColumn::make('stock_status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Ingredient $record) => StockStatus::resolve($record)),
+                    ->getStateUsing(fn (Ingredient $record): StockStatus => StockStatus::resolve($record)),
 
                 MoneyColumn::make('cost_per_unit')
                     ->sortable()
@@ -57,13 +57,11 @@ class IngredientsTable
                         'low' => 'Low Stock',
                         'out' => 'Out of Stock',
                     ])
-                    ->query(function (Builder $query, array $data) {
-                        return match ($data['value'] ?? null) {
-                            'low' => $query->where('current_stock', '>', 0)
-                                ->whereColumn('current_stock', '<=', 'low_stock_threshold'),
-                            'out' => $query->where('current_stock', '<=', 0),
-                            default => $query,
-                        };
+                    ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
+                        'low' => $query->where('current_stock', '>', 0)
+                            ->whereColumn('current_stock', '<=', 'low_stock_threshold'),
+                        'out' => $query->where('current_stock', '<=', 0),
+                        default => $query,
                     }),
             ])
             ->recordActions([
@@ -83,7 +81,7 @@ class IngredientsTable
                         TextInput::make('notes')
                             ->maxLength(255),
                     ])
-                    ->action(function (Ingredient $record, array $data) {
+                    ->action(function (Ingredient $record, array $data): void {
                         $qty = Arr::float($data, 'quantity');
                         $type = StockAdjustmentType::from(Arr::string($data, 'type'));
                         $notes = Arr::string($data, 'notes', '');
@@ -109,7 +107,7 @@ class IngredientsTable
                             TextInput::make('notes')
                                 ->maxLength(255),
                         ])
-                        ->action(function (Collection $records, array $data) {
+                        ->action(function (Collection $records, array $data): void {
                             $quantity = Arr::float($data, 'quantity');
                             $notes = Arr::string($data, 'notes', '');
                             /** @var Collection<int, Ingredient> $records */

@@ -25,16 +25,22 @@ class AnnouncementBanner extends Page
     use InteractsWithFormActions;
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Announcement Banner';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.announcement-banner';
 
+    #[\Override]
     protected static ?string $title = 'Announcement Banner';
 
     public bool $announcement_enabled = false;
@@ -51,6 +57,7 @@ class AnnouncementBanner extends Page
         $this->announcement_type = $engagement->announcementType;
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema

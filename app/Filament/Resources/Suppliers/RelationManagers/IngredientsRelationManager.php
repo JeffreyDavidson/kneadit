@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Suppliers\RelationManagers;
 
 use App\Filament\Forms\Components\MoneyInput;
@@ -16,8 +18,10 @@ use Filament\Tables\Table;
 
 class IngredientsRelationManager extends RelationManager
 {
+    #[\Override]
     protected static string $relationship = 'ingredients';
 
+    #[\Override]
     public function form(Schema $form): Schema
     {
         return $form

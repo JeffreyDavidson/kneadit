@@ -10,8 +10,10 @@ class StorefrontViewsWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected string $view = 'filament.widgets.storefront-views';
 
     /** @return array<string, mixed> */

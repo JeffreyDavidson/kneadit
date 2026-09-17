@@ -21,6 +21,7 @@ class ReviewAnalytics extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -31,14 +32,19 @@ class ReviewAnalytics extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Review Analytics';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.review-analytics';
 
     private function service(): ReviewAnalyticsService

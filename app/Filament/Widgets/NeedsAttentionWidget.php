@@ -28,16 +28,26 @@ class NeedsAttentionWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = -10;
 
+    #[\Override]
     protected string $view = 'filament.widgets.needs-attention';
 
+    #[\Override]
     public static function canView(): bool
     {
-        return Order::query()->where('status', OrderStatus::Pending)->exists()
-            || ContactMessage::query()->where('is_read', false)->exists()
-            || CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()
-            || Ingredient::query()->lowStock()->exists();
+        if (Order::query()->where('status', OrderStatus::Pending)->exists()) {
+            return true;
+        }
+        if (ContactMessage::query()->where('is_read', false)->exists()) {
+            return true;
+        }
+        if (CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()) {
+            return true;
+        }
+
+        return (bool) Ingredient::query()->lowStock()->exists();
     }
 
     /** @return array<int, array<string, mixed>> */

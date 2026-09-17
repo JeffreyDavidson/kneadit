@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\EmailCampaignResource\Schemas;
 
 use App\Enums\Marketing\EmailCampaignSegment;

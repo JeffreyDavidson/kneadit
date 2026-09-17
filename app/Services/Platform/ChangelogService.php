@@ -101,14 +101,14 @@ class ChangelogService
      */
     private function parseBodyToItems(string $body): array
     {
-        if (empty($body)) {
+        if ($body === '' || $body === '0') {
             return [];
         }
 
         return collect(explode("\n", $body))
-            ->map(fn (string $line) => trim($line))
-            ->filter(fn (string $line) => str_starts_with($line, '- ') || str_starts_with($line, '* '))
-            ->map(fn (string $line) => ltrim($line, '-* '))
+            ->map(fn (string $line): string => trim($line))
+            ->filter(fn (string $line): bool => str_starts_with($line, '- ') || str_starts_with($line, '* '))
+            ->map(fn (string $line): string => ltrim($line, '-* '))
             ->values()
             ->all();
     }

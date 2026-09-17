@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Operations;
 
 use App\Services\Platform\WebhookService;
@@ -7,7 +9,7 @@ use App\Services\Platform\WebhookService;
 class SendTestWebhook
 {
     public function __construct(
-        private WebhookService $webhookService,
+        private readonly WebhookService $webhookService,
     ) {}
 
     /**

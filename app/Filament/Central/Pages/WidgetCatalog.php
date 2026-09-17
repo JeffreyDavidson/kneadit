@@ -11,18 +11,25 @@ use UnitEnum;
 
 class WidgetCatalog extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     protected static ?string $title = 'Widget Catalog';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Widget Catalog';
 
+    #[\Override]
     protected static ?string $slug = 'widget-catalog';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.widget-catalog';
 
     /**

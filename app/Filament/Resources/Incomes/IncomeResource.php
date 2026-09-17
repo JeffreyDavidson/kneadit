@@ -18,26 +18,34 @@ class IncomeResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Income::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'description';
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingUp;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return IncomeForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return IncomesTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('growth-features');
@@ -48,6 +56,7 @@ class IncomeResource extends Resource
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -55,6 +64,7 @@ class IncomeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

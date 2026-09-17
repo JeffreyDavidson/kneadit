@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Order;
 
 use App\DataTransferObjects\Settings\SettingValue;
@@ -23,6 +25,7 @@ class CheckCapacityRequest extends FormRequest
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function validationData(): array
     {
         return array_merge(SettingValue::map(parent::validationData()), [

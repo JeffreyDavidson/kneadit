@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Customers;
 
 use App\Models\Orders\Order;

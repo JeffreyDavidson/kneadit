@@ -20,6 +20,7 @@ class ReportsCenter extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -30,14 +31,19 @@ class ReportsCenter extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartPie;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Reports';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 14;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.reports-center';
 
     public string $activeReport = '';

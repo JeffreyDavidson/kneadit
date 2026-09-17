@@ -25,6 +25,7 @@ class InstagramCaptionGenerator extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -35,16 +36,22 @@ class InstagramCaptionGenerator extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 11;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Instagram Captions';
 
+    #[\Override]
     protected static ?string $title = 'Instagram Caption Generator';
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.instagram-caption-generator';
 
     /** @var array<string, mixed> */

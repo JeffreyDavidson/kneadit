@@ -35,7 +35,7 @@ class CalculateOrderTotals
             ];
         }
 
-        if (empty($payload->orderItems)) {
+        if ($payload->orderItems === []) {
             $payload->cancelled = true;
 
             return $payload;

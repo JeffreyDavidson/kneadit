@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Content;
 
 use App\Builders\Content\GalleryPhotoQueryBuilder;
@@ -28,6 +30,7 @@ class GalleryPhoto extends Model
     /** @use HasFactory<GalleryPhotoFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

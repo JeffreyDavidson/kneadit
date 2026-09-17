@@ -78,7 +78,6 @@ class WidgetPreviewRenderer
         }
 
         $prop = $ref->getProperty($property);
-        $prop->setAccessible(true);
 
         return $prop->getValue($factory);
     }
@@ -91,7 +90,6 @@ class WidgetPreviewRenderer
         }
 
         $prop = $ref->getProperty($property);
-        $prop->setAccessible(true);
         $prop->setValue($factory, $value);
     }
 

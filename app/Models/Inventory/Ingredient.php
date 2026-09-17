@@ -47,6 +47,7 @@ class Ingredient extends Model
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Financial;
 
 use App\Builders\Financial\IncomeQueryBuilder;
@@ -33,6 +35,7 @@ class Income extends Model
     /** @use HasFactory<IncomeFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

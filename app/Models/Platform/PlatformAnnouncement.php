@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Platform;
 
 use App\Builders\Platform\PlatformAnnouncementQueryBuilder;
@@ -41,6 +43,7 @@ class PlatformAnnouncement extends Model
     /** @use HasFactory<PlatformAnnouncementFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -15,14 +15,14 @@ class TaxCsvExporter
     /** @param resource $handle */
     public function writeOrdersCsv(mixed $handle, string $from, string $to): void
     {
-        fputcsv($handle, ['=== ORDERS ===']);
-        fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method']);
+        fputcsv($handle, ['=== ORDERS ==='], escape: '\\');
+        fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method'], escape: '\\');
 
         Order::with(['customer', 'orderItems.product'])
             ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
-            ->chunk(100, function (Collection $orders) use ($handle) {
+            ->chunk(100, function (Collection $orders) use ($handle): void {
                 foreach ($orders as $order) {
-                    $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
+                    $items = $order->orderItems->map(fn (OrderItem $i): string => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, CsvValueSanitizer::row([
                         $order->created_at?->format('Y-m-d'),
                         $order->order_number,
@@ -34,7 +34,8 @@ class TaxCsvExporter
                         number_format($order->total->dollars(), 2, '.', ''),
                         $order->payment_status->value,
                         $order->payment_method->value,
-                    ]));
+                    ]),
+                        escape: '\\');
                 }
             });
     }
@@ -42,8 +43,8 @@ class TaxCsvExporter
     /** @param resource $handle */
     public function writeExpensesCsv(mixed $handle, string $from, string $to): void
     {
-        fputcsv($handle, ['=== EXPENSES ===']);
-        fputcsv($handle, ['Date', 'Category (IRS Schedule C)', 'Description', 'Amount', 'Business Use %', 'Deductible Amount', 'Vendor']);
+        fputcsv($handle, ['=== EXPENSES ==='], escape: '\\');
+        fputcsv($handle, ['Date', 'Category (IRS Schedule C)', 'Description', 'Amount', 'Business Use %', 'Deductible Amount', 'Vendor'], escape: '\\');
 
         $categoryMap = [
             'ingredients' => 'Cost of Goods Sold (Line 4)',
@@ -60,7 +61,7 @@ class TaxCsvExporter
 
         Expense::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
+            ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap): void {
                 foreach ($expenses as $expense) {
                     fputcsv($handle, CsvValueSanitizer::row([
                         $expense->date?->format('Y-m-d'),
@@ -70,7 +71,8 @@ class TaxCsvExporter
                         $expense->business_percentage->value(),
                         $expense->deductible_amount->dollars(),
                         $expense->notes ?? '',
-                    ]));
+                    ]),
+                        escape: '\\');
                 }
             });
     }
@@ -78,12 +80,12 @@ class TaxCsvExporter
     /** @param resource $handle */
     public function writeIncomeCsv(mixed $handle, string $from, string $to): void
     {
-        fputcsv($handle, ['=== INCOME ===']);
-        fputcsv($handle, ['Date', 'Source', 'Description', 'Amount', 'Category']);
+        fputcsv($handle, ['=== INCOME ==='], escape: '\\');
+        fputcsv($handle, ['Date', 'Source', 'Description', 'Amount', 'Category'], escape: '\\');
 
         Income::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function (Collection $incomes) use ($handle) {
+            ->chunk(100, function (Collection $incomes) use ($handle): void {
                 foreach ($incomes as $income) {
                     fputcsv($handle, CsvValueSanitizer::row([
                         $income->date?->format('Y-m-d'),
@@ -91,7 +93,8 @@ class TaxCsvExporter
                         $income->description,
                         $income->amount->dollars(),
                         'Gross Receipts (Schedule C Line 1)',
-                    ]));
+                    ]),
+                        escape: '\\');
                 }
             });
     }
@@ -112,13 +115,13 @@ class TaxCsvExporter
         $totalDeductible = (int) Expense::query()->whereBetween('date', [$from, $to])->sum('deductible_amount') / 100;
         $netProfit = $totalRevenue - $totalDeductible;
 
-        fputcsv($handle, ['=== TAX SUMMARY ===']);
-        fputcsv($handle, ['Metric', 'Amount']);
-        fputcsv($handle, ['Total Revenue (Orders)', number_format((float) $totalOrderRevenue, 2)]);
-        fputcsv($handle, ['Total Revenue (Other Income)', number_format((float) $totalIncomeRevenue, 2)]);
-        fputcsv($handle, ['Total Revenue (Combined)', number_format($totalRevenue, 2)]);
-        fputcsv($handle, ['Total Expenses', number_format($totalExpenses, 2)]);
-        fputcsv($handle, ['Total Deductible', number_format($totalDeductible, 2)]);
-        fputcsv($handle, ['Net Profit (Revenue - Deductible)', number_format($netProfit, 2)]);
+        fputcsv($handle, ['=== TAX SUMMARY ==='], escape: '\\');
+        fputcsv($handle, ['Metric', 'Amount'], escape: '\\');
+        fputcsv($handle, ['Total Revenue (Orders)', number_format((float) $totalOrderRevenue, 2)], escape: '\\');
+        fputcsv($handle, ['Total Revenue (Other Income)', number_format((float) $totalIncomeRevenue, 2)], escape: '\\');
+        fputcsv($handle, ['Total Revenue (Combined)', number_format($totalRevenue, 2)], escape: '\\');
+        fputcsv($handle, ['Total Expenses', number_format($totalExpenses, 2)], escape: '\\');
+        fputcsv($handle, ['Total Deductible', number_format($totalDeductible, 2)], escape: '\\');
+        fputcsv($handle, ['Net Profit (Revenue - Deductible)', number_format($netProfit, 2)], escape: '\\');
     }
 }

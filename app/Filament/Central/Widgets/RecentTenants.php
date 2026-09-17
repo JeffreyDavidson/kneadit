@@ -13,17 +13,21 @@ use Filament\Widgets\TableWidget;
 
 class RecentTenants extends TableWidget
 {
+    #[\Override]
     protected static ?int $sort = 4;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected static ?string $heading = 'Recent Signups';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table
             ->query(Tenant::query()->latest()->limit(5))
-            ->recordUrl(fn (Tenant $record) => TenantResource::getUrl('view', ['record' => $record->id]))
+            ->recordUrl(fn (Tenant $record): string => TenantResource::getUrl('view', ['record' => $record->id]))
             ->columns([
                 TextColumn::make('store_name')
                     ->label('Bakery')

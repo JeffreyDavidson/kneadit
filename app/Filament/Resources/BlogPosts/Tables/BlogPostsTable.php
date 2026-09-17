@@ -46,14 +46,14 @@ class BlogPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Publish Post')
                     ->modalDescription('Are you sure you want to publish this post?')
-                    ->action(function (TenantBlogPost $record) {
+                    ->action(function (TenantBlogPost $record): void {
                         resolve(PublishBlogPost::class)($record);
                         Notification::make()
                             ->title('Post published')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (TenantBlogPost $record) => ! $record->is_published),
+                    ->visible(fn (TenantBlogPost $record): bool => ! $record->is_published),
 
                 Action::make('unpublish')
                     ->icon(Heroicon::OutlinedArrowDownCircle)
@@ -62,7 +62,7 @@ class BlogPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Unpublish Post')
                     ->modalDescription('Are you sure you want to unpublish this post?')
-                    ->action(function (TenantBlogPost $record) {
+                    ->action(function (TenantBlogPost $record): void {
                         resolve(UnpublishBlogPost::class)($record);
                         Notification::make()
                             ->title('Post unpublished')

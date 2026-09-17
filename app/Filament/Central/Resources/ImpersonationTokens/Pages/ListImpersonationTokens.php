@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\ImpersonationTokens\Pages;
 
 use App\Filament\Central\Resources\ImpersonationTokens\ImpersonationTokenResource;
@@ -13,8 +15,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListImpersonationTokens extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ImpersonationTokenResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

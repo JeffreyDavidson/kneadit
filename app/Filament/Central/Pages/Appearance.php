@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Pages;
 
 use App\Filament\Shared\PanelThemes;
@@ -11,14 +13,19 @@ use UnitEnum;
 
 class Appearance extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $title = 'Appearance';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.appearance';
 
     public string $current = 'honey';

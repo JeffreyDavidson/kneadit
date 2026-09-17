@@ -24,8 +24,8 @@ class TransitionOrderStatus
     ];
 
     public function __construct(
-        private InventoryManager $inventoryManager,
-        private ReverseOrderDiscounts $reverseOrderDiscounts,
+        private readonly InventoryManager $inventoryManager,
+        private readonly ReverseOrderDiscounts $reverseOrderDiscounts,
     ) {}
 
     public function __invoke(Order $order, OrderStatus $to): Order
@@ -35,7 +35,7 @@ class TransitionOrderStatus
 
         throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
 
-        DB::transaction(function () use ($order, $from, $to) {
+        DB::transaction(function () use ($order, $from, $to): void {
             $order->update(['status' => $to]);
 
             if ($to === OrderStatus::Baking) {
@@ -84,6 +84,6 @@ class TransitionOrderStatus
     {
         $allowed = self::TRANSITIONS[$order->status->value] ?? [];
 
-        return array_map(fn (string $s) => OrderStatus::from($s), $allowed);
+        return array_map(OrderStatus::from(...), $allowed);
     }
 }

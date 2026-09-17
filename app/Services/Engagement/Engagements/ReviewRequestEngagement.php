@@ -30,7 +30,7 @@ class ReviewRequestEngagement implements CustomerEngagement
             ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
             ->with('customer')
             ->get()
-            ->map(function (Order $order) {
+            ->map(function (Order $order): EngagementRecipient {
                 /** @var Customer $customer */
                 $customer = $order->customer;
 

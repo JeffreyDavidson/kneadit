@@ -21,6 +21,7 @@ class LoyaltyDashboard extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -31,14 +32,19 @@ class LoyaltyDashboard extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Loyalty Program';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 13;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.loyalty-dashboard';
 
     public bool $loyaltyEnabled;

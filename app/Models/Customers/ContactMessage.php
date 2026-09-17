@@ -30,6 +30,7 @@ class ContactMessage extends Model
     /** @use HasFactory<ContactMessageFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

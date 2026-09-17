@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\PayPal;
 
 use App\Services\Settings\SettingsManager;
@@ -8,11 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class TokenManager
 {
-    private string $baseUrl;
+    private readonly string $baseUrl;
 
-    private ?string $clientId;
+    private readonly ?string $clientId;
 
-    private ?string $clientSecret;
+    private readonly ?string $clientSecret;
 
     private ?string $accessToken = null;
 
@@ -78,7 +80,7 @@ class TokenManager
      */
     public function isConfigured(): bool
     {
-        return ! empty($this->clientId) && ! empty($this->clientSecret);
+        return ! in_array($this->clientId, [null, '', '0'], true) && ! in_array($this->clientSecret, [null, '', '0'], true);
     }
 
     private function credential(mixed $tenantValue, mixed $configuredValue): ?string

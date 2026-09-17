@@ -21,17 +21,22 @@ class ReorderReminders extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.reorder-reminders';
 
+    #[\Override]
     protected static ?string $title = 'Reorder Reminders';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Reorder Reminders';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
     #[Url]
     public int $threshold = 60;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -42,16 +47,19 @@ class ReorderReminders extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     public static function getNavigationIcon(): string|BackedEnum|null
     {
         return Heroicon::OutlinedBellAlert;
     }
 
+    #[\Override]
     public static function getNavigationGroup(): string|\UnitEnum|null
     {
         return 'Communication';
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

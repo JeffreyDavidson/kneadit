@@ -5,10 +5,10 @@ namespace App\Presenters;
 use App\Models\Inventory\Recipe;
 use App\Support\ProfitMargin;
 
-final class RecipePresenter
+final readonly class RecipePresenter
 {
     public function __construct(
-        public readonly Recipe $recipe,
+        public Recipe $recipe,
     ) {}
 
     public static function for(Recipe $recipe): self

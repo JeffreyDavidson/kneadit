@@ -98,6 +98,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         ];
     }
 
+    #[\Override]
     protected function casts(): array
     {
         return [

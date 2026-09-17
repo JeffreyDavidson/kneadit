@@ -14,8 +14,10 @@ class TodaysOrdersWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected string $view = 'filament.widgets.todays-orders';
 
     /**
@@ -23,6 +25,7 @@ class TodaysOrdersWidget extends Widget
      * "Enjoy the quiet" empty state was just dead space.
      * Reappears the moment something with delivery_date = today exists.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return Order::query()->whereDate('delivery_date', Date::today())->exists();

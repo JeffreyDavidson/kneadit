@@ -35,6 +35,7 @@ class Recipe extends Model
     /** @use HasFactory<RecipeFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

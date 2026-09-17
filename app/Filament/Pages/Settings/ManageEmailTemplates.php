@@ -24,6 +24,7 @@ class ManageEmailTemplates extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -34,16 +35,22 @@ class ManageEmailTemplates extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Email Templates';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.manage-email-templates';
 
+    #[\Override]
     protected static ?string $title = 'Email Templates';
 
     /**
@@ -62,7 +69,7 @@ class ManageEmailTemplates extends Page
         }
 
         return collect(EmailTemplateType::cases())
-            ->map(fn (EmailTemplateType $type) => [
+            ->map(fn (EmailTemplateType $type): array => [
                 'type' => $type->value,
                 'label' => $type->getLabel(),
                 'description' => $type->description(),

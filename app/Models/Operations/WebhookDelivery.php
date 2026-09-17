@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use App\Builders\Operations\WebhookDeliveryQueryBuilder;
@@ -29,6 +31,7 @@ class WebhookDelivery extends Model
     /** @use HasFactory<WebhookDeliveryFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

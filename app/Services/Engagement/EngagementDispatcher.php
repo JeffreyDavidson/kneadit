@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Log;
 class EngagementDispatcher
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private ScheduledNotificationRunTracker $runTracker,
+        private readonly TenancyManager $tenancyManager,
+        private readonly ScheduledNotificationRunTracker $runTracker,
     ) {}
 
     /**
@@ -25,7 +25,7 @@ class EngagementDispatcher
     public function dispatch(CustomerEngagement $engagement, Command $output): int
     {
         return $this->tenancyManager->forEachTenant(
-            function (Tenant $tenant, TenantSettings $settings) use ($engagement, $output) {
+            function (Tenant $tenant, TenantSettings $settings) use ($engagement, $output): void {
                 if (! $engagement->isEnabled($settings)) {
                     $output->info("Skipping {$tenant->id} — disabled");
 
@@ -66,7 +66,7 @@ class EngagementDispatcher
                     $output->info("[{$tenant->id}] Processed {$sent} recipient(s).");
                 }
             },
-            function (Tenant $tenant, \Throwable $e) use ($engagement, $output) {
+            function (Tenant $tenant, \Throwable $e) use ($engagement, $output): void {
                 $output->error("Tenant {$tenant->id} failed: {$e->getMessage()}");
                 $engagementClass = $engagement::class;
                 Log::warning("{$engagementClass} tenant failed", [

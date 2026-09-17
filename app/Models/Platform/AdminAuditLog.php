@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Platform;
 
 use App\Builders\Platform\AdminAuditLogQueryBuilder;
@@ -42,6 +44,7 @@ class AdminAuditLog extends Model
     /** @use HasFactory<AdminAuditLogFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Ingredients\Pages;
 
 use App\Filament\Resources\Ingredients\IngredientResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListIngredients extends ListRecords
 {
+    #[\Override]
     protected static string $resource = IngredientResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

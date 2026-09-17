@@ -54,6 +54,6 @@ final class OrderAccessGuard
     {
         $verified = session(self::SESSION_KEY, []);
 
-        return is_array($verified) ? array_values(array_filter($verified, 'is_string')) : [];
+        return is_array($verified) ? array_values(array_filter($verified, is_string(...))) : [];
     }
 }

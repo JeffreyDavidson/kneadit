@@ -21,6 +21,7 @@ class SmartShoppingList extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -31,14 +32,19 @@ class SmartShoppingList extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Shopping List';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.smart-shopping-list';
 
     public string $startDate = '';
@@ -115,6 +121,7 @@ class SmartShoppingList extends Page
             ->send();
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

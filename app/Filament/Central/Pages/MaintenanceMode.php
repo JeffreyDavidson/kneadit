@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Pages;
 
 use App\DataTransferObjects\Settings\SettingValue;
@@ -11,14 +13,19 @@ use UnitEnum;
 
 class MaintenanceMode extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 10;
 
+    #[\Override]
     protected static ?string $title = 'Maintenance Mode';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.maintenance-mode';
 
     public bool $maintenance_mode = false;

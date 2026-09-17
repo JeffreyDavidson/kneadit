@@ -19,14 +19,19 @@ class ActivityLogPage extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Activity Log';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected string $view = 'filament.pages.platform.activity-log';
 
     public ?string $filterAction = null;
@@ -73,6 +78,7 @@ class ActivityLogPage extends Page
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([

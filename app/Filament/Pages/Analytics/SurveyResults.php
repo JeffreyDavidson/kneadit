@@ -16,18 +16,25 @@ class SurveyResults extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 12;
 
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Survey Results';
 
+    #[\Override]
     protected static ?string $title = 'Survey Results';
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.survey-results';
 
     public ?int $surveyId = null;
@@ -49,7 +56,7 @@ class SurveyResults extends Page
             return null;
         }
 
-        return response()->streamDownload(static function () use ($survey) {
+        return response()->streamDownload(static function () use ($survey): void {
             $csvValue = CsvValueSanitizer::sanitize(...);
             $handle = fopen('php://output', 'w');
             throw_if($handle === false, \RuntimeException::class, 'Failed to open file');
@@ -58,7 +65,7 @@ class SurveyResults extends Page
             foreach ($questions as $q) {
                 $headers[] = $csvValue($q['question']);
             }
-            fputcsv($handle, $headers);
+            fputcsv($handle, $headers, escape: '\\');
 
             foreach ($survey->responses as $i => $response) {
                 $row = [
@@ -70,12 +77,13 @@ class SurveyResults extends Page
                 foreach ($questions as $qi => $q) {
                     $row[] = $csvValue($response->answers[$qi] ?? '');
                 }
-                fputcsv($handle, $row);
+                fputcsv($handle, $row, escape: '\\');
             }
             fclose($handle);
         }, "survey-{$survey->id}-results.csv");
     }
 
+    #[\Override]
     protected function getViewData(): array
     {
         return [

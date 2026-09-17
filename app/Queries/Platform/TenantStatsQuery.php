@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Queries\Platform;
 
 use App\Models\Platform\Tenant;
 
-final class TenantStatsQuery
+final readonly class TenantStatsQuery
 {
-    public function __construct(private readonly TenantOverviewQuery $overviewQuery) {}
+    public function __construct(private TenantOverviewQuery $overviewQuery) {}
 
     /**
      * @return array{products: int, orders: int, revenue: float, customers: int, reviews: int, last_order: string|null}

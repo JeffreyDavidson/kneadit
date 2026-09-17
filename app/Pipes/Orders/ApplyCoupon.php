@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class ApplyCoupon
 {
     public function __construct(
-        private CouponService $couponService,
+        private readonly CouponService $couponService,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed

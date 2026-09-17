@@ -28,7 +28,7 @@ class EmailCampaignForm
                             ])
                             ->default('custom')
                             ->live()
-                            ->afterStateUpdated(function (string $state, Set $set) {
+                            ->afterStateUpdated(function (string $state, Set $set): void {
                                 $templates = self::getTemplates();
 
                                 if (isset($templates[$state])) {

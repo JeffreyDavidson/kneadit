@@ -21,9 +21,9 @@ use Stripe\StripeClient;
 class CateringDepositCheckoutService
 {
     public function __construct(
-        private StripeSettingsReader $settings,
-        private RecordCateringDeposit $recordCateringDeposit,
-        private StripeClient $stripe,
+        private readonly StripeSettingsReader $settings,
+        private readonly RecordCateringDeposit $recordCateringDeposit,
+        private readonly StripeClient $stripe,
     ) {}
 
     public function redirectToCheckout(CateringInquiry $inquiry, float $depositDollars): ?string

@@ -12,17 +12,22 @@ class UpgradePlan extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpCircle;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Upgrade Plan';
 
+    #[\Override]
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
 
+    #[\Override]
     protected static ?string $title = 'Upgrade Your Plan';
 
+    #[\Override]
     protected string $view = 'filament.pages.platform.upgrade-plan';
 
     public string $currentPlan = SubscriptionTier::Starter->value;

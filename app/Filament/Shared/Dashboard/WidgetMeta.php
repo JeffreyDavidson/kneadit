@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Shared\Dashboard;
 
 use App\Enums\Filament\WidgetSize;

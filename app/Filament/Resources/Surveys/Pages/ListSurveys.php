@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Surveys\Pages;
 
 use App\Filament\Resources\Surveys\SurveyResource;
@@ -9,8 +11,10 @@ use Filament\Support\Enums\Width;
 
 class ListSurveys extends ListRecords
 {
+    #[\Override]
     protected static string $resource = SurveyResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

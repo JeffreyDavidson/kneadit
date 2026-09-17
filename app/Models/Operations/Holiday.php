@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use App\Builders\Operations\HolidayQueryBuilder;
@@ -38,6 +40,7 @@ class Holiday extends Model
     /** @use HasFactory<HolidayFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

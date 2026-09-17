@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Models\Inventory\Product;
@@ -29,6 +31,7 @@ class ProductResource extends JsonApiResource
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function toAttributes(Request $request): array
     {
         return [

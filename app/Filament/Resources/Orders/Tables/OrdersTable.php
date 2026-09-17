@@ -88,7 +88,7 @@ class OrdersTable
                     ->requiresConfirmation()
                     ->modalHeading('Send PayPal Invoice')
                     ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
-                    ->action(function (Order $record) {
+                    ->action(function (Order $record): void {
                         $invoiceId = resolve(InvoiceService::class)->createAndSend($record);
 
                         if ($invoiceId) {
@@ -107,7 +107,7 @@ class OrdersTable
                             ->send();
                     })
                     ->visible(
-                        fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
+                        fn (Order $record): bool => $record->payment_status === PaymentStatus::Unpaid &&
                         ! $record->paypal_invoice_id &&
                         in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]) &&
                         // Hide entirely when PayPal isn't configured for the tenant
@@ -194,13 +194,13 @@ class OrdersTable
             ->requiresConfirmation()
             ->modalHeading($heading)
             ->modalDescription($description)
-            ->action(function (Order $record) use ($targetStatus, $notificationTitle, $notificationColor) {
+            ->action(function (Order $record) use ($targetStatus, $notificationTitle, $notificationColor): void {
                 resolve(TransitionOrderStatus::class)($record, $targetStatus);
                 Notification::make()
                     ->title($notificationTitle)
                     ->color($notificationColor)
                     ->send();
             })
-            ->visible(fn (Order $record) => in_array($targetStatus, TransitionOrderStatus::allowedTransitions($record)));
+            ->visible(fn (Order $record): bool => in_array($targetStatus, TransitionOrderStatus::allowedTransitions($record)));
     }
 }

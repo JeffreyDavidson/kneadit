@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Services\Settings\TenantSettings;
@@ -25,6 +27,7 @@ class StoreInfoResource extends JsonApiResource
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function toAttributes(Request $request): array
     {
         return [
