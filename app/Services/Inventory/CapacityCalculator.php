@@ -24,7 +24,7 @@ class CapacityCalculator
     {
         $limit = $this->forDate($date);
 
-        if ($limit && $limit->max_orders > 0) {
+        if ($limit instanceof CapacityLimit && $limit->max_orders > 0) {
             return $limit->max_orders;
         }
 

@@ -27,7 +27,7 @@ test('digest:weekly skips tenants with digest disabled', function () {
     $tenancyManager->expects('withinTenant')
         ->resolves(
             // Simulate settings returning '0' for digest
-            fn($tenant, $callback) => null);
+            fn ($tenant, $callback) => null);
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
@@ -52,7 +52,7 @@ test('digest:weekly returns failure when tenant processing fails', function () {
 
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn($message) => str_contains($message, 'Weekly digest processing failed'));
+        ->withArgs(fn ($message) => str_contains($message, 'Weekly digest processing failed'));
 
     $this->artisan('digest:weekly')
         ->expectsOutputToContain('Failed')

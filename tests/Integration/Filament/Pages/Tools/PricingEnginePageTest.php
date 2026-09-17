@@ -40,7 +40,7 @@ test('mount sets default rates from settings', function () {
 test('get products property returns collection', function () {
     Product::factory()->count(2)->create();
 
-    expect(test()->page->getProductsProperty())->toHaveCount(2);
+    expect(test()->page->products)->toHaveCount(2);
 });
 
 test('updated selected product id loads recipe cost', function () {

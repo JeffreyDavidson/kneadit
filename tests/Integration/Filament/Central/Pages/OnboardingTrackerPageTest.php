@@ -42,10 +42,10 @@ test('tracker builds and sorts configured and incomplete tenant records', functi
 
     expect($data)->toHaveCount(2)
         ->and($configured)->toHaveKeys([
-        'id', 'name', 'subdomain', 'owner', 'email',
-        'plan', 'created_at', 'days_since_signup',
-        'checks', 'completed', 'total',
-    ])
+            'id', 'name', 'subdomain', 'owner', 'email',
+            'plan', 'created_at', 'days_since_signup',
+            'checks', 'completed', 'total',
+        ])
         ->and($configured['checks']['store_name'])->toBeTrue()
         ->and($incomplete['checks']['store_name'])->toBeFalse()
         ->and($configured['checks']['storefront_enabled'])->toBeTrue()

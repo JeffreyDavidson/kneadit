@@ -14,7 +14,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 
 /**
  * @property-read Tenant $record
@@ -27,7 +27,7 @@ class ViewTenant extends ViewRecord
     #[\Override]
     protected string $view = 'filament.central.pages.view-tenant';
 
-    #[Rule(['required', 'min:3'])]
+    #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
 
     #[\Override]

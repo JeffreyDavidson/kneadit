@@ -17,7 +17,7 @@ class ShowPlansController extends Controller
     {
         return view('central.billing.plans', [
             'plans' => config('kneadit.plans'),
-            'currentPlan' => $user ? SubscriptionTier::resolve($user)?->value : null,
+            'currentPlan' => $user instanceof User ? SubscriptionTier::resolve($user)?->value : null,
             'bakeryName' => session('bakery_name'),
         ]);
     }

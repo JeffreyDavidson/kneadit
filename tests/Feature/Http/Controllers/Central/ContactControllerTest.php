@@ -22,7 +22,7 @@ test('marketing contact form queues an email to the platform address', function 
 
     $response->assertOk()->assertJson(['success' => true]);
 
-    Mail::assertQueued(ContactFormMail::class, fn(ContactFormMail $mail) => $mail->hasTo('hello@getkneadit.app')
+    Mail::assertQueued(ContactFormMail::class, fn (ContactFormMail $mail) => $mail->hasTo('hello@getkneadit.app')
         && $mail->senderName === 'Jane Doe'
         && $mail->senderEmail === 'jane@example.com'
         && str_contains($mail->body, 'pricing'));

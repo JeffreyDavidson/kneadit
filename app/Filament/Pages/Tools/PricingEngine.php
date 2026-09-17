@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class PricingEngine extends Page
 {
@@ -70,7 +71,8 @@ class PricingEngine extends Page
     }
 
     /** @return Collection<int, Product> */
-    public function getProductsProperty(): Collection
+    #[Computed]
+    public function products(): Collection
     {
         return Product::query()->with(['category', 'recipes'])->orderBy('name')->get();
     }

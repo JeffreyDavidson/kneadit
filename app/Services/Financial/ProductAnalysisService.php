@@ -90,7 +90,7 @@ class ProductAnalysisService
      */
     private function formatIngredients(?Recipe $recipe): Collection
     {
-        if (! $recipe || ! $recipe->ingredients) {
+        if (! $recipe instanceof Recipe || ! $recipe->ingredients) {
             return new Collection;
         }
 

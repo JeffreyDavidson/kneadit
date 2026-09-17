@@ -48,7 +48,7 @@ test('returns seven-day charts and weekly revenue from grouped aggregates', func
     ]);
 
     $data = resolve(StatsOverviewQuery::class)->get();
-    expect($data)->toMatchArray(['ordersChart' => [0, 0, 0, 0, 0, 0, 2], 'ordersChart' => 2]);
+    expect($data)->toMatchArray(['ordersChart' => [0, 0, 0, 0, 0, 0, 2], 'todaysOrders' => 2]);
 });
 
 test('loads the complete dashboard dataset in five queries', function () {

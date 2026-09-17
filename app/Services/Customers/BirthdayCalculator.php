@@ -23,7 +23,7 @@ class BirthdayCalculator
 
     public function daysUntil(?Carbon $birthday): ?int
     {
-        if (! $birthday) {
+        if (! $birthday instanceof Carbon) {
             return null;
         }
 

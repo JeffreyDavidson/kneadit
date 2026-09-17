@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Livewire\Attributes\Computed;
 
 class ActivityLogPage extends Page
 {
@@ -51,7 +52,8 @@ class ActivityLogPage extends Page
     public ?int $expandedId = null;
 
     /** @return LengthAwarePaginator<int, ActivityLog> */
-    public function getActivitiesProperty(): LengthAwarePaginator
+    #[Computed]
+    public function activities(): LengthAwarePaginator
     {
         $query = ActivityLog::query()->latest();
 

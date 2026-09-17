@@ -103,7 +103,7 @@ test('dispatchForRecipient creates coupon and dispatches event when coupon enabl
     $engagement = resolve(BirthdayEngagement::class);
     $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
-    Event::assertDispatched(fn(CustomerBirthday $event) => $event->coupon !== null);
+    Event::assertDispatched(fn (CustomerBirthday $event) => $event->coupon !== null);
     assertDatabaseHas('coupons', [
         'percentage' => 15,
     ]);
@@ -130,6 +130,6 @@ test('dispatchForRecipient dispatches event without coupon when coupon disabled'
     $engagement = resolve(BirthdayEngagement::class);
     $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
-    Event::assertDispatched(fn(CustomerBirthday $event) => $event->coupon === null);
+    Event::assertDispatched(fn (CustomerBirthday $event) => $event->coupon === null);
     assertDatabaseCount('coupons', 0);
 });

@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class SocialCalendar extends Page
 {
@@ -118,7 +119,8 @@ class SocialCalendar extends Page
     }
 
     /** @return array<int, mixed> */
-    public function getCalendarDaysProperty(): array
+    #[Computed]
+    public function calendarDays(): array
     {
         $start = Date::create($this->year, $this->month, 1);
         $daysInMonth = $start->daysInMonth;
@@ -144,7 +146,8 @@ class SocialCalendar extends Page
         return $days;
     }
 
-    public function getMonthLabelProperty(): string
+    #[Computed]
+    public function monthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->format('F Y');
     }

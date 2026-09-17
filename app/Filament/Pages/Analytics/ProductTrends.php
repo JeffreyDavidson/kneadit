@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 
 class ProductTrends extends Page
@@ -93,17 +94,20 @@ class ProductTrends extends Page
     }
 
     /** @return array<int, mixed> */
-    public function getTrendsDataProperty(): array
+    #[Computed]
+    public function trendsData(): array
     {
         return resolve(ProductTrendsService::class)->calculate($this->year, $this->month);
     }
 
-    public function getMonthLabelProperty(): string
+    #[Computed]
+    public function monthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->format('F Y');
     }
 
-    public function getPrevMonthLabelProperty(): string
+    #[Computed]
+    public function prevMonthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->subMonth()->format('M Y');
     }

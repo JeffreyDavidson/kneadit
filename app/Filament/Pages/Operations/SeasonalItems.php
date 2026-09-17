@@ -23,6 +23,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\ValidatedInput;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class SeasonalItems extends Page
 {
@@ -134,19 +135,22 @@ class SeasonalItems extends Page
     }
 
     /** @return Collection<int, SeasonalItem> */
-    public function getCurrentItemsProperty(): Collection
+    #[Computed]
+    public function currentItems(): Collection
     {
         return SeasonalItem::with('product')->current()->get();
     }
 
     /** @return Collection<int, SeasonalItem> */
-    public function getUpcomingItemsProperty(): Collection
+    #[Computed]
+    public function upcomingItems(): Collection
     {
         return SeasonalItem::with('product')->upcoming()->orderBy('available_from')->get();
     }
 
     /** @return Collection<int, SeasonalItem> */
-    public function getExpiredItemsProperty(): Collection
+    #[Computed]
+    public function expiredItems(): Collection
     {
         return SeasonalItem::with('product')->expired()->orderByDesc('available_until')->get();
     }

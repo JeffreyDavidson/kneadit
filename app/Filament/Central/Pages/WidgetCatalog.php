@@ -7,6 +7,7 @@ use App\Filament\Shared\Dashboard\WidgetMeta;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\Computed;
 use UnitEnum;
 
 class WidgetCatalog extends Page
@@ -54,7 +55,8 @@ class WidgetCatalog extends Page
      *
      * @return array<int, array<string, mixed>>
      */
-    public function getCatalogWidgetsProperty(): array
+    #[Computed]
+    public function catalogWidgets(): array
     {
         $catalog = [];
 

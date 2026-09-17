@@ -1,18 +1,21 @@
 <?php
 
 declare(strict_types=1);
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
 
 arch('enums should implement HasLabel for Filament')
     ->expect('App\Enums')
-    ->toImplement(\Filament\Support\Contracts\HasLabel::class);
+    ->toImplement(HasLabel::class);
 
 arch('custom query builders should extend Eloquent Builder')
     ->expect('App\Builders')
-    ->toExtend(\Illuminate\Database\Eloquent\Builder::class);
+    ->toExtend(Builder::class);
 
 arch('custom casts should implement CastsAttributes')
     ->expect('App\Casts')
-    ->toImplement(\Illuminate\Contracts\Database\Eloquent\CastsAttributes::class);
+    ->toImplement(CastsAttributes::class);
 
 arch('value objects should be final readonly')
     ->expect('App\ValueObjects')

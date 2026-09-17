@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Orders;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Responses\ApiResponse;
+use App\Models\Financial\Coupon;
 use App\Presenters\CouponPresenter;
 use App\Services\Coupon\CouponService;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +32,7 @@ class ApplyCouponController extends Controller
             'coupon_id' => $coupon?->id,
             'code' => $coupon?->code,
             'discount_amount' => $result->discount,
-            'label' => $coupon ? CouponPresenter::for($coupon)->formattedDiscount() : null,
+            'label' => $coupon instanceof Coupon ? CouponPresenter::for($coupon)->formattedDiscount() : null,
         ], 'Coupon applied successfully.');
     }
 }

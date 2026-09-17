@@ -61,7 +61,7 @@ test('backup creates backup directory', function () {
         dirname(base_path()).'/backups',
         base_path().'/../backups',
     ];
-    $found = array_any($possibleDirs, fn($dir) => is_dir($dir));
+    $found = array_any($possibleDirs, fn ($dir) => is_dir($dir));
 
     expect($found)->toBeTrue('Backup directory should be created');
 });
@@ -76,7 +76,7 @@ test('backup outputs progress messages', function () {
 test('backup logs completion', function () {
     Log::shouldReceive('info')
         ->once()
-        ->withArgs(fn($message, $context) => str_contains($message, 'Database backup completed')
+        ->withArgs(fn ($message, $context) => str_contains($message, 'Database backup completed')
             && isset($context['path'])
             && isset($context['size']));
 

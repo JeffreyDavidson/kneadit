@@ -13,7 +13,7 @@ test('survey id defaults to null', function () {
 });
 
 test('get survey property returns null when no survey selected', function () {
-    expect(test()->page->getSurveyProperty())->toBeNull();
+    expect(test()->page->survey)->toBeNull();
 });
 
 test('get survey property returns survey when selected', function () {
@@ -21,14 +21,14 @@ test('get survey property returns survey when selected', function () {
 
     test()->page->surveyId = $survey->id;
 
-    expect(test()->page->getSurveyProperty())->not->toBeNull()
-        ->and(test()->page->getSurveyProperty()->title)->toBe('Customer Feedback');
+    expect(test()->page->survey)->not->toBeNull()
+        ->and(test()->page->survey->title)->toBe('Customer Feedback');
 });
 
 test('get survey property returns null for nonexistent id', function () {
     test()->page->surveyId = 99999;
 
-    expect(test()->page->getSurveyProperty())->toBeNull();
+    expect(test()->page->survey)->toBeNull();
 });
 
 test('get view data returns surveys list', function () {

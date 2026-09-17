@@ -87,13 +87,13 @@ test('delete nonexistent seasonal item throws exception', function () {
 });
 
 test('current items property returns collection', function () {
-    expect(test()->page->getCurrentItemsProperty())->toBeInstanceOf(Collection::class);
+    expect(test()->page->currentItems)->toBeInstanceOf(Collection::class);
 });
 
 test('upcoming items property returns collection', function () {
-    expect(test()->page->getUpcomingItemsProperty())->toBeInstanceOf(Collection::class);
+    expect(test()->page->upcomingItems)->toBeInstanceOf(Collection::class);
 });
 
 test('expired items property returns collection', function () {
-    expect(test()->page->getExpiredItemsProperty())->toBeInstanceOf(Collection::class);
+    expect(test()->page->expiredItems)->toBeInstanceOf(Collection::class);
 });

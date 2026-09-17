@@ -36,7 +36,7 @@ test('dispatch includes event header', function () {
 
     resolve(WebhookService::class)->dispatch('order.updated', ['status' => OrderStatus::Delivered]);
 
-    Http::assertSent(fn($request) => $request->hasHeader('X-KneadIt-Event', 'order.updated'));
+    Http::assertSent(fn ($request) => $request->hasHeader('X-KneadIt-Event', 'order.updated'));
 });
 
 test('dispatch includes signature header', function () {
@@ -47,7 +47,7 @@ test('dispatch includes signature header', function () {
 
     resolve(WebhookService::class)->dispatch('order.created', ['test' => true]);
 
-    Http::assertSent(fn($request) => $request->hasHeader('X-KneadIt-Signature'));
+    Http::assertSent(fn ($request) => $request->hasHeader('X-KneadIt-Signature'));
 });
 
 test('dispatch body contains event and data', function () {

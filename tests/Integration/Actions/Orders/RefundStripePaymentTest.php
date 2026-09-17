@@ -45,7 +45,7 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
 
     $refundService = Double::for(RefundService::class);
     $refundService->expects('create')
-        ->with(Argument::satisfies(fn(mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'))
+        ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'))
         ->returns($stripeRefundResource);
 
     app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));

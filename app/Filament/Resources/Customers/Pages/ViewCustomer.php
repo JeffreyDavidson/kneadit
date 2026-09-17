@@ -17,7 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 
 /**
  * Customer 360 — single-page aggregation of everything we know about
@@ -36,7 +36,7 @@ class ViewCustomer extends ViewRecord
     protected string $view = 'filament.resources.customers.pages.view-customer';
 
     /** Inline note-add form state — mirrors the ViewTenant pattern. */
-    #[Rule(['required', 'min:3'])]
+    #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
 
     /**

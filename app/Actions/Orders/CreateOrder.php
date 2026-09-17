@@ -65,7 +65,7 @@ class CreateOrder
             throw new UnexpectedValueException('The order pipeline returned an invalid payload.');
         }
 
-        if ($result->cancelled || ! $result->order) {
+        if ($result->cancelled || ! $result->order instanceof Order) {
             return null;
         }
 

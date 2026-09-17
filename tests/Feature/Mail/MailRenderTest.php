@@ -122,13 +122,13 @@ test('platform account mail classes render without errors', function () {
         ->toBeString()
         ->not->toBeEmpty()
         ->and((new NewSubscriberNotificationMail(
-        'Jane',
-        'jane@example.com',
-        'Sweet Bakery',
-        'sweet-bakery.kneadit.test',
-        'starter',
-        'https://kneadit.test/central',
-    ))->render())->toBeString()->not->toBeEmpty();
+            'Jane',
+            'jane@example.com',
+            'Sweet Bakery',
+            'sweet-bakery.kneadit.test',
+            'starter',
+            'https://kneadit.test/central',
+        ))->render())->toBeString()->not->toBeEmpty();
 
     $user = User::factory()->owner()->create();
 

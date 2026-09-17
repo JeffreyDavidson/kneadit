@@ -1,9 +1,10 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Support\Facades\DB;
 
 arch('view models must not use the DB facade')
-    ->expect(\Illuminate\Support\Facades\DB::class)
+    ->expect(DB::class)
     ->not->toBeUsedIn('App\ViewModels');
 
 test('view models must not call Model::query() statically', function () {

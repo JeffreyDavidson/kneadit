@@ -7,6 +7,7 @@ use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOrderRequest;
+use App\Models\Orders\Order;
 use App\Services\Orders\OrderAccessGuard;
 use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +37,7 @@ class SubmitOrderController extends Controller
                 )]);
         }
 
-        if (! $order) {
+        if (! $order instanceof Order) {
             return back()->withErrors([
                 'delivery_date' => $content['flash_full'] ?? 'Sorry, this date is fully booked. Please choose another date.',
             ]);

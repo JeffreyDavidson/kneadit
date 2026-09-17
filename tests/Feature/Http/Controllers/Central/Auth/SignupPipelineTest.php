@@ -141,7 +141,7 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
 
     $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
 
-    Event::assertDispatched(TenantOnboarded::class, fn(TenantOnboarded $event) => $event->user->is($user)
+    Event::assertDispatched(TenantOnboarded::class, fn (TenantOnboarded $event) => $event->user->is($user)
         && $event->tenant->id === $sub
         && str_contains($event->adminUrl, "{$sub}.")
         && str_ends_with($event->adminUrl, '/admin'));

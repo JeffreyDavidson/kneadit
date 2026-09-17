@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Database\Eloquent\Model;
 
 arch('enums should be string backed')
     ->expect('App\Enums')
@@ -9,7 +10,7 @@ arch('enums should be string backed')
 
 arch('models should extend eloquent model')
     ->expect('App\Models')
-    ->toExtend(\Illuminate\Database\Eloquent\Model::class)
+    ->toExtend(Model::class)
     ->ignoring('App\Models\Concerns');
 
 test('models must not declare resolveRouteBinding or getRouteKeyName', function () {

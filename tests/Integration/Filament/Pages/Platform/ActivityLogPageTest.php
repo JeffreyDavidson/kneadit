@@ -24,7 +24,7 @@ test('page state has expected defaults', function () {
 test('get activities property returns paginator', function () {
     ActivityLog::factory()->count(3)->create();
 
-    $result = test()->page->getActivitiesProperty();
+    $result = test()->page->activities;
 
     expect($result)->toBeInstanceOf(LengthAwarePaginator::class)
         ->and($result->total())->toBe(3);
@@ -36,7 +36,7 @@ test('get activities property filters by action', function () {
     ActivityLog::factory()->create(['action' => 'deleted']);
 
     test()->page->filterAction = 'created';
-    $result = test()->page->getActivitiesProperty();
+    $result = test()->page->activities;
 
     expect($result->total())->toBe(1);
 });
@@ -46,7 +46,7 @@ test('get activities property filters by model type', function () {
     ActivityLog::factory()->create(['model_type' => Product::class]);
 
     test()->page->filterModelType = Order::class;
-    $result = test()->page->getActivitiesProperty();
+    $result = test()->page->activities;
 
     expect($result->total())->toBe(1);
 });
@@ -56,7 +56,7 @@ test('get activities property filters by user name', function () {
     ActivityLog::factory()->create(['user_name' => 'Jane Smith']);
 
     test()->page->filterUser = 'John';
-    $result = test()->page->getActivitiesProperty();
+    $result = test()->page->activities;
 
     expect($result->total())->toBe(1);
 });
@@ -67,7 +67,7 @@ test('get activities property filters by date range', function () {
     ActivityLog::factory()->create(['created_at' => now()]);
 
     test()->page->filterDateFrom = now()->subDays(6)->format('Y-m-d');
-    $result = test()->page->getActivitiesProperty();
+    $result = test()->page->activities;
 
     expect($result->total())->toBe(2);
 });

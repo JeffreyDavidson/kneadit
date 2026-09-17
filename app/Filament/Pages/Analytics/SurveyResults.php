@@ -7,6 +7,7 @@ use App\Models\Engagement\Survey;
 use App\Services\Export\CsvValueSanitizer;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\Computed;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -39,7 +40,8 @@ class SurveyResults extends Page
 
     public ?int $surveyId = null;
 
-    public function getSurveyProperty(): ?Survey
+    #[Computed]
+    public function survey(): ?Survey
     {
         return $this->surveyId ? Survey::with('responses')->find($this->surveyId) : null;
     }
