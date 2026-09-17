@@ -55,7 +55,7 @@ class ProductAnalysisService
      */
     public function portfolio(string $sortBy = 'margin_desc'): ProductPortfolioSummary
     {
-        $products = once(fn () => $this->loadProductAnalysis());
+        $products = once(fn (): Collection => $this->loadProductAnalysis());
         $sorted = $this->sortProducts($products, $sortBy);
 
         $productsWithCostData = $sorted->where('has_cost_data', true);
@@ -116,7 +116,7 @@ class ProductAnalysisService
         return Product::with(['recipes'])
             ->where('is_active', true)
             ->get()
-            ->map(function (Product $product) {
+            ->map(function (Product $product): array {
                 $cost = $this->costResolver->resolve($product);
                 $price = $product->price?->dollars() ?? 0.0;
                 $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;

@@ -45,7 +45,7 @@ class LogsActivityObserver
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
                 'description' => class_basename($model)." #{$modelKey} was {$action->value}",
-                'properties' => empty($changes) ? null : ['changes' => $changes],
+                'properties' => $changes === [] ? null : ['changes' => $changes],
                 'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable $e) {

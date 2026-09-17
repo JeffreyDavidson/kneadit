@@ -82,7 +82,7 @@ class FinanceSummary extends Page
         $this->totalRevenue = $data->totalRevenue;
         $this->totalExpenses = $data->totalExpenses;
         $this->netProfit = $data->netProfit;
-        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
+        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
         $this->expenseBreakdown = $data->expenseBreakdown;
         $this->cogsAmount = $data->cogsAmount;
         $this->cogsPercentage = $data->cogsPercentage;

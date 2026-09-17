@@ -29,10 +29,10 @@ class CustomerQueryBuilder extends Builder
      */
     public function withOrderMetrics(): static
     {
-        $this->withCount(['orders' => function (OrderQueryBuilder $q) {
+        $this->withCount(['orders' => function (OrderQueryBuilder $q): void {
             $q->active();
         }])
-            ->withSum(['orders' => function (OrderQueryBuilder $q) {
+            ->withSum(['orders' => function (OrderQueryBuilder $q): void {
                 $q->active();
             }], 'total')
             ->addSelect([

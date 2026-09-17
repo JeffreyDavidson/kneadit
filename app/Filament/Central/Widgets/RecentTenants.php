@@ -27,7 +27,7 @@ class RecentTenants extends TableWidget
     {
         return $table
             ->query(Tenant::query()->latest()->limit(5))
-            ->recordUrl(fn (Tenant $record) => TenantResource::getUrl('view', ['record' => $record->id]))
+            ->recordUrl(fn (Tenant $record): string => TenantResource::getUrl('view', ['record' => $record->id]))
             ->columns([
                 TextColumn::make('store_name')
                     ->label('Bakery')

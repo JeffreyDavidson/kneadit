@@ -15,7 +15,7 @@ class ResolveCustomer
                 'name' => $payload->data->customerName,
                 'phone' => $payload->data->customerPhone,
                 'birthday' => $payload->data->customerBirthday,
-            ], fn (mixed $v) => $v !== null),
+            ], fn (mixed $v): bool => $v !== null),
         );
 
         return $next($payload);

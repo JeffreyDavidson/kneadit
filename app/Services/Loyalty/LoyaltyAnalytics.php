@@ -53,7 +53,7 @@ class LoyaltyAnalytics
     public function leaderboard(int $limit = 5): array
     {
         return $this->topCustomers($limit)
-            ->map(fn (Customer $c) => [
+            ->map(fn (Customer $c): array => [
                 'name' => $c->name,
                 'points' => (int) $c->balance,
             ])
@@ -70,7 +70,7 @@ class LoyaltyAnalytics
             ->latest()
             ->limit($limit)
             ->get()
-            ->map(fn (LoyaltyPoint $lp) => [
+            ->map(fn (LoyaltyPoint $lp): array => [
                 'customer' => $lp->customer->name ?? 'Unknown',
                 'points' => $lp->points,
                 'description' => $lp->description ?? '',

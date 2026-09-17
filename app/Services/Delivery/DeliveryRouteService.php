@@ -27,7 +27,7 @@ class DeliveryRouteService
             ->where('delivery_address', '!=', '')
             ->orderBy('delivery_time')
             ->get()
-            ->map(fn (Order $order) => [
+            ->map(fn (Order $order): array => [
                 'id' => $order->id,
                 'order_number' => $order->order_number,
                 'customer_name' => $order->customer->name ?? 'Unknown Customer',

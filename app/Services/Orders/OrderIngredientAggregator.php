@@ -93,7 +93,7 @@ class OrderIngredientAggregator
         $inventoryIngredients = Ingredient::all()
             ->keyBy(fn (Ingredient $i) => Str::lower($i->name));
 
-        return $aggregated->map(function (array $item) use ($inventoryIngredients) {
+        return $aggregated->map(function (array $item) use ($inventoryIngredients): array {
             $tracked = $inventoryIngredients->get(Str::lower($item['name']));
             $currentStock = $tracked ? (float) $tracked->current_stock : null;
 

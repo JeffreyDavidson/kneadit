@@ -32,7 +32,7 @@ class CustomerDirectoryStatsQuery
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);
 
         $topCustomer = Customer::query()
-            ->withSum(['orders' => fn (OrderQueryBuilder $q) => $q->active()], 'total')
+            ->withSum(['orders' => fn (OrderQueryBuilder $q): OrderQueryBuilder => $q->active()], 'total')
             ->orderByDesc('orders_sum_total')
             ->first();
 

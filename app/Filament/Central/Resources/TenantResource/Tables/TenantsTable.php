@@ -159,7 +159,7 @@ class TenantsTable
                             Select::make('plan')
                                 ->label('New Plan')
                                 ->options(collect(SubscriptionTier::cases())
-                                    ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->labelWithPrice()])
+                                    ->mapWithKeys(fn (SubscriptionTier $tier): array => [$tier->value => $tier->labelWithPrice()])
                                     ->all())
                                 ->required(),
                         ])

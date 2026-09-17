@@ -102,7 +102,7 @@ class FeatureUsageQuery
             Date::today()->toDateString(),
         ])
             ->get()
-            ->groupBy(fn (FeatureUsageLog $log) => $log->feature.'|'.$log->date->toDateString());
+            ->groupBy(fn (FeatureUsageLog $log): string => $log->feature.'|'.$log->date->toDateString());
 
         $maximumCount = $logs->max(
             fn (Collection $group): mixed => $group->sum('usage_count'),

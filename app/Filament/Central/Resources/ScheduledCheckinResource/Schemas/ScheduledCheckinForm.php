@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\ScheduledCheckinResource\Schemas;
 
 use Filament\Forms\Components\Textarea;

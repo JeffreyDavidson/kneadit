@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Centralized Stripe client so Stripe-using actions can be tested with
         // a mocked binding rather than instantiating the client themselves.
-        $this->app->bind(StripeClient::class, fn () => new StripeClient(
+        $this->app->bind(StripeClient::class, fn (): StripeClient => new StripeClient(
             Config::string('cashier.secret', ''),
         ));
     }

@@ -68,7 +68,7 @@ class GiftCard extends Model
     protected function isUsable(): Attribute
     {
         return Attribute::make(
-            get: fn () => GiftCardStatus::resolve($this) === GiftCardStatus::Active,
+            get: fn (): bool => GiftCardStatus::resolve($this) === GiftCardStatus::Active,
         );
     }
 }

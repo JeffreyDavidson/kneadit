@@ -108,14 +108,14 @@ class CustomerDirectory extends Page
             }]);
 
         if ($this->search) {
-            $query->where(function (Builder $q) {
+            $query->where(function (Builder $q): void {
                 $q->whereLike('name', '%'.$this->search.'%')
                     ->orWhereLike('email', '%'.$this->search.'%')
                     ->orWhereLike('phone', '%'.$this->search.'%');
             });
         }
 
-        return $query->orderBy('name')->get()->map(fn (Customer $customer) => [
+        return $query->orderBy('name')->get()->map(fn (Customer $customer): array => [
             'id' => $customer->id,
             'name' => $customer->name,
             'email' => $customer->email,

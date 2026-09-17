@@ -77,21 +77,21 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Upgrade Plan')
-                    ->url(fn () => route('filament.admin.pages.upgrade-plan'))
+                    ->url(fn (): string => route('filament.admin.pages.upgrade-plan'))
                     ->icon('heroicon-o-arrow-up-circle'),
                 MenuItem::make()
                     ->label('Messages')
-                    ->url(fn () => route('filament.admin.pages.messages'))
+                    ->url(fn (): string => route('filament.admin.pages.messages'))
                     ->icon('heroicon-o-envelope'),
                 MenuItem::make()
                     ->label('Help')
-                    ->url(fn () => route('filament.admin.pages.help-center'))
+                    ->url(fn (): string => route('filament.admin.pages.help-center'))
                     ->icon('heroicon-o-question-mark-circle'),
             ])
             ->databaseNotifications()
             ->font('Inter')
             ->favicon(asset('images/logo-icon.png'))
-            ->renderHook('panels::head.end', function () {
+            ->renderHook('panels::head.end', function (): HtmlString {
                 // Resolve the active preset; default to 'honey' which produces
                 // the same hex values as the previous hardcoded fallback so
                 // tenants without a saved theme are visually identical.
@@ -116,7 +116,7 @@ class AdminPanelProvider extends PanelProvider
                     .'<style>'.PanelThemes::tenantCss($theme).'</style>',
                 );
             })
-            ->renderHook('panels::global-search.after', fn () => new HtmlString(
+            ->renderHook('panels::global-search.after', fn (): HtmlString => new HtmlString(
                 '<a href="'.route('filament.admin.pages.dashboard-config').'" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#8b6844;transition:background 0.15s;" title="Customize Dashboard" onmouseover="this.style.background=\'rgba(212,165,116,0.12)\'" onmouseout="this.style.background=\'transparent\'">'
                 .'<svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;" viewBox="0 0 20 20" fill="currentColor">'
                 .'<path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />'

@@ -22,7 +22,7 @@ class ProductCsvExporter
         throw_if($output === false, \RuntimeException::class, 'Failed to open file');
         fputcsv($output, $this->headers, escape: '\\');
 
-        Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
+        Product::with('category')->orderBy('name')->each(function (Product $product) use ($output): void {
             fputcsv($output, CsvValueSanitizer::row([
                 $product->name,
                 $product->category->name ?? '',
@@ -61,7 +61,7 @@ class ProductCsvExporter
         $header = array_map(fn (?string $h) => Str::lower(trim($h ?? '')), $header);
         $missing = array_diff(['name', 'price'], $header);
 
-        if (! empty($missing)) {
+        if ($missing !== []) {
             fclose($handle);
 
             return ['rows' => [], 'errors' => ['Missing required columns: '.implode(', ', $missing)]];
@@ -78,7 +78,7 @@ class ProductCsvExporter
             $mapped = array_combine($header, $row);
             $rowErrors = [];
 
-            if (empty(trim($mapped['name'] ?? ''))) {
+            if (in_array(trim($mapped['name'] ?? ''), ['', '0'], true)) {
                 $rowErrors[] = 'Name is required';
             }
             $price = $mapped['price'] ?? '';
@@ -93,7 +93,7 @@ class ProductCsvExporter
             $mapped['_errors'] = $rowErrors;
             $rows[] = $mapped;
 
-            if (! empty($rowErrors)) {
+            if ($rowErrors !== []) {
                 $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
             }
         }

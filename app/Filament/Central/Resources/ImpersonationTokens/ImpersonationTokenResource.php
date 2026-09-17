@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\ImpersonationTokens;
 
 use App\Filament\Central\Resources\ImpersonationTokens\Pages\ListImpersonationTokens;

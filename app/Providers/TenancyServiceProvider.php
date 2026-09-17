@@ -119,7 +119,7 @@ class TenancyServiceProvider extends ServiceProvider
 
     protected function mapRoutes(): void
     {
-        $this->app->booted(function () {
+        $this->app->booted(function (): void {
             if (file_exists(base_path('routes/tenant.php'))) {
                 Route::group([], base_path('routes/tenant.php'));
             }

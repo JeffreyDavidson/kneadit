@@ -2,6 +2,7 @@
 
 namespace App\Pipes\Orders;
 
+use App\Models\Customers\Customer;
 use App\Services\Loyalty\CustomerLoyalty;
 use App\ValueObjects\Money;
 use Closure;
@@ -19,7 +20,7 @@ class ApplyTierPerks
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if ($payload->customer === null) {
+        if (! $payload->customer instanceof Customer) {
             return $next($payload);
         }
 

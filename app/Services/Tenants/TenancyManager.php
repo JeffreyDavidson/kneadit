@@ -55,7 +55,7 @@ class TenancyManager
 
         foreach (Tenant::query()->lazyById(self::TENANT_CHUNK_SIZE) as $tenant) {
             try {
-                $this->withinTenant($tenant, function () use ($tenant, $callback) {
+                $this->withinTenant($tenant, function () use ($tenant, $callback): void {
                     $settings = $this->tenantSettingsRegistry->all();
                     $callback($tenant, $settings);
                 });

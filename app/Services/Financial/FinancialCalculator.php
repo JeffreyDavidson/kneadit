@@ -54,19 +54,19 @@ class FinancialCalculator
         $orderRevenueByMonth = Order::query()->paidInYear($year)
             ->whereNotNull('delivery_date')
             ->get(['delivery_date', 'total'])
-            ->groupBy(fn (Order $o) => (int) $o->delivery_date?->month)
+            ->groupBy(fn (Order $o): int => (int) $o->delivery_date?->month)
             ->map(fn (Collection $group) => $group->sum(fn (Order $o) => $o->total->dollars()));
 
         $incomeByMonth = Income::query()->forYear($year)
             ->whereNotNull('date')
             ->get(['date', 'amount'])
-            ->groupBy(fn (Income $i) => (int) $i->date?->month)
+            ->groupBy(fn (Income $i): int => (int) $i->date?->month)
             ->map(fn (Collection $group) => $group->sum(fn (Income $i) => $i->amount->dollars()));
 
         $expensesByMonth = Expense::query()->forYear($year)
             ->whereNotNull('date')
             ->get(['date', 'amount'])
-            ->groupBy(fn (Expense $e) => (int) $e->date?->month)
+            ->groupBy(fn (Expense $e): int => (int) $e->date?->month)
             ->map(fn (Collection $group) => $group->sum(fn (Expense $e) => $e->amount->dollars()));
 
         $breakdown = [];

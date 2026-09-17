@@ -35,7 +35,7 @@ class TransitionOrderStatus
 
         throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
 
-        DB::transaction(function () use ($order, $from, $to) {
+        DB::transaction(function () use ($order, $from, $to): void {
             $order->update(['status' => $to]);
 
             if ($to === OrderStatus::Baking) {

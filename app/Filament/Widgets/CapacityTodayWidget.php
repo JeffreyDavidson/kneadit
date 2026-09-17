@@ -68,7 +68,7 @@ class CapacityTodayWidget extends Widget
             ->orderBy('date')
             ->limit(3)
             ->get()
-            ->map(fn (BlockedDate $b) => [
+            ->map(fn (BlockedDate $b): array => [
                 'date' => $b->date->format('M j'),
                 'reason' => $b->reason ?? 'Closed',
             ])

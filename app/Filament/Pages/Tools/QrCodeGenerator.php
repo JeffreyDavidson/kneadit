@@ -149,7 +149,7 @@ class QrCodeGenerator extends Page
             $content = $service->generatePng($url, $options['size'], $options['color']);
             $filename = 'qr-code.'.($options['page'] ?: 'home').'.png';
 
-            return Response::streamDownload(fn () => print ($content), $filename, [
+            return Response::streamDownload(fn (): int => print ($content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
         }
@@ -157,7 +157,7 @@ class QrCodeGenerator extends Page
         $content = $service->generateSvg($url, $options['size'], $options['color']);
         $filename = 'qr-code.'.($options['page'] ?: 'home').'.svg';
 
-        return Response::streamDownload(fn () => print ($content), $filename, [
+        return Response::streamDownload(fn (): int => print ($content), $filename, [
             'Content-Type' => 'image/svg+xml',
         ]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions\Orders;
 
 use App\Models\Orders\Order;
@@ -21,7 +23,7 @@ class InsufficientStockException extends RuntimeException implements ShouldntRep
     ) {
         $list = implode(', ', $shortages);
 
-        $prefix = $order !== null
+        $prefix = $order instanceof Order
             ? "Order {$order->order_number} cannot be modified"
             : 'Order cannot be placed';
 

@@ -20,7 +20,7 @@ class MarkOrderPaid
             return $order;
         }
 
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order): void {
             $order->update(['payment_status' => PaymentStatus::Paid]);
         });
 

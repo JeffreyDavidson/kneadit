@@ -29,7 +29,7 @@ class ListMessages extends ListRecords
                 ->schema([
                     Select::make('tenant_id')
                         ->label('Bakery')
-                        ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->all())
+                        ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t): array => [$t->id => $t->store_name ?: $t->name])->all())
                         ->searchable()
                         ->required(),
                     TextInput::make('subject')
@@ -39,7 +39,7 @@ class ListMessages extends ListRecords
                         ->required()
                         ->rows(6),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data): void {
                     PlatformMessage::query()->create([
                         'tenant_id' => $data['tenant_id'],
                         'sender_type' => PlatformSenderType::Admin,

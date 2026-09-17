@@ -56,7 +56,7 @@ class SurveyResults extends Page
             return null;
         }
 
-        return response()->streamDownload(static function () use ($survey) {
+        return response()->streamDownload(static function () use ($survey): void {
             $csvValue = CsvValueSanitizer::sanitize(...);
             $handle = fopen('php://output', 'w');
             throw_if($handle === false, \RuntimeException::class, 'Failed to open file');

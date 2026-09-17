@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\PlatformSettings\Pages;
 
 use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;

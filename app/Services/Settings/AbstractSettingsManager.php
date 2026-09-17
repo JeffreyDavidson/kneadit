@@ -44,7 +44,7 @@ abstract class AbstractSettingsManager
     /** @param array<string, mixed> $settings */
     public function setMany(array $settings): void
     {
-        DB::transaction(function () use ($settings) {
+        DB::transaction(function () use ($settings): void {
             foreach ($settings as $key => $value) {
                 $this->set($key, $value);
             }

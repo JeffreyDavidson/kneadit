@@ -61,7 +61,7 @@ class SendEmailCampaign
         $emails = [];
 
         foreach ($this->filteredTenants($segment) as $tenant) {
-            $this->tenancyManager->withinTenant($tenant, function () use (&$emails) {
+            $this->tenancyManager->withinTenant($tenant, function () use (&$emails): void {
                 array_push($emails, ...$this->currentTenantEmails()->all());
             });
         }

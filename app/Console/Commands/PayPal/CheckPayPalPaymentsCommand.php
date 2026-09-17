@@ -74,15 +74,15 @@ class CheckPayPalPaymentsCommand extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, function (Order $o) use ($markOrderPaid) {
+                'PAID' => tap($order, function (Order $o) use ($markOrderPaid): void {
                     $markOrderPaid($o);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
-                'CANCELLED' => tap($order, function (Order $o) {
+                'CANCELLED' => tap($order, function (Order $o): void {
                     $o->update(['payment_status' => PaymentStatus::Cancelled]);
                     $this->warn("  ⚠ #{$o->order_number} cancelled");
                 }),
-                'REFUNDED' => tap($order, function (Order $o) {
+                'REFUNDED' => tap($order, function (Order $o): void {
                     $o->update(['payment_status' => PaymentStatus::Refunded]);
                     $this->warn("  ⚠ #{$o->order_number} refunded");
                 }),

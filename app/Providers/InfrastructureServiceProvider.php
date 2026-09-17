@@ -21,7 +21,7 @@ class InfrastructureServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(CspNonce::class);
-        $this->app->bind(StripeClient::class, fn () => new StripeClient(
+        $this->app->bind(StripeClient::class, fn (): StripeClient => new StripeClient(
             Config::string('cashier.secret', ''),
         ));
     }

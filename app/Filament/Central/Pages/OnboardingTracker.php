@@ -69,10 +69,10 @@ class OnboardingTracker extends Page
         }
 
         $data = match ($this->sort) {
-            'progress_desc' => $data->sortByDesc(fn (array $t) => [$t['completed'], $t['created_at']?->getTimestamp() ?? 0]),
+            'progress_desc' => $data->sortByDesc(fn (array $t): array => [$t['completed'], $t['created_at']?->getTimestamp() ?? 0]),
             'newest' => $data->sortByDesc(fn (array $t) => $t['created_at']?->getTimestamp() ?? 0),
             'oldest' => $data->sortBy(fn (array $t) => $t['created_at']?->getTimestamp() ?? PHP_INT_MAX),
-            default => $data->sortBy(fn (array $t) => [$t['completed'], -($t['created_at']?->getTimestamp() ?? 0)]),
+            default => $data->sortBy(fn (array $t): array => [$t['completed'], -($t['created_at']?->getTimestamp() ?? 0)]),
         };
 
         return $data->values();
@@ -151,8 +151,8 @@ class OnboardingTracker extends Page
 
         return [
             'total' => $data->count(),
-            'fully_onboarded' => $data->filter(fn (array $t) => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS)->count(),
-            'needs_attention' => $data->filter(fn (array $t) => $t['completed'] < 6)->count(),
+            'fully_onboarded' => $data->filter(fn (array $t): bool => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS)->count(),
+            'needs_attention' => $data->filter(fn (array $t): bool => $t['completed'] < 6)->count(),
         ];
     }
 }

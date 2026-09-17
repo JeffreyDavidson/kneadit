@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Expenses\Tables;
 
 use App\Enums\Financial\ExpenseCategory;
@@ -37,7 +39,7 @@ class ExpensesTable
 
                 TextColumn::make('business_percentage')
                     ->label('Business %')
-                    ->formatStateUsing(fn (Percentage $state) => $state->formatted())
+                    ->formatStateUsing(fn (Percentage $state): string => $state->formatted())
                     ->sortable(),
 
                 MoneyColumn::make('deductible_amount')

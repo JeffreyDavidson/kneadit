@@ -42,12 +42,12 @@ class CouponForm
                                 MoneyInput::make('fixed_amount')
                                     ->label('Discount Amount')
                                     ->helperText('Use for fixed-amount discounts')
-                                    ->required(fn (Get $get) => $get('type') === CouponType::Fixed->value),
+                                    ->required(fn (Get $get): bool => $get('type') === CouponType::Fixed->value),
 
                                 PercentageInput::make('percentage')
                                     ->label('Discount Percentage')
                                     ->helperText('Use for percentage discounts')
-                                    ->required(fn (Get $get) => $get('type') === CouponType::Percentage->value),
+                                    ->required(fn (Get $get): bool => $get('type') === CouponType::Percentage->value),
 
                                 MoneyInput::make('min_order_amount')
                                     ->minValue(0),

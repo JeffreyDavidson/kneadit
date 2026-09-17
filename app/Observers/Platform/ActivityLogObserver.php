@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Observers\Platform;
 
 use App\Models\Operations\ActivityLog;

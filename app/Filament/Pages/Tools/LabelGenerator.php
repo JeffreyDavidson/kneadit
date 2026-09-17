@@ -120,7 +120,7 @@ class LabelGenerator extends Page
 
     public function generateLabels(): void
     {
-        if (empty($this->selectedProducts)) {
+        if ($this->selectedProducts === []) {
             $this->dispatch('notify', type: 'warning', message: 'Please select at least one product.');
 
             return;

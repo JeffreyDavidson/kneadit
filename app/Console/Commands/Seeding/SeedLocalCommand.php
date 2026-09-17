@@ -60,7 +60,7 @@ class SeedLocalCommand extends Command
                 label: 'How many tenants?',
                 placeholder: '100',
                 default: '100',
-                validate: fn (string $value) => match (true) {
+                validate: fn (string $value): ?string => match (true) {
                     ! ctype_digit($value) => 'Must be a whole number.',
                     (int) $value < 1 => 'Must be at least 1.',
                     (int) $value > 500 => 'Capped at 500 — go in batches if you really need more.',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Tenants;
 
 use App\Enums\Orders\PaymentMethod;
@@ -45,7 +47,7 @@ class SaveTenantSettings
             'order_journey_steps' => json_encode(array_values($orderJourneySteps)),
             'catering_event_types' => json_encode(array_values(array_filter(
                 $cateringEventTypes,
-                fn (mixed $value) => is_string($value) && trim($value) !== '',
+                fn (mixed $value): bool => is_string($value) && trim($value) !== '',
             ))),
             // Per-status order email toggles. Stored as '1'/'0' strings to
             // match how EngagementSettings reads them (=== '1').

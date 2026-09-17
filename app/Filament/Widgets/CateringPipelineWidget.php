@@ -27,8 +27,11 @@ class CateringPipelineWidget extends Widget
     #[\Override]
     public static function canView(): bool
     {
-        return CateringInquiry::query()->openFunnel()->exists()
-            || CateringInquiry::query()->quoted()->exists();
+        if (CateringInquiry::query()->openFunnel()->exists()) {
+            return true;
+        }
+
+        return (bool) CateringInquiry::query()->quoted()->exists();
     }
 
     public function getOpenInquiriesCount(): int

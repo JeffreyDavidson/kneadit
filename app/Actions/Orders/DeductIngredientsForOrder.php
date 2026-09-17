@@ -17,7 +17,7 @@ class DeductIngredientsForOrder
     {
         $order->loadMissing('orderItems.product.recipes.inventoryIngredients');
 
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order): void {
             foreach ($order->orderItems as $orderItem) {
                 $product = $orderItem->product;
 

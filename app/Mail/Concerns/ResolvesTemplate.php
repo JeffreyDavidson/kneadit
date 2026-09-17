@@ -30,7 +30,7 @@ trait ResolvesTemplate
 
         $this->resolvedTemplateLoaded = true;
 
-        if ($type === null) {
+        if (! $type instanceof EmailTemplateType) {
             return $this->resolvedTemplateCache = null;
         }
 

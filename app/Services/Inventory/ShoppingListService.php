@@ -108,7 +108,7 @@ class ShoppingListService
             }
         }
 
-        if (! empty($noSupplier)) {
+        if ($noSupplier !== []) {
             $grouped['none'] = [
                 'supplier' => ['id' => null, 'name' => 'No Supplier Assigned', 'email' => null, 'phone' => null],
                 'items' => $noSupplier,

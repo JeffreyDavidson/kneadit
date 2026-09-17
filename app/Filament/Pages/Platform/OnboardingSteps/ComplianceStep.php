@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Forms\Components\MoneyInput;

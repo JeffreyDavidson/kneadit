@@ -62,11 +62,11 @@ class HolidayPlanningCalendar extends Page
         $this->holidays = Holiday::query()->orderBy('date')->get();
 
         $this->upcomingHolidays = $this->holidays
-            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isUpcoming())
+            ->filter(fn (Holiday $holiday): bool => HolidayPresenter::for($holiday)->isUpcoming())
             ->take(10);
 
         $this->inPrepPeriod = $this->holidays
-            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isInPrepPeriod());
+            ->filter(fn (Holiday $holiday): bool => HolidayPresenter::for($holiday)->isInPrepPeriod());
     }
 
     /** @return Collection<string, Collection<int, Holiday>> */
@@ -76,7 +76,7 @@ class HolidayPlanningCalendar extends Page
         $nextYear = $currentYear + 1;
 
         return $this->holidays
-            ->filter(function (Holiday $holiday) use ($currentYear, $nextYear) {
+            ->filter(function (Holiday $holiday) use ($currentYear, $nextYear): bool {
                 $year = $holiday->date->year;
 
                 return $year === $currentYear || $year === $nextYear;

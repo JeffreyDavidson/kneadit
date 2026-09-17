@@ -37,7 +37,7 @@ class DispatchOrderCreatedWebhookListener extends QueuedListener implements Shou
             'status' => $order->status,
             'payment_status' => $order->payment_status,
             'delivery_date' => $order->delivery_date?->toDateString(),
-            'items' => $order->orderItems->map(fn (OrderItem $item) => [
+            'items' => $order->orderItems->map(fn (OrderItem $item): array => [
                 'product' => $item->product?->name,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price->dollars(),

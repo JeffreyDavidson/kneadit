@@ -101,7 +101,7 @@ final class CustomerPresenter
     /** @return array<int, array<string, mixed>> */
     private function formattedOrders(): array
     {
-        return $this->customer->orders->map(fn (Order $order) => [
+        return $this->customer->orders->map(fn (Order $order): array => [
             'id' => $order->id,
             'order_number' => $order->order_number,
             'status' => $order->status->getLabel(),
@@ -115,7 +115,7 @@ final class CustomerPresenter
     /** @return array<int, array<string, mixed>> */
     private function formattedNotes(): array
     {
-        return $this->customer->customerNotes->map(fn (CustomerNote $note) => [
+        return $this->customer->customerNotes->map(fn (CustomerNote $note): array => [
             'id' => $note->id,
             'note' => $note->note,
             'created_by' => $note->createdBy->name ?? 'Unknown',

@@ -5,6 +5,7 @@ namespace App\Pipes\Orders;
 use App\Actions\Financial\ApplyCoupon;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Financial\Coupon;
+use App\Models\Orders\Order;
 use Closure;
 
 class RecordCouponUsage
@@ -19,7 +20,7 @@ class RecordCouponUsage
             return $next($payload);
         }
 
-        assert($payload->order !== null, 'Order must be persisted before RecordCouponUsage');
+        assert($payload->order instanceof Order, 'Order must be persisted before RecordCouponUsage');
 
         $coupon = Coupon::query()->find($payload->couponId);
 

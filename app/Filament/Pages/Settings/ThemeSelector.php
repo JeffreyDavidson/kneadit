@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Settings;
 
 use App\Enums\Platform\SubscriptionTier;

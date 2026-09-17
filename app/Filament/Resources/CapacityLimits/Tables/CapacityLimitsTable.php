@@ -48,7 +48,7 @@ class CapacityLimitsTable
 
                 TextColumn::make('max_orders')
                     ->label('Max Orders')
-                    ->formatStateUsing(fn (int $state) => $state > 0 ? $state : 'Unlimited')
+                    ->formatStateUsing(fn (int $state): int|string => $state > 0 ? $state : 'Unlimited')
                     ->sortable(),
 
                 IconColumn::make('is_blocked')

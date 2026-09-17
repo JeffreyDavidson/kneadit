@@ -53,7 +53,7 @@ class HolidaysTable
 
                 TextColumn::make('orders_display')
                     ->label('Orders')
-                    ->getStateUsing(function (Holiday $record) {
+                    ->getStateUsing(function (Holiday $record): string {
                         $count = Arr::integer(['value' => $record->order_count ?? 0], 'value', 0);
 
                         return $record->max_orders
@@ -64,12 +64,12 @@ class HolidaysTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Holiday $record) => HolidayPresenter::for($record)->orderingStatus())
-                    ->color(fn (Holiday $record) => HolidayPresenter::for($record)->orderingStatusColor()),
+                    ->getStateUsing(fn (Holiday $record): string => HolidayPresenter::for($record)->orderingStatus())
+                    ->color(fn (Holiday $record): string => HolidayPresenter::for($record)->orderingStatusColor()),
 
                 TextColumn::make('days_until')
                     ->label('Days Until')
-                    ->getStateUsing(function (Holiday $record) {
+                    ->getStateUsing(function (Holiday $record): string {
                         if ($record->date->isPast()) {
                             return 'Passed';
                         }

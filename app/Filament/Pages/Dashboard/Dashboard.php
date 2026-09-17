@@ -120,13 +120,13 @@ class Dashboard extends BaseDashboard
         if ($config === null || $config === []) {
             return collect($registry)
                 ->reject(fn (string $class, string $key): bool => WidgetMeta::isDefaultHidden($key))
-                ->map(fn (string $class, string $key) => $this->wrapWithSize($class, $key, null))
+                ->map(fn (string $class, string $key): string|\Filament\Widgets\WidgetConfiguration => $this->wrapWithSize($class, $key, null))
                 ->values()
                 ->all();
         }
 
         // Sort by saved order, drop hidden widgets, drop unknown keys.
-        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
+        uasort($config, fn (array $a, array $b): int => $a['order'] <=> $b['order']);
 
         /** @var array<int, class-string<Widget>|WidgetConfiguration> $widgets */
         $widgets = [];

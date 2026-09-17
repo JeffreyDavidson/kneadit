@@ -20,9 +20,9 @@ class TaxCsvExporter
 
         Order::with(['customer', 'orderItems.product'])
             ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
-            ->chunk(100, function (Collection $orders) use ($handle) {
+            ->chunk(100, function (Collection $orders) use ($handle): void {
                 foreach ($orders as $order) {
-                    $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
+                    $items = $order->orderItems->map(fn (OrderItem $i): string => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, CsvValueSanitizer::row([
                         $order->created_at?->format('Y-m-d'),
                         $order->order_number,
@@ -61,7 +61,7 @@ class TaxCsvExporter
 
         Expense::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
+            ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap): void {
                 foreach ($expenses as $expense) {
                     fputcsv($handle, CsvValueSanitizer::row([
                         $expense->date?->format('Y-m-d'),
@@ -85,7 +85,7 @@ class TaxCsvExporter
 
         Income::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function (Collection $incomes) use ($handle) {
+            ->chunk(100, function (Collection $incomes) use ($handle): void {
                 foreach ($incomes as $income) {
                     fputcsv($handle, CsvValueSanitizer::row([
                         $income->date?->format('Y-m-d'),

@@ -61,7 +61,7 @@ class HandleConnectCheckoutCompleted
         }
 
         try {
-            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant, $orderId, $cateringInquiryId, $paymentIntentId, $session) {
+            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
                 if ($cateringInquiryId) {
                     $inquiry = CateringInquiry::query()
                         ->whereKey($cateringInquiryId)

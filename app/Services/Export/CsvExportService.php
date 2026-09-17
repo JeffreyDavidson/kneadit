@@ -83,7 +83,7 @@ class CsvExportService
         }
 
         $query->orderBy("{$config['table']}.id")
-            ->chunk(500, function (Collection $rows) use ($handle, $config) {
+            ->chunk(500, function (Collection $rows) use ($handle, $config): void {
                 foreach ($rows as $row) {
                     $csvRow = [];
                     foreach ($config['columns'] as $column) {

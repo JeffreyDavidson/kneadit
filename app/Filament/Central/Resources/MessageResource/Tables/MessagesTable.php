@@ -60,14 +60,14 @@ class MessagesTable
                     ->placeholder('All'),
                 SelectFilter::make('tenant_id')
                     ->label('Bakery')
-                    ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->all())
+                    ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t): array => [$t->id => $t->store_name ?: $t->name])->all())
                     ->searchable(),
             ])
             ->defaultSort('is_read', 'asc')
-            ->recordUrl(fn (Model $record) => MessageResource::getUrl('view', ['record' => $record->getKey()]))
+            ->recordUrl(fn (Model $record): string => MessageResource::getUrl('view', ['record' => $record->getKey()]))
             ->recordActions([
                 Actions\ViewAction::make()
-                    ->url(fn (Model $record) => MessageResource::getUrl('view', ['record' => $record->getKey()])),
+                    ->url(fn (Model $record): string => MessageResource::getUrl('view', ['record' => $record->getKey()])),
             ]);
     }
 }

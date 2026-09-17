@@ -17,7 +17,7 @@ class StorefrontStatsQuery
      */
     public static function get(): array
     {
-        return Cache::flexible('storefront_stats', [3600, 7200], fn () => [
+        return Cache::flexible('storefront_stats', [3600, 7200], fn (): array => [
             'customer_count' => Customer::query()->count(),
             'avg_rating' => (float) Review::query()->approved()->avg('rating'),
             'order_count' => Order::query()->count(),

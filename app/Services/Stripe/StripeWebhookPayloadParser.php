@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Stripe;
 
 use App\DataTransferObjects\Settings\SettingValue;

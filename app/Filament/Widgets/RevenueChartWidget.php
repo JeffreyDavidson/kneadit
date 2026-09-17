@@ -78,7 +78,7 @@ class RevenueChartWidget extends ChartWidget
         /** @var Collection<int, Carbon> $period */
         $period = collect(iterator_to_array(CarbonPeriod::create($start, $end)));
         $labels = $period
-            ->map(fn (Carbon $d) => $d->format('M j'))
+            ->map(fn (Carbon $d): string => $d->format('M j'))
             ->all();
 
         $currentTotal = array_sum($current);
@@ -124,7 +124,7 @@ class RevenueChartWidget extends ChartWidget
         $days = collect(iterator_to_array(CarbonPeriod::create($start, $end)));
 
         return $days
-            ->map(fn (Carbon $d) => (float) ($raw[$d->format('Y-m-d')] ?? 0))
+            ->map(fn (Carbon $d): float => (float) ($raw[$d->format('Y-m-d')] ?? 0))
             ->all();
     }
 

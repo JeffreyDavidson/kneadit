@@ -91,7 +91,7 @@ class CustomDomain extends Page
 
         $domain = trim((string) $this->custom_domain);
 
-        if (empty($domain)) {
+        if ($domain === '' || $domain === '0') {
             resolve(RemoveCustomDomain::class)($tenant);
             $this->dns_status = null;
             $this->ssl_status = null;
@@ -156,7 +156,7 @@ class CustomDomain extends Page
 
     private function refreshDnsStatus(): void
     {
-        if (empty($this->custom_domain)) {
+        if (in_array($this->custom_domain, [null, '', '0'], true)) {
             $this->dns_status = null;
 
             return;

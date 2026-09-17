@@ -42,7 +42,7 @@ class WeeklyDigestDataCollector
             ],
             topProducts: WeeklyDigestQuery::topProducts($weekStart, $weekEnd),
             atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
-                ->map(fn (Customer $customer) => [
+                ->map(fn (Customer $customer): array => [
                     'name' => $customer->name,
                     'days_since_last_order' => CustomerPresenter::for($customer)->daysSinceLastOrder(),
                 ]),

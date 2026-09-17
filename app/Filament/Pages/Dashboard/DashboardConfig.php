@@ -60,7 +60,7 @@ class DashboardConfig extends Page
             $config = $this->getDefaults();
         }
 
-        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
+        uasort($config, fn (array $a, array $b): int => $a['order'] <=> $b['order']);
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {

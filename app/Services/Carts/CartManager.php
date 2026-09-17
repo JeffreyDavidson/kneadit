@@ -39,7 +39,7 @@ class CartManager
     public function currentOrCreate(): Cart
     {
         $cart = $this->current();
-        if ($cart !== null) {
+        if ($cart instanceof Cart) {
             return $cart;
         }
 

@@ -76,7 +76,7 @@ final readonly class ProductLabelPresenter
         $allergens = $recipe->inventoryIngredients
             ->flatMap(fn (Ingredient $i) => $i->allergens ?? collect())
             ->unique(fn (Allergen $a) => $a->value)
-            ->sortBy(fn (Allergen $a) => $a->getLabel())
+            ->sortBy(fn (Allergen $a): string => $a->getLabel())
             ->values()
             ->all();
 
@@ -87,11 +87,11 @@ final readonly class ProductLabelPresenter
     {
         $allergens = $this->allergens();
 
-        if (empty($allergens)) {
+        if ($allergens === []) {
             return null;
         }
 
-        $labels = Collection::make($allergens)->map(fn (Allergen $a) => $a->getLabel())->all();
+        $labels = Collection::make($allergens)->map(fn (Allergen $a): string => $a->getLabel())->all();
 
         return 'Contains: '.implode(', ', $labels).'.';
     }
@@ -102,7 +102,7 @@ final readonly class ProductLabelPresenter
         /** @var list<string> $rows */
         $rows = Collection::make($recipe->ingredients ?? [])
             ->reject(fn (array $row): bool => empty($row['name']))
-            ->sortByDesc(fn (array $row) => (float) ($row['quantity'] ?? 0))
+            ->sortByDesc(fn (array $row): float => (float) ($row['quantity'] ?? 0))
             ->pluck('name')
             ->filter()
             ->values()

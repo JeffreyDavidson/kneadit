@@ -46,7 +46,7 @@ class ReviewsTable
                         $state === 3 => 'warning',
                         default => 'success',
                     })
-                    ->formatStateUsing(fn (int $state) => $state.'/5'),
+                    ->formatStateUsing(fn (int $state): string => $state.'/5'),
 
                 TextColumn::make('comment')
                     ->limit(50)
@@ -106,14 +106,14 @@ class ReviewsTable
                     ->color('success')
                     ->authorize('update')
                     ->action(fn (Review $record) => resolve(ApproveReview::class)($record))
-                    ->visible(fn (Review $record) => ! $record->is_approved),
+                    ->visible(fn (Review $record): bool => ! $record->is_approved),
 
                 Action::make('feature')
                     ->icon(Heroicon::OutlinedStar)
                     ->color('warning')
                     ->authorize('update')
                     ->action(fn (Review $record) => resolve(FeatureReview::class)($record))
-                    ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
+                    ->visible(fn (Review $record): bool => ! $record->is_featured && $record->is_approved),
 
                 SlideOverEditAction::make(),
             ])

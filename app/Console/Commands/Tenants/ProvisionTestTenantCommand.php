@@ -83,7 +83,7 @@ class ProvisionTestTenantCommand extends Command
             '--force' => true,
         ]);
 
-        $tenant->run(function () use ($tenant) {
+        $tenant->run(function () use ($tenant): void {
             DB::connection('tenant')->table('users')->insert([
                 'name' => $tenant->name,
                 'email' => $tenant->email,

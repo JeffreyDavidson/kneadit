@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Settings\Schemas;
 
 use App\Filament\Pages\Settings\Schemas\ManageSettings\CateringSection;

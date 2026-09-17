@@ -47,7 +47,7 @@ class ProductImportExportForm
                             $csv = resolve(ProductCsvExporter::class)->export();
                             $filename = 'products-'.now()->format('Y-m-d').'.csv';
 
-                            return response()->streamDownload(function () use ($csv) {
+                            return response()->streamDownload(function () use ($csv): void {
                                 echo $csv;
                             }, $filename, ['Content-Type' => 'text/csv']);
                         }),
@@ -58,7 +58,7 @@ class ProductImportExportForm
                         ->action(function () {
                             $csv = resolve(ProductCsvExporter::class)->getTemplateContent();
 
-                            return response()->streamDownload(function () use ($csv) {
+                            return response()->streamDownload(function () use ($csv): void {
                                 echo $csv;
                             }, 'products-template.csv', ['Content-Type' => 'text/csv']);
                         }),
@@ -82,10 +82,10 @@ class ProductImportExportForm
                         ->label('Preview Import')
                         ->icon(Heroicon::OutlinedEye)
                         ->color('warning')
-                        ->action(function (Livewire $livewire) {
+                        ->action(function (Livewire $livewire): void {
                             $file = self::uploadedCsv($livewire);
 
-                            if ($file === null) {
+                            if (! $file instanceof UploadedFile) {
                                 Notification::make()->title('Invalid file. Please re-upload your CSV.')->danger()->send();
 
                                 return;
@@ -114,10 +114,10 @@ class ProductImportExportForm
                         ->requiresConfirmation()
                         ->modalHeading('Confirm Import')
                         ->modalDescription('This will create new products and update existing ones matched by name. Continue?')
-                        ->action(function (Livewire $livewire) {
+                        ->action(function (Livewire $livewire): void {
                             $file = self::uploadedCsv($livewire);
 
-                            if ($file === null) {
+                            if (! $file instanceof UploadedFile) {
                                 Notification::make()->title('Invalid file. Please re-upload your CSV.')->danger()->send();
 
                                 return;

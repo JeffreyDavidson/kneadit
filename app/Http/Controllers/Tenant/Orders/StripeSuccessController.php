@@ -24,7 +24,7 @@ class StripeSuccessController extends Controller
 
         $completedOrder = $stripeService->handleCheckoutComplete($sessionId);
 
-        if ($completedOrder === null || $completedOrder->isNot($order)) {
+        if (! $completedOrder instanceof Order || $completedOrder->isNot($order)) {
             abort(403);
         }
 

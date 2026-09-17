@@ -53,7 +53,7 @@ class ViewOrder extends ViewRecord
     {
         $allowedTransitions = TransitionOrderStatus::allowedTransitions($this->record);
         $options = collect($allowedTransitions)
-            ->mapWithKeys(fn (OrderStatus $status) => [$status->value => $status->name])
+            ->mapWithKeys(fn (OrderStatus $status): array => [$status->value => $status->name])
             ->all();
 
         return [

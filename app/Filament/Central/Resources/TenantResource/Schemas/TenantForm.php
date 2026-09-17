@@ -32,7 +32,7 @@ class TenantForm
                                 ->alphaDash()
                                 ->placeholder('sweet-bakes')
                                 ->helperText('This becomes their subdomain: sweet-bakes.getkneadit.app')
-                                ->disabled(fn (?Tenant $record) => $record !== null),
+                                ->disabled(fn (?Tenant $record): bool => $record instanceof Tenant),
                             TextInput::make('name')
                                 ->label('Owner Name')
                                 ->required(),
@@ -43,7 +43,7 @@ class TenantForm
                                 ->required(),
                             Select::make('plan')
                                 ->options(collect(SubscriptionTier::cases())
-                                    ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->labelWithPrice()])
+                                    ->mapWithKeys(fn (SubscriptionTier $tier): array => [$tier->value => $tier->labelWithPrice()])
                                     ->all())
                                 ->required(),
                         ]),

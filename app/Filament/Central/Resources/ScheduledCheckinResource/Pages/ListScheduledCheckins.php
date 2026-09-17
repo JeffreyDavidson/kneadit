@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\ScheduledCheckinResource\Pages;
 
 use App\Filament\Central\Resources\ScheduledCheckinResource;

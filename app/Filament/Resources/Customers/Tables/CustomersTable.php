@@ -33,7 +33,7 @@ class CustomersTable
         $atRiskDays = self::atRiskDays();
 
         return $table
-            ->modifyQueryUsing(fn (CustomerQueryBuilder $query) => $query->withOrderMetrics())
+            ->modifyQueryUsing(fn (CustomerQueryBuilder $query): CustomerQueryBuilder => $query->withOrderMetrics())
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
@@ -71,7 +71,7 @@ class CustomersTable
                     ->label('Birthday')
                     ->date('M j')
                     ->badge()
-                    ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
+                    ->color(fn (Customer $record): string => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
                     ->icon(fn (Customer $record): ?Heroicon => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? Heroicon::OutlinedCake : null)
                     ->formatStateUsing(fn (mixed $state, Customer $record): string => self::birthdayLabel($state, $record))
                     ->sortable()
@@ -96,7 +96,7 @@ class CustomersTable
 
                 TextColumn::make('average_order_value')
                     ->label('Avg Order')
-                    ->getStateUsing(fn (Customer $record) => $record->orders_count > 0
+                    ->getStateUsing(fn (Customer $record): int|float => $record->orders_count > 0
                         ? ($record->orders_sum_total / $record->orders_count)
                         : 0)
                     ->money('USD')
@@ -105,7 +105,7 @@ class CustomersTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Customer $record) => CustomerStatus::resolve(
+                    ->getStateUsing(fn (Customer $record): CustomerStatus => CustomerStatus::resolve(
                         (int) $record->orders_count,
                         $record->last_order_date ? Date::parse($record->last_order_date) : null,
                         $atRiskDays,

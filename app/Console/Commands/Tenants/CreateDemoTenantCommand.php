@@ -82,7 +82,7 @@ class CreateDemoTenantCommand extends Command
 
         $this->info('Seeding tenant data...');
 
-        $tenant->run(function () {
+        $tenant->run(function (): void {
             // Create admin user
             User::query()->create([
                 'name' => 'Demo Baker',

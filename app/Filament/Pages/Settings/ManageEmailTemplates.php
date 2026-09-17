@@ -69,7 +69,7 @@ class ManageEmailTemplates extends Page
         }
 
         return collect(EmailTemplateType::cases())
-            ->map(fn (EmailTemplateType $type) => [
+            ->map(fn (EmailTemplateType $type): array => [
                 'type' => $type->value,
                 'label' => $type->getLabel(),
                 'description' => $type->description(),

@@ -26,7 +26,7 @@ class ValidateStockAvailability
             return $next($payload);
         }
 
-        $productIds = array_unique(array_map(fn (array $item) => (int) $item['product_id'], $items));
+        $productIds = array_unique(array_map(fn (array $item): int => (int) $item['product_id'], $items));
 
         /** @var array<int, Product> $products */
         $products = Product::query()

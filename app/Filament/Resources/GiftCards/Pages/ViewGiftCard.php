@@ -27,11 +27,11 @@ class ViewGiftCard extends ViewRecord
     {
         return [
             Action::make('toggle_active')
-                ->label(fn () => $this->record->is_active ? 'Deactivate' : 'Activate')
-                ->color(fn () => $this->record->is_active ? 'danger' : 'success')
+                ->label(fn (): string => $this->record->is_active ? 'Deactivate' : 'Activate')
+                ->color(fn (): string => $this->record->is_active ? 'danger' : 'success')
                 ->authorize('update')
                 ->requiresConfirmation()
-                ->action(function () {
+                ->action(function (): void {
                     resolve(ToggleGiftCardActive::class)($this->record);
                 }),
 
@@ -47,7 +47,7 @@ class ViewGiftCard extends ViewRecord
                     TextInput::make('notes')
                         ->placeholder('Reason for credit'),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data): void {
                     resolve(AddGiftCardCredit::class)(
                         $this->record,
                         Arr::float($data, 'amount'),

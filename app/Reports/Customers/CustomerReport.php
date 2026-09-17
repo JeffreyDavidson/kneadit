@@ -33,10 +33,10 @@ class CustomerReport
             ->withPaidOrderMetrics($range)
             ->orderByDesc('total_spend')
             ->get()
-            ->filter(fn (Customer $c) => ((float) $c->total_spend) > 0)
+            ->filter(fn (Customer $c): bool => ((float) $c->total_spend) > 0)
             ->take(10)
             ->values()
-            ->map(fn (Customer $c) => [
+            ->map(fn (Customer $c): array => [
                 'name' => $c->name,
                 'email' => $c->email,
                 // total_spend is SUM(orders.total) and orders.total is bigint cents

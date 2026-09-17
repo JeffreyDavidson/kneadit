@@ -42,7 +42,7 @@ class ReorderRemindersWidget extends Widget
             ->orderByDesc('last_order_at')
             ->limit(10)
             ->get()
-            ->map(fn (Customer $c) => [
+            ->map(fn (Customer $c): array => [
                 'name' => $c->name,
                 'email' => $c->email,
                 'last_order' => $c->last_order_at ? Date::parse($c->last_order_at)->diffForHumans() : 'N/A',

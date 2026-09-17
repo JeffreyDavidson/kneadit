@@ -82,7 +82,7 @@ class ProductTrendsService
                 ];
             }
 
-            if (! empty($products)) {
+            if ($products !== []) {
                 $grouped[] = ['category' => $category->name, 'products' => $products];
             }
         }

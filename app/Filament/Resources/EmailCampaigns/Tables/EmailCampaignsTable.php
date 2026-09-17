@@ -57,7 +57,7 @@ class EmailCampaignsTable
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign')
                     ->modalDescription('This will send this email to all customers. Are you sure?')
-                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft)
+                    ->visible(fn (EmailCampaign $record): bool => $record->status === EmailCampaignStatus::Draft)
                     ->action(fn (EmailCampaign $record) => resolve(SendEmailCampaign::class)($record)),
                 SlideOverEditAction::make(),
             ])

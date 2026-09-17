@@ -105,7 +105,7 @@ class TaxExport extends Page
 
         $filename = "tax-export-{$year}-{$type->value}.csv";
 
-        return response()->streamDownload(function () use ($type, $dateFrom, $dateTo) {
+        return response()->streamDownload(function () use ($type, $dateFrom, $dateTo): void {
             $handle = fopen('php://output', 'w');
             throw_if($handle === false, \RuntimeException::class, 'Failed to open file handle');
 

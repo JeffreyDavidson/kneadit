@@ -94,7 +94,7 @@ class SocialPostForm
         return Action::make('generateCaption')
             ->label('Generate Caption')
             ->icon(Heroicon::OutlinedSparkles)
-            ->action(function (Get $get, Set $set) {
+            ->action(function (Get $get, Set $set): void {
                 $productId = $get('product_id');
 
                 if (! $productId) {

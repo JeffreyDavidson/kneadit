@@ -50,11 +50,11 @@ class EmailCampaignsTable
             ->recordActions([
                 Actions\EditAction::make()
                     ->slideOver()
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent
+                    ->visible(fn (EmailCampaign $record): bool => $record->status !== EmailCampaignStatus::Sent
                         && $record->status !== EmailCampaignStatus::Sending),
                 Actions\ViewAction::make()
                     ->slideOver()
-                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Sent
+                    ->visible(fn (EmailCampaign $record): bool => $record->status === EmailCampaignStatus::Sent
                         || $record->status === EmailCampaignStatus::Sending),
                 Actions\Action::make('send_now')
                     ->label('Send Now')
@@ -65,7 +65,7 @@ class EmailCampaignsTable
                     ->modalHeading('Send Campaign Now')
                     ->modalDescription('Are you sure you want to send this campaign immediately?')
                     ->action(fn (EmailCampaign $record) => resolve(SendEmailCampaign::class)($record))
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent
+                    ->visible(fn (EmailCampaign $record): bool => $record->status !== EmailCampaignStatus::Sent
                         && $record->status !== EmailCampaignStatus::Sending),
                 Actions\Action::make('schedule')
                     ->label('Schedule')
@@ -78,7 +78,7 @@ class EmailCampaignsTable
                             ->required(),
                     ])
                     ->action(fn (EmailCampaign $record, array $data) => resolve(ScheduleEmailCampaign::class)($record, Arr::string($data, 'scheduled_at')))
-                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft),
+                    ->visible(fn (EmailCampaign $record): bool => $record->status === EmailCampaignStatus::Draft),
             ])
             ->toolbarActions([
                 AuthorizedDeleteBulkAction::make(),

@@ -25,7 +25,7 @@ class SendWeeklyDigestCommand extends Command
 
         foreach ($tenants as $tenant) {
             try {
-                $tenancyManager->withinTenant($tenant, function () use ($tenant, $runTracker) {
+                $tenancyManager->withinTenant($tenant, function () use ($tenant, $runTracker): void {
                     if (resolve(SettingsManager::class)->get('weekly_digest_enabled', '1') !== '1') {
                         $this->info("Skipping {$tenant->id} — digest disabled");
 
