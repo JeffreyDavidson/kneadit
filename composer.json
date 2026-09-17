@@ -30,7 +30,6 @@
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.1",
         "laravel/pint": "^1.30",
-        "laravel/sail": "^1.53",
         "laraveldaily/filacheck": "^1.1",
         "laraveldaily/filacheck-pro": "^1.1",
         "mockery/mockery": "^1.6",
@@ -44,7 +43,6 @@
         "pestphp/pest-plugin-rector": "^5.0",
         "pestphp/pest-plugin-type-coverage": "^5.0",
         "phpstan/extension-installer": "^1.4",
-        "phpunit/phpunit": "^13.2",
         "rector/rector": "^2.3",
         "spatie/pest-plugin-snapshots": "^2.2"
     },
