@@ -79,10 +79,13 @@ class ProvisionTestTenantCommand extends Command
         Domain::query()->create(['domain' => $this->domain(), 'tenant_id' => $tenant->id]);
         Domain::query()->create(['domain' => self::TENANT_ID, 'tenant_id' => $tenant->id]);
 
-        Artisan::call('tenants:migrate', [
-            '--tenants' => [self::TENANT_ID],
-            '--force' => true,
-        ]);
+        $tenant->run(function (): void {
+            Artisan::call('migrate', [
+                '--database' => 'tenant',
+                '--path' => database_path('migrations'),
+                '--force' => true,
+            ]);
+        });
 
         $tenant->run(function () use ($tenant): void {
             DB::connection('tenant')->table('users')->insert([
