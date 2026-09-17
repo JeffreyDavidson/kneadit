@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c50b2e0486d1b508f7f0ed1fa16df7e",
+    "content-hash": "d11e1318fecff0c553b2e643d9304872",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2621,171 +2621,6 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-07-27T14:48:58+00:00"
-        },
-        {
-            "name": "laravel/head",
-            "version": "v0.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/head.git",
-                "reference": "09e88a09c0ca08533be94863a4d3e95016b6d88f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/head/zipball/09e88a09c0ca08533be94863a4d3e95016b6d88f",
-                "reference": "09e88a09c0ca08533be94863a4d3e95016b6d88f",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^13.17.0",
-                "illuminate/routing": "^13.17.0",
-                "illuminate/support": "^13.17.0",
-                "illuminate/view": "^13.17.0",
-                "php": "^8.3"
-            },
-            "require-dev": {
-                "inertiajs/inertia-laravel": "^3.1",
-                "laravel/pint": "^1.28.0",
-                "livewire/livewire": "^4.3",
-                "orchestra/testbench": "^11.0",
-                "pestphp/pest": "^4.0",
-                "phpstan/phpstan": "^2.0",
-                "rector/rector": "^2.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Head": "Laravel\\Head\\Facades\\Head"
-                    },
-                    "providers": [
-                        "Laravel\\Head\\HeadServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Head\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "First-party head management for Laravel applications",
-            "homepage": "https://github.com/laravel/head",
-            "keywords": [
-                "head",
-                "laravel",
-                "metadata",
-                "seo",
-                "tags"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel/head/issues",
-                "source": "https://github.com/laravel/head"
-            },
-            "time": "2026-08-26T18:54:37+00:00"
-        },
-        {
-            "name": "laravel/nightwatch",
-            "version": "v1.30.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/nightwatch.git",
-                "reference": "541caaf38640c1007a9202721b23d3baa4041cb2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/nightwatch/zipball/541caaf38640c1007a9202721b23d3baa4041cb2",
-                "reference": "541caaf38640c1007a9202721b23d3baa4041cb2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zlib": "*",
-                "guzzlehttp/promises": "^2.0|^3.0",
-                "laravel/framework": "^10.0|^11.0|^12.0|^13.0",
-                "monolog/monolog": "^3.6",
-                "nesbot/carbon": "^2.0|^3.0",
-                "php": "^8.2",
-                "psr/http-message": "^1.0|^2.0",
-                "psr/log": "^1.0|^2.0|^3.0",
-                "ramsey/uuid": "^4.0",
-                "symfony/console": "^6.0|^7.0|^8.0",
-                "symfony/http-foundation": "^6.0|^7.0|^8.0",
-                "symfony/polyfill-php84": "^1.29"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "^3.349",
-                "ext-pcntl": "*",
-                "ext-pdo": "*",
-                "guzzlehttp/guzzle": "^7.0|^8.0",
-                "guzzlehttp/psr7": "^2.0|^3.0",
-                "laravel/horizon": "^5.4",
-                "laravel/pint": "1.21.0",
-                "laravel/vapor-core": "^2.38.2",
-                "livewire/livewire": "^2.0|^3.0",
-                "mockery/mockery": "^1.0",
-                "mongodb/laravel-mongodb": "^4.0|^5.0",
-                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "orchestra/testbench-core": "^8.0|^9.0|^10.0|^11.0",
-                "orchestra/workbench": "^8.0|^9.0|^10.0|^11.0",
-                "phpstan/phpstan": "^1.0",
-                "phpunit/phpunit": "^10.0|^11.0|^12.0",
-                "singlestoredb/singlestoredb-laravel": "^1.0|^2.0",
-                "spatie/laravel-ignition": "^2.0",
-                "symfony/mailer": "^6.0|^7.0|^8.0",
-                "symfony/mime": "^6.0|^7.0|^8.0",
-                "symfony/var-dumper": "^6.0|^7.0|^8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Nightwatch": "Laravel\\Nightwatch\\Facades\\Nightwatch"
-                    },
-                    "providers": [
-                        "Laravel\\Nightwatch\\NightwatchServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "agent/helpers.php"
-                ],
-                "psr-4": {
-                    "Laravel\\Nightwatch\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The official Laravel Nightwatch package.",
-            "homepage": "https://nightwatch.laravel.com",
-            "keywords": [
-                "Insights",
-                "laravel",
-                "monitoring"
-            ],
-            "support": {
-                "docs": "https://nightwatch.laravel.com/docs",
-                "issues": "https://github.com/laravel/nightwatch/issues",
-                "source": "https://github.com/laravel/nightwatch"
-            },
-            "time": "2026-09-16T02:00:04+00:00"
         },
         {
             "name": "laravel/pennant",
@@ -10929,106 +10764,6 @@
             "time": "2025-08-24T17:25:34+00:00"
         },
         {
-            "name": "barryvdh/laravel-debugbar",
-            "version": "v4.4.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fruitcake/laravel-debugbar.git",
-                "reference": "caa08515a2eef6d8137653d3a1f3c3387cadf184"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/caa08515a2eef6d8137653d3a1f3c3387cadf184",
-                "reference": "caa08515a2eef6d8137653d3a1f3c3387cadf184",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/routing": "^11|^12|^13.0",
-                "illuminate/session": "^11|^12|^13.0",
-                "illuminate/support": "^11|^12|^13.0",
-                "php": "^8.2",
-                "php-debugbar/php-debugbar": "^3.8.0",
-                "php-debugbar/symfony-bridge": "^1.1"
-            },
-            "require-dev": {
-                "larastan/larastan": "^3",
-                "laravel/ai": "^0.8",
-                "laravel/octane": "^2",
-                "laravel/pennant": "^1",
-                "laravel/pint": "^1",
-                "laravel/telescope": "^5.16",
-                "livewire/livewire": "^3.7|^4",
-                "mockery/mockery": "^1.3.3",
-                "orchestra/testbench-dusk": "^9|^10|^11",
-                "php-debugbar/twig-bridge": "^2.0",
-                "phpstan/phpstan-phpunit": "^2",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^11",
-                "shipmonk/phpstan-rules": "^4.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Debugbar": "Fruitcake\\LaravelDebugbar\\Facades\\Debugbar"
-                    },
-                    "providers": [
-                        "Fruitcake\\LaravelDebugbar\\ServiceProvider"
-                    ]
-                },
-                "branch-alias": {
-                    "dev-master": "4.2-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Fruitcake\\LaravelDebugbar\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fruitcake",
-                    "homepage": "https://fruitcake.nl"
-                },
-                {
-                    "name": "Barry vd. Heuvel",
-                    "email": "barryvdh@gmail.com"
-                }
-            ],
-            "description": "PHP Debugbar integration for Laravel",
-            "keywords": [
-                "barryvdh",
-                "debug",
-                "debugbar",
-                "dev",
-                "laravel",
-                "profiler",
-                "webprofiler"
-            ],
-            "support": {
-                "issues": "https://github.com/fruitcake/laravel-debugbar/issues",
-                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.4.3"
-            },
-            "funding": [
-                {
-                    "url": "https://fruitcake.nl",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-09-01T13:46:43+00:00"
-        },
-        {
             "name": "barryvdh/laravel-ide-helper",
             "version": "v3.7.0",
             "source": {
@@ -12953,6 +12688,96 @@
             "time": "2024-05-16T03:13:13+00:00"
         },
         {
+            "name": "mrpunyapal/laravel-auditor",
+            "version": "v0.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MrPunyapal/laravel-auditor.git",
+                "reference": "84a25dea782f08bcfa134e3d3d942c10646770c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MrPunyapal/laravel-auditor/zipball/84a25dea782f08bcfa134e3d3d942c10646770c2",
+                "reference": "84a25dea782f08bcfa134e3d3d942c10646770c2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^12.0||^13.0",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.9",
+                "laravel/agent-detector": "^2.0",
+                "laravel/chisel": "^0.1",
+                "laravel/mcp": "^0.7.1|^0.8.0|^0.9.0",
+                "laravel/pao": "^1.0",
+                "laravel/pint": "^1.29",
+                "laravel/prompts": "^0.3",
+                "mrpunyapal/docsmith": "^0.5.1",
+                "orchestra/testbench": "^10.0||^11.0",
+                "pestphp/pest": "^4.6||^5.0",
+                "pestphp/pest-plugin-laravel": "^4.1||^5.0",
+                "pestphp/pest-plugin-type-coverage": "^4.0||^5.0",
+                "phpstan/extension-installer": "^1.4"
+            },
+            "suggest": {
+                "laravel/boost": "Expose Auditor guidelines, skills, and context tools through Laravel Boost.",
+                "laravel/mcp": "Required by Laravel Boost to load Auditor's Boost MCP tool adapters."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "LaravelAuditor": "LaravelAuditor\\Facades\\LaravelAuditor"
+                    },
+                    "providers": [
+                        "LaravelAuditor\\LaravelAuditorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelAuditor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Punyapal Shah",
+                    "email": "mrpunyapal@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Evidence-based audit methodology and read-only Laravel context tools for existing AI coding agents.",
+            "homepage": "https://mrpunyapal.github.io/laravel-auditor",
+            "keywords": [
+                "Audit",
+                "Context",
+                "ai-agents",
+                "auditing",
+                "code-quality",
+                "dev",
+                "dev-tool",
+                "laravel",
+                "laravel-auditor",
+                "mcp"
+            ],
+            "support": {
+                "issues": "https://github.com/MrPunyapal/laravel-auditor/issues",
+                "source": "https://github.com/MrPunyapal/laravel-auditor/tree/v0.1.6"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mrpunyapal",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-06T04:10:38+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.14.0",
             "source": {
@@ -14328,174 +14153,6 @@
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
             "time": "2022-02-21T01:04:05+00:00"
-        },
-        {
-            "name": "php-debugbar/php-debugbar",
-            "version": "v3.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-debugbar/php-debugbar.git",
-                "reference": "18ced90d4b882ed449b2278fea8692f8f7d1c13c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/18ced90d4b882ed449b2278fea8692f8f7d1c13c",
-                "reference": "18ced90d4b882ed449b2278fea8692f8f7d1c13c",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.2",
-                "psr/log": "^1|^2|^3",
-                "symfony/var-dumper": "^5.4|^6|^7|^8"
-            },
-            "replace": {
-                "maximebf/debugbar": "self.version"
-            },
-            "require-dev": {
-                "dbrekelmans/bdi": "^1.4",
-                "friendsofphp/php-cs-fixer": "^3.92",
-                "monolog/monolog": "^3.9",
-                "php-debugbar/doctrine-bridge": "^3@dev",
-                "php-debugbar/monolog-bridge": "^1@dev",
-                "php-debugbar/symfony-bridge": "^1@dev",
-                "php-debugbar/twig-bridge": "^2@dev",
-                "phpstan/phpstan": "^2.1",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^10",
-                "predis/predis": "^3.3",
-                "shipmonk/phpstan-rules": "^4.3",
-                "symfony/browser-kit": "^6.4|7.0",
-                "symfony/dom-crawler": "^6.4|^7",
-                "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
-                "symfony/http-foundation": "^5.4|^6.4|^7.3|^8.0",
-                "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
-                "symfony/panther": "^1|^2.1",
-                "twig/twig": "^3.11.2"
-            },
-            "suggest": {
-                "php-debugbar/doctrine-bridge": "To integrate Doctrine with php-debugbar.",
-                "php-debugbar/monolog-bridge": "To integrate Monolog with php-debugbar.",
-                "php-debugbar/symfony-bridge": "To integrate Symfony with php-debugbar.",
-                "php-debugbar/twig-bridge": "To integrate Twig with php-debugbar."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DebugBar\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Maxime Bouroumeau-Fuseau",
-                    "email": "maxime.bouroumeau@gmail.com",
-                    "homepage": "http://maximebf.com"
-                },
-                {
-                    "name": "Barry vd. Heuvel",
-                    "email": "barryvdh@gmail.com"
-                }
-            ],
-            "description": "Debug bar in the browser for php application",
-            "homepage": "https://github.com/php-debugbar/php-debugbar",
-            "keywords": [
-                "debug",
-                "debug bar",
-                "debugbar",
-                "dev",
-                "profiler",
-                "toolbar"
-            ],
-            "support": {
-                "issues": "https://github.com/php-debugbar/php-debugbar/issues",
-                "source": "https://github.com/php-debugbar/php-debugbar/tree/v3.8.0"
-            },
-            "funding": [
-                {
-                    "url": "https://fruitcake.nl",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-07-02T12:38:20+00:00"
-        },
-        {
-            "name": "php-debugbar/symfony-bridge",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-debugbar/symfony-bridge.git",
-                "reference": "e37d2debe5d316408b00d0ab2688d9c2cf59b5ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-debugbar/symfony-bridge/zipball/e37d2debe5d316408b00d0ab2688d9c2cf59b5ad",
-                "reference": "e37d2debe5d316408b00d0ab2688d9c2cf59b5ad",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.2",
-                "php-debugbar/php-debugbar": "^3.1",
-                "symfony/http-foundation": "^5.4|^6.4|^7.3|^8.0"
-            },
-            "require-dev": {
-                "dbrekelmans/bdi": "^1.4",
-                "phpunit/phpunit": "^10",
-                "symfony/browser-kit": "^6|^7",
-                "symfony/dom-crawler": "^6|^7",
-                "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
-                "symfony/panther": "^1|^2.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DebugBar\\Bridge\\Symfony\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Maxime Bouroumeau-Fuseau",
-                    "email": "maxime.bouroumeau@gmail.com",
-                    "homepage": "http://maximebf.com"
-                },
-                {
-                    "name": "Barry vd. Heuvel",
-                    "email": "barryvdh@gmail.com"
-                }
-            ],
-            "description": "Symfony bridge for PHP Debugbar",
-            "homepage": "https://github.com/php-debugbar/php-debugbar",
-            "keywords": [
-                "debugbar",
-                "dev",
-                "symfony"
-            ],
-            "support": {
-                "issues": "https://github.com/php-debugbar/symfony-bridge/issues",
-                "source": "https://github.com/php-debugbar/symfony-bridge/tree/v1.1.0"
-            },
-            "time": "2026-01-15T14:47:34+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -16608,6 +16265,68 @@
             "time": "2026-07-29T16:01:39+00:00"
         },
         {
+            "name": "spatie/pest-plugin-test-time",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/pest-plugin-test-time.git",
+                "reference": "3280362fbb1990c89ed88d8f0dadae6414b608bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/pest-plugin-test-time/zipball/3280362fbb1990c89ed88d8f0dadae6414b608bd",
+                "reference": "3280362fbb1990c89ed88d8f0dadae6414b608bd",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^3.0",
+                "pestphp/pest": "^4.0|^5.0",
+                "php": "^8.4",
+                "spatie/test-time": "^1.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-v2": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Functions.php"
+                ],
+                "psr-4": {
+                    "Spatie\\PestPluginTestTime\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Pest plugin to  control the flow of time",
+            "homepage": "https://github.com/spatie/pest-plugin-test-time",
+            "keywords": [
+                "pest-plugin-test-time",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/pest-plugin-test-time/tree/2.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-07-29T16:01:33+00:00"
+        },
+        {
             "name": "spatie/phpunit-snapshot-assertions",
             "version": "5.4.0",
             "source": {
@@ -16686,6 +16405,73 @@
                 }
             ],
             "time": "2026-04-29T09:52:03+00:00"
+        },
+        {
+            "name": "spatie/test-time",
+            "version": "1.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/test-time.git",
+                "reference": "308242a6c7ce4af2455ee0ab61b7d3d627cb78fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/test-time/zipball/308242a6c7ce4af2455ee0ab61b7d3d627cb78fd",
+                "reference": "308242a6c7ce4af2455ee0ab61b7d3d627cb78fd",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^2.63|^3.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\TestTime\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A small package to control the flow time",
+            "homepage": "https://github.com/spatie/test-time",
+            "keywords": [
+                "spatie",
+                "test-time"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/test-time/issues",
+                "source": "https://github.com/spatie/test-time/tree/1.3.3"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-02-05T13:30:14+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
