@@ -28,6 +28,7 @@
         "jasonmccreary/double": "^0.6.0",
         "larastan/larastan": "^3.9",
         "laravel/boost": "^2.3",
+        "laravel/doctor": "^0.1.0",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.1",
         "laravel/pint": "^1.30",
