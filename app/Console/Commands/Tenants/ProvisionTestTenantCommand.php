@@ -10,7 +10,6 @@ use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Stancl\Tenancy\Database\Models\Domain;
 
@@ -42,11 +41,9 @@ class ProvisionTestTenantCommand extends Command
         }
 
         $this->info('Seeding BrowserTestFixtureSeeder...');
-        Artisan::call('tenants:seed', [
-            '--tenants' => [self::TENANT_ID],
-            '--class' => BrowserTestFixtureSeeder::class,
-            '--force' => true,
-        ]);
+        $tenant->run(function (): void {
+            resolve(BrowserTestFixtureSeeder::class)->run();
+        });
 
         $this->newLine();
         $this->info("✅ browser-test tenant ready at http://{$this->domain()}");
@@ -78,11 +75,6 @@ class ProvisionTestTenantCommand extends Command
         Domain::query()->create(['domain' => $this->domain(), 'tenant_id' => $tenant->id]);
         Domain::query()->create(['domain' => self::TENANT_ID, 'tenant_id' => $tenant->id]);
 
-        Artisan::call('tenants:migrate', [
-            '--tenants' => [self::TENANT_ID],
-            '--force' => true,
-        ]);
-
         $tenant->run(function () use ($tenant): void {
             DB::connection('tenant')->table('users')->insert([
                 'name' => $tenant->name,
@@ -98,7 +90,7 @@ class ProvisionTestTenantCommand extends Command
                 'store_email' => $tenant->email,
             ]);
 
-            Artisan::call('db:seed', ['--force' => true]);
+            resolve(BrowserTestFixtureSeeder::class)->run();
         });
 
         return $tenant;
@@ -111,10 +103,6 @@ class ProvisionTestTenantCommand extends Command
 
     private function deleteOrphanedDatabase(TenantSQLiteDatabaseManager $manager): void
     {
-        if (Tenant::query()->whereKey(self::TENANT_ID)->exists()) {
-            return;
-        }
-
         $tenant = new Tenant(['id' => self::TENANT_ID]);
         $databaseName = $tenant->database()->getName();
 
