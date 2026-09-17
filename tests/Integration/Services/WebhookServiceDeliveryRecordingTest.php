@@ -62,7 +62,7 @@ test('response body is truncated to ~2KB', function () {
 
     resolve(WebhookService::class)->dispatch('order.created', []);
 
-    expect(strlen((string) WebhookDelivery::sole()->response_body))->toBe(2000);
+    expect((string) WebhookDelivery::sole()->response_body)->toHaveLength(2000);
 });
 
 test('no row is recorded when the service is not configured', function () {

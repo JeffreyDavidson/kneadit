@@ -72,13 +72,17 @@ final readonly class ProductLabelPresenter
             return [];
         }
 
-        /** @var list<Allergen> $allergens */
-        $allergens = $recipe->inventoryIngredients
-            ->flatMap(fn (Ingredient $i) => $i->allergens ?? collect())
-            ->unique(fn (Allergen $a) => $a->value)
-            ->sortBy(fn (Allergen $a): string => $a->getLabel())
-            ->values()
-            ->all();
+        /** @var array<string, Allergen> $allergensByValue */
+        $allergensByValue = [];
+
+        foreach ($recipe->inventoryIngredients as $ingredient) {
+            foreach ($ingredient->allergens ?? [] as $allergen) {
+                $allergensByValue[$allergen->value] = $allergen;
+            }
+        }
+
+        $allergens = array_values($allergensByValue);
+        usort($allergens, fn (Allergen $a, Allergen $b): int => $a->getLabel() <=> $b->getLabel());
 
         return $allergens;
     }

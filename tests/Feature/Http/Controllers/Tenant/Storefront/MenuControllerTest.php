@@ -32,10 +32,7 @@ test('biscotto theme renders the parchment menu presentation', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.menu', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-menu-hero', false)
-        ->assertSee('biscotto-parchment', false)
-        ->assertSee('biscotto-menu-order', false);
+    $response->assertOk()->assertSeeHtml('biscotto-menu-hero')->assertSeeHtml('biscotto-parchment')->assertSeeHtml('biscotto-menu-order');
 });
 
 test('menu page shows store name from settings', function () {

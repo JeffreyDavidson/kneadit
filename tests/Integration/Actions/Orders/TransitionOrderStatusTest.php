@@ -130,9 +130,8 @@ test('critical effect failure rolls back the status transition', function () {
     $order = Order::factory()->confirmed()->create();
 
     expect(fn () => resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking))
-        ->toThrow(RuntimeException::class, 'Inventory deduction failed');
-
-    expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
+        ->toThrow(RuntimeException::class, 'Inventory deduction failed')
+        ->and($order->fresh()->status)->toBe(OrderStatus::Confirmed);
 });
 
 test('cancellation decrements coupon used_count and creates reversal transaction', function () {

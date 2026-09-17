@@ -41,14 +41,14 @@ test('save goal closes modal', function () {
 });
 
 test('get monthly data property returns expected keys', function () {
-    $data = test()->widget->getMonthlyDataProperty();
+    $data = test()->widget->monthlyData;
 
     expect($data)->toBeArray()
         ->toHaveKeys(['label', 'goal', 'revenue', 'percentage']);
 });
 
 test('get monthly data property returns numeric values', function () {
-    $data = test()->widget->getMonthlyDataProperty();
+    $data = test()->widget->monthlyData;
 
     expect($data['goal'])->toBeFloat()
         ->and($data['revenue'])->toBeFloat()
@@ -56,14 +56,14 @@ test('get monthly data property returns numeric values', function () {
 });
 
 test('get yearly data property returns expected keys', function () {
-    $data = test()->widget->getYearlyDataProperty();
+    $data = test()->widget->yearlyData;
 
     expect($data)->toBeArray()
         ->toHaveKeys(['label', 'goal', 'revenue', 'percentage']);
 });
 
 test('get yearly data property returns numeric values', function () {
-    $data = test()->widget->getYearlyDataProperty();
+    $data = test()->widget->yearlyData;
 
     expect($data['goal'])->toBeFloat()
         ->and($data['revenue'])->toBeFloat()
@@ -72,14 +72,14 @@ test('get yearly data property returns numeric values', function () {
 
 test('monthly data percentage is capped at 100', function () {
     // With no orders and default goal, percentage should be 0
-    $data = test()->widget->getMonthlyDataProperty();
+    $data = test()->widget->monthlyData;
 
     expect($data['percentage'])->toBeLessThanOrEqual(100)
         ->and($data['percentage'])->toBeGreaterThanOrEqual(0);
 });
 
 test('yearly data percentage is capped at 100', function () {
-    $data = test()->widget->getYearlyDataProperty();
+    $data = test()->widget->yearlyData;
 
     expect($data['percentage'])->toBeLessThanOrEqual(100)
         ->and($data['percentage'])->toBeGreaterThanOrEqual(0);

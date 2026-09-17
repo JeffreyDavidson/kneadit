@@ -31,22 +31,18 @@ test('creates a percent-off once coupon and a promotion code', function () {
     bindDoubledStripe(
         function (CouponService $coupons): void {
             $coupons->expects('create')
-                ->with(Argument::satisfies(function (mixed $payload): bool {
-                    return is_array($payload)
-                        && ($payload['percent_off'] ?? null) === 100
-                        && ($payload['duration'] ?? null) === 'once'
-                        && ($payload['max_redemptions'] ?? null) === 1
-                        && ($payload['metadata']['tenant_id'] ?? null) === 'vip-baker';
-                }))
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload)
+                    && ($payload['percent_off'] ?? null) === 100
+                    && ($payload['duration'] ?? null) === 'once'
+                    && ($payload['max_redemptions'] ?? null) === 1
+                    && ($payload['metadata']['tenant_id'] ?? null) === 'vip-baker'))
                 ->returns((object) ['id' => 'coupon_abc']);
         },
         function (PromotionCodeService $promotionCodes): void {
             $promotionCodes->expects('create')
-                ->with(Argument::satisfies(function (mixed $payload): bool {
-                    return is_array($payload)
-                        && ($payload['coupon'] ?? null) === 'coupon_abc'
-                        && ($payload['code'] ?? null) === 'VIP-JANE';
-                }))
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload)
+                    && ($payload['coupon'] ?? null) === 'coupon_abc'
+                    && ($payload['code'] ?? null) === 'VIP-JANE'))
                 ->returns((object) ['id' => 'promo_xyz', 'code' => 'VIP-JANE']);
         },
     );
@@ -66,11 +62,9 @@ test('creates a repeating coupon with duration_in_months', function () {
     bindDoubledStripe(
         function (CouponService $coupons): void {
             $coupons->expects('create')
-                ->with(Argument::satisfies(function (mixed $payload): bool {
-                    return is_array($payload)
-                        && ($payload['duration'] ?? null) === 'repeating'
-                        && ($payload['duration_in_months'] ?? null) === 3;
-                }))
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload)
+                    && ($payload['duration'] ?? null) === 'repeating'
+                    && ($payload['duration_in_months'] ?? null) === 3))
                 ->returns((object) ['id' => 'coupon_rep']);
         },
         function (PromotionCodeService $promotionCodes): void {
@@ -91,12 +85,10 @@ test('creates an amount-off coupon with currency', function () {
     bindDoubledStripe(
         function (CouponService $coupons): void {
             $coupons->expects('create')
-                ->with(Argument::satisfies(function (mixed $payload): bool {
-                    return is_array($payload)
-                        && ($payload['amount_off'] ?? null) === 2500
-                        && ($payload['currency'] ?? null) === 'usd'
-                        && ! isset($payload['percent_off']);
-                }))
+                ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload)
+                    && ($payload['amount_off'] ?? null) === 2500
+                    && ($payload['currency'] ?? null) === 'usd'
+                    && ! isset($payload['percent_off'])))
                 ->returns((object) ['id' => 'coupon_amt']);
         },
         function (PromotionCodeService $promotionCodes): void {

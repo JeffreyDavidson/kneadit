@@ -51,10 +51,7 @@ test('can render the view order page', function () {
 
     livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
-        ->assertSee('Your bread is ready.')
-        ->assertSee('Thank you, see you soon.')
-        ->assertSee('flex justify-end', false)
-        ->assertSee('flex justify-start', false);
+        ->assertSee('Your bread is ready.')->assertSee('Thank you, see you soon.')->assertSeeHtml('flex justify-end')->assertSeeHtml('flex justify-start');
 });
 
 test('view order page renders the Catering section when the order is linked to an inquiry', function () {

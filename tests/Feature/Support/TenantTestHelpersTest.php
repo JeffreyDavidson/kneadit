@@ -23,10 +23,8 @@ test('tenant helpers create central tenant and domain records with domain langua
 
     expect($tenant)->toBeInstanceOf(Tenant::class)
         ->and($tenant->id)->toBe('sweet-bakery')
-        ->and($tenant->store_name)->toBe('Sweet Bakery');
-
-    expect(DB::table('domains')->where('domain', 'sweet-bakery.kneadit.test')->where('tenant_id', 'sweet-bakery')->exists())
-        ->toBeTrue();
+        ->and($tenant->store_name)->toBe('Sweet Bakery')
+        ->and(DB::table('domains')->where('domain', 'sweet-bakery.kneadit.test')->where('tenant_id', 'sweet-bakery')->exists())->toBeTrue();
 });
 
 test('tenant admin helper creates and authenticates an owner in tenant storage', function () {
@@ -40,9 +38,8 @@ test('tenant admin helper creates and authenticates an owner in tenant storage',
 
     expect($admin)->toBeInstanceOf(User::class)
         ->and($admin->email)->toBe('admin@example.com')
-        ->and(auth()->user()->is($admin))->toBeTrue();
-
-    expect(User::query()->whereKey($admin->id)->where('email', 'admin@example.com')->exists())->toBeTrue();
+        ->and(auth()->user()->is($admin))->toBeTrue()
+        ->and(User::query()->whereKey($admin->id)->where('email', 'admin@example.com')->exists())->toBeTrue();
 });
 
 test('onboarding notification helper asserts queued welcome and platform subscriber mail', function () {

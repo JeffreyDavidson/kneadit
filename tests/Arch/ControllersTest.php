@@ -4,6 +4,8 @@ declare(strict_types=1);
 use App\Http\Controllers\Central\ConsumeImpersonationController;
 use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
@@ -51,7 +53,7 @@ arch('controllers should be classes')
     ->ignoring('App\Http\Controllers\Stripe\Concerns');
 
 arch('controllers should not use DB facade directly')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(DB::class)
     ->not->toBeUsedIn('App\Http\Controllers')
     ->ignoring([
         ImpersonateController::class,
@@ -59,7 +61,7 @@ arch('controllers should not use DB facade directly')
     ]);
 
 arch('controllers should not invoke tenancy middleware directly')
-    ->expect('Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain')
+    ->expect(InitializeTenancyByDomainOrSubdomain::class)
     ->not->toBeUsedIn('App\Http\Controllers');
 
 foreach ($controllerFiles as $controllerClass) {

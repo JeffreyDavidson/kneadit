@@ -45,9 +45,7 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
 
     $refundService = Double::for(RefundService::class);
     $refundService->expects('create')
-        ->with(Argument::satisfies(function (mixed $payload): bool {
-            return is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc';
-        }))
+        ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'))
         ->returns($stripeRefundResource);
 
     app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
@@ -64,9 +62,8 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
         ->and($refund->stripe_refund_id)->toBe('re_test_xyz123')
         ->and($refund->amount->dollars())->toBe(25.00)
         ->and($refund->reason)->toBe('Customer requested refund')
-        ->and($refund->user_id)->toBe($user->id);
-
-    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Refunded);
+        ->and($refund->user_id)->toBe($user->id)
+        ->and($order->fresh()->payment_status)->toBe(PaymentStatus::Refunded);
 });
 
 test('throws StripeRefundFailedException when the Stripe API errors', function () {

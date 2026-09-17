@@ -33,7 +33,7 @@ class CapacityLimitForm
                         ->required()
                         ->live()
                         ->afterStateHydrated(function (Select $component, ?CapacityLimit $record): void {
-                            if (! $record) {
+                            if (! $record instanceof CapacityLimit) {
                                 return;
                             }
                             if ($record->specific_date) {

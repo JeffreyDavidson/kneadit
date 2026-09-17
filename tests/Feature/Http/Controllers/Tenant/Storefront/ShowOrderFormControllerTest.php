@@ -32,9 +32,5 @@ test('biscotto order page uses the themed presentation without replacing the ord
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.create', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-order-hero', false)
-        ->assertSee('biscotto-order-stage', false)
-        ->assertSee('data-test="order-form"', false)
-        ->assertSee('data-test="order-form-submit"', false);
+    $response->assertOk()->assertSeeHtml('biscotto-order-hero')->assertSeeHtml('biscotto-order-stage')->assertSeeHtml('data-test="order-form"')->assertSeeHtml('data-test="order-form-submit"');
 });

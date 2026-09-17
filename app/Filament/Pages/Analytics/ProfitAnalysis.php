@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 /**
  * @property-read ProductPortfolioSummary $portfolio
@@ -53,7 +54,8 @@ class ProfitAnalysis extends Page
         // Triggers re-render with the new sort order
     }
 
-    public function getPortfolioProperty(): ProductPortfolioSummary
+    #[Computed]
+    public function portfolio(): ProductPortfolioSummary
     {
         return resolve(ProductAnalysisService::class)->portfolio($this->sortBy);
     }

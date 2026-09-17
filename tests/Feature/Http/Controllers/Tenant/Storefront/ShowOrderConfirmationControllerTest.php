@@ -31,8 +31,7 @@ test('biscotto order confirmation uses the themed follow-up presentation', funct
         ->withSession(verifiedOrdersSession([$order]))
         ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-order-confirmation', false)
+    $response->assertOk()->assertSeeHtml('biscotto-order-confirmation')
         ->assertSee($order->order_number);
 });
 

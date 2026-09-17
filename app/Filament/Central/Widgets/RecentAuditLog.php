@@ -5,6 +5,7 @@ namespace App\Filament\Central\Widgets;
 use App\Models\Platform\AdminAuditLog;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
 
 class RecentAuditLog extends Widget
 {
@@ -18,7 +19,8 @@ class RecentAuditLog extends Widget
     protected string $view = 'filament.central.widgets.recent-audit';
 
     /** @return Collection<int, AdminAuditLog> */
-    public function getRecentLogsProperty(): Collection
+    #[Computed]
+    public function recentLogs(): Collection
     {
         return AdminAuditLog::query()->latest()
             ->limit(5)

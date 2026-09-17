@@ -93,11 +93,8 @@ test('customer and marketing mail classes render without errors', function () {
 
     expect((new NewContactMessageNotificationMail($message))->render())
         ->toContain('Jane Baker')
-        ->toContain('Can you make a birthday cake?');
-
-    expect((new HappyBirthdayMail($customer))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
+        ->toContain('Can you make a birthday cake?')
+        ->and((new HappyBirthdayMail($customer))->render())->toBeString()->not->toBeEmpty();
 
     $product = Product::factory()->create();
 
@@ -123,32 +120,23 @@ test('platform account mail classes render without errors', function () {
 
     expect((new StaffInvitationMail($invitation, 'Sweet Bakery', 'https://example.com/accept'))->render())
         ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new NewSubscriberNotificationMail(
-        'Jane',
-        'jane@example.com',
-        'Sweet Bakery',
-        'sweet-bakery.kneadit.test',
-        'starter',
-        'https://kneadit.test/central',
-    ))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and((new NewSubscriberNotificationMail(
+            'Jane',
+            'jane@example.com',
+            'Sweet Bakery',
+            'sweet-bakery.kneadit.test',
+            'starter',
+            'https://kneadit.test/central',
+        ))->render())->toBeString()->not->toBeEmpty();
 
     $user = User::factory()->owner()->create();
 
     expect((new TrialReminderMail($user, 'Sweet Bakery', 3))->render())
         ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new PaymentFailedMail($user))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and((new PaymentFailedMail($user))->render())->toBeString()->not->toBeEmpty()
+        ->and((new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin'))->render())->toBeString()->not->toBeEmpty();
 });
 
 test('standalone operational mail classes render without errors', function () {
@@ -169,15 +157,9 @@ test('standalone operational mail classes render without errors', function () {
 
     expect((new PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15'))->render())
         ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new HealthAlertMail('Database connection failed'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new ScheduledCheckinMail('Weekly check-in report', 'Weekly Checkin'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and((new HealthAlertMail('Database connection failed'))->render())->toBeString()->not->toBeEmpty()
+        ->and((new ScheduledCheckinMail('Weekly check-in report', 'Weekly Checkin'))->render())->toBeString()->not->toBeEmpty();
 
     $weeklyDigest = new WeeklyDigestMail(
         stats: [

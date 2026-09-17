@@ -22,7 +22,5 @@ test('marketing home page renders its navigation and hero', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get('/storefront-home-test');
 
-    $response->assertOk()
-        ->assertSee('nav-link', false)
-        ->assertSee('hero-fade-1', false);
+    $response->assertOk()->assertSeeHtml('nav-link')->assertSeeHtml('hero-fade-1');
 });

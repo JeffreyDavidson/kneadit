@@ -15,6 +15,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class LoyaltyDashboard extends Page
 {
@@ -118,34 +119,40 @@ class LoyaltyDashboard extends Page
         $manager->set('loyalty_tier_platinum_free_delivery', $this->tierPlatinumFreeDelivery ? '1' : '0');
     }
 
-    public function getTotalPointsIssuedProperty(): int
+    #[Computed]
+    public function totalPointsIssued(): int
     {
         return $this->analytics()->metrics()->totalIssued;
     }
 
-    public function getTotalPointsRedeemedProperty(): int
+    #[Computed]
+    public function totalPointsRedeemed(): int
     {
         return $this->analytics()->metrics()->totalRedeemed;
     }
 
-    public function getActiveMembersProperty(): int
+    #[Computed]
+    public function activeMembers(): int
     {
         return $this->analytics()->metrics()->activeMembers;
     }
 
-    public function getAvailableRewardsCountProperty(): int
+    #[Computed]
+    public function availableRewardsCount(): int
     {
         return $this->analytics()->metrics()->availableRewards;
     }
 
     /** @return Collection<int, Customer> */
-    public function getTopCustomersProperty(): Collection
+    #[Computed]
+    public function topCustomers(): Collection
     {
         return $this->analytics()->topCustomers();
     }
 
     /** @return Collection<int, LoyaltyPoint> */
-    public function getRecentActivityProperty(): Collection
+    #[Computed]
+    public function recentActivity(): Collection
     {
         return $this->analytics()->recentActivity();
     }

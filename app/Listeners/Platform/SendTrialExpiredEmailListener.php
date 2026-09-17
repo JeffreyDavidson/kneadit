@@ -25,9 +25,7 @@ class SendTrialExpiredEmailListener extends SendEmailListener
         $adminUrl = $event->adminUrl;
 
         // Keep queued events created before adminUrl was added deploy-safe.
-        if ($adminUrl === null) {
-            $adminUrl = $this->tenantUrls->admin(new Tenant(['id' => $event->tenantId]));
-        }
+        $adminUrl ??= $this->tenantUrls->admin(new Tenant(['id' => $event->tenantId]));
 
         return new TrialExpiredMail(
             user: $event->user,

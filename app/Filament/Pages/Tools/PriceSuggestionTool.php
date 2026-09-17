@@ -84,7 +84,7 @@ class PriceSuggestionTool extends Page
 
     public function generateMarginComparisons(): void
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe instanceof Recipe || ! $this->selectedRecipe->cost) {
             $this->marginComparisons = new Collection;
 
             return;
@@ -111,7 +111,7 @@ class PriceSuggestionTool extends Page
 
     public function getSuggestedPrice(): float
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe instanceof Recipe || ! $this->selectedRecipe->cost) {
             return 0.0;
         }
 

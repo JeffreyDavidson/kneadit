@@ -26,9 +26,7 @@ test('biscotto theme renders its bakery gallery presentation', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.gallery', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-gallery-hero', false)
-        ->assertSee('biscotto-gallery-stage', false)
+    $response->assertOk()->assertSeeHtml('biscotto-gallery-hero')->assertSeeHtml('biscotto-gallery-stage')
         ->assertSee('Fresh from the Oven');
 });
 

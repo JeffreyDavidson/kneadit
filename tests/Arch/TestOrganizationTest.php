@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 test('Unit tests must not use RefreshDatabase', function () {
     $unitDir = dirname(__DIR__).'/Unit';
@@ -25,7 +26,7 @@ test('Unit tests must not use RefreshDatabase', function () {
             throw new RuntimeException("Unable to read {$file->getPathname()}.");
         }
 
-        if (str_contains($contents, 'Illuminate\Foundation\Testing\RefreshDatabase')) {
+        if (str_contains($contents, RefreshDatabase::class)) {
             $violations[] = str_replace(dirname(__DIR__).'/', '', $file->getPathname());
         }
     }

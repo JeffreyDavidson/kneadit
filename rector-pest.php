@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-use Pest\Rector\Rules\ConvertBeforeAllInDescribeRector;
-use Pest\Rector\Rules\FixInvalidRepeatValueRector;
-use Pest\Rector\Rules\Pest2ToPest3\TapToDeferRector;
-use Pest\Rector\Rules\Pest2ToPest3\ToHaveMethodOnClassRector;
-use Pest\Rector\Rules\Pest2ToPest3\UsesToExtendRector;
-use Pest\Rector\Rules\RemoveDebugExpectationsRector;
-use Pest\Rector\Rules\RemoveOnlyRector;
-use Pest\Rector\Rules\RemoveRedundantPestUsesRector;
+use Pest\Rector\Set\PestSetList;
+use Rector\CodeQuality\Rector\If_\ObjectExplicitBoolCompareRector;
 use Rector\Config\RectorConfig;
+use Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector;
+use Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector;
+use RectorLaravel\Rector\Class_\LivewireComponentComputedMethodToComputedAttributeRector;
+use RectorLaravel\Rector\Class_\LivewireComponentQueryStringToUrlAttributeRector;
 
 return RectorConfig::configure()
     ->withPaths([
         __DIR__.'/tests',
     ])
-    ->withRules([
-        TapToDeferRector::class,
-        ToHaveMethodOnClassRector::class,
-        UsesToExtendRector::class,
-        ConvertBeforeAllInDescribeRector::class,
-        FixInvalidRepeatValueRector::class,
-        RemoveDebugExpectationsRector::class,
-        RemoveOnlyRector::class,
-        RemoveRedundantPestUsesRector::class,
+    ->withPhpSets()
+    ->withSets([
+        PestSetList::CODING_STYLE,
+    ])
+    ->withComposerBased(laravel: true)
+    ->withSkip([
+        BinaryOpNullableToInstanceofRector::class,
+        LivewireComponentComputedMethodToComputedAttributeRector::class,
+        LivewireComponentQueryStringToUrlAttributeRector::class,
+        ObjectExplicitBoolCompareRector::class,
+        NewMethodCallWithoutParenthesesRector::class,
     ]);

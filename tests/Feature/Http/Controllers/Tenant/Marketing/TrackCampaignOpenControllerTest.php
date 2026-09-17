@@ -18,8 +18,8 @@ test('stamps opened_at when the pixel is hit and returns a GIF', function () {
 
     $response->assertOk();
     $response->assertHeader('Content-Type', 'image/gif');
-    expect($response->getContent())->toHaveLength(42);
-    expect($log->fresh()->opened_at)->not->toBeNull();
+    expect($response->getContent())->toHaveLength(42)
+        ->and($log->fresh()->opened_at)->not->toBeNull();
 });
 
 test('subsequent hits do not overwrite opened_at (first-hit wins)', function () {

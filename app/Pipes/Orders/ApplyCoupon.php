@@ -18,7 +18,7 @@ class ApplyCoupon
     {
         $coupon = $this->resolveCoupon($payload);
 
-        if (! $coupon) {
+        if (! $coupon instanceof Coupon) {
             return $next($payload);
         }
 

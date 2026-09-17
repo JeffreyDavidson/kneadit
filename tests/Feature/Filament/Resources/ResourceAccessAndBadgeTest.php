@@ -76,7 +76,7 @@ test('growth-feature resources cannot be accessed when feature is inactive', fun
 test('resources show upgrade badges when tenant has no plan', function () {
     // tenant() returns null → meetsRequirement returns false → shows badge
     expect(EmailCampaignResource::getNavigationBadge())->toBe('PRO');
-    expect(CouponResource::getNavigationBadge())->toBe('GROWTH');
-    expect(EmailCampaignResource::getNavigationBadgeColor())->toBe('warning');
-    expect(CouponResource::getNavigationBadgeColor())->toBe('info');
+    expect(CouponResource::getNavigationBadge())->toBe('GROWTH')
+        ->and(EmailCampaignResource::getNavigationBadgeColor())->toBe('warning')
+        ->and(CouponResource::getNavigationBadgeColor())->toBe('info');
 });

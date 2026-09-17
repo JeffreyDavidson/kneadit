@@ -10,6 +10,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Livewire\Attributes\Url;
 use UnitEnum;
 
 /** @phpstan-type OnboardingRecord array{id: string, name: string, subdomain: string, owner: string, email: string, plan: string, created_at: \Illuminate\Support\Carbon|null, days_since_signup: int, checks: array<string, bool>, completed: int, total: int} */
@@ -30,18 +31,14 @@ class OnboardingTracker extends Page
     #[\Override]
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
+    #[Url(except: 'all')]
     public string $filterStatus = 'all';
 
+    #[Url(except: 'all')]
     public string $filterPlan = 'all';
 
+    #[Url(except: 'progress_asc')]
     public string $sort = 'progress_asc';
-
-    /** @var array<string, mixed> */
-    protected array $queryString = [
-        'filterStatus' => ['except' => 'all'],
-        'filterPlan' => ['except' => 'all'],
-        'sort' => ['except' => 'progress_asc'],
-    ];
 
     #[\Override]
     public function getSubheading(): ?string

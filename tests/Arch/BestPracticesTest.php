@@ -4,6 +4,9 @@ declare(strict_types=1);
 use App\Listeners\Platform\RecordScheduledTaskStatusListener;
 use App\Listeners\QueuedListener;
 use App\Mail\BaseMailable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 arch('actions should be invokable')
     ->expect('App\Actions')
@@ -11,7 +14,7 @@ arch('actions should be invokable')
 
 arch('form requests should extend FormRequest')
     ->expect('App\Http\Requests')
-    ->toExtend('Illuminate\Foundation\Http\FormRequest');
+    ->toExtend(FormRequest::class);
 
 arch('services should be classes')
     ->expect('App\Services')
@@ -37,7 +40,7 @@ arch('controllers should not use env() directly')
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('models should not use DB facade')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(DB::class)
     ->not->toBeUsedIn('App\Models');
 
 arch('exceptions should be classes')
@@ -169,7 +172,7 @@ test('model static calls in controllers must use explicit query()', function () 
 });
 
 arch('controllers should not use Mail facade directly')
-    ->expect('Illuminate\Support\Facades\Mail')
+    ->expect(Mail::class)
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('mail classes should not call settings() directly')

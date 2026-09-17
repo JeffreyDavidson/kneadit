@@ -74,13 +74,6 @@ test('sitemap generates URLs from the application routes', function () {
 
     $response = $this->get(route('sitemap'));
 
-    $response
-        ->assertOk()
-        ->assertSee(route('home'), escape: false)
-        ->assertSee(route('blog.index'), escape: false)
-        ->assertSee(route('pricing'), escape: false)
-        ->assertSee(route('register'), escape: false)
-        ->assertSee(route('changelog'), escape: false)
-        ->assertSee(route('blog.show', ['centralPost' => $post->slug]), escape: false)
+    $response->assertOk()->assertSeeHtml(route('home'))->assertSeeHtml(route('blog.index'))->assertSeeHtml(route('pricing'))->assertSeeHtml(route('register'))->assertSeeHtml(route('changelog'))->assertSeeHtml(route('blog.show', ['centralPost' => $post->slug]))
         ->assertDontSee('getkneadit.app');
 });

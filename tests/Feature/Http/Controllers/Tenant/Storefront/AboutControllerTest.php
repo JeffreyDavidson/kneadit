@@ -20,8 +20,6 @@ test('biscotto theme renders its story and portrait presentation', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.about', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-about-hero', false)
-        ->assertSee('biscotto-about-photo', false)
+    $response->assertOk()->assertSeeHtml('biscotto-about-hero')->assertSeeHtml('biscotto-about-photo')
         ->assertSee('With love and flour dust');
 });
