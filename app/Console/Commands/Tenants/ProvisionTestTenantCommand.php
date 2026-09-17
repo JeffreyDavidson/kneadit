@@ -42,11 +42,12 @@ class ProvisionTestTenantCommand extends Command
         }
 
         $this->info('Seeding BrowserTestFixtureSeeder...');
-        Artisan::call('tenants:seed', [
-            '--tenants' => [self::TENANT_ID],
-            '--class' => BrowserTestFixtureSeeder::class,
-            '--force' => true,
-        ]);
+        $tenant->run(function (): void {
+            Artisan::call('db:seed', [
+                '--class' => BrowserTestFixtureSeeder::class,
+                '--force' => true,
+            ]);
+        });
 
         $this->newLine();
         $this->info("✅ browser-test tenant ready at http://{$this->domain()}");
