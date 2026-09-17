@@ -10,7 +10,6 @@ use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -44,10 +43,7 @@ class ProvisionTestTenantCommand extends Command
 
         $this->info('Seeding BrowserTestFixtureSeeder...');
         $tenant->run(function (): void {
-            Artisan::call('db:seed', [
-                '--class' => BrowserTestFixtureSeeder::class,
-                '--force' => true,
-            ]);
+            resolve(BrowserTestFixtureSeeder::class)->run();
         });
 
         $this->newLine();
@@ -79,12 +75,6 @@ class ProvisionTestTenantCommand extends Command
 
         Domain::query()->create(['domain' => $this->domain(), 'tenant_id' => $tenant->id]);
         Domain::query()->create(['domain' => self::TENANT_ID, 'tenant_id' => $tenant->id]);
-
-        $tenant->run(function (): void {
-            $migrator = resolve(Migrator::class);
-            $migrator->setConnection('tenant');
-            $migrator->run([database_path('migrations')], ['--force' => true]);
-        });
 
         $tenant->run(function () use ($tenant): void {
             DB::connection('tenant')->table('users')->insert([
