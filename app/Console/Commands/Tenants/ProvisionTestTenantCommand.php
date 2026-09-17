@@ -114,10 +114,6 @@ class ProvisionTestTenantCommand extends Command
 
     private function deleteOrphanedDatabase(TenantSQLiteDatabaseManager $manager): void
     {
-        if (Tenant::query()->whereKey(self::TENANT_ID)->exists()) {
-            return;
-        }
-
         $tenant = new Tenant(['id' => self::TENANT_ID]);
         $databaseName = $tenant->database()->getName();
 
