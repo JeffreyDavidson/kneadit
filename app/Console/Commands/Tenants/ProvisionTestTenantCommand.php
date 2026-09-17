@@ -10,7 +10,6 @@ use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Stancl\Tenancy\Database\Models\Domain;
 
