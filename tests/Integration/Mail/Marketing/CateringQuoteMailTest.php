@@ -28,7 +28,7 @@ test('renders the itemized table when the inquiry has items', function () {
         'unit_price' => 3,
     ]);
 
-    $html = (new CateringQuoteMail($inquiry->fresh()))->render();
+    $html = new CateringQuoteMail($inquiry->fresh())->render();
 
     expect($html)->toContain("What's included")
         ->and($html)->toContain('Wedding cake')
@@ -43,7 +43,7 @@ test('falls back to single-amount layout when the inquiry has no items', functio
         'quoted_amount' => 750,
     ]);
 
-    $html = (new CateringQuoteMail($inquiry))->render();
+    $html = new CateringQuoteMail($inquiry)->render();
 
     expect($html)->not->toContain("What's included")
         ->and($html)->toContain('Your Quote');

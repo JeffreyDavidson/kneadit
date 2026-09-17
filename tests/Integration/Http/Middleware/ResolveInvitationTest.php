@@ -15,7 +15,7 @@ test('it resolves a valid pending invitation onto the request', function () {
     $invitation = StaffInvitation::factory()->create();
 
     $request = Request::create("/invite/{$invitation->token}");
-    $request->setRouteResolver(fn () => (new Route('GET', 'invite/{token}', []))->bind($request));
+    $request->setRouteResolver(fn () => new Route('GET', 'invite/{token}', [])->bind($request));
 
     $middleware = new ResolveInvitation;
     $resolved = null;
@@ -35,7 +35,7 @@ test('it returns expired view for expired invitation', function () {
     ]);
 
     $request = Request::create("/invite/{$invitation->token}");
-    $request->setRouteResolver(fn () => (new Route('GET', 'invite/{token}', []))->bind($request));
+    $request->setRouteResolver(fn () => new Route('GET', 'invite/{token}', [])->bind($request));
 
     $middleware = new ResolveInvitation;
     $response = $middleware->handle($request, fn () => new Response('should not reach'));

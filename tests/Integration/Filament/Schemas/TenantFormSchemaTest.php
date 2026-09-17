@@ -48,14 +48,14 @@ test('order form schema has components', function () {
 
 test('ingredients relation manager has correct relationship', function () {
     expect(
-        (new ReflectionClass(IngredientsRelationManager::class))
+        new ReflectionClass(IngredientsRelationManager::class)
             ->getStaticPropertyValue('relationship'),
     )->toBe('ingredients');
 });
 
 test('view gift card references gift card resource', function () {
     expect(
-        (new ReflectionClass(ViewGiftCard::class))
+        new ReflectionClass(ViewGiftCard::class)
             ->getStaticPropertyValue('resource'),
     )->toBe(GiftCardResource::class);
 });
