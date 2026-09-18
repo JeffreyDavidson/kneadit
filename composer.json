@@ -53,8 +53,7 @@
         "phpstan/extension-installer": "^1.4",
         "rector/rector": "^2.3",
         "spatie/pest-plugin-snapshots": "^2.2",
-        "spatie/pest-plugin-test-time": "^2.3",
-        "tomasvotruba/bladestan": "^0.11.7"
+        "spatie/pest-plugin-test-time": "^2.3"
     },
     "autoload": {
         "psr-4": {
