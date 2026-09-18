@@ -74,14 +74,14 @@ test('tenant form schema has components', function () {
 
 test('notes relation manager has correct relationship', function () {
     expect(
-        (new ReflectionClass(NotesRelationManager::class))
+        new ReflectionClass(NotesRelationManager::class)
             ->getStaticPropertyValue('relationship'),
     )->toBe('notes');
 });
 
 test('edit blog post references blog post resource', function () {
     expect(
-        (new ReflectionClass(EditBlogPost::class))
+        new ReflectionClass(EditBlogPost::class)
             ->getStaticPropertyValue('resource'),
     )->toBe(BlogPostResource::class);
 });

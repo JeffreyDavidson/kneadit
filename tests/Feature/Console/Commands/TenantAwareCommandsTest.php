@@ -24,19 +24,19 @@ test('send repeat order reminders command exists', function () {
 });
 
 test('paypal command uses TenancyManager for tenant context', function () {
-    $source = file_get_contents((new ReflectionClass(CheckPayPalPaymentsCommand::class))->getFileName());
+    $source = file_get_contents(new ReflectionClass(CheckPayPalPaymentsCommand::class)->getFileName());
 
     expect($source)->toContain('forEachTenant')->toContain('TenancyManager');
 });
 
 test('birthday command uses EngagementDispatcher for tenant context', function () {
-    $source = file_get_contents((new ReflectionClass(SendBirthdayEmailsCommand::class))->getFileName());
+    $source = file_get_contents(new ReflectionClass(SendBirthdayEmailsCommand::class)->getFileName());
 
     expect($source)->toContain('EngagementDispatcher');
 });
 
 test('repeat reminders command uses EngagementDispatcher for tenant context', function () {
-    $source = file_get_contents((new ReflectionClass(SendRepeatOrderRemindersCommand::class))->getFileName());
+    $source = file_get_contents(new ReflectionClass(SendRepeatOrderRemindersCommand::class)->getFileName());
 
     expect($source)->toContain('EngagementDispatcher');
 });

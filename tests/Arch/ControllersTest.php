@@ -21,7 +21,7 @@ $controllerFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
     })
     ->reject(fn ($class) => $class === Controller::class)
     ->filter(fn ($class) => class_exists($class))
-    ->reject(fn ($class): bool => (new ReflectionClass($class))->isAbstract())
+    ->reject(fn ($class): bool => new ReflectionClass($class)->isAbstract())
     ->values();
 
 foreach ($controllerFiles as $controllerClass) {

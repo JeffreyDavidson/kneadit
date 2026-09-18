@@ -60,7 +60,7 @@ test('articles are alphabetized and limited to Markdown files', function () {
     File::put(test()->tmp.'/billing/a-first.md', "# First\n");
     File::put(test()->tmp.'/billing/ignored.txt', 'Not a help article');
 
-    $topics = (new HelpRepository(test()->tmp))->topics();
+    $topics = new HelpRepository(test()->tmp)->topics();
 
     expect($topics[1]['articles'])->toHaveCount(3)
         ->and(array_column($topics[1]['articles'], 'slug'))

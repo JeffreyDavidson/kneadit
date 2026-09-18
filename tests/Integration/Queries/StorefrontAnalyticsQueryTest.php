@@ -83,7 +83,7 @@ test('conversion funnel counts unique sessions and excludes confirmation reloads
         ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
     ]);
 
-    $funnel = (new StorefrontAnalyticsQuery(now()->startOfWeek()))->conversionFunnel();
+    $funnel = new StorefrontAnalyticsQuery(now()->startOfWeek())->conversionFunnel();
 
     expect($funnel[2]->toArray())
         ->toMatchArray(['label' => 'Order Page', 'count' => 1]);

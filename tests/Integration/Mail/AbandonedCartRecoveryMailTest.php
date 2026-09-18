@@ -19,7 +19,7 @@ test('renders items + recovery link when no coupon', function () {
     CartItem::factory()->for($cart)->create(['product_id' => $product->id, 'quantity' => 3]);
 
     $cart->load('items.product');
-    $rendered = (new AbandonedCartRecoveryMail($cart, null))->render();
+    $rendered = new AbandonedCartRecoveryMail($cart, null)->render();
 
     expect($rendered)
         ->toContain('Alice')
@@ -42,7 +42,7 @@ test('renders coupon card when a coupon is attached', function () {
     ]);
 
     $cart->load('items.product');
-    $rendered = (new AbandonedCartRecoveryMail($cart, $coupon))->render();
+    $rendered = new AbandonedCartRecoveryMail($cart, $coupon)->render();
 
     expect($rendered)
         ->toContain('BACK-ABCDE')
@@ -52,6 +52,6 @@ test('renders coupon card when a coupon is attached', function () {
 test('subject mentions the cart', function () {
     $cart = Cart::factory()->create();
 
-    expect((new AbandonedCartRecoveryMail($cart))->envelope()->subject)
+    expect(new AbandonedCartRecoveryMail($cart)->envelope()->subject)
         ->toBe('You left something in your cart');
 });

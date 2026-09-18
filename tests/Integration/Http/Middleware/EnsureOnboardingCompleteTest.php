@@ -49,7 +49,7 @@ test('passes through for auth routes', function () {
 
     $middleware = new EnsureOnboardingComplete;
     $request = Request::create('/admin/auth/login');
-    $request->setRouteResolver(fn () => (new Route('GET', '/admin/auth/login', []))->name('filament.admin.auth.login'));
+    $request->setRouteResolver(fn () => new Route('GET', '/admin/auth/login', [])->name('filament.admin.auth.login'));
 
     $response = $middleware->handle($request, fn () => new Response('OK'));
 

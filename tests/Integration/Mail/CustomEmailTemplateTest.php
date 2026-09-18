@@ -201,7 +201,7 @@ test('custom template body strips dangerous HTML when rendered', function () {
         'body' => '<p>Thanks!</p><script>alert("xss")</script><img src=x onerror="alert(1)">',
     ]);
 
-    $rendered = (new OrderPlacedMail($order))->render();
+    $rendered = new OrderPlacedMail($order)->render();
 
     expect($rendered)
         ->not->toContain('<script>')
