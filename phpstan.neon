@@ -11,9 +11,9 @@ parameters:
     scanDirectories:
         - vendor/filament
     type_coverage:
-        param: 85
-        return: 85
-        property: 85
+        param: 100
+        return: 100
+        property: 100
     treatPhpDocTypesAsCertain: true
     ignoreErrors:
         # Tenant domains relation from vendor trait (HasDomains)
