@@ -26,7 +26,7 @@ Launch readiness risk is not the absence of tests; it is test boundary drift and
 | Arch | `tests/Arch` | 12 | Good guardrail layer for structure, naming, and best practices. |
 | Browser | `tests/Browser` | 46 | Useful Playwright/Pest browser smoke coverage for central pages, storefront pages/forms, and admin pages. Excluded from CI tests workflow. |
 
-Additional quality gates in CI: PHPStan, Pest type coverage at 100%, Pint, TLint, FilaCheck, Ward security scan, and Rector dry-run on PRs with `continue-on-error: true`.
+Additional quality gates in CI: PHPStan, Pest type coverage at 100%, Pint, FilaCheck, Ward security scan, and Rector dry-run on PRs with `continue-on-error: true`.
 
 ## Required test type boundaries
 
