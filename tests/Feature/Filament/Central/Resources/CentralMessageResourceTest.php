@@ -7,6 +7,8 @@ use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Livewire\livewire;
+
 beforeEach(function () {
     setUpCentralTest();
     test()->actingAs(User::factory()->platformAdmin()->create());

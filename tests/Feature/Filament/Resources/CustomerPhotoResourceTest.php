@@ -9,6 +9,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Pennant\Feature;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {

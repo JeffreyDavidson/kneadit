@@ -5,6 +5,8 @@ use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 

@@ -12,6 +12,8 @@ use App\Services\Settings\SettingsManager;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {

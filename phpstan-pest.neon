@@ -6,7 +6,6 @@ parameters:
         - bootstrap/app.php
         - phpstan-bootstrap.php
     stubFiles:
-        - tests/pest-livewire.stub
         - stubs/Illuminate/Http/Response.stub
         - stubs/Illuminate/Testing/TestResponse.stub
         - stubs/Symfony/Component/HttpFoundation/Response.stub
