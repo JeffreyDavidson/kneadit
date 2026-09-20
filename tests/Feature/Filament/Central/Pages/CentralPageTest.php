@@ -12,6 +12,8 @@ use App\Filament\Central\Pages\TenantComparison;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 
+use function Pest\Livewire\livewire;
+
 beforeEach(function () {
     setUpCentralTest();
     test()->actingAs(User::factory()->platformAdmin()->create());

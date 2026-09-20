@@ -9,6 +9,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Laravel\Pennant\Feature;
 
+use function Pest\Livewire\livewire;
+
 beforeEach(function () {
     setUpCentralTest();
     test()->actingAs(User::factory()->owner()->create());
