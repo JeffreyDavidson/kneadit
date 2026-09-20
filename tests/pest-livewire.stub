@@ -10,7 +10,7 @@ use Livewire\Features\SupportTesting\Testable;
  *
  * @template TComponent of Component
  *
- * @param array<array-key, mixed> $params
+ * @param  array<array-key, mixed>  $params
  * @return ($name is class-string<TComponent> ? Testable<TComponent> : Testable<Component>)
  */
 function livewire(string $name, array $params = []) {}
@@ -21,8 +21,11 @@ abstract class Component {}
 
 namespace Livewire\Features\SupportTesting;
 
+use Illuminate\Testing\TestResponse;
+
 /**
  * @template TComponent of \Livewire\Component
- * @mixin \Illuminate\Testing\TestResponse
+ *
+ * @mixin TestResponse
  */
 class Testable {}
