@@ -44,16 +44,23 @@ jobs:
           key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-${{ runner.os }}-node-24-
 
-      - name: Verify local PHP
-        run: php -v && php -m
+      - name: Setup PHP and Composer
+        uses: ./.github/actions/setup-php-composer
 
-      - name: Install Composer
-        run: |
-          mkdir -p "$RUNNER_TEMP/composer-bin"
-          curl -sS https://getcomposer.org/installer -o "$RUNNER_TEMP/composer-setup.php"
-          php "$RUNNER_TEMP/composer-setup.php" --install-dir="$RUNNER_TEMP/composer-bin" --filename=composer
-          echo "$RUNNER_TEMP/composer-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/composer-bin/composer" --version
+      - name: Resolve npm cache directory
+        id: npm-cache
+        shell: bash
+        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore npm cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.npm-cache.outputs.directory }}
+          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-node-24-
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Install Composer dependencies
         env:
@@ -259,7 +266,6 @@ jobs:
             "- Baseline valid: ${BASELINE_VALID:-false}" \
             "- Execution mode: $mode" \
             "- Tests executed: $test_count" >> "$GITHUB_STEP_SUMMARY"
-
       - name: Upload TIA timing report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
