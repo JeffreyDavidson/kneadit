@@ -14,14 +14,19 @@ use UnitEnum;
 
 class FeatureUsage extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCursorArrowRays;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Insights';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $title = 'Feature Usage';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.feature-usage';
 
     public ?string $selectedFeature = null;

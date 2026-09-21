@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Analytics\StorefrontAnalytics;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -39,15 +40,15 @@ test('get conversion rate returns float', function () {
 });
 
 test('get page views chart returns collection', function () {
-    expect(test()->page->getPageViewsChart())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->getPageViewsChart())->toBeInstanceOf(Collection::class);
 });
 
 test('get daily trend returns collection', function () {
-    expect(test()->page->getDailyTrend())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->getDailyTrend())->toBeInstanceOf(Collection::class);
 });
 
 test('get top products returns collection', function () {
-    expect(test()->page->getTopProducts())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->getTopProducts())->toBeInstanceOf(Collection::class);
 });
 
 test('get conversion funnel returns array', function () {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Storefront;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CheckGiftCardBalanceRequest;
 use App\Http\Responses\ApiResponse;
+use App\Models\Financial\GiftCard;
 use App\Services\GiftCards\GiftCardService;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +15,7 @@ class CheckGiftCardBalanceController extends Controller
     {
         $card = $service->checkBalance($request->string('code')->toString());
 
-        if (! $card) {
+        if (! $card instanceof GiftCard) {
             return ApiResponse::error('Gift card not found.', 404);
         }
 

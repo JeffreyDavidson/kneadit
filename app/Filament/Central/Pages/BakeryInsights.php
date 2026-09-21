@@ -18,14 +18,19 @@ use UnitEnum;
 
 class BakeryInsights extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Insights';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected static ?string $title = 'Bakery Insights';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.bakery-insights';
 
     public string $activeTab = 'health';
@@ -79,7 +84,7 @@ class BakeryInsights extends Page
 
         Notification::make()
             ->title('Trial Extended')
-            ->body(($tenant->store_name ?? $tenant->name) . " trial extended to {$newEnd->format('M j, Y')}.")
+            ->body(($tenant->store_name ?? $tenant->name)." trial extended to {$newEnd->format('M j, Y')}.")
             ->success()
             ->send();
     }

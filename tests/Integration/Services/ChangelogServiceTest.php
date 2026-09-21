@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Platform\ChangelogService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -37,7 +38,7 @@ test('falls back to config when GitHub API fails', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect($entries)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect($entries)->toBeInstanceOf(Collection::class);
 });
 
 test('filters out draft releases', function () {

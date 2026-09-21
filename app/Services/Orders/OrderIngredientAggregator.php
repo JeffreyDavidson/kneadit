@@ -36,7 +36,7 @@ class OrderIngredientAggregator
     }
 
     /**
-     * @param Collection<int, OrderItem> $orderItems
+     * @param  Collection<int, OrderItem>  $orderItems
      * @return Collection<string, array{name: string, quantity: float, unit: string}>
      */
     private function aggregateIngredients(Collection $orderItems): Collection
@@ -85,7 +85,7 @@ class OrderIngredientAggregator
     }
 
     /**
-     * @param Collection<string, array{name: string, quantity: float, unit: string}> $aggregated
+     * @param  Collection<string, array{name: string, quantity: float, unit: string}>  $aggregated
      * @return Collection<string, array{name: string, quantity: float, unit: string, in_stock: float|null, stock_unit: string|null, needs_purchase: bool, deficit: float}>
      */
     private function crossReferenceInventory(Collection $aggregated): Collection
@@ -93,7 +93,7 @@ class OrderIngredientAggregator
         $inventoryIngredients = Ingredient::all()
             ->keyBy(fn (Ingredient $i) => Str::lower($i->name));
 
-        return $aggregated->map(function (array $item) use ($inventoryIngredients) {
+        return $aggregated->map(function (array $item) use ($inventoryIngredients): array {
             $tracked = $inventoryIngredients->get(Str::lower($item['name']));
             $currentStock = $tracked ? (float) $tracked->current_stock : null;
 

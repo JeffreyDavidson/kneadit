@@ -20,7 +20,7 @@ class ProductQueryBuilder extends Builder
 
     public function inSeason(): static
     {
-        return $this->where(function (Builder $query) {
+        return $this->where(function (Builder $query): void {
             $query->whereDoesntHave('seasonalItems')
                 ->orWhereHas('seasonalItems', fn (Builder $sq) => $sq
                     ->where('available_from', '<=', now())

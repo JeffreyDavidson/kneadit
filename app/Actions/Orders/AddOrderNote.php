@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Orders;
 
 use App\Models\Orders\Order;
@@ -12,7 +14,7 @@ class AddOrderNote
         $timestamp = now()->format('Y-m-d H:i:s');
         $newNote = "[{$timestamp}] {$note}";
 
-        $updatedNotes = $currentNotes ? $currentNotes . "\n\n" . $newNote : $newNote;
+        $updatedNotes = $currentNotes ? $currentNotes."\n\n".$newNote : $newNote;
 
         $order->update(['notes' => $updatedNotes]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\ScheduledNotificationRunFactory;
@@ -7,10 +9,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $notification_key
- * @property \Illuminate\Support\Carbon $claimed_at
+ * @property Carbon $claimed_at
  *
  * @mixin \Eloquent
  */
@@ -21,6 +24,7 @@ class ScheduledNotificationRun extends Model
     /** @use HasFactory<ScheduledNotificationRunFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

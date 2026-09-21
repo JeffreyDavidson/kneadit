@@ -224,7 +224,7 @@ test('auto-generates webhook secret when url is set without one', function () {
     resolve(SaveTenantSettings::class)($data);
 
     expect(settings('webhook_url'))->toBe('https://hooks.example.com/test')
-        ->and(strlen((string) settings('webhook_secret')))->toBe(40);
+        ->and((string) settings('webhook_secret'))->toHaveLength(40);
 });
 
 test('preserves an explicitly provided secret instead of generating one', function () {

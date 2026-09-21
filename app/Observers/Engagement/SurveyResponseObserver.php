@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Observers\Engagement;
 
 use App\Models\Engagement\SurveyResponse;
@@ -15,6 +17,6 @@ class SurveyResponseObserver
 {
     public function creating(SurveyResponse $response): void
     {
-        $response->created_at = $response->created_at ?? now();
+        $response->created_at ??= now();
     }
 }

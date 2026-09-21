@@ -13,8 +13,10 @@ class StatsOverview extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 1;
 
+    #[\Override]
     protected string $view = 'filament.widgets.stats-overview';
 
     /** @return array<int, array<string, mixed>> */
@@ -95,7 +97,7 @@ class StatsOverview extends Widget
     {
         $arrow = $delta >= 0 ? '↑' : '↓';
 
-        return "{$arrow} " . abs($delta) . "% {$suffix}";
+        return "{$arrow} ".abs($delta)."% {$suffix}";
     }
 
     private function trendTone(int $delta): string
@@ -113,7 +115,7 @@ class StatsOverview extends Widget
     }
 
     /**
-     * @param array<int, int> $values
+     * @param  array<int, int>  $values
      * @return array<int, int>
      */
     private function normaliseChart(array $values): array

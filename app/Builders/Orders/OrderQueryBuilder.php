@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Builders\Orders;
 
 use App\Enums\Orders\OrderStatus;
@@ -7,6 +9,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 /** @extends Builder<Order> */
 class OrderQueryBuilder extends Builder
@@ -130,7 +133,7 @@ class OrderQueryBuilder extends Builder
     /**
      * Filter orders for delivery on a specific date with active delivery statuses.
      */
-    public function forDeliveryOnDate(\Illuminate\Support\Carbon $date): static
+    public function forDeliveryOnDate(Carbon $date): static
     {
         $this->with(['customer', 'orderItems.product'])
             ->whereNotNull('delivery_address')

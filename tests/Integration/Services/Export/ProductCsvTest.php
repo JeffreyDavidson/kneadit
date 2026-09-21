@@ -25,7 +25,7 @@ function createCsvFile(string $content): UploadedFile
 test('export generates valid csv with headers', function () {
     $csv = test()->service->export();
     $lines = explode("\n", trim($csv));
-    $headers = str_getcsv($lines[0]);
+    $headers = str_getcsv($lines[0], escape: '\\');
 
     expect($headers)->toContain('name')->toContain('price')->toContain('category');
 });
@@ -75,7 +75,7 @@ test('import handles invalid prices', function () {
 
 test('template has correct headers', function () {
     $template = test()->service->getTemplateContent();
-    $headers = str_getcsv(trim($template));
+    $headers = str_getcsv(trim($template), escape: '\\');
 
     expect($headers)->toBe(['name', 'category', 'description', 'price', 'cost', 'is_active', 'is_featured']);
 });

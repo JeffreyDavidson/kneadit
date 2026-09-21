@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 
 use App\Filament\Central\Resources\SupportTicketResource;
@@ -11,8 +13,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListTickets extends ListRecords
 {
+    #[\Override]
     protected static string $resource = SupportTicketResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

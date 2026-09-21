@@ -11,8 +11,8 @@ final class TenantSettingsFormMapper
      * Convert persisted settings into the public property names used by the
      * Livewire form. Defaults are applied here so the page remains an adapter.
      *
-     * @param array<string, mixed> $values
-     * @param array<string, mixed> $defaults
+     * @param  array<string, mixed>  $values
+     * @param  array<string, mixed>  $defaults
      * @return array<string, mixed>
      */
     public function fromSettings(array $values, array $defaults): array
@@ -59,8 +59,8 @@ final class TenantSettingsFormMapper
     }
 
     /**
-     * @param list<string> $values
-     * @param list<string> $defaults
+     * @param  list<string>  $values
+     * @param  list<string>  $defaults
      * @return list<string>
      */
     private function withListFallback(array $values, array $defaults): array

@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Http;
 
 function paymentVerifierTokenManager(?string $accessToken): TokenManager
 {
-    return new class($accessToken) extends TokenManager {
-        public function __construct(private ?string $accessToken) {}
+    return new class($accessToken) extends TokenManager
+    {
+        public function __construct(private readonly ?string $accessToken) {}
 
         public function getAccessToken(): ?string
         {

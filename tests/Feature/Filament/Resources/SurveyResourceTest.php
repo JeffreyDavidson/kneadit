@@ -1,10 +1,14 @@
 <?php
 
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
+use App\Filament\Resources\Surveys\Pages\ViewSurvey;
+use App\Filament\Resources\Surveys\SurveyResource;
 use App\Models\Engagement\Survey;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -98,7 +102,7 @@ test('edit survey validates title is required', function () {
 test('can render the view survey page', function () {
     $survey = Survey::factory()->create();
 
-    livewire(App\Filament\Resources\Surveys\Pages\ViewSurvey::class, ['record' => $survey->getRouteKey()])
+    livewire(ViewSurvey::class, ['record' => $survey->getRouteKey()])
         ->assertOk();
 });
 
@@ -114,14 +118,14 @@ test('can sort surveys by title', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Surveys\SurveyResource::getGloballySearchableAttributes())
+    expect(SurveyResource::getGloballySearchableAttributes())
         ->toBe(['title']);
 });
 
 test('resource returns global search result title', function () {
     $survey = Survey::factory()->create(['title' => 'Customer Feedback']);
 
-    expect(App\Filament\Resources\Surveys\SurveyResource::getGlobalSearchResultTitle($survey))
+    expect(SurveyResource::getGlobalSearchResultTitle($survey))
         ->toBe('Customer Feedback');
 });
 
@@ -131,7 +135,7 @@ test('resource returns global search result details', function () {
         'responses_count' => 15,
     ]);
 
-    $details = App\Filament\Resources\Surveys\SurveyResource::getGlobalSearchResultDetails($survey);
+    $details = SurveyResource::getGlobalSearchResultDetails($survey);
 
     expect($details)
         ->toHaveKey('Status', 'Active')

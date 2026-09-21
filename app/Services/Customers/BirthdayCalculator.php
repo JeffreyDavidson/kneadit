@@ -8,7 +8,7 @@ class BirthdayCalculator
 {
     public function hasBirthday(?Carbon $birthday): bool
     {
-        return $birthday !== null;
+        return $birthday instanceof Carbon;
     }
 
     public function isThisMonth(?Carbon $birthday): bool
@@ -23,7 +23,7 @@ class BirthdayCalculator
 
     public function daysUntil(?Carbon $birthday): ?int
     {
-        if (! $birthday) {
+        if (! $birthday instanceof Carbon) {
             return null;
         }
 

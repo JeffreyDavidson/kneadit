@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Pages\Tools\QrCodeGenerator;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
@@ -8,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stancl\Tenancy\Database\Models\Domain;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,7 +21,7 @@ beforeEach(function () {
     $fakeTenant = new Tenant;
     $fakeTenant->forceFill([
         'id' => 'test-bakery',
-        'plan' => App\Enums\Platform\SubscriptionTier::Pro,
+        'plan' => SubscriptionTier::Pro,
     ]);
     $fakeTenant->setRelation('domains', new Collection([
         new Domain(['domain' => 'test-bakery.getkneadit.test']),

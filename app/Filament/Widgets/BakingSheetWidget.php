@@ -14,8 +14,10 @@ class BakingSheetWidget extends Widget
 {
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 3;
 
+    #[\Override]
     protected string $view = 'filament.widgets.baking-sheet';
 
     /**
@@ -24,6 +26,7 @@ class BakingSheetWidget extends Widget
      * the moment any pending/confirmed/baking order item exists for
      * today (or a confirmed order item ahead of today).
      */
+    #[\Override]
     public static function canView(): bool
     {
         return OrderItem::query()

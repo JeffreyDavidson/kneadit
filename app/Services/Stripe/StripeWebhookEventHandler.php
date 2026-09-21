@@ -7,12 +7,12 @@ use App\Events\Platform\PaymentFailed;
 use App\Queries\Platform\StripeCustomerLookupQuery;
 use Illuminate\Support\Facades\Log;
 
-final class StripeWebhookEventHandler
+final readonly class StripeWebhookEventHandler
 {
     public function __construct(
-        private readonly StripeWebhookPayloadParser $payloadParser,
-        private readonly SyncSubscriptionPlan $syncSubscriptionPlan,
-        private readonly StripeCustomerLookupQuery $customerLookup,
+        private StripeWebhookPayloadParser $payloadParser,
+        private SyncSubscriptionPlan $syncSubscriptionPlan,
+        private StripeCustomerLookupQuery $customerLookup,
     ) {}
 
     /** @param array<string, mixed> $subscription */

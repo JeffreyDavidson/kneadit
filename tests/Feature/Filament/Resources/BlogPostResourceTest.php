@@ -7,6 +7,8 @@ use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Models\Content\TenantBlogPost;
 use App\Models\Staff\User;
 
+use function Pest\Livewire\livewire;
+
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());

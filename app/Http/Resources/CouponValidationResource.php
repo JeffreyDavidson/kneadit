@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 class CouponValidationResource extends JsonApiResource
 {
     /**
-     * @param array{code: string, valid: bool, discount_amount: float, type: ?string, value: ?float} $resource
+     * @param  array{code: string, valid: bool, discount_amount: float, type: ?string, value: ?float}  $resource
      */
     public function __construct(array $resource)
     {
@@ -27,6 +27,7 @@ class CouponValidationResource extends JsonApiResource
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function toAttributes(Request $request): array
     {
         return [

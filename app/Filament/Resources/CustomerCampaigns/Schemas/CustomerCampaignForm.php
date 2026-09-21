@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\CustomerCampaigns\Schemas;
 
 use App\Enums\Customers\RfmSegment;
@@ -59,7 +61,7 @@ class CustomerCampaignForm
         $options = ['all' => 'All paid customers'];
 
         foreach (RfmSegment::cases() as $segment) {
-            $options[$segment->value] = $segment->getLabel() . ' — ' . $segment->description();
+            $options[$segment->value] = $segment->getLabel().' — '.$segment->description();
         }
 
         return $options;

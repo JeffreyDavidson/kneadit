@@ -46,9 +46,14 @@ final class TenantUrlGenerator
             throw new \UnexpectedValueException('The application URL must contain a host.');
         }
 
+        $configuredTenantDomain = Config::get('tenancy.tenant_domain');
+        $tenantDomain = is_string($configuredTenantDomain) && $configuredTenantDomain !== ''
+            ? $configuredTenantDomain
+            : $host;
+
         return $uri
             ->withScheme($uri->scheme() ?: 'https')
-            ->withHost("{$tenant->id}.{$host}")
+            ->withHost("{$tenant->id}.{$tenantDomain}")
             ->withPath('/')
             ->replaceQuery([])
             ->withoutFragment();

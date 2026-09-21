@@ -20,6 +20,7 @@ use App\Models\Financial\GiftCardTransaction;
 use App\Models\Staff\User;
 use App\Observers\LogsActivityObserver;
 use App\Observers\Orders\OrderObserver;
+use App\ValueObjects\Money;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -65,12 +66,12 @@ use Illuminate\Support\Carbon;
  * @property-read string|null $date
  * @property Carbon|null $delivery_date
  * @property Carbon|null $delivery_time
- * @property \App\ValueObjects\Money $subtotal
- * @property \App\ValueObjects\Money $delivery_fee
- * @property \App\ValueObjects\Money $discount_amount
- * @property \App\ValueObjects\Money $gift_card_amount
- * @property \App\ValueObjects\Money $tip_amount
- * @property \App\ValueObjects\Money $total
+ * @property Money $subtotal
+ * @property Money $delivery_fee
+ * @property Money $discount_amount
+ * @property Money $gift_card_amount
+ * @property Money $tip_amount
+ * @property Money $total
  * @property string|null $pickup_contact_name
  * @property string|null $pickup_contact_phone
  * @property string|null $pickup_contact_email
@@ -86,6 +87,7 @@ class Order extends Model
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
+    #[\Override]
     protected $attributes = [
         'status' => OrderStatus::Pending,
         'payment_status' => PaymentStatus::Unpaid,
@@ -97,6 +99,7 @@ class Order extends Model
         'tip_amount' => 0,
     ];
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Engagement\RewardType;
+use App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Models\Engagement\LoyaltyReward;
 use App\Models\Staff\User;
@@ -8,6 +9,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -127,14 +130,14 @@ test('can sort loyalty rewards by points required', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGloballySearchableAttributes())
+    expect(LoyaltyRewardResource::getGloballySearchableAttributes())
         ->toBe(['name']);
 });
 
 test('resource returns global search result title', function () {
     $reward = LoyaltyReward::factory()->create(['name' => 'Free Cookie']);
 
-    expect(App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGlobalSearchResultTitle($reward))
+    expect(LoyaltyRewardResource::getGlobalSearchResultTitle($reward))
         ->toBe('Free Cookie');
 });
 
@@ -143,7 +146,7 @@ test('resource returns global search result details', function () {
         'points_required' => 200,
     ]);
 
-    $details = App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGlobalSearchResultDetails($reward);
+    $details = LoyaltyRewardResource::getGlobalSearchResultDetails($reward);
 
     expect($details)
         ->toHaveKey('Points', '200')

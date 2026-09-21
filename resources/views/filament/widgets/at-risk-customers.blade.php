@@ -13,7 +13,7 @@
     </div>
 
     @forelse ($rows as $row)
-        <x-tenant-admin.dashboard.list-row :value="$row['days_inactive'] . 'd inactive'">
+        <x-tenant-admin.dashboard.list-row :value="$row['days_inactive'].'d inactive'">
             <a
                 href="{{ $this->getCustomerViewUrl($row['id']) }}"
                 style="color: var(--pw-card-accent); text-decoration: none"

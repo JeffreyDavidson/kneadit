@@ -69,7 +69,7 @@ test('register request rejects falsy terms', function () {
 test('register request rejects values longer than 255 characters', function () {
     foreach ([
         'name' => str_repeat('a', 256),
-        'email' => str_repeat('a', 250) . '@x.com',
+        'email' => str_repeat('a', 250).'@x.com',
         'bakery_name' => str_repeat('a', 256),
     ] as $field => $value) {
         $validator = validator(

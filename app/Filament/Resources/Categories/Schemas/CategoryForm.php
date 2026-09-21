@@ -23,7 +23,7 @@ class CategoryForm
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (?string $state, Set $set) {
+                            ->afterStateUpdated(function (?string $state, Set $set): void {
                                 $set('slug', Str::slug($state ?? ''));
                             }),
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\Csp;
 
 /**
@@ -9,7 +11,7 @@ namespace App\Support\Csp;
  * every Blade @cspnonce directive call (which writes it into <script>/<style>
  * tags).
  */
-final class CspNonce
+final readonly class CspNonce
 {
     private string $value;
 

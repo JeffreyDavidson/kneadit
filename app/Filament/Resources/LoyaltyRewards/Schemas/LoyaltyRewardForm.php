@@ -34,18 +34,18 @@ class LoyaltyRewardForm
             PercentageInput::make('discount_percentage')
                 ->label('Discount Percentage')
                 ->helperText('Use for percentage discounts')
-                ->required(fn (Get $get) => $get('reward_type') === RewardType::PercentageDiscount->value),
+                ->required(fn (Get $get): bool => $get('reward_type') === RewardType::PercentageDiscount->value),
 
             MoneyInput::make('discount_amount')
                 ->label('Discount Amount')
                 ->helperText('Use for fixed-amount discounts')
-                ->required(fn (Get $get) => $get('reward_type') === RewardType::FixedDiscount->value),
+                ->required(fn (Get $get): bool => $get('reward_type') === RewardType::FixedDiscount->value),
 
             Select::make('product_id')
                 ->label('Product')
                 ->relationship('product', 'name')
                 ->searchable()
-                ->visible(fn (Get $get) => $get('reward_type') === RewardType::FreeProduct->value),
+                ->visible(fn (Get $get): bool => $get('reward_type') === RewardType::FreeProduct->value),
             Toggle::make('is_active')
                 ->label('Active')
                 ->default(true),

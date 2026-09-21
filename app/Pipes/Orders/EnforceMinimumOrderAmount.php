@@ -5,12 +5,13 @@ namespace App\Pipes\Orders;
 use App\Enums\Orders\DeliveryType;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 use Closure;
 
 class EnforceMinimumOrderAmount
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
@@ -21,7 +22,7 @@ class EnforceMinimumOrderAmount
         $minimum = (float) ($isDelivery
             ? $orders->minimumDeliveryOrderAmount
             : $orders->minimumPickupOrderAmount);
-        $minimumMoney = \App\ValueObjects\Money::fromDollars($minimum);
+        $minimumMoney = Money::fromDollars($minimum);
 
         if ($minimumMoney->isPositive() && $minimumMoney->greaterThan($payload->subtotal)) {
             throw new MinimumOrderAmountNotMetException(

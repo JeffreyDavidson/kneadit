@@ -18,34 +18,43 @@ class HolidayResource extends Resource
 {
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected static ?string $model = Holiday::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Holidays';
 
+    #[\Override]
     protected static ?int $navigationSort = 9;
 
+    #[\Override]
     public static function getNavigationIcon(): string|BackedEnum|null
     {
         return Heroicon::OutlinedSun;
     }
 
+    #[\Override]
     public static function getNavigationGroup(): ?string
     {
         return 'Tools';
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return HolidayForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return HolidaysTable::configure($table);
     }
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return Feature::active('pro-features');
@@ -56,6 +65,7 @@ class HolidayResource extends Resource
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

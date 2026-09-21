@@ -1,10 +1,14 @@
 <?php
 
+use App\Enums\Customers\WaitlistStatus;
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
+use App\Filament\Resources\WaitlistEntries\WaitlistEntryResource;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -45,7 +49,7 @@ test('can filter waitlist entries by status', function () {
     $notified = WaitlistEntry::factory()->notified()->create();
 
     livewire(ListWaitlistEntries::class)
-        ->filterTable('status', App\Enums\Customers\WaitlistStatus::Waiting->value)
+        ->filterTable('status', WaitlistStatus::Waiting->value)
         ->assertCanSeeTableRecords(collect([$waiting]))
         ->assertCanNotSeeTableRecords(collect([$notified]));
 });
@@ -67,7 +71,7 @@ test('can create a waitlist entry via slide-over', function () {
             'customer_email' => 'jane@example.com',
             'customer_phone' => '555-0100',
             'requested_date' => now()->addDays(5)->format('Y-m-d'),
-            'status' => App\Enums\Customers\WaitlistStatus::Waiting->value,
+            'status' => WaitlistStatus::Waiting->value,
         ])
         ->assertHasNoFormErrors();
 
@@ -90,7 +94,7 @@ test('create waitlist entry validates required fields', function () {
                 'customer_name' => 'Test',
                 'customer_email' => 'test@example.com',
                 'requested_date' => now()->addDay()->format('Y-m-d'),
-                'status' => App\Enums\Customers\WaitlistStatus::Waiting->value,
+                'status' => WaitlistStatus::Waiting->value,
                 ...$data,
             ])
             ->assertHasFormErrors($errors);
@@ -112,33 +116,33 @@ test('navigation badge shows waiting entry count', function () {
     WaitlistEntry::factory()->waiting()->count(2)->create();
     WaitlistEntry::factory()->notified()->create();
 
-    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
+    expect(WaitlistEntryResource::getNavigationBadge())
         ->toBe('2');
 });
 
 test('navigation badge returns null when no waiting entries', function () {
     WaitlistEntry::factory()->notified()->create();
 
-    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
+    expect(WaitlistEntryResource::getNavigationBadge())
         ->toBeNull();
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGloballySearchableAttributes())
+    expect(WaitlistEntryResource::getGloballySearchableAttributes())
         ->toBe(['customer_email', 'customer_name']);
 });
 
 test('resource returns global search result title', function () {
     $entry = WaitlistEntry::factory()->create(['customer_name' => 'Alice Baker']);
 
-    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGlobalSearchResultTitle($entry))
+    expect(WaitlistEntryResource::getGlobalSearchResultTitle($entry))
         ->toBe('Alice Baker');
 });
 
 test('resource returns global search result details', function () {
     $entry = WaitlistEntry::factory()->create(['customer_email' => 'alice@example.com']);
 
-    $details = App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGlobalSearchResultDetails($entry);
+    $details = WaitlistEntryResource::getGlobalSearchResultDetails($entry);
 
     expect($details)
         ->toHaveKey('Email', 'alice@example.com')

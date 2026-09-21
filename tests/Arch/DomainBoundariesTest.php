@@ -6,7 +6,7 @@ test('central delivery and read layers do not open tenant context directly', fun
     $violations = [];
     foreach (['app/Http/Controllers', 'app/Queries', 'app/Reports'] as $directory) {
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/' . $directory, FilesystemIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/'.$directory, FilesystemIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {

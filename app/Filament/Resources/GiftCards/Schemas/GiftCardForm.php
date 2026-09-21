@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\GiftCards\Schemas;
 
 use App\Filament\Forms\Components\MoneyInput;

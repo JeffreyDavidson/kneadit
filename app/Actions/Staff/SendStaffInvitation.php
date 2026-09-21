@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class SendStaffInvitation
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     /**

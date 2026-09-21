@@ -39,7 +39,7 @@ class CartManager
     public function currentOrCreate(): Cart
     {
         $cart = $this->current();
-        if ($cart !== null) {
+        if ($cart instanceof Cart) {
             return $cart;
         }
 
@@ -60,7 +60,7 @@ class CartManager
      * Replace the cart's items wholesale. The Alpine cart is the source
      * of truth on the client; we mirror it on the server.
      *
-     * @param array<int, array{product_id: int, quantity: int}> $items
+     * @param  array<int, array{product_id: int, quantity: int}>  $items
      */
     public function replaceItems(Cart $cart, array $items): void
     {

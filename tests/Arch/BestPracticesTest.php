@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+use App\Listeners\Platform\RecordScheduledTaskStatusListener;
+use App\Listeners\QueuedListener;
+use App\Mail\BaseMailable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 arch('actions should be invokable')
     ->expect('App\Actions')
@@ -8,7 +14,7 @@ arch('actions should be invokable')
 
 arch('form requests should extend FormRequest')
     ->expect('App\Http\Requests')
-    ->toExtend('Illuminate\Foundation\Http\FormRequest');
+    ->toExtend(FormRequest::class);
 
 arch('services should be classes')
     ->expect('App\Services')
@@ -34,7 +40,7 @@ arch('controllers should not use env() directly')
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('models should not use DB facade')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(DB::class)
     ->not->toBeUsedIn('App\Models');
 
 arch('exceptions should be classes')
@@ -43,8 +49,8 @@ arch('exceptions should be classes')
 
 arch('mailables should extend BaseMailable')
     ->expect('App\Mail')
-    ->toExtend(App\Mail\BaseMailable::class)
-    ->ignoring([App\Mail\BaseMailable::class, 'App\Mail\Concerns']);
+    ->toExtend(BaseMailable::class)
+    ->ignoring([BaseMailable::class, 'App\Mail\Concerns']);
 
 arch('controllers should not use compact() for view data')
     ->expect('compact')
@@ -52,7 +58,7 @@ arch('controllers should not use compact() for view data')
 
 test('associative arrays in controllers should be multiline', function () {
     $violations = [];
-    $controllersDir = dirname(__DIR__, 2) . '/app/Http/Controllers';
+    $controllersDir = dirname(__DIR__, 2).'/app/Http/Controllers';
 
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($controllersDir, FilesystemIterator::SKIP_DOTS),
@@ -74,7 +80,7 @@ test('associative arrays in controllers should be multiline', function () {
         }
 
         $lines = explode("\n", $content);
-        $relative = str_replace(dirname(__DIR__, 2) . '/app' . DIRECTORY_SEPARATOR, '', $file->getPathname());
+        $relative = str_replace(dirname(__DIR__, 2).'/app'.DIRECTORY_SEPARATOR, '', $file->getPathname());
 
         foreach ($lines as $lineNum => $sourceLine) {
             // Skip lines without single-line associative arrays
@@ -105,18 +111,18 @@ test('associative arrays in controllers should be multiline', function () {
                 }
             }
 
-            $violations[] = $relative . ':' . ($lineNum + 1) . ' — single-line associative array';
+            $violations[] = $relative.':'.($lineNum + 1).' — single-line associative array';
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Associative arrays should be multiline:\n" . implode("\n", array_slice($violations, 0, 30)),
+        "Associative arrays should be multiline:\n".implode("\n", array_slice($violations, 0, 30)),
     );
 });
 
 test('model static calls in controllers must use explicit query()', function () {
     $controllerFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Http/Controllers', FilesystemIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator(__DIR__.'/../../app/Http/Controllers', FilesystemIterator::SKIP_DOTS),
     )))
         ->filter(fn (SplFileInfo $file): bool => $file->getExtension() === 'php')
         ->map(fn (SplFileInfo $file): string => $file->getPathname())
@@ -124,7 +130,7 @@ test('model static calls in controllers must use explicit query()', function () 
 
     $modelClasses = [];
     $modelIterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator(__DIR__.'/../../app/Models', FilesystemIterator::SKIP_DOTS),
     );
 
     foreach ($modelIterator as $file) {
@@ -132,7 +138,7 @@ test('model static calls in controllers must use explicit query()', function () 
             continue;
         }
 
-        if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR)) {
+        if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR.'Concerns'.DIRECTORY_SEPARATOR)) {
             continue;
         }
 
@@ -161,12 +167,12 @@ test('model static calls in controllers must use explicit query()', function () 
     }
 
     expect($violations)->toBeEmpty(
-        "Controllers must use Model::query()->method() instead of Model::method():\n" . implode("\n", $violations),
+        "Controllers must use Model::query()->method() instead of Model::method():\n".implode("\n", $violations),
     );
 });
 
 arch('controllers should not use Mail facade directly')
-    ->expect('Illuminate\Support\Facades\Mail')
+    ->expect(Mail::class)
     ->not->toBeUsedIn('App\Http\Controllers');
 
 arch('mail classes should not call settings() directly')
@@ -176,16 +182,16 @@ arch('mail classes should not call settings() directly')
 
 arch('all listeners should extend QueuedListener')
     ->expect('App\Listeners')
-    ->toExtend(App\Listeners\QueuedListener::class)
+    ->toExtend(QueuedListener::class)
     ->ignoring([
-        App\Listeners\QueuedListener::class,
+        QueuedListener::class,
         // Scheduler lifecycle events contain process-local task objects and
         // must be recorded synchronously rather than serialized to a queue.
-        App\Listeners\Platform\RecordScheduledTaskStatusListener::class,
+        RecordScheduledTaskStatusListener::class,
     ]);
 
 test('all listeners have retry configuration', function () {
-    $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php') ?: [];
+    $listenerFiles = glob(__DIR__.'/../../app/Listeners/*.php') ?: [];
     $violations = [];
 
     foreach ($listenerFiles as $file) {
@@ -212,22 +218,22 @@ test('all listeners have retry configuration', function () {
     }
 
     expect($violations)->toBeEmpty(
-        "Listeners must have retry configuration:\n" . implode("\n", $violations),
+        "Listeners must have retry configuration:\n".implode("\n", $violations),
     );
 });
 
 test('all models have factories', function () {
     $modelFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator(__DIR__.'/../../app/Models', FilesystemIterator::SKIP_DOTS),
     )))
         ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
-        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR.'Concerns'.DIRECTORY_SEPARATOR))
         ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))
         ->reject(fn ($name) => in_array($name, ['ImpersonationToken', 'Tenant']))
         ->values();
 
     $factoryFiles = collect(iterator_to_array(new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(__DIR__ . '/../../database/factories', FilesystemIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator(__DIR__.'/../../database/factories', FilesystemIterator::SKIP_DOTS),
     )))
         ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
         ->map(fn (SplFileInfo $file): string => str_replace('Factory', '', $file->getBasename('.php')))
@@ -237,6 +243,6 @@ test('all models have factories', function () {
     $missing = $modelFiles->reject(fn ($model) => in_array($model, $factoryFiles))->all();
 
     expect($missing)->toBeEmpty(
-        'Models missing factories: ' . implode(', ', $missing),
+        'Models missing factories: '.implode(', ', $missing),
     );
 });

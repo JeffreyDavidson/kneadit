@@ -2,7 +2,7 @@
     $initials = function (string $name): string {
         $parts = preg_split('/\s+/', trim($name)) ?: [];
 
-        return strtoupper(substr($parts[0] ?? '?', 0, 1) . substr($parts[1] ?? '', 0, 1));
+        return strtoupper(substr($parts[0] ?? '?', 0, 1).substr($parts[1] ?? '', 0, 1));
     };
 
     $thread = $this->getThread();

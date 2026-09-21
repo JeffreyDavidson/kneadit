@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Builders\Financial;
 
 use App\Models\Financial\Coupon;
@@ -22,13 +24,13 @@ class CouponQueryBuilder extends Builder
     public function valid(): static
     {
         $this->active()
-            ->where(function (Builder $q) {
+            ->where(function (Builder $q): void {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
-            ->where(function (Builder $q) {
+            ->where(function (Builder $q): void {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
             })
-            ->where(function (Builder $q) {
+            ->where(function (Builder $q): void {
                 $q->whereNull('max_uses')->orWhereColumn('used_count', '<', 'max_uses');
             });
 

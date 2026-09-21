@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Customers\CateringEventType;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -10,7 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 test('cateringEventTypes falls back to enum default labels when not configured', function () {
     $settings = TenantSettings::resolve();
 
-    expect($settings->catering->eventTypes)->toBe(App\Enums\Customers\CateringEventType::defaultLabels());
+    expect($settings->catering->eventTypes)->toBe(CateringEventType::defaultLabels());
 });
 
 test('cateringEventTypes resolves from a stored json array', function () {
@@ -26,7 +27,7 @@ test('cateringEventTypes falls back to defaults when the stored json is empty', 
 
     $settings = TenantSettings::resolve();
 
-    expect($settings->catering->eventTypes)->toBe(App\Enums\Customers\CateringEventType::defaultLabels());
+    expect($settings->catering->eventTypes)->toBe(CateringEventType::defaultLabels());
 });
 
 test('hero CTA properties fall back to defaults when unset in settings', function () {

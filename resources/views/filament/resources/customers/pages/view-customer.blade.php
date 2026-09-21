@@ -13,7 +13,7 @@
     $initials = function (string $name): string {
         $parts = preg_split('/\s+/', trim($name)) ?: [];
 
-        return strtoupper(substr($parts[0] ?? '?', 0, 1) . substr($parts[1] ?? '', 0, 1));
+        return strtoupper(substr($parts[0] ?? '?', 0, 1).substr($parts[1] ?? '', 0, 1));
     };
 
     $row = function (string $label, ?string $value, bool $mono = false) {
@@ -29,7 +29,7 @@
     $accountRows = [
         $row('Customer Since', $createdAt?->format('M j, Y') ?? '—'),
         $row('Last Order', $stats['last_order'] ?? 'Never'),
-        $row('Days Since Last Order', $stats['days_since_last_order'] !== null ? $stats['days_since_last_order'] . ' days' : '—'),
+        $row('Days Since Last Order', $stats['days_since_last_order'] !== null ? $stats['days_since_last_order'].' days' : '—'),
     ];
 @endphp
 

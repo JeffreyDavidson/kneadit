@@ -28,7 +28,7 @@ use Stripe\StripeClient;
 class CreateStripePromotionCode
 {
     public function __construct(
-        private StripeClient $stripe,
+        private readonly StripeClient $stripe,
     ) {}
 
     public function __invoke(

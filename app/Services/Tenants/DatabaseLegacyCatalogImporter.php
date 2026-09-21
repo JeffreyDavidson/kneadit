@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tenants;
 
 use App\Services\Tenants\Contracts\LegacyCatalogImporter;
@@ -10,8 +12,8 @@ use UnexpectedValueException;
 final class DatabaseLegacyCatalogImporter implements LegacyCatalogImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $categories
-     * @param array<int, array<string, mixed>> $products
+     * @param  array<int, array<string, mixed>>  $categories
+     * @param  array<int, array<string, mixed>>  $products
      * @return array{category_ids: array<int, int>, product_ids: array<int, int>}
      */
     public function import(array $categories, array $products): array
@@ -25,7 +27,7 @@ final class DatabaseLegacyCatalogImporter implements LegacyCatalogImporter
     }
 
     /**
-     * @param array<int, array<string, mixed>> $categories
+     * @param  array<int, array<string, mixed>>  $categories
      * @return array<int, int>
      */
     private function importCategories(array $categories): array
@@ -52,8 +54,8 @@ final class DatabaseLegacyCatalogImporter implements LegacyCatalogImporter
     }
 
     /**
-     * @param array<int, array<string, mixed>> $products
-     * @param array<int, int> $categoryIds
+     * @param  array<int, array<string, mixed>>  $products
+     * @param  array<int, int>  $categoryIds
      * @return array<int, int>
      */
     private function importProducts(array $products, array $categoryIds): array

@@ -9,6 +9,7 @@ use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,7 @@ class ReverseOrderDiscounts
 {
     public function __invoke(Order $order, string $reason): void
     {
-        DB::transaction(function () use ($order, $reason) {
+        DB::transaction(function () use ($order, $reason): void {
             $this->reverseCoupon($order, $reason);
             $this->reverseGiftCard($order, $reason);
         });
@@ -34,7 +35,7 @@ class ReverseOrderDiscounts
             ->where('type', CouponTransactionType::Usage)
             ->first()?->amount;
 
-        $couponDiscount = $couponUsageAmount instanceof \App\ValueObjects\Money
+        $couponDiscount = $couponUsageAmount instanceof Money
             ? $couponUsageAmount->dollars()
             : $order->discount_amount->dollars();
 

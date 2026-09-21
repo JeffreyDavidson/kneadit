@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Mail\Concerns\BakerBranded;
 use App\Mail\Customers\HappyBirthdayMail;
@@ -70,7 +71,7 @@ test('from name defaults when no store name', function () {
 test('order confirmed uses baker branded from', function () {
     settings(['store_name' => 'Flour Power']);
 
-    $mail = new OrderStatusMail(test()->order, App\Enums\Orders\OrderStatus::Confirmed);
+    $mail = new OrderStatusMail(test()->order, OrderStatus::Confirmed);
     $envelope = $mail->envelope();
 
     expect($envelope->from->name)->toContain('Flour Power via KneadIt');

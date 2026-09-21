@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Recipes\Tables;
 
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
@@ -30,7 +32,7 @@ class RecipesTable
 
                 TextColumn::make('prep_time_minutes')
                     ->label('Prep Time')
-                    ->formatStateUsing(fn (?int $state) => $state ? $state . ' min' : '-')
+                    ->formatStateUsing(fn (?int $state): string => $state ? $state.' min' : '-')
                     ->sortable(),
 
                 MoneyColumn::make('cost')
@@ -50,7 +52,7 @@ class RecipesTable
                             }
                         }
 
-                        return implode(', ', $names) . (count($state) > 3 ? '...' : '');
+                        return implode(', ', $names).(count($state) > 3 ? '...' : '');
                     })
                     ->limit(50),
 

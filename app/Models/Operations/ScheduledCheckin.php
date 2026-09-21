@@ -38,6 +38,7 @@ class ScheduledCheckin extends Model
     /** @use HasFactory<ScheduledCheckinFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

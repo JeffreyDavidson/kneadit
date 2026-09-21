@@ -15,10 +15,13 @@ class MarginAlertWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected string $view = 'filament.widgets.margin-alert';
 
+    #[\Override]
     public static function canView(): bool
     {
         return Product::query()->whereHas('recipe')->exists();
@@ -51,7 +54,7 @@ class MarginAlertWidget extends Widget
                     'price' => $product->price?->formatted() ?? '—',
                     'cost' => $product->cost?->formatted() ?? '—',
                     'margin' => $margin,
-                    'margin_formatted' => Number::format($margin, 1) . '%',
+                    'margin_formatted' => Number::format($margin, 1).'%',
                 ];
             })
             ->filter()

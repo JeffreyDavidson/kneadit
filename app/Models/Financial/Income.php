@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Financial;
 
 use App\Builders\Financial\IncomeQueryBuilder;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Financial\IncomeSource;
+use App\ValueObjects\Money;
 use Database\Factories\Financial\IncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -20,7 +23,7 @@ use Illuminate\Support\Carbon;
  *
  * @property Carbon|null $date
  * @property IncomeSource $source
- * @property \App\ValueObjects\Money $amount
+ * @property Money $amount
  *
  * @mixin \Eloquent
  */
@@ -32,6 +35,7 @@ class Income extends Model
     /** @use HasFactory<IncomeFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

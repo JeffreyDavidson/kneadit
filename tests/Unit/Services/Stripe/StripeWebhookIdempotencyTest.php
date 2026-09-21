@@ -31,9 +31,8 @@ test('completes claimed events and rejects duplicate claims', function () {
 test('events without identifiers do not block processing', function () {
     $idempotency = resolve(StripeWebhookIdempotency::class);
 
-    expect($idempotency->claim(null))->toBeTrue();
-
-    expect($idempotency->process(null, fn () => 'first'))->toBe('first')
+    expect($idempotency->claim(null))->toBeTrue()
+        ->and($idempotency->process(null, fn () => 'first'))->toBe('first')
         ->and($idempotency->process(null, fn () => 'second'))->toBe('second');
 
     $idempotency->complete(null);
@@ -56,10 +55,7 @@ test('releases a failed event claim so the event can be retried', function () {
 
     expect(fn () => $idempotency->process('evt_retry_after_failure', function () {
         throw new RuntimeException('temporary processing failure');
-    }))->toThrow(RuntimeException::class, 'temporary processing failure');
-
-    expect($idempotency->process('evt_retry_after_failure', fn () => 'retried'))
-        ->toBe('retried')
-        ->and($idempotency->process('evt_retry_after_failure', fn () => 'duplicate'))
-        ->toBeNull();
+    }))->toThrow(RuntimeException::class, 'temporary processing failure')
+        ->and($idempotency->process('evt_retry_after_failure', fn () => 'retried'))->toBe('retried')
+        ->and($idempotency->process('evt_retry_after_failure', fn () => 'duplicate'))->toBeNull();
 });

@@ -4,6 +4,7 @@ use App\Actions\Platform\ConsumeImpersonationToken;
 use App\Enums\Staff\UserRole;
 use App\Models\Platform\ImpersonationToken;
 use App\Models\Staff\User;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -40,7 +41,7 @@ test('aborts when token already consumed', function () {
     ]);
 
     resolve(ConsumeImpersonationToken::class)($rawToken);
-})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
+})->throws(HttpException::class);
 
 test('aborts on expired token', function () {
     ImpersonationToken::factory()->create([
@@ -50,4 +51,4 @@ test('aborts on expired token', function () {
     ]);
 
     resolve(ConsumeImpersonationToken::class)('expired-token');
-})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
+})->throws(HttpException::class);

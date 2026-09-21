@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\CateringInquiries\Pages;
 
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListCateringInquiries extends ListRecords
 {
+    #[\Override]
     protected static string $resource = CateringInquiryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -125,14 +125,14 @@ class SeedDemoCommand extends Command
             ));
 
             if (! $result->successful()) {
-                $this->error('  ❌ Failed: ' . trim($result->errorOutput() ?: $result->output()));
+                $this->error('  ❌ Failed: '.trim($result->errorOutput() ?: $result->output()));
 
                 continue;
             }
 
             Tenant::query()->whereKey($bakery['id'])->update(['is_demo' => true]);
 
-            $domain = $bakery['id'] . '.kneadit.test';
+            $domain = $bakery['id'].'.kneadit.test';
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
             $created[] = $bakery['id'];
         }
@@ -153,7 +153,7 @@ class SeedDemoCommand extends Command
     }
 
     /**
-     * @param array<int, string> $createdIds
+     * @param  array<int, string>  $createdIds
      */
     private function seedCentralActivity(array $createdIds): void
     {
@@ -224,7 +224,7 @@ class SeedDemoCommand extends Command
         AdminAuditLog::query()->create([
             'admin_id' => $admin?->id,
             'action' => 'extended_trial',
-            'description' => 'Extended trial by 30 days for ' . ($createdIds[1] ?? 'tenant'),
+            'description' => 'Extended trial by 30 days for '.($createdIds[1] ?? 'tenant'),
             'target_type' => 'tenant',
             'target_id' => $createdIds[1] ?? null,
             'user_name' => $adminName,

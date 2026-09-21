@@ -46,6 +46,7 @@ class EmailCampaign extends Model
     /** @use HasFactory<EmailCampaignFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

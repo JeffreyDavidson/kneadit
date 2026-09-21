@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects;
 
-final readonly class Address
+final readonly class Address implements \Stringable
 {
     public function __construct(
         public ?string $street = null,
@@ -38,7 +38,7 @@ final readonly class Address
     /**
      * Create from an array of address components.
      *
-     * @param array<string, string|null> $data
+     * @param  array<string, string|null>  $data
      */
     public static function fromArray(array $data): self
     {

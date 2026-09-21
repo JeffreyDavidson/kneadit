@@ -13,12 +13,14 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class DescriptionGenerator extends Page
 {
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -29,14 +31,19 @@ class DescriptionGenerator extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Descriptions';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 12;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.description-generator';
 
     public ?string $selectedProductId = null;
@@ -51,7 +58,8 @@ class DescriptionGenerator extends Page
     public array $descriptions = [];
 
     /** @return Collection<int, Product> */
-    public function getProductsProperty(): Collection
+    #[Computed]
+    public function products(): Collection
     {
         return Product::query()
             ->with('category')

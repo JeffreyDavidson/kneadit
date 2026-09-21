@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Content;
 
 use App\Builders\Content\BlogPostQueryBuilder;
@@ -45,6 +47,7 @@ class BlogPost extends Model
     /** @use HasFactory<BlogPostFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

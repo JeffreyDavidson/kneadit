@@ -32,7 +32,7 @@ test('descriptions defaults to empty array', function () {
 test('get products property returns collection', function () {
     Product::factory()->count(2)->create();
 
-    expect(test()->page->getProductsProperty())->toHaveCount(2);
+    expect(test()->page->products)->toHaveCount(2);
 });
 
 test('generate with no product name produces empty descriptions', function () {

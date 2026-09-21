@@ -9,6 +9,8 @@ use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
 use App\Policies\Engagement\CouponPolicy;
+use App\ValueObjects\Money;
+use App\ValueObjects\Percentage;
 use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -36,9 +38,9 @@ use Illuminate\Support\Str;
  *
  * @property Carbon|null $starts_at
  * @property Carbon|null $expires_at
- * @property \App\ValueObjects\Money|null $fixed_amount
- * @property \App\ValueObjects\Percentage|null $percentage
- * @property \App\ValueObjects\Money|null $min_order_amount
+ * @property Money|null $fixed_amount
+ * @property Percentage|null $percentage
+ * @property Money|null $min_order_amount
  *
  * @mixin \Eloquent
  */
@@ -52,6 +54,7 @@ class Coupon extends Model
     /** @use HasFactory<CouponFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

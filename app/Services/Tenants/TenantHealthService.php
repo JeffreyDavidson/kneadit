@@ -72,7 +72,7 @@ class TenantHealthService
      */
     protected function getTenantMetrics(Tenant $tenant): array
     {
-        return $this->tenancyManager->withinTenant($tenant, function () {
+        return $this->tenancyManager->withinTenant($tenant, function (): array {
             $lastLogin = User::query()->max('updated_at');
             $orderCount = Order::query()->count();
             $productCount = Product::query()->count();
@@ -96,15 +96,15 @@ class TenantHealthService
 
         return [
             'average' => $data->count() > 0 ? round($data->avg('health_score') ?? 0) : 0,
-            'healthy' => $data->filter(fn (array $t) => $t['health_score'] > 70)->count(),
-            'at_risk' => $data->filter(fn (array $t) => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count(),
-            'critical' => $data->filter(fn (array $t) => $t['health_score'] < 40)->count(),
+            'healthy' => $data->filter(fn (array $t): bool => $t['health_score'] > 70)->count(),
+            'at_risk' => $data->filter(fn (array $t): bool => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count(),
+            'critical' => $data->filter(fn (array $t): bool => $t['health_score'] < 40)->count(),
             'total' => $data->count(),
         ];
     }
 
     /**
-     * @param array{has_products: bool, has_categories: bool, has_orders: bool} $metrics
+     * @param  array{has_products: bool, has_categories: bool, has_orders: bool}  $metrics
      */
     protected function countSetupCompleted(Tenant $tenant, array $metrics): int
     {

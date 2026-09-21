@@ -6,10 +6,10 @@ use App\Models\Operations\Holiday;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
-final class HolidayPresenter
+final readonly class HolidayPresenter
 {
     public function __construct(
-        public readonly Holiday $holiday,
+        public Holiday $holiday,
     ) {}
 
     public static function for(Holiday $holiday): self
@@ -56,10 +56,10 @@ final class HolidayPresenter
         $days = $this->daysAway();
 
         return match (true) {
-            $days < 0 => 'Passed ' . abs($days) . ' days ago',
+            $days < 0 => 'Passed '.abs($days).' days ago',
             $days === 0 => 'Today!',
             $days === 1 => 'Tomorrow',
-            default => $days . ' days away',
+            default => $days.' days away',
         };
     }
 

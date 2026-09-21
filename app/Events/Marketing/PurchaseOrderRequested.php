@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events\Marketing;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
@@ -10,7 +12,7 @@ class PurchaseOrderRequested implements ShouldDispatchAfterCommit
     use Dispatchable;
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     public function __construct(
         public readonly string $supplierEmail,

@@ -14,7 +14,7 @@ beforeEach(function () {
 test('subject includes the store name', function () {
     $customer = Customer::factory()->create();
 
-    $message = (new CustomerPasswordResetNotification('reset-token'))->toMail($customer);
+    $message = new CustomerPasswordResetNotification('reset-token')->toMail($customer);
 
     expect($message->subject)->toBe('Reset your password — Sweet Treats Bakery');
 });
@@ -22,7 +22,7 @@ test('subject includes the store name', function () {
 test('body mentions the store name', function () {
     $customer = Customer::factory()->create();
 
-    $message = (new CustomerPasswordResetNotification('reset-token'))->toMail($customer);
+    $message = new CustomerPasswordResetNotification('reset-token')->toMail($customer);
 
     expect(implode("\n", $message->introLines))->toContain('Sweet Treats Bakery');
 });
@@ -30,7 +30,7 @@ test('body mentions the store name', function () {
 test('action button points at the password reset route with the token', function () {
     $customer = Customer::factory()->create(['email' => 'jane@example.com']);
 
-    $message = (new CustomerPasswordResetNotification('the-token'))->toMail($customer);
+    $message = new CustomerPasswordResetNotification('the-token')->toMail($customer);
 
     expect($message->actionUrl)
         ->toContain('the-token')

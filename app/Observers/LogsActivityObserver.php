@@ -26,7 +26,7 @@ class LogsActivityObserver
     }
 
     /**
-     * @param array<string, mixed> $changes
+     * @param  array<string, mixed>  $changes
      */
     private function log(Model $model, ActivityAction $action, array $changes = []): void
     {
@@ -44,8 +44,8 @@ class LogsActivityObserver
                 'action' => $action,
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
-                'description' => class_basename($model) . " #{$modelKey} was {$action->value}",
-                'properties' => empty($changes) ? null : ['changes' => $changes],
+                'description' => class_basename($model)." #{$modelKey} was {$action->value}",
+                'properties' => $changes === [] ? null : ['changes' => $changes],
                 'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable $e) {

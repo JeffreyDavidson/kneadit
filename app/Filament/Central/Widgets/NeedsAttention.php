@@ -9,13 +9,17 @@ use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 
 class NeedsAttention extends Widget
 {
+    #[\Override]
     protected static ?int $sort = 2;
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected string $view = 'filament.central.widgets.needs-attention';
 
     /**
@@ -30,7 +34,7 @@ class NeedsAttention extends Widget
             $items[] = [
                 'severity' => 'critical',
                 'icon' => Heroicon::OutlinedInbox,
-                'title' => $openTickets . ' open ' . str('ticket')->plural($openTickets) . ' awaiting reply',
+                'title' => $openTickets.' open '.str('ticket')->plural($openTickets).' awaiting reply',
                 'subtitle' => 'Bakers are waiting on a response',
                 'cta' => 'Open Inbox',
                 'url' => SupportTicketResource::getUrl('index'),
@@ -46,7 +50,7 @@ class NeedsAttention extends Widget
             $items[] = [
                 'severity' => 'warning',
                 'icon' => Heroicon::OutlinedClock,
-                'title' => $expiringTrials . ' ' . str('trial')->plural($expiringTrials) . ' ending this week',
+                'title' => $expiringTrials.' '.str('trial')->plural($expiringTrials).' ending this week',
                 'subtitle' => 'Reach out before they convert or churn',
                 'cta' => 'View Bakeries',
                 'url' => TenantResource::getUrl('index'),
@@ -55,7 +59,7 @@ class NeedsAttention extends Widget
 
         $stuckOnboarding = Tenant::query()
             ->where('created_at', '<=', now()->subDays(7))
-            ->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
+            ->where(function (Builder $q): void {
                 $q->whereNull('store_name')
                     ->orWhere('storefront_enabled', false);
             })
@@ -64,7 +68,7 @@ class NeedsAttention extends Widget
             $items[] = [
                 'severity' => 'warning',
                 'icon' => Heroicon::OutlinedClipboardDocumentCheck,
-                'title' => $stuckOnboarding . ' ' . str('bakery')->plural($stuckOnboarding) . ' stuck in onboarding',
+                'title' => $stuckOnboarding.' '.str('bakery')->plural($stuckOnboarding).' stuck in onboarding',
                 'subtitle' => 'Signed up 7+ days ago without finishing setup',
                 'cta' => 'Open Tracker',
                 'url' => OnboardingTracker::getUrl(),
@@ -76,7 +80,7 @@ class NeedsAttention extends Widget
             $items[] = [
                 'severity' => 'info',
                 'icon' => Heroicon::OutlinedNoSymbol,
-                'title' => $deactivated . ' deactivated ' . str('bakery')->plural($deactivated),
+                'title' => $deactivated.' deactivated '.str('bakery')->plural($deactivated),
                 'subtitle' => 'Currently blocked from accessing the platform',
                 'cta' => 'Review',
                 'url' => TenantResource::getUrl('index'),

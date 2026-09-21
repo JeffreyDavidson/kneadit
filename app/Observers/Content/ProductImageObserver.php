@@ -8,7 +8,7 @@ use App\Models\Inventory\ProductImage;
 class ProductImageObserver
 {
     public function __construct(
-        private SyncProductPrimaryImage $syncPrimaryImage,
+        private readonly SyncProductPrimaryImage $syncPrimaryImage,
     ) {}
 
     public function saved(ProductImage $image): void

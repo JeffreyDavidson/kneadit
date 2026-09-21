@@ -14,7 +14,7 @@ class ProductSalesQuery
     /**
      * Get top products by revenue within a date range.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      * @return Collection<int, array{name: string, units_sold: int, revenue: float}>
      */
     public static function topByRevenue(DateRange|array $range, int $limit = 10): Collection
@@ -24,7 +24,7 @@ class ProductSalesQuery
             ->orderByDesc('revenue_cents')
             ->limit($limit)
             ->get()
-            ->map(fn (OrderItem $item) => [
+            ->map(fn (OrderItem $item): array => [
                 'name' => $item->product->name ?? 'Deleted Product',
                 'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
                 'revenue' => Arr::integer($item->getAttributes(), 'revenue_cents', 0) / 100.0,
@@ -34,7 +34,7 @@ class ProductSalesQuery
     /**
      * Get top products by quantity sold.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      * @return Collection<int, array{name: string, units_sold: int, revenue: float}>
      */
     public static function topByQuantity(DateRange|array $range, int $limit = 10): Collection
@@ -44,7 +44,7 @@ class ProductSalesQuery
             ->orderByDesc('units_sold')
             ->limit($limit)
             ->get()
-            ->map(fn (OrderItem $item) => [
+            ->map(fn (OrderItem $item): array => [
                 'name' => $item->product->name ?? 'Deleted Product',
                 'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
                 'revenue' => Arr::integer($item->getAttributes(), 'revenue_cents', 0) / 100.0,
@@ -54,7 +54,7 @@ class ProductSalesQuery
     /**
      * Build the shared paid product-sales aggregate used by the rankings.
      *
-     * @param DateRange|array<int, string> $range
+     * @param  DateRange|array<int, string>  $range
      * @return Builder<OrderItem>
      */
     public static function aggregates(DateRange|array $range): Builder

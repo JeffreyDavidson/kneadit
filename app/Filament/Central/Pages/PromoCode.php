@@ -31,16 +31,22 @@ class PromoCode extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $title = 'Promo Codes';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Promo Codes';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.promo-code';
 
     /** @var array<string, mixed> */
@@ -78,13 +84,13 @@ class PromoCode extends Page implements HasForms
                                 ->live()
                                 ->default('percent'),
                             TextInput::make('discount_value')
-                                ->label(fn (Get $get) => $get('discount_type') === 'amount' ? 'Amount Off (USD)' : 'Percent Off')
+                                ->label(fn (Get $get): string => $get('discount_type') === 'amount' ? 'Amount Off (USD)' : 'Percent Off')
                                 ->numeric()
                                 ->required()
                                 ->minValue(1)
-                                ->maxValue(fn (Get $get) => $get('discount_type') === 'percent' ? 100 : null)
-                                ->suffix(fn (Get $get) => $get('discount_type') === 'amount' ? 'USD' : '%')
-                                ->helperText(fn (Get $get) => $get('discount_type') === 'percent'
+                                ->maxValue(fn (Get $get): ?int => $get('discount_type') === 'percent' ? 100 : null)
+                                ->suffix(fn (Get $get): string => $get('discount_type') === 'amount' ? 'USD' : '%')
+                                ->helperText(fn (Get $get): string => $get('discount_type') === 'percent'
                                     ? 'Whole number 1-100.'
                                     : 'Whole dollars (e.g. 25 = $25 off).'),
                         ]),
@@ -102,8 +108,8 @@ class PromoCode extends Page implements HasForms
                                 ->label('Duration in Months')
                                 ->numeric()
                                 ->minValue(1)
-                                ->required(fn (Get $get) => $get('duration') === 'repeating')
-                                ->visible(fn (Get $get) => $get('duration') === 'repeating')
+                                ->required(fn (Get $get): bool => $get('duration') === 'repeating')
+                                ->visible(fn (Get $get): bool => $get('duration') === 'repeating')
                                 ->helperText('How many monthly invoices the discount applies to.'),
                         ]),
                     ]),
@@ -152,7 +158,7 @@ class PromoCode extends Page implements HasForms
                             ->placeholder('— None —')
                             ->options(fn () => Tenant::query()->orderBy('store_name')
                                 ->get()
-                                ->mapWithKeys(fn (Tenant $t) => [$t->id => ($t->store_name ?: $t->name) . ' (' . $t->id . ')'])
+                                ->mapWithKeys(fn (Tenant $t): array => [$t->id => ($t->store_name ?: $t->name).' ('.$t->id.')'])
                                 ->all())
                             ->searchable()
                             ->helperText('Stamps tenant_id into the Stripe coupon metadata for later reconciliation.'),

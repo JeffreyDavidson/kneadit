@@ -11,12 +11,14 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class SocialCalendar extends Page
 {
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -27,14 +29,19 @@ class SocialCalendar extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Social Calendar';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 8;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.social-calendar';
 
     public int $year;
@@ -112,7 +119,8 @@ class SocialCalendar extends Page
     }
 
     /** @return array<int, mixed> */
-    public function getCalendarDaysProperty(): array
+    #[Computed]
+    public function calendarDays(): array
     {
         $start = Date::create($this->year, $this->month, 1);
         $daysInMonth = $start->daysInMonth;
@@ -138,7 +146,8 @@ class SocialCalendar extends Page
         return $days;
     }
 
-    public function getMonthLabelProperty(): string
+    #[Computed]
+    public function monthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->format('F Y');
     }

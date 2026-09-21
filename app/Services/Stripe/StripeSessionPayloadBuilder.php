@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Stripe;
 
 use App\Models\Orders\Order;
@@ -12,7 +14,7 @@ class StripeSessionPayloadBuilder
     /**
      * Build the full Stripe Checkout Session params for an order.
      *
-     * @param list<array{coupon: string}> $discounts
+     * @param  list<array{coupon: string}>  $discounts
      * @return array{mode: string, line_items: list<StripeLineItem>, success_url: string, cancel_url: string, customer_email?: string, metadata: array<string, string>, payment_intent_data: array{metadata: array<string, string>}, discounts?: list<array{coupon: string}>}
      */
     public function build(Order $order, string $tenantId, string $successUrl, string $cancelUrl, array $discounts = []): array
@@ -36,7 +38,7 @@ class StripeSessionPayloadBuilder
             $params['customer_email'] = $customerEmail;
         }
 
-        if (! empty($discounts)) {
+        if ($discounts !== []) {
             $params['discounts'] = $discounts;
         }
 

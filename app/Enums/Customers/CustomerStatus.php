@@ -36,7 +36,7 @@ enum CustomerStatus: string implements HasColor, HasLabel
      */
     public static function resolve(int $orderCount, ?Carbon $lastOrderDate, ?int $thresholdDays = null): self
     {
-        if ($orderCount <= 0 || ! $lastOrderDate) {
+        if ($orderCount <= 0 || ! $lastOrderDate instanceof Carbon) {
             return self::Active;
         }
 

@@ -69,19 +69,19 @@ test('month label property returns formatted string', function () {
     test()->page->month = 4;
     test()->page->year = 2026;
 
-    expect(test()->page->getMonthLabelProperty())->toBe('April 2026');
+    expect(test()->page->monthLabel)->toBe('April 2026');
 });
 
 test('prev month label property returns previous month formatted', function () {
     test()->page->month = 4;
     test()->page->year = 2026;
 
-    expect(test()->page->getPrevMonthLabelProperty())->toBe('Mar 2026');
+    expect(test()->page->prevMonthLabel)->toBe('Mar 2026');
 });
 
 test('trends data property returns array', function () {
     test()->page->month = now()->month;
     test()->page->year = now()->year;
 
-    expect(test()->page->getTrendsDataProperty())->toBeArray();
+    expect(test()->page->trendsData)->toBeArray();
 });

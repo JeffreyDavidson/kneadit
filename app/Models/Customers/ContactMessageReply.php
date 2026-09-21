@@ -27,6 +27,7 @@ class ContactMessageReply extends Model
     /** @use HasFactory<ContactMessageReplyFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

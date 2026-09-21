@@ -7,6 +7,17 @@ use Illuminate\Support\Facades\Config;
 test('generates a tenant storefront URL', function () {
     Config::set('app.url', 'https://getkneadit.app');
 
+    Config::set('tenancy.tenant_domain', null);
+
+    $url = resolve(TenantUrlGenerator::class)->storefront(new Tenant(['id' => 'test-bakery']));
+
+    expect($url)->toBe('https://test-bakery.getkneadit.app');
+});
+
+test('uses the tenant domain when the application has a separate host', function () {
+    Config::set('app.url', 'https://app.getkneadit.app');
+    Config::set('tenancy.tenant_domain', 'getkneadit.app');
+
     $url = resolve(TenantUrlGenerator::class)->storefront(new Tenant(['id' => 'test-bakery']));
 
     expect($url)->toBe('https://test-bakery.getkneadit.app');

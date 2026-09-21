@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 class ProductAnalysisService
 {
     public function __construct(
-        private ProductCostResolver $costResolver,
+        private readonly ProductCostResolver $costResolver,
     ) {}
 
     /**
@@ -55,7 +55,7 @@ class ProductAnalysisService
      */
     public function portfolio(string $sortBy = 'margin_desc'): ProductPortfolioSummary
     {
-        $products = once(fn () => $this->loadProductAnalysis());
+        $products = once(fn (): Collection => $this->loadProductAnalysis());
         $sorted = $this->sortProducts($products, $sortBy);
 
         $productsWithCostData = $sorted->where('has_cost_data', true);
@@ -90,7 +90,7 @@ class ProductAnalysisService
      */
     private function formatIngredients(?Recipe $recipe): Collection
     {
-        if (! $recipe || ! $recipe->ingredients) {
+        if (! $recipe instanceof Recipe || ! $recipe->ingredients) {
             return new Collection;
         }
 
@@ -116,7 +116,7 @@ class ProductAnalysisService
         return Product::with(['recipes'])
             ->where('is_active', true)
             ->get()
-            ->map(function (Product $product) {
+            ->map(function (Product $product): array {
                 $cost = $this->costResolver->resolve($product);
                 $price = $product->price?->dollars() ?? 0.0;
                 $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;
@@ -136,7 +136,7 @@ class ProductAnalysisService
     }
 
     /**
-     * @param Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> $products
+     * @param  Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}>  $products
      * @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}>
      */
     private function sortProducts(Collection $products, string $sortBy): Collection

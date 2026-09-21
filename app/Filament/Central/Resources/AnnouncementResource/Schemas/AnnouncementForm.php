@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\AnnouncementResource\Schemas;
 
 use App\Enums\Platform\AnnouncementType;
@@ -56,7 +58,7 @@ class AnnouncementForm
                             ->options([
                                 'all' => 'All Plans',
                                 ...collect(SubscriptionTier::cases())
-                                    ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->getLabel()])
+                                    ->mapWithKeys(fn (SubscriptionTier $tier): array => [$tier->value => $tier->getLabel()])
                                     ->all(),
                             ])
                             ->columns(2)

@@ -10,21 +10,28 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\SplFileInfo;
 use Throwable;
 use UnitEnum;
 
 class Backups extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Backups';
 
+    #[\Override]
     protected static ?string $title = 'Database Backups';
 
+    #[\Override]
     protected static ?int $navigationSort = 60;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.backups';
 
     /**
@@ -40,7 +47,7 @@ class Backups extends Page
             return "{$projectRoot}/backups";
         }
 
-        return dirname(base_path()) . '/backups';
+        return dirname(base_path()).'/backups';
     }
 
     /**
@@ -64,13 +71,13 @@ class Backups extends Page
 
             $name = basename($folder);
             $files = File::files($folder);
-            $tenantFiles = collect($files)->filter(fn (\Symfony\Component\Finder\SplFileInfo $file): bool => $file->getFilename() !== 'central.sqlite');
+            $tenantFiles = collect($files)->filter(fn (SplFileInfo $file): bool => $file->getFilename() !== 'central.sqlite');
 
             $backups[] = [
                 'name' => $name,
                 'created_at' => self::parseTimestamp($name),
-                'size' => collect($files)->sum(fn (\Symfony\Component\Finder\SplFileInfo $file): int => $file->getSize()),
-                'central' => collect($files)->contains(fn (\Symfony\Component\Finder\SplFileInfo $file): bool => $file->getFilename() === 'central.sqlite'),
+                'size' => collect($files)->sum(fn (SplFileInfo $file): int => $file->getSize()),
+                'central' => collect($files)->contains(fn (SplFileInfo $file): bool => $file->getFilename() === 'central.sqlite'),
                 'tenant_count' => $tenantFiles->count(),
             ];
         }
@@ -117,7 +124,7 @@ class Backups extends Page
             return;
         }
 
-        $path = self::backupDirectory() . '/' . $name;
+        $path = self::backupDirectory().'/'.$name;
 
         if (! is_dir($path)) {
             Notification::make()->title('Backup not found')->danger()->send();
@@ -162,12 +169,12 @@ class Backups extends Page
             return "{$bytes} B";
         }
         if ($bytes < 1024 * 1024) {
-            return number_format($bytes / 1024, 1) . ' KB';
+            return number_format($bytes / 1024, 1).' KB';
         }
         if ($bytes < 1024 * 1024 * 1024) {
-            return number_format($bytes / 1024 / 1024, 1) . ' MB';
+            return number_format($bytes / 1024 / 1024, 1).' MB';
         }
 
-        return number_format($bytes / 1024 / 1024 / 1024, 2) . ' GB';
+        return number_format($bytes / 1024 / 1024 / 1024, 2).' GB';
     }
 }

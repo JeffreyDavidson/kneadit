@@ -10,7 +10,7 @@
         $first = $parts[0] ?? '';
         $last = count($parts) > 1 ? end($parts) : '';
 
-        return strtoupper(mb_substr($first, 0, 1) . mb_substr($last, 0, 1));
+        return strtoupper(mb_substr($first, 0, 1).mb_substr($last, 0, 1));
     };
 
     $roleColor = fn (UserRole $role): string => match ($role) {

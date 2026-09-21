@@ -6,7 +6,7 @@ test('central route files do not depend on tenant presentation controllers', fun
     $violations = [];
     $basePath = dirname(__DIR__, 2);
 
-    foreach (glob($basePath . '/routes/central/*.php') ?: [] as $file) {
+    foreach (glob($basePath.'/routes/central/*.php') ?: [] as $file) {
         $contents = file_get_contents($file);
 
         if ($contents === false) {
@@ -16,14 +16,14 @@ test('central route files do not depend on tenant presentation controllers', fun
         if (preg_match_all('/^use App\\\\Http\\\\Controllers\\\\([^;]+);/m', $contents, $matches) !== false) {
             foreach ($matches[1] as $controller) {
                 if (str_starts_with($controller, 'Tenant\\') || str_starts_with($controller, 'Storefront\\')) {
-                    $violations[] = str_replace($basePath . '/', '', $file) . ': ' . $controller;
+                    $violations[] = str_replace($basePath.'/', '', $file).': '.$controller;
                 }
             }
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Central routes must not import tenant presentation controllers:\n" . implode("\n", $violations),
+        "Central routes must not import tenant presentation controllers:\n".implode("\n", $violations),
     );
 });
 
@@ -31,7 +31,7 @@ test('tenant route files keep tenant presentation controllers under tenant surfa
     $violations = [];
     $basePath = dirname(__DIR__, 2);
 
-    foreach (glob($basePath . '/routes/tenant/*.php') ?: [] as $file) {
+    foreach (glob($basePath.'/routes/tenant/*.php') ?: [] as $file) {
         $contents = file_get_contents($file);
 
         if ($contents === false) {
@@ -45,14 +45,14 @@ test('tenant route files keep tenant presentation controllers under tenant surfa
                     || str_starts_with($controller, 'Central\\InvoiceController')
                     || str_starts_with($controller, 'Central\\PrintProductLabelController')
                     || str_starts_with($controller, 'Order\\')) {
-                    $violations[] = str_replace($basePath . '/', '', $file) . ': ' . $controller;
+                    $violations[] = str_replace($basePath.'/', '', $file).': '.$controller;
                 }
             }
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Tenant routes must use surface-aligned controller namespaces:\n" . implode("\n", $violations),
+        "Tenant routes must use surface-aligned controller namespaces:\n".implode("\n", $violations),
     );
 });
 
@@ -61,9 +61,9 @@ test('static route views resolve to existing Blade templates', function () {
     $basePath = dirname(__DIR__, 2);
 
     foreach (array_merge(
-        glob($basePath . '/routes/*.php') ?: [],
-        glob($basePath . '/routes/central/*.php') ?: [],
-        glob($basePath . '/routes/tenant/*.php') ?: [],
+        glob($basePath.'/routes/*.php') ?: [],
+        glob($basePath.'/routes/central/*.php') ?: [],
+        glob($basePath.'/routes/tenant/*.php') ?: [],
     ) as $file) {
         $contents = file_get_contents($file);
 
@@ -78,15 +78,15 @@ test('static route views resolve to existing Blade templates', function () {
         );
 
         foreach ($matches[1] as $view) {
-            $viewPath = $basePath . '/resources/views/' . str_replace('.', '/', $view) . '.blade.php';
+            $viewPath = $basePath.'/resources/views/'.str_replace('.', '/', $view).'.blade.php';
 
             if (! is_file($viewPath)) {
-                $missing[] = str_replace($basePath . '/', '', $file) . ': ' . $view;
+                $missing[] = str_replace($basePath.'/', '', $file).': '.$view;
             }
         }
     }
 
     expect($missing)->toBeEmpty(
-        "Static route views must resolve:\n" . implode("\n", $missing),
+        "Static route views must resolve:\n".implode("\n", $missing),
     );
 });

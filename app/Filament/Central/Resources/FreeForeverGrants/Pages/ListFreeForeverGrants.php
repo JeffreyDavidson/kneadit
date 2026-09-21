@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\FreeForeverGrants\Pages;
 
 use App\Filament\Central\Resources\FreeForeverGrants\FreeForeverGrantResource;
@@ -12,8 +14,10 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListFreeForeverGrants extends ListRecords
 {
+    #[\Override]
     protected static string $resource = FreeForeverGrantResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [];

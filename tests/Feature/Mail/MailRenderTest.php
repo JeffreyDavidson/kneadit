@@ -1,13 +1,36 @@
 <?php
 
 use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\SenderType;
+use App\Mail\Customers\HappyBirthdayMail;
 use App\Mail\Customers\NewContactMessageNotificationMail;
+use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
+use App\Mail\Customers\ReviewRequestMail;
+use App\Mail\Marketing\CateringQuoteMail;
+use App\Mail\Marketing\CustomerBlastMail;
+use App\Mail\Orders\NewOrderMessageMail;
+use App\Mail\Orders\NewOrderNotificationMail;
+use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
+use App\Mail\Orders\PurchaseOrderMail;
+use App\Mail\Platform\HealthAlertMail;
+use App\Mail\Platform\NewSubscriberNotificationMail;
+use App\Mail\Platform\PaymentFailedMail;
+use App\Mail\Platform\ScheduledCheckinMail;
+use App\Mail\Platform\StaffInvitationMail;
+use App\Mail\Platform\TrialExpiredMail;
+use App\Mail\Platform\TrialReminderMail;
+use App\Mail\Platform\WeeklyDigestMail;
 use App\Mail\Platform\WelcomeBakerMail;
+use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\ContactMessage;
 use App\Models\Customers\Customer;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Collection;
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -17,16 +40,16 @@ test('order mail classes render without errors', function () {
         ->create(['delivery_time' => now()]);
     $order->load('customer', 'orderItems.product');
 
-    expect((new OrderStatusMail($order, OrderStatus::Delivered))->render())
+    expect(new OrderStatusMail($order, OrderStatus::Delivered)->render())
         ->toBeString()
         ->not->toBeEmpty();
 
     foreach ([
-        App\Mail\Orders\NewOrderNotificationMail::class,
-        App\Mail\Orders\OrderPlacedMail::class,
-        App\Mail\Customers\ReviewRequestMail::class,
+        NewOrderNotificationMail::class,
+        OrderPlacedMail::class,
+        ReviewRequestMail::class,
     ] as $mailClass) {
-        expect((new $mailClass($order))->render())
+        expect(new $mailClass($order)->render())
             ->toBeString()
             ->not->toBeEmpty();
     }
@@ -38,18 +61,18 @@ test('order mail classes render without errors', function () {
         OrderStatus::Delivered,
         OrderStatus::Cancelled,
     ] as $status) {
-        expect((new OrderStatusMail($order, $status))->render())
+        expect(new OrderStatusMail($order, $status)->render())
             ->toBeString()
             ->not->toBeEmpty();
     }
 
     $message = $order->messages()->create([
-        'sender_type' => App\Enums\Orders\SenderType::Customer,
+        'sender_type' => SenderType::Customer,
         'sender_name' => 'Jane',
         'message' => 'Can I add extra frosting?',
     ]);
 
-    expect((new App\Mail\Orders\NewOrderMessageMail($message))->render())
+    expect(new NewOrderMessageMail($message)->render())
         ->toBeString()
         ->not->toBeEmpty();
 });
@@ -57,7 +80,7 @@ test('order mail classes render without errors', function () {
 test('customer and marketing mail classes render without errors', function () {
     $customer = Customer::factory()->create();
 
-    expect((new RepeatOrderReminderMail($customer, 30))->render())
+    expect(new RepeatOrderReminderMail($customer, 30)->render())
         ->toBeString()
         ->not->toBeEmpty();
 
@@ -68,68 +91,56 @@ test('customer and marketing mail classes render without errors', function () {
         'message' => 'Can you make a birthday cake?',
     ]);
 
-    expect((new NewContactMessageNotificationMail($message))->render())
+    expect(new NewContactMessageNotificationMail($message)->render())
         ->toContain('Jane Baker')
-        ->toContain('Can you make a birthday cake?');
+        ->toContain('Can you make a birthday cake?')
+        ->and(new HappyBirthdayMail($customer)->render())->toBeString()->not->toBeEmpty();
 
-    expect((new App\Mail\Customers\HappyBirthdayMail($customer))->render())
+    $product = Product::factory()->create();
+
+    expect(new ProductAvailableMail($product, 'Jane')->render())
         ->toBeString()
         ->not->toBeEmpty();
 
-    $product = App\Models\Inventory\Product::factory()->create();
-
-    expect((new App\Mail\Customers\ProductAvailableMail($product, 'Jane'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    $inquiry = App\Models\Customers\CateringInquiry::factory()->create([
+    $inquiry = CateringInquiry::factory()->create([
         'quoted_amount' => 500.00,
     ]);
 
-    expect((new App\Mail\Marketing\CateringQuoteMail($inquiry))->render())
+    expect(new CateringQuoteMail($inquiry)->render())
         ->toBeString()
         ->not->toBeEmpty();
 });
 
 test('platform account mail classes render without errors', function () {
-    expect((new WelcomeBakerMail('Jane', 'Sweet Treats', 'https://example.com/admin', 'starter', 'https://example.com/getting-started'))->render())
+    expect(new WelcomeBakerMail('Jane', 'Sweet Treats', 'https://example.com/admin', 'starter', 'https://example.com/getting-started')->render())
         ->toBeString()
         ->not->toBeEmpty();
 
-    $invitation = App\Models\Staff\StaffInvitation::factory()->create();
+    $invitation = StaffInvitation::factory()->create();
 
-    expect((new App\Mail\Platform\StaffInvitationMail($invitation, 'Sweet Bakery', 'https://example.com/accept'))->render())
+    expect(new StaffInvitationMail($invitation, 'Sweet Bakery', 'https://example.com/accept')->render())
         ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and(new NewSubscriberNotificationMail(
+            'Jane',
+            'jane@example.com',
+            'Sweet Bakery',
+            'sweet-bakery.kneadit.test',
+            'starter',
+            'https://kneadit.test/central',
+        )->render())->toBeString()->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\NewSubscriberNotificationMail(
-        'Jane',
-        'jane@example.com',
-        'Sweet Bakery',
-        'sweet-bakery.kneadit.test',
-        'starter',
-        'https://kneadit.test/central',
-    ))->render())
+    $user = User::factory()->owner()->create();
+
+    expect(new TrialReminderMail($user, 'Sweet Bakery', 3)->render())
         ->toBeString()
-        ->not->toBeEmpty();
-
-    $user = App\Models\Staff\User::factory()->owner()->create();
-
-    expect((new App\Mail\Platform\TrialReminderMail($user, 'Sweet Bakery', 3))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new App\Mail\Platform\PaymentFailedMail($user))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new App\Mail\Platform\TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and(new PaymentFailedMail($user)->render())->toBeString()->not->toBeEmpty()
+        ->and(new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin')->render())->toBeString()->not->toBeEmpty();
 });
 
 test('standalone operational mail classes render without errors', function () {
-    expect((new App\Mail\Marketing\CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>'))->render())
+    expect(new CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>')->render())
         ->toBeString()
         ->not->toBeEmpty();
 
@@ -144,27 +155,21 @@ test('standalone operational mail classes render without errors', function () {
         ],
     ];
 
-    expect((new App\Mail\Orders\PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15'))->render())
+    expect(new PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15')->render())
         ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->and(new HealthAlertMail('Database connection failed')->render())->toBeString()->not->toBeEmpty()
+        ->and(new ScheduledCheckinMail('Weekly check-in report', 'Weekly Checkin')->render())->toBeString()->not->toBeEmpty();
 
-    expect((new App\Mail\Platform\HealthAlertMail('Database connection failed'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    expect((new App\Mail\Platform\ScheduledCheckinMail('Weekly check-in report', 'Weekly Checkin'))->render())
-        ->toBeString()
-        ->not->toBeEmpty();
-
-    $weeklyDigest = new App\Mail\Platform\WeeklyDigestMail(
+    $weeklyDigest = new WeeklyDigestMail(
         stats: [
             'total_orders' => 10,
             'total_revenue' => '$500.00',
             'new_customers' => 3,
             'avg_order_value' => '$50.00',
         ],
-        topProducts: new Illuminate\Database\Eloquent\Collection,
-        atRiskCustomers: new Illuminate\Database\Eloquent\Collection,
+        topProducts: new Collection,
+        atRiskCustomers: new Collection,
         upcomingCount: 5,
         storeName: 'Test Bakery',
         adminUrl: 'https://test.kneadit.test/admin',

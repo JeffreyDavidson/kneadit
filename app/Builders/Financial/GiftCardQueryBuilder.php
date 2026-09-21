@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Builders\Financial;
 
 use App\Models\Financial\GiftCard;
@@ -16,7 +18,7 @@ class GiftCardQueryBuilder extends Builder
     {
         $this->where('is_active', true)
             ->where('current_balance', '>', 0)
-            ->where(function (Builder $q) {
+            ->where(function (Builder $q): void {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
             });
 

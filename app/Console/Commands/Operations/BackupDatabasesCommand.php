@@ -24,7 +24,7 @@ class BackupDatabasesCommand extends Command
         $backupDir = $this->getBackupDir();
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupPath = "{$backupDir}/{$timestamp}";
-        $stagingPath = "{$backupPath}.in-progress-" . Str::random(12);
+        $stagingPath = "{$backupPath}.in-progress-".Str::random(12);
 
         File::ensureDirectoryExists($stagingPath, 0755);
 
@@ -37,7 +37,7 @@ class BackupDatabasesCommand extends Command
             if ($centralDb !== '' && file_exists($centralDb)) {
                 $dest = "{$stagingPath}/central.sqlite";
                 $this->copyDatabase($centralDb, $dest);
-                $this->info('  ✓ Central DB (' . $this->formatSize((int) filesize($centralDb)) . ')');
+                $this->info('  ✓ Central DB ('.$this->formatSize((int) filesize($centralDb)).')');
             } else {
                 $this->warn("  ⚠ Central DB not found at: {$centralDb}");
                 $backupComplete = false;
@@ -122,7 +122,7 @@ class BackupDatabasesCommand extends Command
     protected function getBackupDir(): string
     {
         // Use a shared directory outside releases for Forge deploys
-        $sharedDir = dirname(base_path()) . '/backups';
+        $sharedDir = dirname(base_path()).'/backups';
 
         // Fallback for local dev
         if (Str::contains(base_path(), '/current/') || Str::contains(base_path(), '/releases/')) {
@@ -181,13 +181,13 @@ class BackupDatabasesCommand extends Command
 
         $sidecars = Arr::reject(
             ['-wal', '-shm'],
-            fn (string $suffix): bool => is_link($source . $suffix) || ! File::isFile($source . $suffix),
+            fn (string $suffix): bool => is_link($source.$suffix) || ! File::isFile($source.$suffix),
         );
 
         foreach ($sidecars as $suffix) {
-            $sidecarSource = $source . $suffix;
+            $sidecarSource = $source.$suffix;
 
-            $sidecarDestination = $destination . $suffix;
+            $sidecarDestination = $destination.$suffix;
             throw_unless(
                 File::copy($sidecarSource, $sidecarDestination),
                 RuntimeException::class,
@@ -215,9 +215,9 @@ class BackupDatabasesCommand extends Command
     protected function formatSize(int $bytes): string
     {
         if ($bytes >= 1048576) {
-            return round($bytes / 1048576, 1) . ' MB';
+            return round($bytes / 1048576, 1).' MB';
         }
 
-        return round($bytes / 1024, 1) . ' KB';
+        return round($bytes / 1024, 1).' KB';
     }
 }

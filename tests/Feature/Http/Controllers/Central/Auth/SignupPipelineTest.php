@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -42,18 +43,16 @@ function uniqueSubdomain(): string
 {
     test()->subdomainCounter++;
 
-    return 'testbakery' . test()->subdomainCounter;
+    return 'testbakery'.test()->subdomainCounter;
 }
 
 /**
- * @param array<string, mixed> $data
- * @return TestResponse<Symfony\Component\HttpFoundation\Response>
+ * @param  array<string, mixed>  $data
+ * @return TestResponse<Response>
  */
 function submitOnboarding(User $user, array $data = []): TestResponse
 {
-    if (! isset($data['subdomain'])) {
-        $data['subdomain'] = uniqueSubdomain();
-    }
+    $data['subdomain'] ??= uniqueSubdomain();
 
     $payload = array_merge([
         'store_name' => 'My Test Bakery',
@@ -140,14 +139,12 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         ->and(auth()->check())->toBeFalse()
         ->and(csrf_token())->not->toBe($tokenBefore);
 
-    $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
+    $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
 
-    Event::assertDispatched(TenantOnboarded::class, function (TenantOnboarded $event) use ($user, $sub) {
-        return $event->user->is($user)
-            && $event->tenant->id === $sub
-            && str_contains($event->adminUrl, "{$sub}.")
-            && str_ends_with($event->adminUrl, '/admin');
-    });
+    Event::assertDispatched(TenantOnboarded::class, fn (TenantOnboarded $event) => $event->user->is($user)
+        && $event->tenant->id === $sub
+        && str_contains($event->adminUrl, "{$sub}.")
+        && str_ends_with($event->adminUrl, '/admin'));
 });
 
 test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {
@@ -229,7 +226,7 @@ test('onboarding rejects invalid payloads', function () {
 test('subdomain is lowercased', function () {
     $user = createSignupUser();
     $this->subdomainCounter++;
-    $sub = 'MyBaKeRy' . $this->subdomainCounter;
+    $sub = 'MyBaKeRy'.$this->subdomainCounter;
     $lower = strtolower($sub);
 
     submitOnboarding($user, ['subdomain' => $sub]);

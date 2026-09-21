@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Export;
 
 final class CsvValueSanitizer
@@ -18,7 +20,7 @@ final class CsvValueSanitizer
     }
 
     /**
-     * @param array<int, mixed> $values
+     * @param  array<int, mixed>  $values
      * @return array<int, bool|float|int|string|null>
      */
     public static function row(array $values): array

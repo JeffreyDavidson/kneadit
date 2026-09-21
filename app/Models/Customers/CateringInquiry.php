@@ -9,6 +9,7 @@ use App\Casts\StripTagsCast;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
+use App\ValueObjects\Money;
 use Database\Factories\Customers\CateringInquiryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 /**
  * @property CateringInquiryStatus $status
@@ -27,11 +29,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry query()
  *
- * @property \App\ValueObjects\Money|null $budget
- * @property \App\ValueObjects\Money|null $quoted_amount
- * @property \App\ValueObjects\Money|null $deposit_amount
- * @property \Illuminate\Support\Carbon|null $event_date
- * @property \Illuminate\Support\Carbon|null $deposit_paid_at
+ * @property Money|null $budget
+ * @property Money|null $quoted_amount
+ * @property Money|null $deposit_amount
+ * @property Carbon|null $event_date
+ * @property Carbon|null $deposit_paid_at
  * @property string|null $deposit_reference
  * @property string|null $stripe_checkout_session_id
  * @property string|null $stripe_payment_intent_id
@@ -47,6 +49,7 @@ class CateringInquiry extends Model
     /** @use HasFactory<CateringInquiryFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

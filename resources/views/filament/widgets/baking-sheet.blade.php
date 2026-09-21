@@ -10,7 +10,7 @@
     </div>
 
     @forelse ($rows as $row)
-        <x-tenant-admin.dashboard.list-row :label="$row['name']" :value="$row['quantity'] . ' to bake'" />
+        <x-tenant-admin.dashboard.list-row :label="$row['name']" :value="$row['quantity'].' to bake'" />
     @empty
         <x-tenant-admin.dashboard.empty-state
             icon="heroicon-o-clipboard-document-check"

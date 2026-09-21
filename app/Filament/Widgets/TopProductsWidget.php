@@ -14,8 +14,10 @@ class TopProductsWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 7;
 
+    #[\Override]
     protected string $view = 'filament.widgets.top-products';
 
     /** @return array<int, array<string, mixed>> */
@@ -32,7 +34,7 @@ class TopProductsWidget extends Widget
                 'units_sold' => $p['units_sold'],
                 'revenue' => $p['revenue'],
                 'percentage' => (int) round(($p['revenue'] / $maxRevenue) * 100),
-                'revenue_formatted' => '$' . number_format((float) $p['revenue'], 0),
+                'revenue_formatted' => '$'.number_format((float) $p['revenue'], 0),
             ])->all();
         });
     }

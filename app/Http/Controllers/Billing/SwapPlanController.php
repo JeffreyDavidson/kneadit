@@ -10,6 +10,7 @@ use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Laravel\Cashier\Subscription;
 
 class SwapPlanController extends Controller
 {
@@ -23,7 +24,7 @@ class SwapPlanController extends Controller
 
         $subscription = $user->subscription('default');
 
-        if ($subscription === null || ! $subscription->valid()) {
+        if (! $subscription instanceof Subscription || ! $subscription->valid()) {
             return to_route('billing.plans')
                 ->with('error', 'No active subscription found. Choose a plan to start billing.');
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Orders;
 
 use App\Events\Orders\OrderDelivered;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class AwardLoyaltyPointsListener extends QueuedListener
 {
     public function __construct(
-        private LoyaltyLedger $loyaltyLedger,
+        private readonly LoyaltyLedger $loyaltyLedger,
     ) {}
 
     public function handle(OrderDelivered $event): void

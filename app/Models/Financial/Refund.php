@@ -5,22 +5,24 @@ namespace App\Models\Financial;
 use App\Casts\MoneyCentsCast;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\ValueObjects\Money;
 use Database\Factories\Financial\RefundFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $order_id
  * @property int|null $user_id
- * @property \App\ValueObjects\Money $amount
+ * @property Money $amount
  * @property string|null $reason
  * @property string|null $stripe_refund_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Order $order
  * @property-read User|null $user
  *
@@ -37,6 +39,7 @@ class Refund extends Model
     /** @use HasFactory<RefundFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

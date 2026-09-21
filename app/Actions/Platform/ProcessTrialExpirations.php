@@ -2,6 +2,7 @@
 
 namespace App\Actions\Platform;
 
+use App\Models\Staff\User;
 use App\Services\Platform\TrialExpirationNotifier;
 use App\Services\Platform\TrialExpirationReader;
 use Illuminate\Support\Facades\Log;
@@ -12,8 +13,8 @@ class ProcessTrialExpirations
     private const array REMINDER_DAYS = [7, 3, 1];
 
     public function __construct(
-        private TrialExpirationReader $reader,
-        private TrialExpirationNotifier $notifier,
+        private readonly TrialExpirationReader $reader,
+        private readonly TrialExpirationNotifier $notifier,
     ) {}
 
     /** @return array{reminders: int, pausings: int, failures: int} */
@@ -51,7 +52,7 @@ class ProcessTrialExpirations
             }
 
             $user = $this->reader->userFor($tenant);
-            if (! $user) {
+            if (! $user instanceof User) {
                 continue;
             }
             if ($user->subscribed('default')) {
@@ -76,14 +77,14 @@ class ProcessTrialExpirations
         foreach ($this->reader->tenantsExpired() as $tenant) {
             $user = $this->reader->userFor($tenant);
 
-            if ($user && $user->subscribed('default')) {
+            if ($user instanceof User && $user->subscribed('default')) {
                 continue;
             }
 
             $tenant->update(['storefront_enabled' => false]);
             $pausings++;
 
-            if ($user) {
+            if ($user instanceof User) {
                 $this->notifier->notifyExpired($user, $tenant);
             }
 

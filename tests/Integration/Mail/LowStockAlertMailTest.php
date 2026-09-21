@@ -22,7 +22,7 @@ test('LowStockAlertMail renders a row for each low-stock ingredient', function (
         'low_stock_threshold' => 5,
     ]);
 
-    $rendered = (new LowStockAlertMail(collect([$flour, $sugar])))->render();
+    $rendered = new LowStockAlertMail(collect([$flour, $sugar]))->render();
 
     expect($rendered)
         ->toContain('All-purpose flour')

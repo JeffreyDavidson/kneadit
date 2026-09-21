@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Financial\MonthlyFinancials;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -18,6 +19,7 @@ class FinanceSummary extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -28,14 +30,19 @@ class FinanceSummary extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Finance Summary';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.finance-summary';
 
     public int $selectedYear;
@@ -75,7 +82,7 @@ class FinanceSummary extends Page
         $this->totalRevenue = $data->totalRevenue;
         $this->totalExpenses = $data->totalExpenses;
         $this->netProfit = $data->netProfit;
-        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (\App\DataTransferObjects\Financial\MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
+        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
         $this->expenseBreakdown = $data->expenseBreakdown;
         $this->cogsAmount = $data->cogsAmount;
         $this->cogsPercentage = $data->cogsPercentage;
@@ -90,6 +97,7 @@ class FinanceSummary extends Page
         $this->loadFinancialData();
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

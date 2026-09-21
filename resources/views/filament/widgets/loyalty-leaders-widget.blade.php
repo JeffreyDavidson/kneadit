@@ -19,7 +19,7 @@
             Top {{ $topCount }} Members
         </div>
         @foreach ($shownCustomers as $i => $customer)
-            <x-tenant-admin.dashboard.list-row :value="number_format($customer['points']) . ' pts'">
+            <x-tenant-admin.dashboard.list-row :value="number_format($customer['points']).' pts'">
                 <span
                     @if ($i === 0)
                         style="font-weight: 700; color: var(--pw-card-accent)"

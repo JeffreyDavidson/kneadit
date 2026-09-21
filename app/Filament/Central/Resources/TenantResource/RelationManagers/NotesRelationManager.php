@@ -17,24 +17,29 @@ use Illuminate\Support\Facades\Gate;
 
 class NotesRelationManager extends RelationManager
 {
+    #[\Override]
     protected static string $relationship = 'notes';
 
     /** No TenantNotePolicy exists; platform admins can freely manage notes. */
+    #[\Override]
     public function canCreate(): bool
     {
         return auth()->check() && Gate::allows('platform-admin');
     }
 
+    #[\Override]
     public function canEdit(Model $record): bool
     {
         return $this->canCreate();
     }
 
+    #[\Override]
     public function canDelete(Model $record): bool
     {
         return $this->canCreate();
     }
 
+    #[\Override]
     public function form(Schema $form): Schema
     {
         return $form

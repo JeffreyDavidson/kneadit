@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Operations\OrderCalendar;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -87,7 +88,7 @@ test('get calendar days returns collection', function () {
     test()->page->mount();
     $days = test()->page->getCalendarDays();
 
-    expect($days)->toBeInstanceOf(Illuminate\Support\Collection::class)
+    expect($days)->toBeInstanceOf(Collection::class)
         ->and($days)->not->toBeEmpty();
 });
 
@@ -127,5 +128,5 @@ test('load order counts populates order counts', function () {
     test()->page->mount();
     test()->page->loadOrderCounts();
 
-    expect(test()->page->orderCounts)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->orderCounts)->toBeInstanceOf(Collection::class);
 });

@@ -7,7 +7,7 @@
         {{-- Photo-Forward Hero --}}
         <x-storefront.hero-section
             :image="$settings->heroImageUrl()"
-            :image-alt="$settings->store->name . ' contact'"
+            :image-alt="$settings->store->name.' contact'"
             image-class="hero-img"
         >
             <div class="relative z-10 flex min-h-[55vh] flex-col items-center justify-end px-4 pb-20 text-center">

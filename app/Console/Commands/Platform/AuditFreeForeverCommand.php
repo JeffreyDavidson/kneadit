@@ -9,6 +9,7 @@ use App\Models\Staff\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('platform:audit-free-forever')]
@@ -22,7 +23,7 @@ class AuditFreeForeverCommand extends Command
         // admin UI that writes the grant ledger.
         $unapproved = Tenant::query()
             ->where('free_forever', true)
-            ->whereDoesntHave('freeForeverGrants', fn (\Illuminate\Database\Eloquent\Builder $q) => $q->whereNull('revoked_at'))
+            ->whereDoesntHave('freeForeverGrants', fn (Builder $q) => $q->whereNull('revoked_at'))
             ->get()
             ->map(fn (Tenant $tenant): array => [
                 'id' => $tenant->id,
@@ -51,7 +52,7 @@ class AuditFreeForeverCommand extends Command
         }
 
         Mail::to($admins)->queue(new UnapprovedFreeForeverAlertMail($unapproved));
-        $this->info('Alert queued to ' . count($admins) . ' platform admin(s).');
+        $this->info('Alert queued to '.count($admins).' platform admin(s).');
 
         return self::SUCCESS;
     }

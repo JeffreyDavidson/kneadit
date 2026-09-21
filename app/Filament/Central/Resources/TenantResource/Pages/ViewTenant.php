@@ -14,20 +14,23 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 
 /**
  * @property-read Tenant $record
  */
 class ViewTenant extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = TenantResource::class;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.view-tenant';
 
-    #[Rule(['required', 'min:3'])]
+    #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -53,7 +56,7 @@ class ViewTenant extends ViewRecord
     {
         try {
             return resolve(TenantStatsQuery::class)->forTenant($this->record);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return $this->emptyStats();
         }
     }
@@ -87,6 +90,7 @@ class ViewTenant extends ViewRecord
     }
 
     /** Suppress auto-render of relation managers; we render Notes inside the Notes tab manually. */
+    #[\Override]
     public function getAllRelationManagers(): array
     {
         return [];

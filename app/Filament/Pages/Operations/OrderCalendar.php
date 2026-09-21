@@ -17,6 +17,7 @@ class OrderCalendar extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -27,14 +28,19 @@ class OrderCalendar extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Order Calendar';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.order-calendar';
 
     public int $currentYear;

@@ -74,7 +74,7 @@ test('storefront and external website constraints are enforced', function () {
     $validator = validator(
         array_merge(validOnboardingData(), [
             'storefront_choice' => 'own',
-            'external_website' => 'https://example.com/' . str_repeat('a', 240),
+            'external_website' => 'https://example.com/'.str_repeat('a', 240),
         ]),
         (new StoreOnboardingRequest)->rules(),
     );
@@ -136,7 +136,7 @@ function validOnboardingData(): array
 {
     return [
         'store_name' => 'Sweet Bakes',
-        'subdomain' => 'sweet-bakes-' . uniqid(),
+        'subdomain' => 'sweet-bakes-'.uniqid(),
         'storefront_choice' => 'kneadit',
     ];
 }

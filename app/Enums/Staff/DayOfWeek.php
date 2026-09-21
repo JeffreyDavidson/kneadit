@@ -25,7 +25,7 @@ enum DayOfWeek: string implements HasLabel
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $day) => [$day->value => $day->getLabel()])
+            ->mapWithKeys(fn (self $day): array => [$day->value => $day->getLabel()])
             ->all();
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Stripe\StripeWebhookController;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 
@@ -30,10 +31,10 @@ test('price id to plan mapping uses SubscriptionTier::fromPriceId', function () 
         'pro' => 'price_test_pro',
     ]]);
 
-    expect(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_starter'))->toBe(App\Enums\Platform\SubscriptionTier::Starter)
-        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_growth'))->toBe(App\Enums\Platform\SubscriptionTier::Growth)
-        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_pro'))->toBe(App\Enums\Platform\SubscriptionTier::Pro)
-        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
+    expect(SubscriptionTier::fromPriceId('price_test_starter'))->toBe(SubscriptionTier::Starter)
+        ->and(SubscriptionTier::fromPriceId('price_test_growth'))->toBe(SubscriptionTier::Growth)
+        ->and(SubscriptionTier::fromPriceId('price_test_pro'))->toBe(SubscriptionTier::Pro)
+        ->and(SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
 });
 
 test('webhook route uses custom controller', function () {

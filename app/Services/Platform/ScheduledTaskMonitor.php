@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Platform;
 
 use App\DataTransferObjects\Settings\SettingValue;
@@ -9,7 +11,7 @@ use Throwable;
 class ScheduledTaskMonitor
 {
     public function __construct(
-        private PlatformSettingsManager $settings,
+        private readonly PlatformSettingsManager $settings,
     ) {}
 
     public function started(string $task): void

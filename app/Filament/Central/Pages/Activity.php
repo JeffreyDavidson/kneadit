@@ -12,58 +12,61 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use UnitEnum;
 
 class Activity extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected static ?string $title = 'Activity';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.activity';
 
     public string $activeTab = 'platform';
 
     // ── Platform Events filters ──
 
+    #[Url(except: '')]
     public string $filterEvent = '';
 
+    #[Url(except: '')]
     public string $filterEventSearch = '';
 
+    #[Url(except: '')]
     public string $filterEventDateFrom = '';
 
+    #[Url(except: '')]
     public string $filterEventDateTo = '';
 
     // ── Audit Trail Properties ──
 
+    #[Url(except: '')]
     public string $filterAction = '';
 
+    #[Url(except: '')]
     public string $filterSearch = '';
 
+    #[Url(except: '')]
     public string $filterDateFrom = '';
 
+    #[Url(except: '')]
     public string $filterDateTo = '';
 
+    #[Url(except: 1)]
     public int $page = 1;
 
     public int $perPage = 20;
-
-    /** @var array<string, mixed> */
-    protected array $queryString = [
-        'filterEvent' => ['except' => ''],
-        'filterEventSearch' => ['except' => ''],
-        'filterEventDateFrom' => ['except' => ''],
-        'filterEventDateTo' => ['except' => ''],
-        'filterAction' => ['except' => ''],
-        'filterSearch' => ['except' => ''],
-        'filterDateFrom' => ['except' => ''],
-        'filterDateTo' => ['except' => ''],
-        'page' => ['except' => 1],
-    ];
 
     // ── Platform Events (Activity Log) Methods ──
 
@@ -78,17 +81,20 @@ class Activity extends Page
         ]);
     }
 
-    public function getEventTodayCountProperty(): int
+    #[Computed]
+    public function eventTodayCount(): int
     {
         return resolve(PlatformActivityQuery::class)->todayCount();
     }
 
-    public function getEventWeekCountProperty(): int
+    #[Computed]
+    public function eventWeekCount(): int
     {
         return resolve(PlatformActivityQuery::class)->weekCount();
     }
 
-    public function getMostCommonEventProperty(): string
+    #[Computed]
+    public function mostCommonEvent(): string
     {
         return resolve(PlatformActivityQuery::class)->mostCommonEvent();
     }
@@ -137,7 +143,8 @@ class Activity extends Page
     // ── Admin Actions (Audit Trail) Methods ──
 
     /** @return LengthAwarePaginator<int, AdminAuditLog> */
-    public function getLogsProperty(): LengthAwarePaginator
+    #[Computed]
+    public function logs(): LengthAwarePaginator
     {
         return resolve(AdminAuditLogQuery::class)->paginate([
             'action' => $this->filterAction,
@@ -147,17 +154,20 @@ class Activity extends Page
         ], $this->perPage, $this->page);
     }
 
-    public function getTodayCountProperty(): int
+    #[Computed]
+    public function todayCount(): int
     {
         return resolve(AdminAuditLogQuery::class)->todayCount();
     }
 
-    public function getWeekCountProperty(): int
+    #[Computed]
+    public function weekCount(): int
     {
         return resolve(AdminAuditLogQuery::class)->weekCount();
     }
 
-    public function getMostCommonActionProperty(): string
+    #[Computed]
+    public function mostCommonAction(): string
     {
         return resolve(AdminAuditLogQuery::class)->mostCommonAction();
     }

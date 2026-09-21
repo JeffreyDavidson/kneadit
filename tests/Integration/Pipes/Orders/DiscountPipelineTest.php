@@ -10,6 +10,7 @@ use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,7 +22,7 @@ beforeEach(function () {
     test()->product = Product::factory()->create(['price' => 20.00]);
 });
 
-function createOrderWith(array $overrides = []): ?App\Models\Orders\Order
+function createOrderWith(array $overrides = []): ?Order
 {
     return resolve(CreateOrder::class)(
         CreateOrderData::fromArray(array_merge([

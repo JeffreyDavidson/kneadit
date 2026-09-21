@@ -33,7 +33,7 @@ class CouponService
 
     public function validate(string $code, float $subtotal): CouponValidationResult
     {
-        return DB::transaction(function () use ($code, $subtotal) {
+        return DB::transaction(function () use ($code, $subtotal): CouponValidationResult {
             $coupon = Coupon::query()->where('code', Str::upper(trim($code)))->lockForUpdate()->first();
 
             if (! $coupon) {
@@ -45,7 +45,7 @@ class CouponService
             }
 
             if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount->dollars()) {
-                return CouponValidationResult::invalid('Minimum order of ' . $coupon->min_order_amount->formatted() . ' required for this coupon.');
+                return CouponValidationResult::invalid('Minimum order of '.$coupon->min_order_amount->formatted().' required for this coupon.');
             }
 
             $discount = $this->calculateDiscount($coupon, $subtotal);

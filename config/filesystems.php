@@ -60,7 +60,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => $publicStoragePath,
-            'url' => rtrim($appUrl, '/') . '/storage',
+            'url' => rtrim($appUrl, '/').'/storage',
             'visibility' => 'public',
             'throw' => true,
         ],

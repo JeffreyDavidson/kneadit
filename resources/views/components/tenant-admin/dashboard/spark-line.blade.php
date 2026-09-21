@@ -19,7 +19,7 @@
     }
 
     $polyPoints = implode(' ', $points);
-    $areaPoints = $points === [] ? '' : "0,{$height} " . $polyPoints . " {$viewWidth},{$height}";
+    $areaPoints = $points === [] ? '' : "0,{$height} ".$polyPoints." {$viewWidth},{$height}";
 @endphp
 
 <svg

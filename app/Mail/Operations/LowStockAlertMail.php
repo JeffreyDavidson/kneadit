@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail\Operations;
 
 use App\Mail\BaseMailable;
@@ -14,7 +16,7 @@ class LowStockAlertMail extends BaseMailable
     use BakerBranded;
 
     /**
-     * @param Collection<int, Ingredient> $ingredients
+     * @param  Collection<int, Ingredient>  $ingredients
      */
     public function __construct(
         public Collection $ingredients,

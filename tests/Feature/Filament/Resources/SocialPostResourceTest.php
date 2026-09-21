@@ -2,12 +2,15 @@
 
 use App\Enums\Marketing\SocialPlatform;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
+use App\Filament\Resources\SocialPosts\SocialPostResource;
 use App\Models\Content\SocialPost;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -99,26 +102,26 @@ test('navigation badge shows scheduled post count', function () {
     SocialPost::factory()->scheduled()->count(3)->create();
     SocialPost::factory()->draft()->create();
 
-    expect(App\Filament\Resources\SocialPosts\SocialPostResource::getNavigationBadge())
+    expect(SocialPostResource::getNavigationBadge())
         ->toBe('3');
 });
 
 test('navigation badge returns null when no scheduled posts', function () {
     SocialPost::factory()->draft()->create();
 
-    expect(App\Filament\Resources\SocialPosts\SocialPostResource::getNavigationBadge())
+    expect(SocialPostResource::getNavigationBadge())
         ->toBeNull();
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\SocialPosts\SocialPostResource::getGloballySearchableAttributes())
+    expect(SocialPostResource::getGloballySearchableAttributes())
         ->toBe(['caption']);
 });
 
 test('resource returns global search result title', function () {
     $post = SocialPost::factory()->create(['caption' => 'Fresh bread from the oven today']);
 
-    $title = App\Filament\Resources\SocialPosts\SocialPostResource::getGlobalSearchResultTitle($post);
+    $title = SocialPostResource::getGlobalSearchResultTitle($post);
 
     expect($title)->toBeString();
 });
@@ -126,7 +129,7 @@ test('resource returns global search result title', function () {
 test('resource returns global search result details', function () {
     $post = SocialPost::factory()->create();
 
-    $details = App\Filament\Resources\SocialPosts\SocialPostResource::getGlobalSearchResultDetails($post);
+    $details = SocialPostResource::getGlobalSearchResultDetails($post);
 
     expect($details)
         ->toHaveKeys(['Platform', 'Status']);

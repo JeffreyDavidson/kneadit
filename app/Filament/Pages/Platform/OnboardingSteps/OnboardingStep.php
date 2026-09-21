@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
@@ -25,7 +27,7 @@ abstract class OnboardingStep
     /**
      * Persist this step's data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     abstract public static function save(array $data): void;
 

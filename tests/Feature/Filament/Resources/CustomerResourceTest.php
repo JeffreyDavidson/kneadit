@@ -1,11 +1,14 @@
 <?php
 
+use App\Filament\Resources\Customers\CustomerResource;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Models\Customers\Customer;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -110,14 +113,14 @@ test('can filter customers with birthday this month', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Customers\CustomerResource::getGloballySearchableAttributes())
+    expect(CustomerResource::getGloballySearchableAttributes())
         ->toBe(['name', 'email', 'phone']);
 });
 
 test('resource returns global search result title', function () {
     $customer = Customer::factory()->create(['name' => 'Alice Baker']);
 
-    expect(App\Filament\Resources\Customers\CustomerResource::getGlobalSearchResultTitle($customer))
+    expect(CustomerResource::getGlobalSearchResultTitle($customer))
         ->toBe('Alice Baker');
 });
 
@@ -127,7 +130,7 @@ test('resource returns global search result details', function () {
         'phone' => '5550100',
     ]);
 
-    $details = App\Filament\Resources\Customers\CustomerResource::getGlobalSearchResultDetails($customer);
+    $details = CustomerResource::getGlobalSearchResultDetails($customer);
 
     expect($details)
         ->toHaveKey('Email', 'alice@example.com')

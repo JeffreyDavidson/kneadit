@@ -56,6 +56,6 @@ test('only sends scheduled campaigns whose scheduled time has arrived', function
     app()->instance(TenancyManager::class, $tenancyManager);
 
     $this->artisan('campaigns:send-scheduled')
-        ->expectsOutput('test-tenant: campaign #' . $due->id . ' sent to 4 recipient(s)')
+        ->expectsOutput('test-tenant: campaign #'.$due->id.' sent to 4 recipient(s)')
         ->assertSuccessful();
 });

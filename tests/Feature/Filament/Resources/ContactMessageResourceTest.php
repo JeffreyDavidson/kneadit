@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\ContactMessages\ContactMessageResource;
 use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
 use App\Filament\Resources\ContactMessages\Pages\ViewContactMessage;
 use App\Mail\Customers\ContactMessageReplyMail;
@@ -9,6 +10,8 @@ use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -81,11 +84,9 @@ test('reply action sends the email, persists the reply, and marks the message as
             'body' => 'Thanks for reaching out — happy to help with that.',
         ]);
 
-    Mail::assertQueued(ContactMessageReplyMail::class, function (ContactMessageReplyMail $mail) use ($message): bool {
-        return $mail->hasTo($message->email)
-            && $mail->replySubject === 'Re: Custom cake'
-            && str_contains($mail->replyBody, 'Thanks for reaching out');
-    });
+    Mail::assertQueued(ContactMessageReplyMail::class, fn (ContactMessageReplyMail $mail): bool => $mail->hasTo($message->email)
+        && $mail->replySubject === 'Re: Custom cake'
+        && str_contains($mail->replyBody, 'Thanks for reaching out'));
 
     expect($message->fresh()->is_read)->toBeTrue();
 
@@ -153,14 +154,14 @@ test('can filter contact messages by read status', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\ContactMessages\ContactMessageResource::getGloballySearchableAttributes())
+    expect(ContactMessageResource::getGloballySearchableAttributes())
         ->toBe(['name', 'email', 'subject']);
 });
 
 test('resource returns global search result title', function () {
     $message = ContactMessage::factory()->create(['subject' => 'Custom Cake Order']);
 
-    expect(App\Filament\Resources\ContactMessages\ContactMessageResource::getGlobalSearchResultTitle($message))
+    expect(ContactMessageResource::getGlobalSearchResultTitle($message))
         ->toBe('Custom Cake Order');
 });
 
@@ -171,7 +172,7 @@ test('resource returns global search result details', function () {
         'is_read' => false,
     ]);
 
-    $details = App\Filament\Resources\ContactMessages\ContactMessageResource::getGlobalSearchResultDetails($message);
+    $details = ContactMessageResource::getGlobalSearchResultDetails($message);
 
     expect($details)
         ->toHaveKey('From', 'Jane Baker')

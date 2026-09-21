@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\PlatformSettings\Pages;
 
 use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListPlatformSettings extends ListRecords
 {
+    #[\Override]
     protected static string $resource = PlatformSettingResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

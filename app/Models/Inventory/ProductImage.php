@@ -28,6 +28,7 @@ class ProductImage extends Model
     /** @use HasFactory<ProductImageFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

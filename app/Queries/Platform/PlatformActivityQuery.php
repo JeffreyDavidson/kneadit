@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class PlatformActivityQuery
 {
     /**
-     * @param array{event?: string, search?: string, date_from?: string, date_to?: string} $filters
+     * @param  array{event?: string, search?: string, date_from?: string, date_to?: string}  $filters
      * @return Collection<int, PlatformActivity>
      */
     public function get(array $filters): Collection

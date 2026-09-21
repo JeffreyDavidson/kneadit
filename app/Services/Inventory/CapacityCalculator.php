@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Date;
 class CapacityCalculator
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     public function forDate(Carbon|string $date): ?CapacityLimit
@@ -24,7 +24,7 @@ class CapacityCalculator
     {
         $limit = $this->forDate($date);
 
-        if ($limit && $limit->max_orders > 0) {
+        if ($limit instanceof CapacityLimit && $limit->max_orders > 0) {
             return $limit->max_orders;
         }
 

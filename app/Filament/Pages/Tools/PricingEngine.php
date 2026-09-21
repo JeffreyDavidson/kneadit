@@ -14,12 +14,14 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class PricingEngine extends Page
 {
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -30,14 +32,19 @@ class PricingEngine extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Pricing';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 8;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.pricing-engine';
 
     public ?string $selectedProductId = null;
@@ -64,7 +71,8 @@ class PricingEngine extends Page
     }
 
     /** @return Collection<int, Product> */
-    public function getProductsProperty(): Collection
+    #[Computed]
+    public function products(): Collection
     {
         return Product::query()->with(['category', 'recipes'])->orderBy('name')->get();
     }

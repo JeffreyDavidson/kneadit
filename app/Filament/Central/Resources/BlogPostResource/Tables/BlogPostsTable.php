@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\BlogPostResource\Tables;
 
 use App\Filament\Actions\AuthorizedDeleteBulkAction;

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Engagement\PageView;
+use App\Models\Orders\Order;
 use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -45,7 +46,7 @@ test('conversion rate calculates correctly with orders', function () {
     ]);
 
     // Create an order in the same date range
-    App\Models\Orders\Order::factory()->create(['created_at' => now()]);
+    Order::factory()->create(['created_at' => now()]);
 
     $query = new StorefrontAnalyticsQuery(now()->startOfWeek());
 
@@ -82,7 +83,7 @@ test('conversion funnel counts unique sessions and excludes confirmation reloads
         ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
     ]);
 
-    $funnel = (new StorefrontAnalyticsQuery(now()->startOfWeek()))->conversionFunnel();
+    $funnel = new StorefrontAnalyticsQuery(now()->startOfWeek())->conversionFunnel();
 
     expect($funnel[2]->toArray())
         ->toMatchArray(['label' => 'Order Page', 'count' => 1]);

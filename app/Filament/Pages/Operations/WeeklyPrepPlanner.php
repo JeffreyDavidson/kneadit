@@ -23,6 +23,7 @@ class WeeklyPrepPlanner extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -33,14 +34,19 @@ class WeeklyPrepPlanner extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Prep Planner';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.weekly-prep-planner';
 
     public ?string $selectedWeekStart = null;

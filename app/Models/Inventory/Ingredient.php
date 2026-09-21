@@ -6,6 +6,7 @@ use App\Builders\Inventory\IngredientQueryBuilder;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Inventory\Allergen;
 use App\Observers\LogsActivityObserver;
+use App\ValueObjects\Money;
 use Database\Factories\Inventory\IngredientFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -33,7 +34,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
  *
  * @property-read Pivot|null $pivot
- * @property \App\ValueObjects\Money|null $cost_per_unit
+ * @property Money|null $cost_per_unit
  *
  * @mixin \Eloquent
  */
@@ -46,6 +47,7 @@ class Ingredient extends Model
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

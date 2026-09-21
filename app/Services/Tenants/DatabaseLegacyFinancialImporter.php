@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tenants;
 
 use App\Services\Tenants\Contracts\LegacyFinancialImporter;
@@ -9,8 +11,8 @@ use UnexpectedValueException;
 class DatabaseLegacyFinancialImporter implements LegacyFinancialImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $expenses
-     * @param array<int, array<string, mixed>> $incomes
+     * @param  array<int, array<string, mixed>>  $expenses
+     * @param  array<int, array<string, mixed>>  $incomes
      */
     public function import(array $expenses, array $incomes): void
     {

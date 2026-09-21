@@ -11,6 +11,7 @@ use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Faker\Factory as Faker;
+use Faker\Generator;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -59,7 +60,7 @@ class SeedLocalCommand extends Command
                 label: 'How many tenants?',
                 placeholder: '100',
                 default: '100',
-                validate: fn (string $value) => match (true) {
+                validate: fn (string $value): ?string => match (true) {
                     ! ctype_digit($value) => 'Must be a whole number.',
                     (int) $value < 1 => 'Must be at least 1.',
                     (int) $value > 500 => 'Capped at 500 — go in batches if you really need more.',
@@ -129,7 +130,7 @@ class SeedLocalCommand extends Command
 
             if (! $result->successful()) {
                 $this->newLine();
-                $this->error("Failed to create {$spec['id']}: " . trim($result->errorOutput() ?: $result->output()));
+                $this->error("Failed to create {$spec['id']}: ".trim($result->errorOutput() ?: $result->output()));
                 $bar->advance();
 
                 continue;
@@ -161,23 +162,23 @@ class SeedLocalCommand extends Command
     /**
      * @return array<string, string>
      */
-    private function generateTenantSpec(\Faker\Generator $faker, int $index): array
+    private function generateTenantSpec(Generator $faker, int $index): array
     {
-        $storeName = ucfirst($faker->word) . ' ' . collect(self::STORE_TYPES)->random();
-        $id = Str::slug($storeName) . '-' . ($index + 1);
+        $storeName = ucfirst($faker->word()).' '.collect(self::STORE_TYPES)->random();
+        $id = Str::slug($storeName).'-'.($index + 1);
         $palette = collect(self::PALETTES)->random();
 
         return [
             'id' => $id,
-            'name' => $faker->name,
-            'email' => $faker->unique()->safeEmail,
+            'name' => $faker->name(),
+            'email' => $faker->unique()->safeEmail(),
             'store_name' => $storeName,
             'brand_primary' => $palette[0],
             'brand_secondary' => $palette[1],
         ];
     }
 
-    private function randomizeTenantAttributes(Tenant $tenant, \Faker\Generator $faker, ?int $grantedByUserId = null): void
+    private function randomizeTenantAttributes(Tenant $tenant, Generator $faker, ?int $grantedByUserId = null): void
     {
         $createdAt = $faker->dateTimeBetween('-6 months', 'now');
 
@@ -226,9 +227,9 @@ class SeedLocalCommand extends Command
     }
 
     /**
-     * @param array<int, string> $tenantIds
+     * @param  array<int, string>  $tenantIds
      */
-    private function seedCentralActivity(array $tenantIds, \Faker\Generator $faker): void
+    private function seedCentralActivity(array $tenantIds, Generator $faker): void
     {
         if ($tenantIds === []) {
             return;
@@ -244,11 +245,11 @@ class SeedLocalCommand extends Command
             AdminAuditLog::query()->create([
                 'admin_id' => $adminUser?->id,
                 'action' => $faker->randomElement($actions),
-                'description' => $faker->sentence,
+                'description' => $faker->sentence(),
                 'target_type' => 'tenant',
                 'target_id' => $tenantId,
                 'user_name' => $adminName,
-                'ip_address' => $faker->ipv4,
+                'ip_address' => $faker->ipv4(),
                 'created_at' => $faker->dateTimeBetween('-3 months', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
             ]);
@@ -277,12 +278,12 @@ class SeedLocalCommand extends Command
             ]);
 
             // 50% chance of an admin reply
-            if ($faker->boolean) {
+            if ($faker->boolean()) {
                 SupportReply::query()->create([
                     'ticket_id' => $ticket->id,
                     'author_type' => 'admin',
                     'author_name' => $adminName,
-                    'body' => $faker->paragraph,
+                    'body' => $faker->paragraph(),
                     'created_at' => $faker->dateTimeBetween($createdAt, 'now'),
                     'updated_at' => $faker->dateTimeBetween($createdAt, 'now'),
                 ]);

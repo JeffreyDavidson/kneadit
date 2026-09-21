@@ -20,7 +20,7 @@ class ResetPasswordController extends Controller
 
         $status = Password::reset(
             $request->validated(),
-            function (User $user, string $password) {
+            function (User $user, string $password): void {
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));

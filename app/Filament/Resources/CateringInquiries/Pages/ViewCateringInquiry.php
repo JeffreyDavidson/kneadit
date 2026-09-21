@@ -38,10 +38,13 @@ use Illuminate\Support\ValidatedInput;
  */
 class ViewCateringInquiry extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = CateringInquiryResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.catering-inquiries.view-catering-inquiry';
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -65,9 +68,9 @@ class ViewCateringInquiry extends ViewRecord
                     ->label('Reason (optional, recorded in notes)')
                     ->rows(3),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, CancelCateringInquiry $cancelInquiry): void {
                 $reason = Arr::string($data, 'reason', '');
-                resolve(CancelCateringInquiry::class)($this->record, $reason !== '' ? $reason : null);
+                $cancelInquiry($this->record, $reason !== '' ? $reason : null);
 
                 $this->record->refresh();
 
@@ -126,7 +129,7 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema([
                 Select::make('event_type')
-                    ->options(function () {
+                    ->options(function (): array {
                         $types = resolve(TenantSettings::class)->catering->eventTypes;
 
                         return array_combine($types, $types);

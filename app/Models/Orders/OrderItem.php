@@ -34,6 +34,7 @@ class OrderItem extends Model
     /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

@@ -43,6 +43,7 @@ class Referral extends Model
     /** @use HasFactory<ReferralFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

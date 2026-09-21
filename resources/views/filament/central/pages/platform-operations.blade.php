@@ -17,7 +17,7 @@
                     'gold' => ['bg' => 'bg-honey/5 border-honey/20', 'iconBg' => 'bg-honey/15 border-honey/25', 'iconColor' => 'text-honey'],
                     default => ['bg' => 'bg-honey/5 border-honey/20', 'iconBg' => 'bg-honey/15 border-honey/25', 'iconColor' => 'text-honey'],
                 };
-                $iconComponent = $cmd['icon'] instanceof \Filament\Support\Icons\Heroicon ? 'heroicon-' . $cmd['icon']->value : $cmd['icon'];
+                $iconComponent = $cmd['icon'] instanceof \Filament\Support\Icons\Heroicon ? 'heroicon-'.$cmd['icon']->value : $cmd['icon'];
                 $lastRun = $this->getLastRun($cmd['key']);
                 $lastRunCarbon = $lastRun ? \Illuminate\Support\Carbon::parse($lastRun) : null;
                 $taskStatus = $this->getTaskStatus($cmd['key']);

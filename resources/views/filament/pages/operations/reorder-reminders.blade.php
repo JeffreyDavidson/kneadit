@@ -43,7 +43,7 @@
             <x-tenant-admin.stat-card label="Warning (90+ days)" :value="$warningCount" tone="warning" />
             <x-tenant-admin.stat-card
                 label="Revenue at Risk"
-                :value="'$' . number_format($totalRevAtRisk, 0)"
+                :value="'$'.number_format($totalRevAtRisk, 0)"
                 tone="brand-600"
             />
         </x-tenant-admin.stat-grid>
@@ -51,7 +51,7 @@
         {{-- Customer table --}}
         <x-tenant-admin.card
             title="Inactive Customers"
-            :subtitle="$customers->count() . ' ' . Str::plural('customer', $customers->count())"
+            :subtitle="$customers->count().' '.Str::plural('customer', $customers->count())"
         >
             <x-tenant-admin.data-table data-admin-table>
                 <x-slot:head>
@@ -82,18 +82,18 @@
                             {{ \Carbon\Carbon::parse($customer->last_order_date)->format('M j, Y') }}
                         </td>
                         <td>
-                            <x-tenant-admin.badge :type="$urgency" :label="$customer->days_since . ' days'" />
+                            <x-tenant-admin.badge :type="$urgency" :label="$customer->days_since.' days'" />
                         </td>
                         <td class="text-brand-900 text-center font-semibold">{{ $customer->total_orders }}</td>
                         <td class="text-brand-900 text-right font-bold">@money($customer->total_spent)</td>
                         <td class="text-right">
                             @php
-                                $subject = rawurlencode('We miss you at ' . app(TenantSettings::class)->storeName . '!');
-                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(TenantSettings::class)->storeName);
+                                $subject = rawurlencode('We miss you at '.app(TenantSettings::class)->storeName.'!');
+                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n".app(TenantSettings::class)->storeName);
                             @endphp
                             <x-tenant-admin.btn
                                 variant="primary"
-                                :href="'mailto:' . $customer->customer_email . '?subject=' . $subject . '&body=' . $body"
+                                :href="'mailto:'.$customer->customer_email.'?subject='.$subject.'&body='.$body"
                                 icon="heroicon-o-envelope"
                                 size="sm"
                             >

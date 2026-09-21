@@ -19,10 +19,10 @@ class CancelCateringInquiry
         $trimmed = $reason !== null ? trim($reason) : '';
 
         if ($trimmed !== '') {
-            $stamped = '[' . now()->toDateString() . '] Cancelled: ' . $trimmed;
+            $stamped = '['.now()->toDateString().'] Cancelled: '.$trimmed;
 
             $inquiry->notes = $inquiry->notes
-                ? $stamped . "\n\n" . $inquiry->notes
+                ? $stamped."\n\n".$inquiry->notes
                 : $stamped;
 
             $inquiry->save();

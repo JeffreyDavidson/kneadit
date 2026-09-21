@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 
 class ProductTrends extends Page
@@ -18,12 +19,16 @@ class ProductTrends extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.product-trends';
 
+    #[\Override]
     protected static ?string $title = 'Product Trends';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Product Trends';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
     #[Url]
@@ -32,6 +37,7 @@ class ProductTrends extends Page
     #[Url]
     public int $year = 0;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -42,16 +48,19 @@ class ProductTrends extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     public static function getNavigationIcon(): string|BackedEnum|null
     {
         return Heroicon::OutlinedArrowTrendingUp;
     }
 
+    #[\Override]
     public static function getNavigationGroup(): string|\UnitEnum|null
     {
         return 'Tools';
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [
@@ -85,17 +94,20 @@ class ProductTrends extends Page
     }
 
     /** @return array<int, mixed> */
-    public function getTrendsDataProperty(): array
+    #[Computed]
+    public function trendsData(): array
     {
         return resolve(ProductTrendsService::class)->calculate($this->year, $this->month);
     }
 
-    public function getMonthLabelProperty(): string
+    #[Computed]
+    public function monthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->format('F Y');
     }
 
-    public function getPrevMonthLabelProperty(): string
+    #[Computed]
+    public function prevMonthLabel(): string
     {
         return Date::create($this->year, $this->month, 1)->subMonth()->format('M Y');
     }

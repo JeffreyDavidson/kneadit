@@ -15,12 +15,14 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 class LoyaltyDashboard extends Page
 {
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -31,14 +33,19 @@ class LoyaltyDashboard extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Loyalty Program';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?int $navigationSort = 13;
 
+    #[\Override]
     protected string $view = 'filament.pages.engagement.loyalty-dashboard';
 
     public bool $loyaltyEnabled;
@@ -112,34 +119,40 @@ class LoyaltyDashboard extends Page
         $manager->set('loyalty_tier_platinum_free_delivery', $this->tierPlatinumFreeDelivery ? '1' : '0');
     }
 
-    public function getTotalPointsIssuedProperty(): int
+    #[Computed]
+    public function totalPointsIssued(): int
     {
         return $this->analytics()->metrics()->totalIssued;
     }
 
-    public function getTotalPointsRedeemedProperty(): int
+    #[Computed]
+    public function totalPointsRedeemed(): int
     {
         return $this->analytics()->metrics()->totalRedeemed;
     }
 
-    public function getActiveMembersProperty(): int
+    #[Computed]
+    public function activeMembers(): int
     {
         return $this->analytics()->metrics()->activeMembers;
     }
 
-    public function getAvailableRewardsCountProperty(): int
+    #[Computed]
+    public function availableRewardsCount(): int
     {
         return $this->analytics()->metrics()->availableRewards;
     }
 
     /** @return Collection<int, Customer> */
-    public function getTopCustomersProperty(): Collection
+    #[Computed]
+    public function topCustomers(): Collection
     {
         return $this->analytics()->topCustomers();
     }
 
     /** @return Collection<int, LoyaltyPoint> */
-    public function getRecentActivityProperty(): Collection
+    #[Computed]
+    public function recentActivity(): Collection
     {
         return $this->analytics()->recentActivity();
     }

@@ -12,8 +12,8 @@ test('empty tracker returns no data and zeroed summary', function () {
     expect(test()->page->getTenantOnboardingData())->toBeEmpty();
     $stats = test()->page->getSummaryStats();
 
-    expect($stats)->toHaveKeys(['total', 'fully_onboarded', 'needs_attention']);
-    expect($stats['total'])->toBe(0)
+    expect($stats)->toHaveKeys(['total', 'fully_onboarded', 'needs_attention'])
+        ->and($stats['total'])->toBe(0)
         ->and($stats['fully_onboarded'])->toBe(0)
         ->and($stats['needs_attention'])->toBe(0);
 });
@@ -40,22 +40,22 @@ test('tracker builds and sorts configured and incomplete tenant records', functi
     $configured = $records[$configuredTenant->id];
     $incomplete = $records[$incompleteTenant->id];
 
-    expect($data)->toHaveCount(2);
-    expect($configured)->toHaveKeys([
-        'id', 'name', 'subdomain', 'owner', 'email',
-        'plan', 'created_at', 'days_since_signup',
-        'checks', 'completed', 'total',
-    ]);
-    expect($configured['checks']['store_name'])->toBeTrue();
-    expect($incomplete['checks']['store_name'])->toBeFalse();
-    expect($configured['checks']['storefront_enabled'])->toBeTrue();
-    expect($configured['checks']['brand_customized'])->toBeTrue();
-    expect($incomplete['checks']['brand_customized'])->toBeFalse();
-    expect($configured['checks']['has_products'])->toBeTrue()
+    expect($data)->toHaveCount(2)
+        ->and($configured)->toHaveKeys([
+            'id', 'name', 'subdomain', 'owner', 'email',
+            'plan', 'created_at', 'days_since_signup',
+            'checks', 'completed', 'total',
+        ])
+        ->and($configured['checks']['store_name'])->toBeTrue()
+        ->and($incomplete['checks']['store_name'])->toBeFalse()
+        ->and($configured['checks']['storefront_enabled'])->toBeTrue()
+        ->and($configured['checks']['brand_customized'])->toBeTrue()
+        ->and($incomplete['checks']['brand_customized'])->toBeFalse()
+        ->and($configured['checks']['has_products'])->toBeTrue()
         ->and($configured['checks']['has_categories'])->toBeTrue()
-        ->and($configured['checks']['has_orders'])->toBeFalse();
-    expect($configured['total'])->toBe(7);
-    expect($data->first()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
+        ->and($configured['checks']['has_orders'])->toBeFalse()
+        ->and($configured['total'])->toBe(7)
+        ->and($data->first()['completed'])->toBeLessThanOrEqual($data->last()['completed']);
 });
 
 test('get summary stats counts tenants needing attention', function () {

@@ -22,7 +22,7 @@
                 ['label' => 'Total Views', 'value' => number_format($this->getTotalViews()), 'gradient' => 'from-amber-100 to-amber-200', 'border' => 'border-amber-500', 'labelColor' => 'text-amber-800', 'valueColor' => 'text-amber-900'],
                 ['label' => 'Unique Visitors', 'value' => number_format($this->getUniqueVisitors()), 'gradient' => 'from-pink-100 to-pink-200', 'border' => 'border-pink-500', 'labelColor' => 'text-pink-800', 'valueColor' => 'text-pink-900'],
                 ['label' => 'Most Popular Page', 'value' => $this->getMostPopularPage(), 'gradient' => 'from-blue-100 to-blue-200', 'border' => 'border-blue-500', 'labelColor' => 'text-blue-800', 'valueColor' => 'text-blue-900', 'extra' => 'capitalize'],
-                ['label' => 'Conversion Rate', 'value' => $this->getConversionRate() . '%', 'gradient' => 'from-emerald-100 to-emerald-200', 'border' => 'border-emerald-500', 'labelColor' => 'text-emerald-800', 'valueColor' => 'text-emerald-900'],
+                ['label' => 'Conversion Rate', 'value' => $this->getConversionRate().'%', 'gradient' => 'from-emerald-100 to-emerald-200', 'border' => 'border-emerald-500', 'labelColor' => 'text-emerald-800', 'valueColor' => 'text-emerald-900'],
             ] as $card)
                 <div class="bg-gradient-to-br {{ $card['gradient'] }} rounded-xl p-5 border {{ $card['border'] }}">
                     <div class="text-[13px] {{ $card['labelColor'] }} font-semibold uppercase tracking-wider">

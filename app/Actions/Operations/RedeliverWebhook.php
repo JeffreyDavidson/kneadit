@@ -9,7 +9,7 @@ use App\Services\Platform\WebhookService;
 class RedeliverWebhook
 {
     public function __construct(
-        private WebhookService $webhookService,
+        private readonly WebhookService $webhookService,
     ) {}
 
     /**

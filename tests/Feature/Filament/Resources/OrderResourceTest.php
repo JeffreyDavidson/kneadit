@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
+use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Customers\CateringInquiry;
@@ -8,6 +11,8 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -48,10 +53,7 @@ test('can render the view order page', function () {
 
     livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
-        ->assertSee('Your bread is ready.')
-        ->assertSee('Thank you, see you soon.')
-        ->assertSee('flex justify-end', false)
-        ->assertSee('flex justify-start', false);
+        ->assertSee('Your bread is ready.')->assertSee('Thank you, see you soon.')->assertSeeHtml('flex justify-end')->assertSeeHtml('flex justify-start');
 });
 
 test('view order page renders the Catering section when the order is linked to an inquiry', function () {
@@ -93,7 +95,7 @@ test('can filter orders by status', function () {
     $delivered = Order::factory()->recycle(test()->customer)->delivered()->create();
 
     livewire(ListOrders::class)
-        ->filterTable('status', App\Enums\Orders\OrderStatus::Delivered->value)
+        ->filterTable('status', OrderStatus::Delivered->value)
         ->assertCanSeeTableRecords(collect([$delivered]))
         ->assertCanNotSeeTableRecords(collect([$pending]));
 });
@@ -103,7 +105,7 @@ test('can filter orders by payment status', function () {
     $paid = Order::factory()->recycle(test()->customer)->paid()->create();
 
     livewire(ListOrders::class)
-        ->filterTable('payment_status', App\Enums\Orders\PaymentStatus::Paid->value)
+        ->filterTable('payment_status', PaymentStatus::Paid->value)
         ->assertCanSeeTableRecords(collect([$paid]))
         ->assertCanNotSeeTableRecords(collect([$unpaid]));
 });
@@ -120,28 +122,28 @@ test('can sort orders by total', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Orders\OrderResource::getGloballySearchableAttributes())
+    expect(OrderResource::getGloballySearchableAttributes())
         ->toBe(['customer.name', 'customer.email', 'status']);
 });
 
 test('resource returns global search result title', function () {
     $order = Order::factory()->recycle(test()->customer)->create();
 
-    expect(App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultTitle($order))
-        ->toBe('Order #' . $order->order_number);
+    expect(OrderResource::getGlobalSearchResultTitle($order))
+        ->toBe('Order #'.$order->order_number);
 });
 
 test('resource returns global search result details', function () {
     $order = Order::factory()->recycle(test()->customer)->create(['total' => 99.99]);
 
-    $details = App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultDetails($order);
+    $details = OrderResource::getGlobalSearchResultDetails($order);
 
     expect($details)
         ->toHaveKeys(['Customer', 'Total', 'Status']);
 });
 
 test('global search eloquent query eager loads customer', function () {
-    $query = App\Filament\Resources\Orders\OrderResource::getGlobalSearchEloquentQuery();
+    $query = OrderResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('customer');
 });

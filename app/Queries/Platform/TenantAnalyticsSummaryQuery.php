@@ -29,7 +29,7 @@ class TenantAnalyticsSummaryQuery
                 $thisMonth > $lastMonth => 'up', $thisMonth < $lastMonth => 'down', default => 'flat',
             }],
             ['label' => 'Active Subscriptions', 'value' => (string) $active, 'hint' => $conversion['on_trial'] === 0 && $conversion['expired'] === 0 ? 'No trial activity' : "{$conversion['on_trial']} on trial • {$conversion['expired']} churned", 'trend' => 'neutral'],
-            ['label' => 'Trial → Paid', 'value' => $completedTrials > 0 ? $conversionRate . '%' : '—', 'hint' => $completedTrials > 0 ? "{$active} of {$completedTrials} completed trials converted" : 'No trials completed yet', 'trend' => match (true) {
+            ['label' => 'Trial → Paid', 'value' => $completedTrials > 0 ? $conversionRate.'%' : '—', 'hint' => $completedTrials > 0 ? "{$active} of {$completedTrials} completed trials converted" : 'No trials completed yet', 'trend' => match (true) {
                 $completedTrials === 0 => 'neutral', $conversionRate >= 50 => 'up', $conversionRate >= 25 => 'neutral', default => 'down',
             }],
         ];
@@ -53,6 +53,6 @@ class TenantAnalyticsSummaryQuery
         }
         $diff = (int) round(($current - $previous) / $previous * 100);
 
-        return ($current >= $previous ? '↑' : '↓') . ' ' . abs($diff) . "% vs. last month ({$previous})";
+        return ($current >= $previous ? '↑' : '↓').' '.abs($diff)."% vs. last month ({$previous})";
     }
 }

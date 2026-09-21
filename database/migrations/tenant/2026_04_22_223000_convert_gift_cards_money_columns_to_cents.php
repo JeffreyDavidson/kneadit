@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Schema;
  * Phase 4 of N. orders.gift_card_amount was already migrated in #310 (it's
  * an orders column).
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $cardColumns = ['initial_balance', 'current_balance'];

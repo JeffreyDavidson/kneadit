@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Orders;
 
 final class ItemPayloadNormalizer
 {
     /**
-     * @param array<mixed> $items
+     * @param  array<mixed>  $items
      * @return list<array{product_id: int, quantity: int}>
      */
     public function products(array $items): array
@@ -20,7 +22,7 @@ final class ItemPayloadNormalizer
     }
 
     /**
-     * @param array<mixed> $items
+     * @param  array<mixed>  $items
      * @return list<array{order_item_id: int, quantity: int}>
      */
     public function orderItems(array $items): array
@@ -35,7 +37,7 @@ final class ItemPayloadNormalizer
     }
 
     /**
-     * @param array<mixed> $items
+     * @param  array<mixed>  $items
      * @return list<array<string, int>>
      */
     private function normalize(array $items, string $identifierKey): array

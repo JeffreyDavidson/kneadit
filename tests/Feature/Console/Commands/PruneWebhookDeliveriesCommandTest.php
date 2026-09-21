@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Operations\WebhookDelivery;
+use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
@@ -16,7 +17,7 @@ beforeEach(function () {
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')
         ->resolves(function (callable $callback) {
-            $callback(new App\Models\Platform\Tenant(['id' => 'test-tenant']));
+            $callback(new Tenant(['id' => 'test-tenant']));
 
             return 0;
         });

@@ -11,10 +11,13 @@ class LowStockWidget extends Widget
 {
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 11;
 
+    #[\Override]
     protected string $view = 'filament.widgets.low-stock';
 
+    #[\Override]
     public static function canView(): bool
     {
         return Ingredient::query()->lowStock()->exists();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inventory\Category;
+use App\Models\Orders\Cart;
 use App\Models\Orders\CartItem;
 use App\Services\Carts\CartManager;
 use App\Services\Settings\TenantSettings;
@@ -20,7 +21,7 @@ class ShowOrderFormController extends Controller
             ->get();
 
         $cart = $cartManager->current();
-        $hydratedItems = $cart
+        $hydratedItems = $cart instanceof Cart
             ? $cart->items()->with('product')->get()->map(fn (CartItem $item): array => [
                 'id' => $item->product_id,
                 'name' => $item->product->name ?? 'Product',

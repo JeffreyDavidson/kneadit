@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Platform;
 
 use App\Models\Platform\Tenant;
@@ -9,7 +11,7 @@ use Stancl\Tenancy\Database\Models\Domain;
 class AddCustomDomain
 {
     public function __construct(
-        private ForgeService $forge,
+        private readonly ForgeService $forge,
     ) {}
 
     public function __invoke(Tenant $tenant, string $domain): void

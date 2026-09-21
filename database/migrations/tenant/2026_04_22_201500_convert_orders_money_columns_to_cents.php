@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Schema;
  * cast from MoneyCast to MoneyCentsCast in the same release, so the
  * dollar→cent conversion never has a stale window.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         $orderColumns = ['subtotal', 'delivery_fee', 'discount_amount', 'gift_card_amount', 'total'];

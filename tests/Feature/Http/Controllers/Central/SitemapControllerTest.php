@@ -13,7 +13,7 @@ beforeEach(function () {
 test('sitemap returns response with xml content type', function () {
     // Stub the view to avoid Blade XML-declaration compilation issue (short_open_tag)
     View::addNamespace('test', sys_get_temp_dir());
-    $tmpView = sys_get_temp_dir() . '/sitemap-stub.php';
+    $tmpView = sys_get_temp_dir().'/sitemap-stub.php';
     file_put_contents($tmpView, '<urlset></urlset>');
 
     View::composer('central.seo.sitemap', function ($view) use ($tmpView) {
@@ -74,13 +74,6 @@ test('sitemap generates URLs from the application routes', function () {
 
     $response = $this->get(route('sitemap'));
 
-    $response
-        ->assertOk()
-        ->assertSee(route('home'), escape: false)
-        ->assertSee(route('blog.index'), escape: false)
-        ->assertSee(route('pricing'), escape: false)
-        ->assertSee(route('register'), escape: false)
-        ->assertSee(route('changelog'), escape: false)
-        ->assertSee(route('blog.show', ['centralPost' => $post->slug]), escape: false)
+    $response->assertOk()->assertSeeHtml(route('home'))->assertSeeHtml(route('blog.index'))->assertSeeHtml(route('pricing'))->assertSeeHtml(route('register'))->assertSeeHtml(route('changelog'))->assertSeeHtml(route('blog.show', ['centralPost' => $post->slug]))
         ->assertDontSee('getkneadit.app');
 });

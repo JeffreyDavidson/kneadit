@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Coupons\Tables;
 
 use App\Builders\Financial\CouponQueryBuilder;
@@ -37,7 +39,7 @@ class CouponsTable
                     ->placeholder('No minimum'),
 
                 TextColumn::make('usage')
-                    ->formatStateUsing(function (mixed $state, Coupon $record) {
+                    ->formatStateUsing(function (mixed $state, Coupon $record): string {
                         if ($record->max_uses) {
                             return "{$record->used_count} / {$record->max_uses}";
                         }

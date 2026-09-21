@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stancl\Tenancy\Database\Models\Domain;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {

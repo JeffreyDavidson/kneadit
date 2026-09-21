@@ -37,9 +37,7 @@ class PrepScheduleService
             ->oldest('delivery_date')
             ->orderBy('delivery_time')
             ->get()
-            ->groupBy(function (Order $order) {
-                return Date::parse($order->delivery_date)->format('Y-m-d');
-            })
+            ->groupBy(fn (Order $order) => Date::parse($order->delivery_date)->format('Y-m-d'))
             ->all());
 
         $prepSchedule = $this->generatePrepSchedule($weeklyOrders);
@@ -48,7 +46,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
+     * @param  WeeklyOrders  $weeklyOrders
      * @return PrepSchedule
      */
     public function generatePrepSchedule(Collection $weeklyOrders): Collection
@@ -93,7 +91,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
+     * @param  WeeklyOrders  $weeklyOrders
      * @return Collection<string, ProductPreparationSummary>
      */
     public function getProductSummary(Collection $weeklyOrders): Collection
@@ -124,7 +122,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param PrepSchedule $prepSchedule
+     * @param  PrepSchedule  $prepSchedule
      * @return Collection<string, Collection<int, PrepTimelineItem>>
      */
     public function getTimelineView(Collection $prepSchedule): Collection
@@ -132,15 +130,13 @@ class PrepScheduleService
         $timeline = [];
 
         foreach ($prepSchedule as $date => $prepTasks) {
-            $dayTimeline = $prepTasks->sortBy('prepStartDateTime')->map(function (PrepTask $task): PrepTimelineItem {
-                return new PrepTimelineItem(
-                    time: $task->prepStartTime,
-                    task: "Start {$task->productName} (x{$task->quantity}) for {$task->customerName}",
-                    duration: $task->prepTimeMinutes,
-                    order: $task->orderNumber,
-                    deliveryTime: $task->deliveryTime,
-                );
-            });
+            $dayTimeline = $prepTasks->sortBy('prepStartDateTime')->map(fn (PrepTask $task): PrepTimelineItem => new PrepTimelineItem(
+                time: $task->prepStartTime,
+                task: "Start {$task->productName} (x{$task->quantity}) for {$task->customerName}",
+                duration: $task->prepTimeMinutes,
+                order: $task->orderNumber,
+                deliveryTime: $task->deliveryTime,
+            ));
 
             $timeline[$date] = $dayTimeline->values();
         }
@@ -149,7 +145,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param PrepSchedule $prepSchedule
+     * @param  PrepSchedule  $prepSchedule
      */
     public function getTotalPrepHours(Collection $prepSchedule): float
     {
@@ -165,8 +161,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param WeeklyOrders $weeklyOrders
-     * @param PrepSchedule $prepSchedule
+     * @param  WeeklyOrders  $weeklyOrders
+     * @param  PrepSchedule  $prepSchedule
      */
     public function getWeekSummary(Collection $weeklyOrders, Collection $prepSchedule): PrepWeekSummary
     {

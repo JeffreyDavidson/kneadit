@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Incomes\Pages;
 
 use App\Filament\Resources\Incomes\IncomeResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListIncomes extends ListRecords
 {
+    #[\Override]
     protected static string $resource = IncomeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -11,7 +11,7 @@ class RedeemGiftCard
 {
     public function __invoke(string $code, float $amount, ?int $orderId = null): GiftCardRedemptionResult
     {
-        return DB::transaction(function () use ($code, $amount, $orderId) {
+        return DB::transaction(function () use ($code, $amount, $orderId): GiftCardRedemptionResult {
             $card = GiftCard::query()->lockForUpdate()->where('code', $code)->firstOrFail();
 
             if (! $card->is_usable) {

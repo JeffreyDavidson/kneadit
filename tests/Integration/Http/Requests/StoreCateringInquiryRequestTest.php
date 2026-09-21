@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Requests\Storefront\StoreCateringInquiryRequest;
+use App\Services\Settings\TenantSettingsRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -19,7 +20,7 @@ test('catering inquiry requires essential fields', function () {
 
 test('event_type must match a configured event type', function () {
     settings(['catering_event_types' => json_encode(['Kids Party', 'School Function'])]);
-    resolve(App\Services\Settings\TenantSettingsRegistry::class)->flush();
+    resolve(TenantSettingsRegistry::class)->flush();
 
     $request = new StoreCateringInquiryRequest;
     $validator = validator(['event_type' => 'Wedding'], $request->rules());
@@ -29,7 +30,7 @@ test('event_type must match a configured event type', function () {
 
 test('event_type accepts a configured event type', function () {
     settings(['catering_event_types' => json_encode(['Kids Party', 'School Function'])]);
-    resolve(App\Services\Settings\TenantSettingsRegistry::class)->flush();
+    resolve(TenantSettingsRegistry::class)->flush();
 
     $request = new StoreCateringInquiryRequest;
     $validator = validator(['event_type' => 'Kids Party'], $request->rules());

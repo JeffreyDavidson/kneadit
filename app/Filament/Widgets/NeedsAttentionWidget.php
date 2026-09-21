@@ -28,16 +28,26 @@ class NeedsAttentionWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected static ?int $sort = -10;
 
+    #[\Override]
     protected string $view = 'filament.widgets.needs-attention';
 
+    #[\Override]
     public static function canView(): bool
     {
-        return Order::query()->where('status', OrderStatus::Pending)->exists()
-            || ContactMessage::query()->where('is_read', false)->exists()
-            || CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()
-            || Ingredient::query()->lowStock()->exists();
+        if (Order::query()->where('status', OrderStatus::Pending)->exists()) {
+            return true;
+        }
+        if (ContactMessage::query()->where('is_read', false)->exists()) {
+            return true;
+        }
+        if (CateringInquiry::query()->where('status', CateringInquiryStatus::Inquiry)->exists()) {
+            return true;
+        }
+
+        return (bool) Ingredient::query()->lowStock()->exists();
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -56,7 +66,7 @@ class NeedsAttentionWidget extends Widget
             $items[] = [
                 'severity' => $pending > 5 ? 'critical' : 'warning',
                 'icon' => Heroicon::OutlinedClipboardDocumentCheck,
-                'title' => $pending . ' pending ' . str('order')->plural($pending) . ' awaiting confirmation',
+                'title' => $pending.' pending '.str('order')->plural($pending).' awaiting confirmation',
                 'subtitle' => 'Customers are waiting to hear back',
                 'url' => OrderResource::getUrl('index'),
                 'cta' => 'Open Orders',
@@ -68,7 +78,7 @@ class NeedsAttentionWidget extends Widget
             $items[] = [
                 'severity' => 'warning',
                 'icon' => Heroicon::OutlinedInbox,
-                'title' => $unreadMessages . ' unread customer ' . str('message')->plural($unreadMessages),
+                'title' => $unreadMessages.' unread customer '.str('message')->plural($unreadMessages),
                 'subtitle' => 'Customers have reached out and are awaiting a reply',
                 'url' => ContactMessageResource::getUrl('index'),
                 'cta' => 'Open Inbox',
@@ -80,7 +90,7 @@ class NeedsAttentionWidget extends Widget
             $items[] = [
                 'severity' => 'warning',
                 'icon' => Heroicon::OutlinedCake,
-                'title' => $newInquiries . ' new catering ' . str('inquiry')->plural($newInquiries) . ' awaiting a quote',
+                'title' => $newInquiries.' new catering '.str('inquiry')->plural($newInquiries).' awaiting a quote',
                 'subtitle' => 'Send a quote before the customer drops off',
                 'url' => CateringInquiryResource::getUrl('index'),
                 'cta' => 'View Inquiries',
@@ -92,7 +102,7 @@ class NeedsAttentionWidget extends Widget
             $items[] = [
                 'severity' => 'info',
                 'icon' => Heroicon::OutlinedArchiveBoxXMark,
-                'title' => $lowStock . ' ' . str('ingredient')->plural($lowStock) . ' running low',
+                'title' => $lowStock.' '.str('ingredient')->plural($lowStock).' running low',
                 'subtitle' => 'Restock before production stalls',
                 'url' => IngredientResource::getUrl('index'),
                 'cta' => 'View Ingredients',

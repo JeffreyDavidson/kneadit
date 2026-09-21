@@ -1,18 +1,19 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Support\Facades\DB;
 
 arch('view models must not use the DB facade')
-    ->expect('Illuminate\Support\Facades\DB')
+    ->expect(DB::class)
     ->not->toBeUsedIn('App\ViewModels');
 
 test('view models must not call Model::query() statically', function () {
-    $viewModelsDir = dirname(__DIR__, 2) . '/app/ViewModels';
+    $viewModelsDir = dirname(__DIR__, 2).'/app/ViewModels';
     $modelClasses = collect(iterator_to_array(new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/app/Models', FilesystemIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/app/Models', FilesystemIterator::SKIP_DOTS),
     )))
         ->filter(fn (mixed $file): bool => $file instanceof SplFileInfo && $file->getExtension() === 'php')
-        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->reject(fn (SplFileInfo $file): bool => str_contains($file->getPathname(), DIRECTORY_SEPARATOR.'Concerns'.DIRECTORY_SEPARATOR))
         ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))
         ->values()
         ->all();
@@ -43,7 +44,7 @@ test('view models must not call Model::query() statically', function () {
         if ($contents === false) {
             throw new RuntimeException("Unable to read {$file->getPathname()}.");
         }
-        $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
+        $relative = str_replace(dirname(__DIR__, 2).'/', '', $file->getPathname());
 
         foreach ($modelClasses as $model) {
             if (preg_match("/\\b{$model}::query\\s*\\(/", $contents)) {
@@ -53,6 +54,6 @@ test('view models must not call Model::query() statically', function () {
     }
 
     expect($violations)->toBeEmpty(
-        "ViewModels must not query the database directly:\n" . implode("\n", $violations),
+        "ViewModels must not query the database directly:\n".implode("\n", $violations),
     );
 });

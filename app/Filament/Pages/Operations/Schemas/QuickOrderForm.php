@@ -53,7 +53,7 @@ class QuickOrderForm
                                 ])->all())
                             ->getOptionLabelUsing(fn (string $value): ?string => Customer::query()->find($value)?->name)
                             ->live()
-                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                            ->afterStateUpdated(function (Set $set, ?string $state): void {
                                 if ($state) {
                                     $customer = Customer::query()->find($state);
                                     if ($customer) {
@@ -87,9 +87,9 @@ class QuickOrderForm
                     /** @var array<int, array{quantity: int, unit_price: float}> $items */
                     $items = $get('order_items') ?? [];
                     $totalItems = count($items);
-                    $subtotal = collect($items)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
+                    $subtotal = collect($items)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
 
-                    return $totalItems . ' items · Subtotal: $' . Number::currency($subtotal);
+                    return $totalItems.' items · Subtotal: $'.Number::currency($subtotal);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -104,10 +104,10 @@ class QuickOrderForm
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name . ' - ' . ($product->price?->formatted() ?? ''),
+                                            $product->id => $product->name.' - '.($product->price?->formatted() ?? ''),
                                         ]))
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                                    ->afterStateUpdated(function (Set $set, ?string $state): void {
                                         if ($state) {
                                             $product = Product::query()->find($state);
                                             if ($product) {

@@ -7,22 +7,25 @@ use App\Filament\Central\Resources\SupportTicketResource;
 use App\Models\Platform\SupportTicket;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 
 /**
  * @property-read SupportTicket $record
  */
 class ViewTicket extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = SupportTicketResource::class;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.view-ticket';
 
-    #[Rule(['required', 'min:3'])]
+    #[Validate(['required', 'min:3'])]
     public string $replyBody = '';
 
     public string $adminNotesDraft = '';
 
+    #[\Override]
     public function mount(int|string $record): void
     {
         parent::mount($record);

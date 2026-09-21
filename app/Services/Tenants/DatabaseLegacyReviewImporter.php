@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tenants;
 
 use App\Services\Tenants\Contracts\LegacyReviewImporter;
@@ -11,7 +13,7 @@ class DatabaseLegacyReviewImporter implements LegacyReviewImporter
     public function import(array $reviews, array $productIds, array $orderIds): void
     {
         foreach ($reviews as $review) {
-            $email = $review['email'] ?: 'legacy-review-' . $this->stringValue($review['id']) . '@migration.invalid';
+            $email = $review['email'] ?: 'legacy-review-'.$this->stringValue($review['id']).'@migration.invalid';
             DB::table('reviews')->updateOrInsert(
                 ['customer_email' => $email, 'comment' => $review['body']],
                 [

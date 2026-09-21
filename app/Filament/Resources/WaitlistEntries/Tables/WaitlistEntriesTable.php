@@ -64,7 +64,7 @@ class WaitlistEntriesTable
                     ->color('info')
                     ->authorize('update')
                     ->requiresConfirmation()
-                    ->action(function (WaitlistEntry $record) {
+                    ->action(function (WaitlistEntry $record): void {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Notified);
                         Notification::make()
                             ->title('Customer notified')
@@ -72,14 +72,14 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => $record->status === WaitlistStatus::Waiting),
+                    ->visible(fn (WaitlistEntry $record): bool => $record->status === WaitlistStatus::Waiting),
 
                 Action::make('convert')
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
                     ->authorize('update')
                     ->requiresConfirmation()
-                    ->action(function (WaitlistEntry $record) {
+                    ->action(function (WaitlistEntry $record): void {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Converted);
                         Notification::make()
                             ->title('Customer converted')
@@ -87,14 +87,14 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => in_array($record->status, [WaitlistStatus::Waiting, WaitlistStatus::Notified])),
+                    ->visible(fn (WaitlistEntry $record): bool => in_array($record->status, [WaitlistStatus::Waiting, WaitlistStatus::Notified])),
 
                 Action::make('remove')
                     ->icon(Heroicon::OutlinedXMark)
                     ->color('danger')
                     ->authorize('update')
                     ->requiresConfirmation()
-                    ->action(function (WaitlistEntry $record) {
+                    ->action(function (WaitlistEntry $record): void {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Removed);
                         Notification::make()
                             ->title('Customer removed')
@@ -102,7 +102,7 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => $record->status !== WaitlistStatus::Removed),
+                    ->visible(fn (WaitlistEntry $record): bool => $record->status !== WaitlistStatus::Removed),
 
                 SlideOverEditAction::make(),
             ])

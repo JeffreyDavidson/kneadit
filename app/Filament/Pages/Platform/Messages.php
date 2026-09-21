@@ -13,26 +13,33 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Messages extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Messages';
 
+    #[\Override]
     protected static ?int $navigationSort = 90;
 
+    #[\Override]
     protected string $view = 'filament.pages.platform.messages';
 
     public ?int $viewingMessage = null;
 
     public string $replyBody = '';
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'Messages';
     }
 
     /** @return Collection<int, PlatformMessage> */
+    #[\Override]
     public function getMessages(): Collection
     {
         /** @var Tenant|null $tenant */
@@ -83,7 +90,7 @@ class Messages extends Page
         PlatformMessage::query()->create([
             'tenant_id' => $tenant?->id,
             'sender_type' => PlatformSenderType::Tenant,
-            'subject' => 'Re: ' . $parent->subject,
+            'subject' => 'Re: '.$parent->subject,
             'body' => $this->replyBody,
             'parent_id' => $parent->id,
         ]);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tenants;
 
 use App\Services\Tenants\Contracts\LegacyCustomerImporter;
@@ -10,7 +12,7 @@ use UnexpectedValueException;
 final class DatabaseLegacyCustomerImporter implements LegacyCustomerImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $orders
+     * @param  array<int, array<string, mixed>>  $orders
      * @return array<string, int>
      */
     public function import(array $orders): array

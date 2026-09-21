@@ -14,8 +14,10 @@ class CustomerInsightsWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 8;
 
+    #[\Override]
     protected string $view = 'filament.widgets.customer-insights';
 
     public function getNewCustomersThisWeek(): int

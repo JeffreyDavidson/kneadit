@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataTransferObjects\Production;
 
 use App\Models\Orders\Order;
@@ -10,9 +12,9 @@ use Illuminate\Support\Collection;
 final readonly class WeeklyPrepData
 {
     /**
-     * @param Collection<string, EloquentCollection<int, Order>> $weeklyOrders
-     * @param list<Carbon> $weekDays
-     * @param Collection<string, Collection<int, PrepTask>> $prepSchedule
+     * @param  Collection<string, EloquentCollection<int, Order>>  $weeklyOrders
+     * @param  list<Carbon>  $weekDays
+     * @param  Collection<string, Collection<int, PrepTask>>  $prepSchedule
      */
     public function __construct(
         public Collection $weeklyOrders,

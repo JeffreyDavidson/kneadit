@@ -5,6 +5,8 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -18,7 +20,7 @@ dataset('widgetSizeGroups', function (): array {
     $groups = [];
 
     foreach (array_chunk(array_keys(WidgetMeta::all()), 5) as $index => $widgetKeys) {
-        $groups['Widget group ' . ($index + 1)] = $widgetKeys;
+        $groups['Widget group '.($index + 1)] = $widgetKeys;
     }
 
     return $groups;

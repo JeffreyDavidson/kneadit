@@ -262,7 +262,7 @@
                         <div>
                             <x-storefront.icon-circle size="lg" variant="subtle" class="mx-auto mb-5">
                                 <x-dynamic-component
-                                    :component="'heroicon-o-' . ($step['icon'] ?? 'star')"
+                                    :component="'heroicon-o-'.($step['icon'] ?? 'star')"
                                     class="text-warm-500 h-8 w-8"
                                 />
                             </x-storefront.icon-circle>

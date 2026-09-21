@@ -13,16 +13,22 @@ use UnitEnum;
 
 class PlatformOperations extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBolt;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Operations';
 
+    #[\Override]
     protected static ?string $title = 'Platform Operations';
 
+    #[\Override]
     protected static ?int $navigationSort = 50;
 
+    #[\Override]
     protected string $view = 'filament.central.pages.platform-operations';
 
     /**
@@ -96,7 +102,7 @@ class PlatformOperations extends Page
 
     public function getLastRun(string $key): ?string
     {
-        $value = $this->getTaskStatus($key)['finished_at'] ?? platformSettings('last_run_' . $key);
+        $value = $this->getTaskStatus($key)['finished_at'] ?? platformSettings('last_run_'.$key);
 
         return is_string($value) && $value !== '' ? $value : null;
     }
@@ -123,7 +129,7 @@ class PlatformOperations extends Page
             $exit = Artisan::call($key);
             $output = trim(Artisan::output());
 
-            platformSettings(['last_run_' . $key => now()->toIso8601String()]);
+            platformSettings(['last_run_'.$key => now()->toIso8601String()]);
             resolve(ScheduledTaskMonitor::class)->succeeded($key, microtime(true) - $startedAt, $exit);
 
             if ($exit === 0) {

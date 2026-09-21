@@ -23,11 +23,11 @@ class InitializeTenancyIfNeeded
             return $next($request);
         }
 
-        // Redirect www to apex domain
+        // Redirect legacy central hosts to the application host.
         $host = $request->getHost();
-        if ($host === 'www.getkneadit.app') {
+        if (in_array($host, ['getkneadit.app', 'www.getkneadit.app', 'www.app.getkneadit.app'], true)) {
             return redirect()->to(
-                $request->getScheme() . '://getkneadit.app' . $request->getRequestUri(),
+                $request->getScheme().'://app.getkneadit.app'.$request->getRequestUri(),
                 301,
             );
         }

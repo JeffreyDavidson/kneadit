@@ -9,7 +9,7 @@ use Stancl\Tenancy\Database\Models\Domain;
 class RemoveCustomDomain
 {
     public function __construct(
-        private ForgeService $forge,
+        private readonly ForgeService $forge,
     ) {}
 
     public function __invoke(Tenant $tenant): void

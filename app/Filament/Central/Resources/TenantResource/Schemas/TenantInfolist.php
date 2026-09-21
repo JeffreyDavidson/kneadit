@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
 use App\Models\Platform\Tenant;
@@ -34,7 +36,7 @@ class TenantInfolist
                                 ->placeholder('None'),
                             TextEntry::make('external_website')
                                 ->label('External Website')
-                                ->url(fn (?string $state) => $state)
+                                ->url(fn (?string $state): ?string => $state)
                                 ->openUrlInNewTab()
                                 ->placeholder('None'),
                         ]),
@@ -59,13 +61,13 @@ class TenantInfolist
                             TextEntry::make('is_active')
                                 ->label('Active')
                                 ->badge()
-                                ->formatStateUsing(fn (bool $state) => $state ? 'Yes' : 'No')
-                                ->color(fn (bool $state) => $state ? 'success' : 'danger'),
+                                ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                                ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
                             TextEntry::make('storefront_enabled')
                                 ->label('Storefront')
                                 ->badge()
-                                ->formatStateUsing(fn (bool $state) => $state ? 'Enabled' : 'Disabled')
-                                ->color(fn (bool $state) => $state ? 'success' : 'danger'),
+                                ->formatStateUsing(fn (bool $state): string => $state ? 'Enabled' : 'Disabled')
+                                ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
                         ]),
                         Grid::make(2)->schema([
                             TextEntry::make('trial_ends_at')

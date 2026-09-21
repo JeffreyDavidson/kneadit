@@ -8,25 +8,33 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class SupportTicketResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = SupportTicket::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'subject';
 
+    #[\Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['subject'];
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInbox;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Support Inbox';
 
     public static function getNavigationBadge(): ?string
@@ -53,26 +61,31 @@ class SupportTicketResource extends Resource
      * Tickets originate from bakers; platform admins only view/reply/resolve
      * via ViewTicket. No create or edit surface.
      */
+    #[\Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    #[\Override]
+    public static function canEdit(Model $record): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return SupportTicketsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

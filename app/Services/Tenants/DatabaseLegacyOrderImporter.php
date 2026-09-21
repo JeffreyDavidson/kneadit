@@ -11,15 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
+final readonly class DatabaseLegacyOrderImporter implements LegacyOrderImporter
 {
-    public function __construct(private readonly LegacyImportValueParser $parser) {}
+    public function __construct(private LegacyImportValueParser $parser) {}
 
     /**
-     * @param array<int, array<string, mixed>> $orders
-     * @param array<int, array<string, mixed>> $orderNotes
-     * @param array<string, int> $customerIds
-     * @param array<int, int> $couponIds
+     * @param  array<int, array<string, mixed>>  $orders
+     * @param  array<int, array<string, mixed>>  $orderNotes
+     * @param  array<string, int>  $customerIds
+     * @param  array<int, int>  $couponIds
      * @return array<int, int>
      */
     public function import(array $orders, array $orderNotes, array $customerIds, array $couponIds): array
@@ -63,8 +63,8 @@ final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
     }
 
     /**
-     * @param array<string, mixed> $order
-     * @param array<int, array<string, mixed>> $orderNotes
+     * @param  array<string, mixed>  $order
+     * @param  array<int, array<string, mixed>>  $orderNotes
      */
     private function orderNotes(array $order, array $orderNotes): ?string
     {
@@ -88,7 +88,7 @@ final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
             return $originalNotes !== '' ? $originalNotes : null;
         }
 
-        $legacyHistory = "Legacy order history:\n" . $notes->implode("\n");
+        $legacyHistory = "Legacy order history:\n".$notes->implode("\n");
 
         return $originalNotes !== ''
             ? "{$originalNotes}\n\n{$legacyHistory}"
@@ -96,7 +96,7 @@ final class DatabaseLegacyOrderImporter implements LegacyOrderImporter
     }
 
     /**
-     * @param class-string<\BackedEnum> $enumClass
+     * @param  class-string<\BackedEnum>  $enumClass
      */
     private function enumValue(string $enumClass, mixed $value, string $label): string
     {

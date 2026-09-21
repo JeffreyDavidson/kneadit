@@ -10,6 +10,8 @@ use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
 use App\Filament\Pages\Platform\OnboardingSteps\PreviewStep;
 use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 
@@ -95,14 +97,14 @@ test('product step defaults returns empty strings when no product', function () 
 });
 
 test('product step defaults loads existing product', function () {
-    $category = App\Models\Inventory\Category::factory()->create([
+    $category = Category::factory()->create([
         'name' => 'Bread',
         'slug' => 'bread',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    $product = App\Models\Inventory\Product::factory()->create([
+    $product = Product::factory()->create([
         'name' => 'Test Sourdough',
         'description' => 'A test loaf',
         'price' => 10.00,

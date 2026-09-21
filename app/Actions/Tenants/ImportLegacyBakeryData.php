@@ -34,7 +34,7 @@ class ImportLegacyBakeryData
     ) {}
 
     /**
-     * @param LegacyBakeryImportData|array<string, array<int, array<string, mixed>>> $data
+     * @param  LegacyBakeryImportData|array<string, array<int, array<string, mixed>>>  $data
      * @return array<string, int>
      */
     public function __invoke(LegacyBakeryImportData|array $data): array

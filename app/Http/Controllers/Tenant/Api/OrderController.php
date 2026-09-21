@@ -8,6 +8,7 @@ use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreApiOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Models\Orders\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
@@ -34,7 +35,7 @@ class OrderController extends Controller
             ]);
         }
 
-        if (! $order) {
+        if (! $order instanceof Order) {
             throw ValidationException::withMessages([
                 'delivery_date' => 'This date is fully booked or no valid items in order.',
             ]);

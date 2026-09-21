@@ -1,12 +1,15 @@
 <?php
 
 use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Filament\Resources\Products\ProductResource;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -125,28 +128,28 @@ test('can edit a product via table action', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Products\ProductResource::getGloballySearchableAttributes())
+    expect(ProductResource::getGloballySearchableAttributes())
         ->toBe(['name', 'description', 'category.name']);
 });
 
 test('resource returns global search result title', function () {
     $product = Product::factory()->recycle(test()->category)->create(['name' => 'Ciabatta']);
 
-    expect(App\Filament\Resources\Products\ProductResource::getGlobalSearchResultTitle($product))
+    expect(ProductResource::getGlobalSearchResultTitle($product))
         ->toBe('Ciabatta');
 });
 
 test('resource returns global search result details', function () {
     $product = Product::factory()->recycle(test()->category)->create(['price' => 5.50]);
 
-    $details = App\Filament\Resources\Products\ProductResource::getGlobalSearchResultDetails($product);
+    $details = ProductResource::getGlobalSearchResultDetails($product);
 
     expect($details)
         ->toHaveKeys(['Category', 'Price']);
 });
 
 test('global search eloquent query eager loads category', function () {
-    $query = App\Filament\Resources\Products\ProductResource::getGlobalSearchEloquentQuery();
+    $query = ProductResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('category');
 });

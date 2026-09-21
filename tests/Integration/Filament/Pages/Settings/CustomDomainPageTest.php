@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\DnsVerificationStatus;
 use App\Filament\Pages\Settings\CustomDomain;
 
 beforeEach(function () {
@@ -34,7 +35,7 @@ test('check dns sets pending for unknown domain', function () {
     $method = new ReflectionMethod(CustomDomain::class, 'refreshDnsStatus');
     $method->invoke(test()->page);
 
-    expect(test()->page->dns_status)->toBe(App\Enums\Platform\DnsVerificationStatus::Pending);
+    expect(test()->page->dns_status)->toBe(DnsVerificationStatus::Pending);
 });
 
 test('provision ssl sets manual status when forge not configured', function () {

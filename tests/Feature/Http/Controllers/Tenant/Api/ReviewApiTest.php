@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Engagement\Review;
+use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -40,7 +41,7 @@ test('reviews endpoint returns all approved when featured is not requested', fun
 });
 
 test('store review creates review and returns a JSON:API resource', function () {
-    $product = App\Models\Inventory\Product::factory()->create();
+    $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/reviews', [
@@ -83,7 +84,7 @@ test('store review fails validation with missing fields', function () {
 });
 
 test('store review fails validation with invalid rating', function () {
-    $product = App\Models\Inventory\Product::factory()->create();
+    $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/reviews', [

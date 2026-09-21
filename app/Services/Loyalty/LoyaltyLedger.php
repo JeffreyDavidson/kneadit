@@ -10,8 +10,8 @@ use App\Services\Settings\TenantSettings;
 class LoyaltyLedger
 {
     public function __construct(
-        private TenantSettings $settings,
-        private CustomerLoyalty $customerLoyalty,
+        private readonly TenantSettings $settings,
+        private readonly CustomerLoyalty $customerLoyalty,
     ) {}
 
     /**

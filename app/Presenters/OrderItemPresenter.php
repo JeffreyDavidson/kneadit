@@ -5,10 +5,10 @@ namespace App\Presenters;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\Money;
 
-final class OrderItemPresenter
+final readonly class OrderItemPresenter
 {
     public function __construct(
-        public readonly OrderItem $orderItem,
+        public OrderItem $orderItem,
     ) {}
 
     public static function for(OrderItem $orderItem): self

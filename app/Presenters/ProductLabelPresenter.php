@@ -14,9 +14,9 @@ use Illuminate\Support\Number;
  * by weight descending (per FDA rules) and a "Contains: …" allergen statement
  * derived from the union of its recipe ingredients' allergen tags.
  */
-final class ProductLabelPresenter
+final readonly class ProductLabelPresenter
 {
-    public function __construct(public readonly Product $product) {}
+    public function __construct(public Product $product) {}
 
     public static function for(Product $product): self
     {
@@ -72,13 +72,17 @@ final class ProductLabelPresenter
             return [];
         }
 
-        /** @var list<Allergen> $allergens */
-        $allergens = $recipe->inventoryIngredients
-            ->flatMap(fn (Ingredient $i) => $i->allergens ?? collect())
-            ->unique(fn (Allergen $a) => $a->value)
-            ->sortBy(fn (Allergen $a) => $a->getLabel())
-            ->values()
-            ->all();
+        /** @var array<string, Allergen> $allergensByValue */
+        $allergensByValue = [];
+
+        foreach ($recipe->inventoryIngredients as $ingredient) {
+            foreach ($ingredient->allergens ?? [] as $allergen) {
+                $allergensByValue[$allergen->value] = $allergen;
+            }
+        }
+
+        $allergens = array_values($allergensByValue);
+        usort($allergens, fn (Allergen $a, Allergen $b): int => $a->getLabel() <=> $b->getLabel());
 
         return $allergens;
     }
@@ -87,13 +91,13 @@ final class ProductLabelPresenter
     {
         $allergens = $this->allergens();
 
-        if (empty($allergens)) {
+        if ($allergens === []) {
             return null;
         }
 
-        $labels = Collection::make($allergens)->map(fn (Allergen $a) => $a->getLabel())->all();
+        $labels = Collection::make($allergens)->map(fn (Allergen $a): string => $a->getLabel())->all();
 
-        return 'Contains: ' . implode(', ', $labels) . '.';
+        return 'Contains: '.implode(', ', $labels).'.';
     }
 
     /** @return list<string> */
@@ -102,7 +106,7 @@ final class ProductLabelPresenter
         /** @var list<string> $rows */
         $rows = Collection::make($recipe->ingredients ?? [])
             ->reject(fn (array $row): bool => empty($row['name']))
-            ->sortByDesc(fn (array $row) => (float) ($row['quantity'] ?? 0))
+            ->sortByDesc(fn (array $row): float => (float) ($row['quantity'] ?? 0))
             ->pluck('name')
             ->filter()
             ->values()

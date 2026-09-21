@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\WebhookDeliveries;
 
 use App\Filament\Concerns\RequiresManagerRole;
@@ -24,43 +26,55 @@ class WebhookDeliveryResource extends Resource
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static ?string $model = WebhookDelivery::class;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'event';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBoltSlash;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Webhook Deliveries';
 
+    #[\Override]
     protected static ?int $navigationSort = 95;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess();
     }
 
+    #[\Override]
     public static function canCreate(): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function canEdit(Model $record): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function canDelete(Model $record): bool
     {
         return false;
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return WebhookDeliveriesTable::configure($table);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

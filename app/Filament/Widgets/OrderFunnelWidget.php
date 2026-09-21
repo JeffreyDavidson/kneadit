@@ -14,8 +14,10 @@ class OrderFunnelWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 3;
 
+    #[\Override]
     protected string $view = 'filament.widgets.order-funnel';
 
     /** @return array<int, array<string, mixed>> */

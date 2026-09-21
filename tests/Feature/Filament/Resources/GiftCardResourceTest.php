@@ -1,11 +1,16 @@
 <?php
 
+use App\Enums\Financial\GiftCardStatus;
+use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
+use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Models\Financial\GiftCard;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -109,7 +114,7 @@ test('can filter gift cards by depleted status', function () {
     $depleted = GiftCard::factory()->depleted()->create();
 
     livewire(ListGiftCards::class)
-        ->filterTable('status', App\Enums\Financial\GiftCardStatus::Depleted->value)
+        ->filterTable('status', GiftCardStatus::Depleted->value)
         ->assertCanSeeTableRecords(collect([$depleted]))
         ->assertCanNotSeeTableRecords(collect([$active]));
 });
@@ -117,19 +122,19 @@ test('can filter gift cards by depleted status', function () {
 test('can render the view gift card page', function () {
     $giftCard = GiftCard::factory()->create();
 
-    livewire(App\Filament\Resources\GiftCards\Pages\ViewGiftCard::class, ['record' => $giftCard->getRouteKey()])
+    livewire(ViewGiftCard::class, ['record' => $giftCard->getRouteKey()])
         ->assertOk();
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\GiftCards\GiftCardResource::getGloballySearchableAttributes())
+    expect(GiftCardResource::getGloballySearchableAttributes())
         ->toBe(['code', 'purchaser_name', 'recipient_name']);
 });
 
 test('resource returns global search result title', function () {
     $giftCard = GiftCard::factory()->create(['code' => 'ABCD-1234-EFGH-5678']);
 
-    expect(App\Filament\Resources\GiftCards\GiftCardResource::getGlobalSearchResultTitle($giftCard))
+    expect(GiftCardResource::getGlobalSearchResultTitle($giftCard))
         ->toBe('Gift Card: ABCD-1234-EFGH-5678');
 });
 
@@ -139,7 +144,7 @@ test('resource returns global search result details', function () {
         'recipient_name' => 'Bob',
     ]);
 
-    $details = App\Filament\Resources\GiftCards\GiftCardResource::getGlobalSearchResultDetails($giftCard);
+    $details = GiftCardResource::getGlobalSearchResultDetails($giftCard);
 
     expect($details)
         ->toHaveKey('Balance')

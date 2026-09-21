@@ -7,10 +7,10 @@ use Illuminate\Support\Collection;
 final readonly class HomepageSettings
 {
     /**
-     * @param array<string, string> $socialMediaLinks
-     * @param array<string, mixed> $operatingHours
-     * @param array<int, array<string, mixed>> $faqItems
-     * @param array<string, array<string, mixed>> $sections
+     * @param  array<string, string>  $socialMediaLinks
+     * @param  array<string, mixed>  $operatingHours
+     * @param  array<int, array<string, mixed>>  $faqItems
+     * @param  array<string, array<string, mixed>>  $sections
      */
     public function __construct(
         public array $socialMediaLinks,
@@ -42,7 +42,7 @@ final readonly class HomepageSettings
     {
         return array_filter(
             SettingValue::decodedMap(settings('social_media_links')),
-            fn (mixed $url): bool => is_string($url),
+            is_string(...),
         );
     }
 

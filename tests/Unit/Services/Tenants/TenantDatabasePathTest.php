@@ -17,13 +17,13 @@ afterEach(function () {
 
 function tenantDatabaseSecurityRoot(): string
 {
-    return storage_path('framework/testing/tenant-database-security-' . getmypid());
+    return storage_path('framework/testing/tenant-database-security-'.getmypid());
 }
 
 test('tenant database paths remain inside the configured root', function () {
     $path = resolve(TenantDatabasePath::class)->resolve('tenant-safe_bakery.sqlite');
 
-    expect($path)->toBe(tenantDatabaseSecurityRoot() . DIRECTORY_SEPARATOR . 'tenant-safe_bakery.sqlite');
+    expect($path)->toBe(tenantDatabaseSecurityRoot().DIRECTORY_SEPARATOR.'tenant-safe_bakery.sqlite');
 });
 
 test('tenant database paths reject traversal and path separators', function (string $databaseName) {
@@ -44,7 +44,7 @@ test('tenant databases are created with owner-only permissions', function () {
 
     expect($manager->createDatabase($tenant))->toBeTrue();
 
-    $path = tenantDatabaseSecurityRoot() . DIRECTORY_SEPARATOR . 'tenantsafebakery';
+    $path = tenantDatabaseSecurityRoot().DIRECTORY_SEPARATOR.'tenantsafebakery';
     $permissions = fileperms($path);
 
     throw_if($permissions === false, RuntimeException::class, 'Unable to inspect tenant database permissions.');
@@ -55,9 +55,9 @@ test('tenant databases are created with owner-only permissions', function () {
 
 test('tenant database connections refuse filesystem symlinks', function () {
     File::ensureDirectoryExists(tenantDatabaseSecurityRoot(), 0700);
-    $target = storage_path('framework/testing/tenant-database-target-' . Str::uuid());
+    $target = storage_path('framework/testing/tenant-database-target-'.Str::uuid());
     File::put($target, 'not a tenant database');
-    $link = tenantDatabaseSecurityRoot() . DIRECTORY_SEPARATOR . 'tenantsymlink';
+    $link = tenantDatabaseSecurityRoot().DIRECTORY_SEPARATOR.'tenantsymlink';
     symlink($target, $link);
 
     try {
@@ -77,7 +77,7 @@ test('tenant database connections refuse filesystem symlinks', function () {
 
 test('tenant database connections normalize existing file permissions', function () {
     File::ensureDirectoryExists(tenantDatabaseSecurityRoot(), 0700);
-    $path = tenantDatabaseSecurityRoot() . DIRECTORY_SEPARATOR . 'tenantexisting';
+    $path = tenantDatabaseSecurityRoot().DIRECTORY_SEPARATOR.'tenantexisting';
     File::put($path, '');
     File::chmod($path, 0644);
 

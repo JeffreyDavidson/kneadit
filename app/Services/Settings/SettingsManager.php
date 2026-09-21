@@ -9,7 +9,7 @@ use App\Models\Platform\Tenant;
 class SettingsManager extends AbstractSettingsManager
 {
     public function __construct(
-        private TenantSettingCipher $cipher,
+        private readonly TenantSettingCipher $cipher,
     ) {}
 
     protected function cacheKey(): string
@@ -53,11 +53,13 @@ class SettingsManager extends AbstractSettingsManager
         return SettingValue::decodedMap($json);
     }
 
+    #[\Override]
     protected function valueForStorage(string $key, mixed $value): mixed
     {
         return $this->cipher->encrypt($key, $value);
     }
 
+    #[\Override]
     protected function valueFromStorage(string $key, mixed $value): mixed
     {
         return $this->cipher->decrypt($key, $value);

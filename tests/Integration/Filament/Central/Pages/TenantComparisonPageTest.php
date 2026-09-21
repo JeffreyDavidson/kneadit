@@ -27,7 +27,7 @@ test('get all tenants returns tenants ordered by store name', function () {
     $tenants = test()->page->getAllTenants();
 
     expect($tenants)->toHaveCount(2)
-        ->and(array_values($tenants)[0])->toBe('Alpha Bakery');
+        ->and(array_first($tenants))->toBe('Alpha Bakery');
 });
 
 test('get comparison data returns empty when no tenants selected', function () {

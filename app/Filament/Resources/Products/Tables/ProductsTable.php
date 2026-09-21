@@ -59,8 +59,8 @@ class ProductsTable
                     ->label('Waitlist')
                     ->getStateUsing(fn (Product $record) => $record->waitlist_entries_count)
                     ->badge()
-                    ->color(fn (int $state) => $state > 0 ? 'warning' : 'gray')
-                    ->formatStateUsing(fn (int $state) => $state > 0 ? "{$state} waiting" : '—')
+                    ->color(fn (int $state): string => $state > 0 ? 'warning' : 'gray')
+                    ->formatStateUsing(fn (int $state): string => $state > 0 ? "{$state} waiting" : '—')
                     ->toggleable(),
 
                 TextColumn::make('created_at')
@@ -84,15 +84,15 @@ class ProductsTable
                     ->label('Print label')
                     ->icon(Heroicon::OutlinedPrinter)
                     ->color('gray')
-                    ->url(fn (Product $record) => route('admin.products.label', $record))
+                    ->url(fn (Product $record): string => route('admin.products.label', $record))
                     ->openUrlInNewTab(),
                 Action::make('notifyWaitlist')
-                    ->label(fn (Product $record): string => 'Notify Waitlist (' . ($record->waitlist_entries_count ?? 0) . ')')
+                    ->label(fn (Product $record): string => 'Notify Waitlist ('.($record->waitlist_entries_count ?? 0).')')
                     ->icon(Heroicon::OutlinedBellAlert)
                     ->color('warning')
                     ->visible(fn (Product $record): bool => ($record->waitlist_entries_count ?? 0) > 0)
                     ->requiresConfirmation()
-                    ->modalHeading(fn (Product $record) => "Notify {$record->waitlist_entries_count} customer(s) that {$record->name} is back?")
+                    ->modalHeading(fn (Product $record): string => "Notify {$record->waitlist_entries_count} customer(s) that {$record->name} is back?")
                     ->modalDescription('Each customer will be emailed and marked as notified so they won\'t be re-emailed on the next run.')
                     ->action(function (Product $record): void {
                         $count = resolve(NotifyProductWaitlist::class)($record);

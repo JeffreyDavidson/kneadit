@@ -39,7 +39,7 @@
                     <div class="border-warm-200 rounded-2xl border bg-white p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                         <div class="bg-warm-100 mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full">
                             <x-dynamic-component
-                                :component="'heroicon-o-' . ($occasion['icon'] ?? 'star')"
+                                :component="'heroicon-o-'.($occasion['icon'] ?? 'star')"
                                 class="text-warm-500 h-7 w-7"
                             />
                         </div>

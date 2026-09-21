@@ -16,6 +16,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -26,9 +27,11 @@ use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 use RuntimeException;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->app->bind(LegacyCatalogImporter::class, DatabaseLegacyCatalogImporter::class);
@@ -41,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Centralized Stripe client so Stripe-using actions can be tested with
         // a mocked binding rather than instantiating the client themselves.
-        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(
+        $this->app->bind(StripeClient::class, fn (): StripeClient => new StripeClient(
             Config::string('cashier.secret', ''),
         ));
     }
@@ -91,7 +94,7 @@ class AppServiceProvider extends ServiceProvider
         // raw `throttle:5,1` / `throttle:10,1` everywhere makes route
         // files readable and lets the browser-test bypass live in one
         // place rather than as a dedicated middleware subclass.
-        $key = function (\Illuminate\Http\Request $request): string {
+        $key = function (Request $request): string {
             $identifier = $request->user()?->getAuthIdentifier();
 
             if (is_string($identifier) || is_int($identifier)) {
@@ -101,35 +104,35 @@ class AppServiceProvider extends ServiceProvider
             return $request->ip() ?? 'unknown';
         };
 
-        $bypass = fn (\Illuminate\Http\Request $request): bool => $request->getHost() === 'browser-test.kneadit.test';
+        $bypass = fn (Request $request): bool => $request->getHost() === 'browser-test.kneadit.test';
 
         // Auth + payment + order-modify + invite + central marketing contact.
-        RateLimiter::for('sensitive-write', fn (\Illuminate\Http\Request $request) => $bypass($request)
+        RateLimiter::for('sensitive-write', fn (Request $request) => $bypass($request)
             ? Limit::none()
             : Limit::perMinute(5)->by($key($request)));
 
         // Verification email resend — intentionally slow; spamming the
         // inbox is the abuse pattern this guards against.
-        RateLimiter::for('verification-resend', fn (\Illuminate\Http\Request $request) => $bypass($request)
+        RateLimiter::for('verification-resend', fn (Request $request) => $bypass($request)
             ? Limit::none()
             : Limit::perMinute(6)->by($key($request)));
 
         // Storefront forms + order writes + API writes — the catch-all
         // for "user just submitted a form, allow a few retries on hiccups."
-        RateLimiter::for('form-write', fn (\Illuminate\Http\Request $request) => $bypass($request)
+        RateLimiter::for('form-write', fn (Request $request) => $bypass($request)
             ? Limit::none()
             : Limit::perMinute(10)->by($key($request)));
 
         // Referral code claim — bumped above form-write because users
         // legitimately retry with multiple variations and the abuse cost
         // is low (claim is idempotent against a known set of codes).
-        RateLimiter::for('referral-claim', fn (\Illuminate\Http\Request $request) => $bypass($request)
+        RateLimiter::for('referral-claim', fn (Request $request) => $bypass($request)
             ? Limit::none()
             : Limit::perMinute(30)->by($key($request)));
 
         // High-frequency reads + light passive writes (cart persist,
         // pickup-slots lookup, CSP-report intake, public API reads).
-        RateLimiter::for('frequent-poll', fn (\Illuminate\Http\Request $request) => $bypass($request)
+        RateLimiter::for('frequent-poll', fn (Request $request) => $bypass($request)
             ? Limit::none()
             : Limit::perMinute(60)->by($key($request)));
 

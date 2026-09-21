@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 /**
  * @property-read ProductPortfolioSummary $portfolio
@@ -20,6 +21,7 @@ class ProfitAnalysis extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -30,14 +32,19 @@ class ProfitAnalysis extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Profit Analysis';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.profit-analysis';
 
     public string $sortBy = 'margin_desc';
@@ -47,7 +54,8 @@ class ProfitAnalysis extends Page
         // Triggers re-render with the new sort order
     }
 
-    public function getPortfolioProperty(): ProductPortfolioSummary
+    #[Computed]
+    public function portfolio(): ProductPortfolioSummary
     {
         return resolve(ProductAnalysisService::class)->portfolio($this->sortBy);
     }

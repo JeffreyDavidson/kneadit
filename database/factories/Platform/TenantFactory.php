@@ -35,7 +35,7 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => fake()->unique()->slug(2) . '-' . bin2hex(random_bytes(4)),
+            'id' => fake()->unique()->slug(2).'-'.bin2hex(random_bytes(4)),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'plan' => SubscriptionTier::Starter->value,

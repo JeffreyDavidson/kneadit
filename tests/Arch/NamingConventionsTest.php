@@ -1,9 +1,11 @@
 <?php
 
+use App\Mail\BaseMailable;
+
 arch('mail classes must end with Mail')
     ->expect('App\Mail')
     ->toHaveSuffix('Mail')
-    ->ignoring(App\Mail\BaseMailable::class)
+    ->ignoring(BaseMailable::class)
     ->ignoring('App\Mail\Concerns');
 
 arch('listener classes must end with Listener')

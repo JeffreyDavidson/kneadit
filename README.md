@@ -45,6 +45,33 @@ npm run build              # Production frontend build
 
 Browser tests require a running local application, seeded browser fixtures, and Playwright. See [Testing](docs/operations.md#browser-tests).
 
+### Shared development commands
+
+KneadIt and Ringside share explicit command names while retaining each application's
+Pint rules, Rector exclusions, PHPStan levels, and test coverage requirements:
+
+| Command | Behavior |
+| --- | --- |
+| `composer lint:dirty` | Fix formatting in changed PHP and Blade files |
+| `composer test:lint` | Check PHP and Blade formatting |
+| `composer test:types` | Run application and Pest static analysis |
+| `composer test:type-coverage` | Check the 100% Pest type-coverage requirement |
+| `composer test:rector` | Check application and Pest Rector rules without changing files |
+| `composer rector:fix` | Apply application and Pest Rector transformations |
+| `composer test:application` | Run non-browser tests, including architecture tests |
+| `composer test:browser` | Run browser tests after the fixture setup linked above |
+| `composer check` | Run the existing PHP, Filament, and frontend checks |
+| `composer test:push` | Run `check`, then browser tests |
+
+Existing commands remain available. In KneadIt, `lint` fixes only changed files,
+`rector` is a dry run, and `test` clears the configuration cache before running
+non-browser tests. Use the explicit shared names when switching between apps.
+For a filtered run, pass arguments directly: `composer test:application -- --filter=Example`.
+
+Both apps use Pint's Laravel preset with Blade formatting and keep their additional
+rules in their own `pint.json`. Pint owns Blade formatting through its Prettier
+plugins; application-specific exceptions are not copied between projects.
+
 ## Architecture
 
 The central database owns platform users, tenants, domains, subscriptions, and platform administration data. Each tenant has a separate SQLite database under `TENANT_DB_PATH` (the project database directory by default). Tenant identification occurs from the request domain before sessions and authentication use the database.

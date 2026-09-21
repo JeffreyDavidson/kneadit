@@ -3,6 +3,7 @@
 namespace App\Services\Engagement\Engagements;
 
 use App\Events\Customers\ReviewRequested;
+use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
@@ -29,8 +30,8 @@ class ReviewRequestEngagement implements CustomerEngagement
             ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
             ->with('customer')
             ->get()
-            ->map(function (Order $order) {
-                /** @var \App\Models\Customers\Customer $customer */
+            ->map(function (Order $order): EngagementRecipient {
+                /** @var Customer $customer */
                 $customer = $order->customer;
 
                 return new EngagementRecipient(

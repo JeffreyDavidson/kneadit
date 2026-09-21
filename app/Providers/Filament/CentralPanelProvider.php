@@ -17,6 +17,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -59,13 +60,13 @@ class CentralPanelProvider extends PanelProvider
                 NavigationGroup::make('Settings'),
             ])
             ->font('Inter')
-            ->renderHook('panels::head.end', fn () => new HtmlString(
+            ->renderHook('panels::head.end', fn (): HtmlString => new HtmlString(
                 // Inject the theme palette BEFORE the stylesheet so the CSS variables
                 // are defined when central-admin.css references them.
-                '<style>' . PanelThemes::rootCss() . '</style>'
-                . '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . filemtime(public_path('css/central-admin.css')) . '">',
+                '<style>'.PanelThemes::rootCss().'</style>'
+                .'<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.filemtime(public_path('css/central-admin.css')).'">',
             ))
-            ->renderHook('panels::body.end', fn () => new HtmlString('
+            ->renderHook('panels::body.end', fn (): HtmlString => new HtmlString('
                 <script>
                     document.addEventListener("livewire:navigating", () => {
                         const nav = document.querySelector(".fi-sidebar-nav");
@@ -84,7 +85,7 @@ class CentralPanelProvider extends PanelProvider
             '))
             ->renderHook(
                 PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
-                fn () => view('filament.central.user-menu-header'),
+                fn (): Factory|\Illuminate\Contracts\View\View => view('filament.central.user-menu-header'),
             )
             ->userMenuItems([
                 Action::make('appearance')

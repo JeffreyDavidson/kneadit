@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Operations;
 
 use App\Builders\Operations\BusinessScheduleQueryBuilder;
@@ -25,6 +27,7 @@ class BusinessSchedule extends Model
     /** @use HasFactory<BusinessScheduleFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

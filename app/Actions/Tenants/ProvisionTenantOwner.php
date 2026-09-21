@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Tenants;
 
 use App\Models\Platform\Tenant;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class ProvisionTenantOwner
 {
     public function __construct(
-        private SettingsManager $settingsManager,
+        private readonly SettingsManager $settingsManager,
     ) {}
 
     public function __invoke(

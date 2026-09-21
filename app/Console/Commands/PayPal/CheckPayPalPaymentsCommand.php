@@ -19,40 +19,37 @@ use Throwable;
 #[Description('Check PayPal invoice payment statuses and update orders across all tenants')]
 class CheckPayPalPaymentsCommand extends Command
 {
-    public function handle(TenancyManager $tenancyManager): int
-    {
+    public function handle(
+        TenancyManager $tenancyManager,
+        PaymentVerifier $paymentVerifier,
+        MarkOrderPaid $markOrderPaid,
+        SettingsManager $settingsManager,
+    ): int {
         // Skip entirely if PayPal isn't configured at the platform level
         if (! config('services.paypal.client_id')) {
             return Command::SUCCESS;
         }
 
-        $failures = 0;
+        $failures = $tenancyManager->forEachTenant(
+            function (Tenant $tenant) use ($paymentVerifier, $markOrderPaid, $settingsManager): void {
+                // Skip tenants without PayPal configured
+                if (! $settingsManager->get('paypal_client_id')) {
+                    return;
+                }
 
-        foreach (Tenant::query()->cursor() as $tenant) {
-            try {
-                $tenancyManager->withinTenant($tenant, function () use ($tenant) {
-                    // Skip tenants without PayPal configured
-                    $clientId = resolve(SettingsManager::class)->get('paypal_client_id');
-                    if (! $clientId) {
-                        return;
-                    }
-
-                    $this->processTenant($tenant);
-                });
-            } catch (Throwable $e) {
-                $failures++;
+                $this->processTenant($tenant, $paymentVerifier, $markOrderPaid);
+            },
+            function (Tenant $tenant, Throwable $e): void {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
                 Log::error("PayPal check failed for tenant {$tenant->id}", ['error' => $e->getMessage()]);
-            }
-        }
+            },
+        );
 
         return $failures > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
-    protected function processTenant(Tenant $tenant): void
+    protected function processTenant(Tenant $tenant, PaymentVerifier $paymentVerifier, MarkOrderPaid $markOrderPaid): void
     {
-        $paymentVerifier = resolve(PaymentVerifier::class);
-
         $orders = Order::query()->where('payment_status', PaymentStatus::Unpaid)
             ->whereNotNull('paypal_invoice_id')
             ->get();
@@ -77,15 +74,15 @@ class CheckPayPalPaymentsCommand extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, function (Order $o) {
-                    resolve(MarkOrderPaid::class)($o);
+                'PAID' => tap($order, function (Order $o) use ($markOrderPaid): void {
+                    $markOrderPaid($o);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
-                'CANCELLED' => tap($order, function (Order $o) {
+                'CANCELLED' => tap($order, function (Order $o): void {
                     $o->update(['payment_status' => PaymentStatus::Cancelled]);
                     $this->warn("  ⚠ #{$o->order_number} cancelled");
                 }),
-                'REFUNDED' => tap($order, function (Order $o) {
+                'REFUNDED' => tap($order, function (Order $o): void {
                     $o->update(['payment_status' => PaymentStatus::Refunded]);
                     $this->warn("  ⚠ #{$o->order_number} refunded");
                 }),

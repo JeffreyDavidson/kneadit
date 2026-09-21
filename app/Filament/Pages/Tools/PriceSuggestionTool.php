@@ -18,6 +18,7 @@ class PriceSuggestionTool extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -28,14 +29,19 @@ class PriceSuggestionTool extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Price Suggestion';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 8;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;
@@ -78,7 +84,7 @@ class PriceSuggestionTool extends Page
 
     public function generateMarginComparisons(): void
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe instanceof Recipe || ! $this->selectedRecipe->cost) {
             $this->marginComparisons = new Collection;
 
             return;
@@ -88,7 +94,7 @@ class PriceSuggestionTool extends Page
         $margins = [50, 60, 65, 70];
         $recipe = $this->selectedRecipe;
 
-        $this->marginComparisons = collect($margins)->map(function (int $margin) use ($pricing, $recipe) {
+        $this->marginComparisons = collect($margins)->map(function (int $margin) use ($pricing, $recipe): array {
             $suggestedPrice = $pricing->suggestPrice($recipe->cost?->dollars() ?? 0.0, $margin);
             $currentPrice = $recipe->product?->price?->dollars() ?? 0.0;
             $difference = $suggestedPrice - $currentPrice;
@@ -105,7 +111,7 @@ class PriceSuggestionTool extends Page
 
     public function getSuggestedPrice(): float
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe instanceof Recipe || ! $this->selectedRecipe->cost) {
             return 0.0;
         }
 

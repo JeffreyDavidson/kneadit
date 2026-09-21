@@ -3,6 +3,7 @@
 namespace App\Services\Settings;
 
 use App\DataTransferObjects\Settings\SettingValue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 abstract class AbstractSettingsManager
@@ -13,7 +14,7 @@ abstract class AbstractSettingsManager
     abstract protected function cacheKey(): string;
 
     /**
-     * @return class-string<\Illuminate\Database\Eloquent\Model>
+     * @return class-string<Model>
      */
     abstract protected function modelClass(): string;
 
@@ -43,7 +44,7 @@ abstract class AbstractSettingsManager
     /** @param array<string, mixed> $settings */
     public function setMany(array $settings): void
     {
-        DB::transaction(function () use ($settings) {
+        DB::transaction(function () use ($settings): void {
             foreach ($settings as $key => $value) {
                 $this->set($key, $value);
             }

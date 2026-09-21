@@ -13,7 +13,7 @@ class EmailTemplateRenderer
      * Returns null if no custom template exists, allowing the Mailable
      * to fall back to its default Blade view.
      *
-     * @param array<string, string> $placeholders
+     * @param  array<string, string>  $placeholders
      * @return array{subject: string, body: string|null}|null
      */
     public function resolve(EmailTemplateType $type, array $placeholders = []): ?array
@@ -37,7 +37,7 @@ class EmailTemplateRenderer
     /**
      * Replace {placeholder} tokens with actual values.
      *
-     * @param array<string, string> $placeholders
+     * @param  array<string, string>  $placeholders
      */
     public function replacePlaceholders(string $content, array $placeholders): string
     {
@@ -54,7 +54,7 @@ class EmailTemplateRenderer
      * Used by Mailables when no custom template exists but they
      * still want placeholder-based subject generation.
      *
-     * @param array<string, string> $placeholders
+     * @param  array<string, string>  $placeholders
      */
     public function renderDefaultSubject(EmailTemplateType $type, array $placeholders = []): string
     {

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class StorefrontAnalyticsQuery
 {
     public function __construct(
-        private ?Carbon $startDate = null,
+        private readonly ?Carbon $startDate = null,
     ) {}
 
     public function totalViews(): int
@@ -51,7 +51,7 @@ class StorefrontAnalyticsQuery
         }
 
         $ordersQuery = Order::query();
-        if ($this->startDate) {
+        if ($this->startDate instanceof Carbon) {
             $ordersQuery->where('created_at', '>=', $this->startDate);
         }
 
@@ -121,7 +121,7 @@ class StorefrontAnalyticsQuery
         $orderViews = $this->uniqueSessionsForPage('order');
 
         $ordersQuery = Order::query();
-        if ($this->startDate) {
+        if ($this->startDate instanceof Carbon) {
             $ordersQuery->where('created_at', '>=', $this->startDate);
         }
         $completedOrders = $ordersQuery->count();
@@ -157,7 +157,7 @@ class StorefrontAnalyticsQuery
     {
         $query = PageView::query()->whereNull('product_id');
 
-        if ($this->startDate) {
+        if ($this->startDate instanceof Carbon) {
             $query->where('created_at', '>=', $this->startDate);
         }
 
@@ -169,7 +169,7 @@ class StorefrontAnalyticsQuery
     {
         $query = PageView::query()->whereNotNull('product_id');
 
-        if ($this->startDate) {
+        if ($this->startDate instanceof Carbon) {
             $query->where('created_at', '>=', $this->startDate);
         }
 

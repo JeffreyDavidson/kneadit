@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Settings;
 
 use App\Enums\Platform\SubscriptionTier;
@@ -18,6 +20,7 @@ class ThemeSelector extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -28,16 +31,22 @@ class ThemeSelector extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPaintBrush;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Storefront Theme';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.theme-selector';
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'Storefront Theme';
@@ -54,7 +63,7 @@ class ThemeSelector extends Page
         $this->dispatch('$refresh');
 
         Notification::make()
-            ->title('Theme updated to ' . ucfirst($theme))
+            ->title('Theme updated to '.ucfirst($theme))
             ->success()
             ->send();
     }

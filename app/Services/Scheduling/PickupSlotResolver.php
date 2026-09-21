@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Date;
 class PickupSlotResolver
 {
     public function __construct(
-        private TenantSettings $settings,
+        private readonly TenantSettings $settings,
     ) {}
 
     /**

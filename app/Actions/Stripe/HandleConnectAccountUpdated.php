@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 class HandleConnectAccountUpdated
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private SettingsManager $settings,
+        private readonly TenancyManager $tenancyManager,
+        private readonly SettingsManager $settings,
     ) {}
 
     public function __invoke(mixed $account): void
@@ -40,7 +40,7 @@ class HandleConnectAccountUpdated
         }
 
         try {
-            $this->tenancyManager->withinTenant($tenant, function () use ($chargesEnabled, $tenantId) {
+            $this->tenancyManager->withinTenant($tenant, function () use ($chargesEnabled, $tenantId): void {
                 $this->settings->set('stripe_connect_charges_enabled', $chargesEnabled ? '1' : '0');
 
                 if ($chargesEnabled) {

@@ -30,8 +30,7 @@ test('biscotto order verification uses the themed follow-up presentation', funct
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.verify.show', ['order' => $order->order_number], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-order-verify', false)
+    $response->assertOk()->assertSeeHtml('biscotto-order-verify')
         ->assertSee('Verify your email');
 });
 

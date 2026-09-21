@@ -146,8 +146,8 @@
                                     ['label' => 'This Month', 'value' => $tenant['month_orders']],
                                     ['label' => 'Products', 'value' => $tenant['total_products']],
                                     ['label' => 'Categories', 'value' => $tenant['total_categories']],
-                                    ['label' => 'Avg Review', 'value' => ($tenant['avg_review'] ?: '—') . '/5'],
-                                    ['label' => 'Setup', 'value' => $tenant['setup_completed'] . '/7'],
+                                    ['label' => 'Avg Review', 'value' => ($tenant['avg_review'] ?: '—').'/5'],
+                                    ['label' => 'Setup', 'value' => $tenant['setup_completed'].'/7'],
                                     ['label' => 'Days Since Signup', 'value' => $tenant['days_since_signup']],
                                 ];
                             @endphp
@@ -157,7 +157,7 @@
                             @php
                                 $healthColor = $tenant['health_score'] > 70 ? 'text-emerald-500' : ($tenant['health_score'] >= 40 ? 'text-amber-500' : 'text-red-500');
                             @endphp
-                            <x-central.metric-row label="Health Score" :value-class="$healthColor . ' font-bold'">
+                            <x-central.metric-row label="Health Score" :value-class="$healthColor.' font-bold'">
                                 {{ $tenant['health_score'] }}/100</x-central.metric-row>
                         </div>
                     </x-central.card>

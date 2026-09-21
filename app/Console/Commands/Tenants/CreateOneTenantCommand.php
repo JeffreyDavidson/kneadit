@@ -22,7 +22,7 @@ class CreateOneTenantCommand extends Command
     public function handle(): int
     {
         $id = $this->argument('id');
-        $domain = $id . '.kneadit.test';
+        $domain = $id.'.kneadit.test';
 
         // Create tenant (triggers CreateDatabase + MigrateDatabase via events)
         $tenant = Tenant::query()->create([
@@ -47,7 +47,7 @@ class CreateOneTenantCommand extends Command
         ]);
 
         // Seed using $tenant->run() — works in a clean process
-        $tenant->run(function () use ($tenant) {
+        $tenant->run(function () use ($tenant): void {
             // Use DB::connection('tenant') to ensure we hit the tenant DB
             // and raw table insert to avoid User model's 'hashed' cast double-hashing
             DB::connection('tenant')->table('users')->insert([

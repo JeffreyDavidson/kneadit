@@ -27,7 +27,7 @@ enum BlogPostCategory: string implements HasColor, HasLabel
     public static function options(): Collection
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $case) => [$case->value => $case->getLabel()])
+            ->mapWithKeys(fn (self $case): array => [$case->value => $case->getLabel()])
             ->prepend('All Posts', 'all');
     }
 

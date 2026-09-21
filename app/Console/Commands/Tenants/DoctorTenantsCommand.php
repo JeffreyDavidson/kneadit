@@ -27,8 +27,8 @@ class DoctorTenantsCommand extends Command
 
         $this->info('Tenant diagnostic:');
         $this->line("  ✓ Healthy:        {$report['healthy']}");
-        $this->line('  ✗ Orphan rows:    ' . count($report['orphanRows']) . '   (central row exists, SQLite file missing)');
-        $this->line('  ✗ Orphan files:   ' . count($report['orphanFiles']) . ' (SQLite file exists, no central row)');
+        $this->line('  ✗ Orphan rows:    '.count($report['orphanRows']).'   (central row exists, SQLite file missing)');
+        $this->line('  ✗ Orphan files:   '.count($report['orphanFiles']).' (SQLite file exists, no central row)');
 
         if ($report['orphanRows'] === [] && $report['orphanFiles'] === []) {
             note('No drift detected.');
@@ -123,7 +123,7 @@ class DoctorTenantsCommand extends Command
             return;
         }
 
-        warning('Found ' . count($files) . ' SQLite file(s) with no matching tenant row.');
+        warning('Found '.count($files).' SQLite file(s) with no matching tenant row.');
 
         if (! $this->option('force')) {
             if (! confirm(label: 'Delete these orphan SQLite files?', default: false)) {
@@ -134,7 +134,7 @@ class DoctorTenantsCommand extends Command
         }
 
         foreach ($files as $file) {
-            $this->line('  • ' . basename($file));
+            $this->line('  • '.basename($file));
             unlink($file);
         }
     }

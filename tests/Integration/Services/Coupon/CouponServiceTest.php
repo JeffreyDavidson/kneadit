@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Financial\ApplyCoupon;
 use App\Models\Financial\Coupon;
 use App\Services\Coupon\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -63,7 +64,7 @@ test('isValid returns false for future start date coupon', function () {
 test('apply increments used count', function () {
     $coupon = Coupon::factory()->create();
 
-    resolve(App\Actions\Financial\ApplyCoupon::class)($coupon);
+    resolve(ApplyCoupon::class)($coupon);
 
     expect($coupon->fresh()->used_count)->toBe(1);
 });

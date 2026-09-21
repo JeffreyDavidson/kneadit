@@ -6,10 +6,10 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\SeasonalItem;
 use Illuminate\Support\Facades\Storage;
 
-final class ProductPresenter
+final readonly class ProductPresenter
 {
     public function __construct(
-        public readonly Product $product,
+        public Product $product,
     ) {}
 
     public static function for(Product $product): self

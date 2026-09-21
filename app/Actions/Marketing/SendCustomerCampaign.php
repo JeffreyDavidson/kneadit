@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 class SendCustomerCampaign
 {
     public function __construct(
-        private ResolveCampaignRecipients $resolveRecipients,
+        private readonly ResolveCampaignRecipients $resolveRecipients,
     ) {}
 
     public function __invoke(CustomerCampaign $campaign): int

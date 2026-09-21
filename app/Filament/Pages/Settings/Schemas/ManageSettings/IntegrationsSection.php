@@ -41,9 +41,9 @@ class IntegrationsSection
                     ->placeholder('https://hooks.zapier.com/...')
                     ->helperText(new HtmlString(
                         'We POST a JSON body when these events fire: <code>order.created</code>, <code>order.updated</code>, '
-                        . '<code>order.cancelled</code>, <code>order.delivered</code>. '
-                        . 'Each request includes <code>X-KneadIt-Signature</code> (HMAC-SHA256 of the body, signed with the secret below). '
-                        . 'The destination must be a public HTTPS endpoint.',
+                        .'<code>order.cancelled</code>, <code>order.delivered</code>. '
+                        .'Each request includes <code>X-KneadIt-Signature</code> (HMAC-SHA256 of the body, signed with the secret below). '
+                        .'The destination must be a public HTTPS endpoint.',
                     ))
                     ->columnSpanFull(),
 

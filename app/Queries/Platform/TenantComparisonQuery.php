@@ -20,21 +20,21 @@ class TenantComparisonQuery
     {
         return Tenant::query()->orderBy('store_name')
             ->get()
-            ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
+            ->mapWithKeys(fn (Tenant $t): array => [$t->id => $t->store_name ?: $t->name])
             ->all();
     }
 
     /**
-     * @param array<int, string> $tenantIds
+     * @param  array<int, string>  $tenantIds
      * @return array<int, array<string, mixed>>
      */
     /**
-     * @param list<string> $tenantIds
+     * @param  list<string>  $tenantIds
      * @return list<TenantComparisonResult>
      */
     public function comparison(array $tenantIds): array
     {
-        if (empty($tenantIds)) {
+        if ($tenantIds === []) {
             return [];
         }
 
@@ -117,7 +117,7 @@ class TenantComparisonQuery
             );
         }
 
-        usort($results, fn (TenantLeaderboardEntry $a, TenantLeaderboardEntry $b) => $b->totalOrders <=> $a->totalOrders);
+        usort($results, fn (TenantLeaderboardEntry $a, TenantLeaderboardEntry $b): int => $b->totalOrders <=> $a->totalOrders);
 
         return $results;
     }

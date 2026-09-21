@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
@@ -9,7 +11,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class UnapprovedFreeForeverAlertMail extends BaseMailable
 {
     /**
-     * @param array<int, array{id: string, name: string, email: string}> $unapproved
+     * @param  array<int, array{id: string, name: string, email: string}>  $unapproved
      */
     public function __construct(
         public array $unapproved,

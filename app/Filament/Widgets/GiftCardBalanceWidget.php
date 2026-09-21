@@ -13,8 +13,10 @@ class GiftCardBalanceWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 16;
 
+    #[\Override]
     protected string $view = 'filament.widgets.gift-card-balance-widget';
 
     public function getTotalOutstandingBalance(): float
@@ -37,7 +39,7 @@ class GiftCardBalanceWidget extends Widget
         return $this->cached('recent_redeemed', [300, 600], fn (): array => GiftCardTransaction::with('giftCard')->latest()
             ->limit(3)
             ->get()
-            ->map(fn (GiftCardTransaction $t) => [
+            ->map(fn (GiftCardTransaction $t): array => [
                 'code' => $t->giftCard->code ?? 'N/A',
                 // Store cents not Money so abs()/format math works on the cached array
                 // (Money::__toString returns "$X.XX" which parses as 0 in numeric context).

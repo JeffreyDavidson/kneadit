@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Operations;
 
 use App\Filament\Concerns\RequiresManagerRole;
@@ -17,15 +19,21 @@ class WebhooksDocs extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     protected static ?int $navigationSort = 96;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Webhook Docs';
 
+    #[\Override]
     protected static ?string $title = 'Webhook Documentation';
 
+    #[\Override]
     protected string $view = 'filament.pages.operations.webhooks-docs';
 }

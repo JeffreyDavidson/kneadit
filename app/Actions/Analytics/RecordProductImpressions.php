@@ -18,7 +18,7 @@ class RecordProductImpressions
 
         $timestamp = now();
 
-        $records = $productIds->map(fn (mixed $productId) => [
+        $records = $productIds->map(fn (mixed $productId): array => [
             'page' => $data['page'],
             'product_id' => $this->productId($productId),
             'session_id' => $data['session_id'],

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Surveys\Pages;
 
 use App\Filament\Resources\Surveys\SurveyResource;
@@ -12,8 +14,10 @@ use Filament\Schemas\Schema;
 
 class ViewSurvey extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = SurveyResource::class;
 
+    #[\Override]
     public function infolist(Schema $infolist): Schema
     {
         return $infolist->schema([

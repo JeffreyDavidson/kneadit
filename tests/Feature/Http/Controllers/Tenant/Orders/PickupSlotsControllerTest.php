@@ -2,6 +2,7 @@
 
 use App\Models\Operations\BusinessSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -15,7 +16,7 @@ test('endpoint returns available slots for a date when enabled', function () {
         'pickup_slot_interval_minutes' => 30,
         'pickup_slot_max_per_window' => 3,
     ]);
-    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
+    $date = Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,

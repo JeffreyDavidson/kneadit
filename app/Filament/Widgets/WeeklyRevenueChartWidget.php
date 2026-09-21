@@ -9,18 +9,22 @@ use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class WeeklyRevenueChartWidget extends ChartWidget
 {
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 5;
 
+    #[\Override]
     protected ?string $heading = 'Weekly Financial Overview';
 
     // Override Filament's default chart view so the chart renders inside our
     // <x-tenant-admin.dashboard.preview-card> shell instead of <x-filament::section>.
+    #[\Override]
     protected string $view = 'filament.widgets.weekly-revenue';
 
     protected function getType(): string
@@ -28,6 +32,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
         return 'bar';
     }
 
+    #[\Override]
     protected function getData(): array
     {
         $cacheKey = $this->isSize('lg') ? 'main_compare' : 'main';
@@ -76,8 +81,8 @@ class WeeklyRevenueChartWidget extends ChartWidget
         });
     }
 
-    /** @return \Illuminate\Support\Collection<string, float> */
-    private function expensesByDay(DateRange $range): \Illuminate\Support\Collection
+    /** @return Collection<string, float> */
+    private function expensesByDay(DateRange $range): Collection
     {
         $values = Expense::query()
             ->whereBetween('date', $range->toArray())

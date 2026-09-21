@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\WaitlistEntries\Pages;
 
 use App\Filament\Resources\WaitlistEntries\WaitlistEntryResource;
@@ -8,8 +10,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListWaitlistEntries extends ListRecords
 {
+    #[\Override]
     protected static string $resource = WaitlistEntryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

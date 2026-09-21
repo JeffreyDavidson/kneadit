@@ -15,8 +15,10 @@ class BirthdayWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 12;
 
+    #[\Override]
     protected string $view = 'filament.widgets.birthday-widget';
 
     /**
@@ -28,6 +30,7 @@ class BirthdayWidget extends Widget
      * birthday clusters; that's fine because the widget exists for
      * stores that DO use the birthday program.
      */
+    #[\Override]
     public static function canView(): bool
     {
         return Customer::query()->whereNotNull('birthday')->exists();

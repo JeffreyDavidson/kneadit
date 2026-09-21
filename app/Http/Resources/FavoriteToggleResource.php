@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -9,7 +11,7 @@ use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 class FavoriteToggleResource extends JsonApiResource
 {
     /**
-     * @param array{customer_email: string, product_id: int, favorited: bool} $resource
+     * @param  array{customer_email: string, product_id: int, favorited: bool}  $resource
      */
     public function __construct(array $resource)
     {
@@ -27,6 +29,7 @@ class FavoriteToggleResource extends JsonApiResource
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function toAttributes(Request $request): array
     {
         return [

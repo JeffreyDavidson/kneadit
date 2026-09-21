@@ -18,6 +18,7 @@ class RecipeCostCalculator extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -28,14 +29,19 @@ class RecipeCostCalculator extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 13;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.recipe-cost-calculator';
 
     public ?int $selectedRecipeId = null;

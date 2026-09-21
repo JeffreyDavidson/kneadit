@@ -27,6 +27,7 @@ class CustomerReminder extends Model
     /** @use HasFactory<CustomerReminderFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

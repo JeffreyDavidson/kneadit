@@ -22,6 +22,7 @@ class StorefrontAnalytics extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -32,14 +33,19 @@ class StorefrontAnalytics extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Storefront Analytics';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 10;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.storefront-analytics';
 
     public string $period = 'week';

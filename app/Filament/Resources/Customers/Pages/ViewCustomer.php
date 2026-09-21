@@ -17,7 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 
 /**
  * Customer 360 — single-page aggregation of everything we know about
@@ -29,12 +29,14 @@ use Livewire\Attributes\Rule;
  */
 class ViewCustomer extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = CustomerResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.customers.pages.view-customer';
 
     /** Inline note-add form state — mirrors the ViewTenant pattern. */
-    #[Rule(['required', 'min:3'])]
+    #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
 
     /**
@@ -44,6 +46,7 @@ class ViewCustomer extends ViewRecord
      * render, including post-Livewire-action re-renders where the model
      * is hydrated fresh without its prior relations.
      */
+    #[\Override]
     public function getRecord(): Model
     {
         return parent::getRecord()->loadMissing([
@@ -53,6 +56,7 @@ class ViewCustomer extends ViewRecord
         ]);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -88,7 +92,7 @@ class ViewCustomer extends ViewRecord
 
                     Notification::make()
                         ->title('Loyalty points adjusted')
-                        ->body(($points >= 0 ? '+' : '') . $points . ' points · ' . $description)
+                        ->body(($points >= 0 ? '+' : '').$points.' points · '.$description)
                         ->success()
                         ->send();
                 }),
@@ -125,7 +129,7 @@ class ViewCustomer extends ViewRecord
 
                     Notification::make()
                         ->title('Redemption recorded')
-                        ->body($points . ' points redeemed · ' . $description)
+                        ->body($points.' points redeemed · '.$description)
                         ->success()
                         ->send();
                 }),
@@ -133,6 +137,7 @@ class ViewCustomer extends ViewRecord
     }
 
     /** @return array<string, mixed> */
+    #[\Override]
     public function getViewData(): array
     {
         return [

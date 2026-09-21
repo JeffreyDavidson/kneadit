@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataTransferObjects\Platform;
 
 final readonly class FeatureUsageHeatmap
 {
     /**
-     * @param list<string> $days
-     * @param list<array{feature: string, cells: list<array{date: string, count: int, intensity: float}>}> $rows
+     * @param  list<string>  $days
+     * @param  list<array{feature: string, cells: list<array{date: string, count: int, intensity: float}>}>  $rows
      */
     public function __construct(
         public array $days,

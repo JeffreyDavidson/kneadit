@@ -34,7 +34,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
                 'customerReminders',
             ])
             ->get()
-            ->map(function (Customer $customer) use ($cutoffDate, $reminderDays) {
+            ->map(function (Customer $customer) use ($cutoffDate, $reminderDays): ?\App\Services\Engagement\Contracts\EngagementRecipient {
                 $lastOrder = $customer->orders->first();
 
                 if (! $lastOrder || $lastOrder->delivery_date?->isAfter($cutoffDate)) {

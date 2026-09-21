@@ -18,14 +18,19 @@ class Analytics extends Page
 
     private ?TenantAnalyticsSummaryQuery $analyticsSummaryQuery = null;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $title = 'Analytics';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.analytics';
 
     /** @return array<int, array<string, mixed>> */

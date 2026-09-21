@@ -16,14 +16,16 @@ class CapacityTodayWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 17;
 
+    #[\Override]
     protected string $view = 'filament.widgets.capacity-today-widget';
 
     /** @return array<string, mixed> */
     public function getCapacityData(Carbon $date): array
     {
-        return $this->cached('capacity_' . $date->toDateString(), [300, 600], function () use ($date): array {
+        return $this->cached('capacity_'.$date->toDateString(), [300, 600], function () use ($date): array {
             $maxOrders = resolve(CapacityCalculator::class)->getMaxOrders($date);
             $currentOrders = Order::query()->whereDate('delivery_date', $date)
                 ->active()
@@ -60,19 +62,17 @@ class CapacityTodayWidget extends Widget
     /** @return array<int, array<string, string>> */
     public function getBlockedDaysWarning(): array
     {
-        return $this->cached('blocked_days_' . Date::today()->toDateString(), [1800, 3600], function (): array {
-            return BlockedDate::query()->where('date', '>=', Date::today())
-                ->where('date', '<=', Date::today()->addDays(7))
-                ->where('is_all_day', true)
-                ->orderBy('date')
-                ->limit(3)
-                ->get()
-                ->map(fn (BlockedDate $b) => [
-                    'date' => $b->date->format('M j'),
-                    'reason' => $b->reason ?? 'Closed',
-                ])
-                ->all();
-        });
+        return $this->cached('blocked_days_'.Date::today()->toDateString(), [1800, 3600], fn (): array => BlockedDate::query()->where('date', '>=', Date::today())
+            ->where('date', '<=', Date::today()->addDays(7))
+            ->where('is_all_day', true)
+            ->orderBy('date')
+            ->limit(3)
+            ->get()
+            ->map(fn (BlockedDate $b): array => [
+                'date' => $b->date->format('M j'),
+                'reason' => $b->reason ?? 'Closed',
+            ])
+            ->all());
     }
 
     protected function cachePrefix(): string

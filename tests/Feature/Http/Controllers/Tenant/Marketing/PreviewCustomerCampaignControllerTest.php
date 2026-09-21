@@ -24,7 +24,7 @@ test('renders the campaign mailable as HTML for a manager', function () {
         ->get(route('campaign.preview', ['campaign' => $campaign]));
 
     $response->assertOk();
-    $response->assertSee('Fresh croissants this weekend.', escape: false);
+    $response->assertSeeHtml('Fresh croissants this weekend.');
 });
 
 test('redirects guests to login', function () {

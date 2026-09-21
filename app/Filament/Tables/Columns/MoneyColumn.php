@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Tables\Columns;
 
 use App\ValueObjects\Money;
@@ -7,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 
 class MoneyColumn extends TextColumn
 {
+    #[\Override]
     public static function make(?string $name = null): static
     {
         return parent::make($name)

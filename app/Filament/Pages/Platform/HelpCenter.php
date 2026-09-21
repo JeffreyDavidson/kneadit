@@ -10,14 +10,19 @@ use Livewire\Attributes\Url;
 
 class HelpCenter extends Page
 {
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Help';
 
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static ?int $navigationSort = 100;
 
+    #[\Override]
     protected string $view = 'filament.pages.platform.help-center';
 
     /** Deep-link target: `?article={topic-slug}/{article-slug}` opens that article on mount. */

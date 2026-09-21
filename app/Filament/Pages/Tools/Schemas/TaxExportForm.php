@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TaxExportForm
 {
@@ -59,7 +60,7 @@ class TaxExportForm
                             ->label('Download CSV Export')
                             ->icon(Heroicon::OutlinedArrowDownTray)
                             ->color('primary')
-                            ->action(function (TaxExport $livewire) {
+                            ->action(function (TaxExport $livewire): StreamedResponse {
                                 $data = $livewire->form->getState();
 
                                 return $livewire->generateExport($data);
@@ -86,6 +87,6 @@ class TaxExportForm
             $allYears = collect([now()->year]);
         }
 
-        return $allYears->mapWithKeys(fn (int $y) => [$y => (string) $y])->all();
+        return $allYears->mapWithKeys(fn (int $y): array => [$y => (string) $y])->all();
     }
 }

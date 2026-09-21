@@ -63,7 +63,7 @@ class CsvExportService
     /**
      * Write CSV data to a file handle.
      *
-     * @param resource $handle
+     * @param  resource  $handle
      */
     public function writeTo(mixed $handle, string $type): void
     {
@@ -72,7 +72,7 @@ class CsvExportService
             return;
         }
 
-        fputcsv($handle, $config['headers']);
+        fputcsv($handle, $config['headers'], escape: '\\');
 
         $query = DB::table($config['table']);
 
@@ -83,7 +83,7 @@ class CsvExportService
         }
 
         $query->orderBy("{$config['table']}.id")
-            ->chunk(500, function (Collection $rows) use ($handle, $config) {
+            ->chunk(500, function (Collection $rows) use ($handle, $config): void {
                 foreach ($rows as $row) {
                     $csvRow = [];
                     foreach ($config['columns'] as $column) {
@@ -94,7 +94,7 @@ class CsvExportService
                             $csvRow[] = $row->{$column} ?? '';
                         }
                     }
-                    fputcsv($handle, CsvValueSanitizer::row($csvRow));
+                    fputcsv($handle, CsvValueSanitizer::row($csvRow), escape: '\\');
                 }
             });
     }

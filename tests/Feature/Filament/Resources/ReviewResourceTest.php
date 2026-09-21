@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Reviews\Pages\ListReviews;
+use App\Filament\Resources\Reviews\ReviewResource;
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
 use App\Models\Staff\User;
@@ -8,6 +9,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -119,28 +122,28 @@ test('can sort reviews by customer name', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Reviews\ReviewResource::getGloballySearchableAttributes())
+    expect(ReviewResource::getGloballySearchableAttributes())
         ->toBe(['customer_name', 'customer_email']);
 });
 
 test('resource returns global search result title', function () {
     $review = Review::factory()->recycle(test()->product)->create(['customer_name' => 'Alice Baker']);
 
-    expect(App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultTitle($review))
+    expect(ReviewResource::getGlobalSearchResultTitle($review))
         ->toBe('Review by Alice Baker');
 });
 
 test('resource returns global search result details', function () {
     $review = Review::factory()->recycle(test()->product)->create(['rating' => 4]);
 
-    $details = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultDetails($review);
+    $details = ReviewResource::getGlobalSearchResultDetails($review);
 
     expect($details)
         ->toHaveKeys(['Rating', 'Product']);
 });
 
 test('global search eloquent query eager loads product', function () {
-    $query = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchEloquentQuery();
+    $query = ReviewResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('product');
 });

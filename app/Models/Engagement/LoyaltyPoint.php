@@ -45,6 +45,7 @@ class LoyaltyPoint extends Model
     /** @use HasFactory<LoyaltyPointFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

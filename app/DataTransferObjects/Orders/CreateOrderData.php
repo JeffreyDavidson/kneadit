@@ -5,7 +5,7 @@ namespace App\DataTransferObjects\Orders;
 final readonly class CreateOrderData
 {
     /**
-     * @param array<int, array{product_id: int, quantity: int}> $items
+     * @param  array<int, array{product_id: int, quantity: int}>  $items
      */
     public function __construct(
         public string $customerName,
@@ -32,7 +32,7 @@ final readonly class CreateOrderData
     /**
      * Create from validated request data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {

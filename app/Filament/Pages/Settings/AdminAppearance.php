@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Settings;
 
 use App\Filament\Concerns\RequiresManagerRole;
@@ -15,16 +17,22 @@ class AdminAppearance extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Admin Theme';
 
+    #[\Override]
     protected static ?string $title = 'Admin Theme';
 
+    #[\Override]
     protected string $view = 'filament.pages.settings.admin-appearance';
 
     public string $current = 'honey';

@@ -1,5 +1,6 @@
 <?php
 
+use App\ValueObjects\Money;
 use Illuminate\Support\Facades\Blade;
 
 test('money directive formats amount with dollar sign and two decimals', function () {
@@ -33,13 +34,13 @@ test('money directive formats large amount with comma separator', function () {
 });
 
 test('money directive handles Money value object instances', function () {
-    $result = Blade::render('@money($amount)', ['amount' => App\ValueObjects\Money::fromDollars(42.50)]);
+    $result = Blade::render('@money($amount)', ['amount' => Money::fromDollars(42.50)]);
 
     expect($result)->toBe('$42.50');
 });
 
 test('money directive handles Money zero instance', function () {
-    $result = Blade::render('@money($amount)', ['amount' => App\ValueObjects\Money::zero()]);
+    $result = Blade::render('@money($amount)', ['amount' => Money::zero()]);
 
     expect($result)->toBe('$0.00');
 });

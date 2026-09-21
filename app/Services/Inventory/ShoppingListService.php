@@ -50,8 +50,8 @@ class ShoppingListService
     }
 
     /**
-     * @param Collection<int, Ingredient> $lowStockIngredients
-     * @param array<int, float> $upcomingNeeds
+     * @param  Collection<int, Ingredient>  $lowStockIngredients
+     * @param  array<int, float>  $upcomingNeeds
      * @return array<int|string, array<string, mixed>>
      */
     private function groupBySupplier(Collection $lowStockIngredients, array $upcomingNeeds): array
@@ -108,7 +108,7 @@ class ShoppingListService
             }
         }
 
-        if (! empty($noSupplier)) {
+        if ($noSupplier !== []) {
             $grouped['none'] = [
                 'supplier' => ['id' => null, 'name' => 'No Supplier Assigned', 'email' => null, 'phone' => null],
                 'items' => $noSupplier,

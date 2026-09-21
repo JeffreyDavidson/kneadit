@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataTransferObjects\Financial;
 
 use Illuminate\Support\Collection;
@@ -7,8 +9,8 @@ use Illuminate\Support\Collection;
 final readonly class FinancialSummary
 {
     /**
-     * @param Collection<int, MonthlyFinancials> $monthlyBreakdown
-     * @param Collection<int, array{category: string, amount: float, percentage: float}> $expenseBreakdown
+     * @param  Collection<int, MonthlyFinancials>  $monthlyBreakdown
+     * @param  Collection<int, array{category: string, amount: float, percentage: float}>  $expenseBreakdown
      */
     public function __construct(
         public float $totalRevenue,

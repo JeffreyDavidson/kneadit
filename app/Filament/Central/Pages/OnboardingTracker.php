@@ -7,36 +7,40 @@ use App\Services\Tenants\TenantOnboardingMetrics;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Livewire\Attributes\Url;
 use UnitEnum;
 
 /** @phpstan-type OnboardingRecord array{id: string, name: string, subdomain: string, owner: string, email: string, plan: string, created_at: \Illuminate\Support\Carbon|null, days_since_signup: int, checks: array<string, bool>, completed: int, total: int} */
 class OnboardingTracker extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected static ?string $title = 'Onboarding Tracker';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
+    #[Url(except: 'all')]
     public string $filterStatus = 'all';
 
+    #[Url(except: 'all')]
     public string $filterPlan = 'all';
 
+    #[Url(except: 'progress_asc')]
     public string $sort = 'progress_asc';
 
-    /** @var array<string, mixed> */
-    protected array $queryString = [
-        'filterStatus' => ['except' => 'all'],
-        'filterPlan' => ['except' => 'all'],
-        'sort' => ['except' => 'progress_asc'],
-    ];
-
+    #[\Override]
     public function getSubheading(): ?string
     {
         return 'Monitor which bakers have completed their setup.';
@@ -62,10 +66,10 @@ class OnboardingTracker extends Page
         }
 
         $data = match ($this->sort) {
-            'progress_desc' => $data->sortByDesc(fn (array $t) => [$t['completed'], $t['created_at']?->getTimestamp() ?? 0]),
+            'progress_desc' => $data->sortByDesc(fn (array $t): array => [$t['completed'], $t['created_at']?->getTimestamp() ?? 0]),
             'newest' => $data->sortByDesc(fn (array $t) => $t['created_at']?->getTimestamp() ?? 0),
             'oldest' => $data->sortBy(fn (array $t) => $t['created_at']?->getTimestamp() ?? PHP_INT_MAX),
-            default => $data->sortBy(fn (array $t) => [$t['completed'], -($t['created_at']?->getTimestamp() ?? 0)]),
+            default => $data->sortBy(fn (array $t): array => [$t['completed'], -($t['created_at']?->getTimestamp() ?? 0)]),
         };
 
         return $data->values();
@@ -79,7 +83,7 @@ class OnboardingTracker extends Page
      *     owner: string,
      *     email: string,
      *     plan: string,
-     *     created_at: \Illuminate\Support\Carbon|null,
+     *     created_at: Carbon|null,
      *     days_since_signup: int,
      *     checks: array<string, bool>,
      *     completed: int,
@@ -106,7 +110,7 @@ class OnboardingTracker extends Page
     }
 
     /**
-     * @param OnboardingRecord $tenant
+     * @param  OnboardingRecord  $tenant
      */
     private function matchesStatus(array $tenant, string $status): bool
     {
@@ -144,8 +148,8 @@ class OnboardingTracker extends Page
 
         return [
             'total' => $data->count(),
-            'fully_onboarded' => $data->filter(fn (array $t) => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS)->count(),
-            'needs_attention' => $data->filter(fn (array $t) => $t['completed'] < 6)->count(),
+            'fully_onboarded' => $data->filter(fn (array $t): bool => $t['completed'] === TenantOnboardingMetrics::TOTAL_CHECKS)->count(),
+            'needs_attention' => $data->filter(fn (array $t): bool => $t['completed'] < 6)->count(),
         ];
     }
 }

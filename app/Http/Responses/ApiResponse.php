@@ -20,7 +20,7 @@ class ApiResponse
     }
 
     /**
-     * @param array<string, mixed>|null $errors
+     * @param  array<string, mixed>|null  $errors
      */
     public static function error(string $message, int $status = 422, ?array $errors = null): JsonResponse
     {

@@ -3,6 +3,7 @@
 use App\Models\Operations\WebhookDelivery;
 use App\Services\Platform\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 pest()->use(RefreshDatabase::class);
@@ -46,7 +47,7 @@ test('failed http response records a failed delivery row', function () {
 });
 
 test('connection exception records an error delivery row', function () {
-    Http::fake(fn () => throw new Illuminate\Http\Client\ConnectionException('Connection refused'));
+    Http::fake(fn () => throw new ConnectionException('Connection refused'));
 
     resolve(WebhookService::class)->dispatch('order.cancelled', ['order_number' => 'ORD-003']);
 
@@ -61,7 +62,7 @@ test('response body is truncated to ~2KB', function () {
 
     resolve(WebhookService::class)->dispatch('order.created', []);
 
-    expect(strlen((string) WebhookDelivery::sole()->response_body))->toBe(2000);
+    expect((string) WebhookDelivery::sole()->response_body)->toHaveLength(2000);
 });
 
 test('no row is recorded when the service is not configured', function () {

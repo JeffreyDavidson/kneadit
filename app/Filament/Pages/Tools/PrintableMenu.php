@@ -21,6 +21,7 @@ class PrintableMenu extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -31,14 +32,19 @@ class PrintableMenu extends Page
         return SubscriptionTier::Growth;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Printable Menu';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
 
+    #[\Override]
     protected static ?int $navigationSort = 16;
 
+    #[\Override]
     protected string $view = 'filament.pages.tools.printable-menu';
 
     public string $activeView = 'menu';
@@ -88,7 +94,7 @@ class PrintableMenu extends Page
             throw new \LogicException('The tenant must have a domain to generate a printable menu.');
         }
 
-        return 'http://' . $domain->domain;
+        return 'http://'.$domain->domain;
     }
 
     public function getQrCode(): string

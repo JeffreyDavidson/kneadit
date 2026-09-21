@@ -2,6 +2,7 @@
 
 use App\Models\Operations\WebhookDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 
 pest()->use(RefreshDatabase::class);
 
@@ -26,5 +27,5 @@ test('succeeded is cast to bool', function () {
 test('dispatched_at is cast to Carbon', function () {
     $delivery = WebhookDelivery::factory()->create();
 
-    expect($delivery->dispatched_at)->toBeInstanceOf(Illuminate\Support\Carbon::class);
+    expect($delivery->dispatched_at)->toBeInstanceOf(Carbon::class);
 });

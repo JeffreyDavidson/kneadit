@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 class NotifyProductWaitlist
 {
     public function __construct(
-        private EngagementSettings $engagementSettings,
+        private readonly EngagementSettings $engagementSettings,
     ) {}
 
     /**

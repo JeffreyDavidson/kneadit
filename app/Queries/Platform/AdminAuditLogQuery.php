@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class AdminAuditLogQuery
 {
     /**
-     * @param array{action?: string, search?: string, date_from?: string, date_to?: string} $filters
+     * @param  array{action?: string, search?: string, date_from?: string, date_to?: string}  $filters
      * @return LengthAwarePaginator<int, AdminAuditLog>
      */
     public function paginate(array $filters, int $perPage, int $page): LengthAwarePaginator
@@ -41,7 +41,7 @@ class AdminAuditLogQuery
     }
 
     /**
-     * @param array{action?: string, search?: string, date_from?: string, date_to?: string} $filters
+     * @param  array{action?: string, search?: string, date_from?: string, date_to?: string}  $filters
      * @return Builder<AdminAuditLog>
      */
     private function filteredQuery(array $filters): Builder

@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Settings\GiftCardSettings;
 use App\DataTransferObjects\Settings\OnboardingSettings;
 
 test('it can be constructed with all sub-DTOs', function () {
@@ -112,7 +113,7 @@ test('giftCards.presetAmounts defaults to standard amounts', function () {
 });
 
 test('giftCards.presetAmounts can be customized', function () {
-    $settings = makeTenantSettings(giftCards: new App\DataTransferObjects\Settings\GiftCardSettings(
+    $settings = makeTenantSettings(giftCards: new GiftCardSettings(
         presetAmounts: [5, 15, 30, 75],
         defaultAmount: 25,
     ));
@@ -127,7 +128,7 @@ test('giftCards.defaultAmount defaults to 25', function () {
 });
 
 test('giftCards.defaultAmount can be customized', function () {
-    $settings = makeTenantSettings(giftCards: new App\DataTransferObjects\Settings\GiftCardSettings(
+    $settings = makeTenantSettings(giftCards: new GiftCardSettings(
         presetAmounts: [10, 25, 50, 100],
         defaultAmount: 50,
     ));

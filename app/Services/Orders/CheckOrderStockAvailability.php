@@ -20,7 +20,7 @@ use App\Services\Inventory\IngredientDemandCalculator;
  */
 class CheckOrderStockAvailability
 {
-    public function __construct(private IngredientDemandCalculator $calculator) {}
+    public function __construct(private readonly IngredientDemandCalculator $calculator) {}
 
     /**
      * @throws InsufficientStockException when any ingredient's projected

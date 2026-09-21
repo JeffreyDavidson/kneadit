@@ -14,7 +14,7 @@ class SecurityHeaders
     /**
      * Add security headers to every response.
      *
-     * @param Closure(Request): Response $next
+     * @param  Closure(Request): Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -65,7 +65,7 @@ class SecurityHeaders
             "base-uri 'self'",
             "form-action 'self' https://checkout.stripe.com",
             "frame-ancestors 'self'",
-            'report-uri ' . route('csp.report'),
+            'report-uri '.route('csp.report'),
         ]);
     }
 }

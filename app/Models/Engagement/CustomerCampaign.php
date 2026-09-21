@@ -37,6 +37,7 @@ class CustomerCampaign extends Model
     /** @use HasFactory<CustomerCampaignFactory> */
     use HasFactory;
 
+    #[\Override]
     protected static function booted(): void
     {
         // When a baker sets scheduled_at on a still-draft campaign, promote
@@ -53,6 +54,7 @@ class CustomerCampaign extends Model
         });
     }
 
+    #[\Override]
     protected function casts(): array
     {
         return [

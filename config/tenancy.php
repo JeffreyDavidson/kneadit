@@ -30,10 +30,13 @@ return [
     'central_domains' => [
         '127.0.0.1',
         'localhost',
+        'app.getkneadit.app',
         'getkneadit.app',
         'www.getkneadit.app',
         'kneadit.test',
     ],
+
+    'tenant_domain' => env('TENANT_DOMAIN'),
 
     /**
      * Tenancy bootstrappers are executed when tenancy is initialized.

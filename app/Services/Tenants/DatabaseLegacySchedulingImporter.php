@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tenants;
 
 use App\Services\Tenants\Contracts\LegacySchedulingImporter;
@@ -8,8 +10,8 @@ use Illuminate\Support\Facades\DB;
 class DatabaseLegacySchedulingImporter implements LegacySchedulingImporter
 {
     /**
-     * @param array<int, array<string, mixed>> $capacityLimits
-     * @param array<int, array<string, mixed>> $holidays
+     * @param  array<int, array<string, mixed>>  $capacityLimits
+     * @param  array<int, array<string, mixed>>  $holidays
      */
     public function import(array $capacityLimits, array $holidays): void
     {

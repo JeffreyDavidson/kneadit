@@ -13,7 +13,7 @@ use App\ValueObjects\Money;
 class FinancialReport
 {
     public function __construct(
-        private FinancialCalculator $calculator,
+        private readonly FinancialCalculator $calculator,
     ) {}
 
     public function generate(int $year): FinancialReportResult

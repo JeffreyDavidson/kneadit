@@ -14,19 +14,25 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Livewire\Attributes\Computed;
 
 class ActivityLogPage extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Activity Log';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     protected string $view = 'filament.pages.platform.activity-log';
 
     public ?string $filterAction = null;
@@ -46,7 +52,8 @@ class ActivityLogPage extends Page
     public ?int $expandedId = null;
 
     /** @return LengthAwarePaginator<int, ActivityLog> */
-    public function getActivitiesProperty(): LengthAwarePaginator
+    #[Computed]
+    public function activities(): LengthAwarePaginator
     {
         $query = ActivityLog::query()->latest();
 
@@ -67,12 +74,13 @@ class ActivityLogPage extends Page
         }
 
         if ($this->filterDateTo) {
-            $query->where('created_at', '<=', $this->filterDateTo . ' 23:59:59');
+            $query->where('created_at', '<=', $this->filterDateTo.' 23:59:59');
         }
 
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
     }
 
+    #[\Override]
     public function content(Schema $schema): Schema
     {
         return $schema->components([

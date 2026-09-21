@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\PayPal\Contracts;
 
 use App\DataTransferObjects\PayPal\PayPalResponse;

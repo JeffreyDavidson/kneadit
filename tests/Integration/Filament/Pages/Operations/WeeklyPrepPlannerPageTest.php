@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Operations\WeeklyPrepPlanner;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -16,8 +17,8 @@ test('mount sets selected week start to start of current week', function () {
 test('mount loads weekly data', function () {
     test()->page->mount();
 
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class)
-        ->and(test()->page->prepSchedule)->toBeInstanceOf(Illuminate\Support\Collection::class)
+    expect(test()->page->weeklyOrders)->toBeInstanceOf(Collection::class)
+        ->and(test()->page->prepSchedule)->toBeInstanceOf(Collection::class)
         ->and(test()->page->weekDays)->toBeArray();
 });
 
@@ -35,19 +36,19 @@ test('load weekly data with valid date populates data', function () {
 
     test()->page->loadWeeklyData();
 
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->weeklyOrders)->toBeInstanceOf(Collection::class);
 });
 
 test('get product summary returns collection', function () {
     test()->page->mount();
 
-    expect(test()->page->getProductSummary())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->getProductSummary())->toBeInstanceOf(Collection::class);
 });
 
 test('get timeline view returns collection', function () {
     test()->page->mount();
 
-    expect(test()->page->getTimelineView())->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->getTimelineView())->toBeInstanceOf(Collection::class);
 });
 
 test('get total prep hours returns float', function () {

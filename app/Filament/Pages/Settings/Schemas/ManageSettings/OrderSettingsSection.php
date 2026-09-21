@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Forms\Components\MoneyInput;
@@ -71,10 +73,10 @@ class OrderSettingsSection
                         $fee = $state['fee'];
 
                         return (is_scalar($minDistance) ? (string) $minDistance : '')
-                            . '–'
-                            . (is_scalar($maxDistance) ? (string) $maxDistance : '')
-                            . ' mi · $'
-                            . (is_scalar($fee) ? (string) $fee : '');
+                            .'–'
+                            .(is_scalar($maxDistance) ? (string) $maxDistance : '')
+                            .' mi · $'
+                            .(is_scalar($fee) ? (string) $fee : '');
                     }),
 
                 Grid::make(2)

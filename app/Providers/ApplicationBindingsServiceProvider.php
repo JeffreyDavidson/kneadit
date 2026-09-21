@@ -65,6 +65,7 @@ class ApplicationBindingsServiceProvider extends ServiceProvider
         OnboardingSettings::class => 'onboarding',
     ];
 
+    #[\Override]
     public function register(): void
     {
         $this->app->bind(PayPalClient::class, HttpPayPalClient::class);

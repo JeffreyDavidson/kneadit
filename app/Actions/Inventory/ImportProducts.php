@@ -33,7 +33,7 @@ class ImportProducts
             $rowErrors = $this->stringList($row['_errors'] ?? []);
 
             if ($rowErrors !== []) {
-                $errors[] = "Row {$line}: " . implode(', ', $rowErrors);
+                $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
 
                 continue;
             }
@@ -42,12 +42,10 @@ class ImportProducts
                 $categoryId = null;
                 $categoryName = trim($this->stringValue($row['category'] ?? ''));
                 if ($categoryName !== '') {
-                    if (! isset($categoryCache[$categoryName])) {
-                        $categoryCache[$categoryName] = Category::query()->firstOrCreate(
-                            ['name' => $categoryName],
-                            ['slug' => Str::slug($categoryName)],
-                        )->id;
-                    }
+                    $categoryCache[$categoryName] ??= Category::query()->firstOrCreate(
+                        ['name' => $categoryName],
+                        ['slug' => Str::slug($categoryName)],
+                    )->id;
                     $categoryId = $categoryCache[$categoryName];
                 }
 

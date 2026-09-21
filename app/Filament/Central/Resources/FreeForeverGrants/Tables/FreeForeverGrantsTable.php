@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Central\Resources\FreeForeverGrants\Tables;
 
 use App\Models\Platform\FreeForeverGrant;
@@ -33,8 +35,8 @@ class FreeForeverGrantsTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->state(fn (FreeForeverGrant $record) => $record->revoked_at ? 'revoked' : 'active')
-                    ->color(fn (string $state) => match ($state) {
+                    ->state(fn (FreeForeverGrant $record): string => $record->revoked_at ? 'revoked' : 'active')
+                    ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
                         'revoked' => 'danger',
                         default => 'gray',
@@ -54,7 +56,7 @@ class FreeForeverGrantsTable
                         'active' => 'Active',
                         'revoked' => 'Revoked',
                     ])
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         if (($data['value'] ?? null) === 'active') {
                             $query->whereNull('revoked_at');
                         } elseif (($data['value'] ?? null) === 'revoked') {
@@ -68,7 +70,7 @@ class FreeForeverGrantsTable
                     ->icon(Heroicon::OutlinedNoSymbol)
                     ->color('danger')
                     ->authorize('platform-admin')
-                    ->visible(fn (FreeForeverGrant $record) => $record->revoked_at === null)
+                    ->visible(fn (FreeForeverGrant $record): bool => $record->revoked_at === null)
                     ->requiresConfirmation()
                     ->modalHeading('Revoke free-forever access')
                     ->modalDescription('The tenant will start seeing billing prompts again and will need an active Stripe subscription or trial to use the service.')
@@ -78,7 +80,7 @@ class FreeForeverGrantsTable
 
                         Notification::make()
                             ->title('Grant revoked')
-                            ->body('Tenant ' . ($record->tenant->store_name ?: $record->tenant_id) . ' is no longer free forever.')
+                            ->body('Tenant '.($record->tenant->store_name ?: $record->tenant_id).' is no longer free forever.')
                             ->success()
                             ->send();
                     }),

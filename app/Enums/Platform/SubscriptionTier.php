@@ -58,7 +58,7 @@ enum SubscriptionTier: string implements HasColor, HasLabel
     public static function priceMap(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $tier) => [$tier->value => $tier->priceInDollars()])
+            ->mapWithKeys(fn (self $tier): array => [$tier->value => $tier->priceInDollars()])
             ->all();
     }
 

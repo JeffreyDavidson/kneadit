@@ -114,7 +114,7 @@ it('writes orders CSV with join to order_items', function () {
     $content = $service->toString('orders');
     $rows = array_values(array_filter(explode("\n", trim($content))));
 
-    expect(str_getcsv($rows[0]))->toBe([
+    expect(str_getcsv($rows[0], escape: '\\'))->toBe([
         'Order ID',
         'Customer ID',
         'Status',
@@ -123,7 +123,7 @@ it('writes orders CSV with join to order_items', function () {
         'Item Qty',
         'Item Unit Price',
         'Order Created At',
-    ])->and(str_getcsv($rows[1]))->toContain('1', '1', 'pending');
+    ])->and(str_getcsv($rows[1], escape: '\\'))->toContain('1', '1', 'pending');
 });
 
 it('writes reviews CSV with customer and order identity', function () {
@@ -144,7 +144,7 @@ it('writes reviews CSV with customer and order identity', function () {
     $content = $service->toString('reviews');
     $rows = array_values(array_filter(explode("\n", trim($content))));
 
-    expect(str_getcsv($rows[0]))->toBe([
+    expect(str_getcsv($rows[0], escape: '\\'))->toBe([
         'ID',
         'Product ID',
         'Order ID',
@@ -154,7 +154,7 @@ it('writes reviews CSV with customer and order identity', function () {
         'Comment',
         'Created At',
         'Updated At',
-    ])->and(str_getcsv($rows[1]))->toContain('Jane', 'jane@example.com', 'Great product!');
+    ])->and(str_getcsv($rows[1], escape: '\\'))->toContain('Jane', 'jane@example.com', 'Great product!');
 });
 
 it('generates CSV as a string via toString', function () {

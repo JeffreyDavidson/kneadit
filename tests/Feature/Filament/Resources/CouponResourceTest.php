@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Financial\CouponType;
+use App\Filament\Resources\Coupons\CouponResource;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Models\Financial\Coupon;
 use App\Models\Staff\User;
@@ -8,6 +9,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -108,21 +111,21 @@ test('can sort coupons by code', function () {
 });
 
 test('resource returns globally searchable attributes', function () {
-    expect(App\Filament\Resources\Coupons\CouponResource::getGloballySearchableAttributes())
+    expect(CouponResource::getGloballySearchableAttributes())
         ->toBe(['code']);
 });
 
 test('resource returns global search result title', function () {
     $coupon = Coupon::factory()->create(['code' => 'SPRING20']);
 
-    expect(App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultTitle($coupon))
+    expect(CouponResource::getGlobalSearchResultTitle($coupon))
         ->toBe('SPRING20');
 });
 
 test('resource returns global search result details', function () {
     $coupon = Coupon::factory()->percentage()->create(['percentage' => 20]);
 
-    $details = App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultDetails($coupon);
+    $details = CouponResource::getGlobalSearchResultDetails($coupon);
 
     expect($details)
         ->toHaveKeys(['Type', 'Value', 'Active']);

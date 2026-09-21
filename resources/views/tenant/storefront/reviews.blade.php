@@ -7,7 +7,7 @@
         {{-- Photo-Forward Hero with Dark Overlay --}}
         <x-storefront.hero-section
             :image="$vm->settings->heroImageUrl()"
-            :image-alt="$vm->settings->store->name . ' Reviews'"
+            :image-alt="$vm->settings->store->name.' Reviews'"
             image-class="hero-img"
             min-height="60vh"
             gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)"
@@ -55,7 +55,7 @@
                         <x-storefront.stat-display
                             wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
                             x-ref="pct"
-                            :value="$vm->fiveStarPct . '%'"
+                            :value="$vm->fiveStarPct.'%'"
                             label="5-Star Reviews"
                         />
                         <x-storefront.stat-display

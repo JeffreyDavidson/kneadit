@@ -20,18 +20,25 @@ class DashboardConfig extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Dashboard Configuration';
 
+    #[\Override]
     protected static ?string $title = 'Customize Dashboard';
 
+    #[\Override]
     protected static ?string $slug = 'dashboard-config';
 
+    #[\Override]
     protected static \UnitEnum|string|null $navigationGroup = 'Settings';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
+    #[\Override]
     protected string $view = 'filament.pages.dashboard.dashboard-config';
 
     /** @var list<ConfigurableWidget> */
@@ -53,7 +60,7 @@ class DashboardConfig extends Page
             $config = $this->getDefaults();
         }
 
-        uasort($config, fn (array $a, array $b) => $a['order'] <=> $b['order']);
+        uasort($config, fn (array $a, array $b): int => $a['order'] <=> $b['order']);
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {
@@ -97,8 +104,8 @@ class DashboardConfig extends Page
      * default (a saved 'xl' for welcome_banner, e.g., gets clamped
      * to 'sm' since allowedSizes doesn't include xl).
      *
-     * @param SavedWidgetSettings $settings
-     * @param WidgetDetails $meta
+     * @param  SavedWidgetSettings  $settings
+     * @param  WidgetDetails  $meta
      */
     private function resolveSize(string $key, array $settings, array $meta): string
     {

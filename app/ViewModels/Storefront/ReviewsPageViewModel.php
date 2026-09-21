@@ -18,10 +18,10 @@ class ReviewsPageViewModel
     public readonly array $ratingBreakdown;
 
     /**
-     * @param LengthAwarePaginator<int, Review> $reviews
-     * @param object{avg_rating: float, total_count: int} $stats
-     * @param array<int, int> $starCounts keyed by star rating (5→1)
-     * @param array<string, mixed> $content
+     * @param  LengthAwarePaginator<int, Review>  $reviews
+     * @param  object{avg_rating: float, total_count: int}  $stats
+     * @param  array<int, int>  $starCounts  keyed by star rating (5→1)
+     * @param  array<string, mixed>  $content
      */
     public function __construct(
         public readonly LengthAwarePaginator $reviews,

@@ -7,13 +7,16 @@ use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
+use Livewire\Attributes\Computed;
 
 class GoalTrackerWidget extends Widget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected string $view = 'filament.widgets.goal-tracker';
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
     public bool $showEditModal = false;
@@ -49,9 +52,10 @@ class GoalTrackerWidget extends Widget
     }
 
     /** @return array<string, mixed> */
-    public function getMonthlyDataProperty(): array
+    #[Computed]
+    public function monthlyData(): array
     {
-        return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
+        return $this->cached('monthly_'.now()->format('Y-m'), [900, 1800], function (): array {
             $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
             $range = DateRange::thisMonth();
@@ -73,9 +77,10 @@ class GoalTrackerWidget extends Widget
     }
 
     /** @return array<string, mixed> */
-    public function getYearlyDataProperty(): array
+    #[Computed]
+    public function yearlyData(): array
     {
-        return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
+        return $this->cached('yearly_'.now()->format('Y'), [1800, 3600], function (): array {
             $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
             $range = DateRange::thisYear();

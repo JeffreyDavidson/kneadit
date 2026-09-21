@@ -12,14 +12,19 @@ use UnitEnum;
 
 class TenantComparison extends Page
 {
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Insights';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected static ?string $title = 'Bakery Comparison';
 
+    #[\Override]
     protected string $view = 'filament.central.pages.tenant-comparison';
 
     public string $activeTab = 'compare';

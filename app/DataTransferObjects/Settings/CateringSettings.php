@@ -42,7 +42,7 @@ final readonly class CateringSettings
 
         $values = array_values(array_filter(
             $decoded,
-            fn (mixed $v) => is_string($v) && trim($v) !== '',
+            fn (mixed $v): bool => is_string($v) && trim($v) !== '',
         ));
 
         return $values === [] ? CateringEventType::defaultLabels() : $values;

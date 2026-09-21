@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * recipe_ingredients.quantity, etc.) stay decimal — they're physical units
  * (lbs, cups, count), not money.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         DB::statement('UPDATE recipes SET cost = ROUND(cost * 100) WHERE cost IS NOT NULL');

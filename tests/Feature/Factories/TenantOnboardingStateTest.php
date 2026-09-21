@@ -14,7 +14,7 @@ test('onboarded() factory state produces a fully-onboarded tenant', function () 
     // Central-DB columns set by the wizard
     expect($tenant->fresh()->store_name)->not->toBeEmpty()
         ->and($tenant->fresh()->store_logo)->not->toBeEmpty()
-        ->and((bool) $tenant->fresh()->storefront_enabled)->toBeTrue()
+        ->and($tenant->fresh()->storefront_enabled)->toBeTruthy()
         ->and($tenant->fresh()->brand_color_primary)->not->toBe(BrandingSettings::DEFAULT_BRAND_COLOR);
 
     $tenantData = $tenant->run(fn () => [

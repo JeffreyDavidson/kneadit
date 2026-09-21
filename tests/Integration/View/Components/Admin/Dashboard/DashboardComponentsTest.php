@@ -60,11 +60,8 @@ test('list-row renders label, optional value, and optional dot', function () {
         ->toContain('Order #100')
         ->toContain('$28')
         ->toContain('class="pw-dot"')
-        ->toContain('#d4a574');
-
-    expect($withoutDot)
-        ->toContain('Order #100')
-        ->not->toContain('class="pw-dot"');
+        ->toContain('#d4a574')
+        ->and($withoutDot)->toContain('Order #100')->not->toContain('class="pw-dot"');
 });
 
 test('list-row falls back to slot content when label is omitted', function () {
@@ -90,13 +87,10 @@ test('bar-row renders label with computed pct fallback or explicit value text', 
     expect($defaultValue)
         ->toContain('Chocolate Cake')
         ->toContain('85%')
-        ->toContain('width: 85%');
-
-    expect($explicitValue)
-        ->toContain('Monthly Goal')
+        ->toContain('width: 85%')
+        ->and($explicitValue)->toContain('Monthly Goal')
         ->toContain('$2,450 / $5,000')
-        ->toContain('width: 49%')
-        ->not->toContain('49%</span>');
+        ->toContain('width: 49%')->not->toContain('49%</span>');
 });
 
 test('spark-bars renders one bar per data point with correct heights', function () {

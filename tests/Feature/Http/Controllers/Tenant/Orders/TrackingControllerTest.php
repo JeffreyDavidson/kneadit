@@ -39,8 +39,7 @@ test('biscotto tracking page uses the themed follow-up presentation', function (
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.track', [], false));
 
-    $response->assertOk()
-        ->assertSee('biscotto-order-tracking', false)
+    $response->assertOk()->assertSeeHtml('biscotto-order-tracking')
         ->assertSee('Track Your Order');
 });
 
@@ -80,7 +79,7 @@ test('tracking shows correct status for each order stage', function (string $sta
         ->for($customer)
         ->recycle($user)
         ->create([
-            'order_number' => 'KN' . strtoupper($status),
+            'order_number' => 'KN'.strtoupper($status),
             'status' => $status,
             'subtotal' => 10.00,
             'total' => 10.00,
@@ -157,9 +156,5 @@ test('per-order links reference order_number, not the integer id (route binds by
             'email' => 'jane@example.com',
         ]);
 
-    $response->assertOk()
-        ->assertSee("?reorder={$order->order_number}", false)
-        ->assertSee("loadMessages('{$order->order_number}')", false)
-        ->assertDontSee("?reorder={$order->id}\"", false)
-        ->assertDontSee("loadMessages({$order->id})", false);
+    $response->assertOk()->assertSeeHtml("?reorder={$order->order_number}")->assertSeeHtml("loadMessages('{$order->order_number}')")->assertDontSeeHtml("?reorder={$order->id}\"")->assertDontSeeHtml("loadMessages({$order->id})");
 });

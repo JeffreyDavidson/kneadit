@@ -7,8 +7,8 @@ use Illuminate\Support\Collection;
 final readonly class ProductPortfolioSummary
 {
     /**
-     * @param Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> $products
-     * @param array{high: int, medium: int, low: int} $marginBreakdown
+     * @param  Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}>  $products
+     * @param  array{high: int, medium: int, low: int}  $marginBreakdown
      */
     public function __construct(
         public Collection $products,

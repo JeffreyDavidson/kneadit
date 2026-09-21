@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Inventory;
 
 use App\DataTransferObjects\Inventory\IngredientDemandItem;
@@ -7,7 +9,7 @@ use App\DataTransferObjects\Inventory\IngredientDemandItem;
 final class IngredientDemandCalculator
 {
     /**
-     * @param iterable<IngredientDemandItem> $items
+     * @param  iterable<IngredientDemandItem>  $items
      * @return list<string>
      */
     public function shortages(iterable $items): array

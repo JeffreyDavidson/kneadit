@@ -12,8 +12,10 @@ class LoyaltyLeadersWidget extends Widget
     use CachesWidgetData;
     use HasDashboardSize;
 
+    #[\Override]
     protected static ?int $sort = 21;
 
+    #[\Override]
     protected string $view = 'filament.widgets.loyalty-leaders-widget';
 
     /** @return array<int, array<string, mixed>> */

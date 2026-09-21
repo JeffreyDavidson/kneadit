@@ -53,12 +53,10 @@ test('does not expose widget exceptions in the placeholder and logs server-side 
     Tenant::factory()->onboarded()->create(['id' => Tenant::DEMO_ID]);
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(function (string $message, array $context): bool {
-            return $message === 'WidgetPreviewRenderer failed'
-                && $context['widget'] === FailingWidgetPreview::class
-                && $context['exception'] instanceof RuntimeException
-                && $context['exception']->getMessage() === 'database password leaked';
-        });
+        ->withArgs(fn (string $message, array $context): bool => $message === 'WidgetPreviewRenderer failed'
+            && $context['widget'] === FailingWidgetPreview::class
+            && $context['exception'] instanceof RuntimeException
+            && $context['exception']->getMessage() === 'database password leaked');
 
     $html = (new WidgetPreviewRenderer)->render(FailingWidgetPreview::class);
 

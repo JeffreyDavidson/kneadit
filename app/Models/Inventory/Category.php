@@ -33,6 +33,7 @@ class Category extends Model
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

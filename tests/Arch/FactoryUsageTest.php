@@ -76,7 +76,7 @@ test('test files should not use direct Model::create() for models with factories
             continue;
         }
 
-        if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Arch' . DIRECTORY_SEPARATOR)) {
+        if (str_contains($file->getPathname(), DIRECTORY_SEPARATOR.'Arch'.DIRECTORY_SEPARATOR)) {
             continue;
         }
 
@@ -86,7 +86,7 @@ test('test files should not use direct Model::create() for models with factories
             throw new RuntimeException("Unable to read {$file->getPathname()}.");
         }
 
-        $relative = str_replace($testsDir . DIRECTORY_SEPARATOR, '', $file->getPathname());
+        $relative = str_replace($testsDir.DIRECTORY_SEPARATOR, '', $file->getPathname());
 
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $content, $matches)) {
@@ -96,6 +96,6 @@ test('test files should not use direct Model::create() for models with factories
     }
 
     expect($violations)->toBeEmpty(
-        "Use Model::factory() instead of Model::create() / Model::query()->create():\n" . implode("\n", $violations),
+        "Use Model::factory() instead of Model::create() / Model::query()->create():\n".implode("\n", $violations),
     );
 });

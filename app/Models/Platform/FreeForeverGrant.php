@@ -8,15 +8,16 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $tenant_id
  * @property int|null $granted_by_user_id
- * @property \Illuminate\Support\Carbon $granted_at
- * @property \Illuminate\Support\Carbon|null $revoked_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon $granted_at
+ * @property Carbon|null $revoked_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Tenant $tenant
  * @property-read User|null $grantedByUser
  *
@@ -32,6 +33,7 @@ class FreeForeverGrant extends Model
     /** @use HasFactory<FreeForeverGrantFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

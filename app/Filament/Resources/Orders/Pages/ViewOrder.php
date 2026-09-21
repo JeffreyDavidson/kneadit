@@ -28,8 +28,10 @@ use Illuminate\Support\Arr;
  */
 class ViewOrder extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = OrderResource::class;
 
+    #[\Override]
     protected string $view = 'filament.resources.orders.view-order';
 
     /**
@@ -40,16 +42,18 @@ class ViewOrder extends ViewRecord
      * Livewire follow-up request, where the model is re-hydrated from
      * the request payload without its prior relations).
      */
+    #[\Override]
     public function getRecord(): Model
     {
         return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages', 'cateringInquiry']);
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         $allowedTransitions = TransitionOrderStatus::allowedTransitions($this->record);
         $options = collect($allowedTransitions)
-            ->mapWithKeys(fn (OrderStatus $status) => [$status->value => $status->name])
+            ->mapWithKeys(fn (OrderStatus $status): array => [$status->value => $status->name])
             ->all();
 
         return [

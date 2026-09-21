@@ -2,11 +2,14 @@
 
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use App\ViewModels\Storefront\LoyaltyPageViewModel;
+use Illuminate\Support\Collection;
 
-function makeLoyaltyTenantSettings(): App\Services\Settings\TenantSettings
+function makeLoyaltyTenantSettings(): TenantSettings
 {
     return makeTenantSettings(
         engagement: makeEngagementSettings(['birthdayCouponEnabled' => true]),
@@ -14,7 +17,7 @@ function makeLoyaltyTenantSettings(): App\Services\Settings\TenantSettings
 }
 
 /**
- * @param array{settings?: App\Services\Settings\TenantSettings, customer?: ?Customer, balance?: LoyaltyBalance, history?: Illuminate\Support\Collection<int, App\Models\Engagement\LoyaltyPoint>, rewards?: Illuminate\Support\Collection<int, LoyaltyReward>, content?: array<string, string>, howSteps?: array<int, array<string, string>>, customerNotFound?: bool} $overrides
+ * @param  array{settings?: TenantSettings, customer?: ?Customer, balance?: LoyaltyBalance, history?: Collection<int, LoyaltyPoint>, rewards?: Collection<int, LoyaltyReward>, content?: array<string, string>, howSteps?: array<int, array<string, string>>, customerNotFound?: bool}  $overrides
  */
 function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
 {

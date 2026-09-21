@@ -10,6 +10,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ReviewAnalyticsService;
+use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -20,6 +21,7 @@ class ReviewAnalytics extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
+    #[\Override]
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -30,14 +32,19 @@ class ReviewAnalytics extends Page
         return SubscriptionTier::Pro;
     }
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Review Analytics';
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
+    #[\Override]
     protected static ?int $navigationSort = 4;
 
+    #[\Override]
     protected string $view = 'filament.pages.analytics.review-analytics';
 
     private function service(): ReviewAnalyticsService
@@ -77,7 +84,7 @@ class ReviewAnalytics extends Page
         );
     }
 
-    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?\Carbon\Carbon}> */
+    /** @return Collection<int, array{id: int, customer_name: string, product_name: string, rating: int, comment: ?string, is_approved: bool, is_featured: bool, created_at: ?Carbon}> */
     public function getRecentReviews(): Collection
     {
         return $this->service()->getRecentReviews()->map(

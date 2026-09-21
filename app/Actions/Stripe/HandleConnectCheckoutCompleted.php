@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Log;
 class HandleConnectCheckoutCompleted
 {
     public function __construct(
-        private TenancyManager $tenancyManager,
-        private MarkOrderPaid $markOrderPaid,
-        private RecordCateringDeposit $recordCateringDeposit,
+        private readonly TenancyManager $tenancyManager,
+        private readonly MarkOrderPaid $markOrderPaid,
+        private readonly RecordCateringDeposit $recordCateringDeposit,
     ) {}
 
     public function __invoke(mixed $session): void
@@ -61,7 +61,7 @@ class HandleConnectCheckoutCompleted
         }
 
         try {
-            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant, $orderId, $cateringInquiryId, $paymentIntentId, $session) {
+            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
                 if ($cateringInquiryId) {
                     $inquiry = CateringInquiry::query()
                         ->whereKey($cateringInquiryId)

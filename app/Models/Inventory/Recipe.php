@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Casts\MoneyCentsCast;
+use App\ValueObjects\Money;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe query()
  *
- * @property \App\ValueObjects\Money|null $cost
+ * @property Money|null $cost
  *
  * @mixin \Eloquent
  */
@@ -34,6 +35,7 @@ class Recipe extends Model
     /** @use HasFactory<RecipeFactory> */
     use HasFactory;
 
+    #[\Override]
     protected function casts(): array
     {
         return [

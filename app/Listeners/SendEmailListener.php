@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
 use Illuminate\Contracts\Mail\Mailable;
@@ -34,7 +36,7 @@ abstract class SendEmailListener extends QueuedListener
 
     final public function failed(object $event, \Throwable $exception): void
     {
-        Log::warning(class_basename($this) . ' failed', [
+        Log::warning(class_basename($this).' failed', [
             ...$this->getFailureContext($event),
             'error' => $exception->getMessage(),
         ]);

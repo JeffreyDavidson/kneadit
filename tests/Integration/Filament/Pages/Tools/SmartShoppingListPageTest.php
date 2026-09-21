@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Tools\SmartShoppingList;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -29,14 +30,14 @@ test('include upcoming defaults to false', function () {
 test('mount initializes supplier groups', function () {
     test()->page->mount();
 
-    expect(test()->page->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->supplierGroups)->toBeInstanceOf(Collection::class);
 });
 
 test('generate list populates supplier groups', function () {
     test()->page->mount();
     test()->page->generateList();
 
-    expect(test()->page->supplierGroups)->toBeInstanceOf(Illuminate\Support\Collection::class);
+    expect(test()->page->supplierGroups)->toBeInstanceOf(Collection::class);
 });
 
 test('toggle upcoming flips flag and regenerates list', function () {

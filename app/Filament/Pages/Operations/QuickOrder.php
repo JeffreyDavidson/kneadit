@@ -20,6 +20,7 @@ class QuickOrder extends Page
 {
     use RequiresManagerRole;
 
+    #[\Override]
     protected string $view = 'filament-panels::pages.page';
 
     /**
@@ -28,16 +29,22 @@ class QuickOrder extends Page
      * colourful QuickActionsWidget icon grid. The route stays registered
      * so those buttons keep working.
      */
+    #[\Override]
     protected static bool $shouldRegisterNavigation = false;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
+    #[\Override]
     protected static ?string $title = 'Quick Order';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Quick Order';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
     /** @var array<string, mixed> */
@@ -69,7 +76,7 @@ class QuickOrder extends Page
                 ->send();
 
             $this->form->fill();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             Notification::make()
                 ->title('Error Creating Order')
                 ->body('There was an error creating the order. Please try again.')

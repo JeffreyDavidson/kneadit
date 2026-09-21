@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions\Orders;
 
 use App\Models\Orders\Order;
@@ -9,11 +11,11 @@ use RuntimeException;
 class InsufficientStockException extends RuntimeException implements ShouldntReport
 {
     /**
-     * @param array<int, string> $shortages Names of ingredients whose projected
-     *                                      demand would exceed current stock.
-     * @param ?Order $order Set when the failure attaches to a persisted order
-     *                      (the modification path); null at placement time
-     *                      where the order doesn't exist yet.
+     * @param  array<int, string>  $shortages  Names of ingredients whose projected
+     *                                         demand would exceed current stock.
+     * @param  ?Order  $order  Set when the failure attaches to a persisted order
+     *                         (the modification path); null at placement time
+     *                         where the order doesn't exist yet.
      */
     public function __construct(
         public readonly array $shortages,
@@ -21,7 +23,7 @@ class InsufficientStockException extends RuntimeException implements ShouldntRep
     ) {
         $list = implode(', ', $shortages);
 
-        $prefix = $order !== null
+        $prefix = $order instanceof Order
             ? "Order {$order->order_number} cannot be modified"
             : 'Order cannot be placed';
 

@@ -16,23 +16,26 @@ class PlatformStats extends StatsOverviewWidget
 {
     use CachesWidgetData;
 
+    #[\Override]
     protected ?string $pollingInterval = null;
 
+    #[\Override]
     protected static ?int $sort = 0;
 
+    #[\Override]
     protected function getStats(): array
     {
         $data = $this->cached('main', [900, 1800], fn (): array => $this->loadData());
 
         return [
             Stat::make('MRR', Number::currency($data['mrr']))
-                ->description($data['activePaying'] . ' paying')
+                ->description($data['activePaying'].' paying')
                 ->color('success')
                 ->icon(Heroicon::OutlinedCurrencyDollar)
                 ->chart($data['mrrChart'])
                 ->chartColor('success'),
             Stat::make('Total Bakeries', $data['totalTenants'])
-                ->description($data['activePaying'] . ' active')
+                ->description($data['activePaying'].' active')
                 ->color('success')
                 ->icon(Heroicon::OutlinedBuildingStorefront)
                 ->chart($data['bakeryChart'])

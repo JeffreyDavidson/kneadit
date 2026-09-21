@@ -30,7 +30,7 @@ test('get tenants returns tenants ordered by store name', function () {
     $tenants = test()->page->getTenants();
 
     expect($tenants)->toHaveCount(2)
-        ->and(array_values($tenants)[0])->toBe('Alpha Bakery');
+        ->and(array_first($tenants))->toBe('Alpha Bakery');
 });
 
 test('get tenants uses name when store name is empty', function () {
@@ -38,7 +38,7 @@ test('get tenants uses name when store name is empty', function () {
 
     $tenants = test()->page->getTenants();
 
-    expect(array_values($tenants)[0])->toBe('Fallback Name');
+    expect(array_first($tenants))->toBe('Fallback Name');
 });
 
 test('updated selected tenant clears counts when null', function () {
