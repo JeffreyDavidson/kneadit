@@ -1,7 +1,6 @@
 <?php
 
 use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
-use InvalidArgumentException;
 
 it('stores dataset records and reports their counts', function () {
     $data = LegacyBakeryImportData::from([
