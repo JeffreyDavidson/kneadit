@@ -101,7 +101,7 @@ Important entry points:
 - `resources/views/components` — reusable Blade components grouped by surface
 - `resources/views/shared` — shared Blade includes such as analytics and order-form scripts
 
-See [Architecture](docs/architecture.md) for request flow, domain boundaries, order/payment behavior, and settings design. See [Operations](docs/operations.md) for queues, scheduling, deployment, testing, security, and monitoring.
+See [Architecture](docs/architecture.md) for request flow, domain boundaries, order/payment behavior, and settings design. See [Operations](docs/operations.md) for queues, scheduling, deployment, testing, security, and monitoring. See [Deployment environments](docs/deployment-environments.md) for the Gitflow release process and Forge/Cloudflare domain topology.
 
 ## Development rules
 

@@ -86,6 +86,12 @@ The repository uses simplified gitflow:
 - `main` deploys to production through Laravel Forge.
 - release versions are tags surfaced through the root `VERSION` file and `config/kneadit.php`; run `bin/sync-version` during deployment before caching configuration.
 
+The normal staging branch is `develop`. During release hardening, staging may
+temporarily track the active `release/vX.Y.Z` branch so reviewers validate the
+exact release candidate before it is merged into `main`. See
+[Deployment environments](deployment-environments.md) for the branch,
+domain, Forge, and Cloudflare topology.
+
 The repository does not automatically back-merge `main` into `develop`. Prepare releases locally from a freshly pulled `develop` branch so release history stays linear and reviewable:
 
 ```bash
