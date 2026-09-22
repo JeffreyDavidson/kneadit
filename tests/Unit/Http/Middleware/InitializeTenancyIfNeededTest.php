@@ -47,6 +47,16 @@ test('passes through for central domains', function () {
     expect($response->getContent())->toBe('OK');
 });
 
+test('passes through for the staging application domain', function () {
+    $middleware = new InitializeTenancyIfNeeded;
+    $request = Request::create('https://app.staging.getkneadit.app/');
+    $request->headers->set('HOST', 'app.staging.getkneadit.app');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->getContent())->toBe('OK');
+});
+
 test('returns 503 when central row exists but tenant SQLite file is missing', function () {
     config(['tenancy.central_domains' => ['getkneadit.app']]);
 
