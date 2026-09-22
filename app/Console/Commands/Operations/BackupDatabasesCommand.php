@@ -121,15 +121,7 @@ class BackupDatabasesCommand extends Command
 
     protected function getBackupDir(): string
     {
-        // Use a shared directory outside releases for Forge deploys
-        $sharedDir = dirname(base_path()).'/backups';
-
-        // Fallback for local dev
-        if (Str::contains(base_path(), '/current/') || Str::contains(base_path(), '/releases/')) {
-            // Forge zero-downtime deploy — go up to project root
-            $projectRoot = preg_replace('#/(current|releases/\d+)$#', '', base_path());
-            $sharedDir = "{$projectRoot}/backups";
-        }
+        $sharedDir = Config::string('backups.path');
 
         if (! is_dir($sharedDir)) {
             File::ensureDirectoryExists($sharedDir, 0755);
