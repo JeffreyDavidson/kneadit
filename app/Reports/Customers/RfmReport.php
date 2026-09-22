@@ -2,9 +2,13 @@
 
 namespace App\Reports\Customers;
 
+use App\DataTransferObjects\Customers\RfmCustomerSample;
+use App\DataTransferObjects\Customers\RfmReportResult;
+use App\DataTransferObjects\Customers\RfmSegmentResult;
 use App\Enums\Customers\RfmSegment;
 use App\Models\Customers\Customer;
 use App\Services\Customers\RfmClassifier;
+use App\ValueObjects\Money;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
 
@@ -21,22 +25,8 @@ class RfmReport
         private readonly RfmClassifier $classifier,
     ) {}
 
-    /**
-     * Produce an RFM segmentation snapshot as of `now()`.
-     *
-     * @return array{
-     *     total: int,
-     *     segments: array<string, array{
-     *         segment: RfmSegment,
-     *         label: string,
-     *         description: string,
-     *         color: string,
-     *         count: int,
-     *         sampleCustomers: array<int, array{id: int, name: string, email: string, recency_days: int, frequency: int, monetary: float}>
-     *     }>
-     * }
-     */
-    public function generate(): array
+    /** Produce an RFM segmentation snapshot as of `now()`. */
+    public function generate(): RfmReportResult
     {
         $rows = Customer::query()
             ->withRfmMetrics()
@@ -46,7 +36,7 @@ class RfmReport
 
         /** @var array<string, int> $counts */
         $counts = [];
-        /** @var array<string, array<int, array{id: int, name: string, email: string, recency_days: int, frequency: int, monetary: float}>> $samples */
+        /** @var array<string, list<RfmCustomerSample>> $samples */
         $samples = [];
 
         foreach (RfmSegment::cases() as $segment) {
@@ -64,38 +54,39 @@ class RfmReport
             $frequency = Arr::integer($customer->getAttributes(), 'frequency', 0);
             // monetary_cents is a raw SUM() which bypasses the money cast
             // (see 2026_04_22_201500_convert_orders_money_columns_to_cents).
-            $monetary = Arr::integer($customer->getAttributes(), 'monetary_cents', 0) / 100;
+            $monetary = Money::fromCents(Arr::integer($customer->getAttributes(), 'monetary_cents', 0));
 
-            $segment = $this->classifier->classify($recencyDays, $frequency, $monetary);
+            $segment = $this->classifier->classify($recencyDays, $frequency, $monetary->dollars());
             $counts[$segment->value]++;
 
             if (count($samples[$segment->value]) < 5) {
-                $samples[$segment->value][] = [
-                    'id' => $customer->id,
-                    'name' => $customer->name,
-                    'email' => $customer->email,
-                    'recency_days' => $recencyDays,
-                    'frequency' => $frequency,
-                    'monetary' => $monetary,
-                ];
+                $samples[$segment->value][] = new RfmCustomerSample(
+                    id: $customer->id,
+                    name: $customer->name,
+                    email: $customer->email,
+                    recencyDays: $recencyDays,
+                    frequency: $frequency,
+                    monetary: $monetary,
+                );
             }
         }
 
+        /** @var array<string, RfmSegmentResult> $segments */
         $segments = [];
         foreach (RfmSegment::cases() as $segment) {
-            $segments[$segment->value] = [
-                'segment' => $segment,
-                'label' => $segment->getLabel(),
-                'description' => $segment->description(),
-                'color' => $segment->getColor(),
-                'count' => $counts[$segment->value],
-                'sampleCustomers' => $samples[$segment->value],
-            ];
+            $segments[$segment->value] = new RfmSegmentResult(
+                segment: $segment,
+                label: $segment->getLabel(),
+                description: $segment->description(),
+                color: $segment->getColor(),
+                count: $counts[$segment->value],
+                sampleCustomers: $samples[$segment->value],
+            );
         }
 
-        return [
-            'total' => $rows->count(),
-            'segments' => $segments,
-        ];
+        return new RfmReportResult(
+            total: $rows->count(),
+            segments: $segments,
+        );
     }
 }

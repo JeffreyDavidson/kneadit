@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Customers\RfmReportResult;
 use App\Enums\Customers\RfmSegment;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
@@ -40,8 +41,14 @@ function makeRfmCustomer(int $frequency, float $totalDollars, int $recencyDays, 
 test('empty set returns 0 total and all segments at 0', function () {
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['total'])->toBe(0)
-        ->and($result['segments'])->each->toMatchArray(['count' => 0, 'sampleCustomers' => []]);
+    expect($result)
+        ->toBeInstanceOf(RfmReportResult::class)
+        ->total->toBe(0);
+
+    foreach ($result->segments as $segment) {
+        expect($segment->count)->toBe(0)
+            ->and($segment->sampleCustomers)->toBeEmpty();
+    }
 });
 
 test('classifies a frequent big spender with a recent order as Champion', function () {
@@ -49,8 +56,8 @@ test('classifies a frequent big spender with a recent order as Champion', functi
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::Champions->value]['count'])->toBe(1)
-        ->and($result['segments'][RfmSegment::Champions->value]['sampleCustomers'][0]['email'])->toBe('champ@example.com');
+    expect($result->segments[RfmSegment::Champions->value]->count)->toBe(1)
+        ->and($result->segments[RfmSegment::Champions->value]->sampleCustomers[0]->email)->toBe('champ@example.com');
 });
 
 test('classifies a consistent moderate-spender within 60 days as Loyal', function () {
@@ -58,7 +65,7 @@ test('classifies a consistent moderate-spender within 60 days as Loyal', functio
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::Loyal->value]['count'])->toBe(1);
+    expect($result->segments[RfmSegment::Loyal->value]->count)->toBe(1);
 });
 
 test('classifies a valuable customer cold for 90 days as AtRisk', function () {
@@ -66,7 +73,7 @@ test('classifies a valuable customer cold for 90 days as AtRisk', function () {
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::AtRisk->value]['count'])->toBe(1);
+    expect($result->segments[RfmSegment::AtRisk->value]->count)->toBe(1);
 });
 
 test('classifies a low-frequency recent customer as New', function () {
@@ -74,7 +81,7 @@ test('classifies a low-frequency recent customer as New', function () {
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::New->value]['count'])->toBe(1);
+    expect($result->segments[RfmSegment::New->value]->count)->toBe(1);
 });
 
 test('classifies a 200-day-inactive customer as Hibernating', function () {
@@ -82,7 +89,7 @@ test('classifies a 200-day-inactive customer as Hibernating', function () {
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::Hibernating->value]['count'])->toBe(1);
+    expect($result->segments[RfmSegment::Hibernating->value]->count)->toBe(1);
 });
 
 test('excludes customers with no paid orders', function () {
@@ -90,7 +97,7 @@ test('excludes customers with no paid orders', function () {
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['total'])->toBe(0);
+    expect($result->total)->toBe(0);
 });
 
 test('limits sample customers to 5 per segment', function () {
@@ -100,6 +107,15 @@ test('limits sample customers to 5 per segment', function () {
 
     $result = resolve(RfmReport::class)->generate();
 
-    expect($result['segments'][RfmSegment::New->value]['count'])->toBe(7)
-        ->and($result['segments'][RfmSegment::New->value]['sampleCustomers'])->toHaveCount(5);
+    expect($result->segments[RfmSegment::New->value]->count)->toBe(7)
+        ->and($result->segments[RfmSegment::New->value]->sampleCustomers)->toHaveCount(5);
+});
+
+test('serializes the typed report result for presentation', function () {
+    makeRfmCustomer(frequency: 1, totalDollars: 40.0, recencyDays: 5, email: 'serialize@example.com');
+
+    $result = resolve(RfmReport::class)->generate()->toArray();
+
+    expect($result['total'])->toBe(1)
+        ->and($result['segments'][RfmSegment::New->value]['sampleCustomers'][0]['monetary'])->toBe(40.0);
 });
