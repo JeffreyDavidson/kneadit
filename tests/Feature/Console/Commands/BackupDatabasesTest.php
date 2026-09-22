@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
     setUpCentralTest();
+    config(['backups.path' => storage_path('framework/testing/backups')]);
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     File::ensureDirectoryExists(dirname($centralDatabase));
@@ -21,21 +22,7 @@ afterEach(function () {
     File::delete($centralDatabase.'-wal');
     File::delete($centralDatabase.'-shm');
 
-    // Clean up any backup directories created during tests
-    $possibleDirs = [
-        dirname(base_path()).'/backups',
-        base_path().'/../backups',
-    ];
-
-    foreach ($possibleDirs as $dir) {
-        if (is_dir($dir)) {
-            $subdirs = glob("{$dir}/20*", GLOB_ONLYDIR) ?: [];
-            foreach ($subdirs as $subdir) {
-                array_map(unlink(...), glob("{$subdir}/*") ?: []);
-                @rmdir($subdir);
-            }
-        }
-    }
+    File::deleteDirectory(config('backups.path'));
 });
 
 test('backup command exists', function () {
@@ -57,13 +44,7 @@ test('backup command class has correct signature', function () {
 test('backup creates backup directory', function () {
     $this->artisan('backup:databases');
 
-    $possibleDirs = [
-        dirname(base_path()).'/backups',
-        base_path().'/../backups',
-    ];
-    $found = array_any($possibleDirs, fn ($dir) => is_dir($dir));
-
-    expect($found)->toBeTrue('Backup directory should be created');
+    expect(config('backups.path'))->toBeDirectory();
 });
 
 test('backup outputs progress messages', function () {
@@ -95,33 +76,17 @@ test('backup default keep is 7 days', function () {
 test('backup creates timestamped subdirectory', function () {
     $this->artisan('backup:databases');
 
-    $possibleDirs = [
-        dirname(base_path()).'/backups',
-        base_path().'/../backups',
-    ];
+    $subdirs = glob(config('backups.path').'/20*', GLOB_ONLYDIR) ?: [];
 
-    $found = false;
-    foreach ($possibleDirs as $dir) {
-        if (is_dir($dir)) {
-            $subdirs = glob("{$dir}/20*", GLOB_ONLYDIR) ?: [];
-            if (count($subdirs) > 0) {
-                $found = true;
-                // Verify timestamp format
-                $dirName = basename($subdirs[0]);
-                expect($dirName)->toMatch('/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/');
-            }
-            break;
-        }
-    }
-
-    expect($found)->toBeTrue('Timestamped backup subdirectory should be created');
+    expect($subdirs)->not->toBeEmpty()
+        ->and(basename($subdirs[0]))->toMatch('/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/');
 });
 
 test('backup secures the central database copy', function () {
     Carbon::setTestNow('2026-08-25 15:00:00');
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
-    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
     File::put($centralDatabase, 'central database');
     File::put($centralDatabase.'-wal', 'central wal');
     File::put($centralDatabase.'-shm', 'central shm');
@@ -158,7 +123,7 @@ test('backup fails when a tenant database is missing', function () {
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
-    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
     File::put($centralDatabase, 'central database');
     File::ensureDirectoryExists($tenantDbDirectory);
     config([
@@ -193,7 +158,7 @@ test('backup includes extensionless tenant databases from the configured directo
     Carbon::setTestNow('2026-08-25 15:00:00');
 
     $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
-    $backupDirectory = dirname(base_path()).'/backups/2026-08-25_15-00-00';
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
     File::ensureDirectoryExists($tenantDbDirectory);
     config(['tenancy.tenant_db_path' => $tenantDbDirectory]);
 
