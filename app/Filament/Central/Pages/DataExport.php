@@ -12,6 +12,10 @@ use UnitEnum;
 
 class DataExport extends Page
 {
+    private TenantExportOptionsQuery $tenantExportOptionsQuery;
+
+    private TenantDataCountsQuery $tenantDataCountsQuery;
+
     #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
 
@@ -32,10 +36,18 @@ class DataExport extends Page
     /** @var array<string, int> */
     public array $counts = [];
 
+    public function boot(
+        TenantExportOptionsQuery $tenantExportOptionsQuery,
+        TenantDataCountsQuery $tenantDataCountsQuery,
+    ): void {
+        $this->tenantExportOptionsQuery = $tenantExportOptionsQuery;
+        $this->tenantDataCountsQuery = $tenantDataCountsQuery;
+    }
+
     /** @return array<string, mixed> */
     public function getTenants(): array
     {
-        return resolve(TenantExportOptionsQuery::class)->all();
+        return $this->tenantExportOptionsQuery->all();
     }
 
     public function updatedSelectedTenant(?string $value): void
@@ -54,7 +66,7 @@ class DataExport extends Page
         }
 
         try {
-            $this->counts = resolve(TenantDataCountsQuery::class)->forTenant($tenant);
+            $this->counts = $this->tenantDataCountsQuery->forTenant($tenant);
         } catch (\Throwable) {
             $this->counts = [];
         }
