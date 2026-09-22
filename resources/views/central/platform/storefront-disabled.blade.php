@@ -9,7 +9,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/storefront-disabled.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <div class="container">

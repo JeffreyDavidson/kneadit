@@ -1,9 +1,6 @@
-{{-- Shared rendering partial for ChartWidget subclasses that want the
-     <x-tenant-admin.dashboard.preview-card> shell instead of Filament's section
-     chrome. Replicates the DOM structure Filament's chart Alpine
-     component depends on (data-chart-type, x-ref="canvas", color
-     reference spans), so Chart.js still renders correctly inside the
-     themed shell. --}}
+@props(['icon' => 'heroicon-o-arrow-trending-up'])
+
+{{-- Preserve Filament's chart DOM contract while reusing the tenant dashboard shell. --}}
 @php
     use Filament\Widgets\View\Components\ChartWidgetComponent;
     use Illuminate\View\ComponentAttributeBag;
@@ -15,7 +12,7 @@
 @endphp
 
 <div class="col-span-full">
-    <x-tenant-admin.dashboard.preview-card :heading="$heading" :icon="$icon ?? 'heroicon-o-arrow-trending-up'">
+    <x-tenant-admin.dashboard.preview-card :heading="$heading" :icon="$icon">
         <div
             @if ($pollingInterval = $this->getPollingInterval())
                 wire:poll.{{ $pollingInterval }}="updateChartData"

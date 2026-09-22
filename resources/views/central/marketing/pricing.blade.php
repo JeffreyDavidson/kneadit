@@ -23,7 +23,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/pricing.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <nav class="nav">

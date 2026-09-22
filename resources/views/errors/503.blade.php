@@ -12,7 +12,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/errors.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <div class="wrap">

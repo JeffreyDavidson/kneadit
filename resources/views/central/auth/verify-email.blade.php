@@ -93,7 +93,7 @@
             text-decoration: none;
         }
     </style>
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <div class="auth-container">

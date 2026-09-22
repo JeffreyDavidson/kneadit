@@ -12,7 +12,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <div class="auth-container">
