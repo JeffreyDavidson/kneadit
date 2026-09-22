@@ -60,20 +60,20 @@ test('favicon falls back to svg with brand color', function () {
 
 // --- #23: Cookie consent ---
 
-test('storefront layout has cookie consent banner', function () {
-    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
+test('storefront cookie consent component has banner', function () {
+    $cookieConsent = file_get_contents(resource_path('views/components/storefront/cookie-consent.blade.php'));
 
-    expect($layout)->toContain('cookieConsent')->toContain('acceptCookies')->toContain('localStorage');
+    expect($cookieConsent)->toContain('cookieConsent')->toContain('acceptCookies')->toContain('localStorage');
 });
 
-test('cookie consent links to privacy policy', function () {
-    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
+test('cookie consent component links to privacy policy', function () {
+    $cookieConsent = file_get_contents(resource_path('views/components/storefront/cookie-consent.blade.php'));
 
-    expect($layout)->toContain('/privacy');
+    expect($cookieConsent)->toContain('/privacy');
 });
 
-test('cookie consent hidden by default', function () {
-    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
+test('cookie consent component is hidden by default', function () {
+    $cookieConsent = file_get_contents(resource_path('views/components/storefront/cookie-consent.blade.php'));
 
-    expect($layout)->toMatch('/id="cookieConsent"[^>]*class="[^"]*\bhidden\b/');
+    expect($cookieConsent)->toMatch('/id="cookieConsent"[^>]*class="[^"]*\bhidden\b/');
 });
