@@ -93,10 +93,10 @@ class ViewCateringInquiry extends ViewRecord
                 'customer_phone' => $this->record->customer_phone,
             ])
             ->schema(ContactFields::nameEmailPhone())
-            ->action(function (array $data): void {
+            ->action(function (array $data, UpdateCateringCustomerDetails $updateCustomer): void {
                 $customer = new ValidatedInput($data);
 
-                resolve(UpdateCateringCustomerDetails::class)(
+                $updateCustomer(
                     $this->record,
                     $customer->string('customer_name')->toString(),
                     $customer->string('customer_email')->toString(),
@@ -129,8 +129,8 @@ class ViewCateringInquiry extends ViewRecord
             ])
             ->schema([
                 Select::make('event_type')
-                    ->options(function (): array {
-                        $types = resolve(TenantSettings::class)->catering->eventTypes;
+                    ->options(function (TenantSettings $settings): array {
+                        $types = $settings->catering->eventTypes;
 
                         return array_combine($types, $types);
                     })
@@ -142,10 +142,10 @@ class ViewCateringInquiry extends ViewRecord
                 Textarea::make('dietary_requirements')->rows(2),
                 Textarea::make('venue_address')->rows(2),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, UpdateCateringEventDetails $updateEvent): void {
                 $event = new ValidatedInput($data);
 
-                resolve(UpdateCateringEventDetails::class)(
+                $updateEvent(
                     $this->record,
                     new CateringEventDetails(
                         eventType: $event->string('event_type')->toString(),
@@ -202,9 +202,9 @@ class ViewCateringInquiry extends ViewRecord
                         Textarea::make('special_instructions')->rows(2)->columnSpanFull(),
                     ]),
             ])
-            ->action(function (array $data): void {
-                $rows = resolve(CateringQuoteItemMapper::class)->map($data['items'] ?? []);
-                resolve(SyncCateringQuoteItems::class)($this->record, $rows);
+            ->action(function (array $data, CateringQuoteItemMapper $mapper, SyncCateringQuoteItems $syncItems): void {
+                $rows = $mapper->map($data['items'] ?? []);
+                $syncItems($this->record, $rows);
 
                 Notification::make()->title('Quote items updated.')->success()->send();
             });
@@ -221,8 +221,8 @@ class ViewCateringInquiry extends ViewRecord
             ->requiresConfirmation()
             ->modalHeading('Send quote to customer')
             ->modalDescription(fn (): string => "Email a quote of {$this->record->quoted_amount?->formatted()} to {$this->record->customer_email}.")
-            ->action(function (): void {
-                resolve(SendCateringQuote::class)($this->record);
+            ->action(function (SendCateringQuote $sendQuote): void {
+                $sendQuote($this->record);
 
                 $this->record->refresh();
 
@@ -241,8 +241,8 @@ class ViewCateringInquiry extends ViewRecord
             ->requiresConfirmation()
             ->modalHeading('Resend the current quote?')
             ->modalDescription(fn (): string => "Re-emails the {$this->record->quoted_amount?->formatted()} quote to {$this->record->customer_email}.")
-            ->action(function (): void {
-                resolve(ResendCateringQuote::class)($this->record);
+            ->action(function (ResendCateringQuote $resendQuote): void {
+                $resendQuote($this->record);
 
                 Notification::make()->title('Quote resent.')->success()->send();
             });
@@ -259,9 +259,9 @@ class ViewCateringInquiry extends ViewRecord
             ->requiresConfirmation()
             ->modalHeading('Confirm this booking?')
             ->modalDescription('Creates an order so the rest of fulfillment (payment, messages, status) is tracked there.')
-            ->action(function (): void {
+            ->action(function (ConfirmCateringInquiryBooking $confirmBooking): void {
                 try {
-                    $order = resolve(ConfirmCateringInquiryBooking::class)($this->record);
+                    $order = $confirmBooking($this->record);
                 } catch (InquiryNotConvertibleException $e) {
                     Notification::make()->title($e->getMessage())->danger()->send();
 
@@ -293,17 +293,17 @@ class ViewCateringInquiry extends ViewRecord
                     ->label('Deposit amount ($)')
                     ->numeric()
                     ->required()
-                    ->default(fn (): float => resolve(RecordCateringDeposit::class)->suggestedAmount(
+                    ->default(fn (RecordCateringDeposit $recordDeposit, TenantSettings $settings): float => $recordDeposit->suggestedAmount(
                         $this->record,
-                        resolve(TenantSettings::class)->catering->depositPercent,
+                        $settings->catering->depositPercent,
                     )),
                 TextInput::make('reference')
                     ->label('Reference (check #, last-4, etc.)')
                     ->maxLength(255),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, RecordCateringDeposit $recordDeposit): void {
                 $reference = Arr::string($data, 'reference', '');
-                resolve(RecordCateringDeposit::class)(
+                $recordDeposit(
                     $this->record,
                     Arr::float($data, 'amount'),
                     $reference !== '' ? $reference : null,
@@ -331,10 +331,10 @@ class ViewCateringInquiry extends ViewRecord
                     ->rows(8)
                     ->columnSpanFull(),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, UpdateCateringInquiryNotes $updateNotes): void {
                 $notes = new ValidatedInput($data);
 
-                resolve(UpdateCateringInquiryNotes::class)(
+                $updateNotes(
                     $this->record,
                     $notes->filled('notes')
                         ? $notes->string('notes')->toString()
