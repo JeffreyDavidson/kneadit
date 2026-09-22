@@ -2,6 +2,8 @@
 
 use App\Filament\Central\Pages\DataExport;
 use App\Models\Platform\Tenant;
+use App\Queries\Platform\TenantDataCountsQuery;
+use App\Queries\Platform\TenantExportOptionsQuery;
 use App\Services\Tenants\TenancyManager;
 use Filament\Support\Icons\Heroicon;
 use JMac\Testing\Double;
@@ -9,6 +11,10 @@ use JMac\Testing\Double;
 beforeEach(function () {
     setUpCentralTest();
     test()->page = new DataExport;
+    test()->page->boot(
+        resolve(TenantExportOptionsQuery::class),
+        resolve(TenantDataCountsQuery::class),
+    );
 });
 
 test('selected tenant defaults to null', function () {
@@ -66,6 +72,10 @@ test('updated selected tenant loads data counts', function () {
         ->resolves(fn (Tenant $tenant, callable $callback): mixed => $callback($tenant));
 
     app()->instance(TenancyManager::class, $tenancyManager);
+    test()->page->boot(
+        resolve(TenantExportOptionsQuery::class),
+        resolve(TenantDataCountsQuery::class),
+    );
 
     test()->page->updatedSelectedTenant($tenant->id);
 
