@@ -23,9 +23,9 @@ class InitializeTenancyIfNeeded
             return $next($request);
         }
 
-        // Redirect legacy central hosts to the application host.
+        // Redirect the legacy application hostname to the current app host.
         $host = $request->getHost();
-        if (in_array($host, ['getkneadit.app', 'www.getkneadit.app', 'www.app.getkneadit.app'], true)) {
+        if ($host === 'www.app.getkneadit.app') {
             return redirect()->to(
                 $request->getScheme().'://app.getkneadit.app'.$request->getRequestUri(),
                 301,

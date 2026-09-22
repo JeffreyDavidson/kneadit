@@ -23,16 +23,28 @@ test('passes through when tenancy is already initialized', function () {
     expect($response->getContent())->toBe('Already OK');
 });
 
-test('redirects legacy central domains to the application domain', function () {
+test('redirects the legacy application hostname to the current application domain', function () {
     $middleware = new InitializeTenancyIfNeeded;
-    $request = Request::create('https://www.getkneadit.app/pricing');
-    $request->headers->set('HOST', 'www.getkneadit.app');
+    $request = Request::create('https://www.app.getkneadit.app/pricing');
+    $request->headers->set('HOST', 'www.app.getkneadit.app');
 
     $response = $middleware->handle($request, fn () => new Response('OK'));
 
     expect($response->getStatusCode())->toBe(301)
         ->and($response->headers->get('Location'))->toContain('app.getkneadit.app/pricing')
         ->and($response->headers->get('Location'))->not->toContain('www.');
+});
+
+test('does not redirect the standalone marketing domain to the application', function () {
+    config(['tenancy.central_domains' => ['getkneadit.app']]);
+
+    $middleware = new InitializeTenancyIfNeeded;
+    $request = Request::create('https://getkneadit.app/');
+    $request->headers->set('HOST', 'getkneadit.app');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->getContent())->toBe('OK');
 });
 
 test('passes through for central domains', function () {

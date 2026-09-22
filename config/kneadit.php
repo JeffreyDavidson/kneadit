@@ -30,6 +30,8 @@ return [
 
     'central_theme' => env('CENTRAL_THEME', 'honey'),
 
+    'marketing_url' => env('MARKETING_URL', 'https://getkneadit.test'),
+
     /*
     |--------------------------------------------------------------------------
     | KneadIt SaaS Plans

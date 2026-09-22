@@ -32,8 +32,6 @@ return [
         'localhost',
         'app.getkneadit.app',
         'app.staging.getkneadit.app',
-        'getkneadit.app',
-        'www.getkneadit.app',
         'kneadit.test',
     ],
 
