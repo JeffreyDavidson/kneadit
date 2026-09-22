@@ -42,7 +42,7 @@
         />
         @endif
         {{ $styles ?? "" }}
-        @include('shared.analytics.fathom')
+        <x-analytics.fathom />
 </head>
 <body data-theme="{{ $storefrontTheme }}" {{ $bodyAttrs ?? "" }}>
     @php
@@ -360,40 +360,7 @@
         $pageTestId = 'page-'.str_replace(['storefront.', '.'], ['', '-'], request()->route()?->getName() ?? 'unknown');
     @endphp
     <main @class(['min-h-screen', 'pt-24' => $storefrontTheme !== 'biscotto']) data-test="{{ $pageTestId }}">
-        @php
-            $announcementEnabled = $settings->engagement->announcementEnabled ? '1' : '0';
-            $announcementText = $settings->engagement->announcementText;
-            $announcementType = $settings->engagement->announcementType;
-            $announcementDismissKey = $announcementText
-                ? 'announcement_dismissed_'.hash('xxh128', $announcementText)
-                : null;
-        @endphp
-
-        @if ($announcementEnabled === '1' && $announcementDismissKey)
-        @php
-            $announcementClass = match ($announcementType) {
-                'warning' => 'bg-yellow-100 text-yellow-800 border-b-2 border-yellow-500',
-                'success' => 'bg-green-100 text-green-800 border-b-2 border-green-600',
-                'holiday' => 'bg-gradient-to-br from-red-700 to-green-800 text-white border-b-2 border-yellow-400',
-                default => 'bg-warm-200 text-warm-900 border-b-2 border-warm-500',
-            };
-        @endphp
-        <div
-            x-data="{ show: ! localStorage.getItem('{{ $announcementDismissKey }}') }"
-            x-show="show"
-            x-transition
-            class="relative px-4 py-3 text-center text-sm font-medium {{ $announcementClass }}"
-        >
-            <span>{{ $announcementText }}</span>
-            <button
-                @click="show = false; localStorage.setItem('{{ $announcementDismissKey }}', '1')"
-                class="absolute top-1/2 right-3 -translate-y-1/2 text-lg leading-none opacity-70 hover:opacity-100"
-                aria-label="Dismiss"
-            >
-                &times;
-            </button>
-        </div>
-        @endif
+        <x-storefront.announcement :settings="$settings" />
 
         {{ $slot }}
     </main>

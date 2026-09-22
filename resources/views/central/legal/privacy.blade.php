@@ -16,7 +16,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/legal.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <x-legal.navigation />

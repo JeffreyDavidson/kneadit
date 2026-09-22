@@ -27,10 +27,7 @@
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
 
-    @include('emails.partials.order-items', [
-        'orderItems' => $orderItems,
-        'heading' => 'Cancelled Items:',
-    ])
+    <x-mail.order-items :order-items="$orderItems" heading="Cancelled Items:" />
 
     <div class="order-total" style="background-color: #721c24;">
         <div style="display: flex; justify-content: space-between;">

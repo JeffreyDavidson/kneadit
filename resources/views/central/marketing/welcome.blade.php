@@ -28,7 +28,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <!-- ===== STICKY NAV ===== -->
@@ -609,81 +609,7 @@
     </section>
 
     <!-- ===== 7. FAQ ===== -->
-    <section class="faq" id="faq">
-        <div class="faq-header">
-            <h2 class="reveal">Common questions</h2>
-        </div>
-        <div class="faq-list">
-            <div class="faq-item reveal">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    What is cottage food?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        Cottage food laws let you sell homemade food products directly to consumers from your home
-                        kitchen, no commercial kitchen required. Rules vary by state, but KneadIt helps you stay
-                        compliant with built-in revenue tracking and state-specific limits.
-                    </div>
-                </div>
-            </div>
-            <div class="faq-item reveal reveal-d1">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    Do I need any special equipment?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        Nope! KneadIt runs entirely in your browser on any phone, tablet, or laptop. No special
-                        hardware, no app to install. If you can check email, you can run KneadIt.
-                    </div>
-                </div>
-            </div>
-            <div class="faq-item reveal reveal-d2">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    How does the free trial work?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        Every plan comes with a 30-day free trial, no credit card required. Pick any plan, try the full
-                        feature set, and only pay when you're ready to commit.
-                    </div>
-                </div>
-            </div>
-            <div class="faq-item reveal reveal-d3">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    Can I use my own domain name?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        Yes! Pro plan members can connect a custom domain to their storefront. Starter and Growth plans
-                        get a yourname.getkneadit.app subdomain that looks great too.
-                    </div>
-                </div>
-            </div>
-            <div class="faq-item reveal reveal-d4">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    What payment methods are supported?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        KneadIt integrates with PayPal for professional invoicing with automatic payment reminders. You
-                        can also track cash and other payment methods. Your customers pay you directly. KneadIt never
-                        touches your money.
-                    </div>
-                </div>
-            </div>
-            <div class="faq-item reveal reveal-d5">
-                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-                    When does KneadIt launch?<span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a">
-                    <div class="faq-a-inner">
-                        KneadIt is live! Sign up today and start your 30-day free trial. Early adopters lock in founding
-                        member pricing — those rates stay with you forever.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <x-central.marketing.faq />
 
     <!-- ===== 8. CONTACT ===== -->
     <section class="contact" id="contact">

@@ -1,16 +1,26 @@
+@props([
+    'orderItems',
+    'heading' => null,
+    'itemPrefix' => '',
+    'showInstructionsLabel' => false,
+])
+
 @use(App\Presenters\OrderItemPresenter)
+
 <div class="order-items">
-    @if (!empty($heading))
-    <h4 style="margin-bottom: 10px; color: #8b4513;">{{ $heading }}</h4>
+    @if ($heading)
+        <h4 style="margin-bottom: 10px; color: #8b4513">{{ $heading }}</h4>
     @endif
     @foreach ($orderItems as $item)
         <div class="order-item">
             <div>
-                <div class="item-name">{{ $itemPrefix ?? '' }}{{ $item->product->name }}</div>
+                <div class="item-name">{{ $itemPrefix }}{{ $item->product->name }}</div>
                 <div class="item-details">
                     Quantity: {{ $item->quantity }}
                     @if ($item->special_instructions)
-                        <br><em>{{ ($showInstructionsLabel ?? false) ? 'Special instructions: ' : '' }}{{ $item->special_instructions }}</em>
+                        <br
+                        /><em
+                            >{{ $showInstructionsLabel ? 'Special instructions: ' : '' }}{{ $item->special_instructions }}</em>
                     @endif
                 </div>
             </div>

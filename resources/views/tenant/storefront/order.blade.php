@@ -767,5 +767,10 @@
             </form>
         </div>
     </section>
-    @include('shared.storefront.order-form-script')
+    <x-storefront.order-form-script
+        :settings="$settings"
+        :hydrated-cart-items="$hydratedCartItems ?? []"
+        :hydrated-cart-name="$hydratedCartName ?? null"
+        :hydrated-cart-email="$hydratedCartEmail ?? null"
+    />
 </x-layouts.storefront>
