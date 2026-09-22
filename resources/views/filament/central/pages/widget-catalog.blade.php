@@ -109,9 +109,7 @@
                     @foreach ($widget['allowedSizes'] as $size)
                         <div class="catalog-row-cell">
                             <span class="catalog-size-label">{{ $size }}</span>
-                            @include('filament.shared.dashboard.widget-card', [
-                                'widget' => array_merge($widget, ['size' => $size]),
-                            ])
+                            <x-filament.widgets.widget-card :widget="array_merge($widget, ['size' => $size])" />
                         </div>
                     @endforeach
                 </div>
@@ -120,7 +118,7 @@
     @else
         <div class="catalog-grid">
             @foreach ($this->catalogWidgets as $widget)
-                @include('filament.shared.dashboard.widget-card', ['widget' => $widget])
+                <x-filament.widgets.widget-card :widget="$widget" />
             @endforeach
         </div>
     @endif
