@@ -33,7 +33,7 @@ test('the central home route redirects to the standalone marketing site', functi
     config(['tenancy.central_domains' => ['kneadit.test']]);
     config(['kneadit.marketing_url' => 'https://getkneadit.test']);
 
-    $response = get(route('home'));
+    $response = get('https://kneadit.test/');
 
     $response->assertRedirect('https://getkneadit.test');
 });
