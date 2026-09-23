@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Console\Commands\Tenants\SeedTenantDatabasesCommand;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -96,7 +98,10 @@ class TenancyServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Laravel 13's SeedCommand signature otherwise replaces the tenancy command name and options.
-        $this->app->singleton(Seed::class, fn ($app): SeedTenantDatabasesCommand => new SeedTenantDatabasesCommand($app['db']));
+        $this->app->singleton(
+            Seed::class,
+            fn (Application $app): SeedTenantDatabasesCommand => new SeedTenantDatabasesCommand($app->make(ConnectionResolverInterface::class)),
+        );
     }
 
     public function boot(): void
