@@ -90,7 +90,7 @@ jobs:
             exit 1
           fi
 
-          php -r '$data = json_decode(file_get_contents($argv[1]), true); $baseline = is_array($data) ? ($data["baselines"]["main"] ?? null) : null; $valid = ($data["schema"] ?? null) === 1 && is_array($baseline) && is_string($baseline["sha"] ?? null) && $baseline["sha"] !== "" && is_array($baseline["tree"] ?? null) && count($baseline["tree"]) > 0 && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0; exit($valid ? 0 : 1);' "$baseline_path/graph.json"
+          php -r '$data = json_decode(file_get_contents($argv[1]), true); $baseline = is_array($data) ? ($data["baselines"]["main"] ?? null) : null; $valid = ($data["schema"] ?? null) === 1 && is_array($baseline) && is_string($baseline["sha"] ?? null) && $baseline["sha"] !== "" && is_array($baseline["tree"] ?? null) && is_array($baseline["results"] ?? null) && count($baseline["results"]) > 0; exit($valid ? 0 : 1);' "$baseline_path/graph.json"
           echo "path=$baseline_path" >> "$GITHUB_OUTPUT"
 
       - name: Upload TIA baseline
