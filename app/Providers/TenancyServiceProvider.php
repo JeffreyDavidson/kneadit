@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Console\Commands\Tenants\SeedTenantDatabasesCommand;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\Commands\Seed;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
@@ -93,7 +95,8 @@ class TenancyServiceProvider extends ServiceProvider
     #[\Override]
     public function register(): void
     {
-        //
+        // Laravel 13's SeedCommand signature otherwise replaces the tenancy command name and options.
+        $this->app->singleton(Seed::class, fn ($app): SeedTenantDatabasesCommand => new SeedTenantDatabasesCommand($app['db']));
     }
 
     public function boot(): void
