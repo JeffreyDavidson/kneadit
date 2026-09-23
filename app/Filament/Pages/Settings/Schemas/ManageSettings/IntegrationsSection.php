@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
+use App\Actions\Operations\RegenerateWebhookSecret;
+use App\Actions\Tenants\SaveTenantSettings;
 use App\Filament\Pages\Operations\WebhooksDocs;
 use App\Filament\Pages\Settings\ManageSettings;
 use App\Rules\SafeWebhookUrl;
@@ -31,7 +33,7 @@ class IntegrationsSection
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('gray')
                     ->visible(fn (Get $get): bool => filled($get('webhook_url')))
-                    ->action(fn (ManageSettings $livewire) => $livewire->sendTestWebhook()),
+                    ->action(fn (ManageSettings $livewire, SaveTenantSettings $saveSettings) => $livewire->sendTestWebhook($saveSettings)),
             ])
             ->schema([
                 TextInput::make('webhook_url')
@@ -63,7 +65,7 @@ class IntegrationsSection
                             ->requiresConfirmation()
                             ->modalHeading('Regenerate signing secret?')
                             ->modalDescription('Any integration relying on the current secret to verify signatures will start rejecting requests until you update it with the new value.')
-                            ->action(fn (ManageSettings $livewire) => $livewire->regenerateWebhookSecret()),
+                            ->action(fn (ManageSettings $livewire, RegenerateWebhookSecret $regenerateWebhookSecret) => $livewire->regenerateWebhookSecret($regenerateWebhookSecret)),
                     )
                     ->columnSpanFull(),
             ]);
