@@ -12,8 +12,8 @@ final readonly class SalesReportResult implements Arrayable
 {
     /**
      * @param  array<string, int>  $ordersByStatus
-     * @param  list<array{name: string, units_sold: int, revenue: Money}>  $topProducts
-     * @param  list<array{date: string, revenue: Money}>  $revenueByDay
+     * @param  list<SalesReportProduct>  $topProducts
+     * @param  list<SalesReportDay>  $revenueByDay
      */
     public function __construct(
         public int $totalOrders,
@@ -41,15 +41,14 @@ final readonly class SalesReportResult implements Arrayable
             'totalRevenue' => $this->totalRevenue->dollars(),
             'avgOrderValue' => $this->averageOrderValue->dollars(),
             'ordersByStatus' => $this->ordersByStatus,
-            'topProducts' => array_map(static fn (array $product): array => [
-                'name' => $product['name'],
-                'units_sold' => $product['units_sold'],
-                'revenue' => $product['revenue']->dollars(),
-            ], $this->topProducts),
-            'revenueByDay' => array_map(static fn (array $day): array => [
-                'date' => $day['date'],
-                'revenue' => $day['revenue']->dollars(),
-            ], $this->revenueByDay),
+            'topProducts' => array_map(
+                static fn (SalesReportProduct $product): array => $product->toArray(),
+                $this->topProducts,
+            ),
+            'revenueByDay' => array_map(
+                static fn (SalesReportDay $day): array => $day->toArray(),
+                $this->revenueByDay,
+            ),
         ];
     }
 }

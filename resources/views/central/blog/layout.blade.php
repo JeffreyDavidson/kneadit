@@ -26,7 +26,7 @@
         rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ asset('css/blog.css') }}" />
-    @include('shared.analytics.fathom')
+    <x-analytics.fathom />
 </head>
 <body>
     <nav class="site-nav">

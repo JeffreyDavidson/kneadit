@@ -91,7 +91,7 @@ test('only active paid orders contribute to customer metrics', function () {
         ->and($result->repeatCustomers)->toBe(0)
         ->and($result->repeatRate)->toBe(0.0)
         ->and($result->topCustomers)->toHaveCount(1)
-        ->and($result->topCustomers[0]['total_spend'])->toEqual(Money::fromDollars(100))
-        ->and($result->topCustomers[0]['order_count'])->toBe(1)
+        ->and($result->topCustomers[0]->totalSpend)->toEqual(Money::fromDollars(100))
+        ->and($result->topCustomers[0]->orderCount)->toBe(1)
         ->and($serialized['topCustomers'][0]['total_spend'])->toBe(100.0);
 });

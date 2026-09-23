@@ -8,7 +8,7 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
-/** @var array<string, mixed> $stats */
+/** @var array{total_orders: int, total_revenue: \App\ValueObjects\Money, new_customers: int, avg_order_value: \App\ValueObjects\Money} $stats */
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\OrderItem> $topProducts */
 /** @var \Illuminate\Support\Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers */
 /** @var int $upcomingCount */
@@ -32,7 +32,7 @@
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Orders</div>
                 </td>
                 <td style="text-align: center; padding: 10px;">
-                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ $stats['total_revenue'] }}</div>
+                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">{{ $stats['total_revenue']->formatted() }}</div>
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Revenue</div>
                 </td>
             </tr>
@@ -42,7 +42,7 @@
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">New Customers</div>
                 </td>
                 <td style="text-align: center; padding: 10px;">
-                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ $stats['avg_order_value'] }}</div>
+                    <div style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">{{ $stats['avg_order_value']->formatted() }}</div>
                     <div style="font-size: 12px; color: #6b5c4d; text-transform: uppercase;">Avg Order</div>
                 </td>
             </tr>

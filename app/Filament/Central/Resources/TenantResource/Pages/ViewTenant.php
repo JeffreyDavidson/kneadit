@@ -2,10 +2,11 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
+use App\Actions\Platform\AddTenantNote;
+use App\Actions\Platform\DeleteTenantNote;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\Tenant;
-use App\Models\Platform\TenantNote;
 use App\Queries\Platform\TenantStatsQuery;
 use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Actions;
@@ -21,6 +22,8 @@ use Livewire\Attributes\Validate;
  */
 class ViewTenant extends ViewRecord
 {
+    private TenantStatsQuery $tenantStatsQuery;
+
     #[\Override]
     protected static string $resource = TenantResource::class;
 
@@ -29,6 +32,11 @@ class ViewTenant extends ViewRecord
 
     #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
+
+    public function boot(TenantStatsQuery $tenantStatsQuery): void
+    {
+        $this->tenantStatsQuery = $tenantStatsQuery;
+    }
 
     #[\Override]
     protected function getHeaderActions(): array
@@ -55,7 +63,7 @@ class ViewTenant extends ViewRecord
     public function getTenantStats(): array
     {
         try {
-            return resolve(TenantStatsQuery::class)->forTenant($this->record);
+            return $this->tenantStatsQuery->forTenant($this->record);
         } catch (\Throwable) {
             return $this->emptyStats();
         }
@@ -96,14 +104,15 @@ class ViewTenant extends ViewRecord
         return [];
     }
 
-    public function addNote(): void
+    public function addNote(AddTenantNote $addTenantNote): void
     {
         $this->validate(['noteBody' => ['required', 'min:3']]);
 
-        $this->record->notes()->create([
-            'body' => $this->noteBody,
-            'author' => auth()->user()->name ?? 'admin',
-        ]);
+        $addTenantNote(
+            $this->record,
+            $this->noteBody,
+            auth()->user()->name ?? 'admin',
+        );
 
         $this->noteBody = '';
         $this->record->load('notes');
@@ -114,12 +123,9 @@ class ViewTenant extends ViewRecord
             ->send();
     }
 
-    public function deleteNote(int $noteId): void
+    public function deleteNote(int $noteId, DeleteTenantNote $deleteTenantNote): void
     {
-        TenantNote::query()
-            ->where('tenant_id', $this->record->id)
-            ->where('id', $noteId)
-            ->delete();
+        $deleteTenantNote($this->record, $noteId);
 
         $this->record->load('notes');
 

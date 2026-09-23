@@ -27,11 +27,11 @@
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
 
-    @include('emails.partials.order-items', [
-        'orderItems' => $orderItems,
-        'heading' => 'Delivered Items:',
-        'itemPrefix' => '✅ ',
-    ])
+    <x-mail.order-items
+        :order-items="$orderItems"
+        heading="Delivered Items:"
+        item-prefix="✅ "
+    />
 
     <div class="order-total">
         <div style="display: flex; justify-content: space-between;">

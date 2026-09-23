@@ -50,11 +50,11 @@ it('only includes active paid orders in sales metrics', function () {
         ->and($result->averageOrderValue)->toEqual(Money::fromDollars(20))
         ->and($result->ordersByStatus)->toBe(['pending' => 1])
         ->and($result->topProducts)->toHaveCount(1)
-        ->and($result->topProducts[0]['units_sold'])->toBe(2)
-        ->and($result->topProducts[0]['revenue'])->toEqual(Money::fromDollars(20))
+        ->and($result->topProducts[0]->unitsSold)->toBe(2)
+        ->and($result->topProducts[0]->revenue)->toEqual(Money::fromDollars(20))
         ->and($result->revenueByDay)->toHaveCount(1)
-        ->and($result->revenueByDay[0]['date'])->toBe('2026-01-15')
-        ->and($result->revenueByDay[0]['revenue'])->toEqual(Money::fromDollars(20))
+        ->and($result->revenueByDay[0]->date)->toBe('2026-01-15')
+        ->and($result->revenueByDay[0]->revenue)->toEqual(Money::fromDollars(20))
         ->and($result->toArray())->toMatchArray([
             'totalOrders' => 1,
             'totalRevenue' => 20.0,

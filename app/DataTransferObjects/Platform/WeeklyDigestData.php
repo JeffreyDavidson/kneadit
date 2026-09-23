@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\DataTransferObjects\Platform;
 
 use App\Models\Orders\OrderItem;
+use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
 final readonly class WeeklyDigestData
 {
     /**
-     * @param  array{total_orders: int, total_revenue: string, new_customers: int, avg_order_value: string}  $stats
+     * @param  array{total_orders: int, total_revenue: Money, new_customers: int, avg_order_value: Money}  $stats
      * @param  Collection<int, OrderItem>  $topProducts
      * @param  SupportCollection<int, array{name: string, days_since_last_order: ?int}>  $atRiskCustomers
      */

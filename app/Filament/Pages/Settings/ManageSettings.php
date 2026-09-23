@@ -118,12 +118,12 @@ class ManageSettings extends Page
     /** @var array<int, array<string, string>> */
     public array $order_journey_steps = [];
 
-    public function mount(): void
+    public function mount(TenantSettingsFormMapper $formMapper): void
     {
-        $this->loadSettings();
+        $this->loadSettings($formMapper);
     }
 
-    protected function loadSettings(): void
+    protected function loadSettings(TenantSettingsFormMapper $formMapper): void
     {
         $defaults = TenantSettingsDefaults::all();
         $values = [];
@@ -132,7 +132,7 @@ class ManageSettings extends Page
             $values[$key] = settings($key, $default);
         }
 
-        $this->applySettings(resolve(TenantSettingsFormMapper::class)->fromSettings($values, $defaults));
+        $this->applySettings($formMapper->fromSettings($values, $defaults));
     }
 
     #[\Override]
@@ -141,10 +141,10 @@ class ManageSettings extends Page
         return ManageSettingsForm::configure($schema);
     }
 
-    public function save(): void
+    public function save(SaveTenantSettings $saveSettings): void
     {
         try {
-            resolve(SaveTenantSettings::class)($this->toSettingsArray());
+            $saveSettings($this->toSettingsArray());
 
             Notification::make()
                 ->title('Settings saved successfully!')
@@ -159,9 +159,9 @@ class ManageSettings extends Page
         }
     }
 
-    public function regenerateWebhookSecret(): void
+    public function regenerateWebhookSecret(RegenerateWebhookSecret $regenerateWebhookSecret): void
     {
-        $this->webhook_secret = resolve(RegenerateWebhookSecret::class)();
+        $this->webhook_secret = $regenerateWebhookSecret();
 
         Notification::make()
             ->title('Webhook secret regenerated')
@@ -170,12 +170,14 @@ class ManageSettings extends Page
             ->send();
     }
 
-    public function sendTestWebhook(): void
+    public function sendTestWebhook(SaveTenantSettings $saveSettings): void
     {
         // Persist any pending changes (URL/secret) before firing the test, so
         // the dispatch reads the current form state — not the last-saved state.
-        resolve(SaveTenantSettings::class)($this->toSettingsArray());
+        $saveSettings($this->toSettingsArray());
 
+        // Resolve after saving because the action's WebhookService snapshots
+        // WebhookSettings when it is constructed.
         resolve(SendTestWebhook::class)();
 
         Notification::make()
@@ -185,10 +187,10 @@ class ManageSettings extends Page
             ->send();
     }
 
-    public function resetToDefaults(): void
+    public function resetToDefaults(TenantSettingsFormMapper $formMapper): void
     {
         $defaults = TenantSettingsDefaults::all();
-        $this->applySettings(resolve(TenantSettingsFormMapper::class)->fromSettings($defaults, $defaults));
+        $this->applySettings($formMapper->fromSettings($defaults, $defaults));
 
         Notification::make()
             ->title('Settings reset to defaults')

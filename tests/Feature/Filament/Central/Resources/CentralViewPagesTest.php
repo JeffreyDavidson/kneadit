@@ -3,6 +3,7 @@
 use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
 use App\Filament\Central\Resources\SupportTicketResource\Pages\ViewTicket;
 use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
+use App\Models\Platform\TenantNote;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Config;
@@ -183,4 +184,32 @@ test('tenant view page returns tenant stats', function () {
 
     expect($stats)
         ->toHaveKeys(['products', 'orders', 'revenue', 'customers']);
+});
+
+test('tenant view page can add and delete a tenant note', function () {
+    $tenant = DB::table('tenants')->where('id', 'notes-bakery')->first();
+    if (! $tenant) {
+        DB::table('tenants')->insert([
+            'id' => 'notes-bakery',
+            'name' => 'Notes Baker',
+            'email' => 'notes@test.com',
+            'plan' => 'pro',
+            'store_name' => 'Notes Bakery',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    $component = livewire(ViewTenant::class, ['record' => 'notes-bakery'])
+        ->set('noteBody', 'Follow up on onboarding')
+        ->call('addNote')
+        ->assertSet('noteBody', '')
+        ->assertNotified('Note added');
+
+    $note = TenantNote::query()->where('tenant_id', 'notes-bakery')->firstOrFail();
+
+    $component->call('deleteNote', $note->id)
+        ->assertNotified('Note deleted');
+
+    expect(TenantNote::query()->find($note->id))->toBeNull();
 });

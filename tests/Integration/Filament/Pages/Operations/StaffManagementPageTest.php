@@ -4,11 +4,13 @@ use App\Enums\Staff\UserRole;
 use App\Filament\Pages\Operations\StaffManagement;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
+use App\Queries\Staff\StaffDirectoryQuery;
 
 beforeEach(function () {
     setUpTenantTest();
     test()->user = User::factory()->owner()->create();
     test()->page = new StaffManagement;
+    test()->page->boot(resolve(StaffDirectoryQuery::class));
 });
 
 test('get title returns team management', function () {

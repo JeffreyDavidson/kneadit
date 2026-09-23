@@ -280,11 +280,7 @@
 
         <div class="preview-grid" id="widget-sortable">
             @foreach ($widgets as $index => $widget)
-                @include('filament.shared.dashboard.widget-card', [
-                    'widget' => $widget,
-                    'configMode' => true,
-                    'index' => $index,
-                ])
+                <x-filament.widgets.widget-card :widget="$widget" config-mode :index="$index" />
             @endforeach
         </div>
     </div>

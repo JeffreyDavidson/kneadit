@@ -7,6 +7,7 @@ use App\Http\Controllers\Tenant\Storefront\HomeController;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +18,7 @@ class RootController extends Controller
         $tenant = tenant();
 
         if (! $tenant instanceof Tenant) {
-            return view('central.marketing.welcome');
+            return redirect()->to(Config::string('kneadit.marketing_url'));
         }
 
         $externalUrl = $tenant->external_website;

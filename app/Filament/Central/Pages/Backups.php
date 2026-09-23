@@ -8,8 +8,8 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 use Throwable;
 use UnitEnum;
@@ -34,20 +34,10 @@ class Backups extends Page
     #[\Override]
     protected string $view = 'filament.central.pages.backups';
 
-    /**
-     * Resolve the directory the BackupDatabasesCommand writes into. Same
-     * algorithm as the command — shared dir outside Forge release folders
-     * so backups survive deploys.
-     */
+    /** Resolve the directory the BackupDatabasesCommand writes into. */
     public static function backupDirectory(): string
     {
-        if (Str::contains(base_path(), '/current/') || Str::contains(base_path(), '/releases/')) {
-            $projectRoot = preg_replace('#/(current|releases/\d+)$#', '', base_path());
-
-            return "{$projectRoot}/backups";
-        }
-
-        return dirname(base_path()).'/backups';
+        return Config::string('backups.path');
     }
 
     /**

@@ -44,9 +44,12 @@ test('sales report returns correct totals', function () {
     createPaidOrder(30.00, '2026-03-02');
 
     $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
+    $revenueByDay = collect($report->revenueByDay)->keyBy('date');
 
     expect($report->totalOrders)->toBe(2)
-        ->and($report->totalRevenue)->toEqual(Money::fromDollars(80));
+        ->and($report->totalRevenue)->toEqual(Money::fromDollars(80))
+        ->and($revenueByDay->get('2026-03-01')->revenue)->toEqual(Money::fromDollars(50))
+        ->and($revenueByDay->get('2026-03-02')->revenue)->toEqual(Money::fromDollars(30));
 });
 
 test('sales report respects date range', function () {

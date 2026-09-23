@@ -5,6 +5,7 @@ use App\Events\Platform\WeeklyDigestRequested;
 use App\Listeners\Platform\SendWeeklyDigestEmailListener;
 use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\Staff\User;
+use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ test('it sends weekly digest email to the user', function () {
     $event = new WeeklyDigestRequested(
         user: $user,
         data: new WeeklyDigestData(
-            stats: ['total_orders' => 12, 'total_revenue' => '$450.00', 'new_customers' => 2, 'avg_order_value' => '$37.50'],
+            stats: ['total_orders' => 12, 'total_revenue' => Money::fromDollars(450), 'new_customers' => 2, 'avg_order_value' => Money::fromDollars(37.50)],
             topProducts: new Collection,
             atRiskCustomers: new Collection,
             upcomingCount: 3,
@@ -47,7 +48,7 @@ test('failed method logs a warning with user email and error message', function 
     $event = new WeeklyDigestRequested(
         user: $user,
         data: new WeeklyDigestData(
-            stats: ['total_orders' => 12, 'total_revenue' => '$450.00', 'new_customers' => 2, 'avg_order_value' => '$37.50'],
+            stats: ['total_orders' => 12, 'total_revenue' => Money::fromDollars(450), 'new_customers' => 2, 'avg_order_value' => Money::fromDollars(37.50)],
             topProducts: new Collection,
             atRiskCustomers: new Collection,
             upcomingCount: 3,

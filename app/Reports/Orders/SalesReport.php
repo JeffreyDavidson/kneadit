@@ -2,6 +2,8 @@
 
 namespace App\Reports\Orders;
 
+use App\DataTransferObjects\Orders\SalesReportDay;
+use App\DataTransferObjects\Orders\SalesReportProduct;
 use App\DataTransferObjects\Orders\SalesReportResult;
 use App\Models\Orders\Order;
 use App\Queries\Financial\ProductSalesQuery;
@@ -36,19 +38,19 @@ class SalesReport
             ->all();
 
         $topProducts = array_values(ProductSalesQuery::topByRevenue($range)
-            ->map(static fn (array $product): array => [
-                'name' => $product['name'],
-                'units_sold' => $product['units_sold'],
-                'revenue' => Money::fromDollars($product['revenue']),
-            ])
+            ->map(static fn (array $product): SalesReportProduct => new SalesReportProduct(
+                name: $product['name'],
+                unitsSold: $product['units_sold'],
+                revenue: $product['revenue'],
+            ))
             ->all());
 
-        /** @var list<array{date: string, revenue: Money}> $revenueByDay */
+        /** @var list<SalesReportDay> $revenueByDay */
         $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
-            ->map(static fn (float $revenue, string $date): array => [
-                'date' => $date,
-                'revenue' => Money::fromDollars($revenue),
-            ])
+            ->map(static fn (Money $revenue, string $date): SalesReportDay => new SalesReportDay(
+                date: $date,
+                revenue: $revenue,
+            ))
             ->values()
             ->all();
 

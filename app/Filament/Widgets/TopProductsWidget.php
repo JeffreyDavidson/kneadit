@@ -27,14 +27,17 @@ class TopProductsWidget extends Widget
 
         return $this->cached("main_{$limit}", [900, 1800], function () use ($limit): array {
             $products = ProductSalesQuery::topByRevenue(DateRange::thisMonth(), $limit)->all();
-            $maxRevenue = max(array_column($products, 'revenue') ?: [1.0]);
+            $maxRevenueCents = max(array_map(
+                fn (array $product): int => $product['revenue']->cents(),
+                $products,
+            ) ?: [1]);
 
             return collect($products)->map(fn (array $p): array => [
                 'name' => $p['name'],
                 'units_sold' => $p['units_sold'],
-                'revenue' => $p['revenue'],
-                'percentage' => (int) round(($p['revenue'] / $maxRevenue) * 100),
-                'revenue_formatted' => '$'.number_format((float) $p['revenue'], 0),
+                'revenue' => $p['revenue']->dollars(),
+                'percentage' => (int) round(($p['revenue']->cents() / $maxRevenueCents) * 100),
+                'revenue_formatted' => '$'.number_format($p['revenue']->dollars(), 0),
             ])->all();
         });
     }
