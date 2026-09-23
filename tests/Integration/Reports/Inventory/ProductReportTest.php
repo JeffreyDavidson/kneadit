@@ -47,6 +47,28 @@ test('calculates units sold, revenue, and margin for products', function () {
         'unit_price' => 10.00,
     ]);
 
+    $unpaidOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->unpaid()
+        ->create(['delivery_date' => '2026-03-18']);
+
+    OrderItem::factory()->recycle($unpaidOrder, $product)->create([
+        'quantity' => 3,
+        'unit_price' => 10.00,
+    ]);
+
+    $outsideRangeOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->paid()
+        ->create(['delivery_date' => '2026-04-01']);
+
+    OrderItem::factory()->recycle($outsideRangeOrder, $product)->create([
+        'quantity' => 7,
+        'unit_price' => 10.00,
+    ]);
+
     $range = DateRange::forMonth(2026, 3);
     $report = new ProductReport;
     $result = $report->generate($range);
