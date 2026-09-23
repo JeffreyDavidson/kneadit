@@ -79,12 +79,12 @@ class FinanceSummary extends Page
     {
         $data = resolve(FinancialCalculator::class)->calculate($this->selectedYear);
 
-        $this->totalRevenue = $data->totalRevenue;
-        $this->totalExpenses = $data->totalExpenses;
-        $this->netProfit = $data->netProfit;
-        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
-        $this->expenseBreakdown = $data->expenseBreakdown;
-        $this->cogsAmount = $data->cogsAmount;
+        $this->totalRevenue = $data->totalRevenue->dollars();
+        $this->totalExpenses = $data->totalExpenses->dollars();
+        $this->netProfit = $data->netProfit->dollars();
+        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => ['month_name' => $m->monthName, 'revenue' => $m->revenue->dollars(), 'expenses' => $m->expenses->dollars(), 'net' => $m->net->dollars()]);
+        $this->expenseBreakdown = $data->expenseBreakdown->map(fn ($entry): array => ['category' => $entry->category, 'amount' => $entry->amount->dollars(), 'percentage' => $entry->percentage]);
+        $this->cogsAmount = $data->cogsAmount->dollars();
         $this->cogsPercentage = $data->cogsPercentage;
 
         $this->revenueCapProgress = $this->revenueCap > 0
