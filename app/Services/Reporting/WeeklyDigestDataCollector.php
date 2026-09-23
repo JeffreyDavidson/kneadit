@@ -9,8 +9,8 @@ use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\AtRiskCustomersQuery;
 use App\Queries\Reporting\WeeklyDigestQuery;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
 {
@@ -29,16 +29,18 @@ class WeeklyDigestDataCollector
 
         $totalOrders = (clone $weekOrders)->count();
         // orders.total is bigint cents (migration 2026_04_22_201500).
-        $totalRevenue = (int) (clone $weekOrders)->sum('total') / 100;
+        $totalRevenue = Money::fromCents((int) (clone $weekOrders)->sum('total'));
         $newCustomers = Customer::query()->whereBetween('created_at', [$weekStart, $weekEnd])->count();
-        $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+        $averageOrderValue = $totalOrders > 0
+            ? $totalRevenue->multiply(1 / $totalOrders)
+            : Money::zero();
 
         return new WeeklyDigestData(
             stats: [
                 'total_orders' => $totalOrders,
-                'total_revenue' => (string) Number::currency((float) $totalRevenue),
+                'total_revenue' => $totalRevenue,
                 'new_customers' => $newCustomers,
-                'avg_order_value' => (string) Number::currency($avgOrderValue),
+                'avg_order_value' => $averageOrderValue,
             ],
             topProducts: WeeklyDigestQuery::topProducts($weekStart, $weekEnd),
             atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
