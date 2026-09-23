@@ -1,6 +1,7 @@
 <?php
 
 use App\DataTransferObjects\Customers\CustomerReportResult;
+use App\DataTransferObjects\Inventory\InventoryReportIngredient;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
 use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Enums\Financial\ExpenseCategory;
@@ -117,12 +118,13 @@ test('inventory report flags low stock', function () {
     $report = resolve(InventoryReport::class)->generate();
     $serialized = $report->toArray();
 
-    $flour = collect($report->ingredients)->firstWhere('name', 'Flour');
+    $flour = collect($report->ingredients)->first(fn (InventoryReportIngredient $ingredient): bool => $ingredient->name === 'Flour');
     $serializedFlour = collect($serialized['ingredients'])->firstWhere('name', 'Flour');
 
     expect($report)->toBeInstanceOf(InventoryReportResult::class)
         ->and($report->lowStockItems)->toBe(1)
-        ->and($flour['is_low'])->toBeTrue()
-        ->and($flour['cost_per_unit'])->toEqual(Money::fromDollars(1.50))
+        ->and($flour)->toBeInstanceOf(InventoryReportIngredient::class)
+        ->and($flour->isLow)->toBeTrue()
+        ->and($flour->costPerUnit)->toEqual(Money::fromDollars(1.50))
         ->and($serializedFlour['cost_per_unit'])->toBe(1.5);
 });

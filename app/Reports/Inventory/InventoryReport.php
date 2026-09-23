@@ -2,6 +2,7 @@
 
 namespace App\Reports\Inventory;
 
+use App\DataTransferObjects\Inventory\InventoryReportIngredient;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
@@ -26,27 +27,27 @@ class InventoryReport
             ->groupBy('recipe_ingredients.ingredient_id')
             ->pluck('total_usage', 'ingredient_id');
 
-        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): array {
+        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): InventoryReportIngredient {
             $usageLast30 = Arr::float($usageData->all(), $i->id, 0.0);
             $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 
-            return [
-                'name' => $i->name,
-                'unit' => $i->unit,
-                'current_stock' => (float) $i->current_stock,
-                'low_stock_threshold' => (float) $i->low_stock_threshold,
-                'is_low' => $i->current_stock <= $i->low_stock_threshold,
-                'is_out' => $i->current_stock <= 0,
-                'daily_usage' => round($dailyUsage, 2),
-                'days_until_stockout' => $daysUntilStockout,
-                'cost_per_unit' => $i->cost_per_unit ?? Money::zero(),
-            ];
+            return new InventoryReportIngredient(
+                name: $i->name,
+                unit: $i->unit,
+                currentStock: (float) $i->current_stock,
+                lowStockThreshold: (float) $i->low_stock_threshold,
+                isLow: $i->current_stock <= $i->low_stock_threshold,
+                isOut: $i->current_stock <= 0,
+                dailyUsage: round($dailyUsage, 2),
+                daysUntilStockout: $daysUntilStockout,
+                costPerUnit: $i->cost_per_unit ?? Money::zero(),
+            );
         })->all());
 
         $totalItems = count($ingredients);
-        $lowStockItems = collect($ingredients)->where('is_low', true)->count();
-        $outOfStockItems = collect($ingredients)->where('is_out', true)->count();
+        $lowStockItems = collect($ingredients)->where('isLow', true)->count();
+        $outOfStockItems = collect($ingredients)->where('isOut', true)->count();
 
         return new InventoryReportResult(
             ingredients: $ingredients,
