@@ -2,6 +2,7 @@
 
 namespace App\Reports\Financial;
 
+use App\DataTransferObjects\Financial\FinancialExpenseBreakdown;
 use App\DataTransferObjects\Financial\FinancialReportExpense;
 use App\DataTransferObjects\Financial\FinancialReportMonth;
 use App\DataTransferObjects\Financial\FinancialReportResult;
@@ -25,20 +26,20 @@ class FinancialReport
 
         $monthly = array_values($summary->monthlyBreakdown->map(fn (MonthlyFinancials $m): FinancialReportMonth => new FinancialReportMonth(
             month: substr($m->monthName, 0, 3),
-            revenue: Money::fromDollars($m->revenue),
-            expenses: Money::fromDollars($m->expenses),
-            profit: Money::fromDollars($m->net),
+            revenue: $m->revenue,
+            expenses: $m->expenses,
+            profit: $m->net,
         ))->all());
 
-        $expensesByCategory = array_values($summary->expenseBreakdown->map(fn (array $e): FinancialReportExpense => new FinancialReportExpense(
-            category: $e['category'],
-            amount: Money::fromDollars($e['amount']),
+        $expensesByCategory = array_values($summary->expenseBreakdown->map(fn (FinancialExpenseBreakdown $e): FinancialReportExpense => new FinancialReportExpense(
+            category: $e->category,
+            amount: $e->amount,
         ))->all());
 
         return new FinancialReportResult(
-            totalRevenue: Money::fromDollars($summary->totalRevenue),
-            totalExpenses: Money::fromDollars($summary->totalExpenses),
-            profit: Money::fromDollars($summary->netProfit),
+            totalRevenue: $summary->totalRevenue,
+            totalExpenses: $summary->totalExpenses,
+            profit: $summary->netProfit,
             deductible: $deductible,
             monthly: $monthly,
             expensesByCategory: $expensesByCategory,

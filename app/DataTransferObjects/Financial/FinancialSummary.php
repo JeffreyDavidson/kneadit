@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\DataTransferObjects\Financial;
 
+use App\ValueObjects\Money;
 use Illuminate\Support\Collection;
 
 final readonly class FinancialSummary
 {
     /**
      * @param  Collection<int, MonthlyFinancials>  $monthlyBreakdown
-     * @param  Collection<int, array{category: string, amount: float, percentage: float}>  $expenseBreakdown
+     * @param  Collection<int, FinancialExpenseBreakdown>  $expenseBreakdown
      */
     public function __construct(
-        public float $totalRevenue,
-        public float $totalExpenses,
-        public float $netProfit,
-        public float $cogsAmount,
+        public Money $totalRevenue,
+        public Money $totalExpenses,
+        public Money $netProfit,
+        public Money $cogsAmount,
         public float $cogsPercentage,
         public Collection $monthlyBreakdown,
         public Collection $expenseBreakdown,
