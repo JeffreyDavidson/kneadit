@@ -44,29 +44,6 @@ jobs:
           key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-${{ runner.os }}-node-24-
 
-      - name: Setup PHP and Composer
-        uses: ./.github/actions/setup-php-composer
-
-      - name: Resolve npm cache directory
-        id: npm-cache
-        shell: bash
-        run: echo "directory=$(npm config get cache)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore npm cache
-        uses: actions/cache@v6
-        with:
-          path: ${{ steps.npm-cache.outputs.directory }}
-          key: npm-${{ runner.os }}-node-24-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-${{ runner.os }}-node-24-
-
-      - name: Install Node dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
-
-      - name: Install Composer dependencies
-        env:
-          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
-        run: composer install --no-interaction --prefer-dist
-
       - name: Install Node dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
