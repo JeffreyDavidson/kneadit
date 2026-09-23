@@ -5,6 +5,7 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Queries\Financial\ProductSalesQuery;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -36,7 +37,9 @@ test('aggregates shared product sales totals in cents for paid active orders', f
 
     expect($aggregate)->not->toBeNull()
         ->and((int) $aggregate->units_sold)->toBe(3)
-        ->and((int) $aggregate->getRawOriginal('revenue_cents'))->toBe(3702);
+        ->and((int) $aggregate->getRawOriginal('revenue_cents'))->toBe(3702)
+        ->and(ProductSalesQuery::topByRevenue(new DateRange(now()->subDay(), now()->addDay()))->first()['revenue'])
+        ->toEqual(Money::fromDollars(37.02));
 });
 
 test('topByQuantity returns products sorted by quantity sold', function () {
@@ -118,5 +121,5 @@ test('topByRevenue excludes unpaid orders', function () {
 
     expect($result)->toHaveCount(1)
         ->and($result->first()['units_sold'])->toBe(2)
-        ->and($result->first()['revenue'])->toBe(20.0);
+        ->and($result->first()['revenue'])->toEqual(Money::fromDollars(20));
 });

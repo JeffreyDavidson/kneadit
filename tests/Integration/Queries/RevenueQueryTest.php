@@ -21,6 +21,15 @@ test('total returns revenue for date range', function () {
     expect(RevenueQuery::total($range))->toEqual(Money::fromDollars(80));
 });
 
+test('dailyBreakdown returns money values from cent aggregates', function () {
+    Order::factory()->paid()->withDeliveryDate(now())->create(['total' => 12.34]);
+    Order::factory()->paid()->withDeliveryDate(now())->create(['total' => 10.01]);
+
+    $breakdown = RevenueQuery::dailyBreakdown(new DateRange(now()->startOfDay(), now()->endOfDay()));
+
+    expect($breakdown[now()->toDateString()])->toEqual(Money::fromDollars(22.35));
+});
+
 test('orderCount returns number of active orders in date range', function () {
     Order::factory()->withDeliveryDate(now())->confirmed()->create();
     Order::factory()->withDeliveryDate(now())->pending()->create();

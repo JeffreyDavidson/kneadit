@@ -6,6 +6,7 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Queries\Financial\RevenueQuery;
+use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
@@ -124,7 +125,7 @@ class RevenueChartWidget extends ChartWidget
         $days = collect(iterator_to_array(CarbonPeriod::create($start, $end)));
 
         return $days
-            ->map(fn (Carbon $d): float => (float) ($raw[$d->format('Y-m-d')] ?? 0))
+            ->map(fn (Carbon $d): float => ($raw[$d->format('Y-m-d')] ?? Money::zero())->dollars())
             ->all();
     }
 

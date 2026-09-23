@@ -41,15 +41,15 @@ class SalesReport
             ->map(static fn (array $product): SalesReportProduct => new SalesReportProduct(
                 name: $product['name'],
                 unitsSold: $product['units_sold'],
-                revenue: Money::fromDollars($product['revenue']),
+                revenue: $product['revenue'],
             ))
             ->all());
 
         /** @var list<SalesReportDay> $revenueByDay */
         $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
-            ->map(static fn (float $revenue, string $date): SalesReportDay => new SalesReportDay(
+            ->map(static fn (Money $revenue, string $date): SalesReportDay => new SalesReportDay(
                 date: $date,
-                revenue: Money::fromDollars($revenue),
+                revenue: $revenue,
             ))
             ->values()
             ->all();
