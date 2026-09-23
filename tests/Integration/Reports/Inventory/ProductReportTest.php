@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Inventory\ProductReportProduct;
 use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
@@ -51,18 +52,23 @@ test('calculates units sold, revenue, and margin for products', function () {
     $result = $report->generate($range);
     $serialized = $result->toArray();
 
-    $sourdough = collect($result->products)->firstWhere('name', 'Sourdough');
+    $sourdough = collect($result->products)->first(fn (ProductReportProduct $product): bool => $product->name === 'Sourdough');
     $serializedSourdough = collect($serialized['products'])->firstWhere('name', 'Sourdough');
 
-    expect($sourdough)->not->toBeNull()
-        ->and($sourdough['units_sold'])->toBe(5)
-        ->and($sourdough['price'])->toEqual(Money::fromDollars(10))
-        ->and($sourdough['cost'])->toEqual(Money::fromDollars(4))
-        ->and($sourdough['revenue'])->toEqual(Money::fromDollars(50))
-        ->and($sourdough['margin'])->toBe(60.0)
-        ->and($serializedSourdough['price'])->toBe(10.0)
-        ->and($serializedSourdough['cost'])->toBe(4.0)
-        ->and($serializedSourdough['revenue'])->toBe(50.0);
+    expect($sourdough)->toBeInstanceOf(ProductReportProduct::class)
+        ->and($sourdough->unitsSold)->toBe(5)
+        ->and($sourdough->price)->toEqual(Money::fromDollars(10))
+        ->and($sourdough->cost)->toEqual(Money::fromDollars(4))
+        ->and($sourdough->revenue)->toEqual(Money::fromDollars(50))
+        ->and($sourdough->margin)->toBe(60.0)
+        ->and($serializedSourdough)->toBe([
+            'name' => 'Sourdough',
+            'price' => 10.0,
+            'cost' => 4.0,
+            'units_sold' => 5,
+            'revenue' => 50.0,
+            'margin' => 60.0,
+        ]);
 });
 
 test('returns null margin when price or cost is zero', function () {
@@ -78,5 +84,5 @@ test('returns null margin when price or cost is zero', function () {
 
     $freeSample = collect($result->products)->firstWhere('name', 'Free Sample');
 
-    expect($freeSample['margin'])->toBeNull();
+    expect($freeSample->margin)->toBeNull();
 });
