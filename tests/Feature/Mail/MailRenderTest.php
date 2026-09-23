@@ -30,6 +30,7 @@ use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
+use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Collection;
 
 beforeEach(fn () => setUpTenantTest());
@@ -164,9 +165,9 @@ test('standalone operational mail classes render without errors', function () {
     $weeklyDigest = new WeeklyDigestMail(
         stats: [
             'total_orders' => 10,
-            'total_revenue' => '$500.00',
+            'total_revenue' => Money::fromDollars(500),
             'new_customers' => 3,
-            'avg_order_value' => '$50.00',
+            'avg_order_value' => Money::fromDollars(50),
         ],
         topProducts: new Collection,
         atRiskCustomers: new Collection,
@@ -177,5 +178,7 @@ test('standalone operational mail classes render without errors', function () {
 
     expect($weeklyDigest->render())
         ->toBeString()
-        ->not->toBeEmpty();
+        ->not->toBeEmpty()
+        ->toContain('$500.00', '$50.00')
+        ->not->toContain('$$500.00', '$$50.00');
 });
