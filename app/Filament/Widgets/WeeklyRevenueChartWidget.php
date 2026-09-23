@@ -7,6 +7,7 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Financial\Expense;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
+use App\ValueObjects\Money;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -49,7 +50,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
             for ($date = $range->start->copy(); $date->lte($range->end); $date->addDay()) {
                 $key = $date->format('Y-m-d');
                 $labels[] = $date->format('D');
-                $revenue[] = round((float) ($revenueByDay[$key] ?? 0), 2);
+                $revenue[] = ($revenueByDay[$key] ?? Money::zero())->dollars();
                 $expenses[] = round((float) ($expensesByDay[$key] ?? 0), 2);
             }
 
@@ -68,7 +69,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
                 $lastRevenueByDay = collect(RevenueQuery::dailyBreakdown($lastRange));
                 $lastRevenue = [];
                 for ($date = $lastRange->start->copy(); $date->lte($lastRange->end); $date->addDay()) {
-                    $lastRevenue[] = round((float) ($lastRevenueByDay[$date->format('Y-m-d')] ?? 0), 2);
+                    $lastRevenue[] = ($lastRevenueByDay[$date->format('Y-m-d')] ?? Money::zero())->dollars();
                 }
                 $datasets[] = [
                     'label' => 'Last Week Revenue ($)',

@@ -30,7 +30,7 @@ class RevenueQuery
      * Get daily revenue breakdown for a date range.
      *
      * @param  DateRange|array<int, string>  $range
-     * @return array<string, float>
+     * @return array<string, Money>
      */
     public static function dailyBreakdown(DateRange|array $range): array
     {
@@ -44,7 +44,7 @@ class RevenueQuery
             ->groupBy('date')
             ->pluck('revenue_cents', 'date')
             ->mapWithKeys(fn (mixed $value, mixed $date): array => [
-                Arr::string(['date' => $date], 'date') => Arr::integer(['value' => $value], 'value', 0) / 100,
+                Arr::string(['date' => $date], 'date') => Money::fromCents(Arr::integer(['value' => $value], 'value', 0)),
             ])
             ->all();
     }

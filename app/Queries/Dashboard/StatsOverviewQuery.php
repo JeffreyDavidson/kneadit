@@ -8,6 +8,7 @@ use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
 use App\Queries\Analytics\DateCountQuery;
 use App\Queries\Financial\RevenueQuery;
+use App\ValueObjects\Money;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -50,9 +51,11 @@ class StatsOverviewQuery
         $pendingChart = $dateSeries->fillIntegers($pendingByDate);
         $viewsChart = $dateSeries->fillIntegers($viewsByDate);
         $revenueChart = array_map(
-            fn (string $date): int => (int) ($revenueByDate[$date] ?? 0),
+            fn (string $date): int => (int) ($revenueByDate[$date] ?? Money::zero())->dollars(),
             $dates,
         );
+        $thisWeekRevenue = $this->sumRange($revenueByDate, $weekStart, $weekEnd);
+        $lastWeekRevenue = $this->sumRange($revenueByDate, $lastWeekStart, $lastWeekEnd);
 
         return [
             'todaysOrders' => $ordersChart[6] ?? 0,
@@ -60,8 +63,8 @@ class StatsOverviewQuery
             'weekAvgOrders' => array_sum($ordersChart) / 7,
             'pendingOrders' => Order::query()->where('status', OrderStatus::Pending)->count(),
             'pendingChart' => $pendingChart,
-            'thisWeekRevenue' => $this->sumRange($revenueByDate, $weekStart, $weekEnd),
-            'lastWeekRevenue' => $this->sumRange($revenueByDate, $lastWeekStart, $lastWeekEnd),
+            'thisWeekRevenue' => $thisWeekRevenue->dollars(),
+            'lastWeekRevenue' => $lastWeekRevenue->dollars(),
             'revenueChart' => $revenueChart,
             'viewsToday' => $viewsChart[6] ?? 0,
             'viewsChart' => $viewsChart,
@@ -96,12 +99,15 @@ class StatsOverviewQuery
         );
     }
 
-    /** @param array<string, float> $revenue */
-    private function sumRange(array $revenue, Carbon $start, Carbon $end): float
+    /** @param array<string, Money> $revenue */
+    private function sumRange(array $revenue, Carbon $start, Carbon $end): Money
     {
-        return array_sum(array_map(
-            fn (string $date): float => $revenue[$date] ?? 0.0,
-            DateSeries::between($start, $end)->dates(),
-        ));
+        $total = Money::zero();
+
+        foreach (DateSeries::between($start, $end)->dates() as $date) {
+            $total = $total->add($revenue[$date] ?? Money::zero());
+        }
+
+        return $total;
     }
 }
