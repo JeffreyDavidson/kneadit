@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\DataTransferObjects\Customers;
 
-use App\ValueObjects\Money;
 use Illuminate\Contracts\Support\Arrayable;
 
 /** @implements Arrayable<string, mixed> */
 final readonly class CustomerReportResult implements Arrayable
 {
     /**
-     * @param  list<array{name: string, email: string, total_spend: Money, order_count: int}>  $topCustomers
+     * @param  list<CustomerReportTopCustomer>  $topCustomers
      * @param  array<string, int>  $acquisitionByMonth
      */
     public function __construct(
@@ -40,12 +39,10 @@ final readonly class CustomerReportResult implements Arrayable
             'repeatRate' => $this->repeatRate,
             'repeatCustomers' => $this->repeatCustomers,
             'totalCustomersWithOrders' => $this->totalCustomersWithOrders,
-            'topCustomers' => array_map(static fn (array $customer): array => [
-                'name' => $customer['name'],
-                'email' => $customer['email'],
-                'total_spend' => $customer['total_spend']->dollars(),
-                'order_count' => $customer['order_count'],
-            ], $this->topCustomers),
+            'topCustomers' => array_map(
+                static fn (CustomerReportTopCustomer $customer): array => $customer->toArray(),
+                $this->topCustomers,
+            ),
             'acquisitionByMonth' => $this->acquisitionByMonth,
         ];
     }

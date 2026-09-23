@@ -3,6 +3,7 @@
 namespace App\Reports\Customers;
 
 use App\DataTransferObjects\Customers\CustomerReportResult;
+use App\DataTransferObjects\Customers\CustomerReportTopCustomer;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
@@ -36,14 +37,14 @@ class CustomerReport
             ->filter(fn (Customer $c): bool => ((float) $c->total_spend) > 0)
             ->take(10)
             ->values()
-            ->map(fn (Customer $c): array => [
-                'name' => $c->name,
-                'email' => $c->email,
+            ->map(fn (Customer $c): CustomerReportTopCustomer => new CustomerReportTopCustomer(
+                name: $c->name,
+                email: $c->email,
                 // total_spend is SUM(orders.total) and orders.total is bigint cents
                 // (migration 2026_04_22_201500).
-                'total_spend' => Money::fromCents((int) $c->total_spend),
-                'order_count' => (int) $c->order_count,
-            ])
+                totalSpend: Money::fromCents((int) $c->total_spend),
+                orderCount: (int) $c->order_count,
+            ))
             ->all());
 
         $acquisitionByMonth = Customer::query()->whereBetween('created_at', $range->toArray())
