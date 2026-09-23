@@ -35,7 +35,7 @@ it('keeps weekly revenue and average order value as money', function () {
         'created_at' => '2026-09-10 11:00:00',
     ]);
 
-    $data = (new WeeklyDigestDataCollector(TenantSettings::resolve()))->collect();
+    $data = new WeeklyDigestDataCollector(TenantSettings::resolve())->collect();
 
     expect($data->stats['total_revenue'])->toEqual(Money::fromDollars(32.34))
         ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(16.17));
