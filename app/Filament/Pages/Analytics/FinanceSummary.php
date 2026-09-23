@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Financial\FinancialExpenseBreakdown;
 use App\DataTransferObjects\Financial\MonthlyFinancials;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -83,7 +84,7 @@ class FinanceSummary extends Page
         $this->totalExpenses = $data->totalExpenses->dollars();
         $this->netProfit = $data->netProfit->dollars();
         $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (MonthlyFinancials $m): array => ['month_name' => $m->monthName, 'revenue' => $m->revenue->dollars(), 'expenses' => $m->expenses->dollars(), 'net' => $m->net->dollars()]);
-        $this->expenseBreakdown = $data->expenseBreakdown->map(fn ($entry): array => ['category' => $entry->category, 'amount' => $entry->amount->dollars(), 'percentage' => $entry->percentage]);
+        $this->expenseBreakdown = $data->expenseBreakdown->map(fn (FinancialExpenseBreakdown $entry): array => ['category' => $entry->category, 'amount' => $entry->amount->dollars(), 'percentage' => $entry->percentage]);
         $this->cogsAmount = $data->cogsAmount->dollars();
         $this->cogsPercentage = $data->cogsPercentage;
 
