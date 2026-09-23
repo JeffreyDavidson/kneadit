@@ -4,6 +4,7 @@ use App\Filament\Pages\Settings\ManageSettings;
 use App\Models\Operations\WebhookDelivery;
 use App\Models\Platform\Setting;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettingsDefaults;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
@@ -39,6 +40,15 @@ test('minimum order amounts load from saved settings on mount', function () {
     Livewire::test(ManageSettings::class)
         ->assertSet('minimum_pickup_order_amount', '5')
         ->assertSet('minimum_delivery_order_amount', '20');
+});
+
+test('manage settings page can reset form values to defaults', function () {
+    $defaultStoreName = TenantSettingsDefaults::all()['store_name'];
+
+    Livewire::test(ManageSettings::class)
+        ->set('store_name', 'Temporary Name')
+        ->call('resetToDefaults')
+        ->assertSet('store_name', $defaultStoreName);
 });
 
 test('delivery fee tiers round-trip as structured rows through save and reload', function () {
