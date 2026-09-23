@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Collection;
 
 class StaffDirectoryQuery
 {
+    public function member(int $id): User
+    {
+        return User::query()->findOrFail($id);
+    }
+
     /** @return Collection<int, User> */
     public function members(): Collection
     {

@@ -25,6 +25,8 @@ use UnitEnum;
 
 class StaffManagement extends Page
 {
+    private StaffDirectoryQuery $staffDirectoryQuery;
+
     #[\Override]
     public static function canAccess(): bool
     {
@@ -48,6 +50,11 @@ class StaffManagement extends Page
     #[\Override]
     protected string $view = 'filament.pages.operations.staff-management';
 
+    public function boot(StaffDirectoryQuery $staffDirectoryQuery): void
+    {
+        $this->staffDirectoryQuery = $staffDirectoryQuery;
+    }
+
     #[\Override]
     public function getTitle(): string
     {
@@ -57,13 +64,13 @@ class StaffManagement extends Page
     /** @return Collection<int, User> */
     public function getTeamMembers(): Collection
     {
-        return resolve(StaffDirectoryQuery::class)->members();
+        return $this->staffDirectoryQuery->members();
     }
 
     /** @return Collection<int, StaffInvitation> */
     public function getPendingInvitations(): Collection
     {
-        return resolve(StaffDirectoryQuery::class)->pendingInvitations();
+        return $this->staffDirectoryQuery->pendingInvitations();
     }
 
     #[\Override]
@@ -104,9 +111,9 @@ class StaffManagement extends Page
                     ->required()
                     ->native(false),
             ])
-            ->action(function (array $data): void {
+            ->action(function (array $data, SendStaffInvitation $sendInvitation): void {
                 try {
-                    resolve(SendStaffInvitation::class)(
+                    $sendInvitation(
                         email: Arr::string($data, 'email'),
                         role: UserRole::from(Arr::string($data, 'role')),
                         invitedBy: Arr::integer(['id' => Auth::id()], 'id'),
@@ -133,17 +140,15 @@ class StaffManagement extends Page
             ->color('gray')
             ->size('sm')
             ->slideOver()
-            ->modalHeading(function (array $arguments): string {
-                /** @var User $user */
-                $user = User::query()->findOrFail($arguments['user']);
+            ->modalHeading(function (array $arguments, StaffDirectoryQuery $staffDirectoryQuery): string {
+                $user = $staffDirectoryQuery->member(Arr::integer($arguments, 'user'));
 
                 return "Change role for {$user->name}";
             })
             ->modalDescription('Promoting to Owner gives full billing and team access. Demotions take effect immediately.')
             ->modalSubmitActionLabel('Update role')
-            ->fillForm(function (array $arguments): array {
-                /** @var User $user */
-                $user = User::query()->findOrFail($arguments['user']);
+            ->fillForm(function (array $arguments, StaffDirectoryQuery $staffDirectoryQuery): array {
+                $user = $staffDirectoryQuery->member(Arr::integer($arguments, 'user'));
 
                 return ['role' => $user->role->value];
             })
@@ -158,7 +163,7 @@ class StaffManagement extends Page
                     ->required()
                     ->native(false),
             ])
-            ->action(function (array $data, array $arguments): void {
+            ->action(function (array $data, array $arguments, ChangeStaffRole $changeStaffRole): void {
                 $role = UserRole::tryFrom(Arr::string($data, 'role'));
 
                 if (! $role) {
@@ -166,7 +171,7 @@ class StaffManagement extends Page
                 }
 
                 try {
-                    resolve(ChangeStaffRole::class)(
+                    $changeStaffRole(
                         userId: Arr::integer($arguments, 'user'),
                         newRole: $role,
                         currentUserId: Arr::integer(['id' => Auth::id()], 'id'),
@@ -193,17 +198,16 @@ class StaffManagement extends Page
             ->color('danger')
             ->size('sm')
             ->requiresConfirmation()
-            ->modalHeading(function (array $arguments): string {
-                /** @var User $user */
-                $user = User::query()->findOrFail($arguments['user']);
+            ->modalHeading(function (array $arguments, StaffDirectoryQuery $staffDirectoryQuery): string {
+                $user = $staffDirectoryQuery->member(Arr::integer($arguments, 'user'));
 
                 return "Remove {$user->name}?";
             })
             ->modalDescription('This removes the team member immediately. They will lose access to the admin panel and any in-progress work assigned to them stays with the data, not the user.')
             ->modalSubmitActionLabel('Remove')
-            ->action(function (array $arguments): void {
+            ->action(function (array $arguments, RemoveStaffMember $removeStaffMember): void {
                 try {
-                    resolve(RemoveStaffMember::class)(
+                    $removeStaffMember(
                         userId: Arr::integer($arguments, 'user'),
                         currentUserId: Arr::integer(['id' => Auth::id()], 'id'),
                     );
@@ -231,8 +235,8 @@ class StaffManagement extends Page
             ->modalHeading('Revoke this invitation?')
             ->modalDescription('The invite link will stop working. You can always send a fresh invitation.')
             ->modalSubmitActionLabel('Revoke')
-            ->action(function (array $arguments): void {
-                resolve(RevokeStaffInvitation::class)(Arr::integer($arguments, 'invitation'));
+            ->action(function (array $arguments, RevokeStaffInvitation $revokeInvitation): void {
+                $revokeInvitation(Arr::integer($arguments, 'invitation'));
 
                 Notification::make()
                     ->title('Invitation revoked')
