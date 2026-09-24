@@ -3,10 +3,13 @@
 use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Recipe;
+use App\Models\Inventory\StockAdjustment;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -80,7 +83,8 @@ test('can render ingredient table columns', function () {
         ->assertCanRenderTableColumn('name')
         ->assertCanRenderTableColumn('current_stock')
         ->assertCanRenderTableColumn('stock_status')
-        ->assertCanRenderTableColumn('cost_per_unit');
+        ->assertCanRenderTableColumn('cost_per_unit')
+        ->assertCanRenderTableColumn('is_active');
 });
 
 test('can edit an ingredient via table action', function () {
@@ -96,6 +100,44 @@ test('can edit an ingredient via table action', function () {
         ->assertHasNoFormErrors();
 
     expect($ingredient->fresh()->name)->toBe('Updated Flour');
+});
+
+test('can archive an ingredient without deleting it', function () {
+    $ingredient = Ingredient::factory()->create(['unit' => 'lbs']);
+
+    livewire(ListIngredients::class)
+        ->callAction(TestAction::make('edit')->table($ingredient), data: [
+            'name' => $ingredient->name,
+            'unit' => $ingredient->unit,
+            'current_stock' => $ingredient->current_stock,
+            'low_stock_threshold' => $ingredient->low_stock_threshold,
+            'is_active' => false,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect($ingredient->fresh()->is_active)->toBeFalse();
+
+    livewire(ListIngredients::class)
+        ->assertCanNotSeeTableRecords(collect([$ingredient]))
+        ->filterTable('is_active', '0')
+        ->assertCanSeeTableRecords(collect([$ingredient]));
+});
+
+test('cannot delete an ingredient with stock adjustment history', function () {
+    $ingredient = Ingredient::factory()->create();
+    StockAdjustment::factory()->for($ingredient)->create();
+    $user = User::factory()->owner()->create();
+
+    expect(Gate::forUser($user)->allows('delete', $ingredient))->toBeFalse();
+});
+
+test('cannot delete an ingredient used by a recipe', function () {
+    $ingredient = Ingredient::factory()->create();
+    $recipe = Recipe::factory()->create();
+    $recipe->inventoryIngredients()->attach($ingredient, ['quantity' => 1, 'unit' => $ingredient->unit]);
+    $user = User::factory()->owner()->create();
+
+    expect(Gate::forUser($user)->allows('delete', $ingredient))->toBeFalse();
 });
 
 test('can filter ingredients by low stock', function () {
