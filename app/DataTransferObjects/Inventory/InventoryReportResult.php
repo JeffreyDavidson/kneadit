@@ -29,6 +29,7 @@ final readonly class InventoryReportResult implements Arrayable
      *         is_low: bool,
      *         is_out: bool,
      *         daily_usage: float,
+     *         daily_depletion: float,
      *         days_until_stockout: float|null,
      *         cost_per_unit: float
      *     }>,

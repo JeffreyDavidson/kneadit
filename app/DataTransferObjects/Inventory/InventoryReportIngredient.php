@@ -16,11 +16,12 @@ final readonly class InventoryReportIngredient
         public bool $isLow,
         public bool $isOut,
         public float $dailyUsage,
+        public float $dailyDepletion,
         public ?float $daysUntilStockout,
         public Money $costPerUnit,
     ) {}
 
-    /** @return array{name: string, unit: string, current_stock: float, low_stock_threshold: float, is_low: bool, is_out: bool, daily_usage: float, days_until_stockout: float|null, cost_per_unit: float} */
+    /** @return array{name: string, unit: string, current_stock: float, low_stock_threshold: float, is_low: bool, is_out: bool, daily_usage: float, daily_depletion: float, days_until_stockout: float|null, cost_per_unit: float} */
     public function toArray(): array
     {
         return [
@@ -31,6 +32,7 @@ final readonly class InventoryReportIngredient
             'is_low' => $this->isLow,
             'is_out' => $this->isOut,
             'daily_usage' => $this->dailyUsage,
+            'daily_depletion' => $this->dailyDepletion,
             'days_until_stockout' => $this->daysUntilStockout,
             'cost_per_unit' => $this->costPerUnit->dollars(),
         ];
