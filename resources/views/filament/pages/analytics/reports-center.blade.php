@@ -86,6 +86,29 @@
         </div>
     @endif
 
+    @if ($activeReport === 'inventory')
+        <div class="no-print mb-6 flex flex-wrap items-end gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+            <div>
+                <label for="inventory-usage-window" class="mb-1 block text-sm font-medium">Lookback Period</label>
+                <select
+                    id="inventory-usage-window"
+                    wire:model="inventoryUsageWindowDays"
+                    class="fi-input rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                >
+                    @foreach (collect([7, 30, 90, $inventoryUsageWindowDays])->unique()->sort() as $days)
+                        <option value="{{ $days }}">{{ $days }} days</option>
+                    @endforeach
+                </select>
+            </div>
+            <button
+                wire:click="generateReport('inventory')"
+                class="bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-white transition"
+            >
+                Generate
+            </button>
+        </div>
+    @endif
+
     @if ($activeReport === 'financial')
         <div class="no-print mb-6 flex items-end gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
             <div>
