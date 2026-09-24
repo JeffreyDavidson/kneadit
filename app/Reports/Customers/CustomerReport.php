@@ -9,7 +9,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class CustomerReport
@@ -18,15 +18,19 @@ class CustomerReport
     {
         $newCustomers = Customer::query()->whereBetween('created_at', $range->toArray())->count();
 
-        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q
-            ->whereNotIn('status', [OrderStatus::Cancelled])
-            ->where('payment_status', PaymentStatus::Paid)
-            ->whereBetween('delivery_date', $range->toArray()))->count();
+        $paidOrdersInRange = static function (Builder $query) use ($range): void {
+            $query->whereNotIn('status', [OrderStatus::Cancelled])
+                ->where('payment_status', PaymentStatus::Paid)
+                ->whereBetween('delivery_date', $range->toArray());
+        };
 
-        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q
-            ->whereNotIn('status', [OrderStatus::Cancelled])
-            ->where('payment_status', PaymentStatus::Paid)
-            ->whereBetween('delivery_date', $range->toArray()), '>=', 2)->count();
+        $totalCustomersWithOrders = Customer::query()
+            ->whereHas('orders', $paidOrdersInRange)
+            ->count();
+
+        $repeatCustomers = Customer::query()
+            ->whereHas('orders', $paidOrdersInRange, '>=', 2)
+            ->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
