@@ -20,6 +20,10 @@ class IngredientPolicy extends RolePolicy
             return false;
         }
 
+        if (! $model->exists) {
+            return true;
+        }
+
         return ! $model->stockAdjustments()->exists()
             && ! $model->recipes()->exists();
     }
