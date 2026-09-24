@@ -399,6 +399,12 @@
                                 <th class="py-2 text-right">Stock</th>
                                 <th class="py-2 text-right">Threshold</th>
                                 <th class="py-2 text-right">Daily Usage</th>
+                                <th
+                                    class="py-2 text-right"
+                                    title="Net daily stock movement, including waste and restocks"
+                                >
+                                    Daily Depletion
+                                </th>
                                 <th class="py-2 text-right">Days Left</th>
                                 <th class="py-2 text-right">Status</th>
                             </tr>
@@ -410,6 +416,7 @@
                                     <td class="py-2 text-right">{{ $i['current_stock'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">{{ $i['low_stock_threshold'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">{{ $i['daily_usage'] }} {{ $i['unit'] }}</td>
+                                    <td class="py-2 text-right">{{ $i['daily_depletion'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">
                                         {{ $i['days_until_stockout'] !== null ? $i['days_until_stockout'] . ' days' : '—' }}
                                     </td>
@@ -501,9 +508,17 @@
                 rows = [['Month', 'Revenue', 'Expenses', 'Profit']];
                 data.monthly.forEach((m) => rows.push([m.month, m.revenue, m.expenses, m.profit]));
             } else if (type === 'inventory' && data.ingredients) {
-                rows = [['Ingredient', 'Stock', 'Unit', 'Threshold', 'Daily Usage', 'Days Left']];
+                rows = [['Ingredient', 'Stock', 'Unit', 'Threshold', 'Daily Usage', 'Daily Depletion', 'Days Left']];
                 data.ingredients.forEach((i) =>
-                    rows.push([i.name, i.current_stock, i.unit, i.low_stock_threshold, i.daily_usage, i.days_until_stockout]),
+                    rows.push([
+                        i.name,
+                        i.current_stock,
+                        i.unit,
+                        i.low_stock_threshold,
+                        i.daily_usage,
+                        i.daily_depletion,
+                        i.days_until_stockout,
+                    ]),
                 );
             }
 

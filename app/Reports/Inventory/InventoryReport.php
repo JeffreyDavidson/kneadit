@@ -53,6 +53,7 @@ class InventoryReport
                 isLow: $i->current_stock <= $i->low_stock_threshold,
                 isOut: $i->current_stock <= 0,
                 dailyUsage: round($dailyUsage, 2),
+                dailyDepletion: round($dailyDepletion, 2),
                 daysUntilStockout: $daysUntilStockout,
                 costPerUnit: $i->cost_per_unit ?? Money::zero(),
             );
