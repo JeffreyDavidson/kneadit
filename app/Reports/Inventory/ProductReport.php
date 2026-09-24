@@ -4,6 +4,7 @@ namespace App\Reports\Inventory;
 
 use App\DataTransferObjects\Inventory\ProductReportProduct;
 use App\DataTransferObjects\Inventory\ProductReportResult;
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Product;
 use App\Support\ProfitMargin;
@@ -18,6 +19,7 @@ class ProductReport
     public function generate(DateRange $range): ProductReportResult
     {
         $paidOrdersInRange = static fn (EloquentBuilder $query): EloquentBuilder => $query
+            ->whereNotIn('status', [OrderStatus::Cancelled])
             ->whereBetween('delivery_date', $range->toArray())
             ->where('payment_status', PaymentStatus::Paid);
 

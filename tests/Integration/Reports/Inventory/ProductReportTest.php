@@ -69,6 +69,18 @@ test('calculates units sold, revenue, and margin for products', function () {
         'unit_price' => 10.00,
     ]);
 
+    $cancelledOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->cancelled()
+        ->paid()
+        ->create(['delivery_date' => '2026-03-20']);
+
+    OrderItem::factory()->recycle($cancelledOrder, $product)->create([
+        'quantity' => 11,
+        'unit_price' => 10.00,
+    ]);
+
     $range = DateRange::forMonth(2026, 3);
     $report = new ProductReport;
     $result = $report->generate($range);
