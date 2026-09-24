@@ -63,3 +63,26 @@ test('calculates recent usage from stock adjustments and offsets restocks', func
 
     expect($reportedIngredient->dailyUsage)->toBe(0.8);
 });
+
+test('does not report negative daily usage when restocks exceed usage', function () {
+    Config::set('analytics.inventory_usage_window_days', 10);
+
+    $ingredient = Ingredient::factory()->create();
+
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => -1,
+        'type' => StockAdjustmentType::Usage,
+        'created_at' => now()->subDay(),
+    ]);
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => 3,
+        'type' => StockAdjustmentType::Restock,
+        'created_at' => now()->subDay(),
+    ]);
+
+    $result = (new InventoryReport)->generate();
+    $reportedIngredient = collect($result->ingredients)->firstWhere('name', $ingredient->name);
+
+    expect($reportedIngredient->dailyUsage)->toBe(0.0)
+        ->and($reportedIngredient->daysUntilStockout)->toBeNull();
+});
