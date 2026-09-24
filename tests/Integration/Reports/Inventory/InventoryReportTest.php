@@ -1,11 +1,9 @@
 <?php
 
 use App\DataTransferObjects\Inventory\InventoryReportResult;
+use App\Enums\Inventory\StockAdjustmentType;
 use App\Models\Inventory\Ingredient;
-use App\Models\Inventory\Product;
-use App\Models\Inventory\Recipe;
-use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
+use App\Models\Inventory\StockAdjustment;
 use App\Reports\Inventory\InventoryReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -24,50 +22,44 @@ test('generates inventory report', function () {
         ->and($result->toArray()['ingredients'])->toBeEmpty();
 });
 
-test('excludes cancelled paid orders from recent ingredient usage', function () {
+test('calculates recent usage from stock adjustments and offsets restocks', function () {
     Config::set('analytics.inventory_usage_window_days', 10);
 
     $ingredient = Ingredient::factory()->create();
-    $product = Product::factory()->create();
-    $recipe = Recipe::factory()->for($product)->create();
-    $recipe->inventoryIngredients()->attach($ingredient, ['quantity' => 2.5, 'unit' => 'kg']);
 
-    $deliveredOrder = Order::factory()->delivered()->create([
-        'delivery_date' => now()->subDays(2),
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => -10,
+        'type' => StockAdjustmentType::Usage,
+        'created_at' => now()->subDay(),
     ]);
-    OrderItem::factory()->recycle($deliveredOrder, $product)->create(['quantity' => 3]);
-
-    $cancelledOrder = Order::factory()->cancelled()->paid()->create([
-        'delivery_date' => now()->subDays(1),
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => 2,
+        'type' => StockAdjustmentType::Restock,
+        'created_at' => now()->subDay(),
     ]);
-    OrderItem::factory()->recycle($cancelledOrder, $product)->create(['quantity' => 11]);
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => 100,
+        'type' => StockAdjustmentType::Purchase,
+        'created_at' => now()->subDay(),
+    ]);
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => -100,
+        'type' => StockAdjustmentType::Waste,
+        'created_at' => now()->subDay(),
+    ]);
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => -90,
+        'type' => StockAdjustmentType::Usage,
+        'created_at' => now()->subDays(11),
+    ]);
+    StockAdjustment::factory()->for($ingredient)->create([
+        'quantity' => -90,
+        'type' => StockAdjustmentType::Usage,
+        'created_at' => now()->addDay(),
+    ]);
 
     $result = (new InventoryReport)->generate();
     $reportedIngredient = collect($result->ingredients)->firstWhere('name', $ingredient->name);
 
-    expect($reportedIngredient->dailyUsage)->toBe(0.75);
-});
-
-test('excludes future paid orders from recent ingredient usage', function () {
-    Config::set('analytics.inventory_usage_window_days', 10);
-
-    $ingredient = Ingredient::factory()->create();
-    $product = Product::factory()->create();
-    $recipe = Recipe::factory()->for($product)->create();
-    $recipe->inventoryIngredients()->attach($ingredient, ['quantity' => 2.5, 'unit' => 'kg']);
-
-    $recentOrder = Order::factory()->delivered()->create([
-        'delivery_date' => today()->subDays(2),
-    ]);
-    OrderItem::factory()->recycle($recentOrder, $product)->create(['quantity' => 3]);
-
-    $futureOrder = Order::factory()->confirmed()->paid()->create([
-        'delivery_date' => today()->addDay(),
-    ]);
-    OrderItem::factory()->recycle($futureOrder, $product)->create(['quantity' => 11]);
-
-    $result = (new InventoryReport)->generate();
-    $reportedIngredient = collect($result->ingredients)->firstWhere('name', $ingredient->name);
-
-    expect($reportedIngredient->dailyUsage)->toBe(0.75);
+    expect($reportedIngredient->dailyUsage)->toBe(0.8);
 });
