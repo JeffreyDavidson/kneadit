@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Config;
 
 class InventoryReport
 {
-    public function generate(): InventoryReportResult
+    public function generate(?int $usageWindowDays = null): InventoryReportResult
     {
-        $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
+        $usageWindowDays ??= Config::integer('analytics.inventory_usage_window_days', 30);
         $windowEnd = now();
 
         $stockMovementData = StockAdjustment::query()

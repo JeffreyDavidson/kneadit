@@ -13,10 +13,13 @@ use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Config;
 use Laravel\Pennant\Feature;
 
 class ReportsCenter extends Page
 {
+    private const array INVENTORY_USAGE_WINDOW_OPTIONS = [7, 30, 90];
+
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
@@ -54,6 +57,8 @@ class ReportsCenter extends Page
 
     public int $selectedYear;
 
+    public int $inventoryUsageWindowDays;
+
     /** @var array<string, mixed> */
     public array $reportData = [];
 
@@ -62,6 +67,7 @@ class ReportsCenter extends Page
         $this->startDate = now()->startOfMonth()->format('Y-m-d');
         $this->endDate = now()->format('Y-m-d');
         $this->selectedYear = now()->year;
+        $this->inventoryUsageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
     }
 
     public function generateReport(string $type): void
@@ -69,12 +75,19 @@ class ReportsCenter extends Page
         $this->activeReport = $type;
         $dateRange = DateRange::fromStrings($this->startDate, $this->endDate);
 
+        $configuredUsageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
+        $allowedUsageWindowDays = [...self::INVENTORY_USAGE_WINDOW_OPTIONS, $configuredUsageWindowDays];
+
+        if (! in_array($this->inventoryUsageWindowDays, $allowedUsageWindowDays, true)) {
+            $this->inventoryUsageWindowDays = $configuredUsageWindowDays;
+        }
+
         $this->reportData = match ($type) {
             'sales' => resolve(SalesReport::class)->generate($dateRange)->toArray(),
             'customers' => resolve(CustomerReport::class)->generate($dateRange)->toArray(),
             'products' => resolve(ProductReport::class)->generate($dateRange)->toArray(),
             'financial' => resolve(FinancialReport::class)->generate($this->selectedYear)->toArray(),
-            'inventory' => resolve(InventoryReport::class)->generate()->toArray(),
+            'inventory' => resolve(InventoryReport::class)->generate($this->inventoryUsageWindowDays)->toArray(),
             default => [],
         };
     }

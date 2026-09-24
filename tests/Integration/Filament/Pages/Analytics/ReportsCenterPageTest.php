@@ -53,11 +53,23 @@ test('generate report with inventory type', function () {
     Config::set('analytics.inventory_usage_window_days', 10);
 
     test()->page->mount();
+    test()->page->inventoryUsageWindowDays = 7;
     test()->page->generateReport('inventory');
 
     expect(test()->page->activeReport)->toBe('inventory')
         ->and(test()->page->reportData)->toBeArray()
-        ->and(test()->page->reportData['usageWindowDays'])->toBe(10);
+        ->and(test()->page->reportData['usageWindowDays'])->toBe(7);
+});
+
+test('falls back to the configured window when an unsupported period is selected', function () {
+    Config::set('analytics.inventory_usage_window_days', 30);
+
+    test()->page->mount();
+    test()->page->inventoryUsageWindowDays = 14;
+    test()->page->generateReport('inventory');
+
+    expect(test()->page->inventoryUsageWindowDays)->toBe(30)
+        ->and(test()->page->reportData['usageWindowDays'])->toBe(30);
 });
 
 test('generate report with unknown type returns empty', function () {
