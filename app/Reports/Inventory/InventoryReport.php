@@ -65,6 +65,7 @@ class InventoryReport
 
         return new InventoryReportResult(
             ingredients: $ingredients,
+            usageWindowDays: $usageWindowDays,
             totalItems: $totalItems,
             lowStockItems: $lowStockItems,
             outOfStockItems: $outOfStockItems,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Pages\Analytics\ReportsCenter;
+use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -49,11 +50,14 @@ test('generate report sets active report type', function () {
 });
 
 test('generate report with inventory type', function () {
+    Config::set('analytics.inventory_usage_window_days', 10);
+
     test()->page->mount();
     test()->page->generateReport('inventory');
 
     expect(test()->page->activeReport)->toBe('inventory')
-        ->and(test()->page->reportData)->toBeArray();
+        ->and(test()->page->reportData)->toBeArray()
+        ->and(test()->page->reportData['usageWindowDays'])->toBe(10);
 });
 
 test('generate report with unknown type returns empty', function () {

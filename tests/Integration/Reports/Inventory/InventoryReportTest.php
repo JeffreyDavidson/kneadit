@@ -116,5 +116,7 @@ test('includes waste in days until stockout without inflating daily usage', func
     expect($reportedIngredient->dailyUsage)->toBe(0.8)
         ->and($reportedIngredient->dailyDepletion)->toBe(1.6)
         ->and($reportedIngredient->daysUntilStockout)->toBe(10.0)
+        ->and($result->usageWindowDays)->toBe(10)
+        ->and($result->toArray()['usageWindowDays'])->toBe(10)
         ->and($serializedIngredient['daily_depletion'])->toBe(1.6);
 });

@@ -391,6 +391,10 @@
 
             <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
                 <h3 class="mb-3 font-semibold">Inventory Details</h3>
+                <p class="mb-3 text-sm text-gray-500 dark:text-gray-400">
+                    Daily Usage, Daily Depletion, and Days Left are based on the last {{ $reportData['usageWindowDays'] }} days
+                    of stock movements.
+                </p>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
@@ -508,7 +512,18 @@
                 rows = [['Month', 'Revenue', 'Expenses', 'Profit']];
                 data.monthly.forEach((m) => rows.push([m.month, m.revenue, m.expenses, m.profit]));
             } else if (type === 'inventory' && data.ingredients) {
-                rows = [['Ingredient', 'Stock', 'Unit', 'Threshold', 'Daily Usage', 'Daily Depletion', 'Days Left']];
+                const windowLabel = `${data.usageWindowDays}-day window`;
+                rows = [
+                    [
+                        'Ingredient',
+                        'Stock',
+                        'Unit',
+                        'Threshold',
+                        `Daily Usage (avg/day, ${windowLabel})`,
+                        `Daily Depletion (avg/day, ${windowLabel})`,
+                        `Days Left (${windowLabel})`,
+                    ],
+                ];
                 data.ingredients.forEach((i) =>
                     rows.push([
                         i.name,
