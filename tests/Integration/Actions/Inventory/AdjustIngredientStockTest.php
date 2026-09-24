@@ -57,9 +57,8 @@ test('rolls back the stock change when the adjustment record cannot be created',
     });
 
     expect(fn () => resolve(AdjustIngredientStock::class)($ingredient, -2, StockAdjustmentType::Usage))
-        ->toThrow(RuntimeException::class, 'Could not create stock adjustment');
-
-    expect($ingredient->fresh()->current_stock)->toBe('5.00');
+        ->toThrow(RuntimeException::class, 'Could not create stock adjustment')
+        ->and($ingredient->fresh()->current_stock)->toBe('5.00');
     assertDatabaseMissing('stock_adjustments', ['ingredient_id' => $ingredient->id]);
 });
 
@@ -70,8 +69,7 @@ test('checks the latest stock value before allowing a deduction', function () {
     resolve(AdjustIngredientStock::class)($ingredient, -4, StockAdjustmentType::Usage);
 
     expect(fn () => resolve(AdjustIngredientStock::class)($staleIngredient, -2, StockAdjustmentType::Usage))
-        ->toThrow(StockWouldGoNegativeException::class);
-
-    expect($ingredient->fresh()->current_stock)->toBe('1.00')
+        ->toThrow(StockWouldGoNegativeException::class)
+        ->and($ingredient->fresh()->current_stock)->toBe('1.00')
         ->and($ingredient->stockAdjustments()->count())->toBe(1);
 });
