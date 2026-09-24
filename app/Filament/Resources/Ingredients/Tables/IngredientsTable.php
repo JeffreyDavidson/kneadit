@@ -38,9 +38,15 @@ class IngredientsTable
                     ->sortable(),
 
                 TextColumn::make('stock_status')
-                    ->label('Status')
+                    ->label('Stock status')
                     ->badge()
                     ->getStateUsing(fn (Ingredient $record): StockStatus => StockStatus::resolve($record)),
+
+                TextColumn::make('is_active')
+                    ->label('Availability')
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Archived')
+                    ->color(fn (bool $state): string => $state ? 'success' : 'gray'),
 
                 MoneyColumn::make('cost_per_unit')
                     ->sortable()
@@ -63,6 +69,13 @@ class IngredientsTable
                         'out' => $query->where('current_stock', '<=', 0),
                         default => $query,
                     }),
+                SelectFilter::make('is_active')
+                    ->label('Ingredient status')
+                    ->options([
+                        '1' => 'Active',
+                        '0' => 'Archived',
+                    ])
+                    ->default('1'),
             ])
             ->recordActions([
                 Action::make('record_stock')

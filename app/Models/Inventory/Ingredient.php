@@ -38,12 +38,18 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes', 'allergens')]
+#[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes', 'allergens', 'is_active')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(IngredientQueryBuilder::class)]
 #[UseFactory(IngredientFactory::class)]
 class Ingredient extends Model
 {
+    /** @var array<string, bool> */
+    #[\Override]
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
 
@@ -55,6 +61,7 @@ class Ingredient extends Model
             'low_stock_threshold' => 'decimal:2',
             'cost_per_unit' => MoneyCentsCast::class,
             'allergens' => AsEnumCollection::of(Allergen::class),
+            'is_active' => 'boolean',
         ];
     }
 

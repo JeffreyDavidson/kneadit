@@ -24,6 +24,7 @@ class IngredientFactory extends Factory
             'current_stock' => fake()->randomFloat(2, 10, 100),
             'low_stock_threshold' => 5.00,
             'cost_per_unit' => fake()->randomFloat(2, 1, 20),
+            'is_active' => true,
         ];
     }
 
