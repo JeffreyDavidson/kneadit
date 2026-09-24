@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Inventory\ProductReportProduct;
 use App\DataTransferObjects\Inventory\ProductReportResult;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
@@ -46,23 +47,62 @@ test('calculates units sold, revenue, and margin for products', function () {
         'unit_price' => 10.00,
     ]);
 
+    $unpaidOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->unpaid()
+        ->create(['delivery_date' => '2026-03-18']);
+
+    OrderItem::factory()->recycle($unpaidOrder, $product)->create([
+        'quantity' => 3,
+        'unit_price' => 10.00,
+    ]);
+
+    $outsideRangeOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->paid()
+        ->create(['delivery_date' => '2026-04-01']);
+
+    OrderItem::factory()->recycle($outsideRangeOrder, $product)->create([
+        'quantity' => 7,
+        'unit_price' => 10.00,
+    ]);
+
+    $cancelledOrder = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->cancelled()
+        ->paid()
+        ->create(['delivery_date' => '2026-03-20']);
+
+    OrderItem::factory()->recycle($cancelledOrder, $product)->create([
+        'quantity' => 11,
+        'unit_price' => 10.00,
+    ]);
+
     $range = DateRange::forMonth(2026, 3);
     $report = new ProductReport;
     $result = $report->generate($range);
     $serialized = $result->toArray();
 
-    $sourdough = collect($result->products)->firstWhere('name', 'Sourdough');
+    $sourdough = collect($result->products)->first(fn (ProductReportProduct $product): bool => $product->name === 'Sourdough');
     $serializedSourdough = collect($serialized['products'])->firstWhere('name', 'Sourdough');
 
-    expect($sourdough)->not->toBeNull()
-        ->and($sourdough['units_sold'])->toBe(5)
-        ->and($sourdough['price'])->toEqual(Money::fromDollars(10))
-        ->and($sourdough['cost'])->toEqual(Money::fromDollars(4))
-        ->and($sourdough['revenue'])->toEqual(Money::fromDollars(50))
-        ->and($sourdough['margin'])->toBe(60.0)
-        ->and($serializedSourdough['price'])->toBe(10.0)
-        ->and($serializedSourdough['cost'])->toBe(4.0)
-        ->and($serializedSourdough['revenue'])->toBe(50.0);
+    expect($sourdough)->toBeInstanceOf(ProductReportProduct::class)
+        ->and($sourdough->unitsSold)->toBe(5)
+        ->and($sourdough->price)->toEqual(Money::fromDollars(10))
+        ->and($sourdough->cost)->toEqual(Money::fromDollars(4))
+        ->and($sourdough->revenue)->toEqual(Money::fromDollars(50))
+        ->and($sourdough->margin)->toBe(60.0)
+        ->and($serializedSourdough)->toBe([
+            'name' => 'Sourdough',
+            'price' => 10.0,
+            'cost' => 4.0,
+            'units_sold' => 5,
+            'revenue' => 50.0,
+            'margin' => 60.0,
+        ]);
 });
 
 test('returns null margin when price or cost is zero', function () {
@@ -78,5 +118,5 @@ test('returns null margin when price or cost is zero', function () {
 
     $freeSample = collect($result->products)->firstWhere('name', 'Free Sample');
 
-    expect($freeSample['margin'])->toBeNull();
+    expect($freeSample->margin)->toBeNull();
 });

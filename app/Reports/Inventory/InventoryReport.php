@@ -2,54 +2,70 @@
 
 namespace App\Reports\Inventory;
 
+use App\DataTransferObjects\Inventory\InventoryReportIngredient;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
-use App\Enums\Orders\PaymentStatus;
+use App\Enums\Inventory\StockAdjustmentType;
 use App\Models\Inventory\Ingredient;
-use App\Models\Inventory\Recipe;
+use App\Models\Inventory\StockAdjustment;
 use App\ValueObjects\Money;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 
 class InventoryReport
 {
-    public function generate(): InventoryReportResult
+    public function generate(?int $usageWindowDays = null): InventoryReportResult
     {
-        $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
+        $usageWindowDays ??= Config::integer('analytics.inventory_usage_window_days', 30);
+        $windowEnd = now();
 
-        $usageData = Recipe::query()
-            ->join('recipe_ingredients', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
-            ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.delivery_date', '>=', now()->subDays($usageWindowDays))
-            ->where('orders.payment_status', PaymentStatus::Paid->value)
-            ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
-            ->groupBy('recipe_ingredients.ingredient_id')
-            ->pluck('total_usage', 'ingredient_id');
+        $stockMovementData = StockAdjustment::query()
+            ->whereBetween('created_at', [$windowEnd->copy()->subDays($usageWindowDays), $windowEnd])
+            ->whereIn('type', [
+                StockAdjustmentType::Usage->value,
+                StockAdjustmentType::Restock->value,
+                StockAdjustmentType::Waste->value,
+            ])
+            ->select('ingredient_id')
+            ->selectRaw(
+                'SUM(CASE WHEN type IN (?, ?) THEN -quantity ELSE 0 END) as total_usage',
+                [StockAdjustmentType::Usage->value, StockAdjustmentType::Restock->value],
+            )
+            ->selectRaw('SUM(-quantity) as total_depletion')
+            ->groupBy('ingredient_id')
+            ->toBase()
+            ->get()
+            ->keyBy('ingredient_id');
 
-        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): array {
-            $usageLast30 = Arr::float($usageData->all(), $i->id, 0.0);
-            $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
-            $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
+        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($stockMovementData, $usageWindowDays): InventoryReportIngredient {
+            $stockMovements = $stockMovementData->get($i->id, (object) ['total_usage' => 0, 'total_depletion' => 0]);
+            $usage = $stockMovements->total_usage;
+            $depletion = $stockMovements->total_depletion;
+            $usageInWindow = is_numeric($usage) ? (float) $usage : 0.0;
+            $depletionInWindow = is_numeric($depletion) ? (float) $depletion : 0.0;
+            $dailyUsage = max(0.0, $usageInWindow / max($usageWindowDays, 1));
+            $dailyDepletion = max(0.0, $depletionInWindow / max($usageWindowDays, 1));
+            $daysUntilStockout = $dailyDepletion > 0 ? round($i->current_stock / $dailyDepletion, 0) : null;
 
-            return [
-                'name' => $i->name,
-                'unit' => $i->unit,
-                'current_stock' => (float) $i->current_stock,
-                'low_stock_threshold' => (float) $i->low_stock_threshold,
-                'is_low' => $i->current_stock <= $i->low_stock_threshold,
-                'is_out' => $i->current_stock <= 0,
-                'daily_usage' => round($dailyUsage, 2),
-                'days_until_stockout' => $daysUntilStockout,
-                'cost_per_unit' => $i->cost_per_unit ?? Money::zero(),
-            ];
+            return new InventoryReportIngredient(
+                name: $i->name,
+                unit: $i->unit,
+                currentStock: (float) $i->current_stock,
+                lowStockThreshold: (float) $i->low_stock_threshold,
+                isLow: $i->current_stock <= $i->low_stock_threshold,
+                isOut: $i->current_stock <= 0,
+                dailyUsage: round($dailyUsage, 2),
+                dailyDepletion: round($dailyDepletion, 2),
+                daysUntilStockout: $daysUntilStockout,
+                costPerUnit: $i->cost_per_unit ?? Money::zero(),
+            );
         })->all());
 
         $totalItems = count($ingredients);
-        $lowStockItems = collect($ingredients)->where('is_low', true)->count();
-        $outOfStockItems = collect($ingredients)->where('is_out', true)->count();
+        $lowStockItems = collect($ingredients)->where('isLow', true)->count();
+        $outOfStockItems = collect($ingredients)->where('isOut', true)->count();
 
         return new InventoryReportResult(
             ingredients: $ingredients,
+            usageWindowDays: $usageWindowDays,
             totalItems: $totalItems,
             lowStockItems: $lowStockItems,
             outOfStockItems: $outOfStockItems,

@@ -7,7 +7,7 @@ the code, while Forge sites and Cloudflare DNS provide the deployment targets.
 
 | Environment | Branch or revision | Marketing site | Application site |
 | --- | --- | --- | --- |
-| Staging | `develop` during normal integration; active `release/*` branch during release hardening | `staging.getkneadit.app` | `app.staging.getkneadit.app` |
+| Staging | `develop` during normal integration; active `release/*` branch during release hardening | `staging.getkneadit.app` | `app-staging.getkneadit.app` |
 | Production | `main` at the approved release commit | `getkneadit.app` | `app.getkneadit.app` |
 
 Production tenant storefronts use the application site through the production
@@ -55,7 +55,10 @@ work. Normal staging should therefore follow `develop`, or the active
 - `*.getkneadit.app` — production tenant storefront wildcard on the application
   site only.
 - `staging.getkneadit.app` — staging marketing site.
-- `app.staging.getkneadit.app` — staging application.
+- `app-staging.getkneadit.app` — staging application.
+- `app.staging.getkneadit.app` — legacy staging application alias retained during
+  the hostname transition; remove it only after the new URL and its dependent
+  configuration have been verified.
 - `kneadit.app` — not a KneadIt domain and must not be provisioned.
 - A staging tenant wildcard — intentionally not provisioned.
 

@@ -5,21 +5,29 @@ namespace App\Actions\Inventory;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Exceptions\Inventory\StockWouldGoNegativeException;
 use App\Models\Inventory\Ingredient;
+use Illuminate\Support\Facades\DB;
 
 class AdjustIngredientStock
 {
     public function __invoke(Ingredient $ingredient, float $quantity, StockAdjustmentType $type, ?string $notes = null): void
     {
-        $resulting = (float) $ingredient->current_stock + $quantity;
+        DB::transaction(function () use ($ingredient, $quantity, $type, $notes): void {
+            $lockedIngredient = Ingredient::query()
+                ->whereKey($ingredient->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        throw_if($resulting < 0, StockWouldGoNegativeException::class, $ingredient, $quantity, $resulting);
+            $resulting = (float) $lockedIngredient->current_stock + $quantity;
 
-        $ingredient->increment('current_stock', $quantity);
+            throw_if($resulting < 0, StockWouldGoNegativeException::class, $lockedIngredient, $quantity, $resulting);
 
-        $ingredient->stockAdjustments()->create([
-            'quantity' => $quantity,
-            'type' => $type,
-            'notes' => $notes,
-        ]);
+            $lockedIngredient->increment('current_stock', $quantity);
+
+            $lockedIngredient->stockAdjustments()->create([
+                'quantity' => $quantity,
+                'type' => $type,
+                'notes' => $notes,
+            ]);
+        });
     }
 }

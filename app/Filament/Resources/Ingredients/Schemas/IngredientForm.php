@@ -10,6 +10,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -73,6 +74,10 @@ class IngredientForm
 
                         Textarea::make('notes')
                             ->rows(3),
+
+                        Toggle::make('is_active')
+                            ->label('Active')
+                            ->helperText('Inactive ingredients are retained for inventory history.'),
 
                         CheckboxList::make('allergens')
                             ->label('Allergens')

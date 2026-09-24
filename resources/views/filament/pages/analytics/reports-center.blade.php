@@ -86,6 +86,29 @@
         </div>
     @endif
 
+    @if ($activeReport === 'inventory')
+        <div class="no-print mb-6 flex flex-wrap items-end gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+            <div>
+                <label for="inventory-usage-window" class="mb-1 block text-sm font-medium">Lookback Period</label>
+                <select
+                    id="inventory-usage-window"
+                    wire:model="inventoryUsageWindowDays"
+                    class="fi-input rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800"
+                >
+                    @foreach (collect([7, 30, 90, $inventoryUsageWindowDays])->unique()->sort() as $days)
+                        <option value="{{ $days }}">{{ $days }} days</option>
+                    @endforeach
+                </select>
+            </div>
+            <button
+                wire:click="generateReport('inventory')"
+                class="bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-white transition"
+            >
+                Generate
+            </button>
+        </div>
+    @endif
+
     @if ($activeReport === 'financial')
         <div class="no-print mb-6 flex items-end gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
             <div>
@@ -391,6 +414,10 @@
 
             <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
                 <h3 class="mb-3 font-semibold">Inventory Details</h3>
+                <p class="mb-3 text-sm text-gray-500 dark:text-gray-400">
+                    Daily Usage, Daily Depletion, and Days Left are based on the last {{ $reportData['usageWindowDays'] }} days
+                    of stock movements.
+                </p>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
@@ -399,6 +426,12 @@
                                 <th class="py-2 text-right">Stock</th>
                                 <th class="py-2 text-right">Threshold</th>
                                 <th class="py-2 text-right">Daily Usage</th>
+                                <th
+                                    class="py-2 text-right"
+                                    title="Net daily stock movement, including waste and restocks"
+                                >
+                                    Daily Depletion
+                                </th>
                                 <th class="py-2 text-right">Days Left</th>
                                 <th class="py-2 text-right">Status</th>
                             </tr>
@@ -410,6 +443,7 @@
                                     <td class="py-2 text-right">{{ $i['current_stock'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">{{ $i['low_stock_threshold'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">{{ $i['daily_usage'] }} {{ $i['unit'] }}</td>
+                                    <td class="py-2 text-right">{{ $i['daily_depletion'] }} {{ $i['unit'] }}</td>
                                     <td class="py-2 text-right">
                                         {{ $i['days_until_stockout'] !== null ? $i['days_until_stockout'] . ' days' : '—' }}
                                     </td>
@@ -501,9 +535,28 @@
                 rows = [['Month', 'Revenue', 'Expenses', 'Profit']];
                 data.monthly.forEach((m) => rows.push([m.month, m.revenue, m.expenses, m.profit]));
             } else if (type === 'inventory' && data.ingredients) {
-                rows = [['Ingredient', 'Stock', 'Unit', 'Threshold', 'Daily Usage', 'Days Left']];
+                const windowLabel = `${data.usageWindowDays}-day window`;
+                rows = [
+                    [
+                        'Ingredient',
+                        'Stock',
+                        'Unit',
+                        'Threshold',
+                        `Daily Usage (avg/day, ${windowLabel})`,
+                        `Daily Depletion (avg/day, ${windowLabel})`,
+                        `Days Left (${windowLabel})`,
+                    ],
+                ];
                 data.ingredients.forEach((i) =>
-                    rows.push([i.name, i.current_stock, i.unit, i.low_stock_threshold, i.daily_usage, i.days_until_stockout]),
+                    rows.push([
+                        i.name,
+                        i.current_stock,
+                        i.unit,
+                        i.low_stock_threshold,
+                        i.daily_usage,
+                        i.daily_depletion,
+                        i.days_until_stockout,
+                    ]),
                 );
             }
 
