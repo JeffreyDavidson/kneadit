@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Ingredient extends Model
 {
     /** @var array<string, bool> */
+    #[\Override]
     protected $attributes = [
         'is_active' => true,
     ];
