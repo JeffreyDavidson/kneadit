@@ -27,7 +27,7 @@ class InventoryReport
         $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): InventoryReportIngredient {
             $usage = $usageData->get($i->id, 0);
             $usageInWindow = is_numeric($usage) ? (float) $usage : 0.0;
-            $dailyUsage = $usageInWindow / max($usageWindowDays, 1);
+            $dailyUsage = max(0.0, $usageInWindow / max($usageWindowDays, 1));
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 
             return new InventoryReportIngredient(
