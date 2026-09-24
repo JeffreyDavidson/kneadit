@@ -17,8 +17,16 @@ class ProductReport
 {
     public function generate(DateRange $range): ProductReportResult
     {
-        $products = array_values(Product::query()->withSum(['orderItems as units_sold' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], 'quantity')
-            ->withSum(['orderItems as revenue' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))
+        $paidOrdersInRange = static fn (EloquentBuilder $query): EloquentBuilder => $query
+            ->whereBetween('delivery_date', $range->toArray())
+            ->where('payment_status', PaymentStatus::Paid);
+
+        $paidOrderItemsInRange = static fn (EloquentBuilder $query): EloquentBuilder => $query
+            ->whereHas('order', $paidOrdersInRange);
+
+        $products = array_values(Product::query()
+            ->withSum(['orderItems as units_sold' => $paidOrderItemsInRange], 'quantity')
+            ->withSum(['orderItems as revenue' => $paidOrderItemsInRange], DB::raw('quantity * unit_price'))
             ->get()
             ->map(function (Product $p): ProductReportProduct {
                 $price = $p->price ?? Money::zero();
