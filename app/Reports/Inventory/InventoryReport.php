@@ -17,18 +17,33 @@ class InventoryReport
         $usageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
         $windowEnd = now();
 
-        $usageData = StockAdjustment::query()
+        $stockMovementData = StockAdjustment::query()
             ->whereBetween('created_at', [$windowEnd->copy()->subDays($usageWindowDays), $windowEnd])
-            ->whereIn('type', [StockAdjustmentType::Usage->value, StockAdjustmentType::Restock->value])
-            ->selectRaw('ingredient_id, SUM(-quantity) as total_usage')
+            ->whereIn('type', [
+                StockAdjustmentType::Usage->value,
+                StockAdjustmentType::Restock->value,
+                StockAdjustmentType::Waste->value,
+            ])
+            ->select('ingredient_id')
+            ->selectRaw(
+                'SUM(CASE WHEN type IN (?, ?) THEN -quantity ELSE 0 END) as total_usage',
+                [StockAdjustmentType::Usage->value, StockAdjustmentType::Restock->value],
+            )
+            ->selectRaw('SUM(-quantity) as total_depletion')
             ->groupBy('ingredient_id')
-            ->pluck('total_usage', 'ingredient_id');
+            ->toBase()
+            ->get()
+            ->keyBy('ingredient_id');
 
-        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): InventoryReportIngredient {
-            $usage = $usageData->get($i->id, 0);
+        $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($stockMovementData, $usageWindowDays): InventoryReportIngredient {
+            $stockMovements = $stockMovementData->get($i->id, (object) ['total_usage' => 0, 'total_depletion' => 0]);
+            $usage = $stockMovements->total_usage;
+            $depletion = $stockMovements->total_depletion;
             $usageInWindow = is_numeric($usage) ? (float) $usage : 0.0;
+            $depletionInWindow = is_numeric($depletion) ? (float) $depletion : 0.0;
             $dailyUsage = max(0.0, $usageInWindow / max($usageWindowDays, 1));
-            $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
+            $dailyDepletion = max(0.0, $depletionInWindow / max($usageWindowDays, 1));
+            $daysUntilStockout = $dailyDepletion > 0 ? round($i->current_stock / $dailyDepletion, 0) : null;
 
             return new InventoryReportIngredient(
                 name: $i->name,
