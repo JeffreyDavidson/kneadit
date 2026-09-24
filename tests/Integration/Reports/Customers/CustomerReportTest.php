@@ -71,6 +71,10 @@ test('only active paid orders contribute to customer metrics', function () {
         'delivery_date' => '2026-03-10',
         'total' => 100.00,
     ]);
+    Order::factory()->for($customer)->paid()->create([
+        'delivery_date' => '2026-04-02',
+        'total' => 200.00,
+    ]);
     Order::factory()->for($customer)->unpaid()->create([
         'delivery_date' => '2026-03-11',
         'total' => 500.00,
