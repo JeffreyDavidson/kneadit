@@ -14,6 +14,7 @@ final readonly class InventoryReportResult implements Arrayable
      */
     public function __construct(
         public array $ingredients,
+        public int $usageWindowDays,
         public int $totalItems,
         public int $lowStockItems,
         public int $outOfStockItems,
@@ -33,6 +34,7 @@ final readonly class InventoryReportResult implements Arrayable
      *         days_until_stockout: float|null,
      *         cost_per_unit: float
      *     }>,
+     *     usageWindowDays: int,
      *     totalItems: int,
      *     lowStockItems: int,
      *     outOfStockItems: int
@@ -45,6 +47,7 @@ final readonly class InventoryReportResult implements Arrayable
                 static fn (InventoryReportIngredient $ingredient): array => $ingredient->toArray(),
                 $this->ingredients,
             ),
+            'usageWindowDays' => $this->usageWindowDays,
             'totalItems' => $this->totalItems,
             'lowStockItems' => $this->lowStockItems,
             'outOfStockItems' => $this->outOfStockItems,
