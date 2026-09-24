@@ -47,3 +47,27 @@ test('excludes cancelled paid orders from recent ingredient usage', function () 
 
     expect($reportedIngredient->dailyUsage)->toBe(0.75);
 });
+
+test('excludes future paid orders from recent ingredient usage', function () {
+    Config::set('analytics.inventory_usage_window_days', 10);
+
+    $ingredient = Ingredient::factory()->create();
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $recipe->inventoryIngredients()->attach($ingredient, ['quantity' => 2.5, 'unit' => 'kg']);
+
+    $recentOrder = Order::factory()->delivered()->create([
+        'delivery_date' => today()->subDays(2),
+    ]);
+    OrderItem::factory()->recycle($recentOrder, $product)->create(['quantity' => 3]);
+
+    $futureOrder = Order::factory()->confirmed()->paid()->create([
+        'delivery_date' => today()->addDay(),
+    ]);
+    OrderItem::factory()->recycle($futureOrder, $product)->create(['quantity' => 11]);
+
+    $result = (new InventoryReport)->generate();
+    $reportedIngredient = collect($result->ingredients)->firstWhere('name', $ingredient->name);
+
+    expect($reportedIngredient->dailyUsage)->toBe(0.75);
+});

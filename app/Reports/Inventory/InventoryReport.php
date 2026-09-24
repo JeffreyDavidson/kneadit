@@ -23,6 +23,7 @@ class InventoryReport
             ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.delivery_date', '>=', now()->subDays($usageWindowDays))
+            ->whereDate('orders.delivery_date', '<=', today())
             ->where('orders.status', '!=', OrderStatus::Cancelled->value)
             ->where('orders.payment_status', PaymentStatus::Paid->value)
             ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
@@ -30,8 +31,8 @@ class InventoryReport
             ->pluck('total_usage', 'ingredient_id');
 
         $ingredients = array_values(Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData, $usageWindowDays): InventoryReportIngredient {
-            $usageLast30 = Arr::float($usageData->all(), $i->id, 0.0);
-            $dailyUsage = $usageLast30 / max($usageWindowDays, 1);
+            $usageInWindow = Arr::float($usageData->all(), $i->id, 0.0);
+            $dailyUsage = $usageInWindow / max($usageWindowDays, 1);
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 
             return new InventoryReportIngredient(
