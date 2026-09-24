@@ -4,6 +4,7 @@ namespace App\Reports\Inventory;
 
 use App\DataTransferObjects\Inventory\InventoryReportIngredient;
 use App\DataTransferObjects\Inventory\InventoryReportResult;
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Recipe;
@@ -22,6 +23,7 @@ class InventoryReport
             ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.delivery_date', '>=', now()->subDays($usageWindowDays))
+            ->where('orders.status', '!=', OrderStatus::Cancelled->value)
             ->where('orders.payment_status', PaymentStatus::Paid->value)
             ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
             ->groupBy('recipe_ingredients.ingredient_id')
