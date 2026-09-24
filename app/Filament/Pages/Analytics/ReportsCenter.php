@@ -18,7 +18,7 @@ use Laravel\Pennant\Feature;
 
 class ReportsCenter extends Page
 {
-    private const INVENTORY_USAGE_WINDOW_OPTIONS = [7, 30, 90];
+    private const array INVENTORY_USAGE_WINDOW_OPTIONS = [7, 30, 90];
 
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
