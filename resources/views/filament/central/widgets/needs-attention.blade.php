@@ -34,7 +34,7 @@
                         class="flex items-center gap-3 px-4 py-3 rounded-lg border {{ $tone['border'] }} {{ $tone['bg'] }} hover:border-honey/40 transition-colors no-underline"
                     >
                         <div class="shrink-0 w-10 h-10 rounded-xl {{ $tone['iconBg'] }} border flex items-center justify-center">
-                            <x-dynamic-component :component="$item['icon']" class="w-5 h-5 {{ $tone['iconColor'] }}" />
+                            <x-filament::icon :icon="$item['icon']" class="w-5 h-5 {{ $tone['iconColor'] }}" />
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="text-[0.9rem] font-semibold text-white">{{ $item['title'] }}</div>
