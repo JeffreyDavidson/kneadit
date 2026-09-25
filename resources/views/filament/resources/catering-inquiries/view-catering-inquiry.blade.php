@@ -66,99 +66,69 @@
 
     <div class="space-y-6">
         {{-- ============== CUSTOMER ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex items-center justify-between">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Customer</div>
-                {{ $this->editCustomerAction }}
-            </div>
+        <x-filament.catering-inquiries.section-card title="Customer">
+            <x-slot:actions>{{ $this->editCustomerAction }}</x-slot:actions>
+
             <dl class="divide-brand-700/40 divide-y">
-                <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
-                    <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Name</dt>
-                    <dd class="truncate text-right text-[0.85rem] font-semibold text-white">
-                        {{ $inquiry->customer_name }}
-                    </dd>
-                </div>
+                <x-filament.catering-inquiries.detail-row label="Name" class="truncate">
+                    {{ $inquiry->customer_name }}
+                </x-filament.catering-inquiries.detail-row>
                 @if ($inquiry->customer_email)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Email</dt>
-                        <dd class="truncate text-right text-[0.85rem] font-semibold text-white">
-                            {{ $inquiry->customer_email }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Email" class="truncate">
+                        {{ $inquiry->customer_email }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
                 @if ($inquiry->customer_phone)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Phone</dt>
-                        <dd class="text-right text-[0.85rem] font-semibold text-white">
-                            {{ $inquiry->customer_phone }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Phone">
+                        {{ $inquiry->customer_phone }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
             </dl>
-        </div>
+        </x-filament.catering-inquiries.section-card>
 
         {{-- ============== EVENT DETAILS ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex items-center justify-between">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Event details</div>
-                {{ $this->editEventDetailsAction }}
-            </div>
+        <x-filament.catering-inquiries.section-card title="Event details">
+            <x-slot:actions>{{ $this->editEventDetailsAction }}</x-slot:actions>
+
             <dl class="divide-brand-700/40 divide-y">
-                <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
-                    <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Type</dt>
-                    <dd class="text-right text-[0.85rem] font-semibold text-white">{{ $inquiry->event_type }}</dd>
-                </div>
-                <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                    <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Date</dt>
-                    <dd class="text-right text-[0.85rem] font-semibold text-white">
-                        {{ $eventDate?->format('M j, Y') ?? '—' }}
-                    </dd>
-                </div>
-                <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                    <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Guests</dt>
-                    <dd class="text-right text-[0.85rem] font-semibold text-white tabular-nums">
-                        {{ number_format($inquiry->guest_count) }}
-                    </dd>
-                </div>
+                <x-filament.catering-inquiries.detail-row label="Type">
+                    {{ $inquiry->event_type }}
+                </x-filament.catering-inquiries.detail-row>
+                <x-filament.catering-inquiries.detail-row label="Date">
+                    {{ $eventDate?->format('M j, Y') ?? '—' }}
+                </x-filament.catering-inquiries.detail-row>
+                <x-filament.catering-inquiries.detail-row label="Guests" class="tabular-nums">
+                    {{ number_format($inquiry->guest_count) }}
+                </x-filament.catering-inquiries.detail-row>
                 @if ($inquiry->budget)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Budget</dt>
-                        <dd class="text-right text-[0.85rem] font-semibold text-white tabular-nums">
-                            {{ $inquiry->budget->formatted() }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Budget" class="tabular-nums">
+                        {{ $inquiry->budget->formatted() }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
                 @if ($inquiry->venue_address)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Venue</dt>
-                        <dd class="max-w-md text-right text-[0.85rem] font-semibold whitespace-pre-wrap text-white">
-                            {{ $inquiry->venue_address }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Venue" class="max-w-md whitespace-pre-wrap">
+                        {{ $inquiry->venue_address }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
                 @if ($inquiry->dietary_requirements)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Dietary</dt>
-                        <dd class="max-w-md text-right text-[0.85rem] font-semibold whitespace-pre-wrap text-white">
-                            {{ $inquiry->dietary_requirements }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Dietary" class="max-w-md whitespace-pre-wrap">
+                        {{ $inquiry->dietary_requirements }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
                 @if ($inquiry->details)
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Details</dt>
-                        <dd class="max-w-md text-right text-[0.85rem] font-semibold whitespace-pre-wrap text-white">
-                            {{ $inquiry->details }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Details" class="max-w-md whitespace-pre-wrap">
+                        {{ $inquiry->details }}
+                    </x-filament.catering-inquiries.detail-row>
                 @endif
             </dl>
-        </div>
+        </x-filament.catering-inquiries.section-card>
 
         {{-- ============== QUOTE ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Quote</div>
+        <x-filament.catering-inquiries.section-card
+            title="Quote"
+            header-class="mb-4 flex flex-wrap items-center justify-between gap-3"
+        >
+            <x-slot:actions>
                 <div class="flex flex-wrap items-center gap-2">
                     @if ($this->manageQuoteItemsAction->isVisible())
                         {{ $this->manageQuoteItemsAction }}
@@ -170,7 +140,7 @@
                         {{ $this->resendQuoteAction }}
                     @endif
                 </div>
-            </div>
+            </x-slot:actions>
 
             @if ($inquiry->items->isNotEmpty())
                 <div class="overflow-x-auto">
@@ -257,16 +227,18 @@
                     <div class="text-brand-400 text-[0.9rem]">No items.</div>
                 @endif
             @endif
-        </div>
+        </x-filament.catering-inquiries.section-card>
 
         {{-- ============== BOOKING ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Booking</div>
+        <x-filament.catering-inquiries.section-card
+            title="Booking"
+            header-class="mb-4 flex flex-wrap items-center justify-between gap-3"
+        >
+            <x-slot:actions>
                 @if ($this->confirmBookingAction->isVisible())
                     {{ $this->confirmBookingAction }}
                 @endif
-            </div>
+            </x-slot:actions>
 
             @if ($order)
                 <a
@@ -296,38 +268,31 @@
                     @endif
                 </div>
             @endif
-        </div>
+        </x-filament.catering-inquiries.section-card>
 
         {{-- ============== DEPOSIT ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Deposit</div>
+        <x-filament.catering-inquiries.section-card
+            title="Deposit"
+            header-class="mb-4 flex flex-wrap items-center justify-between gap-3"
+        >
+            <x-slot:actions>
                 @if ($this->markDepositReceivedAction->isVisible())
                     {{ $this->markDepositReceivedAction }}
                 @endif
-            </div>
+            </x-slot:actions>
 
             @if ($depositPaid)
                 <dl class="divide-brand-700/40 divide-y">
-                    <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Amount</dt>
-                        <dd class="text-right text-[0.85rem] font-semibold text-white tabular-nums">
-                            {{ $inquiry->deposit_amount?->formatted() ?? '—' }}
-                        </dd>
-                    </div>
-                    <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                        <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Received</dt>
-                        <dd class="text-right text-[0.85rem] font-semibold text-white">
-                            {{ $inquiry->deposit_paid_at->format('M j, Y') }}
-                        </dd>
-                    </div>
+                    <x-filament.catering-inquiries.detail-row label="Amount" class="tabular-nums">
+                        {{ $inquiry->deposit_amount?->formatted() ?? '—' }}
+                    </x-filament.catering-inquiries.detail-row>
+                    <x-filament.catering-inquiries.detail-row label="Received">
+                        {{ $inquiry->deposit_paid_at->format('M j, Y') }}
+                    </x-filament.catering-inquiries.detail-row>
                     @if ($inquiry->deposit_reference)
-                        <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
-                            <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Reference</dt>
-                            <dd class="text-right text-[0.85rem] font-semibold text-white">
-                                {{ $inquiry->deposit_reference }}
-                            </dd>
-                        </div>
+                        <x-filament.catering-inquiries.detail-row label="Reference">
+                            {{ $inquiry->deposit_reference }}
+                        </x-filament.catering-inquiries.detail-row>
                     @endif
                 </dl>
                 @if ($order)
@@ -345,20 +310,17 @@
                     @endif
                 </div>
             @endif
-        </div>
+        </x-filament.catering-inquiries.section-card>
 
         {{-- ============== INTERNAL NOTES ============== --}}
-        <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
-            <div class="mb-4 flex items-center justify-between">
-                <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Internal notes</div>
-                {{ $this->editNotesAction }}
-            </div>
+        <x-filament.catering-inquiries.section-card title="Internal notes">
+            <x-slot:actions>{{ $this->editNotesAction }}</x-slot:actions>
 
             @if (filled($inquiry->notes))
                 <pre class="text-brand-200 m-0 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap">{{ $inquiry->notes }}</pre>
             @else
                 <div class="text-brand-400 text-[0.85rem]">No notes yet.</div>
             @endif
-        </div>
+        </x-filament.catering-inquiries.section-card>
     </div>
 </x-filament-panels::page>
