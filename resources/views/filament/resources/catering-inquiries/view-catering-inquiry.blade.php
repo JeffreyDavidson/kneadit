@@ -9,29 +9,31 @@
             <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                 Catering Inquiry
             </div>
-            <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">{{ $inquiry->customer_name }}</h2>
+            <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">
+                {{ $viewModel->inquiry->customer_name }}
+            </h2>
             <div class="text-brand-400 mt-1 text-[0.85rem]">
-                <span class="text-brand-200 font-semibold">{{ $inquiry->event_type }}</span>
-                @if ($eventDate)
-                    · {{ $eventDate->format('M j, Y') }}
-                    @if ($eventCountdown)
-                        <span class="text-brand-400">(in {{ $eventCountdown }})</span>
-                    @elseif ($eventPast)
+                <span class="text-brand-200 font-semibold">{{ $viewModel->inquiry->event_type }}</span>
+                @if ($viewModel->eventDate)
+                    · {{ $viewModel->eventDate->format('M j, Y') }}
+                    @if ($viewModel->eventCountdown)
+                        <span class="text-brand-400">(in {{ $viewModel->eventCountdown }})</span>
+                    @elseif ($viewModel->eventPast)
                         <span class="text-brand-400">(past)</span>
                     @endif
                 @endif
-                · {{ number_format($inquiry->guest_count) }} guests
+                · {{ number_format($viewModel->inquiry->guest_count) }} guests
             </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
             <span class="bg-brand-800 border-brand-700 text-brand-200 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] uppercase">
                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                {{ $status->getLabel() }}
+                {{ $viewModel->status->getLabel() }}
             </span>
-            @if ($depositChip)
-                <span class="inline-flex items-center gap-1.5 {{ $depositChip['bg'] }} border {{ $depositChip['border'] }} {{ $depositChip['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
-                    {{ $depositChip['label'] }}
+            @if ($viewModel->depositChip)
+                <span class="inline-flex items-center gap-1.5 {{ $viewModel->depositChip['bg'] }} border {{ $viewModel->depositChip['border'] }} {{ $viewModel->depositChip['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
+                    {{ $viewModel->depositChip['label'] }}
                 </span>
             @endif
         </div>
@@ -39,7 +41,7 @@
         <div class="shrink-0 text-right">
             <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Quoted</div>
             <div class="text-[1.5rem] leading-none font-bold text-white tabular-nums">
-                {{ $inquiry->quoted_amount?->formatted() ?? '—' }}
+                {{ $viewModel->inquiry->quoted_amount?->formatted() ?? '—' }}
             </div>
         </div>
     </div>
@@ -51,16 +53,16 @@
 
             <dl class="divide-brand-700/40 divide-y">
                 <x-filament.catering-inquiries.detail-row label="Name" class="truncate">
-                    {{ $inquiry->customer_name }}
+                    {{ $viewModel->inquiry->customer_name }}
                 </x-filament.catering-inquiries.detail-row>
-                @if ($inquiry->customer_email)
+                @if ($viewModel->inquiry->customer_email)
                     <x-filament.catering-inquiries.detail-row label="Email" class="truncate">
-                        {{ $inquiry->customer_email }}
+                        {{ $viewModel->inquiry->customer_email }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
-                @if ($inquiry->customer_phone)
+                @if ($viewModel->inquiry->customer_phone)
                     <x-filament.catering-inquiries.detail-row label="Phone">
-                        {{ $inquiry->customer_phone }}
+                        {{ $viewModel->inquiry->customer_phone }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
             </dl>
@@ -72,32 +74,32 @@
 
             <dl class="divide-brand-700/40 divide-y">
                 <x-filament.catering-inquiries.detail-row label="Type">
-                    {{ $inquiry->event_type }}
+                    {{ $viewModel->inquiry->event_type }}
                 </x-filament.catering-inquiries.detail-row>
                 <x-filament.catering-inquiries.detail-row label="Date">
-                    {{ $eventDate?->format('M j, Y') ?? '—' }}
+                    {{ $viewModel->eventDate?->format('M j, Y') ?? '—' }}
                 </x-filament.catering-inquiries.detail-row>
                 <x-filament.catering-inquiries.detail-row label="Guests" class="tabular-nums">
-                    {{ number_format($inquiry->guest_count) }}
+                    {{ number_format($viewModel->inquiry->guest_count) }}
                 </x-filament.catering-inquiries.detail-row>
-                @if ($inquiry->budget)
+                @if ($viewModel->inquiry->budget)
                     <x-filament.catering-inquiries.detail-row label="Budget" class="tabular-nums">
-                        {{ $inquiry->budget->formatted() }}
+                        {{ $viewModel->inquiry->budget->formatted() }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
-                @if ($inquiry->venue_address)
+                @if ($viewModel->inquiry->venue_address)
                     <x-filament.catering-inquiries.detail-row label="Venue" class="max-w-md whitespace-pre-wrap">
-                        {{ $inquiry->venue_address }}
+                        {{ $viewModel->inquiry->venue_address }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
-                @if ($inquiry->dietary_requirements)
+                @if ($viewModel->inquiry->dietary_requirements)
                     <x-filament.catering-inquiries.detail-row label="Dietary" class="max-w-md whitespace-pre-wrap">
-                        {{ $inquiry->dietary_requirements }}
+                        {{ $viewModel->inquiry->dietary_requirements }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
-                @if ($inquiry->details)
+                @if ($viewModel->inquiry->details)
                     <x-filament.catering-inquiries.detail-row label="Details" class="max-w-md whitespace-pre-wrap">
-                        {{ $inquiry->details }}
+                        {{ $viewModel->inquiry->details }}
                     </x-filament.catering-inquiries.detail-row>
                 @endif
             </dl>
@@ -123,9 +125,9 @@
             </x-slot:actions>
 
             <x-filament.catering-inquiries.quote-content
-                :items="$inquiry->items"
-                :status="$status"
-                :quoted-amount="$inquiry->quoted_amount"
+                :items="$viewModel->inquiry->items"
+                :status="$viewModel->status"
+                :quoted-amount="$viewModel->inquiry->quoted_amount"
                 :can-manage-items="$this->manageQuoteItemsAction->isVisible()"
             />
         </x-filament.catering-inquiries.section-card>
@@ -141,28 +143,30 @@
                 @endif
             </x-slot:actions>
 
-            @if ($order)
+            @if ($viewModel->order)
                 <a
-                    href="{{ \App\Filament\Resources\Orders\OrderResource::getUrl('view', ['record' => $order]) }}"
+                    href="{{ \App\Filament\Resources\Orders\OrderResource::getUrl('view', ['record' => $viewModel->order]) }}"
                     class="bg-brand-800 border-brand-700/60 hover:border-brand-300/40 group -mx-2 flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors"
                 >
                     <div class="min-w-0">
                         <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                             Linked order
                         </div>
-                        <div class="font-mono text-[0.95rem] font-bold text-white">{{ $order->order_number }}</div>
+                        <div class="font-mono text-[0.95rem] font-bold text-white">
+                            {{ $viewModel->order->order_number }}
+                        </div>
                         <div class="text-brand-400 mt-0.5 text-[0.8rem]">
-                            {{ $order->status->getLabel() }} · {{ $order->payment_status->getLabel() }} · {{ $order->total->formatted() }}
+                            {{ $viewModel->order->status->getLabel() }} · {{ $viewModel->order->payment_status->getLabel() }} · {{ $viewModel->order->total->formatted() }}
                         </div>
                     </div>
                     <x-heroicon-o-arrow-top-right-on-square class="text-brand-400 group-hover:text-brand-200 h-4 w-4 shrink-0 transition-colors" />
                 </a>
             @else
                 <div class="text-brand-200 text-[0.9rem]">
-                    @if ($status === CateringInquiryStatus::Quoted)
+                    @if ($viewModel->status === CateringInquiryStatus::Quoted)
                         Awaiting confirmation. Confirming creates an order so the rest of fulfillment (payment,
                         messages, status) is tracked there.
-                    @elseif ($status === CateringInquiryStatus::Cancelled)
+                    @elseif ($viewModel->status === CateringInquiryStatus::Cancelled)
                         <span class="font-semibold text-red-400">Cancelled.</span>
                     @else
                         Send a quote first; confirmation becomes available once the customer has been quoted.
@@ -182,21 +186,21 @@
                 @endif
             </x-slot:actions>
 
-            @if ($depositPaid)
+            @if ($viewModel->depositPaid)
                 <dl class="divide-brand-700/40 divide-y">
                     <x-filament.catering-inquiries.detail-row label="Amount" class="tabular-nums">
-                        {{ $inquiry->deposit_amount?->formatted() ?? '—' }}
+                        {{ $viewModel->inquiry->deposit_amount?->formatted() ?? '—' }}
                     </x-filament.catering-inquiries.detail-row>
                     <x-filament.catering-inquiries.detail-row label="Received">
-                        {{ $inquiry->deposit_paid_at->format('M j, Y') }}
+                        {{ $viewModel->inquiry->deposit_paid_at->format('M j, Y') }}
                     </x-filament.catering-inquiries.detail-row>
-                    @if ($inquiry->deposit_reference)
+                    @if ($viewModel->inquiry->deposit_reference)
                         <x-filament.catering-inquiries.detail-row label="Reference">
-                            {{ $inquiry->deposit_reference }}
+                            {{ $viewModel->inquiry->deposit_reference }}
                         </x-filament.catering-inquiries.detail-row>
                     @endif
                 </dl>
-                @if ($order)
+                @if ($viewModel->order)
                     <div class="text-brand-400 border-brand-700/40 mt-3 border-t pt-3 text-[0.8rem]">
                         Balance is tracked on the linked order.
                     </div>
@@ -204,10 +208,10 @@
             @else
                 <div class="text-brand-200 text-[0.9rem]">
                     Not received.
-                    @if ($suggestedDeposit !== null)
+                    @if ($viewModel->suggestedDeposit !== null)
                         Suggested deposit:
-                        <span class="font-semibold text-white tabular-nums">${{ number_format($suggestedDeposit, 2) }}</span>
-                        <span class="text-brand-400">({{ $depositPercent }}% of quote)</span>
+                        <span class="font-semibold text-white tabular-nums">${{ number_format($viewModel->suggestedDeposit, 2) }}</span>
+                        <span class="text-brand-400">({{ $viewModel->depositPercent }}% of quote)</span>
                     @endif
                 </div>
             @endif
@@ -217,8 +221,8 @@
         <x-filament.catering-inquiries.section-card title="Internal notes">
             <x-slot:actions>{{ $this->editNotesAction }}</x-slot:actions>
 
-            @if (filled($inquiry->notes))
-                <pre class="text-brand-200 m-0 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap">{{ $inquiry->notes }}</pre>
+            @if (filled($viewModel->inquiry->notes))
+                <pre class="text-brand-200 m-0 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap">{{ $viewModel->inquiry->notes }}</pre>
             @else
                 <div class="text-brand-400 text-[0.85rem]">No notes yet.</div>
             @endif
