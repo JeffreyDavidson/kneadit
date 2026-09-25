@@ -23,6 +23,7 @@ use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use App\Services\Customers\CateringDepositCalculator;
 use App\Services\Settings\TenantSettings;
+use App\ViewModels\Filament\CateringInquiries\CateringInquiryViewModel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -56,36 +57,13 @@ class ViewCateringInquiry extends ViewRecord
     #[\Override]
     protected function getViewData(): array
     {
-        $inquiry = $this->record;
-        $status = $inquiry->status;
-        $eventDate = $inquiry->event_date;
-        $eventCountdown = $eventDate?->isFuture()
-            ? $eventDate->diffForHumans(['parts' => 1, 'short' => false])
-            : null;
-        $eventPast = $eventDate?->isPast() ?? false;
-        $depositPaid = $inquiry->deposit_paid_at !== null;
-        $depositPercent = app(TenantSettings::class)->catering->depositPercent;
-        $suggestedDeposit = $inquiry->quoted_amount && $depositPercent > 0
-            ? resolve(CateringDepositCalculator::class)->suggestedAmount($inquiry, $depositPercent)
-            : null;
-
-        $depositChip = match (true) {
-            $depositPaid => ['label' => 'Deposit received', 'bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-            in_array($status, [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed], true) => ['label' => 'Deposit pending', 'bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-            default => null,
-        };
-
         return [
-            'inquiry' => $inquiry,
-            'status' => $status,
-            'order' => $inquiry->order,
-            'eventDate' => $eventDate,
-            'eventCountdown' => $eventCountdown,
-            'eventPast' => $eventPast,
-            'depositPaid' => $depositPaid,
-            'depositPercent' => $depositPercent,
-            'suggestedDeposit' => $suggestedDeposit,
-            'depositChip' => $depositChip,
+            'viewModel' => new CateringInquiryViewModel(
+                inquiry: $this->record,
+                order: $this->record->order,
+                settings: app(TenantSettings::class),
+                depositCalculator: app(CateringDepositCalculator::class),
+            ),
         ];
     }
 
