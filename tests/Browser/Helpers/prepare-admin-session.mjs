@@ -7,7 +7,7 @@ const storefrontUrl =
     process.env.BROWSER_TEST_STOREFRONT_URL ??
     "http://browser-test.kneadit.test";
 const centralUrl =
-    process.env.BROWSER_TEST_CENTRAL_URL ?? "http://kneadit.test";
+    process.env.BROWSER_TEST_CENTRAL_URL ?? "https://app.getkneadit.test";
 
 const tenantAdminEmail = "browser-test-admin@kneadit.test";
 const tenantAdminPassword = "browser-test-password";

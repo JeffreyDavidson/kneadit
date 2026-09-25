@@ -1,6 +1,6 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'https://app.getkneadit.test');
 
 test('central onboarding page renders for an authenticated user without JS errors', function () use ($centralUrl) {
     authenticatedCentralVisit("{$centralUrl}/onboarding")
