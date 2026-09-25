@@ -21,6 +21,7 @@ use App\Filament\Resources\CateringInquiries\Schemas\CateringEventDetailsFields;
 use App\Filament\Resources\CateringInquiries\Support\CateringQuoteItemMapper;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
+use App\Services\Customers\CateringDepositCalculator;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -65,7 +66,7 @@ class ViewCateringInquiry extends ViewRecord
         $depositPaid = $inquiry->deposit_paid_at !== null;
         $depositPercent = app(TenantSettings::class)->catering->depositPercent;
         $suggestedDeposit = $inquiry->quoted_amount && $depositPercent > 0
-            ? round($inquiry->quoted_amount->dollars() * (min(100, $depositPercent) / 100), 2)
+            ? resolve(CateringDepositCalculator::class)->suggestedAmount($inquiry, $depositPercent)
             : null;
 
         $depositChip = match (true) {
@@ -315,7 +316,7 @@ class ViewCateringInquiry extends ViewRecord
                     ->label('Deposit amount ($)')
                     ->numeric()
                     ->required()
-                    ->default(fn (RecordCateringDeposit $recordDeposit, TenantSettings $settings): float => $recordDeposit->suggestedAmount(
+                    ->default(fn (CateringDepositCalculator $calculator, TenantSettings $settings): float => $calculator->suggestedAmount(
                         $this->record,
                         $settings->catering->depositPercent,
                     )),

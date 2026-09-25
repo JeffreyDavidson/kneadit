@@ -34,16 +34,4 @@ class RecordCateringDeposit
 
         return $inquiry;
     }
-
-    /**
-     * Suggested deposit amount from the quoted total + setting percent.
-     */
-    public function suggestedAmount(CateringInquiry $inquiry, int $depositPercent): float
-    {
-        if (! $inquiry->quoted_amount || $depositPercent <= 0) {
-            return 0.0;
-        }
-
-        return round($inquiry->quoted_amount->dollars() * (min(100, $depositPercent) / 100), 2);
-    }
 }
