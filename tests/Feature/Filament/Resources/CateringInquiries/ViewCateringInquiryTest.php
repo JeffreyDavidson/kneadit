@@ -33,7 +33,12 @@ test('renders the view page with the inquiry summary', function () {
     Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('Maya Patel')
+        ->assertSee('Customer')
+        ->assertSee('Email')
+        ->assertSee('maya@example.com')
         ->assertSee('Wedding')
+        ->assertSee('Event details')
+        ->assertSee('Guests')
         ->assertSee('120 guests')
         ->assertSee('Quote');
 });
