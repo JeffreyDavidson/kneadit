@@ -109,3 +109,11 @@ test('generate report with financial type', function () {
             'expensesByCategory',
         ]);
 });
+
+test('generate report with rfm type', function () {
+    test()->page->mount();
+    test()->page->generateReport('rfm');
+
+    expect(test()->page->activeReport)->toBe('rfm')
+        ->and(test()->page->reportData)->toHaveKeys(['total', 'segments']);
+});
