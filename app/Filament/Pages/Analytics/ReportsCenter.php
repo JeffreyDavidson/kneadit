@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Reports\Customers\CustomerReport;
+use App\Reports\Customers\RfmReport;
 use App\Reports\Financial\FinancialReport;
 use App\Reports\Inventory\InventoryReport;
 use App\Reports\Inventory\ProductReport;
@@ -88,6 +89,7 @@ class ReportsCenter extends Page
             'products' => resolve(ProductReport::class)->generate($dateRange)->toArray(),
             'financial' => resolve(FinancialReport::class)->generate($this->selectedYear)->toArray(),
             'inventory' => resolve(InventoryReport::class)->generate($this->inventoryUsageWindowDays)->toArray(),
+            'rfm' => resolve(RfmReport::class)->generate()->toArray(),
             default => [],
         };
     }
