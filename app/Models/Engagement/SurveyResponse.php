@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Order|null $order
  * @property-read Survey|null $survey
+ * @property array<int, mixed> $answers
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SurveyResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SurveyResponse newQuery()
