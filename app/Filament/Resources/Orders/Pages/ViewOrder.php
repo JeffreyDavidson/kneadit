@@ -14,6 +14,7 @@ use App\Models\Orders\Order;
 use App\Services\PayPal\InvoiceService;
 use App\Services\PayPal\TokenManager;
 use App\Services\Settings\TenantSettings;
+use App\ViewModels\Filament\Orders\OrderViewModel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -46,6 +47,16 @@ class ViewOrder extends ViewRecord
     public function getRecord(): Model
     {
         return parent::getRecord()->loadMissing(['orderItems.product', 'customer', 'messages', 'cateringInquiry']);
+    }
+
+    /** @return array<string, mixed> */
+    #[\Override]
+    protected function getViewData(): array
+    {
+        return [
+            'order' => $this->record,
+            'viewModel' => new OrderViewModel($this->record),
+        ];
     }
 
     #[\Override]
