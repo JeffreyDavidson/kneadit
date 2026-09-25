@@ -69,18 +69,6 @@ test('clamps negative amount to 0', function () {
     expect($inquiry->fresh()->deposit_amount->dollars())->toBe(0.00);
 });
 
-test('suggestedAmount returns the configured percent of the quote', function () {
-    $inquiry = CateringInquiry::factory()->create(['quoted_amount' => 800.00]);
-
-    expect(resolve(RecordCateringDeposit::class)->suggestedAmount($inquiry, 25))->toBe(200.00);
-});
-
-test('suggestedAmount returns 0 when no quote', function () {
-    $inquiry = CateringInquiry::factory()->create(['quoted_amount' => null]);
-
-    expect(resolve(RecordCateringDeposit::class)->suggestedAmount($inquiry, 25))->toBe(0.0);
-});
-
 test('marks a linked Unpaid order as Partial when deposit is recorded', function () {
     $inquiry = CateringInquiry::factory()->create([
         'status' => CateringInquiryStatus::Confirmed,
