@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CateringInquiries\Tables;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
+use App\Filament\Resources\CateringInquiries\Support\CateringEventTypeOptions;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Customers\CateringInquiry;
 use App\Services\Settings\TenantSettings;
@@ -44,11 +45,7 @@ class CateringInquiriesTable
                 SelectFilter::make('status')
                     ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
-                    ->options(function (): array {
-                        $types = resolve(TenantSettings::class)->catering->eventTypes;
-
-                        return array_combine($types, $types);
-                    }),
+                    ->options(fn (TenantSettings $settings): array => CateringEventTypeOptions::make($settings)),
                 DateRangeFilter::make('event_date'),
             ])
             ->recordUrl(fn (CateringInquiry $record): string => CateringInquiryResource::getUrl('view', ['record' => $record]))

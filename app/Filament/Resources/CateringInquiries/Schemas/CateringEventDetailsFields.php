@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
 use App\Filament\Forms\Components\MoneyInput;
+use App\Filament\Resources\CateringInquiries\Support\CateringEventTypeOptions;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Field;
@@ -25,11 +26,7 @@ class CateringEventDetailsFields
 
         return [
             Select::make('event_type')
-                ->options(function (TenantSettings $settings): array {
-                    $types = $settings->catering->eventTypes;
-
-                    return array_combine($types, $types);
-                })
+                ->options(fn (TenantSettings $settings): array => CateringEventTypeOptions::make($settings))
                 ->required(),
             $eventDate,
             TextInput::make('guest_count')
