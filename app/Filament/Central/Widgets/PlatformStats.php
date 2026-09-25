@@ -9,7 +9,6 @@ use App\Queries\Analytics\DateCountQuery;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 
 class PlatformStats extends StatsOverviewWidget
@@ -87,7 +86,7 @@ class PlatformStats extends StatsOverviewWidget
         $ticketChart = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $ticketChart[] = Arr::float($ticketCounts, now()->subDays($i)->format('Y-m-d'), 0.0);
+            $ticketChart[] = (float) ($ticketCounts[now()->subDays($i)->format('Y-m-d')] ?? 0);
         }
 
         return [
