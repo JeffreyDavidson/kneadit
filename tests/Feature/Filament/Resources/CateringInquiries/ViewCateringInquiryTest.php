@@ -44,6 +44,43 @@ test('renders the view page with the inquiry summary', function () {
         ->assertSee('Quote');
 });
 
+test('view page prepares a future event countdown and suggested deposit from tenant settings', function () {
+    test()->travelTo(now()->startOfDay());
+    settings(['catering_deposit_percent' => 35]);
+
+    $inquiry = CateringInquiry::factory()->create([
+        'event_date' => now()->addDays(5)->toDateString(),
+        'quoted_amount' => 100,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee(now()->addDays(5)->format('M j, Y'))
+        ->assertSee('(in '.now()->addDays(5)->diffForHumans(['parts' => 1, 'short' => false]).')')
+        ->assertSee('Deposit pending')
+        ->assertSee('Suggested deposit:')
+        ->assertSee('$35.00')
+        ->assertSee('(35% of quote)');
+});
+
+test('view page labels past events and received deposits', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'event_date' => now()->subDay()->toDateString(),
+        'quoted_amount' => 100,
+        'deposit_paid_at' => now()->subDay(),
+        'deposit_amount' => 25,
+        'status' => CateringInquiryStatus::Confirmed,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('(past)')
+        ->assertSee('Deposit received')
+        ->assertSee('$25.00')
+        ->assertDontSee('Suggested deposit:');
+});
+
 test('quote content renders item details and totals', function () {
     $inquiry = CateringInquiry::factory()->create([
         'quoted_amount' => 2200,

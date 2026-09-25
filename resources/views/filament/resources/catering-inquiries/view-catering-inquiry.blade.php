@@ -1,25 +1,5 @@
 @php
     use App\Enums\Customers\CateringInquiryStatus;
-
-    $inquiry = $record;
-    $status = $inquiry->status;
-    $order = $inquiry->order;
-
-    $eventDate = $inquiry->event_date;
-    $eventCountdown = $eventDate?->isFuture() ? $eventDate->diffForHumans(['parts' => 1, 'short' => false]) : null;
-    $eventPast = $eventDate?->isPast() ?? false;
-
-    $depositPaid = $inquiry->deposit_paid_at !== null;
-    $depositPercent = resolve(\App\Services\Settings\TenantSettings::class)->catering->depositPercent;
-    $suggestedDeposit = $inquiry->quoted_amount && $depositPercent > 0
-        ? round($inquiry->quoted_amount->dollars() * (min(100, $depositPercent) / 100), 2)
-        : null;
-
-    $depositChip = match (true) {
-        $depositPaid => ['label' => 'Deposit received', 'bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-        in_array($status, [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed], true) => ['label' => 'Deposit pending', 'bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-        default => null,
-    };
 @endphp
 
 <x-filament-panels::page>
