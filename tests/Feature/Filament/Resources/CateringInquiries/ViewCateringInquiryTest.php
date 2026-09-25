@@ -5,6 +5,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Filament\Resources\CateringInquiries\Pages\ViewCateringInquiry;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\CateringInquiryItem;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,6 +42,63 @@ test('renders the view page with the inquiry summary', function () {
         ->assertSee('Guests')
         ->assertSee('120 guests')
         ->assertSee('Quote');
+});
+
+test('quote content renders item details and totals', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => 2200,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
+        'name' => 'Celebration cake',
+        'quantity' => 2,
+        'unit_price' => 11,
+        'special_instructions' => 'Gluten-free',
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Celebration cake')
+        ->assertSee('Gluten-free')
+        ->assertSee('$11.00')
+        ->assertSee('$22.00')
+        ->assertSee('Sent · status: Quote Sent');
+});
+
+test('quote content renders the single-amount legacy explanation', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => 4200,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Single-amount quote (added before items existed).')
+        ->assertSee('Manage items');
+});
+
+test('quote content distinguishes editable and read-only empty states', function () {
+    $editableInquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => null,
+        'status' => CateringInquiryStatus::Inquiry,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $editableInquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('No items yet.')
+        ->assertSee('Manage items');
+
+    $readOnlyInquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => null,
+        'status' => CateringInquiryStatus::Completed,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $readOnlyInquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('No items.')
+        ->assertDontSee('No items yet.')
+        ->assertDontSee('Manage items');
 });
 
 test('send quote is visible for an Inquiry with a quoted amount and dispatches the event', function () {
