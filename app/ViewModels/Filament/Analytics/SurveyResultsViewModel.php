@@ -31,8 +31,13 @@ final readonly class SurveyResultsViewModel
     {
         $this->responseCount = $responses->count();
         $questionResults = [];
+        $questions = [];
 
-        foreach ($survey === null ? [] : $survey->questions as $index => $question) {
+        if ($survey instanceof Survey) {
+            $questions = $survey->questions;
+        }
+
+        foreach ($questions as $index => $question) {
             $answers = $responses->map(
                 fn (SurveyResponse $response): mixed => Arr::get($response->answers, $index),
             );
