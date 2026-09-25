@@ -17,14 +17,13 @@ use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
+use App\Filament\Resources\CateringInquiries\Schemas\CateringEventDetailsFields;
 use App\Filament\Resources\CateringInquiries\Support\CateringQuoteItemMapper;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -164,21 +163,7 @@ class ViewCateringInquiry extends ViewRecord
                 'dietary_requirements' => $this->record->dietary_requirements,
                 'venue_address' => $this->record->venue_address,
             ])
-            ->schema([
-                Select::make('event_type')
-                    ->options(function (TenantSettings $settings): array {
-                        $types = $settings->catering->eventTypes;
-
-                        return array_combine($types, $types);
-                    })
-                    ->required(),
-                DatePicker::make('event_date')->required(),
-                TextInput::make('guest_count')->numeric()->required()->minValue(1),
-                MoneyInput::make('budget')->placeholder('Optional'),
-                Textarea::make('details')->required()->rows(4)->label('What they want'),
-                Textarea::make('dietary_requirements')->rows(2),
-                Textarea::make('venue_address')->rows(2),
-            ])
+            ->schema(CateringEventDetailsFields::make())
             ->action(function (array $data, UpdateCateringEventDetails $updateEvent): void {
                 $event = new ValidatedInput($data);
 

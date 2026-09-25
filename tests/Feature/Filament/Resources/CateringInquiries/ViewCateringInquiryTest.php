@@ -3,6 +3,7 @@
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Events\Marketing\CateringQuoteRequested;
+use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Filament\Resources\CateringInquiries\Pages\ViewCateringInquiry;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
@@ -79,6 +80,20 @@ test('view page labels past events and received deposits', function () {
         ->assertSee('Deposit received')
         ->assertSee('$25.00')
         ->assertDontSee('Suggested deposit:');
+});
+
+test('creating an inquiry with a past event date is rejected by the shared event fields', function () {
+    livewire(ListCateringInquiries::class)
+        ->callAction('create', data: [
+            'customer_name' => 'Maya Patel',
+            'customer_email' => 'maya@example.com',
+            'event_type' => 'Wedding',
+            'event_date' => now()->subDay()->toDateString(),
+            'guest_count' => 120,
+            'details' => 'Dessert reception.',
+            'status' => CateringInquiryStatus::Inquiry,
+        ])
+        ->assertHasFormErrors(['event_date']);
 });
 
 test('quote content renders item details and totals', function () {
@@ -328,13 +343,13 @@ test('edit customer action updates contact fields', function () {
     expect($inquiry->fresh()->customer_name)->toBe('New Name');
 });
 
-test('edit event details action updates the inquiry', function () {
+test('edit event details action updates the inquiry and allows a past event date', function () {
     $inquiry = CateringInquiry::factory()->create();
 
     livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('editEventDetails', data: [
             'event_type' => 'Wedding',
-            'event_date' => '2026-11-14',
+            'event_date' => now()->subDay()->toDateString(),
             'guest_count' => 72,
             'budget' => 1800.50,
             'details' => 'Dessert reception after the ceremony.',
@@ -345,7 +360,7 @@ test('edit event details action updates the inquiry', function () {
     $inquiry->refresh();
 
     expect($inquiry->event_type)->toBe('Wedding')
-        ->and($inquiry->event_date?->toDateString())->toBe('2026-11-14')
+        ->and($inquiry->event_date?->toDateString())->toBe(now()->subDay()->toDateString())
         ->and($inquiry->guest_count)->toBe(72)
         ->and($inquiry->budget?->dollars())->toBe(1800.50)
         ->and($inquiry->details)->toBe('Dessert reception after the ceremony.')
