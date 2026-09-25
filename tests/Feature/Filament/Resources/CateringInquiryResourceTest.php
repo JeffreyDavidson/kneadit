@@ -6,6 +6,8 @@ use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -112,6 +114,21 @@ test('can filter catering inquiries by event type', function () {
         ->filterTable('event_type', 'Wedding')
         ->assertCanSeeTableRecords(collect([$wedding]))
         ->assertCanNotSeeTableRecords(collect([$corporate]));
+});
+
+test('uses tenant catering event types for inquiry form and table filter options', function () {
+    settings(['catering_event_types' => json_encode(['Anniversary', 'School Function'])]);
+
+    livewire(ListCateringInquiries::class)
+        ->assertTableFilterExists('event_type', fn (SelectFilter $filter): bool => $filter->getOptions() === [
+            'Anniversary' => 'Anniversary',
+            'School Function' => 'School Function',
+        ])
+        ->mountAction(CreateAction::class)
+        ->assertFormFieldExists('event_type', fn (Select $field): bool => $field->getOptions() === [
+            'Anniversary' => 'Anniversary',
+            'School Function' => 'School Function',
+        ]);
 });
 
 test('can sort catering inquiries by customer name', function () {
