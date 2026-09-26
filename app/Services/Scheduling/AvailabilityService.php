@@ -23,12 +23,35 @@ class AvailabilityService
     {
         $dates = [];
         $today = Date::today();
+        $orderCounts = collect();
+
+        if ($days > 0) {
+            $lastDate = $today->copy()->addDays($days - 1);
+            $orderCounts = Order::query()
+                ->active()
+                ->whereBetween('delivery_date', [$today->toDateString(), $lastDate->toDateString()])
+                ->selectRaw('delivery_date, COUNT(*) as active_orders')
+                ->groupBy('delivery_date')
+                ->toBase()
+                ->get()
+                ->mapWithKeys(function (object $row): array {
+                    if (! is_string($row->delivery_date) || ! is_numeric($row->active_orders)) {
+                        return [];
+                    }
+
+                    return [Date::parse($row->delivery_date)->toDateString() => (int) $row->active_orders];
+                });
+        }
 
         for ($i = 0; $i < $days; $i++) {
             $date = $today->copy()->addDays($i);
             $dateStr = $date->toDateString();
 
-            $dates[] = $this->checkDate($dateStr, (int) $date->dayOfWeek);
+            $dates[] = $this->checkDate(
+                $dateStr,
+                (int) $date->dayOfWeek,
+                (int) $orderCounts->get($dateStr, 0),
+            );
         }
 
         return $dates;
@@ -37,7 +60,7 @@ class AvailabilityService
     /**
      * @return array{date: string, available: bool, reason: string, remaining_capacity: int}
      */
-    private function checkDate(string $dateStr, int $dayOfWeek): array
+    private function checkDate(string $dateStr, int $dayOfWeek, int $currentOrders): array
     {
         $status = DateOpenStatusQuery::forDate($dateStr);
 
@@ -47,9 +70,6 @@ class AvailabilityService
 
         $schedule = BusinessSchedule::query()->forDay($dayOfWeek)->first();
         $maxOrders = $schedule->max_orders ?? $this->settings->orders->defaultDailyCapacity;
-        $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
-            ->active()
-            ->count();
         $remaining = max(0, $maxOrders - $currentOrders);
 
         return [
