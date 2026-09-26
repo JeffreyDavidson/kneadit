@@ -2,7 +2,9 @@
 
 use App\Models\Orders\Order;
 use App\Services\Delivery\DeliveryRouteService;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -71,6 +73,32 @@ test('it loads orders with delivery addresses for a date', function () {
 
     expect($result)->toHaveCount(1)
         ->first()->delivery_address->toBe('123 Main St');
+});
+
+test('it does not load order items when building route order data', function () {
+    $date = now()->format('Y-m-d');
+    $order = Order::factory()->withItems(3)->create([
+        'delivery_date' => $date,
+        'delivery_time' => '14:00',
+        'delivery_address' => '123 Main St',
+        'total' => 50.00,
+    ]);
+
+    $itemQueries = [];
+    DB::listen(function (QueryExecuted $query) use (&$itemQueries): void {
+        if (str_starts_with(strtolower(ltrim($query->sql)), 'select') && str_contains(strtolower($query->sql), 'from "order_items"')) {
+            $itemQueries[] = $query->sql;
+        }
+    });
+
+    $result = resolve(DeliveryRouteService::class)->loadOrders($date);
+
+    expect($result)->toHaveCount(1)
+        ->and($result->first()['id'])->toBe($order->id)
+        ->and($result->first()['order_number'])->toBe($order->order_number)
+        ->and($result->first()['delivery_address'])->toBe('123 Main St')
+        ->and($result->first()['total'])->toBe(50.0)
+        ->and($itemQueries)->toBeEmpty();
 });
 
 test('it excludes orders with empty string delivery address', function () {

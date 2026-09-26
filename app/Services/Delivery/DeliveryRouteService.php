@@ -21,7 +21,7 @@ class DeliveryRouteService
      */
     public function loadOrders(string $date): Collection
     {
-        return Order::with(['customer', 'orderItems'])
+        return Order::with('customer')
             ->whereDate('delivery_date', $date)
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
