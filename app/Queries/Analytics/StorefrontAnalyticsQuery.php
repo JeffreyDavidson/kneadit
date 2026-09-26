@@ -116,9 +116,18 @@ class StorefrontAnalyticsQuery
     /** @return list<ConversionFunnelStep> */
     public function conversionFunnel(): array
     {
-        $homeViews = $this->uniqueSessionsForPage('home');
-        $menuViews = $this->uniqueSessionsForPage('menu');
-        $orderViews = $this->uniqueSessionsForPage('order');
+        $sessionCounts = $this->baseQuery()
+            ->whereIn('page', ['home', 'menu', 'order'])
+            ->select('page')
+            ->selectRaw('COUNT(DISTINCT session_id) as session_count')
+            ->groupBy('page')
+            ->toBase()
+            ->pluck('session_count', 'page')
+            ->map(static fn (mixed $count): int => is_numeric($count) ? (int) $count : 0);
+
+        $homeViews = $sessionCounts->get('home', 0);
+        $menuViews = $sessionCounts->get('menu', 0);
+        $orderViews = $sessionCounts->get('order', 0);
 
         $ordersQuery = Order::query();
         if ($this->startDate instanceof Carbon) {
@@ -174,13 +183,5 @@ class StorefrontAnalyticsQuery
         }
 
         return $query;
-    }
-
-    private function uniqueSessionsForPage(string $page): int
-    {
-        return (clone $this->baseQuery())
-            ->where('page', $page)
-            ->distinct()
-            ->count('session_id');
     }
 }

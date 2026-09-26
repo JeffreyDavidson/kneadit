@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Engagement\PageView;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -76,15 +78,55 @@ test('conversion funnel returns all steps with percentages and dropoff', functio
 });
 
 test('conversion funnel counts unique sessions and excludes confirmation reloads from order starts', function () {
+    $product = Product::factory()->create();
+
     PageView::query()->insert([
+        ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'home', 'session_id' => 'b', 'created_at' => now()],
+        ['page' => 'menu', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'menu', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'menu', 'session_id' => 'b', 'created_at' => now()],
         ['page' => 'order', 'session_id' => 'a', 'created_at' => now()],
         ['page' => 'order', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'order', 'session_id' => 'b', 'created_at' => now()],
         ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
         ['page' => 'order_confirmation', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'home', 'session_id' => 'outside-window', 'created_at' => now()->subWeek()->subDay()],
+    ]);
+    PageView::factory()->create([
+        'page' => 'home',
+        'session_id' => 'product-only',
+        'product_id' => $product->id,
+        'created_at' => now(),
     ]);
 
     $funnel = new StorefrontAnalyticsQuery(now()->startOfWeek())->conversionFunnel();
 
-    expect($funnel[2]->toArray())
-        ->toMatchArray(['label' => 'Order Page', 'count' => 1]);
+    expect($funnel[0]->toArray())
+        ->toMatchArray(['label' => 'Home', 'count' => 2])
+        ->and($funnel[1]->toArray())
+        ->toMatchArray(['label' => 'Menu', 'count' => 2])
+        ->and($funnel[2]->toArray())
+        ->toMatchArray(['label' => 'Order Page', 'count' => 2]);
+});
+
+test('conversion funnel aggregates page-view session counts in one query', function () {
+    PageView::query()->insert([
+        ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
+        ['page' => 'menu', 'session_id' => 'b', 'created_at' => now()],
+        ['page' => 'order', 'session_id' => 'c', 'created_at' => now()],
+    ]);
+
+    DB::connection()->flushQueryLog();
+    DB::connection()->enableQueryLog();
+
+    new StorefrontAnalyticsQuery(now()->startOfWeek())->conversionFunnel();
+
+    $pageViewQueries = collect(DB::connection()->getQueryLog())
+        ->filter(fn (array $query): bool => str_contains($query['query'], 'page_views'));
+
+    DB::connection()->disableQueryLog();
+
+    expect($pageViewQueries)->toHaveCount(1);
 });
