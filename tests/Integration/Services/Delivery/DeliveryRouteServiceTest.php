@@ -86,7 +86,9 @@ test('it does not load order items when building route order data', function () 
 
     $itemQueries = [];
     DB::listen(function (QueryExecuted $query) use (&$itemQueries): void {
-        if (str_starts_with(strtolower(ltrim($query->sql)), 'select') && str_contains(strtolower($query->sql), 'from "order_items"')) {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_starts_with(ltrim($sql), 'select') && str_contains($sql, 'from order_items')) {
             $itemQueries[] = $query->sql;
         }
     });
