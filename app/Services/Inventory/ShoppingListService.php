@@ -95,18 +95,16 @@ class ShoppingListService
             ];
 
             if ($bestSupplier) {
-                if (! isset($grouped[$bestSupplier->id])) {
-                    $grouped[$bestSupplier->id] = [
-                        'supplier' => [
-                            'id' => $bestSupplier->id,
-                            'name' => $bestSupplier->name,
-                            'email' => $bestSupplier->email,
-                            'phone' => $bestSupplier->phone,
-                        ],
-                        'items' => [],
-                        'total' => 0.0,
-                    ];
-                }
+                $grouped[$bestSupplier->id] ??= [
+                    'supplier' => [
+                        'id' => $bestSupplier->id,
+                        'name' => $bestSupplier->name,
+                        'email' => $bestSupplier->email,
+                        'phone' => $bestSupplier->phone,
+                    ],
+                    'items' => [],
+                    'total' => 0.0,
+                ];
 
                 $grouped[$bestSupplier->id]['items'][] = $item;
                 $grouped[$bestSupplier->id]['total'] += $item['subtotal'];
