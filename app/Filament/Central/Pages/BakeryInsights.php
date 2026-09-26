@@ -60,6 +60,12 @@ class BakeryInsights extends Page
         return $this->service()->getHealthSummaryStats();
     }
 
+    /** @return array{tenants: Collection<int, array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int}>, stats: array{average: float|int, healthy: int, at_risk: int, critical: int, total: int}} */
+    public function getTenantHealthSnapshot(): array
+    {
+        return $this->service()->getTenantHealthSnapshot();
+    }
+
     // ── Churn Alerts Tab Methods ──
 
     /** @return Collection<int, array<string, mixed>> */
