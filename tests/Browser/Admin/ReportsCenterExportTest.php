@@ -29,29 +29,20 @@ test('RFM report exports segment summaries and sample customers to CSV', functio
         JS);
 
     $page->assertSee('Export CSV');
-    $page->script(<<<'JS'
-        Livewire.dispatch('export-csv', {
-            type: 'rfm',
-            data: {
-                total: 1,
-                segments: {
-                    champions: {
-                        label: 'Champions',
-                        count: 1,
-                        description: 'Best customers',
-                        sampleCustomers: [{
-                            name: 'Sample Customer',
-                            email: 'sample@example.test',
-                            recency_days: 2,
-                            frequency: 10,
-                            monetary: 500,
-                        }],
-                    },
-                },
-            },
-        });
-        JS);
-    $page->waitForEvent('networkidle');
+    $page->click('Export CSV')
+        ->script(<<<'JS'
+            async () => {
+                const deadline = Date.now() + 5000;
+
+                while (window.__csvFilename === null && Date.now() < deadline) {
+                    await new Promise((resolve) => setTimeout(resolve, 50));
+                }
+
+                if (window.__csvFilename === null) {
+                    throw new Error('The Export CSV button did not trigger a download.');
+                }
+            }
+            JS);
 
     $csv = $page->script('async () => await window.__csvBlob?.text()');
 

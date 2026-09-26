@@ -141,6 +141,7 @@
                 <x-filament::icon icon="heroicon-o-printer" class="h-4 w-4" /> Print
             </button>
             <button
+                type="button"
                 wire:click="exportCsv"
                 class="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium transition hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
