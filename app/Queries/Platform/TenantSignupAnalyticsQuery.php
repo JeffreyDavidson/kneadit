@@ -15,6 +15,9 @@ class TenantSignupAnalyticsQuery
 
     private ?int $currentMonthSignups = null;
 
+    /** @var array{total: int, this_month: int, last_month: int}|null */
+    private ?array $summaryCounts = null;
+
     /** @return array<int, array{label: string, count: int}> */
     public function byMonth(): array
     {
@@ -74,5 +77,33 @@ class TenantSignupAnalyticsQuery
         return $this->currentMonthSignups ??= Tenant::query()->whereYear('created_at', now()->year)
             ->whereMonth('created_at', now()->month)
             ->count();
+    }
+
+    /** @return array{total: int, this_month: int, last_month: int} */
+    public function summaryCounts(): array
+    {
+        if ($this->summaryCounts !== null) {
+            return $this->summaryCounts;
+        }
+
+        $now = Date::now();
+        $monthStart = $now->copy()->startOfMonth();
+        $nextMonthStart = $monthStart->copy()->addMonth();
+        $previousMonth = $now->copy()->subMonth();
+        $counts = Tenant::query()
+            ->toBase()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw('COUNT(CASE WHEN created_at >= ? AND created_at < ? THEN 1 END) as this_month', [$monthStart, $nextMonthStart])
+            ->selectRaw('COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as last_month', [
+                $previousMonth->copy()->startOfMonth(),
+                $previousMonth->copy()->endOfMonth(),
+            ])
+            ->first();
+
+        return $this->summaryCounts = [
+            'total' => Arr::integer(['value' => $counts->total ?? 0], 'value', 0),
+            'this_month' => Arr::integer(['value' => $counts->this_month ?? 0], 'value', 0),
+            'last_month' => Arr::integer(['value' => $counts->last_month ?? 0], 'value', 0),
+        ];
     }
 }
