@@ -95,14 +95,21 @@ class ShoppingListService
             ];
 
             if ($bestSupplier) {
-                $grouped[$bestSupplier->id]['supplier'] = [
-                    'id' => $bestSupplier->id,
-                    'name' => $bestSupplier->name,
-                    'email' => $bestSupplier->email,
-                    'phone' => $bestSupplier->phone,
-                ];
+                if (! isset($grouped[$bestSupplier->id])) {
+                    $grouped[$bestSupplier->id] = [
+                        'supplier' => [
+                            'id' => $bestSupplier->id,
+                            'name' => $bestSupplier->name,
+                            'email' => $bestSupplier->email,
+                            'phone' => $bestSupplier->phone,
+                        ],
+                        'items' => [],
+                        'total' => 0.0,
+                    ];
+                }
+
                 $grouped[$bestSupplier->id]['items'][] = $item;
-                $grouped[$bestSupplier->id]['total'] = array_sum(array_column($grouped[$bestSupplier->id]['items'], 'subtotal'));
+                $grouped[$bestSupplier->id]['total'] += $item['subtotal'];
             } else {
                 $noSupplier[] = $item;
             }
