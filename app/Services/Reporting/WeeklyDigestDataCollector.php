@@ -26,10 +26,15 @@ class WeeklyDigestDataCollector
         $nextWeekEnd = now()->endOfWeek();
 
         $weekOrders = Order::query()->whereBetween('created_at', [$weekStart, $weekEnd]);
-
-        $totalOrders = (clone $weekOrders)->count();
+        $weekOrderStats = $weekOrders
+            ->toBase()
+            ->selectRaw('COUNT(*) as total_orders, COALESCE(SUM(total), 0) as total_revenue')
+            ->first();
+        $totalOrdersValue = $weekOrderStats?->total_orders;
+        $totalOrders = is_numeric($totalOrdersValue) ? (int) $totalOrdersValue : 0;
         // orders.total is bigint cents (migration 2026_04_22_201500).
-        $totalRevenue = Money::fromCents((int) (clone $weekOrders)->sum('total'));
+        $totalRevenueValue = $weekOrderStats?->total_revenue;
+        $totalRevenue = Money::fromCents(is_numeric($totalRevenueValue) ? (int) $totalRevenueValue : 0);
         $newCustomers = Customer::query()->whereBetween('created_at', [$weekStart, $weekEnd])->count();
         $averageOrderValue = $totalOrders > 0
             ? $totalRevenue->multiply(1 / $totalOrders)
