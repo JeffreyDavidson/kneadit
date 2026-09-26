@@ -20,16 +20,13 @@ class ProductSalesQuery
      */
     public static function topByRevenue(DateRange|array $range, int $limit = 10): Collection
     {
-        return self::aggregates($range)
-            ->with('product:id,name')
-            ->orderByDesc('revenue_cents')
-            ->limit($limit)
-            ->get()
-            ->map(fn (OrderItem $item): array => [
-                'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
-                'revenue' => Money::fromCents(Arr::integer($item->getAttributes(), 'revenue_cents', 0)),
-            ]);
+        return self::mapResults(
+            self::aggregates($range)
+                ->with('product:id,name')
+                ->orderByDesc('revenue_cents')
+                ->limit($limit)
+                ->get(),
+        );
     }
 
     /**
@@ -40,16 +37,13 @@ class ProductSalesQuery
      */
     public static function topByQuantity(DateRange|array $range, int $limit = 10): Collection
     {
-        return self::aggregates($range)
-            ->with('product:id,name')
-            ->orderByDesc('units_sold')
-            ->limit($limit)
-            ->get()
-            ->map(fn (OrderItem $item): array => [
-                'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
-                'revenue' => Money::fromCents(Arr::integer($item->getAttributes(), 'revenue_cents', 0)),
-            ]);
+        return self::mapResults(
+            self::aggregates($range)
+                ->with('product:id,name')
+                ->orderByDesc('units_sold')
+                ->limit($limit)
+                ->get(),
+        );
     }
 
     /**
@@ -69,5 +63,18 @@ class ProductSalesQuery
             ->whereIn('order_id', $orderIds)
             ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue_cents')
             ->groupBy('product_id');
+    }
+
+    /**
+     * @param  Collection<int, OrderItem>  $items
+     * @return Collection<int, array{name: string, units_sold: int, revenue: Money}>
+     */
+    private static function mapResults(Collection $items): Collection
+    {
+        return $items->map(fn (OrderItem $item): array => [
+            'name' => $item->product->name ?? 'Deleted Product',
+            'units_sold' => Arr::integer($item->getAttributes(), 'units_sold', 0),
+            'revenue' => Money::fromCents(Arr::integer($item->getAttributes(), 'revenue_cents', 0)),
+        ]);
     }
 }
