@@ -50,12 +50,7 @@ class StorefrontAnalyticsQuery
             return 0;
         }
 
-        $ordersQuery = Order::query();
-        if ($this->startDate instanceof Carbon) {
-            $ordersQuery->where('created_at', '>=', $this->startDate);
-        }
-
-        return round(($ordersQuery->count() / $orderPageViews) * 100, 1);
+        return round(($this->ordersQuery()->count() / $orderPageViews) * 100, 1);
     }
 
     /** @return Collection<int, PageViewCount> */
@@ -120,11 +115,7 @@ class StorefrontAnalyticsQuery
         $menuViews = $this->uniqueSessionsForPage('menu');
         $orderViews = $this->uniqueSessionsForPage('order');
 
-        $ordersQuery = Order::query();
-        if ($this->startDate instanceof Carbon) {
-            $ordersQuery->where('created_at', '>=', $this->startDate);
-        }
-        $completedOrders = $ordersQuery->count();
+        $completedOrders = $this->ordersQuery()->count();
 
         $counts = [
             ['label' => 'Home', 'count' => $homeViews],
@@ -168,6 +159,18 @@ class StorefrontAnalyticsQuery
     private function productQuery(): Builder
     {
         $query = PageView::query()->whereNotNull('product_id');
+
+        if ($this->startDate instanceof Carbon) {
+            $query->where('created_at', '>=', $this->startDate);
+        }
+
+        return $query;
+    }
+
+    /** @return Builder<Order> */
+    private function ordersQuery(): Builder
+    {
+        $query = Order::query();
 
         if ($this->startDate instanceof Carbon) {
             $query->where('created_at', '>=', $this->startDate);
