@@ -1,6 +1,5 @@
 <?php
 
-use App\DataTransferObjects\Platform\TenantOverviewMetrics;
 use App\Models\Platform\Tenant;
 use App\Queries\Platform\TenantOverviewQuery;
 use App\Services\Tenants\TenancyManager;
@@ -8,7 +7,7 @@ use JMac\Testing\Double;
 
 beforeEach(fn () => setUpCentralTest());
 
-test('returns typed overview metrics from the tenant database', function () {
+test('returns the tenant overview metrics required by the admin page', function () {
     $tenant = Tenant::factory()->create();
 
     $tenancyManager = Double::for(TenancyManager::class);
@@ -17,15 +16,15 @@ test('returns typed overview metrics from the tenant database', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    $overview = resolve(TenantOverviewQuery::class)->forTenant($tenant);
+    $overview = resolve(TenantOverviewQuery::class)->adminStats($tenant);
 
     expect($overview)
-        ->toBeInstanceOf(TenantOverviewMetrics::class)
-        ->and($overview->products)->toBe(0)
-        ->and($overview->categories)->toBe(0)
-        ->and($overview->orders)->toBe(0)
-        ->and($overview->customers)->toBe(0)
-        ->and($overview->reviews)->toBe(0)
-        ->and($overview->revenue)->toBe(0.0)
-        ->and($overview->lastOrder)->toBeNull();
+        ->toBe([
+            'products' => 0,
+            'orders' => 0,
+            'revenue' => 0.0,
+            'customers' => 0,
+            'reviews' => 0,
+            'last_order' => null,
+        ]);
 });

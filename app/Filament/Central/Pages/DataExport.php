@@ -3,8 +3,8 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
-use App\Queries\Platform\TenantDataCountsQuery;
 use App\Queries\Platform\TenantExportOptionsQuery;
+use App\Queries\Platform\TenantOverviewQuery;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -14,7 +14,7 @@ class DataExport extends Page
 {
     private TenantExportOptionsQuery $tenantExportOptionsQuery;
 
-    private TenantDataCountsQuery $tenantDataCountsQuery;
+    private TenantOverviewQuery $tenantOverviewQuery;
 
     #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
@@ -38,10 +38,10 @@ class DataExport extends Page
 
     public function boot(
         TenantExportOptionsQuery $tenantExportOptionsQuery,
-        TenantDataCountsQuery $tenantDataCountsQuery,
+        TenantOverviewQuery $tenantOverviewQuery,
     ): void {
         $this->tenantExportOptionsQuery = $tenantExportOptionsQuery;
-        $this->tenantDataCountsQuery = $tenantDataCountsQuery;
+        $this->tenantOverviewQuery = $tenantOverviewQuery;
     }
 
     /** @return array<string, mixed> */
@@ -66,7 +66,7 @@ class DataExport extends Page
         }
 
         try {
-            $this->counts = $this->tenantDataCountsQuery->forTenant($tenant);
+            $this->counts = $this->tenantOverviewQuery->exportCounts($tenant);
         } catch (\Throwable) {
             $this->counts = [];
         }
