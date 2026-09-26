@@ -30,7 +30,9 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ->where('email', '!=', '')
             ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with([
-                'orders' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date'),
+                'orders' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)
+                    ->latest('delivery_date')
+                    ->limit(1),
                 'customerReminders',
             ])
             ->get()
