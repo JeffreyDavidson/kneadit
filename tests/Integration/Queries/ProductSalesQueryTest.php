@@ -75,6 +75,27 @@ test('topByQuantity excludes cancelled orders', function () {
         ->and($result->first()['units_sold'])->toBe(3);
 });
 
+test('rankings retain a consistent result shape when a product is missing', function () {
+    $product = Product::factory()->create();
+    $order = Order::factory()->paid()->withDeliveryDate(now())->create();
+    $item = OrderItem::factory()->recycle($order, $product)->create([
+        'quantity' => 2,
+        'unit_price' => 12.34,
+    ]);
+
+    OrderItem::query()->whereKey($item->id)->update(['product_id' => null]);
+
+    $range = new DateRange(now()->subDay(), now()->addDay());
+    $expected = [
+        'name' => 'Deleted Product',
+        'units_sold' => 2,
+        'revenue' => Money::fromDollars(24.68),
+    ];
+
+    expect(ProductSalesQuery::topByRevenue($range)->first())->toEqual($expected)
+        ->and(ProductSalesQuery::topByQuantity($range)->first())->toEqual($expected);
+});
+
 test('topByQuantity respects the limit parameter', function () {
     $order = Order::factory()->paid()->withDeliveryDate(now())->create();
 
