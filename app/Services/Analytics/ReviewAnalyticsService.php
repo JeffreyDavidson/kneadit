@@ -11,23 +11,38 @@ use App\DataTransferObjects\Analytics\TopReviewedProduct;
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class ReviewAnalyticsService
 {
     public function getOverallStats(): ReviewAnalyticsSummary
     {
-        $totalReviews = Review::query()->count();
+        $stats = Review::query()
+            ->toBase()
+            ->selectRaw('COUNT(*) as total_reviews')
+            ->selectRaw('COALESCE(AVG(rating), 0) as average_rating')
+            ->selectRaw('COUNT(CASE WHEN is_approved = ? THEN 1 END) as approved_reviews', [true])
+            ->first();
+
+        if ($stats === null) {
+            return new ReviewAnalyticsSummary(0, 0, 0, 0);
+        }
+
+        $totalReviews = Arr::integer(['value' => $stats->total_reviews ?? 0], 'value', 0);
+        $approvedReviews = Arr::integer(['value' => $stats->approved_reviews ?? 0], 'value', 0);
 
         if ($totalReviews === 0) {
             return new ReviewAnalyticsSummary(0, 0, 0, 0);
         }
 
-        $averageRating = (float) Review::query()->avg('rating');
-        $approvedReviews = Review::query()->approved()->count();
+        $averageRating = Number::parseFloat(
+            (string) (is_scalar($stats->average_rating ?? null) ? $stats->average_rating : 0),
+        ) ?: 0.0;
         $approvalRate = ($approvedReviews / $totalReviews) * 100;
 
         return new ReviewAnalyticsSummary(

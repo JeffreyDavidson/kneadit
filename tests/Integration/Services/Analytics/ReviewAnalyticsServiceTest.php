@@ -4,6 +4,7 @@ use App\Models\Engagement\Review;
 use App\Services\Analytics\ReviewAnalyticsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -23,14 +24,36 @@ test('overall stats returns zero counts with no reviews', function () {
 test('overall stats calculates correctly with reviews', function () {
     Review::factory()->approved()->create(['rating' => 5]);
     Review::factory()->approved()->create(['rating' => 3]);
-    Review::factory()->create(['rating' => 4]);
+    Review::factory()->create(['rating' => 1]);
 
     $service = new ReviewAnalyticsService;
     $stats = $service->getOverallStats();
 
     expect($stats->totalReviews)->toBe(3)
         ->and($stats->approvedReviews)->toBe(2)
-        ->and($stats->averageRating)->toBe(4.0);
+        ->and($stats->averageRating)->toBe(3.0)
+        ->and($stats->approvalRate)->toBe(66.7);
+});
+
+test('overall stats uses one aggregate query', function () {
+    Review::factory()->approved()->create(['rating' => 5]);
+    Review::factory()->create(['rating' => 3]);
+
+    DB::connection()->flushQueryLog();
+    DB::connection()->enableQueryLog();
+
+    $reviewQueries = collect();
+
+    try {
+        new ReviewAnalyticsService()->getOverallStats();
+
+        $reviewQueries = collect(DB::connection()->getQueryLog())
+            ->filter(fn (array $query): bool => str_contains($query['query'], 'reviews'));
+    } finally {
+        DB::connection()->disableQueryLog();
+    }
+
+    expect($reviewQueries)->toHaveCount(1);
 });
 
 test('monthly trend aggregates the latest twelve calendar months', function () {
