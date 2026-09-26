@@ -2,9 +2,6 @@
 
 namespace App\Queries\Platform;
 
-use App\Models\Platform\Tenant;
-use Illuminate\Support\Facades\Date;
-
 class TenantAnalyticsSummaryQuery
 {
     public function __construct(
@@ -15,13 +12,14 @@ class TenantAnalyticsSummaryQuery
     /** @return array<int, array{label: string, value: string, hint: string, trend: 'up'|'down'|'flat'|'neutral'}> */
     public function kpis(): array
     {
-        $total = $this->signups->total();
-        $thisMonth = $this->signups->thisMonth();
+        $signupCounts = $this->signups->summaryCounts();
+        $total = $signupCounts['total'];
+        $thisMonth = $signupCounts['this_month'];
         $conversion = $this->subscriptions->trialConversion();
         $active = $conversion['converted'];
         $completedTrials = $active + $conversion['expired'];
         $conversionRate = $completedTrials > 0 ? round($active / $completedTrials * 100, 1) : 0.0;
-        $lastMonth = Tenant::query()->whereBetween('created_at', [Date::now()->subMonth()->startOfMonth(), Date::now()->subMonth()->endOfMonth()])->count();
+        $lastMonth = $signupCounts['last_month'];
 
         return [
             ['label' => 'Total Tenants', 'value' => (string) $total, 'hint' => $thisMonth > 0 ? "+{$thisMonth} this month" : 'No new signups yet', 'trend' => $thisMonth > 0 ? 'up' : 'flat'],
