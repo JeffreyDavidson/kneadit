@@ -56,7 +56,18 @@ class ProductTrendsService
      */
     private function groupByCategory(array $currentCounts, array $prevCounts): array
     {
-        $categories = Category::with(['products' => fn (HasMany $q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
+        $productIds = array_keys($currentCounts + $prevCounts);
+
+        if ($productIds === []) {
+            return [];
+        }
+
+        $categories = Category::with([
+            'products' => fn (HasMany $query) => $query
+                ->whereIn('products.id', $productIds)
+                ->orderBy('sort_order')
+                ->orderBy('name'),
+        ])->orderBy('sort_order')->get();
 
         $grouped = [];
         foreach ($categories as $category) {
