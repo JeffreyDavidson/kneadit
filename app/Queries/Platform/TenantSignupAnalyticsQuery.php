@@ -90,15 +90,18 @@ class TenantSignupAnalyticsQuery
         $monthStart = $now->copy()->startOfMonth();
         $nextMonthStart = $monthStart->copy()->addMonth();
         $previousMonth = $now->copy()->subMonth();
-        $counts = Tenant::query()
+        $query = Tenant::query()
             ->toBase()
             ->selectRaw('COUNT(*) as total')
-            ->selectRaw('COUNT(CASE WHEN created_at >= ? AND created_at < ? THEN 1 END) as this_month', [$monthStart, $nextMonthStart])
-            ->selectRaw('COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as last_month', [
+            ->selectRaw('COUNT(CASE WHEN created_at >= ? AND created_at < ? THEN 1 END) as this_month')
+            ->addBinding([$monthStart, $nextMonthStart], 'select')
+            ->selectRaw('COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as last_month')
+            // Keep period boundaries as bindings, never interpolate them into the SQL expression.
+            ->addBinding([
                 $previousMonth->copy()->startOfMonth(),
                 $previousMonth->copy()->endOfMonth(),
-            ])
-            ->first();
+            ], 'select');
+        $counts = $query->first();
 
         return $this->summaryCounts = [
             'total' => Arr::integer(['value' => $counts->total ?? 0], 'value', 0),
