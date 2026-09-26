@@ -3,7 +3,9 @@
 use App\Actions\Content\SyncProductPrimaryImage;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductImage;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -29,6 +31,26 @@ test('it marks the first image by sort order as primary', function () {
         ->and($images[0]->is_primary)->toBeTrue()
         ->and($images[1]->is_primary)->toBeFalse()
         ->and($images[2]->is_primary)->toBeFalse();
+});
+
+test('it only loads the first image when synchronizing the primary image', function () {
+    $product = Product::factory()->create();
+
+    ProductImage::factory()->for($product)->create(['sort_order' => 3]);
+    ProductImage::factory()->for($product)->create(['sort_order' => 1]);
+    ProductImage::factory()->for($product)->create(['sort_order' => 2]);
+
+    $imageSelects = [];
+    DB::listen(function (QueryExecuted $query) use (&$imageSelects): void {
+        if (str_starts_with(strtolower(ltrim($query->sql)), 'select') && str_contains(strtolower($query->sql), 'from "product_images"')) {
+            $imageSelects[] = strtolower($query->sql);
+        }
+    });
+
+    resolve(SyncProductPrimaryImage::class)($product->id);
+
+    expect($imageSelects)->toHaveCount(1)
+        ->and($imageSelects[0])->toContain('limit 1');
 });
 
 test('it promotes next image when primary is deleted', function () {
