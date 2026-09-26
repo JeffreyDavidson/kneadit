@@ -7,7 +7,7 @@ use App\Actions\Platform\DeleteTenantNote;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\Tenant;
-use App\Queries\Platform\TenantStatsQuery;
+use App\Queries\Platform\TenantOverviewQuery;
 use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -22,7 +22,7 @@ use Livewire\Attributes\Validate;
  */
 class ViewTenant extends ViewRecord
 {
-    private TenantStatsQuery $tenantStatsQuery;
+    private TenantOverviewQuery $tenantOverviewQuery;
 
     #[\Override]
     protected static string $resource = TenantResource::class;
@@ -33,9 +33,9 @@ class ViewTenant extends ViewRecord
     #[Validate(['required', 'min:3'])]
     public string $noteBody = '';
 
-    public function boot(TenantStatsQuery $tenantStatsQuery): void
+    public function boot(TenantOverviewQuery $tenantOverviewQuery): void
     {
-        $this->tenantStatsQuery = $tenantStatsQuery;
+        $this->tenantOverviewQuery = $tenantOverviewQuery;
     }
 
     #[\Override]
@@ -63,7 +63,7 @@ class ViewTenant extends ViewRecord
     public function getTenantStats(): array
     {
         try {
-            return $this->tenantStatsQuery->forTenant($this->record);
+            return $this->tenantOverviewQuery->adminStats($this->record);
         } catch (\Throwable) {
             return $this->emptyStats();
         }
