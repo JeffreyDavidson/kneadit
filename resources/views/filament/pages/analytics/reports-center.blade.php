@@ -522,46 +522,122 @@
                 let rows = [];
 
                 if (type === 'sales' && data.topProducts) {
-                    rows = [['Product', 'Units Sold', 'Revenue']];
-                    data.topProducts.forEach((p) => rows.push([p.name, p.units_sold, p.revenue]));
+                    rows = [['Record Type', 'Label', 'Date', 'Count', 'Amount', 'Units Sold']];
+                    rows.push(['Summary', 'Total Orders', '', data.totalOrders, '', '']);
+                    rows.push(['Summary', 'Total Revenue', '', '', data.totalRevenue, '']);
+                    rows.push(['Summary', 'Average Order Value', '', '', data.avgOrderValue, '']);
+                    Object.entries(data.ordersByStatus ?? {}).forEach(([status, count]) =>
+                        rows.push(['Orders by Status', status, '', count, '', '']),
+                    );
+                    data.topProducts.forEach((product) =>
+                        rows.push(['Top Product', product.name, '', '', product.revenue, product.units_sold]),
+                    );
+                    (data.revenueByDay ?? []).forEach((day) =>
+                        rows.push(['Revenue by Day', '', day.date, '', day.revenue, '']),
+                    );
                 } else if (type === 'customers' && data.topCustomers) {
-                    rows = [['Customer', 'Email', 'Orders', 'Total Spend']];
-                    data.topCustomers.forEach((c) => rows.push([c.name, c.email, c.order_count, c.total_spend]));
+                    rows = [['Record Type', 'Label', 'Email', 'Count', 'Amount', 'Month']];
+                    rows.push(['Summary', 'New Customers', '', data.newCustomers, '', '']);
+                    rows.push(['Summary', 'Repeat Rate (%)', '', '', data.repeatRate, '']);
+                    rows.push(['Summary', 'Repeat Customers', '', data.repeatCustomers, '', '']);
+                    rows.push(['Summary', 'Total Customers with Orders', '', data.totalCustomersWithOrders, '', '']);
+                    data.topCustomers.forEach((customer) =>
+                        rows.push([
+                            'Top Customer',
+                            customer.name,
+                            customer.email,
+                            customer.order_count,
+                            customer.total_spend,
+                            '',
+                        ]),
+                    );
+                    Object.entries(data.acquisitionByMonth ?? {}).forEach(([month, count]) =>
+                        rows.push(['Acquisition by Month', '', '', count, '', month]),
+                    );
                 } else if (type === 'products' && data.products) {
                     rows = [['Product', 'Price', 'Cost', 'Margin %', 'Units Sold', 'Revenue']];
-                    data.products.forEach((p) =>
-                        rows.push([p.name, p.price, p.cost, p.margin, p.units_sold, p.revenue]),
+                    data.products.forEach((product) =>
+                        rows.push([
+                            product.name,
+                            product.price,
+                            product.cost,
+                            product.margin,
+                            product.units_sold,
+                            product.revenue,
+                        ]),
                     );
                 } else if (type === 'financial' && data.monthly) {
-                    rows = [['Month', 'Revenue', 'Expenses', 'Profit']];
-                    data.monthly.forEach((m) => rows.push([m.month, m.revenue, m.expenses, m.profit]));
+                    rows = [['Record Type', 'Label', 'Amount', 'Revenue', 'Expenses', 'Profit']];
+                    rows.push(['Summary', 'Total Revenue', data.totalRevenue, '', '', '']);
+                    rows.push(['Summary', 'Total Expenses', data.totalExpenses, '', '', '']);
+                    rows.push(['Summary', 'Profit', data.profit, '', '', '']);
+                    rows.push(['Summary', 'Tax Deductible', data.deductible, '', '', '']);
+                    data.monthly.forEach((month) =>
+                        rows.push(['Monthly Breakdown', month.month, '', month.revenue, month.expenses, month.profit]),
+                    );
+                    (data.expensesByCategory ?? []).forEach((expense) =>
+                        rows.push(['Expenses by Category', expense.category, expense.amount, '', '', '']),
+                    );
                 } else if (type === 'inventory' && data.ingredients) {
-                    const windowLabel = `${data.usageWindowDays}-day window`;
                     rows = [
                         [
-                            'Ingredient',
-                            'Stock',
+                            'Record Type',
+                            'Name',
                             'Unit',
-                            'Threshold',
-                            `Daily Usage (avg/day, ${windowLabel})`,
-                            `Daily Depletion (avg/day, ${windowLabel})`,
-                            `Days Left (${windowLabel})`,
+                            'Current Stock',
+                            'Low Stock Threshold',
+                            'Low Stock',
+                            'Out of Stock',
+                            'Daily Usage',
+                            'Daily Depletion',
+                            'Days Until Stockout',
+                            'Cost per Unit',
+                            'Total Items',
+                            'Low Stock Items',
+                            'Out of Stock Items',
+                            'Usage Window Days',
                         ],
                     ];
-                    data.ingredients.forEach((i) =>
+                    rows.push([
+                        'Summary',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        data.totalItems,
+                        data.lowStockItems,
+                        data.outOfStockItems,
+                        data.usageWindowDays,
+                    ]);
+                    data.ingredients.forEach((ingredient) =>
                         rows.push([
-                            i.name,
-                            i.current_stock,
-                            i.unit,
-                            i.low_stock_threshold,
-                            i.daily_usage,
-                            i.daily_depletion,
-                            i.days_until_stockout,
+                            'Ingredient',
+                            ingredient.name,
+                            ingredient.unit,
+                            ingredient.current_stock,
+                            ingredient.low_stock_threshold,
+                            ingredient.is_low,
+                            ingredient.is_out,
+                            ingredient.daily_usage,
+                            ingredient.daily_depletion,
+                            ingredient.days_until_stockout,
+                            ingredient.cost_per_unit,
+                            '',
+                            '',
+                            '',
+                            data.usageWindowDays,
                         ]),
                     );
                 } else if (type === 'rfm' && data.segments) {
                     rows = [
                         [
+                            'Record Type',
                             'Segment',
                             'Customers in Segment',
                             'Description',
@@ -570,20 +646,34 @@
                             'Recency (days)',
                             'Frequency',
                             'Monetary',
+                            'Total Customers',
                         ],
                     ];
+                    rows.push(['Summary', '', '', '', '', '', '', '', '', data.total]);
 
                     Object.values(data.segments).forEach((segment) => {
                         const sampleCustomers = segment.sampleCustomers ?? [];
 
                         if (sampleCustomers.length === 0) {
-                            rows.push([segment.label, segment.count, segment.description, '', '', '', '', '']);
+                            rows.push([
+                                'Segment',
+                                segment.label,
+                                segment.count,
+                                segment.description,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                            ]);
 
                             return;
                         }
 
                         sampleCustomers.forEach((customer) =>
                             rows.push([
+                                'Sample Customer',
                                 segment.label,
                                 segment.count,
                                 segment.description,
@@ -592,6 +682,7 @@
                                 customer.recency_days,
                                 customer.frequency,
                                 customer.monetary,
+                                '',
                             ]),
                         );
                     });
