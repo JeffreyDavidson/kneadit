@@ -37,18 +37,49 @@ test('findRecipients returns customers whose last paid order exceeds reminder da
     settings(['repeat_reminder_days' => '14']);
 
     $customer = Customer::factory()->create(['email' => 'loyal@example.com']);
+    $lastPaidOrderDate = now()->subDays(30);
     Order::factory()
         ->for($customer)
         ->create([
             'payment_status' => PaymentStatus::Paid,
-            'delivery_date' => now()->subDays(30),
+            'delivery_date' => $lastPaidOrderDate,
+        ]);
+    Order::factory()
+        ->for($customer)
+        ->create([
+            'payment_status' => PaymentStatus::Paid,
+            'delivery_date' => now()->subDays(90),
+        ]);
+    Order::factory()
+        ->for($customer)
+        ->create([
+            'payment_status' => PaymentStatus::Unpaid,
+            'delivery_date' => now()->subDay(),
+        ]);
+
+    $secondCustomer = Customer::factory()->create(['email' => 'returning@example.com']);
+    Order::factory()
+        ->for($secondCustomer)
+        ->create([
+            'payment_status' => PaymentStatus::Paid,
+            'delivery_date' => now()->subDays(60),
+        ]);
+    Order::factory()
+        ->for($secondCustomer)
+        ->create([
+            'payment_status' => PaymentStatus::Paid,
+            'delivery_date' => now()->subDays(20),
         ]);
 
     $engagement = new RepeatOrderReminderEngagement;
     $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
-    expect($recipients)->toHaveCount(1)
-        ->and($recipients->first()->email)->toBe('loyal@example.com');
+    $recipientsByEmail = $recipients->keyBy('email');
+
+    expect($recipients)->toHaveCount(2)
+        ->and($recipientsByEmail['loyal@example.com']->context['last_order_date']->toDateString())->toBe($lastPaidOrderDate->toDateString())
+        ->and($recipientsByEmail['loyal@example.com']->model->orders)->toHaveCount(1)
+        ->and($recipientsByEmail['returning@example.com']->model->orders)->toHaveCount(1);
 });
 
 test('findRecipients excludes customers with recent orders', function () {
