@@ -9,6 +9,7 @@ use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
+use Illuminate\Support\Arr;
 
 final readonly class TenantComparisonMetricsQuery
 {
@@ -18,15 +19,23 @@ final readonly class TenantComparisonMetricsQuery
     {
         try {
             /** @var array{total_orders: int, month_orders: int, total_products: int, total_categories: int, avg_review: float|int|null} $metrics */
-            $metrics = $this->tenancyManager->withinTenant($tenant, fn (): array => [
-                'total_orders' => Order::query()->count(),
-                'month_orders' => Order::query()
-                    ->where('created_at', '>=', now()->startOfMonth())
-                    ->count(),
-                'total_products' => Product::query()->count(),
-                'total_categories' => Category::query()->count(),
-                'avg_review' => Review::query()->avg('rating'),
-            ]);
+            $metrics = $this->tenancyManager->withinTenant($tenant, function (): array {
+                $orderCounts = Order::query()
+                    ->selectRaw(
+                        'COUNT(*) as total_orders, COUNT(CASE WHEN created_at >= ? THEN 1 END) as month_orders',
+                        [now()->startOfMonth()],
+                    )
+                    ->toBase()
+                    ->first();
+
+                return [
+                    'total_orders' => Arr::integer((array) $orderCounts, 'total_orders', 0),
+                    'month_orders' => Arr::integer((array) $orderCounts, 'month_orders', 0),
+                    'total_products' => Product::query()->count(),
+                    'total_categories' => Category::query()->count(),
+                    'avg_review' => Review::query()->avg('rating'),
+                ];
+            });
         } catch (\Throwable) {
             $metrics = [];
         }
