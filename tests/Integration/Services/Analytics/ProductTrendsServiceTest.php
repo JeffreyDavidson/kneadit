@@ -6,7 +6,9 @@ use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Analytics\ProductTrendsService;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -26,15 +28,30 @@ test('returns products with order counts for the given month', function () {
         'product_id' => $product->id,
         'quantity' => 5,
     ]);
+    Product::factory()->inCategory($category)->create();
+
+    $productQuerySql = '';
+    $productQueryBindings = [];
+    DB::listen(function (QueryExecuted $query) use (&$productQuerySql, &$productQueryBindings): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from products')) {
+            $productQuerySql = $sql;
+            $productQueryBindings = $query->bindings;
+        }
+    });
 
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
     expect($result)
         ->toBeArray()
         ->toHaveCount(1)
+        ->and($result[0]['products'])->toHaveCount(1)
         ->and($result[0]['products'][0])
         ->name->toBe($product->name)
-        ->current->toBe(5);
+        ->current->toBe(5)
+        ->and($productQuerySql)->toContain('products.id in (?)')
+        ->and(array_slice($productQueryBindings, -1))->toBe([$product->id]);
 });
 
 test('includes change percentage comparing to previous month', function () {
@@ -161,9 +178,19 @@ test('excludes products with zero orders in both months', function () {
     $category = Category::factory()->create();
     Product::factory()->inCategory($category)->create();
 
+    $catalogQueries = 0;
+    DB::listen(function (QueryExecuted $query) use (&$catalogQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from categories') || str_contains($sql, 'from products')) {
+            $catalogQueries++;
+        }
+    });
+
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
-    expect($result)->toBeEmpty();
+    expect($result)->toBeEmpty()
+        ->and($catalogQueries)->toBe(0);
 });
 
 test('groups products by category', function () {
