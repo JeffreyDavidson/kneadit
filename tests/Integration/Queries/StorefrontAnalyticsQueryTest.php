@@ -56,6 +56,23 @@ test('conversion rate calculates correctly with orders', function () {
     expect($query->conversionRate())->toBe(50.0);
 });
 
+test('conversion rate and funnel apply the same order start-date filter', function () {
+    $startDate = now();
+    PageView::query()->insert([
+        ['page' => 'order', 'session_id' => 'a', 'created_at' => $startDate],
+        ['page' => 'order', 'session_id' => 'b', 'created_at' => $startDate],
+    ]);
+
+    Order::factory()->create(['created_at' => $startDate->copy()->subSecond()]);
+    Order::factory()->create(['created_at' => $startDate->copy()->addSecond()]);
+
+    $query = new StorefrontAnalyticsQuery($startDate);
+    $funnel = $query->conversionFunnel();
+
+    expect($query->conversionRate())->toBe(50.0)
+        ->and($funnel[3]->count)->toBe(1);
+});
+
 test('conversion funnel returns all steps with percentages and dropoff', function () {
     PageView::query()->insert([
         ['page' => 'home', 'session_id' => 'a', 'created_at' => now()],
