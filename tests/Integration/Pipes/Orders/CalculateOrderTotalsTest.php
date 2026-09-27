@@ -5,7 +5,9 @@ use App\Enums\Orders\DeliveryType;
 use App\Models\Inventory\Product;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\OrderPipelineData;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -31,6 +33,35 @@ test('calculates subtotal and total for active products', function () {
         ->and($result->total->dollars())->toBe(30.0)
         ->and($result->orderItems)->toHaveCount(1)
         ->and($result->cancelled)->toBeFalse();
+});
+
+test('loads only product fields needed for order totals', function () {
+    $product = Product::factory()->create(['price' => 10.00, 'is_active' => true]);
+    $data = new CreateOrderData(
+        customerName: 'Jane',
+        customerEmail: 'jane@example.com',
+        deliveryDate: now()->addDay()->format('Y-m-d'),
+        deliveryType: DeliveryType::Pickup->value,
+        items: [['product_id' => $product->id, 'quantity' => 2]],
+    );
+    $productQueries = [];
+
+    DB::listen(function (QueryExecuted $query) use (&$productQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from products')) {
+            $productQueries[] = $sql;
+        }
+    });
+
+    $result = (new CalculateOrderTotals)->handle(new OrderPipelineData($data), fn ($payload) => $payload);
+
+    expect($result->subtotal->dollars())->toBe(20.0)
+        ->and($productQueries)->toHaveCount(1);
+
+    $selectClause = explode(' from products', $productQueries[0], 2)[0];
+
+    expect($selectClause)->toBe('select id, is_active, price');
 });
 
 test('skips inactive products', function () {
