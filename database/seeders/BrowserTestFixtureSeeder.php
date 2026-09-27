@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Enums\Staff\UserRole;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\Survey;
@@ -26,6 +28,8 @@ class BrowserTestFixtureSeeder extends Seeder
 
     public const ADMIN_PASSWORD = 'browser-test-password';
 
+    public const RFM_CUSTOMER_EMAIL = 'browser-test-rfm@kneadit.test';
+
     public const REVIEW_ORDER_NUMBER = 'BROWSER-TEST-REVIEW';
 
     public const SURVEY_TITLE = 'Browser Test Survey';
@@ -37,6 +41,7 @@ class BrowserTestFixtureSeeder extends Seeder
         $this->seedAdminUser();
         $this->skipOnboarding();
         $this->seedReviewableOrder();
+        $this->seedRfmChampionCustomer();
         $this->seedActiveSurvey();
     }
 
@@ -77,6 +82,28 @@ class BrowserTestFixtureSeeder extends Seeder
                 ->for($order)
                 ->for($product)
                 ->create();
+        }
+    }
+
+    private function seedRfmChampionCustomer(): void
+    {
+        $customer = Customer::query()->updateOrCreate(
+            ['email' => self::RFM_CUSTOMER_EMAIL],
+            ['name' => 'Browser Test RFM Champion'],
+        );
+
+        foreach (range(1, 4) as $orderNumber) {
+            Order::query()->updateOrCreate(
+                ['order_number' => "BROWSER-TEST-RFM-{$orderNumber}"],
+                [
+                    'customer_id' => $customer->id,
+                    'status' => OrderStatus::Delivered,
+                    'payment_status' => PaymentStatus::Paid,
+                    'subtotal' => 125,
+                    'total' => 125,
+                    'delivery_date' => now()->subDays(5)->toDateString(),
+                ],
+            );
         }
     }
 
