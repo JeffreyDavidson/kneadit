@@ -9,18 +9,21 @@ class SyncProductPrimaryImage
 {
     public function __invoke(int $productId): void
     {
-        $images = ProductImage::query()->where('product_id', $productId)->orderBy('sort_order')->get();
+        $image = ProductImage::query()
+            ->where('product_id', $productId)
+            ->orderBy('sort_order')
+            ->first();
 
-        if ($images->isEmpty()) {
+        if (! $image) {
             return;
         }
 
         ProductImage::query()->where('product_id', $productId)->update(['is_primary' => false]);
-        $images->first()->updateQuietly(['is_primary' => true]);
+        $image->updateQuietly(['is_primary' => true]);
 
         $product = Product::query()->find($productId);
         if ($product) {
-            $product->updateQuietly(['image' => $images->first()->path]);
+            $product->updateQuietly(['image' => $image->path]);
         }
     }
 }

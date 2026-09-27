@@ -23,7 +23,12 @@ class SalesReport
             ->whereBetween('delivery_date', $range->toArray());
 
         $totalOrders = $orders->count();
-        $totalRevenue = RevenueQuery::total($range);
+        $dailyRevenueByDate = RevenueQuery::dailyBreakdown($range);
+        $totalRevenue = array_reduce(
+            array_values($dailyRevenueByDate),
+            static fn (Money $total, Money $dailyRevenue): Money => $total->add($dailyRevenue),
+            Money::zero(),
+        );
         $averageOrderValue = $totalOrders > 0
             ? $totalRevenue->multiply(1 / $totalOrders)
             : Money::zero();
@@ -46,7 +51,7 @@ class SalesReport
             ->all());
 
         /** @var list<SalesReportDay> $revenueByDay */
-        $revenueByDay = collect(RevenueQuery::dailyBreakdown($range))
+        $revenueByDay = collect($dailyRevenueByDate)
             ->map(static fn (Money $revenue, string $date): SalesReportDay => new SalesReportDay(
                 date: $date,
                 revenue: $revenue,

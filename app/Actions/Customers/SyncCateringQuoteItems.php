@@ -54,8 +54,7 @@ class SyncCateringQuoteItems
                 $inquiry->items()->create($attributes);
             }
 
-            $sumCents = $inquiry->items()->get()
-                ->sum(fn (CateringInquiryItem $item): int => $item->unit_price->cents() * $item->quantity);
+            $sumCents = $inquiry->items()->sum(DB::raw('unit_price * quantity'));
 
             $inquiry->update(['quoted_amount' => Money::fromCents((int) $sumCents)]);
         });

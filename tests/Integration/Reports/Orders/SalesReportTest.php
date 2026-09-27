@@ -7,7 +7,9 @@ use App\Models\Orders\OrderItem;
 use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -20,6 +22,8 @@ it('returns expected report keys', function () {
     $result = $report->generate($range);
 
     expect($result)->toBeInstanceOf(SalesReportResult::class)
+        ->and($result->totalRevenue)->toEqual(Money::zero())
+        ->and($result->revenueByDay)->toBeEmpty()
         ->and($result->toArray())->toHaveKeys(['totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay']);
 });
 
@@ -43,6 +47,15 @@ it('only includes active paid orders in sales metrics', function () {
     OrderItem::factory()->recycle($unpaidOrder, $product)->create(['quantity' => 50, 'unit_price' => 10.00]);
     OrderItem::factory()->recycle($cancelledOrder, $product)->create(['quantity' => 70, 'unit_price' => 10.00]);
 
+    $revenueAggregateQueries = 0;
+    DB::listen(function (QueryExecuted $query) use (&$revenueAggregateQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'sum(total)')) {
+            $revenueAggregateQueries++;
+        }
+    });
+
     $result = (new SalesReport)->generate(DateRange::fromStrings('2026-01-01', '2026-01-31'));
 
     expect($result->totalOrders)->toBe(1)
@@ -55,6 +68,7 @@ it('only includes active paid orders in sales metrics', function () {
         ->and($result->revenueByDay)->toHaveCount(1)
         ->and($result->revenueByDay[0]->date)->toBe('2026-01-15')
         ->and($result->revenueByDay[0]->revenue)->toEqual(Money::fromDollars(20))
+        ->and($revenueAggregateQueries)->toBe(1)
         ->and($result->toArray())->toMatchArray([
             'totalOrders' => 1,
             'totalRevenue' => 20.0,
