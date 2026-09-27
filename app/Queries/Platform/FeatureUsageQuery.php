@@ -97,16 +97,20 @@ class FeatureUsageQuery
             ->sort()
             ->values();
 
-        $logs = FeatureUsageLog::query()->whereBetween('date', [
-            Date::today()->subDays(6)->toDateString(),
-            Date::today()->toDateString(),
-        ])
-            ->get()
-            ->groupBy(fn (FeatureUsageLog $log): string => $log->feature.'|'.$log->date->toDateString());
-
-        $maximumCount = $logs->max(
-            fn (Collection $group): mixed => $group->sum('usage_count'),
+        $startDate = Date::today()->subDays(6)->toDateString();
+        $tomorrow = Date::tomorrow()->toDateString();
+        $logs = FeatureUsageLog::query()
+            ->select(['feature', 'date'])
+            ->selectRaw('SUM(usage_count) as total')
+            ->where('date', '>=', $startDate)
+            ->where('date', '<', $tomorrow)
+            ->groupBy('feature', 'date')
+            ->get();
+        $logsByFeatureAndDate = $logs->keyBy(
+            fn (FeatureUsageLog $log): string => $log->feature.'|'.$log->date->toDateString(),
         );
+
+        $maximumCount = $logs->max(fn (FeatureUsageLog $log): int => (int) $log->total);
         $maxCount = is_numeric($maximumCount) ? (int) $maximumCount : 1;
 
         $rows = [];
@@ -114,10 +118,9 @@ class FeatureUsageQuery
             $cells = [];
             foreach ($days as $day) {
                 $key = $feature.'|'.$day->toDateString();
-                $count = isset($logs[$key])
-                    ? Arr::integer(['count' => $logs[$key]->sum('usage_count')], 'count', 0)
-                    : 0;
-                $intensity = $maxCount > 0 ? $count / $maxCount : 0;
+                $log = $logsByFeatureAndDate->get($key);
+                $count = $log instanceof FeatureUsageLog ? (int) $log->total : 0;
+                $intensity = $maxCount > 0 ? (float) ($count / $maxCount) : 0.0;
                 $cells[] = [
                     'date' => $day->format('M d'),
                     'count' => $count,
