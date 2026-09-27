@@ -51,7 +51,9 @@ class BirthdayWidget extends Widget
         $entries = $this->cached("upcoming_{$limit}", [3600, 7200], function () use ($limit): array {
             $today = now();
 
-            return Customer::query()->whereNotNull('birthday')
+            return Customer::query()
+                ->select(['name', 'birthday'])
+                ->whereNotNull('birthday')
                 ->get()
                 ->map(function (Customer $customer) use ($today): ?array {
                     $next = $customer->birthday?->copy()->year($today->year);
