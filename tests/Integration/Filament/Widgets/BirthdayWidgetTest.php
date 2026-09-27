@@ -2,6 +2,8 @@
 
 use App\Filament\Widgets\BirthdayWidget;
 use App\Models\Customers\Customer;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -30,6 +32,31 @@ test('get upcoming birthdays includes customer with upcoming birthday', function
 
     expect($birthdays)->toHaveCount(1)
         ->and($birthdays->first()->customer_name)->toBe('Birthday Customer');
+});
+
+test('get upcoming birthdays selects only fields used for the widget entries', function () {
+    Customer::factory()->create([
+        'name' => 'Birthday Customer',
+        'birthday' => now()->addDays(5)->subYears(25),
+    ]);
+    $customerQueries = [];
+
+    DB::listen(function (QueryExecuted $query) use (&$customerQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from customers')) {
+            $customerQueries[] = $sql;
+        }
+    });
+
+    $birthdays = test()->widget->getUpcomingBirthdays();
+
+    expect($birthdays->first()->customer_name)->toBe('Birthday Customer')
+        ->and($customerQueries)->toHaveCount(1);
+
+    $selectClause = explode(' from customers', $customerQueries[0], 2)[0];
+
+    expect($selectClause)->toBe('select name, birthday');
 });
 
 test('get upcoming birthdays excludes customers beyond 30 days', function () {
