@@ -55,7 +55,11 @@ class SeasonalItem extends Model
     protected function isCurrentlyAvailable(): Attribute
     {
         return Attribute::make(
-            get: fn (): bool => $this->available_from <= Date::today() && $this->available_until >= Date::today(),
+            get: function (): bool {
+                $today = Date::today();
+
+                return $this->available_from <= $today && $this->available_until >= $today;
+            },
         );
     }
 }
