@@ -7,7 +7,9 @@ use App\Models\Orders\Order;
 use App\Reports\Customers\CustomerReport;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 use function Spatie\Snapshots\assertMatchesSnapshot;
 
@@ -98,4 +100,34 @@ test('only active paid orders contribute to customer metrics', function () {
         ->and($result->topCustomers[0]->totalSpend)->toEqual(Money::fromDollars(100))
         ->and($result->topCustomers[0]->orderCount)->toBe(1)
         ->and($serialized['topCustomers'][0]['total_spend'])->toBe(100.0);
+});
+
+test('filters top customer aggregates to customers with paid orders in range', function () {
+    $payingCustomer = Customer::factory()->create(['name' => 'Paying Customer']);
+    $unpaidCustomer = Customer::factory()->create(['name' => 'Unpaid Customer']);
+
+    Order::factory()->for($payingCustomer)->paid()->create([
+        'delivery_date' => '2026-03-10',
+        'total' => 100.00,
+    ]);
+    Order::factory()->for($unpaidCustomer)->unpaid()->create([
+        'delivery_date' => '2026-03-11',
+        'total' => 500.00,
+    ]);
+
+    $topCustomerQueries = [];
+    DB::listen(function (QueryExecuted $query) use (&$topCustomerQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from customers') && str_contains($sql, 'as total_spend')) {
+            $topCustomerQueries[] = $sql;
+        }
+    });
+
+    $result = (new CustomerReport)->generate(DateRange::forMonth(2026, 3));
+
+    expect($result->topCustomers)->toHaveCount(1)
+        ->and($result->topCustomers[0]->name)->toBe('Paying Customer')
+        ->and($topCustomerQueries)->toHaveCount(1)
+        ->and($topCustomerQueries[0])->toContain('where id in (select customer_id from orders');
 });
