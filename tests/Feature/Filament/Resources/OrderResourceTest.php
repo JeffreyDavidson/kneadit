@@ -8,6 +8,7 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,12 +49,24 @@ test('can render table columns', function () {
 
 test('can render the view order page', function () {
     $order = Order::factory()->recycle(test()->customer)->create();
+    OrderItem::factory()->for($order)->create([
+        'name' => 'Custom bread',
+        'quantity' => 2,
+        'unit_price' => 12.50,
+    ]);
     OrderMessage::factory()->for($order)->fromBaker()->create(['message' => 'Your bread is ready.']);
     OrderMessage::factory()->for($order)->fromCustomer()->create(['message' => 'Thank you, see you soon.']);
 
     livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk()
-        ->assertSee('Your bread is ready.')->assertSee('Thank you, see you soon.')->assertSeeHtml('flex justify-end')->assertSeeHtml('flex justify-start');
+        ->assertSee('Your bread is ready.')
+        ->assertSee('Thank you, see you soon.')
+        ->assertSee('Custom bread')
+        ->assertSee('$25.00')
+        ->assertSeeHtml('bg-amber-500/15')
+        ->assertSeeHtml('bg-red-500/15')
+        ->assertSeeHtml('flex justify-end')
+        ->assertSeeHtml('flex justify-start');
 });
 
 test('view order page renders the Catering section when the order is linked to an inquiry', function () {

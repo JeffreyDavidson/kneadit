@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Staff\User;
 use Database\Seeders\Content\BlogPostSeeder;
 use Database\Seeders\Customers\CustomerSeeder;
 use Database\Seeders\Customers\ReviewSeeder;
@@ -45,12 +44,9 @@ class DatabaseSeeder extends Seeder
      */
     protected function seedCentralData(): void
     {
-        User::query()->updateOrCreate(['email' => 'jeffrey@getkneadit.app'], [
-            'name' => 'Jeffrey Davidson',
-            'password' => bcrypt('password'),
-            'email_verified_at' => now(),
-            'role' => 'platform_admin',
-        ]);
+        if (app()->isLocal()) {
+            $this->call(LocalPlatformAdminSeeder::class);
+        }
 
         $this->call([
             CentralSeeder::class,

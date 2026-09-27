@@ -44,3 +44,15 @@ test('isCurrentlyAvailable method agrees with current scope', function () {
 
     expect($methodIds->all())->toBe($scopeIds->all());
 });
+
+test('current availability includes both date boundaries', function () {
+    test()->travelTo(now()->setTime(12, 0));
+    $today = now()->toDateString();
+    $item = SeasonalItem::factory()->create([
+        'available_from' => $today,
+        'available_until' => $today,
+    ]);
+
+    expect($item->is_currently_available)->toBeTrue()
+        ->and(SeasonalItem::query()->current()->whereKey($item)->exists())->toBeTrue();
+});

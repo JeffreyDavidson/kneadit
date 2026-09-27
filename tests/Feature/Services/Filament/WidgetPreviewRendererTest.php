@@ -3,10 +3,13 @@
 use App\Filament\Widgets\RecentOrdersWidget;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Filament\BladeComponentStateSnapshot;
 use App\Services\Filament\WidgetPreviewRenderer;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
+use ReflectionClass;
 use RuntimeException;
 use Tests\Support\Filament\FailingWidgetPreview;
 
@@ -64,4 +67,42 @@ test('does not expose widget exceptions in the placeholder and logs server-side 
         ->toContain('Widget preview is unavailable.')
         ->not->toContain('database password leaked');
 
+});
+
+test('restores blade component state after a preview render', function () {
+    $factory = app(ViewFactory::class);
+    $reflection = new ReflectionClass($factory);
+    $original = [];
+
+    foreach (['componentStack', 'slotStack', 'componentData'] as $property) {
+        $original[$property] = $reflection->getProperty($property)->getValue($factory);
+    }
+
+    $parentState = [
+        'componentStack' => ['parent-component'],
+        'slotStack' => ['parent-slot'],
+        'componentData' => ['parent-data'],
+    ];
+
+    try {
+        foreach ($parentState as $property => $value) {
+            $reflection->getProperty($property)->setValue($factory, $value);
+        }
+
+        $snapshot = BladeComponentStateSnapshot::capture($factory);
+
+        foreach (array_keys($parentState) as $property) {
+            $reflection->getProperty($property)->setValue($factory, ['leaked state']);
+        }
+
+        $snapshot->restore();
+
+        foreach ($parentState as $property => $value) {
+            expect($reflection->getProperty($property)->getValue($factory))->toBe($value);
+        }
+    } finally {
+        foreach ($original as $property => $value) {
+            $reflection->getProperty($property)->setValue($factory, $value);
+        }
+    }
 });

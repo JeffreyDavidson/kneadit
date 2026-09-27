@@ -9,7 +9,9 @@ use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
 use App\ValueObjects\Money;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use stdClass;
 
 class FinancialCalculator
 {
@@ -52,21 +54,33 @@ class FinancialCalculator
     {
         $orderRevenueByMonth = Order::query()->paidInYear($year)
             ->whereNotNull('delivery_date')
-            ->get(['delivery_date', 'total'])
-            ->groupBy(fn (Order $o): int => (int) $o->delivery_date?->month)
-            ->map(fn (Collection $group): Money => $group->reduce(fn (Money $sum, Order $o): Money => $sum->add($o->total), Money::zero()));
+            ->select('delivery_date')
+            ->selectRaw('SUM(total) as amount_in_cents')
+            ->groupBy('delivery_date')
+            ->toBase()
+            ->get()
+            ->groupBy(fn (object $row): int => $this->monthNumber($row->delivery_date))
+            ->map(fn (Collection $group): Money => $this->moneyFromAggregateRows($group));
 
         $incomeByMonth = Income::query()->forYear($year)
             ->whereNotNull('date')
-            ->get(['date', 'amount'])
-            ->groupBy(fn (Income $i): int => (int) $i->date?->month)
-            ->map(fn (Collection $group): Money => $group->reduce(fn (Money $sum, Income $i): Money => $sum->add($i->amount), Money::zero()));
+            ->select('date')
+            ->selectRaw('SUM(amount) as amount_in_cents')
+            ->groupBy('date')
+            ->toBase()
+            ->get()
+            ->groupBy(fn (object $row): int => $this->monthNumber($row->date))
+            ->map(fn (Collection $group): Money => $this->moneyFromAggregateRows($group));
 
         $expensesByMonth = Expense::query()->forYear($year)
             ->whereNotNull('date')
-            ->get(['date', 'amount'])
-            ->groupBy(fn (Expense $e): int => (int) $e->date?->month)
-            ->map(fn (Collection $group): Money => $group->reduce(fn (Money $sum, Expense $e): Money => $sum->add($e->amount), Money::zero()));
+            ->select('date')
+            ->selectRaw('SUM(amount) as amount_in_cents')
+            ->groupBy('date')
+            ->toBase()
+            ->get()
+            ->groupBy(fn (object $row): int => $this->monthNumber($row->date))
+            ->map(fn (Collection $group): Money => $this->moneyFromAggregateRows($group));
 
         $breakdown = [];
 
@@ -84,6 +98,25 @@ class FinancialCalculator
         }
 
         return collect($breakdown);
+    }
+
+    private function monthNumber(mixed $date): int
+    {
+        if (! is_string($date)) {
+            return 0;
+        }
+
+        return Carbon::parse($date)->month;
+    }
+
+    /** @param Collection<int, stdClass> $rows */
+    private function moneyFromAggregateRows(Collection $rows): Money
+    {
+        $amountInCents = $rows->sum('amount_in_cents');
+
+        return is_numeric($amountInCents)
+            ? Money::fromCents((int) $amountInCents)
+            : Money::zero();
     }
 
     /** @return Collection<int, FinancialExpenseBreakdown> */

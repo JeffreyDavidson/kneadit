@@ -3,7 +3,9 @@
 use App\Actions\Customers\SyncCateringQuoteItems;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -50,4 +52,43 @@ test('synchronizes quote items and recomputes the quoted total', function () {
         ->and($items->last()?->quantity)->toBe(2)
         ->and($items->last()?->special_instructions)->toBe('Vanilla')
         ->and($inquiry->quoted_amount?->dollars())->toBe(310.0);
+});
+
+test('recalculates the quote total with a database aggregate', function () {
+    $inquiry = CateringInquiry::factory()->create();
+    $item = CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
+        'name' => 'Cookies',
+        'quantity' => 2,
+        'unit_price' => 12.34,
+        'sort_order' => 0,
+    ]);
+
+    $itemSelects = [];
+    DB::listen(function (QueryExecuted $query) use (&$itemSelects): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_starts_with(ltrim($sql), 'select') && str_contains($sql, 'from catering_inquiry_items')) {
+            $itemSelects[] = $sql;
+        }
+    });
+
+    resolve(SyncCateringQuoteItems::class)($inquiry, [[
+        'id' => $item->id,
+        'name' => 'Cookies',
+        'quantity' => 2,
+        'unit_price' => 12.34,
+        'special_instructions' => null,
+    ]]);
+
+    expect($inquiry->quoted_amount?->dollars())->toBe(24.68)
+        ->and($itemSelects)->toHaveCount(2)
+        ->and($itemSelects[1])->toContain('sum(unit_price * quantity)');
+});
+
+test('sets the quote total to zero when no items remain', function () {
+    $inquiry = CateringInquiry::factory()->create(['quoted_amount' => 12.34]);
+
+    resolve(SyncCateringQuoteItems::class)($inquiry, []);
+
+    expect($inquiry->quoted_amount?->cents())->toBe(0);
 });

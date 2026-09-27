@@ -32,6 +32,12 @@ return [
 
     'marketing_url' => env('MARKETING_URL', 'https://getkneadit.test'),
 
+    'seed_admin' => [
+        'name' => env('SEED_ADMIN_NAME', 'Local Platform Administrator'),
+        'email' => env('SEED_ADMIN_EMAIL'),
+        'password' => env('SEED_ADMIN_PASSWORD'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | KneadIt SaaS Plans

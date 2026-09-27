@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\CateringInquiries\Pages;
 
 use App\Actions\Customers\CancelCateringInquiry;
-use App\Actions\Customers\ConfirmCateringInquiryBooking;
+use App\Actions\Customers\ConvertCateringInquiryToOrder;
 use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\ResendCateringQuote;
 use App\Actions\Customers\SendCateringQuote;
@@ -17,14 +17,15 @@ use App\Exceptions\Customers\InquiryNotConvertibleException;
 use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
+use App\Filament\Resources\CateringInquiries\Schemas\CateringEventDetailsFields;
 use App\Filament\Resources\CateringInquiries\Support\CateringQuoteItemMapper;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\CateringInquiryItem;
+use App\Services\Customers\CateringDepositCalculator;
 use App\Services\Settings\TenantSettings;
+use App\ViewModels\Filament\CateringInquiries\CateringInquiryViewModel;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -49,6 +50,20 @@ class ViewCateringInquiry extends ViewRecord
     {
         return [
             $this->cancelAction(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    #[\Override]
+    protected function getViewData(): array
+    {
+        return [
+            'viewModel' => new CateringInquiryViewModel(
+                inquiry: $this->record,
+                order: $this->record->order,
+                settings: app(TenantSettings::class),
+                depositCalculator: app(CateringDepositCalculator::class),
+            ),
         ];
     }
 
@@ -127,21 +142,7 @@ class ViewCateringInquiry extends ViewRecord
                 'dietary_requirements' => $this->record->dietary_requirements,
                 'venue_address' => $this->record->venue_address,
             ])
-            ->schema([
-                Select::make('event_type')
-                    ->options(function (TenantSettings $settings): array {
-                        $types = $settings->catering->eventTypes;
-
-                        return array_combine($types, $types);
-                    })
-                    ->required(),
-                DatePicker::make('event_date')->required(),
-                TextInput::make('guest_count')->numeric()->required()->minValue(1),
-                MoneyInput::make('budget')->placeholder('Optional'),
-                Textarea::make('details')->required()->rows(4)->label('What they want'),
-                Textarea::make('dietary_requirements')->rows(2),
-                Textarea::make('venue_address')->rows(2),
-            ])
+            ->schema(CateringEventDetailsFields::make())
             ->action(function (array $data, UpdateCateringEventDetails $updateEvent): void {
                 $event = new ValidatedInput($data);
 
@@ -259,9 +260,9 @@ class ViewCateringInquiry extends ViewRecord
             ->requiresConfirmation()
             ->modalHeading('Confirm this booking?')
             ->modalDescription('Creates an order so the rest of fulfillment (payment, messages, status) is tracked there.')
-            ->action(function (ConfirmCateringInquiryBooking $confirmBooking): void {
+            ->action(function (ConvertCateringInquiryToOrder $convertInquiry): void {
                 try {
-                    $order = $confirmBooking($this->record);
+                    $order = $convertInquiry($this->record);
                 } catch (InquiryNotConvertibleException $e) {
                     Notification::make()->title($e->getMessage())->danger()->send();
 
@@ -293,7 +294,7 @@ class ViewCateringInquiry extends ViewRecord
                     ->label('Deposit amount ($)')
                     ->numeric()
                     ->required()
-                    ->default(fn (RecordCateringDeposit $recordDeposit, TenantSettings $settings): float => $recordDeposit->suggestedAmount(
+                    ->default(fn (CateringDepositCalculator $calculator, TenantSettings $settings): float => $calculator->suggestedAmount(
                         $this->record,
                         $settings->catering->depositPercent,
                     )),

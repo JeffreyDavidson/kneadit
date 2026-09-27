@@ -23,9 +23,11 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 use Pest\Browser\Api\PendingAwaitablePage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
@@ -67,6 +69,14 @@ pest()->extend(TestCase::class)
     */
     ->beforeEach(function () {
         test()->connectionsToTransact = ['sqlite'];
+
+        config([
+            'app.url' => 'http://localhost',
+            'tenancy.tenant_domain' => null,
+        ]);
+
+        URL::forceRootUrl(null);
+        URL::setRequest(Request::create('http://localhost'));
     })
     ->afterEach($cleanupTenantFiles)
     ->in('Feature', 'Integration', 'Unit', 'Browser');

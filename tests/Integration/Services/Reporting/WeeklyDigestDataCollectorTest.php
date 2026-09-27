@@ -6,6 +6,7 @@ use App\Models\Staff\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -18,11 +19,12 @@ it('returns expected data keys', function () {
 
     expect($data)->toBeInstanceOf(WeeklyDigestData::class)
         ->and($data->stats)->toHaveKeys(['total_orders', 'total_revenue', 'new_customers', 'avg_order_value'])
+        ->and($data->stats['total_orders'])->toBe(0)
         ->and($data->stats['total_revenue'])->toEqual(Money::zero())
         ->and($data->stats['avg_order_value'])->toEqual(Money::zero());
 });
 
-it('keeps weekly revenue and average order value as money', function () {
+it('aggregates weekly orders and revenue without filtering cancelled orders', function () {
     $this->travelTo(now()->setDate(2026, 9, 16)->setTime(12, 0));
 
     Order::factory()->create([
@@ -35,8 +37,32 @@ it('keeps weekly revenue and average order value as money', function () {
         'created_at' => '2026-09-10 11:00:00',
     ]);
 
-    $data = new WeeklyDigestDataCollector(TenantSettings::resolve())->collect();
+    Order::factory()->cancelled()->create([
+        'total' => 9.99,
+        'created_at' => '2026-09-11 11:00:00',
+    ]);
 
-    expect($data->stats['total_revenue'])->toEqual(Money::fromDollars(32.34))
-        ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(16.17));
+    DB::connection()->flushQueryLog();
+    DB::connection()->enableQueryLog();
+
+    try {
+        $data = new WeeklyDigestDataCollector(TenantSettings::resolve())->collect();
+    } finally {
+        DB::connection()->disableQueryLog();
+    }
+
+    $orderAggregateQueries = collect(DB::connection()->getQueryLog())
+        ->filter(function (array $query): bool {
+            $sql = strtolower($query['query']);
+
+            return str_contains($sql, 'orders')
+                && str_contains($sql, 'created_at')
+                && str_contains($sql, 'count(')
+                && str_contains($sql, 'sum(');
+        });
+
+    expect($data->stats['total_orders'])->toBe(3)
+        ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(42.33))
+        ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(14.11))
+        ->and($orderAggregateQueries)->toHaveCount(1);
 });

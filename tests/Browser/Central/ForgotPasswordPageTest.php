@@ -1,6 +1,6 @@
 <?php
 
-$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
+$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'https://app.getkneadit.test');
 
 test('central forgot password page renders without JS errors', function () use ($centralUrl) {
     visit("{$centralUrl}/forgot-password")

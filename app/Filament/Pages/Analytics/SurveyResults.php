@@ -4,7 +4,9 @@ namespace App\Filament\Pages\Analytics;
 
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Engagement\Survey;
+use App\Models\Engagement\SurveyResponse;
 use App\Services\Export\CsvValueSanitizer;
+use App\ViewModels\Filament\Analytics\SurveyResultsViewModel;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\Computed;
@@ -88,9 +90,15 @@ class SurveyResults extends Page
     #[\Override]
     protected function getViewData(): array
     {
+        $survey = $this->survey;
+        $responses = $survey === null
+            ? (new SurveyResponse)->newCollection()
+            : $survey->responses;
+
         return [
             'surveys' => Survey::query()->orderBy('title')->pluck('title', 'id'),
-            'survey' => $this->survey,
+            'survey' => $survey,
+            'viewModel' => new SurveyResultsViewModel($survey, $responses),
         ];
     }
 }

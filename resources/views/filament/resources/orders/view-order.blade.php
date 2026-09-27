@@ -1,29 +1,3 @@
-@php
-    use App\Enums\Orders\DeliveryType;
-
-    $order = $record;
-
-    $statusColor = match ($order->status->value) {
-        'pending' => ['bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-        'confirmed' => ['bg' => 'bg-sky-500/15', 'border' => 'border-sky-500/25', 'text' => 'text-sky-400'],
-        'baking' => ['bg' => 'bg-orange-500/15', 'border' => 'border-orange-500/25', 'text' => 'text-orange-400'],
-        'ready' => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-        'delivered' => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-        'cancelled' => ['bg' => 'bg-red-500/15', 'border' => 'border-red-500/25', 'text' => 'text-red-400'],
-        default => ['bg' => 'bg-brand-800', 'border' => 'border-brand-700', 'text' => 'text-brand-200'],
-    };
-
-    $paymentColor = match ($order->payment_status->value) {
-        'paid' => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-        'unpaid' => ['bg' => 'bg-red-500/15', 'border' => 'border-red-500/25', 'text' => 'text-red-400'],
-        'refunded' => ['bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-        default => ['bg' => 'bg-brand-800', 'border' => 'border-brand-700', 'text' => 'text-brand-200'],
-    };
-
-    $isDelivery = $order->delivery_type === DeliveryType::Delivery;
-    $hasPickupContact = filled($order->pickup_contact_name);
-@endphp
-
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
     <div class="bg-brand-900 border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border p-6 md:flex-row md:items-center">
@@ -42,15 +16,15 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 {{ $statusColor['bg'] }} border {{ $statusColor['border'] }} {{ $statusColor['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
+            <span class="inline-flex items-center gap-1.5 {{ $viewModel->statusColor['bg'] }} border {{ $viewModel->statusColor['border'] }} {{ $viewModel->statusColor['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                 {{ $order->status->getLabel() }}
             </span>
-            <span class="inline-flex items-center gap-1.5 {{ $paymentColor['bg'] }} border {{ $paymentColor['border'] }} {{ $paymentColor['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
+            <span class="inline-flex items-center gap-1.5 {{ $viewModel->paymentColor['bg'] }} border {{ $viewModel->paymentColor['border'] }} {{ $viewModel->paymentColor['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
                 {{ $order->payment_status->getLabel() }}
             </span>
             <span class="bg-brand-800 border-brand-300/15 text-brand-200 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
-                @if ($isDelivery)
+                @if ($viewModel->isDelivery)
                     <x-heroicon-o-truck class="h-3 w-3" />
                 @else
                     <x-heroicon-o-shopping-bag class="h-3 w-3" />
@@ -68,14 +42,7 @@
     {{-- ============== TABS ============== --}}
     <div x-data="{ tab: 'overview' }" class="space-y-6">
         <div class="border-brand-300/12 flex items-center gap-1 overflow-x-auto border-b">
-            @php
-                $tabs = [
-                    'overview' => ['label' => 'Overview', 'icon' => 'chart-bar-square'],
-                    'items' => ['label' => 'Items', 'icon' => 'shopping-bag', 'count' => $order->orderItems->count()],
-                    'activity' => ['label' => 'Activity', 'icon' => 'clock', 'count' => $order->messages->count()],
-                ];
-            @endphp
-            @foreach ($tabs as $key => $t)
+            @foreach ($viewModel->tabs as $key => $t)
                 <button
                     type="button"
                     @click="tab = '{{ $key }}'"
@@ -212,10 +179,10 @@
                 {{-- Delivery / Pickup --}}
                 <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
                     <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
-                        {{ $isDelivery ? 'Delivery' : 'Pickup' }}
+                        {{ $viewModel->isDelivery ? 'Delivery' : 'Pickup' }}
                     </div>
                     <dl class="divide-brand-700/40 divide-y">
-                        @if ($isDelivery && $order->delivery_address)
+                        @if ($viewModel->isDelivery && $order->delivery_address)
                             <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Address</dt>
                                 <dd class="text-right text-[0.85rem] font-semibold whitespace-pre-wrap text-white">
@@ -235,7 +202,7 @@
                                 {{ $order->delivery_time?->format('g:i A') ?? '—' }}
                             </dd>
                         </div>
-                        @if ($hasPickupContact)
+                        @if ($viewModel->hasPickupContact)
                             <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Pickup Contact</dt>
                                 <dd class="text-right text-[0.85rem] font-semibold text-white">
@@ -330,7 +297,6 @@
                             </thead>
                             <tbody class="divide-brand-700/40 divide-y">
                                 @foreach ($order->orderItems as $item)
-                                    @php $lineTotal = $item->unit_price->dollars() * $item->quantity; @endphp
                                     <tr>
                                         <td class="py-3 pr-4">
                                             <div class="flex items-center gap-3">
@@ -364,7 +330,7 @@
                                             {{ $item->unit_price->formatted() }}
                                         </td>
                                         <td class="py-3 text-right font-semibold text-white tabular-nums">
-                                            ${{ number_format($lineTotal, 2) }}
+                                            {{ \App\Presenters\OrderItemPresenter::for($item)->totalPrice()->formatted() }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -384,9 +350,7 @@
                     <span class="text-brand-400 text-[0.75rem]">{{ $order->messages->count() }} total</span>
                 </div>
 
-                @php $messages = $order->messages->sortBy('created_at'); @endphp
-
-                @if ($messages->isEmpty())
+                @if ($viewModel->messages->isEmpty())
                     <div class="py-10 text-center">
                         <x-heroicon-o-chat-bubble-left-right class="text-brand-400/40 mx-auto mb-3 h-10 w-10" />
                         <div class="text-brand-200 text-[0.9rem] font-semibold">No messages yet</div>
@@ -396,7 +360,7 @@
                     </div>
                 @else
                     <div class="max-h-96 space-y-3 overflow-y-auto">
-                        @foreach ($messages as $msg)
+                        @foreach ($viewModel->messages as $msg)
                             @php $isBaker = $msg->sender_type->isBaker(); @endphp
                             <div @class(['flex', 'justify-end' => $isBaker, 'justify-start' => ! $isBaker])>
                                 <div @class(['max-w-md rounded-lg border px-4 py-3', 'bg-brand-700 border-brand-600' => $isBaker, 'bg-brand-800 border-brand-700' => ! $isBaker])>

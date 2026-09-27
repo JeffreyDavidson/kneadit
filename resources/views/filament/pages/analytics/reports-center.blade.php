@@ -141,7 +141,8 @@
                 <x-filament::icon icon="heroicon-o-printer" class="h-4 w-4" /> Print
             </button>
             <button
-                onclick="exportCsv()"
+                type="button"
+                wire:click="exportCsv"
                 class="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium transition hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
                 <x-filament::icon icon="heroicon-o-arrow-down-tray" class="h-4 w-4" /> Export CSV
@@ -517,59 +518,196 @@
     @endif
 
     <script @cspnonce>
-        function exportCsv() {
-            const data = @json($reportData);
-            const type = @json($activeReport);
-            let rows = [];
+        const registerCsvExportListener = () => {
+            Livewire.on('export-csv', ({ data, type }) => {
+                let rows = [];
 
-            if (type === 'sales' && data.topProducts) {
-                rows = [['Product', 'Units Sold', 'Revenue']];
-                data.topProducts.forEach((p) => rows.push([p.name, p.units_sold, p.revenue]));
-            } else if (type === 'customers' && data.topCustomers) {
-                rows = [['Customer', 'Email', 'Orders', 'Total Spend']];
-                data.topCustomers.forEach((c) => rows.push([c.name, c.email, c.order_count, c.total_spend]));
-            } else if (type === 'products' && data.products) {
-                rows = [['Product', 'Price', 'Cost', 'Margin %', 'Units Sold', 'Revenue']];
-                data.products.forEach((p) => rows.push([p.name, p.price, p.cost, p.margin, p.units_sold, p.revenue]));
-            } else if (type === 'financial' && data.monthly) {
-                rows = [['Month', 'Revenue', 'Expenses', 'Profit']];
-                data.monthly.forEach((m) => rows.push([m.month, m.revenue, m.expenses, m.profit]));
-            } else if (type === 'inventory' && data.ingredients) {
-                const windowLabel = `${data.usageWindowDays}-day window`;
-                rows = [
-                    [
-                        'Ingredient',
-                        'Stock',
-                        'Unit',
-                        'Threshold',
-                        `Daily Usage (avg/day, ${windowLabel})`,
-                        `Daily Depletion (avg/day, ${windowLabel})`,
-                        `Days Left (${windowLabel})`,
-                    ],
-                ];
-                data.ingredients.forEach((i) =>
+                if (type === 'sales' && data.topProducts) {
+                    rows = [['Record Type', 'Label', 'Date', 'Count', 'Amount', 'Units Sold']];
+                    rows.push(['Summary', 'Total Orders', '', data.totalOrders, '', '']);
+                    rows.push(['Summary', 'Total Revenue', '', '', data.totalRevenue, '']);
+                    rows.push(['Summary', 'Average Order Value', '', '', data.avgOrderValue, '']);
+                    Object.entries(data.ordersByStatus ?? {}).forEach(([status, count]) =>
+                        rows.push(['Orders by Status', status, '', count, '', '']),
+                    );
+                    data.topProducts.forEach((product) =>
+                        rows.push(['Top Product', product.name, '', '', product.revenue, product.units_sold]),
+                    );
+                    (data.revenueByDay ?? []).forEach((day) =>
+                        rows.push(['Revenue by Day', '', day.date, '', day.revenue, '']),
+                    );
+                } else if (type === 'customers' && data.topCustomers) {
+                    rows = [['Record Type', 'Label', 'Email', 'Count', 'Amount', 'Month']];
+                    rows.push(['Summary', 'New Customers', '', data.newCustomers, '', '']);
+                    rows.push(['Summary', 'Repeat Rate (%)', '', '', data.repeatRate, '']);
+                    rows.push(['Summary', 'Repeat Customers', '', data.repeatCustomers, '', '']);
+                    rows.push(['Summary', 'Total Customers with Orders', '', data.totalCustomersWithOrders, '', '']);
+                    data.topCustomers.forEach((customer) =>
+                        rows.push([
+                            'Top Customer',
+                            customer.name,
+                            customer.email,
+                            customer.order_count,
+                            customer.total_spend,
+                            '',
+                        ]),
+                    );
+                    Object.entries(data.acquisitionByMonth ?? {}).forEach(([month, count]) =>
+                        rows.push(['Acquisition by Month', '', '', count, '', month]),
+                    );
+                } else if (type === 'products' && data.products) {
+                    rows = [['Product', 'Price', 'Cost', 'Margin %', 'Units Sold', 'Revenue']];
+                    data.products.forEach((product) =>
+                        rows.push([
+                            product.name,
+                            product.price,
+                            product.cost,
+                            product.margin,
+                            product.units_sold,
+                            product.revenue,
+                        ]),
+                    );
+                } else if (type === 'financial' && data.monthly) {
+                    rows = [['Record Type', 'Label', 'Amount', 'Revenue', 'Expenses', 'Profit']];
+                    rows.push(['Summary', 'Total Revenue', data.totalRevenue, '', '', '']);
+                    rows.push(['Summary', 'Total Expenses', data.totalExpenses, '', '', '']);
+                    rows.push(['Summary', 'Profit', data.profit, '', '', '']);
+                    rows.push(['Summary', 'Tax Deductible', data.deductible, '', '', '']);
+                    data.monthly.forEach((month) =>
+                        rows.push(['Monthly Breakdown', month.month, '', month.revenue, month.expenses, month.profit]),
+                    );
+                    (data.expensesByCategory ?? []).forEach((expense) =>
+                        rows.push(['Expenses by Category', expense.category, expense.amount, '', '', '']),
+                    );
+                } else if (type === 'inventory' && data.ingredients) {
+                    rows = [
+                        [
+                            'Record Type',
+                            'Name',
+                            'Unit',
+                            'Current Stock',
+                            'Low Stock Threshold',
+                            'Low Stock',
+                            'Out of Stock',
+                            'Daily Usage',
+                            'Daily Depletion',
+                            'Days Until Stockout',
+                            'Cost per Unit',
+                            'Total Items',
+                            'Low Stock Items',
+                            'Out of Stock Items',
+                            'Usage Window Days',
+                        ],
+                    ];
                     rows.push([
-                        i.name,
-                        i.current_stock,
-                        i.unit,
-                        i.low_stock_threshold,
-                        i.daily_usage,
-                        i.daily_depletion,
-                        i.days_until_stockout,
-                    ]),
-                );
-            }
+                        'Summary',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        data.totalItems,
+                        data.lowStockItems,
+                        data.outOfStockItems,
+                        data.usageWindowDays,
+                    ]);
+                    data.ingredients.forEach((ingredient) =>
+                        rows.push([
+                            'Ingredient',
+                            ingredient.name,
+                            ingredient.unit,
+                            ingredient.current_stock,
+                            ingredient.low_stock_threshold,
+                            ingredient.is_low,
+                            ingredient.is_out,
+                            ingredient.daily_usage,
+                            ingredient.daily_depletion,
+                            ingredient.days_until_stockout,
+                            ingredient.cost_per_unit,
+                            '',
+                            '',
+                            '',
+                            data.usageWindowDays,
+                        ]),
+                    );
+                } else if (type === 'rfm' && data.segments) {
+                    rows = [
+                        [
+                            'Record Type',
+                            'Segment',
+                            'Customers in Segment',
+                            'Description',
+                            'Sample Customer',
+                            'Email',
+                            'Recency (days)',
+                            'Frequency',
+                            'Monetary',
+                            'Total Customers',
+                        ],
+                    ];
+                    rows.push(['Summary', '', '', '', '', '', '', '', '', data.total]);
 
-            if (rows.length === 0) return;
+                    Object.values(data.segments).forEach((segment) => {
+                        const sampleCustomers = segment.sampleCustomers ?? [];
 
-            const csv = rows.map((r) => r.map((v) => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = type + '-report.csv';
-            a.click();
-            URL.revokeObjectURL(url);
+                        if (sampleCustomers.length === 0) {
+                            rows.push([
+                                'Segment',
+                                segment.label,
+                                segment.count,
+                                segment.description,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                            ]);
+
+                            return;
+                        }
+
+                        sampleCustomers.forEach((customer) =>
+                            rows.push([
+                                'Sample Customer',
+                                segment.label,
+                                segment.count,
+                                segment.description,
+                                customer.name,
+                                customer.email,
+                                customer.recency_days,
+                                customer.frequency,
+                                customer.monetary,
+                                '',
+                            ]),
+                        );
+                    });
+                }
+
+                if (rows.length === 0) return;
+
+                const csv = rows
+                    .map((r) => r.map((v) => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(','))
+                    .join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = type + '-report.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        };
+
+        if (window.Livewire) {
+            registerCsvExportListener();
+        } else {
+            document.addEventListener('livewire:init', registerCsvExportListener, { once: true });
         }
     </script>
 </x-filament-panels::page>

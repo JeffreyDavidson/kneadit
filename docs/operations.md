@@ -183,7 +183,7 @@ Quality workflows normally run for pull requests. If GitHub does not deliver a p
 
 Browser tests use Pest Browser/Playwright against live local URLs. Defaults are:
 
-- `BROWSER_TEST_CENTRAL_URL=http://kneadit.test`
+- `BROWSER_TEST_CENTRAL_URL=https://app.getkneadit.test`
 - `BROWSER_TEST_STOREFRONT_URL=http://browser-test.kneadit.test`
 
 The Browser Smoke workflow starts and stops bounded Laravel servers on dynamically allocated ports. It uses the IPv4 loopback for the central app and the IPv6 loopback for the tenant, so the release gate does not depend on Herd, local DNS services, or fixed ports shared with other processes.

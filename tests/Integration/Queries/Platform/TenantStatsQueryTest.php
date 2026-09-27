@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Platform\Tenant;
-use App\Queries\Platform\TenantStatsQuery;
+use App\Queries\Platform\TenantOverviewQuery;
 use App\Services\Tenants\TenancyManager;
 use JMac\Testing\Double;
 
@@ -17,7 +17,7 @@ it('returns tenant statistics from the tenant database', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    expect(resolve(TenantStatsQuery::class)->forTenant($tenant))
+    expect(resolve(TenantOverviewQuery::class)->adminStats($tenant))
         ->toBe([
             'products' => 0,
             'orders' => 0,

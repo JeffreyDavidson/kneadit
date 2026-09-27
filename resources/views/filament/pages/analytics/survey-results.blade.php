@@ -25,74 +25,55 @@
         </div>
 
         @if ($survey)
-            @php
-                $questions = $survey->questions ?? [];
-                $responses = $survey->responses;
-            @endphp
+            <div class="text-sm text-gray-500">{{ $viewModel->responseCount }} responses</div>
 
-            <div class="text-sm text-gray-500">{{ $responses->count() }} responses</div>
-
-            @if ($responses->isEmpty())
+            @if ($viewModel->responseCount === 0)
                 <p class="text-gray-500 italic">No responses yet.</p>
             @else
                 <div class="space-y-6">
-                    @foreach ($questions as $index => $question)
+                    @foreach ($viewModel->questionResults as $index => $result)
                         <div class="rounded-xl border bg-white p-5 shadow-sm dark:bg-gray-800">
-                            <h4 class="mb-3 text-lg font-semibold">{{ $index + 1 }}. {{ $question['question'] }}</h4>
+                            <h4 class="mb-3 text-lg font-semibold">{{ $index + 1 }}. {{ $result['question'] }}</h4>
 
-                            @if ($question['type'] === 'rating')
-                                @php
-                                    $ratings = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter()->map(fn ($v) => (int) $v);
-                                    $avg = $ratings->count() ? round($ratings->avg(), 1) : 0;
-                                    $distribution = collect(range(1, 5))->mapWithKeys(fn ($r) => [$r => $ratings->filter(fn ($v) => $v === $r)->count()]);
-                                    $maxCount = max($distribution->max(), 1);
-                                @endphp
+                            @if ($result['type'] === 'rating')
                                 <p class="mb-3 text-2xl font-bold">
-                                    {{ $avg }} / 5
-                                    <span class="text-sm font-normal text-gray-500">({{ $ratings->count() }} ratings)</span>
+                                    {{ $result['average'] }} / 5
+                                    <span class="text-sm font-normal text-gray-500">({{ $result['answerCount'] }} ratings)</span>
                                 </p>
                                 <div class="space-y-1">
-                                    @foreach ($distribution->reverse() as $star => $count)
+                                    @foreach ($result['ratingDistribution'] as $rating)
                                         <div class="flex items-center gap-2 text-sm">
-                                            <span class="w-8 text-right">{{ $star }}/5</span>
+                                            <span class="w-8 text-right">{{ $rating['rating'] }}/5</span>
                                             <div class="h-4 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                                                 <div
                                                     class="h-full rounded-full bg-amber-500 transition-all"
-                                                    style="width: {{ ($count / $maxCount) * 100 }}%"
+                                                    style="width: {{ $rating['percentage'] }}%"
                                                 ></div>
                                             </div>
-                                            <span class="w-8 text-gray-500">{{ $count }}</span>
+                                            <span class="w-8 text-gray-500">{{ $rating['count'] }}</span>
                                         </div>
                                     @endforeach
                                 </div>
 
-                            @elseif ($question['type'] === 'multiple_choice')
-                                @php
-                                    $choices = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter();
-                                    $total = $choices->count() ?: 1;
-                                    $breakdown = $choices->countBy()->sortDesc();
-                                @endphp
+                            @elseif ($result['type'] === 'multiple_choice')
                                 <div class="space-y-2">
-                                    @foreach ($breakdown as $option => $count)
+                                    @foreach ($result['choiceBreakdown'] as $choice)
                                         <div class="flex items-center gap-2 text-sm">
-                                            <span class="w-40 truncate">{{ $option }}</span>
+                                            <span class="w-40 truncate">{{ $choice['choice'] }}</span>
                                             <div class="h-4 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                                                 <div
                                                     class="h-full rounded-full bg-blue-500 transition-all"
-                                                    style="width: {{ ($count / $total) * 100 }}%"
+                                                    style="width: {{ $choice['percentage'] }}%"
                                                 ></div>
                                             </div>
-                                            <span class="w-20 text-right text-gray-500">{{ round(($count / $total) * 100) }}% ({{ $count }})</span>
+                                            <span class="w-20 text-right text-gray-500">{{ $choice['percentage'] }}% ({{ $choice['count'] }})</span>
                                         </div>
                                     @endforeach
                                 </div>
 
-                            @elseif ($question['type'] === 'text')
-                                @php
-                                    $texts = $responses->pluck('answers')->map(fn ($a) => $a[$index] ?? null)->filter();
-                                @endphp
+                            @elseif ($result['type'] === 'text')
                                 <div class="max-h-64 space-y-2 overflow-y-auto">
-                                    @foreach ($texts as $text)
+                                    @foreach ($result['textAnswers'] as $text)
                                         <div class="rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-900">
                                             {{ $text }}
                                         </div>

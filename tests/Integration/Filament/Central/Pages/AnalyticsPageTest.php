@@ -3,12 +3,15 @@
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Central\Pages\Analytics;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpCentralTest();
     test()->page = new Analytics;
 });
+
+afterEach(fn () => Date::setTestNow());
 
 test('get signups by month returns 12 months', function () {
     $result = test()->page->getSignupsByMonth();
@@ -104,6 +107,56 @@ test('get this month signups', function () {
     createTenant(['id' => 'm2', 'name' => 'M2', 'email' => 'm2@test.com', 'plan' => SubscriptionTier::Starter]);
 
     expect(test()->page->getThisMonthSignups())->toBe(2);
+});
+
+test('get kpis aggregates signup periods while preserving month boundaries', function () {
+    Date::setTestNow('2026-09-15 12:00:00');
+
+    createTenant(['id' => 'current-start', 'created_at' => '2026-09-01 00:00:00']);
+    createTenant(['id' => 'current-end', 'created_at' => '2026-09-30 23:59:59']);
+    createTenant(['id' => 'next-month', 'created_at' => '2026-10-01 00:00:00']);
+    createTenant(['id' => 'previous-start', 'created_at' => '2026-08-01 00:00:00']);
+    createTenant(['id' => 'previous-end', 'created_at' => '2026-08-31 23:59:59']);
+    createTenant(['id' => 'before-previous', 'created_at' => '2026-07-31 23:59:59']);
+
+    $connection = DB::connection('central');
+    $connection->flushQueryLog();
+    $connection->enableQueryLog();
+
+    try {
+        $kpis = test()->page->getKpis();
+    } finally {
+        $connection->disableQueryLog();
+    }
+
+    $tenantQueryCount = collect($connection->getQueryLog())
+        ->filter(fn (array $query): bool => str_contains(strtolower($query['query']), 'tenants'))
+        ->count();
+
+    expect($kpis[0])->toMatchArray([
+        'label' => 'Total Tenants',
+        'value' => '6',
+        'hint' => '+2 this month',
+        'trend' => 'up',
+    ])
+        ->and($kpis[1])->toMatchArray([
+            'label' => 'New This Month',
+            'value' => '2',
+            'hint' => '↑ 0% vs. last month (2)',
+            'trend' => 'flat',
+        ])
+        ->and($tenantQueryCount)->toBe(2);
+});
+
+test('get kpis reports first month with signups when previous month is empty', function () {
+    Date::setTestNow('2026-09-15 12:00:00');
+    createTenant(['id' => 'first-signup', 'created_at' => '2026-09-01 00:00:00']);
+
+    expect(test()->page->getKpis()[1])->toMatchArray([
+        'value' => '1',
+        'hint' => 'First month with signups',
+        'trend' => 'up',
+    ]);
 });
 
 test('get avg days on trial', function () {

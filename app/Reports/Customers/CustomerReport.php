@@ -7,6 +7,7 @@ use App\DataTransferObjects\Customers\CustomerReportTopCustomer;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,10 @@ class CustomerReport
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
         $topCustomers = array_values(Customer::query()
+            ->whereIn('id', Order::query()
+                ->active()
+                ->paidInDateRange($range)
+                ->select('customer_id'))
             ->withPaidOrderMetrics($range)
             ->orderByDesc('total_spend')
             ->get()

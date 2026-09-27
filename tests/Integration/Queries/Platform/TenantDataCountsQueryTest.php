@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Platform\Tenant;
-use App\Queries\Platform\TenantDataCountsQuery;
+use App\Queries\Platform\TenantOverviewQuery;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\DB;
 use JMac\Testing\Double;
@@ -17,7 +17,7 @@ test('counts tenant data inside the tenant context', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    expect(resolve(TenantDataCountsQuery::class)->forTenant($tenant))
+    expect(resolve(TenantOverviewQuery::class)->exportCounts($tenant))
         ->toBe([
             'products' => 0,
             'categories' => 0,
@@ -49,5 +49,5 @@ test('counts customers separately from staff users', function () {
 
     app()->instance(TenancyManager::class, $tenancyManager);
 
-    expect(resolve(TenantDataCountsQuery::class)->forTenant($tenant)['customers'])->toBe(1);
+    expect(resolve(TenantOverviewQuery::class)->exportCounts($tenant)['customers'])->toBe(1);
 });

@@ -11,7 +11,7 @@ Prerequisites:
 - PHP 8.5 with the extensions required by Laravel and SQLite
 - Composer
 - Node.js 24+ and npm
-- A local domain that resolves `kneadit.test` and `*.kneadit.test` to the application (Laravel Herd supplies this on the primary development machine)
+- Local Herd domains: `app.getkneadit.test` for the application and `getkneadit.test` for the separate marketing site. Tenant development hosts continue to use `*.kneadit.test`.
 
 Install the application:
 
@@ -21,13 +21,15 @@ composer run setup
 
 The setup script installs PHP and JavaScript dependencies, creates `.env`, generates an application key, runs central migrations, and builds frontend assets. Review `.env` before using integrations. The default local configuration uses SQLite, the database queue, log mail, and no live Sentry or payment credentials.
 
+To create or update your local platform administrator, set `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` in `.env`, then run `php artisan db:seed`. The administrator seeder runs only in the local environment and creates no account when email or password is unset; credentials are not committed.
+
 Start the application, queue listener, log viewer, and Vite development server:
 
 ```bash
 composer run dev
 ```
 
-The central application is expected at `http://kneadit.test`. Tenant storefronts use subdomains such as `http://example-bakery.kneadit.test`.
+The central application is expected at `https://app.getkneadit.test`. Tenant storefronts use subdomains such as `http://example-bakery.kneadit.test`.
 
 ## Common commands
 

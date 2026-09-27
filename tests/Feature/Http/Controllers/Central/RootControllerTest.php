@@ -22,20 +22,19 @@ function renderRootFor(?Tenant $tenant = null): View|Response
     return resolve(RootController::class)(resolve(HomeController::class));
 }
 
-test('central requests redirect to the standalone marketing site', function () {
+test('central requests redirect into the application admin', function () {
     $response = renderRootFor();
 
     expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->headers->get('Location'))->toBe('https://getkneadit.test');
+        ->and(parse_url($response->headers->get('Location'), PHP_URL_PATH))->toBe('/admin');
 });
 
-test('the central home route redirects to the standalone marketing site', function () {
-    config(['tenancy.central_domains' => ['kneadit.test']]);
-    config(['kneadit.marketing_url' => 'https://getkneadit.test']);
+test('the central home route stays on the application host', function () {
+    config(['tenancy.central_domains' => ['app.getkneadit.test']]);
 
-    $response = get('https://kneadit.test/');
+    $response = get('https://app.getkneadit.test/');
 
-    $response->assertRedirect('https://getkneadit.test');
+    $response->assertRedirect('https://app.getkneadit.test/admin');
 });
 
 test('active tenant requests render the storefront home page', function () {

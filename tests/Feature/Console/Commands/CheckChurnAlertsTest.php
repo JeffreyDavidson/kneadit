@@ -1,8 +1,11 @@
 <?php
 
+use App\DataTransferObjects\Platform\TenantChurnMetrics;
+use App\DataTransferObjects\Platform\TenantHealthMetrics;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\AdminAuditLog;
-use App\Services\Tenants\TenantHealthService;
+use App\Models\Platform\Tenant;
+use App\Queries\Platform\TenantInsightsMetricsQuery;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use JMac\Testing\Double;
@@ -13,10 +16,28 @@ beforeEach(function () {
 
 function doubleCommandHealthService(array $healthData = [], int $recentOrders = 0): void
 {
-    $healthService = Double::for(TenantHealthService::class);
-    $healthService->allows('getTenantHealthData')->returns(collect($healthData));
-    $healthService->allows('getRecentOrderCount')->returns($recentOrders);
-    app()->instance(TenantHealthService::class, $healthService);
+    $healthByTenant = collect($healthData)->keyBy('id');
+    $metrics = Tenant::query()->get()->map(function (Tenant $tenant) use ($healthByTenant, $recentOrders): TenantChurnMetrics {
+        $health = $healthByTenant->get($tenant->id);
+        $isHealthy = ($health['health_score'] ?? 0) >= 40;
+        $healthMetrics = $health === null ? null : new TenantHealthMetrics(
+            tenant: $tenant,
+            lastUserActivityAt: $isHealthy ? now()->toDateTimeString() : null,
+            totalOrders: $isHealthy ? 50 : 0,
+            totalProducts: $isHealthy ? 20 : 0,
+            totalCategories: $isHealthy ? 1 : 0,
+        );
+
+        return new TenantChurnMetrics(
+            tenant: $tenant,
+            healthMetrics: $healthMetrics,
+            recentOrderCount: (int) ($health['recent_order_count'] ?? $recentOrders),
+        );
+    });
+
+    $metricsQuery = Double::for(TenantInsightsMetricsQuery::class);
+    $metricsQuery->allows('churn')->returns($metrics);
+    app()->instance(TenantInsightsMetricsQuery::class, $metricsQuery);
 }
 
 test('command runs without errors', function () {

@@ -136,6 +136,26 @@ test('groups ingredients by supplier with best price', function () {
         ->and($result[$supplier->id]['items'])->not->toBeEmpty();
 });
 
+test('accumulates supplier totals from rounded item subtotals', function () {
+    $supplier = Supplier::factory()->create();
+
+    foreach ([10, 20, 33] as $unitPrice) {
+        $ingredient = Ingredient::factory()->lowStock()->create();
+        $ingredient->suppliers()->attach($supplier->id, [
+            'unit_price' => $unitPrice,
+            'minimum_order' => null,
+            'lead_time_days' => 3,
+            'sku' => 'ING-'.$ingredient->id,
+        ]);
+    }
+
+    $result = (new ShoppingListService)->generate();
+
+    expect($result[$supplier->id]['items'])->toHaveCount(3)
+        ->and(array_column($result[$supplier->id]['items'], 'subtotal'))->toBe([0.7, 1.4, 2.31])
+        ->and($result[$supplier->id]['total'])->toBe(4.41);
+});
+
 test('ingredients without suppliers go into no supplier group', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
 

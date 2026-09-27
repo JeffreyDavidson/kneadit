@@ -14,7 +14,10 @@ class CalculateOrderTotals
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
         $productIds = array_column($payload->data->items, 'product_id');
-        $products = Product::query()->findOrFail($productIds)->keyBy('id');
+        $products = Product::query()
+            ->select(['id', 'is_active', 'price'])
+            ->findOrFail($productIds)
+            ->keyBy('id');
 
         foreach ($payload->data->items as $item) {
             $product = $products->get($item['product_id']);

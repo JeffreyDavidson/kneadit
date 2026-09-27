@@ -3,8 +3,10 @@
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Events\Marketing\CateringQuoteRequested;
+use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Filament\Resources\CateringInquiries\Pages\ViewCateringInquiry;
 use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\CateringInquiryItem;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,9 +35,122 @@ test('renders the view page with the inquiry summary', function () {
     Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('Maya Patel')
+        ->assertSee('Customer')
+        ->assertSee('Email')
+        ->assertSee('maya@example.com')
         ->assertSee('Wedding')
+        ->assertSee('Event details')
+        ->assertSee('Guests')
         ->assertSee('120 guests')
         ->assertSee('Quote');
+});
+
+test('view page prepares a future event countdown and suggested deposit from tenant settings', function () {
+    test()->travelTo(now()->startOfDay());
+    settings(['catering_deposit_percent' => 35]);
+
+    $inquiry = CateringInquiry::factory()->create([
+        'event_date' => now()->addDays(5)->toDateString(),
+        'quoted_amount' => 100,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee(now()->addDays(5)->format('M j, Y'))
+        ->assertSee('(in '.now()->addDays(5)->diffForHumans(['parts' => 1, 'short' => false]).')')
+        ->assertSee('Deposit pending')
+        ->assertSee('Suggested deposit:')
+        ->assertSee('$35.00')
+        ->assertSee('(35% of quote)');
+});
+
+test('view page labels past events and received deposits', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'event_date' => now()->subDay()->toDateString(),
+        'quoted_amount' => 100,
+        'deposit_paid_at' => now()->subDay(),
+        'deposit_amount' => 25,
+        'status' => CateringInquiryStatus::Confirmed,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('(past)')
+        ->assertSee('Deposit received')
+        ->assertSee('$25.00')
+        ->assertDontSee('Suggested deposit:');
+});
+
+test('creating an inquiry with a past event date is rejected by the shared event fields', function () {
+    livewire(ListCateringInquiries::class)
+        ->callAction('create', data: [
+            'customer_name' => 'Maya Patel',
+            'customer_email' => 'maya@example.com',
+            'event_type' => 'Wedding',
+            'event_date' => now()->subDay()->toDateString(),
+            'guest_count' => 120,
+            'details' => 'Dessert reception.',
+            'status' => CateringInquiryStatus::Inquiry,
+        ])
+        ->assertHasFormErrors(['event_date']);
+});
+
+test('quote content renders item details and totals', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => 2200,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
+        'name' => 'Celebration cake',
+        'quantity' => 2,
+        'unit_price' => 11,
+        'special_instructions' => 'Gluten-free',
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Celebration cake')
+        ->assertSee('Gluten-free')
+        ->assertSee('$11.00')
+        ->assertSee('$22.00')
+        ->assertSee('Sent · status: Quote Sent');
+});
+
+test('quote content renders the single-amount legacy explanation', function () {
+    $inquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => 4200,
+        'status' => CateringInquiryStatus::Quoted,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('Single-amount quote (added before items existed).')
+        ->assertSee('Manage items');
+});
+
+test('quote content distinguishes editable and read-only empty states', function () {
+    $editableInquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => null,
+        'status' => CateringInquiryStatus::Inquiry,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $editableInquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('No items yet.')
+        ->assertSee('Manage items');
+
+    $readOnlyInquiry = CateringInquiry::factory()->create([
+        'quoted_amount' => null,
+        'status' => CateringInquiryStatus::Completed,
+    ]);
+
+    Livewire::test(ViewCateringInquiry::class, ['record' => $readOnlyInquiry->getRouteKey()])
+        ->assertOk()
+        ->assertSee('No items.')
+        ->assertDontSee('No items yet.')
+        ->assertDontSee('Manage items');
 });
 
 test('send quote is visible for an Inquiry with a quoted amount and dispatches the event', function () {
@@ -228,13 +343,13 @@ test('edit customer action updates contact fields', function () {
     expect($inquiry->fresh()->customer_name)->toBe('New Name');
 });
 
-test('edit event details action updates the inquiry', function () {
+test('edit event details action updates the inquiry and allows a past event date', function () {
     $inquiry = CateringInquiry::factory()->create();
 
     livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('editEventDetails', data: [
             'event_type' => 'Wedding',
-            'event_date' => '2026-11-14',
+            'event_date' => now()->subDay()->toDateString(),
             'guest_count' => 72,
             'budget' => 1800.50,
             'details' => 'Dessert reception after the ceremony.',
@@ -245,7 +360,7 @@ test('edit event details action updates the inquiry', function () {
     $inquiry->refresh();
 
     expect($inquiry->event_type)->toBe('Wedding')
-        ->and($inquiry->event_date?->toDateString())->toBe('2026-11-14')
+        ->and($inquiry->event_date?->toDateString())->toBe(now()->subDay()->toDateString())
         ->and($inquiry->guest_count)->toBe(72)
         ->and($inquiry->budget?->dollars())->toBe(1800.50)
         ->and($inquiry->details)->toBe('Dessert reception after the ceremony.')

@@ -1,11 +1,11 @@
 <?php
 
+use App\DataTransferObjects\Platform\TenantChurnMetrics;
+use App\DataTransferObjects\Platform\TenantHealthMetrics;
 use App\Models\Platform\Tenant;
+use App\Queries\Platform\TenantInsightsMetricsQuery;
 use App\Services\Tenants\ChurnAlertService;
-use App\Services\Tenants\TenantHealthService;
-use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
-use JMac\Testing\Matching\Argument;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -13,10 +13,28 @@ beforeEach(function () {
 
 function doubleHealthService(array $healthData = [], int $recentOrders = 0): void
 {
-    $healthService = Double::for(TenantHealthService::class);
-    $healthService->allows('getTenantHealthData')->returns(collect($healthData));
-    $healthService->allows('getRecentOrderCount')->returns($recentOrders);
-    app()->instance(TenantHealthService::class, $healthService);
+    $healthByTenant = collect($healthData)->keyBy('id');
+    $metrics = Tenant::query()->get()->map(function (Tenant $tenant) use ($healthByTenant, $recentOrders): TenantChurnMetrics {
+        $health = $healthByTenant->get($tenant->id);
+        $isHealthy = ($health['health_score'] ?? 0) >= 40;
+        $healthMetrics = $health === null ? null : new TenantHealthMetrics(
+            tenant: $tenant,
+            lastUserActivityAt: $isHealthy ? now()->toDateTimeString() : null,
+            totalOrders: $isHealthy ? 50 : 0,
+            totalProducts: $isHealthy ? 20 : 0,
+            totalCategories: $isHealthy ? 1 : 0,
+        );
+
+        return new TenantChurnMetrics(
+            tenant: $tenant,
+            healthMetrics: $healthMetrics,
+            recentOrderCount: (int) ($health['recent_order_count'] ?? $recentOrders),
+        );
+    });
+
+    $metricsQuery = Double::for(TenantInsightsMetricsQuery::class);
+    $metricsQuery->allows('churn')->returns($metrics);
+    app()->instance(TenantInsightsMetricsQuery::class, $metricsQuery);
 }
 
 test('returns trial expiring alert when trial ends soon with low setup', function () {
@@ -135,7 +153,7 @@ test('returns low health alert when health score is below 40', function () {
 
     expect($lowHealth)->not->toBeNull()
         ->and($lowHealth['severity'])->toBe('critical')
-        ->and($lowHealth['description'])->toContain('20/100');
+        ->and((int) str($lowHealth['description'])->match('/\d+/')->toString())->toBeLessThan(40);
 });
 
 test('does not alert for healthy tenants', function () {
@@ -171,33 +189,23 @@ test('does not treat missing health data as low health or incomplete setup', fun
         ->and($alerts->firstWhere('type', 'trial_expiring'))->toBeNull();
 });
 
-test('does not treat a failed recent order read as no orders', function () {
+test('does not treat an unavailable recent order count as no orders', function () {
     $tenant = createTenant([
         'id' => 'orders-unavailable',
         'name' => 'Orders Unavailable',
         'created_at' => now()->subDays(30),
     ]);
 
-    $healthService = Double::for(TenantHealthService::class);
-    $healthService->allows('getTenantHealthData')->returns(collect([
-        ['id' => $tenant->id, 'health_score' => 80, 'setup_score' => 70],
+    $tenant = Tenant::query()->findOrFail($tenant->id);
+    $metricsQuery = Double::for(TenantInsightsMetricsQuery::class);
+    $metricsQuery->allows('churn')->returns(collect([
+        new TenantChurnMetrics(
+            tenant: $tenant,
+            healthMetrics: new TenantHealthMetrics($tenant, now()->toDateTimeString(), 50, 20, 1),
+            recentOrderCount: null,
+        ),
     ]));
-    $healthService->expects('getRecentOrderCount')
-        ->with(
-            Argument::satisfies(
-                fn (mixed $candidate): bool => $candidate instanceof Tenant && $candidate->id === $tenant->id,
-            ),
-            30,
-        )
-        ->throws(new RuntimeException('DB connection failed'));
-    app()->instance(TenantHealthService::class, $healthService);
-
-    Log::shouldReceive('warning')
-        ->once()
-        ->with('Unable to evaluate tenant order churn', [
-            'tenant_id' => 'orders-unavailable',
-            'error' => 'DB connection failed',
-        ]);
+    app()->instance(TenantInsightsMetricsQuery::class, $metricsQuery);
 
     $alerts = resolve(ChurnAlertService::class)->getAlerts();
 

@@ -18,7 +18,9 @@ class TenantComparisonQuery
     /** @return array<string, string> */
     public function allTenants(): array
     {
-        return Tenant::query()->orderBy('store_name')
+        return Tenant::query()
+            ->select(['id', 'store_name', 'name'])
+            ->orderBy('store_name')
             ->get()
             ->mapWithKeys(fn (Tenant $t): array => [$t->id => $t->store_name ?: $t->name])
             ->all();

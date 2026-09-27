@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Tenant\Catering;
 
-use App\Actions\Customers\RecordCateringDeposit;
 use App\Http\Controllers\Controller;
 use App\Models\Customers\CateringInquiry;
+use App\Services\Customers\CateringDepositCalculator;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\CateringDepositCheckoutService;
 use Illuminate\Http\RedirectResponse;
@@ -16,14 +16,14 @@ class PayCateringDepositController extends Controller
         CateringInquiry $inquiry,
         TenantSettings $settings,
         CateringDepositCheckoutService $checkout,
-        RecordCateringDeposit $depositAction,
+        CateringDepositCalculator $depositCalculator,
     ): RedirectResponse {
         if ($inquiry->deposit_paid_at !== null) {
             return redirect()->away(Config::string('app.url'))
                 ->with('success', 'Deposit already received — thank you!');
         }
 
-        $depositDollars = $depositAction->suggestedAmount(
+        $depositDollars = $depositCalculator->suggestedAmount(
             $inquiry,
             $settings->catering->depositPercent,
         );

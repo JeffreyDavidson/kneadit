@@ -22,8 +22,9 @@
     {{-- Health Scores Tab --}}
     @if ($activeTab === 'health')
         @php
-            $stats = $this->getHealthSummaryStats();
-            $tenants = $this->getTenantHealthData()->sortBy('health_score')->values();
+            $snapshot = $this->getTenantHealthSnapshot();
+            $stats = $snapshot['stats'];
+            $tenants = $snapshot['tenants'];
             $total = max(1, (int) $stats['healthy'] + (int) $stats['at_risk'] + (int) $stats['critical']);
             $avg = (int) $stats['average'];
             $avgClass = $avg > 70 ? 'text-emerald-400' : ($avg >= 40 ? 'text-amber-400' : 'text-red-400');

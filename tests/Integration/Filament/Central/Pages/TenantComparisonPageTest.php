@@ -2,6 +2,8 @@
 
 use App\Filament\Central\Pages\TenantComparison;
 use App\Models\Platform\Tenant;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -28,6 +30,33 @@ test('get all tenants returns tenants ordered by store name', function () {
 
     expect($tenants)->toHaveCount(2)
         ->and(array_first($tenants))->toBe('Alpha Bakery');
+});
+
+test('get all tenants selects only dropdown fields and falls back to tenant name', function () {
+    $tenant = Tenant::factory()->create(['store_name' => 'Alpha Bakery']);
+    $fallbackTenant = Tenant::factory()->create([
+        'name' => 'Fallback Bakery',
+        'store_name' => null,
+    ]);
+    $tenantQueries = [];
+
+    DB::listen(function (QueryExecuted $query) use (&$tenantQueries): void {
+        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+
+        if (str_contains($sql, 'from tenants')) {
+            $tenantQueries[] = $sql;
+        }
+    });
+
+    $tenants = test()->page->getAllTenants();
+
+    expect($tenantQueries)->toHaveCount(1);
+
+    $selectClause = explode(' from tenants', $tenantQueries[0], 2)[0];
+
+    expect($tenants[$tenant->id])->toBe('Alpha Bakery')
+        ->and($tenants[$fallbackTenant->id])->toBe('Fallback Bakery')
+        ->and($selectClause)->toBe('select id, store_name, name');
 });
 
 test('get comparison data returns empty when no tenants selected', function () {
