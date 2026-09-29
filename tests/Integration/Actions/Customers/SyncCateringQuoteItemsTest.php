@@ -60,6 +60,7 @@ test('recalculates the quote total with a database aggregate', function () {
         'name' => 'Cookies',
         'quantity' => 2,
         'unit_price' => 12.34,
+        'special_instructions' => null,
         'sort_order' => 0,
     ]);
 
