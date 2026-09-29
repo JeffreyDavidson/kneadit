@@ -5,7 +5,6 @@ use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
-use InvalidArgumentException;
 
 beforeEach(function () {
     config(['app.key' => 'base64:BskavyAdxjag1K/BGSEfPPiwB/QDha6hMH4H0i1wM7A=']);
