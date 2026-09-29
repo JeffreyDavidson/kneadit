@@ -3,11 +3,9 @@
 namespace App\Models\Customers;
 
 use App\Casts\MoneyCentsCast;
-use App\Observers\Customers\CateringInquiryItemObserver;
 use App\ValueObjects\Money;
 use Database\Factories\Customers\CateringInquiryItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[Fillable('catering_inquiry_id', 'name', 'quantity', 'unit_price', 'special_instructions', 'sort_order')]
-#[ObservedBy(CateringInquiryItemObserver::class)]
 #[UseFactory(CateringInquiryItemFactory::class)]
 class CateringInquiryItem extends Model
 {
