@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CapacityLimits\Tables;
 
+use App\Builders\Operations\CapacityLimitQueryBuilder;
 use App\Enums\Staff\DayOfWeek;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
@@ -13,7 +14,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class CapacityLimitsTable
 {
@@ -28,13 +28,7 @@ class CapacityLimitsTable
                 TextColumn::make('day_label')
                     ->label('Day / Date')
                     ->sortable(
-                        query: function (Builder $query, string $direction): Builder {
-                            $sortDirection = $direction === 'desc' ? 'desc' : 'asc';
-
-                            return $query
-                                ->orderBy('specific_date', $sortDirection)
-                                ->orderBy('day_of_week', $sortDirection);
-                        },
+                        query: fn (CapacityLimitQueryBuilder $query, string $direction): CapacityLimitQueryBuilder => $query->orderByDay($direction),
                     )
                     ->getStateUsing(function (CapacityLimit $record) {
                         if ($record->specific_date) {
@@ -65,7 +59,7 @@ class CapacityLimitsTable
                     ->placeholder('—')
                     ->toggleable(),
             ])
-            ->defaultSort('day_of_week')
+            ->defaultSort('day_label')
             ->filters([
                 TernaryFilter::make('is_blocked')
                     ->label('Blocked'),
