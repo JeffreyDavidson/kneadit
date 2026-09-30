@@ -44,7 +44,7 @@ class LoyaltyAnalytics
 
     public function outstandingPoints(): int
     {
-        return (int) LoyaltyPoint::query()->sum('points');
+        return LoyaltyPoint::query()->balance()->total;
     }
 
     /**

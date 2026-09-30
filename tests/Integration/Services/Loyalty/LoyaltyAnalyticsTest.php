@@ -70,15 +70,24 @@ test('recent activity returns points with customers', function () {
         ->and($activity->first()->customer)->not->toBeNull();
 });
 
-test('outstanding points returns total sum', function () {
+test('outstanding points is earned plus adjusted minus redeemed across customers', function () {
     $customer = Customer::factory()->create();
-    LoyaltyPoint::factory()->earned(100)->for($customer)->create();
-    LoyaltyPoint::factory()->redeemed(30)->for($customer)->create();
+    $otherCustomer = Customer::factory()->create();
+    LoyaltyPoint::factory()->earned(300)->for($customer)->create();
+    LoyaltyPoint::factory()->earned(200)->for($otherCustomer)->create();
+    LoyaltyPoint::factory()->redeemed(100)->for($customer)->create();
+    LoyaltyPoint::factory()->adjusted(-25)->for($otherCustomer)->create();
+    LoyaltyPoint::factory()->adjusted(50)->for($customer)->create();
 
     $outstanding = resolve(LoyaltyAnalytics::class)->outstandingPoints();
 
-    // earned (100) + redeemed (-30 stored as 30) = 130 raw sum
-    expect($outstanding)->toBe(130);
+    expect($outstanding)->toBe(425);
+});
+
+test('outstanding points is zero without any loyalty points', function () {
+    $outstanding = resolve(LoyaltyAnalytics::class)->outstandingPoints();
+
+    expect($outstanding)->toBe(0);
 });
 
 test('recent awards returns formatted array', function () {
