@@ -2,10 +2,10 @@
 
 namespace App\Services\Scheduling;
 
-use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
-use App\Queries\Scheduling\DateOpenStatusQuery;
+use App\Queries\Scheduling\DateCapacityRules;
 use App\Services\Settings\TenantSettings;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
 
 class AvailabilityService
@@ -43,14 +43,19 @@ class AvailabilityService
                 });
         }
 
+        if ($days <= 0) {
+            return $dates;
+        }
+
+        $rules = DateCapacityRules::between($today, $today->copy()->addDays($days - 1));
+
         for ($i = 0; $i < $days; $i++) {
             $date = $today->copy()->addDays($i);
-            $dateStr = $date->toDateString();
 
             $dates[] = $this->checkDate(
-                $dateStr,
-                (int) $date->dayOfWeek,
-                (int) $orderCounts->get($dateStr, 0),
+                $date,
+                $rules,
+                (int) $orderCounts->get($date->toDateString(), 0),
             );
         }
 
@@ -60,16 +65,21 @@ class AvailabilityService
     /**
      * @return array{date: string, available: bool, reason: string, remaining_capacity: int}
      */
-    private function checkDate(string $dateStr, int $dayOfWeek, int $currentOrders): array
+    private function checkDate(CarbonInterface $date, DateCapacityRules $rules, int $currentOrders): array
     {
-        $status = DateOpenStatusQuery::forDate($dateStr);
+        $dateStr = $date->toDateString();
+        $status = $rules->status($date);
 
         if (! $status->open) {
             return ['date' => $dateStr, 'available' => false, 'reason' => $status->reason ?? 'Closed', 'remaining_capacity' => 0];
         }
 
-        $schedule = BusinessSchedule::query()->forDay($dayOfWeek)->first();
-        $maxOrders = $schedule->max_orders ?? $this->settings->orders->defaultDailyCapacity;
+        $maxOrders = $rules->maxOrders($date) ?? $this->settings->orders->defaultDailyCapacity;
+
+        if ($maxOrders === 0) {
+            return ['date' => $dateStr, 'available' => false, 'reason' => 'Not accepting orders', 'remaining_capacity' => 0];
+        }
+
         $remaining = max(0, $maxOrders - $currentOrders);
 
         return [

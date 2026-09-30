@@ -126,7 +126,7 @@ If capacity rejects the request, the pipeline returns no order. Other domain val
 
 ### Date capacity
 
-`CapacityCalculator` decides how many active orders a delivery date can take. A date is unavailable when `DateOpenStatusQuery` reports it closed (an all-day `BlockedDate`, a closed day in Schedule Manager, or an active holiday whose `order_deadline` has passed; the deadline day itself stays open), or when its orders reach the max. Staff-created orders (quick orders, catering conversions) skip this check. The max comes from the first level that sets one, most specific first:
+`CapacityCalculator` decides how many active orders a delivery date can take. Both it and the storefront availability calendar (`AvailabilityService`) read the rules through `DateCapacityRules`, which loads everything for a date range in four queries. A date is unavailable when it is closed (an all-day `BlockedDate`, a closed day in Schedule Manager, or an active holiday whose `order_deadline` has passed; the deadline day itself stays open), or when its orders reach the max. Staff-created orders (quick orders, catering conversions) skip this check. The max comes from the first level that sets one, most specific first:
 
 1. Capacity limit for that exact date
 2. Active holiday on that date

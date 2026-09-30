@@ -1,7 +1,9 @@
 <?php
 
+use App\Enums\Staff\DayOfWeek;
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
+use App\Models\Operations\CapacityLimit;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\AvailabilityService;
@@ -86,4 +88,47 @@ test('holiday past its order deadline shows as unavailable', function () {
         ->available->toBeFalse()
         ->reason->toBe('Orders closed for Christmas')
         ->remaining_capacity->toBe(0);
+});
+
+test('uses capacity limits and holiday limits for remaining capacity', function () {
+    Date::setTestNow('2026-10-05 09:00');
+    settings(['default_daily_capacity' => 25]);
+    CapacityLimit::factory()->weekday(DayOfWeek::Monday)->create(['max_orders' => 8]);
+    Holiday::factory()->active()->create(['date' => '2026-10-06', 'order_deadline' => null, 'max_orders' => 3]);
+    Order::factory()->create(['delivery_date' => '2026-10-06']);
+
+    $days = collect(resolve(AvailabilityService::class)->getAvailability(3))->keyBy('date');
+
+    expect($days['2026-10-05']['remaining_capacity'])->toBe(8)
+        ->and($days['2026-10-06']['remaining_capacity'])->toBe(2)
+        ->and($days['2026-10-07']['remaining_capacity'])->toBe(25);
+});
+
+test('a blocked capacity limit makes the date unavailable', function () {
+    Date::setTestNow('2026-10-05 09:00');
+    CapacityLimit::factory()->weekday(DayOfWeek::Monday)->blocked()->create();
+
+    $monday = resolve(AvailabilityService::class)->getAvailability(1)[0];
+
+    expect($monday)
+        ->available->toBeFalse()
+        ->reason->toBe('Not accepting orders')
+        ->remaining_capacity->toBe(0);
+});
+
+test('runs the same number of queries however many days are requested', function () {
+    $service = resolve(AvailabilityService::class);
+    $service->getAvailability(1);
+
+    $countQueries = function (int $days) use ($service): int {
+        $queries = 0;
+        DB::listen(function () use (&$queries): void {
+            $queries++;
+        });
+        $service->getAvailability($days);
+
+        return $queries;
+    };
+
+    expect($countQueries(30))->toBe($countQueries(3));
 });
