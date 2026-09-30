@@ -3,6 +3,7 @@
 use App\Filament\Resources\CapacityLimits\Pages\ListCapacityLimits;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Staff\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
@@ -63,4 +64,117 @@ test('can create a capacity limit for a weekday', function () {
     expect(CapacityLimit::query()->first())
         ->max_orders->toBe(25)
         ->is_blocked->toBeFalse();
+});
+
+test('can create a capacity limit for a specific date', function () {
+    livewire(ListCapacityLimits::class)
+        ->callAction('create', data: [
+            'day_type' => 'specific',
+            'specific_date' => '2026-10-07',
+            'max_orders' => 12,
+            'notes' => 'Harvest festival',
+        ])
+        ->assertHasNoFormErrors();
+
+    expect(CapacityLimit::query()->sole())
+        ->specific_date->toDateString()->toBe('2026-10-07')
+        ->date->toDateString()->toBe('2026-10-07')
+        ->day_of_week->toBeNull()
+        ->max_orders->toBe(12)
+        ->notes->toBe('Harvest festival');
+});
+
+test('validates capacity limit input', function (array $data, array $errors) {
+    livewire(ListCapacityLimits::class)
+        ->callAction('create', data: [
+            'day_type' => 'specific',
+            'specific_date' => '2026-10-07',
+            'max_orders' => 10,
+            ...$data,
+        ])
+        ->assertHasFormErrors($errors);
+
+    expect(CapacityLimit::query()->count())->toBe(0);
+})->with([
+    'day type is required' => [['day_type' => null], ['day_type' => 'required']],
+    'specific date is required for a specific day' => [['specific_date' => null], ['specific_date' => 'required']],
+    'max orders cannot be negative' => [['max_orders' => -1], ['max_orders' => 'min']],
+    'notes are limited to 500 characters' => [['notes' => str_repeat('a', 501)], ['notes' => 'max']],
+]);
+
+test('edit form loads a specific-date limit as a specific day', function () {
+    $limit = CapacityLimit::factory()->specificDate('2026-10-07')->create(['max_orders' => 10]);
+
+    livewire(ListCapacityLimits::class)
+        ->mountAction(TestAction::make('edit')->table($limit))
+        ->assertSchemaStateSet([
+            'day_type' => 'specific',
+            'max_orders' => 10,
+        ]);
+});
+
+test('can edit a specific-date capacity limit', function () {
+    $limit = CapacityLimit::factory()->specificDate('2026-10-07')->open()->create(['max_orders' => 10]);
+
+    livewire(ListCapacityLimits::class)
+        ->callAction(TestAction::make('edit')->table($limit), data: [
+            'max_orders' => 40,
+            'is_blocked' => true,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect($limit->refresh())
+        ->specific_date->toDateString()->toBe('2026-10-07')
+        ->max_orders->toBe(40)
+        ->is_blocked->toBeTrue();
+});
+
+test('can delete a capacity limit', function () {
+    $limit = CapacityLimit::factory()->specificDate('2026-10-07')->create();
+
+    livewire(ListCapacityLimits::class)
+        ->callAction(TestAction::make('delete')->table($limit));
+
+    expect(CapacityLimit::query()->find($limit->id))->toBeNull();
+});
+
+test('can bulk delete capacity limits', function () {
+    $kept = CapacityLimit::factory()->specificDate('2026-10-05')->create();
+    $doomed = collect([
+        CapacityLimit::factory()->specificDate('2026-10-06')->create(),
+        CapacityLimit::factory()->specificDate('2026-10-07')->create(),
+    ]);
+
+    livewire(ListCapacityLimits::class)
+        ->selectTableRecords($doomed)
+        ->callAction(TestAction::make('delete')->table()->bulk());
+
+    expect(CapacityLimit::query()->count())->toBe(1)
+        ->and(CapacityLimit::query()->find($kept->id))->not->toBeNull()
+        ->and(CapacityLimit::query()->find($doomed->first()->id))->toBeNull();
+});
+
+test('shows the formatted date for a specific-date limit', function () {
+    $limit = CapacityLimit::factory()->specificDate('2026-10-07')->create();
+
+    livewire(ListCapacityLimits::class)
+        ->assertTableColumnStateSet('day_label', 'Wed, Oct 7, 2026', $limit);
+});
+
+test('shows unlimited when max orders is zero', function () {
+    $limit = CapacityLimit::factory()->specificDate('2026-10-07')->create(['max_orders' => 0]);
+
+    livewire(ListCapacityLimits::class)
+        ->assertTableColumnFormattedStateSet('max_orders', 'Unlimited', $limit);
+});
+
+test('can sort capacity limits by day', function () {
+    $earlier = CapacityLimit::factory()->specificDate('2026-10-05')->create();
+    $later = CapacityLimit::factory()->specificDate('2026-10-07')->create();
+
+    livewire(ListCapacityLimits::class)
+        ->sortTable('day_label')
+        ->assertCanSeeTableRecords(collect([$earlier, $later]), inOrder: true)
+        ->sortTable('day_label', 'desc')
+        ->assertCanSeeTableRecords(collect([$later, $earlier]), inOrder: true);
 });

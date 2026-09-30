@@ -24,6 +24,18 @@ class CapacityLimitFactory extends Factory
     }
 
     /**
+     * Limit applies to one specific date rather than a recurring weekday.
+     */
+    public function specificDate(string $date): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'date' => $date,
+            'specific_date' => $date,
+            'day_of_week' => null,
+        ]);
+    }
+
+    /**
      * Day is blocked (no orders accepted).
      */
     public function blocked(): static
