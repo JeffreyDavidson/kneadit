@@ -18,6 +18,7 @@ final readonly class CreateQuickOrderData
         public ?string $customerPhone = null,
         public ?string $deliveryAddress = null,
         public ?string $notes = null,
+        public ?string $deliveryTier = null,
     ) {}
 
     /**
@@ -36,6 +37,7 @@ final readonly class CreateQuickOrderData
             customerPhone: self::nullableStringValue($data['customer_phone'] ?? null, 'customer_phone'),
             deliveryAddress: self::nullableStringValue($data['delivery_address'] ?? null, 'delivery_address'),
             notes: self::nullableStringValue($data['notes'] ?? null, 'notes'),
+            deliveryTier: self::nullableStringValue($data['delivery_tier'] ?? null, 'delivery_tier'),
         );
     }
 

@@ -13,6 +13,7 @@ test('it can be created from array', function () {
         'delivery_date' => '2026-04-01',
         'delivery_time' => '10:00',
         'delivery_address' => null,
+        'delivery_tier' => '1',
         'notes' => 'No nuts',
         'order_items' => [
             ['product_id' => 1, 'quantity' => 2, 'unit_price' => 10.00],
@@ -22,5 +23,6 @@ test('it can be created from array', function () {
     expect($data->customerName)->toBe('Jane')
         ->and($data->customerEmail)->toBe('jane@example.com')
         ->and($data->deliveryType)->toBe(DeliveryType::Pickup->value)
+        ->and($data->deliveryTier)->toBe('1')
         ->and($data->orderItems)->toHaveCount(1);
 });
