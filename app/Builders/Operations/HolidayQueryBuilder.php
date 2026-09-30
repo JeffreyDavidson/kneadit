@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Builders\Operations;
 
 use App\Models\Operations\Holiday;
+use App\Services\Scheduling\BakeryClock;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Date;
 
 /** @extends Builder<Holiday> */
 class HolidayQueryBuilder extends Builder
 {
     public function upcoming(): static
     {
-        $this->where('date', '>=', Date::today())->orderBy('date');
+        $this->whereDate('date', '>=', resolve(BakeryClock::class)->today())->orderBy('date');
 
         return $this;
     }

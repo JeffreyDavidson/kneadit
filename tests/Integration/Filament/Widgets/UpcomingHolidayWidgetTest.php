@@ -2,8 +2,10 @@
 
 use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Models\Operations\Holiday;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -45,4 +47,14 @@ test('getHolidayData includes the holiday name', function () {
     ]);
 
     expect(test()->widget->getHolidayData()['name'])->toBe('Easter');
+});
+
+test('a holiday on the bakery-local today is still upcoming', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    Holiday::factory()->active()->create(['name' => 'Harvest Day', 'date' => '2026-10-05']);
+
+    $data = test()->widget->getHolidayData();
+
+    expect($data['name'] ?? null)->toBe('Harvest Day');
 });

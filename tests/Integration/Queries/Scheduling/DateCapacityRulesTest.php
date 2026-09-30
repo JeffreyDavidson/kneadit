@@ -4,6 +4,7 @@ use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\Holiday;
 use App\Queries\Scheduling\DateCapacityRules;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 
@@ -128,3 +129,14 @@ test('keeps a holiday date open while its order deadline does not apply', functi
     'inactive holiday past its deadline' => [['is_active' => false, 'order_deadline' => '2026-12-18']],
     'holiday without a deadline' => [['order_deadline' => null]],
 ]);
+
+test('keeps the order deadline day open until midnight in the bakery timezone', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-12-21 02:00');
+    $christmas = Date::parse('2026-12-25');
+    Holiday::factory()->active()->create(['date' => '2026-12-25', 'order_deadline' => '2026-12-20']);
+
+    $status = DateCapacityRules::between($christmas, $christmas)->status($christmas);
+
+    expect($status->open)->toBeTrue();
+});
