@@ -59,7 +59,9 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
                     model: $customer,
                     context: [
                         'last_order_date' => $lastOrder->delivery_date,
-                        'days_since_last_order' => $lastOrder->delivery_date?->diffInDays($today),
+                        'days_since_last_order' => $lastOrder->delivery_date
+                            ? (int) $lastOrder->delivery_date->diffInDays($today, absolute: true)
+                            : null,
                         'reminder_days' => $reminderDays,
                     ],
                 );

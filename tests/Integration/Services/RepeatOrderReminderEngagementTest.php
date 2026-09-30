@@ -2,6 +2,7 @@
 
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\RepeatOrderReminderDue;
+use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
 use App\Models\Orders\Order;
@@ -11,6 +12,7 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -177,7 +179,7 @@ test('findRecipients counts days since the last order from the bakery-local date
 
     $recipients = resolve(RepeatOrderReminderEngagement::class)->findRecipients(resolve(TenantSettings::class));
 
-    expect($recipients->first()->context['days_since_last_order'])->toEqual(14);
+    expect($recipients->first()->context['days_since_last_order'])->toBe(14);
 });
 
 test('findRecipients skips reminders scheduled after the bakery-local date', function (string $nextReminderDate, bool $isRecipient) {
@@ -245,4 +247,23 @@ test('dispatchForRecipient creates a reminder record and dispatches event', func
     assertDatabaseHas('customer_reminders', [
         'customer_id' => $customer->id,
     ]);
+});
+
+test('a recipient from findRecipients is dispatched end to end and the reminder is sent', function () {
+    Mail::fake();
+    settings(['repeat_reminder_days' => '14']);
+    $customer = Customer::factory()->create(['email' => 'loyal@example.com']);
+    Order::factory()->for($customer)->create([
+        'payment_status' => PaymentStatus::Paid,
+        'delivery_date' => now()->subDays(30),
+    ]);
+    $engagement = resolve(RepeatOrderReminderEngagement::class);
+    $recipient = $engagement->findRecipients(resolve(TenantSettings::class))->sole();
+
+    $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
+
+    assertDatabaseHas('customer_reminders', [
+        'customer_id' => $customer->id,
+    ]);
+    Mail::assertQueued(RepeatOrderReminderMail::class, fn (RepeatOrderReminderMail $mail) => $mail->hasTo('loyal@example.com'));
 });
