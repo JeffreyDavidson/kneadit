@@ -6,6 +6,7 @@ use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\Engagements\BirthdayEngagement;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -78,6 +79,17 @@ test('findRecipients excludes customers with a birthday on a different day', fun
     $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
+});
+
+test('findRecipients selects birthdays on the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    Customer::factory()->create(['birthday' => '1990-10-05', 'email' => 'local-day@example.com']);
+    Customer::factory()->create(['birthday' => '1990-10-06', 'email' => 'utc-day@example.com']);
+
+    $recipients = resolve(BirthdayEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients->pluck('email')->all())->toBe(['local-day@example.com']);
 });
 
 test('dispatchForRecipient creates coupon and dispatches event when coupon enabled', function () {

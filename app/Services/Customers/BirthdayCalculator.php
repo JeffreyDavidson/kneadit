@@ -2,10 +2,15 @@
 
 namespace App\Services\Customers;
 
+use App\Services\Scheduling\BakeryClock;
 use Illuminate\Support\Carbon;
 
 class BirthdayCalculator
 {
+    public function __construct(
+        private readonly BakeryClock $clock,
+    ) {}
+
     public function hasBirthday(?Carbon $birthday): bool
     {
         return $birthday instanceof Carbon;
@@ -13,12 +18,12 @@ class BirthdayCalculator
 
     public function isThisMonth(?Carbon $birthday): bool
     {
-        return $birthday?->month === now()->month;
+        return $birthday?->month === $this->clock->today()->month;
     }
 
     public function isToday(?Carbon $birthday): bool
     {
-        return $birthday?->format('m-d') === now()->format('m-d');
+        return $birthday?->format('m-d') === $this->clock->today()->format('m-d');
     }
 
     public function daysUntil(?Carbon $birthday): ?int
@@ -27,11 +32,13 @@ class BirthdayCalculator
             return null;
         }
 
-        $next = $birthday->copy()->year(now()->year);
-        if ($next->isPast()) {
+        $today = $this->clock->today();
+
+        $next = $birthday->copy()->year($today->year);
+        if ($next->lt($today)) {
             $next->addYear();
         }
 
-        return (int) now()->diffInDays($next, false);
+        return (int) $today->diffInDays($next, false);
     }
 }
