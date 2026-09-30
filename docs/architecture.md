@@ -113,7 +113,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 
 ## Order lifecycle
 
-Storefront requests are validated by `StoreOrderRequest` and converted to `CreateOrderData`. `CreateOrder` then executes a database transaction containing an ordered Laravel pipeline:
+Storefront requests are validated by `StoreOrderRequest` (the API uses `StoreApiOrderRequest`) and converted to `CreateOrderData`. Both requests apply `ProductAvailableOnDeliveryDate` to each item: a product with seasonal windows can only be ordered for a delivery date inside one of them (inclusive), and products with no windows are always available (`ProductQueryBuilder::availableOn`). `CreateOrder` then executes a database transaction containing an ordered Laravel pipeline:
 
 1. Calculate totals and enforce the minimum order amount. Delivery is priced from the bakery's Delivery Fee Tiers setting (`delivery_tier` is the tier's position) and is free once the subtotal reaches the free-delivery minimum; delivery orders are rejected when delivery is turned off.
 2. Validate date capacity and stock availability.

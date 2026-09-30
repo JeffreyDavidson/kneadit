@@ -3,6 +3,7 @@
 use App\Http\Requests\Storefront\StoreOrderRequest;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\SeasonalItem;
 use App\Models\Operations\BusinessSchedule;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,6 +100,24 @@ test('store order request still accepts pickup when delivery is turned off', fun
 
     expect($errors->has('delivery_type'))->toBeFalse();
 });
+
+test('store order request checks seasonal availability against the delivery date', function (string $deliveryDate, bool $available) {
+    Date::setTestNow('2026-09-30 10:00');
+    SeasonalItem::factory()->recycle(test()->product)->create(['available_from' => '2026-12-01', 'available_until' => '2026-12-24']);
+    $data = array_merge(validOrderData(), [
+        'delivery_date' => $deliveryDate,
+        'items' => [['product_id' => test()->product->id, 'quantity' => 1]],
+    ]);
+
+    $errors = validator($data, (new StoreOrderRequest)->rules())->errors();
+
+    expect($errors->has('items.0.product_id'))->toBe(! $available)
+        ->and($errors->has('delivery_date'))->toBeFalse();
+})->with([
+    'delivery date before the season' => ['2026-11-20', false],
+    'delivery date in the season' => ['2026-12-10', true],
+    'delivery date after the season' => ['2026-12-30', false],
+]);
 
 function validOrderData(): array
 {
