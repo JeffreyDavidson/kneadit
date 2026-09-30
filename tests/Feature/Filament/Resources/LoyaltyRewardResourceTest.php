@@ -4,6 +4,7 @@ use App\Enums\Engagement\RewardType;
 use App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Models\Engagement\LoyaltyReward;
+use App\Models\Inventory\Product;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
@@ -76,6 +77,46 @@ test('create loyalty reward validates required fields', function () {
             ])
             ->assertHasFormErrors($errors);
     }
+});
+
+test('create loyalty reward requires the discount that matches its type', function (RewardType $type, string $field) {
+    livewire(ListLoyaltyRewards::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Test',
+            'points_required' => 100,
+            'reward_type' => $type->value,
+        ])
+        ->assertHasFormErrors([$field => 'required']);
+})->with([
+    'percentage discount' => [RewardType::PercentageDiscount, 'discount_percentage'],
+    'fixed discount' => [RewardType::FixedDiscount, 'discount_amount'],
+]);
+
+test('create loyalty reward form shows the product only for free product rewards', function () {
+    livewire(ListLoyaltyRewards::class)
+        ->mountAction(CreateAction::class)
+        ->fillForm(['reward_type' => RewardType::PercentageDiscount->value])
+        ->assertSchemaComponentHidden('product_id')
+        ->fillForm(['reward_type' => RewardType::FreeProduct->value])
+        ->assertSchemaComponentVisible('product_id');
+});
+
+test('can create a free product loyalty reward with a product', function () {
+    $product = Product::factory()->create();
+
+    livewire(ListLoyaltyRewards::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Free Loaf',
+            'points_required' => 200,
+            'reward_type' => RewardType::FreeProduct->value,
+            'product_id' => $product->id,
+        ])
+        ->assertHasNoFormErrors();
+
+    test()->assertDatabaseHas(LoyaltyReward::class, [
+        'name' => 'Free Loaf',
+        'product_id' => $product->id,
+    ]);
 });
 
 test('can render loyalty reward table columns', function () {

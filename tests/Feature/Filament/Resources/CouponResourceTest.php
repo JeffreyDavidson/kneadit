@@ -54,6 +54,18 @@ test('create coupon validates required fields', function () {
     }
 });
 
+test('create coupon requires the discount that matches its type', function (CouponType $type, string $field) {
+    livewire(ListCoupons::class)
+        ->callAction(CreateAction::class, data: [
+            'code' => 'TEST01',
+            'type' => $type->value,
+        ])
+        ->assertHasFormErrors([$field => 'required']);
+})->with([
+    'fixed' => [CouponType::Fixed, 'fixed_amount'],
+    'percentage' => [CouponType::Percentage, 'percentage'],
+]);
+
 test('can edit a coupon via table action', function () {
     $coupon = Coupon::factory()->percentage()->create();
 
