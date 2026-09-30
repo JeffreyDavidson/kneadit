@@ -1,11 +1,13 @@
 <?php
 
 use App\Enums\Orders\PaymentStatus;
+use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerReminder;
 use App\Models\Operations\ScheduledNotificationRun;
 use App\Models\Orders\Order;
-use App\Services\Engagement\Engagements\RepeatOrderReminderEngagement;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\artisan;
@@ -15,18 +17,6 @@ beforeEach(function () {
     setUpCentralTest();
     runCommandsAsOneTenant();
 });
-
-/**
- * The dispatcher claims one key per customer it processes, so the claims show
- * whether the command reached the customers regardless of what the reminder
- * event itself goes on to do.
- */
-function processedReminderCustomers(): int
-{
-    return ScheduledNotificationRun::query()
-        ->where('notification_key', 'like', 'engagement:'.RepeatOrderReminderEngagement::class.':%')
-        ->count();
-}
 
 test('orders:send-repeat-reminders command runs successfully with no tenants', function () {
     Mail::fake();
@@ -39,6 +29,7 @@ test('orders:send-repeat-reminders command runs successfully with no tenants', f
 
 describe('bakery-local send hour', function () {
     beforeEach(function () {
+        Event::fake([RepeatOrderReminderDue::class]);
         settings(['repeat_reminders_enabled' => '1', 'repeat_reminder_days' => '14']);
         Order::factory()
             ->for(Customer::factory()->create(['email' => 'loyal@example.com']))
@@ -48,13 +39,13 @@ describe('bakery-local send hour', function () {
             ]);
     });
 
-    test('processes customers only when the bakery-local clock reads 10:00', function (string $timezone, string $now, int $processed) {
+    test('sends only when the bakery-local clock reads 10:00', function (string $timezone, string $now, int $sent) {
         settings(['timezone' => $timezone]);
         Date::setTestNow($now);
 
         artisan('orders:send-repeat-reminders')->assertSuccessful();
 
-        expect(processedReminderCustomers())->toBe($processed);
+        Event::assertDispatchedTimes(RepeatOrderReminderDue::class, $sent);
     })->with([
         'New York at 10:00 local' => ['America/New_York', '2026-10-05 14:00', 1],
         'New York at 09:00 local' => ['America/New_York', '2026-10-05 13:00', 0],
@@ -75,24 +66,25 @@ describe('bakery-local send hour', function () {
         ]);
     });
 
-    test('the local-day marker blocks a rerun in the same local hour even without the per-customer claims', function () {
+    test('the local-day marker blocks a rerun in the same local hour even without the per-customer claims or reminder rows', function () {
         settings(['timezone' => 'America/New_York']);
         Date::setTestNow('2026-10-05 14:00');
 
         artisan('orders:send-repeat-reminders')->assertSuccessful();
         ScheduledNotificationRun::query()->where('notification_key', 'like', 'engagement:%')->delete();
+        CustomerReminder::query()->delete();
         Date::setTestNow('2026-10-05 14:30');
         artisan('orders:send-repeat-reminders')->assertSuccessful();
 
-        expect(processedReminderCustomers())->toBe(0);
+        Event::assertDispatchedTimes(RepeatOrderReminderDue::class, 1);
     });
 
-    test('--force processes customers outside the local send hour', function () {
+    test('--force sends outside the local send hour', function () {
         settings(['timezone' => 'America/New_York']);
         Date::setTestNow('2026-10-05 18:00');
 
         artisan('orders:send-repeat-reminders', ['--force' => true])->assertSuccessful();
 
-        expect(processedReminderCustomers())->toBe(1);
+        Event::assertDispatchedTimes(RepeatOrderReminderDue::class, 1);
     });
 });
