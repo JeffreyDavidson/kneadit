@@ -6,6 +6,8 @@ use App\Models\Platform\Tenant;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Notifications\ScheduledNotificationRunTracker;
+use App\Services\Scheduling\LocalSendSchedule;
+use App\Services\Scheduling\LocalSendWindow;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
@@ -21,50 +23,30 @@ class EngagementDispatcher
     /**
      * Run an engagement type across all tenants.
      * Returns the number of failed tenants.
+     *
+     * With a schedule, each tenant is processed only when its own bakery-local
+     * clock is due (once per local date); $force skips that check.
      */
-    public function dispatch(CustomerEngagement $engagement, Command $output): int
-    {
+    public function dispatch(
+        CustomerEngagement $engagement,
+        Command $output,
+        ?LocalSendSchedule $schedule = null,
+        bool $force = false,
+    ): int {
         return $this->tenancyManager->forEachTenant(
-            function (Tenant $tenant, TenantSettings $settings) use ($engagement, $output): void {
-                if (! $engagement->isEnabled($settings)) {
-                    $output->info("Skipping {$tenant->id} — disabled");
+            function (Tenant $tenant, TenantSettings $settings) use ($engagement, $output, $schedule, $force): void {
+                if (! $schedule instanceof LocalSendSchedule) {
+                    $this->dispatchForTenant($engagement, $output, $tenant, $settings);
 
                     return;
                 }
 
-                $recipients = $engagement->findRecipients($settings);
-
-                if ($recipients->isEmpty()) {
-                    return;
-                }
-
-                $sent = 0;
-
-                foreach ($recipients as $recipient) {
-                    $notificationKey = $this->notificationKey($engagement, $recipient);
-
-                    if (! $this->runTracker->claim($notificationKey)) {
-                        continue;
-                    }
-
-                    try {
-                        $engagement->dispatchForRecipient($recipient, $settings);
-                        $sent++;
-                    } catch (\Throwable $e) {
-                        $this->runTracker->release($notificationKey);
-                        $output->error("Failed for {$recipient->name}: {$e->getMessage()}");
-                        $engagementClass = $engagement::class;
-                        Log::warning("{$engagementClass} failed", [
-                            'tenant' => $tenant->id,
-                            'recipient' => $recipient->name,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
-                }
-
-                if ($sent > 0) {
-                    $output->info("[{$tenant->id}] Processed {$sent} recipient(s).");
-                }
+                new LocalSendWindow($this->runTracker)->run(
+                    $schedule,
+                    $settings,
+                    $force,
+                    fn () => $this->dispatchForTenant($engagement, $output, $tenant, $settings),
+                );
             },
             function (Tenant $tenant, \Throwable $e) use ($engagement, $output): void {
                 $output->error("Tenant {$tenant->id} failed: {$e->getMessage()}");
@@ -75,6 +57,53 @@ class EngagementDispatcher
                 ]);
             },
         );
+    }
+
+    private function dispatchForTenant(
+        CustomerEngagement $engagement,
+        Command $output,
+        Tenant $tenant,
+        TenantSettings $settings,
+    ): void {
+        if (! $engagement->isEnabled($settings)) {
+            $output->info("Skipping {$tenant->id} — disabled");
+
+            return;
+        }
+
+        $recipients = $engagement->findRecipients($settings);
+
+        if ($recipients->isEmpty()) {
+            return;
+        }
+
+        $sent = 0;
+
+        foreach ($recipients as $recipient) {
+            $notificationKey = $this->notificationKey($engagement, $recipient);
+
+            if (! $this->runTracker->claim($notificationKey)) {
+                continue;
+            }
+
+            try {
+                $engagement->dispatchForRecipient($recipient, $settings);
+                $sent++;
+            } catch (\Throwable $e) {
+                $this->runTracker->release($notificationKey);
+                $output->error("Failed for {$recipient->name}: {$e->getMessage()}");
+                $engagementClass = $engagement::class;
+                Log::warning("{$engagementClass} failed", [
+                    'tenant' => $tenant->id,
+                    'recipient' => $recipient->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        if ($sent > 0) {
+            $output->info("[{$tenant->id}] Processed {$sent} recipient(s).");
+        }
     }
 
     private function notificationKey(CustomerEngagement $engagement, EngagementRecipient $recipient): string
