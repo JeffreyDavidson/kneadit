@@ -2,6 +2,9 @@
 
 use App\Filament\Widgets\UpcomingOrdersWidget;
 use App\Models\Orders\Order;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -69,4 +72,20 @@ test('get upcoming orders labels tomorrow correctly', function () {
     if (isset($orders[$tomorrowKey])) {
         expect($orders[$tomorrowKey]['label'])->toBe('Tomorrow');
     }
+});
+
+test('get upcoming orders starts at the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Cache::flush();
+    Date::setTestNow('2026-10-06 01:00');
+    Order::factory()->create(['delivery_date' => '2026-10-05']);
+    Order::factory()->create(['delivery_date' => '2026-10-06']);
+
+    $canView = UpcomingOrdersWidget::canView();
+    $orders = test()->widget->getUpcomingOrders();
+
+    expect($canView)->toBeTrue()
+        ->and(array_keys($orders))->toBe(['2026-10-05', '2026-10-06'])
+        ->and($orders['2026-10-05']['label'])->toBe('Today')
+        ->and($orders['2026-10-06']['label'])->toBe('Tomorrow');
 });

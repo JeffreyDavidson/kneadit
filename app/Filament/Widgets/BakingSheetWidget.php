@@ -5,10 +5,10 @@ namespace App\Filament\Widgets;
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\OrderItem;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Date;
 
 class BakingSheetWidget extends Widget
 {
@@ -29,13 +29,15 @@ class BakingSheetWidget extends Widget
     #[\Override]
     public static function canView(): bool
     {
+        $today = resolve(BakeryClock::class)->today();
+
         return OrderItem::query()
-            ->whereHas('order', function (Builder $query): void {
+            ->whereHas('order', function (Builder $query) use ($today): void {
                 $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
-                    ->where(function (Builder $q): void {
-                        $q->whereDate('delivery_date', Date::today())
-                            ->orWhere(function (Builder $q2): void {
-                                $q2->whereDate('delivery_date', '>', Date::today())
+                    ->where(function (Builder $q) use ($today): void {
+                        $q->whereDate('delivery_date', $today)
+                            ->orWhere(function (Builder $q2) use ($today): void {
+                                $q2->whereDate('delivery_date', '>', $today)
                                     ->where('status', OrderStatus::Confirmed);
                             });
                     });
@@ -46,15 +48,17 @@ class BakingSheetWidget extends Widget
     /** @return array<int, array{product_id: int, name: string, quantity: int}> */
     public function getRows(): array
     {
+        $today = resolve(BakeryClock::class)->today();
+
         return OrderItem::query()
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->selectRaw('order_items.product_id, products.name as product_name, SUM(order_items.quantity) as total_quantity')
-            ->whereHas('order', function (Builder $query): void {
+            ->whereHas('order', function (Builder $query) use ($today): void {
                 $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
-                    ->where(function (Builder $q): void {
-                        $q->whereDate('delivery_date', Date::today())
-                            ->orWhere(function (Builder $q2): void {
-                                $q2->whereDate('delivery_date', '>', Date::today())
+                    ->where(function (Builder $q) use ($today): void {
+                        $q->whereDate('delivery_date', $today)
+                            ->orWhere(function (Builder $q2) use ($today): void {
+                                $q2->whereDate('delivery_date', '>', $today)
                                     ->where('status', OrderStatus::Confirmed);
                             });
                     });

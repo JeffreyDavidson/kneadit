@@ -8,9 +8,9 @@ use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
 use App\Queries\Analytics\DateCountQuery;
 use App\Queries\Financial\RevenueQuery;
+use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\Money;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 class StatsOverviewQuery
 {
@@ -30,10 +30,10 @@ class StatsOverviewQuery
      */
     public function get(): array
     {
-        $today = Date::today();
+        $today = resolve(BakeryClock::class)->today();
         $chartStart = $today->copy()->subDays(6);
-        $weekStart = Date::now()->startOfWeek();
-        $weekEnd = Date::now()->endOfWeek();
+        $weekStart = $today->copy()->startOfWeek();
+        $weekEnd = $today->copy()->endOfWeek();
         $lastWeekStart = $weekStart->copy()->subWeek();
         $lastWeekEnd = $weekEnd->copy()->subWeek();
 
