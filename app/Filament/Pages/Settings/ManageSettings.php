@@ -48,11 +48,21 @@ class ManageSettings extends Page
 
     public ?string $store_address = '';
 
+    public ?string $store_website = '';
+
+    public ?string $store_city = '';
+
+    public ?string $store_state = '';
+
+    public ?string $store_zip = '';
+
     public ?int $default_daily_capacity = null;
 
     public ?int $minimum_order_lead_hours = 48;
 
     public ?string $timezone = 'UTC';
+
+    public ?int $default_shelf_life_days = 3;
 
     /** @var array<int, array<string, mixed>> */
     public array $delivery_fee_tiers = [];
@@ -63,7 +73,21 @@ class ManageSettings extends Page
 
     public bool $repeat_reminders_enabled = false;
 
+    public ?int $repeat_reminder_days = 30;
+
     public bool $birthday_program_enabled = false;
+
+    public bool $birthday_coupon_enabled = true;
+
+    public ?int $birthday_discount_percentage = 15;
+
+    public ?int $birthday_coupon_valid_days = 7;
+
+    public bool $review_requests_enabled = false;
+
+    public ?int $review_request_delay_hours = 24;
+
+    public bool $weekly_digest_enabled = true;
 
     public bool $email_order_placed_enabled = true;
 
@@ -92,6 +116,8 @@ class ManageSettings extends Page
 
     public ?string $paypal_client_secret = '';
 
+    public ?string $paypal_invoice_terms = 'Payment due within 30 days.';
+
     public bool $paypal_sandbox = true;
 
     public string $webhook_url = '';
@@ -109,6 +135,12 @@ class ManageSettings extends Page
     public ?string $additional_terms = '';
 
     public bool $show_policies_on_storefront = false;
+
+    public bool $catering_enabled = false;
+
+    public ?int $catering_minimum_guests = 10;
+
+    public ?int $catering_lead_time_days = 14;
 
     /** @var array<int, string> */
     public array $catering_event_types = [];
@@ -218,14 +250,26 @@ class ManageSettings extends Page
             'store_email' => $this->store_email,
             'store_phone' => $this->store_phone,
             'store_address' => $this->store_address,
+            'store_website' => $this->store_website,
+            'store_city' => $this->store_city,
+            'store_state' => $this->store_state,
+            'store_zip' => $this->store_zip,
             'default_daily_capacity' => $this->default_daily_capacity,
             'minimum_order_lead_hours' => $this->minimum_order_lead_hours,
             'timezone' => $this->timezone,
+            'default_shelf_life_days' => $this->default_shelf_life_days,
             'delivery_fee_tiers' => $this->delivery_fee_tiers,
             'minimum_pickup_order_amount' => $this->minimum_pickup_order_amount,
             'minimum_delivery_order_amount' => $this->minimum_delivery_order_amount,
             'repeat_reminders_enabled' => $this->repeat_reminders_enabled,
+            'repeat_reminder_days' => $this->repeat_reminder_days,
             'birthday_program_enabled' => $this->birthday_program_enabled,
+            'birthday_coupon_enabled' => $this->birthday_coupon_enabled,
+            'birthday_discount_percentage' => $this->birthday_discount_percentage,
+            'birthday_coupon_valid_days' => $this->birthday_coupon_valid_days,
+            'review_requests_enabled' => $this->review_requests_enabled,
+            'review_request_delay_hours' => $this->review_request_delay_hours,
+            'weekly_digest_enabled' => $this->weekly_digest_enabled,
             'email_order_placed_enabled' => $this->email_order_placed_enabled,
             'email_order_confirmed_enabled' => $this->email_order_confirmed_enabled,
             'email_order_baking_enabled' => $this->email_order_baking_enabled,
@@ -239,6 +283,7 @@ class ManageSettings extends Page
             'payment_methods' => $this->payment_methods,
             'paypal_client_id' => $this->paypal_client_id,
             'paypal_client_secret' => $this->paypal_client_secret,
+            'paypal_invoice_terms' => $this->paypal_invoice_terms,
             'paypal_sandbox' => $this->paypal_sandbox,
             'webhook_url' => $this->webhook_url,
             'webhook_secret' => $this->webhook_secret,
@@ -248,6 +293,9 @@ class ManageSettings extends Page
             'pickup_policy' => $this->pickup_policy,
             'additional_terms' => $this->additional_terms,
             'show_policies_on_storefront' => $this->show_policies_on_storefront,
+            'catering_enabled' => $this->catering_enabled,
+            'catering_minimum_guests' => $this->catering_minimum_guests,
+            'catering_lead_time_days' => $this->catering_lead_time_days,
             'catering_event_types' => $this->catering_event_types,
             'gift_card_preset_amounts' => $this->gift_card_preset_amounts,
             'gift_card_default_amount' => $this->gift_card_default_amount,

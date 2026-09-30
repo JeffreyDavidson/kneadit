@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Enums\Orders\PaymentMethod;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -41,6 +42,14 @@ class PaymentMethodsSection
                             ->label('PayPal Client Secret')
                             ->password(),
                     ])
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
+
+                Textarea::make('paypal_invoice_terms')
+                    ->label('PayPal Invoice Terms')
+                    ->rows(2)
+                    ->placeholder('Payment due within 30 days.')
+                    ->helperText('Terms printed on invoices sent through PayPal.')
+                    ->columnSpanFull()
                     ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
 
                 Toggle::make('paypal_sandbox')

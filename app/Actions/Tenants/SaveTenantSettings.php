@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Tenants;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\PaymentMethod;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Str;
@@ -27,14 +28,29 @@ class SaveTenantSettings
             'store_email' => $data['store_email'],
             'store_phone' => $data['store_phone'],
             'store_address' => $data['store_address'],
+            'store_website' => $data['store_website'] ?? '',
+            'store_city' => $data['store_city'] ?? '',
+            'store_state' => $data['store_state'] ?? '',
+            'store_zip' => $data['store_zip'] ?? '',
             'default_daily_capacity' => $data['default_daily_capacity'],
             'minimum_order_lead_hours' => $data['minimum_order_lead_hours'],
             'timezone' => $data['timezone'] ?? 'UTC',
+            'default_shelf_life_days' => SettingValue::string($data['default_shelf_life_days'] ?? null, '3'),
             'delivery_fee_tiers' => json_encode(array_values($deliveryFeeTiers)),
             'minimum_pickup_order_amount' => $data['minimum_pickup_order_amount'] ?? '0',
             'minimum_delivery_order_amount' => $data['minimum_delivery_order_amount'] ?? '0',
             'repeat_reminders_enabled' => $data['repeat_reminders_enabled'],
+            'repeat_reminder_days' => SettingValue::string($data['repeat_reminder_days'] ?? null, '30'),
             'birthday_program_enabled' => $data['birthday_program_enabled'],
+            'birthday_coupon_enabled' => ($data['birthday_coupon_enabled'] ?? true) ? '1' : '0',
+            'birthday_discount_percentage' => SettingValue::string($data['birthday_discount_percentage'] ?? null, '15'),
+            'birthday_coupon_valid_days' => SettingValue::string($data['birthday_coupon_valid_days'] ?? null, '7'),
+            'review_requests_enabled' => ($data['review_requests_enabled'] ?? false) ? '1' : '0',
+            'review_request_delay_hours' => SettingValue::string($data['review_request_delay_hours'] ?? null, '24'),
+            'weekly_digest_enabled' => ($data['weekly_digest_enabled'] ?? true) ? '1' : '0',
+            'catering_enabled' => ($data['catering_enabled'] ?? false) ? '1' : '0',
+            'catering_minimum_guests' => SettingValue::string($data['catering_minimum_guests'] ?? null, '10'),
+            'catering_lead_time_days' => SettingValue::string($data['catering_lead_time_days'] ?? null, '14'),
             'payment_methods' => json_encode($paymentMethods),
             'payment_method' => $paymentMethods[0] ?? PaymentMethod::Cash->value,
             'allergy_disclaimer' => $data['allergy_disclaimer'],
@@ -72,6 +88,7 @@ class SaveTenantSettings
         $settings['paypal_client_id'] = $data['paypal_client_id'] ?? '';
         $settings['paypal_client_secret'] = $data['paypal_client_secret'] ?? '';
         $settings['paypal_sandbox'] = ($data['paypal_sandbox'] ?? false) ? '1' : '0';
+        $settings['paypal_invoice_terms'] = $data['paypal_invoice_terms'] ?? 'Payment due within 30 days.';
 
         // Webhooks are independent of payment method. When a URL is set without
         // a secret (first save or after a manual clear), auto-generate one so
