@@ -79,8 +79,8 @@
                                 <p class="text-sm text-gray-500">{{ $activity->description }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="font-semibold {{ $activity->type === 'earned' ? 'text-green-600' : ($activity->type === 'redeemed' ? 'text-red-600' : 'text-yellow-600') }}">
-                                    {{ $activity->type === 'redeemed' ? '-' : '+' }}{{ number_format($activity->points) }}
+                                <span class="font-semibold {{ $activity->type->textClass() }}">
+                                    {{ $activity->type->formatPoints($activity->points) }}
                                 </span>
                                 <p class="text-xs text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
                             </div>
