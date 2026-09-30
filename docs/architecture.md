@@ -115,7 +115,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 
 Storefront requests are validated by `StoreOrderRequest` and converted to `CreateOrderData`. `CreateOrder` then executes a database transaction containing an ordered Laravel pipeline:
 
-1. Calculate totals and enforce the minimum order amount.
+1. Calculate totals and enforce the minimum order amount. Delivery is priced from the bakery's Delivery Fee Tiers setting (`delivery_tier` is the tier's position) and is free once the subtotal reaches the free-delivery minimum; delivery orders are rejected when delivery is turned off.
 2. Validate date capacity and stock availability.
 3. Apply sitewide sales, coupons, gift cards, referrals, and tier perks.
 4. Resolve the customer and persist the order.

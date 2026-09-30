@@ -5,6 +5,7 @@ use App\Enums\Orders\DeliveryType;
 use App\Models\Inventory\Product;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\OrderPipelineData;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ test('calculates subtotal and total for active products', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -54,7 +55,7 @@ test('loads only product fields needed for order totals', function () {
         }
     });
 
-    $result = (new CalculateOrderTotals)->handle(new OrderPipelineData($data), fn ($payload) => $payload);
+    $result = resolve(CalculateOrderTotals::class)->handle(new OrderPipelineData($data), fn ($payload) => $payload);
 
     expect($result->subtotal->dollars())->toBe(20.0)
         ->and($productQueries)->toHaveCount(1);
@@ -80,7 +81,7 @@ test('skips inactive products', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -100,7 +101,7 @@ test('cancels order when no valid items exist', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -108,28 +109,35 @@ test('cancels order when no valid items exist', function () {
         ->and($result->orderItems)->toBeEmpty();
 });
 
-test('adds delivery fee for delivery orders', function () {
-    config(['kneadit.delivery_fees' => ['under5' => 5.00, '5to10' => 8.00]]);
-
-    $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
-
+test('charges the bakery delivery tier fee unless the order reaches the free-delivery minimum', function (float $price, string $tier, string $freeDeliveryMinimum, float $fee) {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
+        'deliveryFeeTiers' => [
+            ['min_distance' => 0, 'max_distance' => 5, 'fee' => 3.00, 'description' => 'Local'],
+            ['min_distance' => 5, 'max_distance' => 10, 'fee' => 6.50, 'description' => 'Nearby'],
+        ],
+        'freeDeliveryMinimum' => $freeDeliveryMinimum,
+    ])));
+    $product = Product::factory()->create(['price' => $price, 'is_active' => true]);
     $data = new CreateOrderData(
         customerName: 'Jane',
         customerEmail: 'jane@example.com',
         deliveryDate: now()->addDay()->format('Y-m-d'),
         deliveryType: DeliveryType::Delivery->value,
         items: [['product_id' => $product->id, 'quantity' => 1]],
-        deliveryTier: 'under5',
+        deliveryTier: $tier,
     );
 
-    $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $result = resolve(CalculateOrderTotals::class)->handle(new OrderPipelineData($data), fn ($p) => $p);
 
-    $result = $pipe->handle($payload, fn ($p) => $p);
-
-    expect($result->deliveryFee->dollars())->toBe(5.0)
-        ->and($result->total->dollars())->toBe(25.0);
-});
+    expect($result->deliveryFee->dollars())->toBe($fee)
+        ->and($result->total->dollars())->toBe($price + $fee);
+})->with([
+    'first tier below the minimum' => [20.00, '0', '50', 3.00],
+    'second tier below the minimum' => [20.00, '1', '50', 6.50],
+    'at the free-delivery minimum' => [50.00, '1', '50', 0.00],
+    'over the free-delivery minimum' => [60.00, '0', '50', 0.00],
+    'no free-delivery minimum set' => [60.00, '1', '0', 6.50],
+]);
 
 test('does not add delivery fee for pickup orders', function () {
     $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
@@ -143,7 +151,7 @@ test('does not add delivery fee for pickup orders', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -164,7 +172,7 @@ test('adds tip to total when tipAmount is provided', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -185,7 +193,7 @@ test('clamps negative tipAmount to zero', function () {
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
@@ -194,7 +202,10 @@ test('clamps negative tipAmount to zero', function () {
 });
 
 test('tip stacks with delivery fee in total', function () {
-    config(['kneadit.delivery_fees' => ['under5' => 5.00]]);
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
+        'deliveryFeeTiers' => [['min_distance' => 0, 'max_distance' => 5, 'fee' => 5.00, 'description' => 'Local']],
+        'freeDeliveryMinimum' => '0',
+    ])));
 
     $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
 
@@ -204,12 +215,12 @@ test('tip stacks with delivery fee in total', function () {
         deliveryDate: now()->addDay()->format('Y-m-d'),
         deliveryType: DeliveryType::Delivery->value,
         items: [['product_id' => $product->id, 'quantity' => 1]],
-        deliveryTier: 'under5',
+        deliveryTier: '0',
         tipAmount: 3.0,
     );
 
     $payload = new OrderPipelineData($data);
-    $pipe = new CalculateOrderTotals;
+    $pipe = resolve(CalculateOrderTotals::class);
 
     $result = $pipe->handle($payload, fn ($p) => $p);
 
