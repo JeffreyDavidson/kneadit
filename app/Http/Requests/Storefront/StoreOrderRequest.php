@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Storefront;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
+use App\Enums\Orders\DeliveryType;
 use App\Services\Scheduling\EarliestDeliveryDate;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,11 +33,11 @@ class StoreOrderRequest extends FormRequest
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:20'],
             'customer_birthday' => ['nullable', 'date'],
-            'delivery_type' => ['required', 'in:pickup,delivery'],
+            'delivery_type' => ['required', Rule::in($this->allowedDeliveryTypes())],
             'delivery_address' => ['required_if:delivery_type,delivery', 'nullable', 'string', 'max:500'],
             'delivery_date' => ['required', 'date', 'after_or_equal:'.resolve(EarliestDeliveryDate::class)->get()->toDateString()],
             'delivery_time' => ['nullable', 'string', 'max:20'],
-            'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', 'in:under5,5to10,10to15,over15'],
+            'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', Rule::in(resolve(TenantSettings::class)->orders->deliveryTierKeys())],
             'notes' => ['nullable', 'string', 'max:500'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id'],
@@ -57,5 +59,17 @@ class StoreOrderRequest extends FormRequest
     public function toData(): CreateOrderData
     {
         return CreateOrderData::fromArray($this->validated());
+    }
+
+    /**
+     * Delivery is only offered when the bakery has it turned on.
+     *
+     * @return list<string>
+     */
+    private function allowedDeliveryTypes(): array
+    {
+        return resolve(TenantSettings::class)->orders->deliveryEnabled
+            ? [DeliveryType::Pickup->value, DeliveryType::Delivery->value]
+            : [DeliveryType::Pickup->value];
     }
 }
