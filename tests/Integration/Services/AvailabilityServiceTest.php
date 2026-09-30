@@ -2,10 +2,12 @@
 
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
+use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\AvailabilityService;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
@@ -68,4 +70,20 @@ test('counts active orders once for the requested date window', function () {
         ->and($result[1]['reason'])->toBe('Fully booked')
         ->and($result[2]['remaining_capacity'])->toBe(2)
         ->and($orderQueries)->toHaveCount(1);
+});
+
+test('holiday past its order deadline shows as unavailable', function () {
+    Date::setTestNow('2026-12-21 09:00');
+    Holiday::factory()->active()->create([
+        'name' => 'Christmas',
+        'date' => '2026-12-25',
+        'order_deadline' => '2026-12-20',
+    ]);
+
+    $christmas = collect(resolve(AvailabilityService::class)->getAvailability(7))->firstWhere('date', '2026-12-25');
+
+    expect($christmas)
+        ->available->toBeFalse()
+        ->reason->toBe('Orders closed for Christmas')
+        ->remaining_capacity->toBe(0);
 });

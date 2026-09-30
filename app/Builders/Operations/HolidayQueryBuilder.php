@@ -32,4 +32,14 @@ class HolidayQueryBuilder extends Builder
 
         return $this;
     }
+
+    /**
+     * The deadline day itself still accepts orders.
+     */
+    public function pastOrderDeadline(): static
+    {
+        $this->whereDate('order_deadline', '<', Date::today());
+
+        return $this;
+    }
 }

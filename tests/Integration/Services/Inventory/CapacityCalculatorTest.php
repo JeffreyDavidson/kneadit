@@ -5,6 +5,7 @@ use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Operations\Holiday;
 use App\Services\Inventory\CapacityCalculator;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -77,3 +78,12 @@ it('uses the most specific order limit for a date', function (array $levels, int
     'a blocked weekday limit beats the schedule' => [['weekday limit' => ['is_blocked' => true], 'schedule' => []], 0],
     'a holiday overrides a blocked weekday limit' => [['holiday' => [], 'weekday limit' => ['is_blocked' => true]], 4],
 ]);
+
+it('is unavailable once a holiday order deadline has passed', function () {
+    Date::setTestNow('2026-12-21 09:00');
+    Holiday::factory()->active()->create(['date' => '2026-12-25', 'order_deadline' => '2026-12-20']);
+
+    $available = resolve(CapacityCalculator::class)->isAvailable('2026-12-25');
+
+    expect($available)->toBeFalse();
+});
