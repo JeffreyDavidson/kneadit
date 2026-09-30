@@ -86,7 +86,7 @@ class CapacityLimitForm
                         ->default(0)
                         ->minValue(0)
                         ->prefixIcon(Heroicon::OutlinedShoppingBag)
-                        ->helperText('0 = unlimited (unless blocked)'),
+                        ->helperText('0 = use the holiday, Schedule Manager, or default limit'),
 
                     Toggle::make('is_blocked')
                         ->label('Block Day Entirely')
