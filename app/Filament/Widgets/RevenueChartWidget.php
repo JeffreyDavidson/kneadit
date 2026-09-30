@@ -6,12 +6,12 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Queries\Financial\RevenueQuery;
+use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
 class RevenueChartWidget extends ChartWidget
@@ -68,7 +68,7 @@ class RevenueChartWidget extends ChartWidget
     /** @return array{heading: string, chart: array<string, mixed>} */
     private function computeData(int $windowDays): array
     {
-        $end = Date::today();
+        $end = resolve(BakeryClock::class)->today();
         $start = $end->copy()->subDays($windowDays - 1);
         $prevEnd = $start->copy()->subDay();
         $prevStart = $prevEnd->copy()->subDays($windowDays - 1);
