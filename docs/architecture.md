@@ -115,7 +115,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 
 Storefront requests are validated by `StoreOrderRequest` and converted to `CreateOrderData`. `CreateOrder` then executes a database transaction containing an ordered Laravel pipeline:
 
-1. Calculate totals and enforce the minimum order amount.
+1. Calculate totals and enforce the minimum order amount. Delivery is priced from the bakery's Delivery Fee Tiers setting (`delivery_tier` is the tier's position) and is free once the subtotal reaches the free-delivery minimum; delivery orders are rejected when delivery is turned off.
 2. Validate date capacity and stock availability.
 3. Apply sitewide sales, coupons, gift cards, referrals, and tier perks.
 4. Resolve the customer and persist the order.
@@ -140,7 +140,7 @@ A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit her
 
 `EarliestDeliveryDate` decides the first delivery date a customer can choose: the bakery's local today (the `timezone` order setting, UTC until set) plus the lead-time days (`minimum_order_lead_hours`, rounded up to whole days). If today's Schedule Manager order cutoff has passed, the order counts as placed tomorrow, so the date moves back one day. The storefront and API order requests validate against it, and the order page shows it and uses it as the date picker's minimum. Staff-created orders don't use it.
 
-"Today" for all of these rules is the bakery's local date from `BakeryClock` (the same `timezone` setting). `BakeryClock::today()` returns that date as a plain date value, so it compares directly with date columns. The holiday deadline check, the availability calendar, the capacity dashboard widget, upcoming holidays and the holiday deadline/day counts in admin all use it. So do the orders dashboard widgets (today's orders, upcoming orders, baking sheet, revenue chart) and the stats overview query, including its week boundaries. The stats overview still buckets its `created_at` series (pending orders, storefront views) by UTC date.
+"Today" for all of these rules is the bakery's local date from `BakeryClock` (the same `timezone` setting). `BakeryClock::today()` returns that date as a plain date value, so it compares directly with date columns. The holiday deadline check, the availability calendar, the capacity dashboard widget, upcoming holidays and the holiday deadline/day counts in admin all use it. Customer engagement uses it too: the birthday email and `BirthdayCalculator` match birthdays against the bakery-local date, and repeat-order reminders measure their cutoff, days since the last order and next reminder date from it. Timestamps such as `reminder_sent_at` stay UTC. The orders dashboard widgets (today's orders, upcoming orders, baking sheet, revenue chart) and the stats overview query, including its week boundaries, use it as well. The stats overview still buckets its `created_at` series (pending orders, storefront views) by UTC date.
 
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 

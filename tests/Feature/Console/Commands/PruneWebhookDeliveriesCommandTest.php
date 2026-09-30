@@ -4,6 +4,7 @@ use App\Models\Operations\WebhookDelivery;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use JMac\Testing\Double;
 
 use function Pest\Laravel\artisan;
@@ -46,3 +47,19 @@ test('prune respects --days option', function () {
     expect(WebhookDelivery::find($sevenDays->id))->toBeNull()
         ->and(WebhookDelivery::find($oneDay->id))->not->toBeNull();
 });
+
+test('prune deletes only deliveries strictly older than the cutoff', function (int $secondsPastCutoff, bool $expectPruned) {
+    Date::setTestNow('2026-09-30 12:00:00');
+
+    $delivery = WebhookDelivery::factory()->create([
+        'dispatched_at' => now()->subDays(30)->subSeconds($secondsPastCutoff),
+    ]);
+
+    artisan('webhooks:prune', ['--days' => 30])->assertSuccessful();
+
+    expect(WebhookDelivery::query()->whereKey($delivery->id)->exists())->toBe(! $expectPruned);
+})->with([
+    'one second inside the window' => [-1, false],
+    'exactly at the cutoff' => [0, false],
+    'one second outside the window' => [1, true],
+]);

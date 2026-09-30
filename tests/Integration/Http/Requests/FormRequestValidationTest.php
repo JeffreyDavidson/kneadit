@@ -21,6 +21,8 @@ use App\Http\Requests\Storefront\StoreSurveyResponseRequest;
 use App\Http\Requests\Storefront\TrackOrderRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
+beforeEach(fn () => setUpTenantTest());
+
 test('form requests reject empty data for required fields', function () {
     /** @var array<class-string<FormRequest>, list<string>> $requests */
     $requests = [
