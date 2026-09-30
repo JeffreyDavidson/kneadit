@@ -7,12 +7,13 @@ use App\Models\Inventory\Category;
 use App\Models\Orders\Cart;
 use App\Models\Orders\CartItem;
 use App\Services\Carts\CartManager;
+use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
 class ShowOrderFormController extends Controller
 {
-    public function __invoke(TenantSettings $settings, CartManager $cartManager): View
+    public function __invoke(TenantSettings $settings, CartManager $cartManager, EarliestDeliveryDate $earliestDeliveryDate): View
     {
         $categories = Category::query()
             ->active()
@@ -38,6 +39,7 @@ class ShowOrderFormController extends Controller
             'hydratedCartItems' => $hydratedItems,
             'hydratedCartEmail' => $cart?->customer_email,
             'hydratedCartName' => $cart?->customer_name,
+            'earliestDeliveryDate' => $earliestDeliveryDate->get(),
         ]);
     }
 }

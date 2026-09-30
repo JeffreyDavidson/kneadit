@@ -40,7 +40,7 @@
             submitError: '',
             capacityWarning: '',
             capacityError: '',
-            minDate: '',
+            minDate: @js($earliestDeliveryDate->toDateString()),
             availabilityData: [],
             unavailableDates: [],
             availableSlots: [],
@@ -51,10 +51,6 @@
             saleDiscount: 0,
 
             init() {
-                const leadTimeHours = {{ $settings->orders->leadTimeHours }};
-                const today = new Date();
-                today.setTime(today.getTime() + leadTimeHours * 60 * 60 * 1000);
-                this.minDate = today.toISOString().split('T')[0];
                 this.loadAvailability();
                 if (this.form.customer_email) {
                     this.loadFavorites();

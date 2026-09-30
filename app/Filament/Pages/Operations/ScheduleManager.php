@@ -97,6 +97,7 @@ class ScheduleManager extends Page
                             ->type('time'),
                         TextInput::make("schedule.{$dayNum}.order_cutoff_time")
                             ->label('Order Cutoff')
+                            ->helperText('After this time, orders count as placed the next day')
                             ->type('time'),
                         TextInput::make("schedule.{$dayNum}.max_orders")
                             ->label('Max Orders')

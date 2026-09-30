@@ -136,6 +136,10 @@ If capacity rejects the request, the pipeline returns no order. Other domain val
 
 A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit here" and falls through to the next level.
 
+### Earliest delivery date
+
+`EarliestDeliveryDate` decides the first delivery date a customer can choose: the bakery's local today (the `timezone` order setting, UTC until set) plus the lead-time days (`minimum_order_lead_hours`, rounded up to whole days). If today's Schedule Manager order cutoff has passed, the order counts as placed tomorrow, so the date moves back one day. The storefront and API order requests validate against it, and the order page shows it and uses it as the date picker's minimum. Staff-created orders don't use it.
+
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 
 ### Payment paths

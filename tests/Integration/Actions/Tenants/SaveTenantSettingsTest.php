@@ -361,3 +361,34 @@ test('persists gift card preset amounts and default amount', function () {
     expect(settings('gift_card_preset_amounts'))->toBe('15,30,75,150')
         ->and((int) settings('gift_card_default_amount'))->toBe(50);
 });
+
+test('saves the bakery timezone, defaulting to UTC', function (array $input, string $expected) {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => 'Please notify us of allergies.',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => 'No refunds.',
+        'deposit_policy' => '50% deposit required.',
+        'refund_policy' => 'No refunds.',
+        'pickup_policy' => 'Pickup within 24 hours.',
+        'additional_terms' => 'None.',
+        'show_policies_on_storefront' => true,
+        ...$input,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(settings('timezone'))->toBe($expected);
+})->with([
+    'a chosen timezone' => [['timezone' => 'America/Chicago'], 'America/Chicago'],
+    'no timezone given' => [[], 'UTC'],
+]);
