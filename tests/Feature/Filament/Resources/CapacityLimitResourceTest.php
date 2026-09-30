@@ -231,6 +231,18 @@ test('shows unlimited when max orders is zero', function () {
         ->assertTableColumnFormattedStateSet('max_orders', 'Unlimited', $limit);
 });
 
+test('lists weekday limits in week order, then specific dates', function () {
+    $friday = CapacityLimit::factory()->weekday(DayOfWeek::Friday)->create();
+    $monday = CapacityLimit::factory()->weekday(DayOfWeek::Monday)->create();
+    $date = CapacityLimit::factory()->specificDate('2026-10-07')->create();
+    $sunday = CapacityLimit::factory()->weekday(DayOfWeek::Sunday)->create();
+
+    livewire(ListCapacityLimits::class)
+        ->assertCanSeeTableRecords(collect([$monday, $friday, $sunday, $date]), inOrder: true)
+        ->sortTable('day_label', 'desc')
+        ->assertCanSeeTableRecords(collect([$date, $sunday, $friday, $monday]), inOrder: true);
+});
+
 test('can sort capacity limits by day', function () {
     $earlier = CapacityLimit::factory()->specificDate('2026-10-05')->create();
     $later = CapacityLimit::factory()->specificDate('2026-10-07')->create();
