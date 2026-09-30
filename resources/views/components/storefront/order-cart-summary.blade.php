@@ -151,11 +151,11 @@
 
 {{-- Totals --}}
 <div class="border-warm-700/20 space-y-2 border-t pt-4 text-sm">
-    <div class="flex justify-between">
+    <div data-test="order-form-subtotal" class="flex justify-between">
         <span class="text-warm-500">Subtotal</span>
         <span class="text-warm-300" x-text="'$' + subtotal.toFixed(2)"></span>
     </div>
-    <div x-show="deliveryFee > 0" class="flex justify-between">
+    <div x-show="deliveryFee > 0" data-test="order-form-delivery-fee" class="flex justify-between">
         <span class="text-warm-500">Delivery</span>
         <span class="text-warm-300" x-text="'$' + deliveryFee.toFixed(2)"></span>
     </div>
@@ -175,7 +175,7 @@
         <span class="text-warm-500">Tip</span>
         <span class="text-warm-300" x-text="'$' + tipAmount.toFixed(2)"></span>
     </div>
-    <div class="border-warm-700/20 flex justify-between border-t pt-3">
+    <div data-test="order-form-total" class="border-warm-700/20 flex justify-between border-t pt-3">
         <span class="font-display text-warm-100 text-lg font-bold">Total</span>
         <span class="font-display text-warm-400 text-2xl font-bold" x-text="'$' + total.toFixed(2)"></span>
     </div>

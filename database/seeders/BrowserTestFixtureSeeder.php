@@ -7,6 +7,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Enums\Staff\UserRole;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\Survey;
+use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
@@ -34,6 +35,18 @@ class BrowserTestFixtureSeeder extends Seeder
 
     public const SURVEY_TITLE = 'Browser Test Survey';
 
+    public const DELIVERY_PRODUCT_NAME = 'Browser Test Delivery Loaf';
+
+    public const DELIVERY_PRODUCT_PRICE = 30.00;
+
+    public const DELIVERY_FREE_MINIMUM = 50.00;
+
+    // Two tiers with distinct fees so a test can tell tier 1 from tier 2.
+    public const DELIVERY_FEE_TIERS = [
+        ['min_distance' => 0, 'max_distance' => 5, 'fee' => 5.00, 'description' => 'Local delivery (0-5 miles)'],
+        ['min_distance' => 5, 'max_distance' => 10, 'fee' => 12.00, 'description' => 'Extended delivery (5-10 miles)'],
+    ];
+
     public function run(): void
     {
         throw_if(app()->environment('production'), RuntimeException::class, 'BrowserTestFixtureSeeder must never run in production.');
@@ -43,6 +56,7 @@ class BrowserTestFixtureSeeder extends Seeder
         $this->seedReviewableOrder();
         $this->seedRfmChampionCustomer();
         $this->seedActiveSurvey();
+        $this->seedDeliveryOrdering();
     }
 
     private function skipOnboarding(): void
@@ -117,6 +131,33 @@ class BrowserTestFixtureSeeder extends Seeder
                     ['question' => 'How was your experience?', 'type' => 'rating'],
                     ['question' => 'Any additional feedback?', 'type' => 'text'],
                 ],
+                'is_active' => true,
+            ],
+        );
+    }
+
+    // Delivery on, two fee tiers, a free-delivery minimum, and one orderable
+    // product priced under that minimum, so storefront order tests can cover
+    // tier pricing and free delivery.
+    private function seedDeliveryOrdering(): void
+    {
+        resolve(SettingsManager::class)->setMany([
+            'delivery_enabled' => '1',
+            'delivery_fee_tiers' => json_encode(self::DELIVERY_FEE_TIERS),
+            'free_delivery_minimum' => (string) self::DELIVERY_FREE_MINIMUM,
+        ]);
+
+        $category = Category::query()->updateOrCreate(
+            ['slug' => 'browser-test-delivery'],
+            ['name' => 'Browser Test Delivery', 'is_active' => true],
+        );
+
+        Product::query()->updateOrCreate(
+            ['slug' => 'browser-test-delivery-loaf'],
+            [
+                'name' => self::DELIVERY_PRODUCT_NAME,
+                'price' => self::DELIVERY_PRODUCT_PRICE,
+                'category_id' => $category->id,
                 'is_active' => true,
             ],
         );

@@ -90,6 +90,7 @@
                                         ></span>
                                         <button
                                             type="button"
+                                            data-test="order-form-product-increment"
                                             @click="incrementItem({{ $product->id }}, {{ $product->price?->dollars() ?? 0 }})"
                                             class="order-qty-btn"
                                         >
