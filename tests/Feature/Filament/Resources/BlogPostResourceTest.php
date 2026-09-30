@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Staff\UserRole;
 use App\Filament\Resources\BlogPosts\BlogPostResource;
 use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
@@ -146,3 +147,46 @@ test('resource returns global search result details', function () {
         ->toHaveKey('Author', 'Chef Baker')
         ->toHaveKey('Published');
 });
+
+dataset('blogPostManagerRoles', [
+    'manager' => [UserRole::Manager],
+    'owner' => [UserRole::Owner],
+]);
+
+test('staff users cannot access the blog post resource', function () {
+    $post = TenantBlogPost::factory()->create();
+    test()->actingAs(User::factory()->staff()->create());
+
+    expect(BlogPostResource::canAccess())->toBeFalse()
+        ->and(BlogPostResource::canCreate())->toBeFalse()
+        ->and(BlogPostResource::canEdit($post))->toBeFalse()
+        ->and(BlogPostResource::canDelete($post))->toBeFalse();
+
+    livewire(ListBlogPosts::class)
+        ->assertForbidden();
+
+    livewire(CreateBlogPost::class)
+        ->assertForbidden();
+
+    livewire(EditBlogPost::class, ['record' => $post->getRouteKey()])
+        ->assertForbidden();
+});
+
+test('manager and owner users can manage blog posts', function (UserRole $role) {
+    $post = TenantBlogPost::factory()->create();
+    test()->actingAs(User::factory()->create(['role' => $role]));
+
+    expect(BlogPostResource::canAccess())->toBeTrue()
+        ->and(BlogPostResource::canCreate())->toBeTrue()
+        ->and(BlogPostResource::canEdit($post))->toBeTrue()
+        ->and(BlogPostResource::canDelete($post))->toBeTrue();
+
+    livewire(ListBlogPosts::class)
+        ->assertOk();
+
+    livewire(CreateBlogPost::class)
+        ->assertOk();
+
+    livewire(EditBlogPost::class, ['record' => $post->getRouteKey()])
+        ->assertOk();
+})->with('blogPostManagerRoles');
