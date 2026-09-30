@@ -12,6 +12,7 @@ class AvailabilityService
 {
     public function __construct(
         private readonly TenantSettings $settings,
+        private readonly BakeryClock $clock,
     ) {}
 
     /**
@@ -22,7 +23,7 @@ class AvailabilityService
     public function getAvailability(int $days = 30): array
     {
         $dates = [];
-        $today = Date::today();
+        $today = $this->clock->today();
         $orderCounts = collect();
 
         if ($days > 0) {

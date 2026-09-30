@@ -7,7 +7,6 @@ namespace App\Services\Scheduling;
 use App\Models\Operations\BusinessSchedule;
 use App\Services\Settings\TenantSettings;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
 
 /**
  * The first delivery date a customer can choose right now. Staff-created
@@ -17,6 +16,7 @@ final readonly class EarliestDeliveryDate
 {
     public function __construct(
         private TenantSettings $settings,
+        private BakeryClock $clock,
     ) {}
 
     /**
@@ -25,7 +25,7 @@ final readonly class EarliestDeliveryDate
      */
     public function get(): CarbonImmutable
     {
-        $now = Date::now($this->settings->orders->timezone)->toImmutable();
+        $now = $this->clock->now()->toImmutable();
         $orderingDay = $now->startOfDay();
         $cutoff = BusinessSchedule::query()->forDay($now->dayOfWeek)->first()?->order_cutoff_time;
 

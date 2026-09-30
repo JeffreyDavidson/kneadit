@@ -2,6 +2,10 @@
 
 use App\Models\Operations\Holiday;
 use App\Presenters\HolidayPresenter;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
+
+beforeEach(fn () => app()->instance(TenantSettings::class, makeTenantSettings()));
 
 test('isUpcoming returns true for future holidays', function () {
     $holiday = Holiday::factory()->make(['date' => now()->addDays(10)]);
@@ -92,4 +96,23 @@ test('prepStatus returns Prep Time when inside the prep window', function () {
     ]);
 
     expect(HolidayPresenter::for($holiday)->prepStatus())->toBe('Prep Time!');
+});
+
+test('deadline and day counts follow the bakery-local date', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-12-21 02:00');
+    $holiday = Holiday::factory()->make(['date' => '2026-12-25', 'order_deadline' => '2026-12-20']);
+
+    $presenter = HolidayPresenter::for($holiday);
+
+    expect($presenter->isDeadlinePassed())->toBeFalse()
+        ->and($presenter->daysUntilDeadline())->toBe(0)
+        ->and($presenter->daysAway())->toBe(5);
+});
+
+test('the deadline day itself is not passed', function () {
+    Date::setTestNow('2026-12-20 15:00');
+    $holiday = Holiday::factory()->make(['date' => '2026-12-25', 'order_deadline' => '2026-12-20']);
+
+    expect(HolidayPresenter::for($holiday)->isDeadlinePassed())->toBeFalse();
 });

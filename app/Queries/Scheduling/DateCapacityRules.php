@@ -9,6 +9,7 @@ use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Operations\Holiday;
+use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\DateOpenStatus;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
@@ -28,6 +29,7 @@ final readonly class DateCapacityRules
      * @param  Collection<array-key, Collection<int, Holiday>>  $holidays  active holidays, grouped by Y-m-d
      * @param  Collection<string, CapacityLimit>  $dateLimits  keyed by Y-m-d
      * @param  Collection<string, CapacityLimit>  $weekdayLimits  keyed by DayOfWeek value
+     * @param  string  $today  the bakery-local date (Y-m-d) the rules were loaded on
      */
     private function __construct(
         private Collection $blockedDates,
@@ -35,6 +37,7 @@ final readonly class DateCapacityRules
         private Collection $holidays,
         private Collection $dateLimits,
         private Collection $weekdayLimits,
+        private string $today,
     ) {}
 
     public static function between(CarbonInterface $start, CarbonInterface $end): self
@@ -67,6 +70,7 @@ final readonly class DateCapacityRules
                 ->filter(fn (CapacityLimit $limit): bool => $limit->specific_date === null)
                 ->unique('day_of_week')
                 ->keyBy('day_of_week'),
+            today: resolve(BakeryClock::class)->today()->toDateString(),
         );
     }
 
@@ -90,7 +94,8 @@ final readonly class DateCapacityRules
         }
 
         $pastDeadline = $this->holidaysOn($date)->first(
-            fn (Holiday $holiday): bool => $holiday->order_deadline?->lt(Date::today()) ?? false,
+            fn (Holiday $holiday): bool => $holiday->order_deadline !== null
+                && $holiday->order_deadline->toDateString() < $this->today,
         );
 
         if ($pastDeadline instanceof Holiday) {

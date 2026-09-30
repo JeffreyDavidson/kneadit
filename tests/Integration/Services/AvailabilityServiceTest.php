@@ -7,6 +7,7 @@ use App\Models\Operations\CapacityLimit;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\AvailabilityService;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
@@ -131,4 +132,13 @@ test('runs the same number of queries however many days are requested', function
     };
 
     expect($countQueries(30))->toBe($countQueries(3));
+});
+
+test('starts the calendar at the bakery-local today', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    $firstDay = resolve(AvailabilityService::class)->getAvailability(1)[0];
+
+    expect($firstDay['date'])->toBe('2026-10-05');
 });
