@@ -3,6 +3,7 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../app/Enums/Engagement/LoyaltyPointType.php';
 
 /*
  * Brand tokens map to runtime CSS vars set per-tenant in
