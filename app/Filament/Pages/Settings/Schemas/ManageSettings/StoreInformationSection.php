@@ -36,6 +36,25 @@ class StoreInformationSection
                             ->label('Store Address')
                             ->placeholder('123 Baker Street, City, State 12345')
                             ->columnSpanFull(),
+
+                        TextInput::make('store_city')
+                            ->label('Store City')
+                            ->placeholder('City'),
+
+                        TextInput::make('store_state')
+                            ->label('Store State')
+                            ->placeholder('State'),
+
+                        TextInput::make('store_zip')
+                            ->label('Store ZIP Code')
+                            ->placeholder('12345')
+                            ->helperText('City, state and ZIP appear on PayPal invoices.'),
+
+                        TextInput::make('store_website')
+                            ->label('Store Website')
+                            ->url()
+                            ->placeholder('https://yourbakery.com')
+                            ->helperText('Shown on printed invoices.'),
                     ]),
             ]);
     }

@@ -8,6 +8,7 @@ use App\Enums\Orders\PaymentMethod;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -165,7 +166,7 @@ class QuickOrderForm
                         DatePicker::make('delivery_date')
                             ->label('Requested Date')
                             ->required()
-                            ->minDate(today()),
+                            ->minDate(resolve(BakeryClock::class)->today()),
 
                         TimePicker::make('delivery_time')
                             ->label('Requested Time')

@@ -1,9 +1,11 @@
 <?php
 
+use App\Enums\Orders\PaymentMethod;
 use App\Filament\Pages\Settings\ManageSettings;
 use App\Models\Operations\WebhookDelivery;
 use App\Models\Platform\Setting;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsDefaults;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -99,6 +101,82 @@ test('sendTestWebhook persists current settings then dispatches a synthetic orde
     });
 
     expect(WebhookDelivery::sole()->event)->toBe('order.created');
+});
+
+test('manage settings page renders the settings that used to be unreachable', function (string $label) {
+    livewire(ManageSettings::class)
+        ->set('payment_methods', [PaymentMethod::PayPal->value])
+        ->assertSee($label);
+})->with([
+    'birthday coupon' => 'Send a Birthday Coupon',
+    'birthday discount' => 'Birthday Discount (%)',
+    'birthday coupon validity' => 'Birthday Coupon Valid For (days)',
+    'repeat reminder days' => 'Repeat Reminder Interval (days)',
+    'review requests' => 'Enable Review Requests',
+    'review request delay' => 'Review Request Delay (hours)',
+    'weekly digest' => 'Weekly Digest Email',
+    'catering enabled' => 'Accept Catering Inquiries',
+    'catering minimum guests' => 'Catering Minimum Guests',
+    'catering lead time' => 'Catering Lead Time (days)',
+    'store website' => 'Store Website',
+    'store city' => 'Store City',
+    'store state' => 'Store State',
+    'store zip' => 'Store ZIP Code',
+    'paypal invoice terms' => 'PayPal Invoice Terms',
+    'default shelf life' => 'Default Shelf Life (days)',
+]);
+
+test('the new settings load the reader defaults on mount', function () {
+    livewire(ManageSettings::class)
+        ->assertSet('birthday_coupon_enabled', true)
+        ->assertSet('birthday_discount_percentage', 15)
+        ->assertSet('birthday_coupon_valid_days', 7)
+        ->assertSet('repeat_reminder_days', 30)
+        ->assertSet('review_requests_enabled', false)
+        ->assertSet('review_request_delay_hours', 24)
+        ->assertSet('weekly_digest_enabled', true)
+        ->assertSet('catering_enabled', false)
+        ->assertSet('catering_minimum_guests', 10)
+        ->assertSet('catering_lead_time_days', 14)
+        ->assertSet('paypal_invoice_terms', 'Payment due within 30 days.')
+        ->assertSet('default_shelf_life_days', 3);
+});
+
+test('manage settings page round-trips the new settings through save and reload', function () {
+    livewire(ManageSettings::class)
+        ->set('birthday_discount_percentage', 20)
+        ->set('review_requests_enabled', true)
+        ->set('weekly_digest_enabled', false)
+        ->set('catering_enabled', true)
+        ->set('catering_minimum_guests', 25)
+        ->set('store_website', 'https://bakery.test')
+        ->set('store_city', 'Austin')
+        ->set('paypal_invoice_terms', 'Due on receipt.')
+        ->set('default_shelf_life_days', 5)
+        ->call('save');
+
+    $settings = TenantSettings::resolve();
+
+    expect($settings->engagement->birthdayDiscountPercentage)->toBe(20)
+        ->and($settings->engagement->reviewRequestsEnabled)->toBeTrue()
+        ->and($settings->catering->enabled)->toBeTrue()
+        ->and($settings->catering->minimumGuests)->toBe('25')
+        ->and($settings->store->website)->toBe('https://bakery.test')
+        ->and(settings('weekly_digest_enabled'))->toBe('0')
+        ->and(settings('store_city'))->toBe('Austin')
+        ->and(settings('paypal_invoice_terms'))->toBe('Due on receipt.')
+        ->and(settings('default_shelf_life_days'))->toBe('5');
+
+    livewire(ManageSettings::class)
+        ->assertSet('birthday_discount_percentage', 20)
+        ->assertSet('review_requests_enabled', true)
+        ->assertSet('weekly_digest_enabled', false)
+        ->assertSet('catering_enabled', true)
+        ->assertSet('catering_minimum_guests', 25)
+        ->assertSet('store_website', 'https://bakery.test')
+        ->assertSet('store_city', 'Austin')
+        ->assertSet('paypal_invoice_terms', 'Due on receipt.')
+        ->assertSet('default_shelf_life_days', 5);
 });
 
 test('every key the form sends is persisted by SaveTenantSettings', function () {

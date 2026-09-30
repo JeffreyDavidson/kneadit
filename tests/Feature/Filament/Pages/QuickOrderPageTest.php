@@ -4,8 +4,11 @@ use App\Enums\Orders\DeliveryType;
 use App\Filament\Pages\Operations\QuickOrder;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Component;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
@@ -56,4 +59,16 @@ test('quick order delivery tier lists the bakery tiers', function () {
         ->fillForm(['delivery_type' => DeliveryType::Delivery->value])
         ->assertFormFieldExists('delivery_tier', fn (Select $field): bool => array_keys($field->getOptions()) === [0, 1]
             && $field->getOptions()[1] === 'Far ($12.50)');
+});
+
+test('quick order date picker starts at the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    $form = livewire(QuickOrder::class)->instance()->form;
+    $minDate = collect($form->getFlatComponents())
+        ->first(fn (Component $component): bool => $component instanceof DatePicker && $component->getName() === 'delivery_date')
+        ->getMinDate();
+
+    expect(Date::parse($minDate)->toDateString())->toBe('2026-10-05');
 });

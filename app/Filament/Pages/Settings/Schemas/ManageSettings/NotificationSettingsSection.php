@@ -22,9 +22,50 @@ class NotificationSettingsSection
                             ->label('Enable Repeat Order Reminders')
                             ->helperText('Send reminders for repeat customers'),
 
+                        TextInput::make('repeat_reminder_days')
+                            ->label('Repeat Reminder Interval (days)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(30)
+                            ->helperText('Days since a customer\'s last order before a repeat reminder is sent.'),
+
                         Toggle::make('birthday_program_enabled')
                             ->label('Enable Birthday Program')
                             ->helperText('Send birthday offers to customers'),
+
+                        Toggle::make('birthday_coupon_enabled')
+                            ->label('Send a Birthday Coupon')
+                            ->helperText('Include a single-use discount coupon in the birthday email.'),
+
+                        TextInput::make('birthday_discount_percentage')
+                            ->label('Birthday Discount (%)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(100)
+                            ->default(15)
+                            ->helperText('Percentage off the birthday coupon.'),
+
+                        TextInput::make('birthday_coupon_valid_days')
+                            ->label('Birthday Coupon Valid For (days)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(7)
+                            ->helperText('How many days the birthday coupon stays usable.'),
+
+                        Toggle::make('review_requests_enabled')
+                            ->label('Enable Review Requests')
+                            ->helperText('Email customers asking for a review after their order is delivered.'),
+
+                        TextInput::make('review_request_delay_hours')
+                            ->label('Review Request Delay (hours)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(24)
+                            ->helperText('Hours to wait after delivery before asking for a review.'),
+
+                        Toggle::make('weekly_digest_enabled')
+                            ->label('Weekly Digest Email')
+                            ->helperText('Email you a weekly summary of orders and revenue.'),
 
                         Toggle::make('low_stock_alerts_enabled')
                             ->label('Enable Daily Low-Stock Alerts')

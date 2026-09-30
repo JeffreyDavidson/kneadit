@@ -10,6 +10,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Queries\Analytics\StorefrontAnalyticsQuery;
+use App\Services\Scheduling\BakeryClock;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -114,12 +115,17 @@ class StorefrontAnalytics extends Page
 
     private function getStartDate(): ?Carbon
     {
-        return match ($this->period) {
-            'today' => today(),
-            'week' => now()->startOfWeek(),
-            'month' => now()->startOfMonth(),
+        $now = resolve(BakeryClock::class)->now();
+
+        $start = match ($this->period) {
+            'today' => $now->startOfDay(),
+            'week' => $now->startOfWeek(),
+            'month' => $now->startOfMonth(),
             'all' => null,
-            default => now()->startOfWeek(),
+            default => $now->startOfWeek(),
         };
+
+        // created_at is stored in the app timezone, so compare against that instant.
+        return $start?->setTimezone(config()->string('app.timezone'));
     }
 }

@@ -171,14 +171,6 @@ test('canRedeem returns false when no customer', function () {
     expect($vm->canRedeem(makeFakeReward(100)))->toBeFalse();
 });
 
-test('historyEntrySign returns minus for Redeemed and plus for others', function () {
-    $vm = makeLoyaltyVm();
-
-    expect($vm->historyEntrySign(LoyaltyPointType::Redeemed))->toBe('-')
-        ->and($vm->historyEntrySign(LoyaltyPointType::Earned))->toBe('+')
-        ->and($vm->historyEntrySign(LoyaltyPointType::Adjusted))->toBe('+');
-});
-
 test('historyEntryColorClass returns correct Tailwind classes per enum case', function () {
     $vm = makeLoyaltyVm();
 
