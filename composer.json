@@ -86,7 +86,7 @@
         "test": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan config:clear --ansi",
-            "@php artisan test --exclude-testsuite=Browser"
+            "@test:application"
         ],
         "test:application": [
             "Composer\\Config::disableProcessTimeout",
