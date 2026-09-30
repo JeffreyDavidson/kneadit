@@ -11,7 +11,6 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Livewire\Livewire;
 
 use function Pest\Livewire\livewire;
 
@@ -32,7 +31,7 @@ test('renders the view page with the inquiry summary', function () {
         'status' => CateringInquiryStatus::Quoted,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('Maya Patel')
         ->assertSee('Customer')
@@ -55,7 +54,7 @@ test('view page prepares a future event countdown and suggested deposit from ten
         'status' => CateringInquiryStatus::Quoted,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee(now()->addDays(5)->format('M j, Y'))
         ->assertSee('(in '.now()->addDays(5)->diffForHumans(['parts' => 1, 'short' => false]).')')
@@ -74,7 +73,7 @@ test('view page labels past events and received deposits', function () {
         'status' => CateringInquiryStatus::Confirmed,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('(past)')
         ->assertSee('Deposit received')
@@ -109,7 +108,7 @@ test('quote content renders item details and totals', function () {
         'special_instructions' => 'Gluten-free',
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('Celebration cake')
         ->assertSee('Gluten-free')
@@ -124,7 +123,7 @@ test('quote content renders the single-amount legacy explanation', function () {
         'status' => CateringInquiryStatus::Quoted,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('Single-amount quote (added before items existed).')
         ->assertSee('Manage items');
@@ -136,7 +135,7 @@ test('quote content distinguishes editable and read-only empty states', function
         'status' => CateringInquiryStatus::Inquiry,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $editableInquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $editableInquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('No items yet.')
         ->assertSee('Manage items');
@@ -146,7 +145,7 @@ test('quote content distinguishes editable and read-only empty states', function
         'status' => CateringInquiryStatus::Completed,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $readOnlyInquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $readOnlyInquiry->getRouteKey()])
         ->assertOk()
         ->assertSee('No items.')
         ->assertDontSee('No items yet.')
@@ -161,7 +160,7 @@ test('send quote is visible for an Inquiry with a quoted amount and dispatches t
         'quoted_amount' => 1000,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionVisible('sendQuote')
         ->assertActionHidden('resendQuote')
         ->callAction('sendQuote');
@@ -176,7 +175,7 @@ test('send quote is hidden when no amount has been set', function () {
         'quoted_amount' => null,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('sendQuote')
         ->assertActionVisible('manageQuoteItems');
 });
@@ -189,7 +188,7 @@ test('resend quote is visible when status is Quoted and dispatches the event', f
         'quoted_amount' => 800,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionVisible('resendQuote')
         ->assertActionHidden('sendQuote')
         ->callAction('resendQuote');
@@ -206,7 +205,7 @@ test('manage quote items adds items, recomputes total, and does not email', func
         'quoted_amount' => null,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('manageQuoteItems', data: [
             'items' => [
                 ['name' => 'Cake', 'quantity' => 1, 'unit_price' => 400, 'special_instructions' => null],
@@ -224,7 +223,7 @@ test('manage quote items adds items, recomputes total, and does not email', func
 test('confirm booking creates an order, transitions inquiry to Confirmed', function () {
     $quoted = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Quoted, 'quoted_amount' => 500]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $quoted->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $quoted->getRouteKey()])
         ->assertActionVisible('confirmBooking')
         ->callAction('confirmBooking');
 
@@ -238,14 +237,14 @@ test('confirm booking is hidden once an order exists', function () {
     $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Confirmed, 'quoted_amount' => 500]);
     Order::factory()->for($inquiry, 'cateringInquiry')->create();
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('confirmBooking');
 });
 
 test('confirm booking is hidden when not Quoted', function () {
     $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Inquiry]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('confirmBooking');
 });
 
@@ -256,7 +255,7 @@ test('mark deposit received persists the deposit fields and promotes status', fu
         'deposit_paid_at' => null,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionVisible('markDepositReceived')
         ->callAction('markDepositReceived', data: ['amount' => 250, 'reference' => 'CHK-9000']);
 
@@ -275,7 +274,7 @@ test('mark deposit received is hidden once a deposit is recorded', function () {
         'deposit_amount' => 250,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('markDepositReceived');
 });
 
@@ -285,7 +284,7 @@ test('cancel action transitions to Cancelled and prepends a reason to notes', fu
         'notes' => 'Existing.',
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionVisible('cancel')
         ->callAction('cancel', data: ['reason' => 'Customer rescheduled']);
 
@@ -298,7 +297,7 @@ test('cancel action transitions to Cancelled and prepends a reason to notes', fu
 test('cancel is hidden when already Completed or Cancelled', function (CateringInquiryStatus $status) {
     $inquiry = CateringInquiry::factory()->create(['status' => $status]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertActionHidden('cancel');
 })->with([
     'completed' => [CateringInquiryStatus::Completed],
@@ -308,7 +307,7 @@ test('cancel is hidden when already Completed or Cancelled', function (CateringI
 test('edit notes action persists changes', function () {
     $inquiry = CateringInquiry::factory()->create(['notes' => null]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('editNotes', data: ['notes' => 'Talked to chef about gluten-free options.']);
 
     expect($inquiry->fresh()->notes)->toBe('Talked to chef about gluten-free options.');
@@ -321,7 +320,7 @@ test('a cancelled inquiry hides the quote, booking, and deposit action buttons',
         'deposit_paid_at' => null,
     ]);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->assertOk()
         ->assertDontSee('Manage items')
         ->assertDontSee('Send quote')
@@ -333,7 +332,7 @@ test('a cancelled inquiry hides the quote, booking, and deposit action buttons',
 test('edit customer action updates contact fields', function () {
     $inquiry = CateringInquiry::factory()->create(['customer_name' => 'Old Name']);
 
-    Livewire::test(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
+    livewire(ViewCateringInquiry::class, ['record' => $inquiry->getRouteKey()])
         ->callAction('editCustomer', data: [
             'customer_name' => 'New Name',
             'customer_email' => 'new@example.com',

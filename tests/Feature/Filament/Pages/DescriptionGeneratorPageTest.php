@@ -4,7 +4,8 @@ use App\Filament\Pages\Tools\DescriptionGenerator;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,7 +16,7 @@ beforeEach(function () {
 });
 
 test('description generator generates descriptions', function () {
-    Livewire::test(DescriptionGenerator::class)
+    livewire(DescriptionGenerator::class)
         ->set('manualProductName', 'Sourdough Loaf')
         ->call('generate');
 

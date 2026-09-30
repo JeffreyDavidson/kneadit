@@ -4,7 +4,8 @@ use App\Filament\Central\Resources\AnnouncementResource\Pages\ListAnnouncements;
 use App\Models\Platform\PlatformAnnouncement;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,7 +18,7 @@ test('can filter announcements by active status', function () {
     $active = PlatformAnnouncement::factory()->active()->create();
     $inactive = PlatformAnnouncement::factory()->inactive()->create();
 
-    Livewire::test(ListAnnouncements::class)
+    livewire(ListAnnouncements::class)
         ->filterTable('is_active', true)
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));

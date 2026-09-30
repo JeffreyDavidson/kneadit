@@ -5,9 +5,9 @@ use App\Models\Platform\PlatformSetting;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Artisan;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 test('page renders', function () {
-    Livewire::test(PlatformOperations::class)->assertOk();
+    livewire(PlatformOperations::class)->assertOk();
 });
 
 test('catalog includes the expected commands', function () {
@@ -41,7 +41,7 @@ test('run invokes artisan command and stamps last run', function () {
         ->once()
         ->andReturn('all checks passed');
 
-    Livewire::test(PlatformOperations::class)
+    livewire(PlatformOperations::class)
         ->call('run', 'health:check')
         ->assertOk();
 
@@ -52,7 +52,7 @@ test('run invokes artisan command and stamps last run', function () {
 });
 
 test('run rejects unknown commands', function () {
-    Livewire::test(PlatformOperations::class)
+    livewire(PlatformOperations::class)
         ->call('run', 'platform:rm-rf-slash')
         ->assertOk();
 

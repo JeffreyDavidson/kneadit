@@ -6,9 +6,9 @@ use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,7 +17,7 @@ beforeEach(function () {
 });
 
 test('list page renders', function () {
-    Livewire::test(ListFreeForeverGrants::class)->assertOk();
+    livewire(ListFreeForeverGrants::class)->assertOk();
 });
 
 test('resource cannot create or edit', function () {
@@ -47,6 +47,6 @@ test('list shows active and revoked grants', function () {
         'revoked_at' => now()->subDays(2),
     ]);
 
-    Livewire::test(ListFreeForeverGrants::class)
+    livewire(ListFreeForeverGrants::class)
         ->assertCanSeeTableRecords(FreeForeverGrant::all());
 });

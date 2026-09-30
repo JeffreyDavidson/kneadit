@@ -3,9 +3,9 @@
 use App\Filament\Pages\Engagement\AnnouncementBanner;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -21,7 +21,7 @@ test('staff cannot access announcement banner page', function () {
 });
 
 test('announcement banner saves settings', function () {
-    Livewire::test(AnnouncementBanner::class)
+    livewire(AnnouncementBanner::class)
         ->set('announcement_enabled', true)
         ->set('announcement_text', 'We are closed for holidays!')
         ->call('save');

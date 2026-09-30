@@ -5,7 +5,8 @@ use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -16,14 +17,14 @@ beforeEach(function () {
 });
 
 test('loyalty dashboard page renders for manager', function () {
-    Livewire::test(LoyaltyDashboard::class)->assertOk();
+    livewire(LoyaltyDashboard::class)->assertOk();
 });
 
 test('toggleLoyalty flips the setting', function () {
     $manager = resolve(SettingsManager::class);
     $manager->set('loyalty_enabled', '0');
 
-    Livewire::test(LoyaltyDashboard::class)
+    livewire(LoyaltyDashboard::class)
         ->call('toggleLoyalty')
         ->assertSet('loyaltyEnabled', true);
 

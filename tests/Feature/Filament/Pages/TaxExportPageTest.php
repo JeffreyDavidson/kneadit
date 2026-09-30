@@ -5,6 +5,8 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 
+use function Pest\Livewire\livewire;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -15,6 +17,6 @@ beforeEach(function () {
 });
 
 test('tax export page can render', function () {
-    Livewire::test(TaxExport::class)
+    livewire(TaxExport::class)
         ->assertOk();
 });

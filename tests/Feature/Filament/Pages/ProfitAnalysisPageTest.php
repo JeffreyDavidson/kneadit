@@ -5,7 +5,8 @@ use App\Models\Inventory\Product;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,13 +19,13 @@ beforeEach(function () {
 test('profit analysis page renders for manager', function () {
     Product::factory()->count(3)->create();
 
-    Livewire::test(ProfitAnalysis::class)->assertOk();
+    livewire(ProfitAnalysis::class)->assertOk();
 });
 
 test('changing the sort order re-renders without error', function () {
     Product::factory()->count(2)->create();
 
-    Livewire::test(ProfitAnalysis::class)
+    livewire(ProfitAnalysis::class)
         ->set('sortBy', 'name_asc')
         ->assertOk();
 });

@@ -3,7 +3,8 @@
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -13,6 +14,6 @@ beforeEach(function () {
 });
 
 test('welcome banner widget can render', function () {
-    Livewire::test(WelcomeBannerWidget::class)
+    livewire(WelcomeBannerWidget::class)
         ->assertOk();
 });

@@ -7,7 +7,8 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,7 +19,7 @@ beforeEach(function () {
 });
 
 test('reorder reminders page can render', function () {
-    Livewire::test(ReorderReminders::class)
+    livewire(ReorderReminders::class)
         ->assertOk();
 });
 
