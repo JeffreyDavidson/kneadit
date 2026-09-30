@@ -5,7 +5,8 @@ use App\Models\Engagement\Survey;
 use App\Models\Engagement\SurveyResponse;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -27,7 +28,7 @@ test('renders precomputed rating, choice, and text results', function () {
     SurveyResponse::factory()->for($survey)->create(['answers' => [3, 'Chocolate', 'Good']]);
     SurveyResponse::factory()->for($survey)->create(['answers' => [5, 'Sprinkles', null]]);
 
-    Livewire::test(SurveyResults::class)
+    livewire(SurveyResults::class)
         ->set('surveyId', $survey->id)
         ->assertOk()
         ->assertSee('How was your visit?')
@@ -46,7 +47,7 @@ test('renders precomputed rating, choice, and text results', function () {
 test('shows the empty-state message when the survey has no responses', function () {
     $survey = Survey::factory()->create();
 
-    Livewire::test(SurveyResults::class)
+    livewire(SurveyResults::class)
         ->set('surveyId', $survey->id)
         ->assertOk()
         ->assertSee('0 responses')

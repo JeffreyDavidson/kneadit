@@ -5,7 +5,8 @@ use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -45,11 +46,11 @@ test('tenant table supports listing columns searching and filters', function () 
         'plan' => 'starter',
         'is_active' => true,
     ]);
-    Livewire::test(ListTenants::class)
+    livewire(ListTenants::class)
         ->assertOk();
 
     foreach (['id', 'store_name', 'name', 'email', 'plan', 'is_active'] as $column) {
-        Livewire::test(ListTenants::class)
+        livewire(ListTenants::class)
             ->assertCanRenderTableColumn($column);
     }
 
@@ -60,13 +61,13 @@ test('tenant table supports listing columns searching and filters', function () 
         'is_active' => false,
     ]);
 
-    Livewire::test(ListTenants::class)
+    livewire(ListTenants::class)
         ->searchTable('Sweet')
         ->assertOk();
-    Livewire::test(ListTenants::class)
+    livewire(ListTenants::class)
         ->filterTable('plan', 'starter')
         ->assertOk();
-    Livewire::test(ListTenants::class)
+    livewire(ListTenants::class)
         ->filterTable('is_active', true)
         ->assertOk();
 });
@@ -75,6 +76,6 @@ test('tenant table displays the configured storefront host', function () {
     Config::set('app.url', 'https://kneadit.test');
     createTestTenant('sweet-bakes');
 
-    Livewire::test(ListTenants::class)
+    livewire(ListTenants::class)
         ->assertSee('sweet-bakes.kneadit.test');
 });

@@ -3,9 +3,9 @@
 use App\Filament\Central\Pages\Backups;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 test('page renders', function () {
-    Livewire::test(Backups::class)->assertOk();
+    livewire(Backups::class)->assertOk();
 });
 
 test('isSafeBackupName accepts valid timestamps and rejects path traversal', function () {

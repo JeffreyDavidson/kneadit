@@ -32,7 +32,8 @@ use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -97,7 +98,7 @@ dataset('adminWidgetGroups', [
 
 test('admin widgets can render', function (string ...$widgetClasses) {
     foreach ($widgetClasses as $widgetClass) {
-        Livewire::test($widgetClass)
+        livewire($widgetClass)
             ->assertOk();
     }
 })->with('adminWidgetGroups');

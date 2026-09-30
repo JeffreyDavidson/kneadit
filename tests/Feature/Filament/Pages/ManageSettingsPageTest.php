@@ -7,7 +7,8 @@ use App\Models\Staff\User;
 use App\Services\Settings\TenantSettingsDefaults;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -17,7 +18,7 @@ beforeEach(function () {
 });
 
 test('manage settings page can save store name', function () {
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->set('store_name', 'New Bakery Name')
         ->call('save');
 
@@ -25,7 +26,7 @@ test('manage settings page can save store name', function () {
 });
 
 test('manage settings page can save minimum order amounts', function () {
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->set('minimum_pickup_order_amount', '10')
         ->set('minimum_delivery_order_amount', '25')
         ->call('save');
@@ -37,7 +38,7 @@ test('manage settings page can save minimum order amounts', function () {
 test('minimum order amounts load from saved settings on mount', function () {
     settings(['minimum_pickup_order_amount' => '5', 'minimum_delivery_order_amount' => '20']);
 
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->assertSet('minimum_pickup_order_amount', '5')
         ->assertSet('minimum_delivery_order_amount', '20');
 });
@@ -45,7 +46,7 @@ test('minimum order amounts load from saved settings on mount', function () {
 test('manage settings page can reset form values to defaults', function () {
     $defaultStoreName = TenantSettingsDefaults::all()['store_name'];
 
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->set('store_name', 'Temporary Name')
         ->call('resetToDefaults')
         ->assertSet('store_name', $defaultStoreName);
@@ -57,7 +58,7 @@ test('delivery fee tiers round-trip as structured rows through save and reload',
         ['min_distance' => 5, 'max_distance' => 10, 'fee' => 5, 'description' => 'Extended'],
     ])]);
 
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->assertSet('delivery_fee_tiers.0.min_distance', 0)
         ->assertSet('delivery_fee_tiers.0.fee', 3)
         ->assertSet('delivery_fee_tiers.1.description', 'Extended')
@@ -75,7 +76,7 @@ test('delivery fee tiers round-trip as structured rows through save and reload',
 test('regenerateWebhookSecret writes a fresh 40-char secret and updates the page property', function () {
     settings(['webhook_secret' => 'old-secret-value']);
 
-    $component = Livewire::test(ManageSettings::class)
+    $component = livewire(ManageSettings::class)
         ->call('regenerateWebhookSecret');
 
     expect(strlen($component->get('webhook_secret')))->toBe(40)
@@ -86,7 +87,7 @@ test('regenerateWebhookSecret writes a fresh 40-char secret and updates the page
 test('sendTestWebhook persists current settings then dispatches a synthetic order.created', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
 
-    Livewire::test(ManageSettings::class)
+    livewire(ManageSettings::class)
         ->set('webhook_url', 'https://8.8.8.8/test')
         ->set('webhook_secret', 'test-secret')
         ->call('sendTestWebhook');
@@ -107,12 +108,12 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
     // nothing. Has bitten us four times already (paypal, webhook,
     // 8 email toggles, 2 gift card fields). This test catches the next one.
 
-    $page = Livewire::test(ManageSettings::class)->instance();
+    $page = livewire(ManageSettings::class)->instance();
 
     $reflection = new ReflectionMethod($page, 'toSettingsArray');
     $sentKeys = array_keys($reflection->invoke($page));
 
-    Livewire::test(ManageSettings::class)->call('save');
+    livewire(ManageSettings::class)->call('save');
 
     // Check the settings table directly — settings() coalesces stored-null
     // back to the supplied default, which would mask a field saved as null.

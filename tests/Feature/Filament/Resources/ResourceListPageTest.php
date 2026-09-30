@@ -27,7 +27,8 @@ use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -80,7 +81,7 @@ dataset('resourceListPageGroups', [
 
 test('resource list pages can render', function (string ...$pageClasses) {
     foreach ($pageClasses as $pageClass) {
-        Livewire::test($pageClass)
+        livewire($pageClass)
             ->assertOk();
     }
 })->with('resourceListPageGroups');

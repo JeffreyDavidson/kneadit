@@ -4,9 +4,9 @@ use App\Filament\Central\Resources\PlatformSettings\Pages\ListPlatformSettings;
 use App\Models\Platform\PlatformSetting;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -15,19 +15,19 @@ beforeEach(function () {
 });
 
 test('list page renders', function () {
-    Livewire::test(ListPlatformSettings::class)->assertOk();
+    livewire(ListPlatformSettings::class)->assertOk();
 });
 
 test('list shows existing settings', function () {
     PlatformSetting::factory()->create(['key' => 'maintenance_mode', 'value' => '0']);
     PlatformSetting::factory()->create(['key' => 'maintenance_message', 'value' => 'Back soon']);
 
-    Livewire::test(ListPlatformSettings::class)
+    livewire(ListPlatformSettings::class)
         ->assertCanSeeTableRecords(PlatformSetting::all());
 });
 
 test('create stores a new setting', function () {
-    Livewire::test(ListPlatformSettings::class)
+    livewire(ListPlatformSettings::class)
         ->callAction('create', data: [
             'key' => 'feature_x_enabled',
             'value' => '1',
@@ -40,7 +40,7 @@ test('create stores a new setting', function () {
 test('create rejects duplicate key', function () {
     PlatformSetting::factory()->create(['key' => 'duplicate_key', 'value' => 'first']);
 
-    Livewire::test(ListPlatformSettings::class)
+    livewire(ListPlatformSettings::class)
         ->callAction('create', data: [
             'key' => 'duplicate_key',
             'value' => 'second',

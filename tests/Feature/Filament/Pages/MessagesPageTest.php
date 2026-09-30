@@ -2,7 +2,8 @@
 
 use App\Filament\Pages\Platform\Messages;
 use App\Models\Staff\User;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -10,6 +11,6 @@ beforeEach(function () {
 });
 
 test('messages page can render', function () {
-    Livewire::test(Messages::class)
+    livewire(Messages::class)
         ->assertOk();
 });

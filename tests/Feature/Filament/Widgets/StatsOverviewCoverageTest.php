@@ -10,7 +10,8 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -35,7 +36,7 @@ test('stats overview renders with order data', function () {
         'status' => OrderStatus::Confirmed,
     ]);
 
-    Livewire::test(StatsOverview::class)
+    livewire(StatsOverview::class)
         ->assertOk();
 });
 
@@ -45,11 +46,11 @@ test('stats overview renders with waitlist entries', function () {
         'requested_date' => today(),
     ]);
 
-    Livewire::test(StatsOverview::class)
+    livewire(StatsOverview::class)
         ->assertOk();
 });
 
 test('stats overview renders with no data', function () {
-    Livewire::test(StatsOverview::class)
+    livewire(StatsOverview::class)
         ->assertOk();
 });

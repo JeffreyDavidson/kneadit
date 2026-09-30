@@ -9,7 +9,8 @@ use App\Filament\Central\Resources\SupportTicketResource\Pages\ListTickets;
 use App\Filament\Central\Resources\TenantResource\Pages\ListTenants;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -29,6 +30,6 @@ dataset('centralResourceListPages', [
 ]);
 
 test('central resource list page can render', function (string $pageClass) {
-    Livewire::test($pageClass)
+    livewire($pageClass)
         ->assertOk();
 })->with('centralResourceListPages');

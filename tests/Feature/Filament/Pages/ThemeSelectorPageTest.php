@@ -4,7 +4,8 @@ use App\Filament\Pages\Settings\ThemeSelector;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,7 +16,7 @@ beforeEach(function () {
 });
 
 test('theme selector renders with available themes', function () {
-    Livewire::test(ThemeSelector::class)
+    livewire(ThemeSelector::class)
         ->assertOk()
         ->assertSee('Theme');
 });

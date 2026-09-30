@@ -4,9 +4,9 @@ use App\Filament\Central\Pages\PromoCode;
 use App\Models\Platform\PlatformPromoCode;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -15,7 +15,7 @@ beforeEach(function () {
 });
 
 test('promo code page renders', function () {
-    Livewire::test(PromoCode::class)->assertOk();
+    livewire(PromoCode::class)->assertOk();
 });
 
 test('history list returns recent codes', function () {

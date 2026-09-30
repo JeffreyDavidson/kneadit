@@ -31,7 +31,7 @@ test('renders and saves the default layout', function () {
 });
 
 test('default layout keeps reporting widgets opt in', function () {
-    Livewire::test(DashboardConfig::class)
+    livewire(DashboardConfig::class)
         ->assertSet('widgets', fn (array $widgets): bool => collect($widgets)
             ->whereIn('key', ['weekly_revenue', 'top_products', 'customer_insights'])
             ->every(fn (array $widget): bool => $widget['visible'] === false));

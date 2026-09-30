@@ -3,7 +3,8 @@
 use App\Filament\Pages\Operations\WebhooksDocs;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -13,12 +14,12 @@ beforeEach(function () {
 });
 
 test('webhook docs page renders for managers', function () {
-    Livewire::test(WebhooksDocs::class)
+    livewire(WebhooksDocs::class)
         ->assertOk();
 });
 
 test('docs page surfaces all four documented events', function () {
-    Livewire::test(WebhooksDocs::class)
+    livewire(WebhooksDocs::class)
         ->assertSee('order.created')
         ->assertSee('order.updated')
         ->assertSee('order.cancelled')
@@ -26,7 +27,7 @@ test('docs page surfaces all four documented events', function () {
 });
 
 test('docs page shows signature verification snippets', function () {
-    Livewire::test(WebhooksDocs::class)
+    livewire(WebhooksDocs::class)
         ->assertSee('hash_hmac')
         ->assertSee('createHmac')
         ->assertSee('hmac.new');

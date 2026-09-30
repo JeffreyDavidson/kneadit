@@ -4,7 +4,8 @@ use App\Filament\Central\Resources\EmailCampaignResource\Pages\ListEmailCampaign
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,7 +18,7 @@ test('can filter central email campaigns by status', function () {
     $draft = EmailCampaign::factory()->draft()->create();
     $sent = EmailCampaign::factory()->sent()->create();
 
-    Livewire::test(ListEmailCampaigns::class)
+    livewire(ListEmailCampaigns::class)
         ->filterTable('status', 'draft')
         ->assertCanSeeTableRecords(collect([$draft]))
         ->assertCanNotSeeTableRecords(collect([$sent]));

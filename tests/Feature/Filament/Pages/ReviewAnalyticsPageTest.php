@@ -4,7 +4,8 @@ use App\Filament\Pages\Analytics\ReviewAnalytics;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,6 +16,6 @@ beforeEach(function () {
 });
 
 test('review analytics page can render', function () {
-    Livewire::test(ReviewAnalytics::class)
+    livewire(ReviewAnalytics::class)
         ->assertOk();
 });

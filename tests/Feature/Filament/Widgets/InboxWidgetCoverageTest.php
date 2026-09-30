@@ -4,7 +4,8 @@ use App\Filament\Widgets\InboxWidget;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -16,7 +17,7 @@ beforeEach(function () {
 });
 
 test('inbox widget renders successfully', function () {
-    Livewire::test(InboxWidget::class)
+    livewire(InboxWidget::class)
         ->assertOk();
 });
 

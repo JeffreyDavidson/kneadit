@@ -7,7 +7,8 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -24,11 +25,11 @@ test('order funnel widget renders with order data across statuses', function () 
     Order::factory()->recycle($customer)->create(['status' => OrderStatus::Confirmed]);
     Order::factory()->recycle($customer)->create(['status' => OrderStatus::Ready]);
 
-    Livewire::test(OrderFunnelWidget::class)
+    livewire(OrderFunnelWidget::class)
         ->assertOk();
 });
 
 test('order funnel widget renders with no orders', function () {
-    Livewire::test(OrderFunnelWidget::class)
+    livewire(OrderFunnelWidget::class)
         ->assertOk();
 });

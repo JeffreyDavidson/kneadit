@@ -8,7 +8,8 @@ use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -36,9 +37,9 @@ test('widget renders denser content at large size than small size', function (st
             ]);
     }
 
-    $smallRows = countRows(Livewire::test($widget, ['dashboardSize' => 'sm'])->html());
+    $smallRows = countRows(livewire($widget, ['dashboardSize' => 'sm'])->html());
     Cache::flush();
-    $largeRows = countRows(Livewire::test($widget, ['dashboardSize' => 'lg'])->html());
+    $largeRows = countRows(livewire($widget, ['dashboardSize' => 'lg'])->html());
 
     expect($largeRows)
         ->toBeGreaterThan(
