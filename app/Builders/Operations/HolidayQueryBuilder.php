@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Builders\Operations;
 
 use App\Models\Operations\Holiday;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
@@ -21,6 +22,13 @@ class HolidayQueryBuilder extends Builder
     public function active(): static
     {
         $this->where('is_active', true);
+
+        return $this;
+    }
+
+    public function onDate(CarbonInterface $date): static
+    {
+        $this->whereDate('date', $date);
 
         return $this;
     }

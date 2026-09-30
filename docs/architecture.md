@@ -124,6 +124,18 @@ Storefront requests are validated by `StoreOrderRequest` and converted to `Creat
 
 If capacity rejects the request, the pipeline returns no order. Other domain validation failures return targeted form errors. A successful transaction logs the placement and emits `OrderCreated`. The current session is granted access to the resulting order before redirecting to payment or confirmation.
 
+### Date capacity
+
+`CapacityCalculator` decides how many active orders a delivery date can take. A date is unavailable when `DateOpenStatusQuery` reports it closed (an all-day `BlockedDate`, or a closed day in Schedule Manager), or when its orders reach the max. The max comes from the first level that sets one, most specific first:
+
+1. Capacity limit for that exact date
+2. Active holiday on that date
+3. Capacity limit for that weekday
+4. Schedule Manager max orders for that weekday
+5. Tenant default (`default_daily_capacity`)
+
+A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit here" and falls through to the next level.
+
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 
 ### Payment paths

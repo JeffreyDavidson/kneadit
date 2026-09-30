@@ -3,7 +3,9 @@
 namespace App\Services\Inventory;
 
 use App\Enums\Staff\DayOfWeek;
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
+use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Queries\Scheduling\DateOpenStatusQuery;
 use App\Services\Settings\TenantSettings;
@@ -17,32 +19,20 @@ class CapacityCalculator
     ) {}
 
     /**
-     * A limit for the exact date wins over the recurring weekday limit.
-     */
-    public function forDate(Carbon|string $date): ?CapacityLimit
-    {
-        $carbon = Date::parse($date);
-
-        return CapacityLimit::query()->onSpecificDate($carbon)->first()
-            ?? CapacityLimit::query()->onWeekday(DayOfWeek::phpWeekOrder()[$carbon->dayOfWeek])->first();
-    }
-
-    /**
-     * A blocked limit allows no orders; a max of 0 means the tenant default.
+     * The first level with a limit wins, most specific first: capacity limit
+     * for the date, active holiday, capacity limit for the weekday, Schedule
+     * Manager, then the tenant default. A blocked capacity limit means 0; a
+     * blank or 0 max means "no limit here" and falls through.
      */
     public function getMaxOrders(Carbon|string $date): int
     {
-        $limit = $this->forDate($date);
+        $carbon = Date::parse($date);
 
-        if ($limit?->is_blocked) {
-            return 0;
-        }
-
-        if ($limit instanceof CapacityLimit && $limit->max_orders > 0) {
-            return $limit->max_orders;
-        }
-
-        return $this->settings->orders->defaultDailyCapacity;
+        return $this->capacityLimitMax(CapacityLimit::query()->onSpecificDate($carbon)->first())
+            ?? Holiday::query()->active()->onDate($carbon)->where('max_orders', '>', 0)->orderBy('max_orders')->first()->max_orders
+            ?? $this->capacityLimitMax(CapacityLimit::query()->onWeekday(DayOfWeek::phpWeekOrder()[$carbon->dayOfWeek])->first())
+            ?? BusinessSchedule::query()->forDay($carbon->dayOfWeek)->where('max_orders', '>', 0)->first()->max_orders
+            ?? $this->settings->orders->defaultDailyCapacity;
     }
 
     public function isAvailable(Carbon|string $date): bool
@@ -74,5 +64,20 @@ class CapacityCalculator
         }
 
         return min(100, ($this->ordersOnDate($date) / $maxOrders) * 100);
+    }
+
+    private function capacityLimitMax(?CapacityLimit $limit): ?int
+    {
+        if (! $limit instanceof CapacityLimit) {
+            return null;
+        }
+
+        if ($limit->is_blocked) {
+            return 0;
+        }
+
+        return $limit->max_orders > 0
+            ? $limit->max_orders
+            : null;
     }
 }
