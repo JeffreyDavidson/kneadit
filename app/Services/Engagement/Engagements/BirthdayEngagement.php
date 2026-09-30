@@ -7,14 +7,15 @@ use App\Events\Customers\CustomerBirthday;
 use App\Models\Customers\Customer;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 
 class BirthdayEngagement implements CustomerEngagement
 {
     public function __construct(
         private readonly CreateBirthdayCoupon $createBirthdayCoupon,
+        private readonly BakeryClock $clock,
     ) {}
 
     public function isEnabled(TenantSettings $settings): bool
@@ -25,7 +26,7 @@ class BirthdayEngagement implements CustomerEngagement
     /** @return Collection<int, EngagementRecipient> */
     public function findRecipients(TenantSettings $settings): Collection
     {
-        $today = Date::today();
+        $today = $this->clock->today();
 
         return Customer::query()
             ->whereNotNull('birthday')
