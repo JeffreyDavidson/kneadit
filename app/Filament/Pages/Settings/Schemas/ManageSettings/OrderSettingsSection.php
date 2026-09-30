@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Forms\Components\MoneyInput;
+use DateTimeZone;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -31,6 +33,14 @@ class OrderSettingsSection
                             ->numeric()
                             ->default(48)
                             ->helperText('Minimum hours before pickup/delivery'),
+
+                        Select::make('timezone')
+                            ->label('Bakery Timezone')
+                            ->options(array_combine(DateTimeZone::listIdentifiers(), DateTimeZone::listIdentifiers()))
+                            ->searchable()
+                            ->required()
+                            ->default('UTC')
+                            ->helperText('Used for order lead time and Schedule Manager order cutoffs'),
                     ]),
 
                 Repeater::make('delivery_fee_tiers')

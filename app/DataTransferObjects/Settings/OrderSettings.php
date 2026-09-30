@@ -2,6 +2,8 @@
 
 namespace App\DataTransferObjects\Settings;
 
+use DateTimeZone;
+
 final readonly class OrderSettings
 {
     /**
@@ -22,12 +24,14 @@ final readonly class OrderSettings
         public bool $sitewideSaleEnabled = false,
         public int $sitewideSalePercent = 0,
         public string $sitewideSaleLabel = 'Sale',
+        public string $timezone = 'UTC',
     ) {}
 
     public static function resolve(): self
     {
         return new self(
-            leadTimeHours: SettingValue::int(settings('order_lead_time_hours'), 24),
+            // The settings page saves minimum_order_lead_hours; order_lead_time_hours is the older seeded/imported key.
+            leadTimeHours: SettingValue::int(settings('minimum_order_lead_hours') ?? settings('order_lead_time_hours'), 24),
             deliveryEnabled: settings('delivery_enabled', '1') === '1',
             freeDeliveryMinimum: SettingValue::string(settings('free_delivery_minimum'), '50'),
             minimumPickupOrderAmount: SettingValue::string(settings('minimum_pickup_order_amount'), '0'),
@@ -41,7 +45,20 @@ final readonly class OrderSettings
             sitewideSaleEnabled: settings('sitewide_sale_enabled', '0') === '1',
             sitewideSalePercent: SettingValue::int(settings('sitewide_sale_percent'), 0),
             sitewideSaleLabel: SettingValue::string(settings('sitewide_sale_label'), 'Sale'),
+            timezone: self::resolveTimezone(),
         );
+    }
+
+    /**
+     * The bakery's timezone for order dates and cutoffs; UTC until one is set.
+     */
+    private static function resolveTimezone(): string
+    {
+        $timezone = SettingValue::string(settings('timezone'), 'UTC');
+
+        return in_array($timezone, DateTimeZone::listIdentifiers(), true)
+            ? $timezone
+            : 'UTC';
     }
 
     /** @return array<int, array<string, mixed>> */

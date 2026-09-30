@@ -45,3 +45,28 @@ test('it is bound as a singleton in the container', function () {
     expect($a)->toBeInstanceOf(TenantSettings::class)
         ->and($a)->toBe($b);
 });
+
+test('lead time comes from the admin setting, then the older key, then the default', function (array $stored, int $expected) {
+    settings($stored);
+
+    $leadTimeHours = TenantSettings::resolve()->orders->leadTimeHours;
+
+    expect($leadTimeHours)->toBe($expected);
+})->with([
+    'admin setting' => [['minimum_order_lead_hours' => '72'], 72],
+    'admin setting wins over the older key' => [['minimum_order_lead_hours' => '72', 'order_lead_time_hours' => '24'], 72],
+    'older key when the admin setting is missing' => [['order_lead_time_hours' => '36'], 36],
+    'default when neither is set' => [[], 24],
+]);
+
+test('timezone comes from settings and falls back to UTC', function (array $stored, string $expected) {
+    settings($stored);
+
+    $timezone = TenantSettings::resolve()->orders->timezone;
+
+    expect($timezone)->toBe($expected);
+})->with([
+    'a valid timezone' => [['timezone' => 'America/Chicago'], 'America/Chicago'],
+    'not set' => [[], 'UTC'],
+    'not a real timezone' => [['timezone' => 'Mars/Olympus'], 'UTC'],
+]);

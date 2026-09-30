@@ -103,7 +103,7 @@
             <h1 class="font-display text-warm-100 mb-4 text-4xl font-bold md:text-6xl">Place Your Order</h1>
             <p class="text-warm-100 max-w-2xl text-lg">
                 Choose your items, tell us when you need them, and we'll have everything freshly prepared. Orders need {{ $settings->orders->leadTimeHours }} hours
-                notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
+                notice — ready {{ $earliestDeliveryDate->format('l, F j') }} or later.
             </p>
         </div>
     </section>
@@ -128,5 +128,6 @@
         :hydrated-cart-items="$hydratedCartItems ?? []"
         :hydrated-cart-name="$hydratedCartName ?? null"
         :hydrated-cart-email="$hydratedCartEmail ?? null"
+        :earliest-delivery-date="$earliestDeliveryDate"
     />
 </x-layouts.storefront>

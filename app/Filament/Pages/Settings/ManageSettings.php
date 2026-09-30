@@ -52,6 +52,8 @@ class ManageSettings extends Page
 
     public ?int $minimum_order_lead_hours = 48;
 
+    public ?string $timezone = 'UTC';
+
     /** @var array<int, array<string, mixed>> */
     public array $delivery_fee_tiers = [];
 
@@ -218,6 +220,7 @@ class ManageSettings extends Page
             'store_address' => $this->store_address,
             'default_daily_capacity' => $this->default_daily_capacity,
             'minimum_order_lead_hours' => $this->minimum_order_lead_hours,
+            'timezone' => $this->timezone,
             'delivery_fee_tiers' => $this->delivery_fee_tiers,
             'minimum_pickup_order_amount' => $this->minimum_pickup_order_amount,
             'minimum_delivery_order_amount' => $this->minimum_delivery_order_amount,

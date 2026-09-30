@@ -3,7 +3,10 @@
 use App\Http\Requests\Storefront\StoreOrderRequest;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Models\Operations\BusinessSchedule;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -55,6 +58,17 @@ test('store order request rejects delivery date too soon', function () {
 
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->has('delivery_date'))->toBeTrue();
+});
+
+test('store order request rejects a date ruled out only by the order cutoff', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['leadTimeHours' => 48])));
+    BusinessSchedule::factory()->open()->create(['day_of_week' => 1, 'order_cutoff_time' => '14:00']);
+    Date::setTestNow('2026-10-05 15:00');
+
+    $rules = (new StoreOrderRequest)->rules();
+
+    expect(validator(array_merge(validOrderData(), ['delivery_date' => '2026-10-07']), $rules)->errors()->has('delivery_date'))->toBeTrue()
+        ->and(validator(array_merge(validOrderData(), ['delivery_date' => '2026-10-08']), $rules)->errors()->has('delivery_date'))->toBeFalse();
 });
 
 function validOrderData(): array
