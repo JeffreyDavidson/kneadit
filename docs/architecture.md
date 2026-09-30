@@ -142,6 +142,8 @@ A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit her
 
 "Today" for all of these rules is the bakery's local date from `BakeryClock` (the same `timezone` setting). `BakeryClock::today()` returns that date as a plain date value, so it compares directly with date columns. The holiday deadline check, the availability calendar, the capacity dashboard widget, upcoming holidays and the holiday deadline/day counts in admin all use it.
 
+The storefront analytics page and the storefront views widget turn bakery-local day and week boundaries into instants in the app timezone before comparing them with `created_at`. Seasonal item availability (the `current`, `upcoming` and `expired` builder methods and `is_currently_available`), the birthday widget, and the Quick Order date picker's minimum date also use the bakery's local today.
+
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 
 ### Payment paths
