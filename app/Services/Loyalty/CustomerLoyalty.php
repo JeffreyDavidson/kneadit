@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services\Loyalty;
 
-use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Engagement\LoyaltyTier;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Arr;
 
 class CustomerLoyalty
 {
@@ -37,17 +35,7 @@ class CustomerLoyalty
 
     public function balance(Customer $customer): LoyaltyBalance
     {
-        $stats = $customer->loyaltyPoints()
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as earned', [LoyaltyPointType::Earned->value])
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as adjusted', [LoyaltyPointType::Adjusted->value])
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as redeemed', [LoyaltyPointType::Redeemed->value])
-            ->first();
-
-        return new LoyaltyBalance(
-            earned: Arr::integer(['value' => $stats->earned ?? 0], 'value', 0),
-            redeemed: Arr::integer(['value' => $stats->redeemed ?? 0], 'value', 0),
-            adjusted: Arr::integer(['value' => $stats->adjusted ?? 0], 'value', 0),
-        );
+        return $customer->loyaltyPoints()->balance();
     }
 
     /**

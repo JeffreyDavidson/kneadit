@@ -84,3 +84,23 @@ test('loyalty points belong to customer', function () {
 
     expect($point->customer->id)->toBe($customer->id);
 });
+
+test('rewards history shows the signed points for each entry type', function (callable $seed, string $expected, string $unexpected) {
+    $customer = Customer::factory()->create();
+    $seed($customer);
+
+    $response = test()
+        ->withoutMiddleware(tenantMiddleware())
+        ->post(route('rewards.check', [], false), ['email' => $customer->email]);
+
+    $text = preg_replace('/\s+/', '', strip_tags($response->getContent()));
+    $response->assertOk();
+    expect($text)
+        ->toContain($expected)
+        ->not->toContain($unexpected);
+})->with([
+    'earned' => [fn (Customer $customer) => LoyaltyPoint::factory()->earned(75)->for($customer)->create(), '+75', '-75'],
+    'redeemed' => [fn (Customer $customer) => LoyaltyPoint::factory()->redeemed(100)->for($customer)->create(), '-100', '+100'],
+    'negative adjustment' => [fn (Customer $customer) => LoyaltyPoint::factory()->adjusted(-25)->for($customer)->create(), '-25', '+-25'],
+    'positive adjustment' => [fn (Customer $customer) => LoyaltyPoint::factory()->adjusted(40)->for($customer)->create(), '+40', '+-40'],
+]);
