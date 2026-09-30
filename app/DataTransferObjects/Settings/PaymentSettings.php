@@ -2,6 +2,8 @@
 
 namespace App\DataTransferObjects\Settings;
 
+use App\Enums\Orders\PaymentMethod;
+
 final readonly class PaymentSettings
 {
     /**
@@ -13,10 +15,17 @@ final readonly class PaymentSettings
 
     public static function resolve(): self
     {
+        // The settings page and onboarding save payment_methods; payment_methods_accepted is the older seeded/imported key.
+        $methods = SettingValue::stringList(settings('payment_methods'));
+
+        if ($methods === []) {
+            $methods = SettingValue::stringList(settings('payment_methods_accepted'));
+        }
+
         return new self(
             methodsAccepted: array_values(array_filter(
-                SettingValue::decodedList(settings('payment_methods_accepted')),
-                is_string(...),
+                $methods,
+                fn (string $method): bool => PaymentMethod::tryFrom($method) !== null,
             )),
         );
     }
