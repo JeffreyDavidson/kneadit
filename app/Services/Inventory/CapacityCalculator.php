@@ -2,6 +2,7 @@
 
 namespace App\Services\Inventory;
 
+use App\Enums\Staff\DayOfWeek;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Orders\Order;
 use App\Queries\Scheduling\DateOpenStatusQuery;
@@ -15,14 +16,27 @@ class CapacityCalculator
         private readonly TenantSettings $settings,
     ) {}
 
+    /**
+     * A limit for the exact date wins over the recurring weekday limit.
+     */
     public function forDate(Carbon|string $date): ?CapacityLimit
     {
-        return CapacityLimit::query()->whereDate('date', Date::parse($date))->first();
+        $carbon = Date::parse($date);
+
+        return CapacityLimit::query()->onSpecificDate($carbon)->first()
+            ?? CapacityLimit::query()->onWeekday(DayOfWeek::phpWeekOrder()[$carbon->dayOfWeek])->first();
     }
 
+    /**
+     * A blocked limit allows no orders; a max of 0 means the tenant default.
+     */
     public function getMaxOrders(Carbon|string $date): int
     {
         $limit = $this->forDate($date);
+
+        if ($limit?->is_blocked) {
+            return 0;
+        }
 
         if ($limit instanceof CapacityLimit && $limit->max_orders > 0) {
             return $limit->max_orders;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Staff\DayOfWeek;
 use App\Filament\Resources\CapacityLimits\Pages\ListCapacityLimits;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Staff\User;
@@ -55,15 +56,78 @@ test('can create a capacity limit for a weekday', function () {
     livewire(ListCapacityLimits::class)
         ->callAction('create', data: [
             'day_type' => 'monday',
-            'day_of_week' => 'monday',
             'max_orders' => 25,
             'is_blocked' => false,
         ])
         ->assertHasNoFormErrors();
 
-    expect(CapacityLimit::query()->first())
+    expect(CapacityLimit::query()->sole())
+        ->day_of_week->toBe(DayOfWeek::Monday->value)
+        ->specific_date->toBeNull()
         ->max_orders->toBe(25)
         ->is_blocked->toBeFalse();
+});
+
+test('can create capacity limits for different weekdays', function () {
+    livewire(ListCapacityLimits::class)
+        ->callAction('create', data: ['day_type' => 'monday', 'max_orders' => 25])
+        ->assertHasNoFormErrors()
+        ->callAction('create', data: ['day_type' => 'tuesday', 'max_orders' => 10])
+        ->assertHasNoFormErrors();
+
+    expect(CapacityLimit::query()->pluck('day_of_week')->sort()->values()->all())
+        ->toBe([DayOfWeek::Monday->value, DayOfWeek::Tuesday->value]);
+});
+
+test('rejects a second capacity limit for the same weekday', function () {
+    CapacityLimit::factory()->weekday(DayOfWeek::Monday)->create();
+
+    livewire(ListCapacityLimits::class)
+        ->callAction('create', data: ['day_type' => 'monday', 'max_orders' => 10])
+        ->assertHasFormErrors(['day_type' => 'unique']);
+
+    expect(CapacityLimit::query()->count())->toBe(1);
+});
+
+test('rejects a second capacity limit for the same date', function () {
+    CapacityLimit::factory()->specificDate('2026-10-07')->create();
+
+    livewire(ListCapacityLimits::class)
+        ->callAction('create', data: [
+            'day_type' => 'specific',
+            'specific_date' => '2026-10-07',
+            'max_orders' => 10,
+        ])
+        ->assertHasFormErrors(['specific_date']);
+
+    expect(CapacityLimit::query()->count())->toBe(1);
+});
+
+test('edit form loads a weekday limit with its weekday selected', function () {
+    $limit = CapacityLimit::factory()->weekday(DayOfWeek::Friday)->create();
+
+    livewire(ListCapacityLimits::class)
+        ->mountAction(TestAction::make('edit')->table($limit))
+        ->assertSchemaStateSet(['day_type' => DayOfWeek::Friday->value]);
+});
+
+test('can edit a weekday limit without tripping the duplicate check', function () {
+    $limit = CapacityLimit::factory()->weekday(DayOfWeek::Friday)->create(['max_orders' => 10]);
+
+    livewire(ListCapacityLimits::class)
+        ->callAction(TestAction::make('edit')->table($limit), data: ['max_orders' => 30])
+        ->assertHasNoFormErrors();
+
+    expect($limit->refresh())
+        ->day_of_week->toBe(DayOfWeek::Friday->value)
+        ->max_orders->toBe(30);
+});
+
+test('shows the weekday name for a weekday limit', function () {
+    $limit = CapacityLimit::factory()->weekday(DayOfWeek::Friday)->create();
+
+    livewire(ListCapacityLimits::class)
+        ->assertTableColumnStateSet('day_label', 'Friday', $limit);
 });
 
 test('can create a capacity limit for a specific date', function () {
@@ -78,7 +142,6 @@ test('can create a capacity limit for a specific date', function () {
 
     expect(CapacityLimit::query()->sole())
         ->specific_date->toDateString()->toBe('2026-10-07')
-        ->date->toDateString()->toBe('2026-10-07')
         ->day_of_week->toBeNull()
         ->max_orders->toBe(12)
         ->notes->toBe('Harvest festival');

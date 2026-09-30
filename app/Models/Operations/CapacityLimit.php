@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models\Operations;
 
+use App\Builders\Operations\CapacityLimitQueryBuilder;
 use Database\Factories\Operations\CapacityLimitFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * A capacity limit applies either to one specific_date or, when that is null,
+ * to every week on day_of_week. day_of_week holds a DayOfWeek value but is not
+ * cast to the enum: rows saved before the weekday fix hold '0', which the cast
+ * would reject on load.
+ *
  * @property int $id
- * @property Carbon $date
  * @property Carbon|null $specific_date
  * @property string|null $day_of_week
  * @property int $max_orders
@@ -22,13 +28,14 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit query()
+ * @method static CapacityLimitQueryBuilder newModelQuery()
+ * @method static CapacityLimitQueryBuilder newQuery()
+ * @method static CapacityLimitQueryBuilder query()
  *
  * @mixin \Eloquent
  */
-#[Fillable('date', 'specific_date', 'day_of_week', 'max_orders', 'is_blocked', 'notes')]
+#[Fillable('specific_date', 'day_of_week', 'max_orders', 'is_blocked', 'notes')]
+#[UseEloquentBuilder(CapacityLimitQueryBuilder::class)]
 #[UseFactory(CapacityLimitFactory::class)]
 class CapacityLimit extends Model
 {
@@ -39,7 +46,6 @@ class CapacityLimit extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
             'max_orders' => 'integer',
             'specific_date' => 'date',
             'is_blocked' => 'boolean',
