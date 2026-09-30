@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Operations;
 
+use App\Enums\Staff\DayOfWeek;
 use App\Models\Operations\CapacityLimit;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,10 +18,20 @@ class CapacityLimitFactory extends Factory
     public function definition(): array
     {
         return [
-            'date' => fake()->dateTimeBetween('+1 day', '+30 days'),
-            'day_of_week' => fake()->numberBetween(0, 6),
+            'day_of_week' => DayOfWeek::cases()[array_rand(DayOfWeek::cases())]->value,
             'max_orders' => fake()->numberBetween(5, 30),
         ];
+    }
+
+    /**
+     * Limit recurs every week on the given weekday.
+     */
+    public function weekday(DayOfWeek $day): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'specific_date' => null,
+            'day_of_week' => $day->value,
+        ]);
     }
 
     /**
@@ -29,7 +40,6 @@ class CapacityLimitFactory extends Factory
     public function specificDate(string $date): static
     {
         return $this->state(fn (array $attributes) => [
-            'date' => $date,
             'specific_date' => $date,
             'day_of_week' => null,
         ]);
