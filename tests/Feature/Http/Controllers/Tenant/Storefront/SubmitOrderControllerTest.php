@@ -267,3 +267,43 @@ test('validation fails with invalid email', function () {
 
     $response->assertSessionHasErrors(['customer_email']);
 });
+
+test('storefront delivery orders pass validation with a bakery delivery tier', function (bool $deliveryEnabled, bool $accepted) {
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings([
+            'deliveryEnabled' => $deliveryEnabled,
+            'deliveryFeeTiers' => [
+                ['min_distance' => 0, 'max_distance' => 5, 'fee' => 3.00, 'description' => 'Local'],
+            ],
+        ]),
+        store: makeStoreInfo(['name' => 'Test']),
+        onboarding: new OnboardingSettings(completedAt: now()->toDateTimeString()),
+    ));
+    $createOrder = Double::for(CreateOrder::class);
+    $createOrder->allows('__invoke')->returns(Order::factory()->create());
+    app()->instance(CreateOrder::class, $createOrder);
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->allows('redirectToCheckout')->returns(null);
+    app()->instance(StripeCheckoutService::class, $stripeService);
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'delivery',
+            'delivery_address' => '1 Main St',
+            'delivery_tier' => '0',
+            'delivery_date' => now()->addDays(3)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+        ]);
+
+    $accepted
+        ? $response->assertSessionHasNoErrors()
+        : $response->assertSessionHasErrors(['delivery_type']);
+})->with([
+    'delivery on' => [true, true],
+    'delivery off' => [false, false],
+]);

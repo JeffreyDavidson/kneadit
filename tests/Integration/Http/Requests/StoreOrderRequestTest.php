@@ -71,6 +71,35 @@ test('store order request rejects a date ruled out only by the order cutoff', fu
         ->and(validator(array_merge(validOrderData(), ['delivery_date' => '2026-10-08']), $rules)->errors()->has('delivery_date'))->toBeFalse();
 });
 
+test('store order request validates delivery against the bakery delivery tiers', function (array $orderSettings, array $input, bool $valid) {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
+        'deliveryFeeTiers' => [
+            ['min_distance' => 0, 'max_distance' => 5, 'fee' => 3.00, 'description' => 'Local'],
+            ['min_distance' => 5, 'max_distance' => 10, 'fee' => 6.50, 'description' => 'Nearby'],
+        ],
+        ...$orderSettings,
+    ])));
+    $data = array_merge(validOrderData(), ['delivery_type' => 'delivery', 'delivery_address' => '1 Main St'], $input);
+
+    $errors = validator($data, (new StoreOrderRequest)->rules())->errors();
+
+    expect($errors->has('delivery_tier') || $errors->has('delivery_type'))->toBe(! $valid);
+})->with([
+    'first configured tier' => [[], ['delivery_tier' => '0'], true],
+    'second configured tier' => [[], ['delivery_tier' => '1'], true],
+    'tier that does not exist' => [[], ['delivery_tier' => '2'], false],
+    'old config tier name' => [[], ['delivery_tier' => 'under5'], false],
+    'delivery turned off' => [['deliveryEnabled' => false], ['delivery_tier' => '0'], false],
+]);
+
+test('store order request still accepts pickup when delivery is turned off', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['deliveryEnabled' => false])));
+
+    $errors = validator(validOrderData(), (new StoreOrderRequest)->rules())->errors();
+
+    expect($errors->has('delivery_type'))->toBeFalse();
+});
+
 function validOrderData(): array
 {
     return [

@@ -43,6 +43,13 @@ class OrderSettingsSection
                             ->helperText('Used for order lead time and Schedule Manager order cutoffs'),
                     ]),
 
+                TextInput::make('default_shelf_life_days')
+                    ->label('Default Shelf Life (days)')
+                    ->numeric()
+                    ->minValue(1)
+                    ->default(3)
+                    ->helperText('Prefills the Best By date on product labels.'),
+
                 Repeater::make('delivery_fee_tiers')
                     ->label('Delivery Fee Tiers')
                     ->helperText('Set how delivery fees scale with distance. Tiers should not overlap.')

@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Builders\Inventory\SeasonalItemQueryBuilder;
+use App\Services\Scheduling\BakeryClock;
 use Database\Factories\Inventory\SeasonalItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 /**
  * @property-read Product|null $product
@@ -56,7 +56,7 @@ class SeasonalItem extends Model
     {
         return Attribute::make(
             get: function (): bool {
-                $today = Date::today();
+                $today = resolve(BakeryClock::class)->today();
 
                 return $this->available_from <= $today && $this->available_until >= $today;
             },

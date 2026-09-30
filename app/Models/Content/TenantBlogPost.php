@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Models\Content;
 
 use App\Builders\Content\TenantBlogPostQueryBuilder;
+use App\Policies\Content\TenantBlogPostPolicy;
 use Database\Factories\Content\TenantBlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -38,6 +40,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'tags', 'author_name', 'is_published', 'published_at')]
 #[UseEloquentBuilder(TenantBlogPostQueryBuilder::class)]
 #[UseFactory(TenantBlogPostFactory::class)]
+#[UsePolicy(TenantBlogPostPolicy::class)]
 class TenantBlogPost extends Model
 {
     /** @use HasFactory<TenantBlogPostFactory> */

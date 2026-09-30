@@ -6,8 +6,8 @@ use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 
 class TodaysOrdersWidget extends Widget
 {
@@ -28,14 +28,16 @@ class TodaysOrdersWidget extends Widget
     #[\Override]
     public static function canView(): bool
     {
-        return Order::query()->whereDate('delivery_date', Date::today())->exists();
+        return Order::query()->whereDate('delivery_date', resolve(BakeryClock::class)->today())->exists();
     }
 
     /** @return array<int, array{id: int, order_number: string, time: string, customer: string, total: string, total_cents: int, status: OrderStatus, dot_color: string}> */
     public function getOrderRows(): array
     {
-        return $this->cached('main_'.Date::today()->toDateString(), [60, 120], fn (): array => Order::query()
-            ->whereDate('delivery_date', Date::today())
+        $today = resolve(BakeryClock::class)->today();
+
+        return $this->cached("main_{$today->toDateString()}", [60, 120], fn (): array => Order::query()
+            ->whereDate('delivery_date', $today)
             ->orderBy('delivery_time')
             ->get()
             ->map(fn (Order $order): array => [

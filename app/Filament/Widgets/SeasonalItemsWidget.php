@@ -5,8 +5,8 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\SeasonalItem;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 
 class SeasonalItemsWidget extends Widget
 {
@@ -21,15 +21,19 @@ class SeasonalItemsWidget extends Widget
 
     public function getCurrentlyInSeasonCount(): int
     {
-        return $this->cached('in_season_'.now()->format('Y-m-d'), [3600, 7200], fn (): int => SeasonalItem::current()->count());
+        $today = resolve(BakeryClock::class)->today();
+
+        return $this->cached("in_season_{$today->toDateString()}", [3600, 7200], fn (): int => SeasonalItem::current()->count());
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getComingSoon(): array
     {
-        return $this->cached('coming_'.now()->format('Y-m-d'), [3600, 7200], fn (): array => SeasonalItem::with('product')
-            ->where('available_from', '>', Date::today())
-            ->where('available_from', '<=', Date::today()->addDays(14))
+        $today = resolve(BakeryClock::class)->today();
+
+        return $this->cached("coming_{$today->toDateString()}", [3600, 7200], fn (): array => SeasonalItem::with('product')
+            ->whereDate('available_from', '>', $today)
+            ->whereDate('available_from', '<=', $today->copy()->addDays(14))
             ->orderBy('available_from')
             ->limit(5)
             ->get()
@@ -43,9 +47,11 @@ class SeasonalItemsWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getEndingSoon(): array
     {
-        return $this->cached('ending_'.now()->format('Y-m-d'), [3600, 7200], fn (): array => SeasonalItem::with('product')
-            ->where('available_until', '>=', Date::today())
-            ->where('available_until', '<=', Date::today()->addDays(14))
+        $today = resolve(BakeryClock::class)->today();
+
+        return $this->cached("ending_{$today->toDateString()}", [3600, 7200], fn (): array => SeasonalItem::with('product')
+            ->whereDate('available_until', '>=', $today)
+            ->whereDate('available_until', '<=', $today->copy()->addDays(14))
             ->orderBy('available_until')
             ->limit(5)
             ->get()

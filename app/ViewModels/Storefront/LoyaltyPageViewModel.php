@@ -178,14 +178,6 @@ class LoyaltyPageViewModel
         return $this->hasCustomer && $this->totalPoints >= $reward->points_required;
     }
 
-    public function historyEntrySign(LoyaltyPointType $type): string
-    {
-        return match ($type) {
-            LoyaltyPointType::Redeemed => '-',
-            default => '+',
-        };
-    }
-
     public function historyEntryColorClass(LoyaltyPointType $type): string
     {
         return match ($type) {

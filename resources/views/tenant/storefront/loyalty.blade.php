@@ -174,8 +174,7 @@
                                                 </p>
                                             </div>
                                             <span class="font-display text-lg font-bold {{ $vm->historyEntryColorClass($entry->type) }}">
-                                                {{ $vm->historyEntrySign($entry->type) }}
-                                                @number($entry->points)
+                                                {{ $entry->type->formatPoints($entry->points) }}
                                             </span>
                                         </div>
                                     @endforeach
