@@ -75,6 +75,33 @@ final readonly class OrderSettings
         return $tiers;
     }
 
+    /**
+     * Valid `delivery_tier` values: each configured tier's position, as the
+     * storefront checkout submits it.
+     *
+     * @return list<string>
+     */
+    public function deliveryTierKeys(): array
+    {
+        return array_map(strval(...), array_keys($this->deliveryFeeTiers));
+    }
+
+    /**
+     * The tier's fee, or free once the subtotal reaches the free-delivery
+     * minimum (a minimum of 0 means never free). Matches the checkout's own
+     * calculation in order-form-script.
+     */
+    public function deliveryFee(string $tier, float $subtotal): float
+    {
+        $freeDeliveryMinimum = SettingValue::float($this->freeDeliveryMinimum, 0.0);
+
+        if ($freeDeliveryMinimum > 0 && $subtotal >= $freeDeliveryMinimum) {
+            return 0.0;
+        }
+
+        return SettingValue::float($this->deliveryFeeTiers[$tier]['fee'] ?? null, 0.0);
+    }
+
     public function leadTimeDays(): int
     {
         return (int) ceil($this->leadTimeHours / 24);

@@ -2,6 +2,7 @@
 
 use App\Http\Requests\Api\StoreApiOrderRequest;
 use App\Models\Inventory\Product;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -66,7 +67,7 @@ test('delivery_address is required when delivery_type is delivery', function () 
         array_merge(validApiOrderData(), [
             'delivery_type' => 'delivery',
             'delivery_address' => null,
-            'delivery_tier' => 'under5',
+            'delivery_tier' => '0',
         ]),
         (new StoreApiOrderRequest)->rules(),
     );
@@ -74,18 +75,31 @@ test('delivery_address is required when delivery_type is delivery', function () 
     expect($validator->errors()->has('delivery_address'))->toBeTrue();
 });
 
-test('delivery_tier must match the enum', function () {
+test('delivery_tier must be one of the bakery delivery tiers', function (string $tier, bool $valid) {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
+        'deliveryFeeTiers' => [
+            ['min_distance' => 0, 'max_distance' => 5, 'fee' => 3.00, 'description' => 'Local'],
+            ['min_distance' => 5, 'max_distance' => 10, 'fee' => 6.50, 'description' => 'Nearby'],
+        ],
+    ])));
+
     $validator = validator(
         array_merge(validApiOrderData(), [
             'delivery_type' => 'delivery',
             'delivery_address' => '123 Main St',
-            'delivery_tier' => 'extreme-distance',
+            'delivery_tier' => $tier,
         ]),
         (new StoreApiOrderRequest)->rules(),
     );
 
-    expect($validator->errors()->has('delivery_tier'))->toBeTrue();
-});
+    expect($validator->errors()->has('delivery_tier'))->toBe(! $valid);
+})->with([
+    'first tier' => ['0', true],
+    'second tier' => ['1', true],
+    'missing tier' => ['2', false],
+    'old tier name' => ['under5', false],
+    'not a tier' => ['extreme-distance', false],
+]);
 
 test('tip_amount bounded 0..1000', function () {
     $data = validApiOrderData();

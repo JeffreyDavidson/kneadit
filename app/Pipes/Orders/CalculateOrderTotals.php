@@ -4,13 +4,16 @@ namespace App\Pipes\Orders;
 
 use App\Enums\Orders\DeliveryType;
 use App\Models\Inventory\Product;
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
 use Closure;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Config;
 
 class CalculateOrderTotals
 {
+    public function __construct(
+        private readonly TenantSettings $settings,
+    ) {}
+
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
         $productIds = array_column($payload->data->items, 'product_id');
@@ -45,11 +48,9 @@ class CalculateOrderTotals
         }
 
         if ($payload->data->deliveryType === DeliveryType::Delivery->value) {
-            $payload->deliveryFee = Money::fromDollars(Arr::float(
-                Config::array('kneadit.delivery_fees', []),
-                $payload->data->deliveryTier,
-                0.0,
-            ));
+            $payload->deliveryFee = Money::fromDollars(
+                $this->settings->orders->deliveryFee($payload->data->deliveryTier ?? '', $payload->subtotal->dollars()),
+            );
         }
 
         $payload->tipAmount = Money::fromDollars(max(0.0, $payload->data->tipAmount));
