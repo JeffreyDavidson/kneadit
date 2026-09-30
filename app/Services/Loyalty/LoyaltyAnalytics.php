@@ -66,7 +66,7 @@ class LoyaltyAnalytics
     public function recentAwards(int $limit = 3): array
     {
         return LoyaltyPoint::with('customer')
-            ->where('points', '>', 0)
+            ->earned()
             ->latest()
             ->limit($limit)
             ->get()

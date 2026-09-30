@@ -2,8 +2,8 @@
 
 namespace App\Queries\Loyalty;
 
-use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use Illuminate\Database\Eloquent\Collection;
 
 class TopLoyaltyCustomersQuery
@@ -14,18 +14,9 @@ class TopLoyaltyCustomersQuery
     public static function get(int $limit = 10): Collection
     {
         return Customer::query()->select('customers.*')
-            ->join('loyalty_points', 'customers.id', '=', 'loyalty_points.customer_id')
-            ->groupBy('customers.id')
-            ->selectRaw(
-                'SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) '
-                .'- SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) as balance',
-                [LoyaltyPointType::Earned->value, LoyaltyPointType::Redeemed->value],
-            )
-            ->selectRaw(
-                'SUM(CASE WHEN loyalty_points.type = ? THEN loyalty_points.points ELSE 0 END) as total_earned',
-                [LoyaltyPointType::Earned->value],
-            )
-            ->orderByDesc('balance')
+            ->joinSub(LoyaltyPoint::query()->balancesByCustomer(), 'balances', 'balances.customer_id', '=', 'customers.id')
+            ->addSelect('balances.balance', 'balances.earned as total_earned')
+            ->orderByDesc('balances.balance')
             ->limit($limit)
             ->get();
     }
