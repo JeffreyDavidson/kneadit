@@ -3,7 +3,7 @@
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\Holiday;
-use App\Queries\Scheduling\DateOpenStatusQuery;
+use App\Queries\Scheduling\DateCapacityRules;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 
@@ -20,7 +20,7 @@ test('returns blocked with reason when an all-day BlockedDate matches', function
         'reason' => 'Christmas',
     ]);
 
-    $status = DateOpenStatusQuery::forDate($date);
+    $status = DateCapacityRules::between($date, $date)->status($date);
 
     expect($status->open)->toBeFalse()
         ->and($status->reason)->toBe('Christmas');
@@ -35,7 +35,7 @@ test('returns blocked with default reason when BlockedDate has no reason', funct
         'reason' => null,
     ]);
 
-    $status = DateOpenStatusQuery::forDate($date);
+    $status = DateCapacityRules::between($date, $date)->status($date);
 
     expect($status->open)->toBeFalse()
         ->and($status->reason)->toBe('Blocked');
@@ -55,7 +55,7 @@ test('partial-day BlockedDate does not close the date', function () {
         'is_open' => true,
     ]);
 
-    expect(DateOpenStatusQuery::forDate($date)->open)->toBeTrue();
+    expect(DateCapacityRules::between($date, $date)->status($date)->open)->toBeTrue();
 });
 
 test('returns closed when BusinessSchedule for the day is not open', function () {
@@ -66,7 +66,7 @@ test('returns closed when BusinessSchedule for the day is not open', function ()
         'is_open' => false,
     ]);
 
-    $status = DateOpenStatusQuery::forDate($date);
+    $status = DateCapacityRules::between($date, $date)->status($date);
 
     expect($status->open)->toBeFalse()
         ->and($status->reason)->toBe('Closed');
@@ -75,7 +75,7 @@ test('returns closed when BusinessSchedule for the day is not open', function ()
 test('returns open when no BusinessSchedule exists for the day of week', function () {
     $date = Date::parse('2026-05-03');
 
-    $status = DateOpenStatusQuery::forDate($date);
+    $status = DateCapacityRules::between($date, $date)->status($date);
 
     expect($status->open)->toBeTrue()
         ->and($status->reason)->toBeNull();
@@ -89,30 +89,22 @@ test('returns open when date is not blocked and schedule is open', function () {
         'is_open' => true,
     ]);
 
-    $status = DateOpenStatusQuery::forDate($date);
+    $status = DateCapacityRules::between($date, $date)->status($date);
 
     expect($status->open)->toBeTrue()
         ->and($status->reason)->toBeNull();
 });
 
-test('accepts string dates', function () {
-    BusinessSchedule::factory()->create([
-        'day_of_week' => (int) Date::parse('2026-05-04')->dayOfWeek,
-        'is_open' => true,
-    ]);
-
-    expect(DateOpenStatusQuery::forDate('2026-05-04')->open)->toBeTrue();
-});
-
 test('closes a holiday date once its order deadline has passed', function () {
     Date::setTestNow('2026-12-21 09:00');
+    $christmas = Date::parse('2026-12-25');
     Holiday::factory()->active()->create([
         'name' => 'Christmas',
         'date' => '2026-12-25',
         'order_deadline' => '2026-12-20',
     ]);
 
-    $status = DateOpenStatusQuery::forDate('2026-12-25');
+    $status = DateCapacityRules::between($christmas, $christmas)->status($christmas);
 
     expect($status->open)->toBeFalse()
         ->and($status->reason)->toBe('Orders closed for Christmas');
@@ -120,13 +112,14 @@ test('closes a holiday date once its order deadline has passed', function () {
 
 test('keeps a holiday date open while its order deadline does not apply', function (array $overrides) {
     Date::setTestNow('2026-12-20 23:30');
+    $christmas = Date::parse('2026-12-25');
     Holiday::factory()->active()->create([
         'date' => '2026-12-25',
         'order_deadline' => '2026-12-20',
         ...$overrides,
     ]);
 
-    $status = DateOpenStatusQuery::forDate('2026-12-25');
+    $status = DateCapacityRules::between($christmas, $christmas)->status($christmas);
 
     expect($status->open)->toBeTrue();
 })->with([

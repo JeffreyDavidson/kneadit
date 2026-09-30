@@ -26,19 +26,9 @@ class HolidayQueryBuilder extends Builder
         return $this;
     }
 
-    public function onDate(CarbonInterface $date): static
+    public function betweenDates(CarbonInterface $start, CarbonInterface $end): static
     {
-        $this->whereDate('date', $date);
-
-        return $this;
-    }
-
-    /**
-     * The deadline day itself still accepts orders.
-     */
-    public function pastOrderDeadline(): static
-    {
-        $this->whereDate('order_deadline', '<', Date::today());
+        $this->whereDate('date', '>=', $start)->whereDate('date', '<=', $end);
 
         return $this;
     }
