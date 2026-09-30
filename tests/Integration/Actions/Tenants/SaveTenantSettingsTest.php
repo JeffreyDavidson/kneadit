@@ -1,6 +1,8 @@
 <?php
 
 use App\Actions\Tenants\SaveTenantSettings;
+use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettings;
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -391,4 +393,90 @@ test('saves the bakery timezone, defaulting to UTC', function (array $input, str
 })->with([
     'a chosen timezone' => [['timezone' => 'America/Chicago'], 'America/Chicago'],
     'no timezone given' => [[], 'UTC'],
+]);
+
+test('saves the settings exposed on the settings page and reads them back through the real readers', function (array $input, Closure $read, mixed $expected) {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+        ...$input,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect($read())->toBe($expected);
+})->with([
+    'birthday coupon disabled' => [['birthday_coupon_enabled' => false], fn () => TenantSettings::resolve()->engagement->birthdayCouponEnabled, false],
+    'birthday discount percentage' => [['birthday_discount_percentage' => 25], fn () => TenantSettings::resolve()->engagement->birthdayDiscountPercentage, 25],
+    'birthday coupon valid days' => [['birthday_coupon_valid_days' => 14], fn () => TenantSettings::resolve()->engagement->birthdayCouponValidDays, 14],
+    'repeat reminder days' => [['repeat_reminder_days' => 60], fn () => TenantSettings::resolve()->engagement->repeatReminderDays, 60],
+    'review requests enabled' => [['review_requests_enabled' => true], fn () => TenantSettings::resolve()->engagement->reviewRequestsEnabled, true],
+    'review request delay hours' => [['review_request_delay_hours' => 48], fn () => TenantSettings::resolve()->engagement->reviewRequestDelayHours, 48],
+    'weekly digest disabled' => [['weekly_digest_enabled' => false], fn () => resolve(SettingsManager::class)->get('weekly_digest_enabled', '1'), '0'],
+    'catering enabled' => [['catering_enabled' => true], fn () => TenantSettings::resolve()->catering->enabled, true],
+    'catering minimum guests' => [['catering_minimum_guests' => 20], fn () => TenantSettings::resolve()->catering->minimumGuests, '20'],
+    'catering lead time days' => [['catering_lead_time_days' => 30], fn () => TenantSettings::resolve()->catering->leadTimeDays, '30'],
+    'store website' => [['store_website' => 'https://bakery.test'], fn () => TenantSettings::resolve()->store->website, 'https://bakery.test'],
+    'store city' => [['store_city' => 'Austin'], fn () => resolve(SettingsManager::class)->get('store_city', ''), 'Austin'],
+    'store state' => [['store_state' => 'TX'], fn () => resolve(SettingsManager::class)->get('store_state', ''), 'TX'],
+    'store zip' => [['store_zip' => '78701'], fn () => resolve(SettingsManager::class)->get('store_zip', ''), '78701'],
+    'paypal invoice terms' => [['paypal_invoice_terms' => 'Due on receipt.'], fn () => resolve(SettingsManager::class)->get('paypal_invoice_terms', 'Payment due within 30 days.'), 'Due on receipt.'],
+    'default shelf life days' => [['default_shelf_life_days' => 5], fn () => resolve(SettingsManager::class)->get('default_shelf_life_days', '3'), '5'],
+]);
+
+test('keeps every reader default when the settings page keys are omitted', function (Closure $read, mixed $expected) {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect($read())->toBe($expected);
+})->with([
+    'birthday coupon enabled' => [fn () => TenantSettings::resolve()->engagement->birthdayCouponEnabled, true],
+    'birthday discount percentage' => [fn () => TenantSettings::resolve()->engagement->birthdayDiscountPercentage, 15],
+    'birthday coupon valid days' => [fn () => TenantSettings::resolve()->engagement->birthdayCouponValidDays, 7],
+    'repeat reminder days' => [fn () => TenantSettings::resolve()->engagement->repeatReminderDays, 30],
+    'review requests enabled' => [fn () => TenantSettings::resolve()->engagement->reviewRequestsEnabled, false],
+    'review request delay hours' => [fn () => TenantSettings::resolve()->engagement->reviewRequestDelayHours, 24],
+    'weekly digest' => [fn () => resolve(SettingsManager::class)->get('weekly_digest_enabled', '1'), '1'],
+    'catering enabled' => [fn () => TenantSettings::resolve()->catering->enabled, false],
+    'catering minimum guests' => [fn () => TenantSettings::resolve()->catering->minimumGuests, '10'],
+    'catering lead time days' => [fn () => TenantSettings::resolve()->catering->leadTimeDays, '14'],
+    'store website' => [fn () => (string) TenantSettings::resolve()->store->website, ''],
+    'paypal invoice terms' => [fn () => resolve(SettingsManager::class)->get('paypal_invoice_terms', 'Something else.'), 'Payment due within 30 days.'],
+    'default shelf life days' => [fn () => resolve(SettingsManager::class)->get('default_shelf_life_days', '99'), '3'],
 ]);
