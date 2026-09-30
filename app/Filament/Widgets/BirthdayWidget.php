@@ -6,6 +6,7 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 use stdClass;
@@ -49,7 +50,7 @@ class BirthdayWidget extends Widget
         // objects. Cache stores hydrate as __PHP_Incomplete_Class because
         // config(cache.serializable_classes) is false. Same shape as #302.
         $entries = $this->cached("upcoming_{$limit}", [3600, 7200], function () use ($limit): array {
-            $today = now();
+            $today = resolve(BakeryClock::class)->today();
 
             return Customer::query()
                 ->select(['name', 'birthday'])
@@ -60,10 +61,10 @@ class BirthdayWidget extends Widget
                     if (! $next) {
                         return null;
                     }
-                    if ($next->lt($today->startOfDay())) {
+                    if ($next->lt($today)) {
                         $next->addYear();
                     }
-                    $daysUntil = (int) today()->diffInDays($next, false);
+                    $daysUntil = (int) $today->diffInDays($next, false);
 
                     return [
                         'customer_name' => $customer->name,

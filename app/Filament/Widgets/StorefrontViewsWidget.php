@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Engagement\PageView;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
 
 class StorefrontViewsWidget extends Widget
@@ -20,13 +21,18 @@ class StorefrontViewsWidget extends Widget
     public function getCardData(): array
     {
         return $this->cached('main', [60, 120], function (): array {
-            $today = today();
+            $now = resolve(BakeryClock::class)->now();
+            $appTimezone = config()->string('app.timezone');
             $chart = [];
 
             for ($i = 6; $i >= 0; $i--) {
-                $day = $today->copy()->subDays($i);
+                // Bakery-local day boundaries, converted to the app timezone that created_at is stored in.
+                $day = $now->copy()->subDays($i);
                 $chart[] = PageView::query()->whereNull('product_id')
-                    ->whereBetween('created_at', [$day->copy()->startOfDay(), $day->copy()->endOfDay()])
+                    ->whereBetween('created_at', [
+                        $day->copy()->startOfDay()->setTimezone($appTimezone),
+                        $day->copy()->endOfDay()->setTimezone($appTimezone),
+                    ])
                     ->count();
             }
 
