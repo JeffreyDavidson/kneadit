@@ -65,9 +65,9 @@ test('obtainSslCertificate logs and returns false when the domain is not in Forg
     test()->logger->shouldHaveReceived('error')->once()->with('Forge: domain not found for SSL request', ['domain' => 'missing.com']);
 });
 
-test('obtainSslCertificate returns false and logs when Forge refuses after retrying', function () {
+test('obtainSslCertificate does not retry a 4xx and logs the Forge status and body', function () {
     Http::fake([
-        FORGE_CLIENT_DOMAINS_URL.'/333/certificates' => Http::response([], 422),
+        FORGE_CLIENT_DOMAINS_URL.'/333/certificates' => Http::response(['errors' => ['invalid']], 422),
         FORGE_CLIENT_DOMAINS_URL.'*' => forgeDomainListing('bakery.com'),
     ]);
 
@@ -75,14 +75,34 @@ test('obtainSslCertificate returns false and logs when Forge refuses after retry
 
     expect($result)->toBeFalse();
 
-    Http::assertSentCount(4);
-    test()->logger->shouldHaveReceived('error')->once()->withArgs(fn (string $message, array $context): bool => $message === 'Forge: obtainSslCertificate failed'
-        && str_contains((string) $context['error'], 'status code 422'));
+    Http::assertSentCount(2);
+    test()->logger->shouldHaveReceived('error')->once()->with('Forge: SSL request failed', [
+        'domain' => 'bakery.com',
+        'status' => 422,
+        'body' => '{"errors":["invalid"]}',
+    ]);
 });
 
-test('addDomainAlias returns false and logs when Forge refuses the domain after retrying', function () {
+test('addDomainAlias does not retry a 4xx and logs the Forge status and body', function () {
     Http::fake(fn (Request $request) => $request->method() === 'POST'
-        ? Http::response(['errors' => []], 422)
+        ? Http::response(['errors' => ['invalid']], 422)
+        : Http::response(['data' => [], 'meta' => ['next_cursor' => null]]));
+
+    $result = (new HttpForgeClient)->addDomainAlias('bakery.com');
+
+    expect($result)->toBeFalse();
+
+    Http::assertSentCount(2);
+    test()->logger->shouldHaveReceived('error')->once()->with('Forge: failed to add domain', [
+        'domain' => 'bakery.com',
+        'status' => 422,
+        'body' => '{"errors":["invalid"]}',
+    ]);
+});
+
+test('addDomainAlias retries a 5xx or 429 and then logs the final response', function (int $status) {
+    Http::fake(fn (Request $request) => $request->method() === 'POST'
+        ? Http::response('unavailable', $status)
         : Http::response(['data' => [], 'meta' => ['next_cursor' => null]]));
 
     $result = (new HttpForgeClient)->addDomainAlias('bakery.com');
@@ -90,8 +110,79 @@ test('addDomainAlias returns false and logs when Forge refuses the domain after 
     expect($result)->toBeFalse();
 
     Http::assertSentCount(4);
-    test()->logger->shouldHaveReceived('error')->once()->withArgs(fn (string $message, array $context): bool => $message === 'Forge: addDomainAlias failed'
-        && str_contains((string) $context['error'], 'status code 422'));
+    test()->logger->shouldHaveReceived('error')->once()->with('Forge: failed to add domain', [
+        'domain' => 'bakery.com',
+        'status' => $status,
+        'body' => 'unavailable',
+    ]);
+})->with([
+    '500' => 500,
+    '503' => 503,
+    '429' => 429,
+]);
+
+test('a transient failure is retried and the request then succeeds', function (int $status) {
+    Http::fake([
+        FORGE_CLIENT_DOMAINS_URL.'/333/certificates' => Http::sequence()
+            ->push([], $status)
+            ->push([], 202),
+        FORGE_CLIENT_DOMAINS_URL.'*' => forgeDomainListing('bakery.com'),
+    ]);
+
+    $result = (new HttpForgeClient)->obtainSslCertificate('bakery.com');
+
+    expect($result)->toBeTrue();
+
+    Http::assertSentCount(3);
+    test()->logger->shouldNotHaveReceived('error');
+})->with([
+    'server error' => 503,
+    'rate limited' => 429,
+]);
+
+test('a connection failure is retried and the request then succeeds', function () {
+    Http::fake([
+        FORGE_CLIENT_DOMAINS_URL.'/333/certificates' => Http::sequence()
+            ->pushFailedConnection()
+            ->push([], 202),
+        FORGE_CLIENT_DOMAINS_URL.'*' => forgeDomainListing('bakery.com'),
+    ]);
+
+    $result = (new HttpForgeClient)->obtainSslCertificate('bakery.com');
+
+    expect($result)->toBeTrue();
+
+    Http::assertSentCount(3);
+});
+
+test('a persistent connection failure is attempted three times before giving up', function () {
+    $attempts = 0;
+    Http::fake(function () use (&$attempts) {
+        $attempts++;
+
+        throw new ConnectionException('Connection refused');
+    });
+
+    $result = (new HttpForgeClient)->addDomainAlias('bakery.com');
+
+    expect($result)->toBeFalse()
+        ->and($attempts)->toBe(3);
+});
+
+test('a failed request never logs the API token', function () {
+    Http::fake(fn (Request $request) => $request->method() === 'POST'
+        ? Http::response(['errors' => ['invalid']], 422)
+        : Http::response(['data' => [], 'meta' => ['next_cursor' => null]]));
+    $logged = [];
+    test()->logger->shouldReceive('error')->andReturnUsing(function (mixed ...$arguments) use (&$logged): void {
+        $logged[] = $arguments;
+    });
+
+    (new HttpForgeClient)->addDomainAlias('bakery.com');
+
+    expect($logged)->not->toBeEmpty()
+        ->and(json_encode($logged))->not->toContain('test-token')
+        ->not->toContain('Bearer');
 });
 
 test('addDomainAlias logs a success when the domain is created', function () {
@@ -106,15 +197,35 @@ test('addDomainAlias logs a success when the domain is created', function () {
     test()->logger->shouldHaveReceived('info')->once()->with('Forge: domain added', ['domain' => 'bakery.com']);
 });
 
-test('removeDomainAlias returns false when Forge refuses the delete', function () {
+test('removeDomainAlias retries a 5xx, then returns false and logs the Forge status and body', function () {
     Http::fake([
-        FORGE_CLIENT_DOMAINS_URL.'/333' => Http::response([], 500),
+        FORGE_CLIENT_DOMAINS_URL.'/333' => Http::response('boom', 500),
         FORGE_CLIENT_DOMAINS_URL.'*' => forgeDomainListing('bakery.com'),
     ]);
 
     $result = (new HttpForgeClient)->removeDomainAlias('bakery.com');
 
     expect($result)->toBeFalse();
+
+    Http::assertSentCount(4);
+    test()->logger->shouldHaveReceived('error')->once()->with('Forge: failed to remove domain', [
+        'domain' => 'bakery.com',
+        'status' => 500,
+        'body' => 'boom',
+    ]);
+});
+
+test('removeDomainAlias does not retry a 4xx', function () {
+    Http::fake([
+        FORGE_CLIENT_DOMAINS_URL.'/333' => Http::response([], 404),
+        FORGE_CLIENT_DOMAINS_URL.'*' => forgeDomainListing('bakery.com'),
+    ]);
+
+    $result = (new HttpForgeClient)->removeDomainAlias('bakery.com');
+
+    expect($result)->toBeFalse();
+
+    Http::assertSentCount(2);
 });
 
 test('domain lookups match the exact domain name among the listed records', function () {
