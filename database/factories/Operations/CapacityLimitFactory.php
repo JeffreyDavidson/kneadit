@@ -18,7 +18,7 @@ class CapacityLimitFactory extends Factory
     public function definition(): array
     {
         return [
-            'day_of_week' => DayOfWeek::cases()[array_rand(DayOfWeek::cases())]->value,
+            'day_of_week' => fake()->randomElement(array_column(DayOfWeek::cases(), 'value')),
             'max_orders' => fake()->numberBetween(5, 30),
         ];
     }
