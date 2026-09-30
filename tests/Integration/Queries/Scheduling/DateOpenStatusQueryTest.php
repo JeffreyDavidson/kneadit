@@ -2,6 +2,7 @@
 
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
+use App\Models\Operations\Holiday;
 use App\Queries\Scheduling\DateOpenStatusQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
@@ -102,3 +103,35 @@ test('accepts string dates', function () {
 
     expect(DateOpenStatusQuery::forDate('2026-05-04')->open)->toBeTrue();
 });
+
+test('closes a holiday date once its order deadline has passed', function () {
+    Date::setTestNow('2026-12-21 09:00');
+    Holiday::factory()->active()->create([
+        'name' => 'Christmas',
+        'date' => '2026-12-25',
+        'order_deadline' => '2026-12-20',
+    ]);
+
+    $status = DateOpenStatusQuery::forDate('2026-12-25');
+
+    expect($status->open)->toBeFalse()
+        ->and($status->reason)->toBe('Orders closed for Christmas');
+});
+
+test('keeps a holiday date open while its order deadline does not apply', function (array $overrides) {
+    Date::setTestNow('2026-12-20 23:30');
+    Holiday::factory()->active()->create([
+        'date' => '2026-12-25',
+        'order_deadline' => '2026-12-20',
+        ...$overrides,
+    ]);
+
+    $status = DateOpenStatusQuery::forDate('2026-12-25');
+
+    expect($status->open)->toBeTrue();
+})->with([
+    'on the deadline day' => [[]],
+    'before the deadline' => [['order_deadline' => '2026-12-22']],
+    'inactive holiday past its deadline' => [['is_active' => false, 'order_deadline' => '2026-12-18']],
+    'holiday without a deadline' => [['order_deadline' => null]],
+]);
