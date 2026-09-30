@@ -2,11 +2,11 @@
 
 namespace App\Services\Inventory;
 
-use App\Models\Operations\CapacityLimit;
 use App\Models\Orders\Order;
-use App\Queries\Scheduling\DateOpenStatusQuery;
+use App\Queries\Scheduling\DateCapacityRules;
 use App\Services\Settings\TenantSettings;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
 
 class CapacityCalculator
@@ -15,29 +15,27 @@ class CapacityCalculator
         private readonly TenantSettings $settings,
     ) {}
 
-    public function forDate(Carbon|string $date): ?CapacityLimit
-    {
-        return CapacityLimit::query()->whereDate('date', Date::parse($date))->first();
-    }
-
+    /**
+     * The date's order limit per DateCapacityRules::maxOrders(), or the
+     * tenant default when no rule sets one.
+     */
     public function getMaxOrders(Carbon|string $date): int
     {
-        $limit = $this->forDate($date);
+        $carbon = Date::parse($date);
 
-        if ($limit instanceof CapacityLimit && $limit->max_orders > 0) {
-            return $limit->max_orders;
-        }
-
-        return $this->settings->orders->defaultDailyCapacity;
+        return $this->maxOrders(DateCapacityRules::between($carbon, $carbon), $carbon);
     }
 
     public function isAvailable(Carbon|string $date): bool
     {
-        if (! DateOpenStatusQuery::forDate($date)->open) {
+        $carbon = Date::parse($date);
+        $rules = DateCapacityRules::between($carbon, $carbon);
+
+        if (! $rules->status($carbon)->open) {
             return false;
         }
 
-        return $this->ordersOnDate($date) < $this->getMaxOrders($date);
+        return $this->ordersOnDate($carbon) < $this->maxOrders($rules, $carbon);
     }
 
     public function remainingSlots(Carbon|string $date): int
@@ -60,5 +58,10 @@ class CapacityCalculator
         }
 
         return min(100, ($this->ordersOnDate($date) / $maxOrders) * 100);
+    }
+
+    private function maxOrders(DateCapacityRules $rules, CarbonInterface $date): int
+    {
+        return $rules->maxOrders($date) ?? $this->settings->orders->defaultDailyCapacity;
     }
 }

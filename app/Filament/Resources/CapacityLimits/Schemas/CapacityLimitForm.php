@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\CapacityLimits\Schemas;
 
+use App\Builders\Operations\CapacityLimitQueryBuilder;
 use App\Enums\Staff\DayOfWeek;
 use App\Models\Operations\CapacityLimit;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -15,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Date;
 
 class CapacityLimitForm
 {
@@ -43,11 +46,13 @@ class CapacityLimitForm
                             }
                         })
                         ->dehydrated(false)
+                        ->unique(CapacityLimit::class, 'day_of_week')
+                        ->validationMessages(['unique' => 'A limit for this weekday already exists.'])
                         ->afterStateUpdated(function (?string $state, Set $set): void {
                             if ($state === 'specific') {
                                 $set('day_of_week', null);
                             } else {
-                                $set('day_of_week', (int) $state);
+                                $set('day_of_week', $state);
                                 $set('specific_date', null);
                             }
                         }),
@@ -56,6 +61,21 @@ class CapacityLimitForm
                         ->label('Date')
                         ->visible(fn (Get $get): bool => $get('day_type') === 'specific')
                         ->required(fn (Get $get): bool => $get('day_type') === 'specific')
+                        // Compare as dates: the stored value may carry a time part.
+                        ->rule(fn (?CapacityLimit $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                            if (! is_string($value) || strtotime($value) === false) {
+                                return;
+                            }
+
+                            $taken = CapacityLimit::query()
+                                ->onSpecificDate(Date::parse($value))
+                                ->when($record, fn (CapacityLimitQueryBuilder $query, CapacityLimit $record) => $query->whereKeyNot($record->getKey()))
+                                ->exists();
+
+                            if ($taken) {
+                                $fail('A limit for this date already exists.');
+                            }
+                        })
                         ->native(false),
 
                     Hidden::make('day_of_week'),
@@ -66,7 +86,7 @@ class CapacityLimitForm
                         ->default(0)
                         ->minValue(0)
                         ->prefixIcon(Heroicon::OutlinedShoppingBag)
-                        ->helperText('0 = unlimited (unless blocked)'),
+                        ->helperText('0 = use the holiday, Schedule Manager, or default limit'),
 
                     Toggle::make('is_blocked')
                         ->label('Block Day Entirely')

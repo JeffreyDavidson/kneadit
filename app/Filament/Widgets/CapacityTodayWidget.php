@@ -7,9 +7,9 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Operations\BlockedDate;
 use App\Models\Orders\Order;
 use App\Services\Inventory\CapacityCalculator;
+use App\Services\Scheduling\BakeryClock;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 
 class CapacityTodayWidget extends Widget
 {
@@ -44,26 +44,28 @@ class CapacityTodayWidget extends Widget
     /** @return array<string, mixed> */
     public function getTodayCapacity(): array
     {
-        return $this->getCapacityData(Date::today());
+        return $this->getCapacityData(resolve(BakeryClock::class)->today());
     }
 
     /** @return array<string, mixed> */
     public function getTomorrowCapacity(): array
     {
-        return $this->getCapacityData(Date::tomorrow());
+        return $this->getCapacityData(resolve(BakeryClock::class)->today()->addDay());
     }
 
     /** @return array<string, mixed> */
     public function getDayAfterCapacity(): array
     {
-        return $this->getCapacityData(Date::today()->copy()->addDays(2));
+        return $this->getCapacityData(resolve(BakeryClock::class)->today()->addDays(2));
     }
 
     /** @return array<int, array<string, string>> */
     public function getBlockedDaysWarning(): array
     {
-        return $this->cached('blocked_days_'.Date::today()->toDateString(), [1800, 3600], fn (): array => BlockedDate::query()->where('date', '>=', Date::today())
-            ->where('date', '<=', Date::today()->addDays(7))
+        $today = resolve(BakeryClock::class)->today();
+
+        return $this->cached('blocked_days_'.$today->toDateString(), [1800, 3600], fn (): array => BlockedDate::query()->whereDate('date', '>=', $today)
+            ->whereDate('date', '<=', $today->copy()->addDays(7))
             ->where('is_all_day', true)
             ->orderBy('date')
             ->limit(3)

@@ -124,6 +124,24 @@ Storefront requests are validated by `StoreOrderRequest` and converted to `Creat
 
 If capacity rejects the request, the pipeline returns no order. Other domain validation failures return targeted form errors. A successful transaction logs the placement and emits `OrderCreated`. The current session is granted access to the resulting order before redirecting to payment or confirmation.
 
+### Date capacity
+
+`CapacityCalculator` decides how many active orders a delivery date can take. Both it and the storefront availability calendar (`AvailabilityService`) read the rules through `DateCapacityRules`, which loads everything for a date range in four queries. A date is unavailable when it is closed (an all-day `BlockedDate`, a closed day in Schedule Manager, or an active holiday whose `order_deadline` has passed; the deadline day itself stays open), or when its orders reach the max. Staff-created orders (quick orders, catering conversions) skip this check. The max comes from the first level that sets one, most specific first:
+
+1. Capacity limit for that exact date
+2. Active holiday on that date
+3. Capacity limit for that weekday
+4. Schedule Manager max orders for that weekday
+5. Tenant default (`default_daily_capacity`)
+
+A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit here" and falls through to the next level.
+
+### Earliest delivery date
+
+`EarliestDeliveryDate` decides the first delivery date a customer can choose: the bakery's local today (the `timezone` order setting, UTC until set) plus the lead-time days (`minimum_order_lead_hours`, rounded up to whole days). If today's Schedule Manager order cutoff has passed, the order counts as placed tomorrow, so the date moves back one day. The storefront and API order requests validate against it, and the order page shows it and uses it as the date picker's minimum. Staff-created orders don't use it.
+
+"Today" for all of these rules is the bakery's local date from `BakeryClock` (the same `timezone` setting). `BakeryClock::today()` returns that date as a plain date value, so it compares directly with date columns. The holiday deadline check, the availability calendar, the capacity dashboard widget, upcoming holidays and the holiday deadline/day counts in admin all use it.
+
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 
 ### Payment paths

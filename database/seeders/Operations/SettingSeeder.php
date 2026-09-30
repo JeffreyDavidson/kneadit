@@ -70,7 +70,7 @@ class SettingSeeder extends Seeder
                 'value' => 'Please be aware that our bakery uses wheat, eggs, dairy, nuts, and soy in our kitchen. While we take precautions to prevent cross-contamination, we cannot guarantee that any item is completely free from allergens. Please inform us of any allergies when placing your order.',
             ],
             [
-                'key' => 'order_lead_time_hours',
+                'key' => 'minimum_order_lead_hours',
                 'value' => '24',
             ],
             [

@@ -3,8 +3,8 @@
 namespace App\Presenters;
 
 use App\Models\Operations\Holiday;
+use App\Services\Scheduling\BakeryClock;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 final readonly class HolidayPresenter
 {
@@ -19,7 +19,7 @@ final readonly class HolidayPresenter
 
     public function daysAway(): int
     {
-        return (int) Date::today()->diffInDays($this->holiday->date, false);
+        return (int) $this->today()->diffInDays($this->holiday->date, false);
     }
 
     public function startPrepBy(): Carbon
@@ -40,14 +40,17 @@ final readonly class HolidayPresenter
     public function daysUntilDeadline(): int
     {
         return $this->holiday->order_deadline
-            ? (int) Date::today()->diffInDays($this->holiday->order_deadline, false)
+            ? (int) $this->today()->diffInDays($this->holiday->order_deadline, false)
             : $this->daysAway();
     }
 
+    /**
+     * The deadline day itself still accepts orders, matching checkout.
+     */
     public function isDeadlinePassed(): bool
     {
         return $this->holiday->order_deadline
-            ? $this->holiday->order_deadline->isPast()
+            ? $this->holiday->order_deadline->lt($this->today())
             : $this->holiday->date->isPast();
     }
 
@@ -112,5 +115,10 @@ final readonly class HolidayPresenter
             'Urgent' => 'warning',
             default => 'success',
         };
+    }
+
+    private function today(): Carbon
+    {
+        return resolve(BakeryClock::class)->today();
     }
 }

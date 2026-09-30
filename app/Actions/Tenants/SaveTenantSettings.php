@@ -29,6 +29,7 @@ class SaveTenantSettings
             'store_address' => $data['store_address'],
             'default_daily_capacity' => $data['default_daily_capacity'],
             'minimum_order_lead_hours' => $data['minimum_order_lead_hours'],
+            'timezone' => $data['timezone'] ?? 'UTC',
             'delivery_fee_tiers' => json_encode(array_values($deliveryFeeTiers)),
             'minimum_pickup_order_amount' => $data['minimum_pickup_order_amount'] ?? '0',
             'minimum_delivery_order_amount' => $data['minimum_delivery_order_amount'] ?? '0',

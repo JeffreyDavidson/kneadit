@@ -24,6 +24,7 @@ final class TenantSettingsFormMapper
             'store_address' => SettingValue::string($values['store_address'] ?? null, SettingValue::string($defaults['store_address'] ?? null)),
             'default_daily_capacity' => SettingValue::nullableInt($values['default_daily_capacity'] ?? null, SettingValue::nullableInt($defaults['default_daily_capacity'] ?? null)),
             'minimum_order_lead_hours' => SettingValue::nullableInt($values['minimum_order_lead_hours'] ?? null, SettingValue::nullableInt($defaults['minimum_order_lead_hours'] ?? null, 48)),
+            'timezone' => SettingValue::string($values['timezone'] ?? null, SettingValue::string($defaults['timezone'] ?? null, 'UTC')),
             'delivery_fee_tiers' => SettingValue::mapList($values['delivery_fee_tiers'] ?? null),
             'minimum_pickup_order_amount' => SettingValue::string($values['minimum_pickup_order_amount'] ?? null, SettingValue::string($defaults['minimum_pickup_order_amount'] ?? null, '0')),
             'minimum_delivery_order_amount' => SettingValue::string($values['minimum_delivery_order_amount'] ?? null, SettingValue::string($defaults['minimum_delivery_order_amount'] ?? null, '0')),

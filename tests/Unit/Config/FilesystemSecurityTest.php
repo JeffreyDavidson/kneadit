@@ -22,9 +22,10 @@ test('CSV imports use a private non-servable tenant-aware disk', function () {
 
 test('public storage link targets the configured public disk root', function () {
     $publicStoragePath = Config::string('filesystems.disks.public.root');
+    $links = Config::array('filesystems.links');
 
-    expect(Config::get('filesystems.links.'.public_path('storage')))
-        ->toBe($publicStoragePath);
+    expect($links)->toHaveKey(public_path('storage'))
+        ->and($links[public_path('storage')])->toBe($publicStoragePath);
 });
 
 test('public storage can be placed outside the release directory', function () {

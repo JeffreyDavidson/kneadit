@@ -23,4 +23,9 @@ final readonly class DateOpenStatus
     {
         return new self(open: false, reason: 'Closed');
     }
+
+    public static function orderingClosed(string $holidayName): self
+    {
+        return new self(open: false, reason: "Orders closed for {$holidayName}");
+    }
 }

@@ -83,9 +83,19 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
-        "test": ["@php artisan config:clear --ansi", "@php artisan test --exclude-testsuite=Browser"],
-        "test:application": "@php artisan test --exclude-testsuite=Browser",
-        "test:browser": "@php artisan test --testsuite=Browser",
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan config:clear --ansi",
+            "@php artisan test --exclude-testsuite=Browser"
+        ],
+        "test:application": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan test --exclude-testsuite=Browser"
+        ],
+        "test:browser": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan test --testsuite=Browser"
+        ],
         "test:push": ["@check", "@test:browser"],
         "test:coverage": "herd coverage vendor/bin/pest --coverage --compact -d memory_limit=1G",
         "lint": "vendor/bin/pint --dirty --blade --format agent",
@@ -153,6 +163,7 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
+        "process-timeout": 0,
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,

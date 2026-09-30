@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -33,4 +35,17 @@ test('biscotto order page uses the themed presentation without replacing the ord
         ->get(route('order.create', [], false));
 
     $response->assertOk()->assertSeeHtml('biscotto-order-hero')->assertSeeHtml('biscotto-order-stage')->assertSeeHtml('data-test="order-form"')->assertSeeHtml('data-test="order-form-submit"');
+});
+
+test('order page shows and enforces the earliest delivery date after the order cutoff', function () {
+    settings(['minimum_order_lead_hours' => '48', 'timezone' => 'America/New_York']);
+    BusinessSchedule::factory()->open()->create(['day_of_week' => 1, 'order_cutoff_time' => '14:00']);
+    Date::setTestNow('2026-10-05 19:30');
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertSee('ready Thursday, October 8 or later')
+        ->assertSeeHtml("minDate: '2026-10-08'");
 });

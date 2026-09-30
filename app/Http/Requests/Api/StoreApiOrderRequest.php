@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
-use App\Services\Settings\TenantSettings;
+use App\Services\Scheduling\EarliestDeliveryDate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreApiOrderRequest extends FormRequest
@@ -42,9 +42,11 @@ class StoreApiOrderRequest extends FormRequest
 
     private function minimumDeliveryDate(): string
     {
-        $leadDays = rescue(fn () => resolve(TenantSettings::class)->leadTimeDays(), 1, false);
-
-        return now()->addDays($leadDays)->toDateString();
+        return rescue(
+            fn (): string => resolve(EarliestDeliveryDate::class)->get()->toDateString(),
+            fn (): string => now()->addDay()->toDateString(),
+            false,
+        );
     }
 
     public function toData(): CreateOrderData

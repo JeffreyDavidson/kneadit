@@ -54,35 +54,51 @@ test('synchronizes quote items and recomputes the quoted total', function () {
         ->and($inquiry->quoted_amount?->dollars())->toBe(310.0);
 });
 
-test('recalculates the quote total with a database aggregate', function () {
+test('recalculates the quote total once with a database aggregate', function () {
     $inquiry = CateringInquiry::factory()->create();
     $item = CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
         'name' => 'Cookies',
         'quantity' => 2,
         'unit_price' => 12.34,
+        'special_instructions' => null,
         'sort_order' => 0,
     ]);
 
     $itemSelects = [];
-    DB::listen(function (QueryExecuted $query) use (&$itemSelects): void {
-        $sql = strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql));
+    $inquiryUpdates = [];
+    DB::listen(function (QueryExecuted $query) use (&$itemSelects, &$inquiryUpdates): void {
+        $sql = ltrim(strtolower(str_replace(['"', '`', '[', ']'], '', $query->sql)));
 
-        if (str_starts_with(ltrim($sql), 'select') && str_contains($sql, 'from catering_inquiry_items')) {
+        if (str_starts_with($sql, 'select') && str_contains($sql, 'from catering_inquiry_items')) {
             $itemSelects[] = $sql;
+        }
+
+        if (str_starts_with($sql, 'update catering_inquiries ')) {
+            $inquiryUpdates[] = $sql;
         }
     });
 
-    resolve(SyncCateringQuoteItems::class)($inquiry, [[
-        'id' => $item->id,
-        'name' => 'Cookies',
-        'quantity' => 2,
-        'unit_price' => 12.34,
-        'special_instructions' => null,
-    ]]);
+    resolve(SyncCateringQuoteItems::class)($inquiry, [
+        [
+            'id' => $item->id,
+            'name' => 'Cookies',
+            'quantity' => 3,
+            'unit_price' => 12.34,
+            'special_instructions' => null,
+        ],
+        [
+            'id' => null,
+            'name' => 'Brownies',
+            'quantity' => 1,
+            'unit_price' => 5.0,
+            'special_instructions' => null,
+        ],
+    ]);
 
-    expect($inquiry->quoted_amount?->dollars())->toBe(24.68)
+    expect($inquiry->quoted_amount?->dollars())->toBe(42.02)
         ->and($itemSelects)->toHaveCount(2)
-        ->and($itemSelects[1])->toContain('sum(unit_price * quantity)');
+        ->and($itemSelects[1])->toContain('sum(unit_price * quantity)')
+        ->and($inquiryUpdates)->toHaveCount(1);
 });
 
 test('sets the quote total to zero when no items remain', function () {

@@ -5,7 +5,6 @@ use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Services\Settings\TenantSettingCipher;
 use Illuminate\Support\Facades\Storage;
-use InvalidArgumentException;
 
 beforeEach(function () {
     config(['app.key' => 'base64:BskavyAdxjag1K/BGSEfPPiwB/QDha6hMH4H0i1wM7A=']);
@@ -88,6 +87,7 @@ it('imports a legacy catalog and order history idempotently while converting dol
         ->assertDatabaseHas('orders', ['order_number' => 'BOB-TEST', 'subtotal' => 2500, 'discount_amount' => 250, 'total' => 2250, 'coupon_id' => 1])
         ->assertDatabaseHas('order_items', ['name' => 'Sourdough', 'unit_price' => 1250])
         ->assertDatabaseHas('coupons', ['code' => 'WELCOME5', 'type' => 'fixed', 'fixed_amount' => 500, 'min_order_amount' => 2000])
+        ->assertDatabaseHas('capacity_limits', ['day_of_week' => 'monday', 'specific_date' => null, 'max_orders' => 10])
         ->assertDatabaseHas('recipes', ['name' => 'Sourdough Recipe', 'cost' => 300])
         ->assertDatabaseHas('expenses', ['description' => 'Fuel', 'amount' => 2000, 'category' => 'delivery', 'deductible_amount' => 1000])
         ->assertDatabaseHas('incomes', ['description' => 'Custom cake', 'amount' => 7500, 'source' => 'other'])

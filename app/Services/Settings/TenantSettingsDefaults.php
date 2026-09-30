@@ -24,6 +24,7 @@ final class TenantSettingsDefaults
             'store_address' => '',
             'default_daily_capacity' => null,
             'minimum_order_lead_hours' => 48,
+            'timezone' => 'UTC',
             'order_modification_window_minutes' => 0,
             'low_stock_alerts_enabled' => false,
             'pickup_slots_enabled' => false,

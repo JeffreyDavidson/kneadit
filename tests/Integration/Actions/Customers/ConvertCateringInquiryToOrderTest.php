@@ -108,7 +108,10 @@ test('copies the event date onto the order delivery_date', function () {
 });
 
 test('copies inquiry items to OrderItems when items exist (no collapsed line)', function () {
-    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Quoted]);
+    $inquiry = CateringInquiry::factory()->create([
+        'status' => CateringInquiryStatus::Quoted,
+        'quoted_amount' => 700,
+    ]);
 
     CateringInquiryItem::factory()->for($inquiry, 'inquiry')->create([
         'name' => 'Wedding cake',

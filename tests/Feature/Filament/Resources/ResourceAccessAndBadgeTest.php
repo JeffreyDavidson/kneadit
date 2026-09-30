@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\CapacityLimits\CapacityLimitResource;
 use App\Filament\Resources\Coupons\CouponResource;
 use App\Filament\Resources\EmailCampaigns\EmailCampaignResource;
 use App\Filament\Resources\GiftCards\GiftCardResource;
@@ -23,6 +24,7 @@ beforeEach(function () {
 
 dataset('proFeatureResources', [
     'pro resources' => [
+        CapacityLimitResource::class,
         EmailCampaignResource::class,
         LoyaltyRewardResource::class,
         IngredientResource::class,

@@ -18,12 +18,8 @@ class ListCapacityLimits extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->slideOver()->slideOver()->modalWidth('md')
-                ->mutateDataUsing(function (array $data): array {
-                    $data['date'] = $data['specific_date'] ?? now()->toDateString();
-
-                    return $data;
-                }),
+                ->slideOver()
+                ->modalWidth('md'),
         ];
     }
 }
