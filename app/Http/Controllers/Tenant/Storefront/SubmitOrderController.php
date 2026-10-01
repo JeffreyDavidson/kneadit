@@ -37,7 +37,9 @@ class SubmitOrderController extends Controller
                 implode(', ', $e->shortages),
             )]);
         } catch (NoOrderableItemsException) {
-            throw ValidationException::withMessages(['items' => NoOrderableItemsException::CUSTOMER_MESSAGE]);
+            throw ValidationException::withMessages([
+                'items' => NoOrderableItemsException::CUSTOMER_MESSAGE,
+            ]);
         } catch (PickupSlotUnavailableException) {
             throw ValidationException::withMessages([
                 'delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE,
