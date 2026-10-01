@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Api;
 use App\Actions\Orders\CreateOrder;
 use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Exceptions\Orders\NoOrderableItemsException;
 use App\Exceptions\Orders\PickupSlotUnavailableException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreApiOrderRequest;
@@ -34,6 +35,8 @@ class OrderController extends Controller
                     implode(', ', $e->shortages),
                 ),
             ]);
+        } catch (NoOrderableItemsException) {
+            throw ValidationException::withMessages(['items' => NoOrderableItemsException::CUSTOMER_MESSAGE]);
         } catch (PickupSlotUnavailableException) {
             throw ValidationException::withMessages([
                 'delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE,
