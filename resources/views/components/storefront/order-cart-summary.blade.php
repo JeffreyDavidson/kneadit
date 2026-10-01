@@ -36,13 +36,15 @@
             placeholder="Enter coupon"
             class="order-input flex-1"
         />
-        <button type="button"
-                                    data-test="order-form-coupon-apply"
-                                    @click="applyCoupon()"
-                                    :disabled="! couponCode || isApplyingCoupon"
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
-                                    :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-        <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
+        <button
+            type="button"
+            data-test="order-form-coupon-apply"
+            @click="applyCoupon()"
+            :disabled="! couponCode || isApplyingCoupon"
+            class="bg-warm-500/15 text-warm-400 border-warm-500/30 rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
+            :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
+        >
+            <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
         </button>
     </div>
     <div x-show="couponError" class="mt-2 text-sm text-red-400" x-text="couponError"></div>

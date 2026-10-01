@@ -59,3 +59,10 @@ test('order page shows and enforces the earliest delivery date after the order c
         ->assertSee('ready Thursday, October 8 or later')
         ->assertSeeHtml("minDate: '2026-10-08'");
 });
+
+test('the coupon apply button closes its opening tag before its label', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    expect($response->getContent())->toMatch('/data-test="order-form-coupon-apply"[^>]*>\s*<span x-text="isApplyingCoupon/');
+});
