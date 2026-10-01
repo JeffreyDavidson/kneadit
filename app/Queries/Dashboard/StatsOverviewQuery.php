@@ -10,6 +10,7 @@ use App\Queries\Analytics\DateCountQuery;
 use App\Queries\Financial\RevenueQuery;
 use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\Money;
+use DateTimeZone;
 use Illuminate\Support\Carbon;
 
 class StatsOverviewQuery
@@ -40,8 +41,9 @@ class StatsOverviewQuery
         $dateSeries = DateSeries::between($chartStart, $today);
         $dates = $dateSeries->dates();
         $ordersByDate = $this->ordersByDeliveryDate($chartStart, $today);
-        $pendingByDate = $this->pendingOrdersByCreatedDate($chartStart, $today);
-        $viewsByDate = $this->storefrontViewsByDate($chartStart, $today);
+        $timezone = resolve(BakeryClock::class)->now()->getTimezone();
+        $pendingByDate = $this->pendingOrdersByCreatedDate($chartStart, $today, $timezone);
+        $viewsByDate = $this->storefrontViewsByDate($chartStart, $today, $timezone);
         $revenueByDate = RevenueQuery::dailyBreakdown([
             $lastWeekStart->toDateString(),
             $weekEnd->toDateString(),
@@ -78,24 +80,24 @@ class StatsOverviewQuery
     }
 
     /** @return array<string, int> */
-    private function pendingOrdersByCreatedDate(Carbon $start, Carbon $end): array
+    private function pendingOrdersByCreatedDate(Carbon $start, Carbon $end, DateTimeZone $timezone): array
     {
-        return DateCountQuery::count(
+        return DateCountQuery::countByLocalDay(
             Order::query()->where('status', OrderStatus::Pending),
-            'created_at',
             $start,
             $end,
+            $timezone,
         );
     }
 
     /** @return array<string, int> */
-    private function storefrontViewsByDate(Carbon $start, Carbon $end): array
+    private function storefrontViewsByDate(Carbon $start, Carbon $end, DateTimeZone $timezone): array
     {
-        return DateCountQuery::count(
+        return DateCountQuery::countByLocalDay(
             PageView::query()->whereNull('product_id'),
-            'created_at',
             $start,
             $end,
+            $timezone,
         );
     }
 

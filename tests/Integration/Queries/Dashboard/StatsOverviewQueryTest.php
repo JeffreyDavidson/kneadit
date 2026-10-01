@@ -84,3 +84,19 @@ test('loads the complete dashboard dataset in five queries', function () {
 
     expect(DB::getQueryLog())->toHaveCount(5);
 });
+
+test('buckets pending orders and storefront views by the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    // 20:30 on 2026-10-05 in New York, then 23:30 on 2026-10-04.
+    Order::factory()->create(['status' => OrderStatus::Pending, 'created_at' => '2026-10-06 00:30']);
+    Order::factory()->create(['status' => OrderStatus::Pending, 'created_at' => '2026-10-05 03:30']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-06 00:30']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-05 03:30']);
+
+    $data = resolve(StatsOverviewQuery::class)->get();
+
+    expect($data['pendingChart'])->toBe([0, 0, 0, 0, 0, 1, 1])
+        ->and($data['viewsChart'])->toBe([0, 0, 0, 0, 0, 1, 1])
+        ->and($data['viewsToday'])->toBe(1);
+});
