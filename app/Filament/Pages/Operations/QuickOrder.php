@@ -76,7 +76,9 @@ class QuickOrder extends Page
                 ->send();
 
             $this->form->fill();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
+            report($e);
+
             Notification::make()
                 ->title('Error Creating Order')
                 ->body('There was an error creating the order. Please try again.')

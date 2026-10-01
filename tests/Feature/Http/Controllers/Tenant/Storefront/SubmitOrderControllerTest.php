@@ -5,6 +5,7 @@ use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Enums\Orders\DeliveryType;
 use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Exceptions\Orders\NoOrderableItemsException;
 use App\Exceptions\Orders\PickupSlotUnavailableException;
 use App\Models\Financial\Coupon;
 use App\Models\Financial\GiftCard;
@@ -481,6 +482,11 @@ dataset('order domain failures', [
         'items',
         'Sorry, we don\'t have enough Flour, Butter in stock right now. Please reduce the quantity or remove an item.',
     ],
+    'no orderable items left in the cart' => [
+        fn () => new NoOrderableItemsException,
+        'items',
+        'Some items in your cart are no longer available. Please review your cart.',
+    ],
     'date fully booked' => [
         fn () => null,
         'delivery_date',
@@ -542,3 +548,26 @@ test('an order the pipeline rejects, submitted as a form, redirects back with th
         ->assertSessionHasErrors([$field => $message])
         ->assertSessionHasInput('customer_name', 'Jane Doe');
 })->with('order domain failures');
+
+test('a cart whose only product was deactivated is told its items are unavailable, not that the date is full', function (string $method) {
+    $payload = domainFailureOrderPayload();
+    Product::query()->update(['is_active' => false]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->{$method}(route('order.store', [], false), $payload);
+
+    $message = 'Some items in your cart are no longer available. Please review your cart.';
+    match ($method) {
+        'postJson' => $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['items' => $message])
+            ->assertJsonMissingValidationErrors(['delivery_date']),
+        default => $response->assertRedirect()
+            ->assertSessionHasErrors(['items' => $message])
+            ->assertSessionDoesntHaveErrors(['delivery_date'])
+            ->assertSessionHasInput('customer_name', 'Jane Doe'),
+    };
+    expect(Order::query()->count())->toBe(0);
+})->with([
+    'JSON' => ['postJson'],
+    'form post' => ['post'],
+]);

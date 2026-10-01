@@ -147,3 +147,16 @@ test('API pickup orders for a slot that fills while the order is placed are reje
     $response->assertStatus(422)
         ->assertJsonPath('errors.0.source.pointer', '/data/attributes/delivery_time');
 });
+
+test('API orders whose products are all inactive are rejected as unavailable items', function () {
+    $product = Product::factory()->inactive()->create();
+    $payload = apiPickupSlotPayload($product, '09:00');
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/orders', $payload);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/items')
+        ->assertJsonPath('errors.0.detail', 'Some items in your cart are no longer available. Please review your cart.');
+    expect(Order::query()->count())->toBe(0);
+});

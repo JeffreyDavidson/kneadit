@@ -3,6 +3,7 @@
 namespace App\Pipes\Orders;
 
 use App\Enums\Orders\DeliveryType;
+use App\Exceptions\Orders\NoOrderableItemsException;
 use App\Models\Inventory\Product;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
@@ -42,9 +43,7 @@ class CalculateOrderTotals
         }
 
         if ($payload->orderItems === []) {
-            $payload->cancelled = true;
-
-            return $payload;
+            throw new NoOrderableItemsException;
         }
 
         if ($payload->data->deliveryType === DeliveryType::Delivery->value) {
