@@ -2,6 +2,7 @@
 
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
+use App\Exceptions\Orders\NoOrderableItemsException;
 use App\Models\Inventory\Product;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\OrderPipelineData;
@@ -89,7 +90,7 @@ test('skips inactive products', function () {
         ->and($result->orderItems)->toHaveCount(1);
 });
 
-test('cancels order when no valid items exist', function () {
+test('rejects the order when no valid items exist', function () {
     $product = Product::factory()->create(['price' => 5.00, 'is_active' => false]);
 
     $data = new CreateOrderData(
@@ -103,10 +104,8 @@ test('cancels order when no valid items exist', function () {
     $payload = new OrderPipelineData($data);
     $pipe = resolve(CalculateOrderTotals::class);
 
-    $result = $pipe->handle($payload, fn ($p) => $p);
-
-    expect($result->cancelled)->toBeTrue()
-        ->and($result->orderItems)->toBeEmpty();
+    expect(fn () => $pipe->handle($payload, fn ($p) => $p))->toThrow(NoOrderableItemsException::class)
+        ->and($payload->orderItems)->toBeEmpty();
 });
 
 test('charges the bakery delivery tier fee unless the order reaches the free-delivery minimum', function (float $price, string $tier, string $freeDeliveryMinimum, float $fee) {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Orders\CreateQuickOrder;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Pages\Operations\QuickOrder;
@@ -13,6 +14,8 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Component;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Exceptions;
+use JMac\Testing\Double;
 
 use function Pest\Livewire\livewire;
 
@@ -164,4 +167,30 @@ test('quick order requires a customer email', function () {
 
     expect(Order::query()->count())->toBe(0)
         ->and(Customer::query()->count())->toBe(0);
+});
+
+test('quick order reports an unexpected failure and tells the user', function () {
+    Exceptions::fake();
+    $failure = new RuntimeException('Quick order blew up');
+    $createQuickOrder = Double::for(CreateQuickOrder::class);
+    $createQuickOrder->expects('__invoke')->throws($failure);
+    app()->instance(CreateQuickOrder::class, $createQuickOrder);
+    $product = Product::factory()->create(['price' => 10.00]);
+
+    livewire(QuickOrder::class)
+        ->fillForm([
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_date' => now()->addDays(3)->toDateString(),
+            'delivery_time' => '14:00',
+            'delivery_type' => DeliveryType::Pickup,
+            'payment_method' => PaymentMethod::Cash,
+            'order_items' => [
+                ['product_id' => $product->id, 'quantity' => 1, 'unit_price' => 10.00],
+            ],
+        ])
+        ->call('createOrder')
+        ->assertNotified('Error Creating Order');
+
+    Exceptions::assertReported(fn (RuntimeException $reported): bool => $reported === $failure);
 });

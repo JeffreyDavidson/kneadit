@@ -18,6 +18,15 @@ enum PaymentStatus: string implements HasColor, HasLabel
         return ucfirst($this->value);
     }
 
+    /** Whether money is still owed, so the order can be marked paid. */
+    public function canBeMarkedPaid(): bool
+    {
+        return match ($this) {
+            self::Unpaid, self::Partial => true,
+            self::Paid, self::Cancelled, self::Refunded => false,
+        };
+    }
+
     public function getColor(): string
     {
         return match ($this) {
@@ -26,6 +35,18 @@ enum PaymentStatus: string implements HasColor, HasLabel
             self::Paid => 'success',
             self::Cancelled => 'gray',
             self::Refunded => 'warning',
+        };
+    }
+
+    /**
+     * Whether an order with this payment status may be hard-deleted: only when
+     * no money was taken (Unpaid) or the payment was voided (Cancelled).
+     */
+    public function allowsDeletion(): bool
+    {
+        return match ($this) {
+            self::Unpaid, self::Cancelled => true,
+            self::Partial, self::Paid, self::Refunded => false,
         };
     }
 }

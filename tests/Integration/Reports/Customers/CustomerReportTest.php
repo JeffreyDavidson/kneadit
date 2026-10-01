@@ -169,3 +169,13 @@ test('keeps date column order ranges on the bakery-local calendar days', functio
     expect($onTheDay->totalCustomersWithOrders)->toBe(1)
         ->and($nextDay->totalCustomersWithOrders)->toBe(0);
 });
+
+test('groups customer acquisition by the bakery-local month, not the UTC month', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    // 8:30 pm on Oct 31 in New York, already Nov 1 in UTC.
+    Customer::factory()->create(['created_at' => '2026-11-01 00:30:00']);
+
+    $result = (new CustomerReport)->generate(DateRange::fromStrings('2026-10-01', '2026-11-30'));
+
+    expect($result->acquisitionByMonth)->toBe(['2026-10' => 1]);
+});

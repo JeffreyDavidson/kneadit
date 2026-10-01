@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Storefront;
 use App\Actions\Orders\CreateOrder;
 use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Exceptions\Orders\NoOrderableItemsException;
 use App\Exceptions\Orders\PickupSlotUnavailableException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOrderRequest;
@@ -35,6 +36,10 @@ class SubmitOrderController extends Controller
                 'Sorry, we don\'t have enough %s in stock right now. Please reduce the quantity or remove an item.',
                 implode(', ', $e->shortages),
             )]);
+        } catch (NoOrderableItemsException) {
+            throw ValidationException::withMessages([
+                'items' => NoOrderableItemsException::CUSTOMER_MESSAGE,
+            ]);
         } catch (PickupSlotUnavailableException) {
             throw ValidationException::withMessages([
                 'delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE,

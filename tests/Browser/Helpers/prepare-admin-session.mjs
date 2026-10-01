@@ -15,6 +15,7 @@ const centralAdminEmail = "browser-test-central@kneadit.test";
 const centralAdminPassword = "browser-test-password";
 const reviewOrderNumber = "BROWSER-TEST-REVIEW";
 const surveyTitle = "Browser Test Survey";
+const rfmCustomerEmail = "browser-test-rfm@kneadit.test";
 
 const repositoryRoot = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
@@ -101,10 +102,23 @@ try {
         reviewOrderNumber,
     );
     const surveyId = await findFirstViewId(tenant.page, "surveys", surveyTitle);
+    const rfmCustomerId = await findFirstViewId(
+        tenant.page,
+        "customers",
+        rfmCustomerEmail,
+    );
 
     await writeFile(
         fixtureIdsOutput,
-        `${JSON.stringify({ review_order_id: reviewOrderId, survey_id: surveyId }, null, 2)}\n`,
+        `${JSON.stringify(
+            {
+                review_order_id: reviewOrderId,
+                survey_id: surveyId,
+                rfm_customer_id: rfmCustomerId,
+            },
+            null,
+            2,
+        )}\n`,
     );
     process.stdout.write(`OK saved ${fixtureIdsOutput}\n`);
 

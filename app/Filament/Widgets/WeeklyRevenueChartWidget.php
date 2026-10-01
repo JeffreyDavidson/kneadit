@@ -51,7 +51,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
                 $key = $date->format('Y-m-d');
                 $labels[] = $date->format('D');
                 $revenue[] = ($revenueByDay[$key] ?? Money::zero())->dollars();
-                $expenses[] = round((float) ($expensesByDay[$key] ?? 0), 2);
+                $expenses[] = ($expensesByDay[$key] ?? Money::zero())->dollars();
             }
 
             $datasets = [
@@ -82,24 +82,23 @@ class WeeklyRevenueChartWidget extends ChartWidget
         });
     }
 
-    /** @return Collection<string, float> */
+    /**
+     * Business-portion expenses per day. deductible_amount is the integer cents
+     * the ExpenseObserver already computed per row (amount x business_percentage,
+     * rounded), so summing it avoids redoing the percentage math in SQL.
+     *
+     * @return Collection<string, Money>
+     */
     private function expensesByDay(DateRange $range): Collection
     {
-        $values = Expense::query()
+        return Expense::query()
             ->whereBetween('date', $range->toArray())
-            ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
+            ->selectRaw('DATE(date) as day, SUM(deductible_amount) as total')
             ->groupBy('day')
-            ->pluck('total', 'day');
-
-        $expenses = [];
-
-        foreach ($values as $day => $total) {
-            if (is_string($day)) {
-                $expenses[$day] = Arr::float(['total' => $total], 'total', 0.0);
-            }
-        }
-
-        return collect($expenses);
+            ->pluck('total', 'day')
+            ->mapWithKeys(fn (mixed $total, mixed $day): array => [
+                Arr::string(['day' => $day], 'day') => Money::fromCents(is_numeric($total) ? (int) $total : 0),
+            ]);
     }
 
     protected function cachePrefix(): string
