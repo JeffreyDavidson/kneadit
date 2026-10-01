@@ -8,6 +8,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Financial\FinancialCalculator;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\SettingsManager;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
@@ -70,7 +71,7 @@ class FinanceSummary extends Page
 
     public function mount(): void
     {
-        $this->selectedYear = now()->year;
+        $this->selectedYear = resolve(BakeryClock::class)->today()->year;
         $revenueCap = resolve(SettingsManager::class)->get('revenue_cap', 250000);
         $this->revenueCap = is_numeric($revenueCap) ? floatval($revenueCap) : 250000;
         $this->loadFinancialData();

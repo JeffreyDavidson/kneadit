@@ -49,6 +49,19 @@ test('loadWeeklyData groups orders by delivery date', function () {
         ->and($result->weeklyOrders[$tuesday])->toHaveCount(1);
 });
 
+test('loadWeeklyData includes orders on the first and last day of the week only', function () {
+    Order::factory()->create(['delivery_date' => '2026-10-04']);
+    $firstDayOrder = Order::factory()->create(['delivery_date' => '2026-10-05']);
+    $lastDayOrder = Order::factory()->create(['delivery_date' => '2026-10-11']);
+    Order::factory()->create(['delivery_date' => '2026-10-12']);
+
+    $result = resolve(PrepScheduleService::class)->loadWeeklyData('2026-10-05');
+
+    expect($result->weeklyOrders->keys()->all())->toBe(['2026-10-05', '2026-10-11'])
+        ->and($result->weeklyOrders['2026-10-05']->sole()->is($firstDayOrder))->toBeTrue()
+        ->and($result->weeklyOrders['2026-10-11']->sole()->is($lastDayOrder))->toBeTrue();
+});
+
 test('generatePrepSchedule creates tasks for items with recipes', function () {
     $monday = now()->startOfWeek()->format('Y-m-d');
     $product = Product::factory()->create();

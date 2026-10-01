@@ -6,8 +6,9 @@ use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Queries\Analytics\CustomerInsightsQuery;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Config;
 
 class CustomerInsightsWidget extends Widget
 {
@@ -22,9 +23,12 @@ class CustomerInsightsWidget extends Widget
 
     public function getNewCustomersThisWeek(): int
     {
-        $weekKey = Date::now()->startOfWeek()->format('Y-W');
+        $weekStart = resolve(BakeryClock::class)->now()->startOfWeek();
+        $weekKey = $weekStart->format('Y-W');
 
-        return $this->cached("new_{$weekKey}", [900, 1800], fn (): int => Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count());
+        return $this->cached("new_{$weekKey}", [900, 1800], fn (): int => Customer::query()
+            ->where('created_at', '>=', $weekStart->copy()->setTimezone(Config::string('app.timezone')))
+            ->count());
     }
 
     public function getRepeatCustomerRate(): float
@@ -42,7 +46,7 @@ class CustomerInsightsWidget extends Widget
     /** @return array<string, mixed> */
     public function getAvgOrderValue(): array
     {
-        $monthKey = now()->format('Y-m');
+        $monthKey = resolve(BakeryClock::class)->now()->format('Y-m');
 
         return $this->cached("aov_{$monthKey}", [900, 1800], function (): array {
             $averages = resolve(CustomerInsightsQuery::class)->averageOrderValues();

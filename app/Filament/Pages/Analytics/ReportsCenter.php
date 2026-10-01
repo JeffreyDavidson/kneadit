@@ -11,6 +11,7 @@ use App\Reports\Financial\FinancialReport;
 use App\Reports\Inventory\InventoryReport;
 use App\Reports\Inventory\ProductReport;
 use App\Reports\Orders\SalesReport;
+use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\DateRange;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -65,9 +66,10 @@ class ReportsCenter extends Page
 
     public function mount(): void
     {
-        $this->startDate = now()->startOfMonth()->format('Y-m-d');
-        $this->endDate = now()->format('Y-m-d');
-        $this->selectedYear = now()->year;
+        $today = resolve(BakeryClock::class)->today();
+        $this->startDate = $today->copy()->startOfMonth()->toDateString();
+        $this->endDate = $today->toDateString();
+        $this->selectedYear = $today->year;
         $this->inventoryUsageWindowDays = Config::integer('analytics.inventory_usage_window_days', 30);
     }
 

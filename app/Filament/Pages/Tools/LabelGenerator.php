@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Tools;
 
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Inventory\Product;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
@@ -59,7 +60,7 @@ class LabelGenerator extends Page
         $storedShelfLife = resolve(SettingsManager::class)->get('default_shelf_life_days', '3');
         $shelfLifeDays = filter_var($storedShelfLife, FILTER_VALIDATE_INT);
         $shelfLifeDays = is_int($shelfLifeDays) ? $shelfLifeDays : 3;
-        $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
+        $this->bestByDate = resolve(BakeryClock::class)->today()->addDays($shelfLifeDays)->toDateString();
     }
 
     #[\Override]

@@ -8,6 +8,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Pages\Tools\Schemas\TaxExportForm;
 use App\Services\Financial\TaxCsvExporter;
+use App\Services\Scheduling\BakeryClock;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Form;
@@ -63,7 +64,7 @@ class TaxExport extends Page
 
     public function mount(): void
     {
-        $this->selectedYear = now()->year;
+        $this->selectedYear = resolve(BakeryClock::class)->today()->year;
         $this->form->fill([
             'year' => $this->selectedYear,
             'export_type' => 'all',

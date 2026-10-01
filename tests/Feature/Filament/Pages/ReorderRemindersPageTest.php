@@ -81,3 +81,17 @@ test('customers lapse and count days against the bakery-local date', function ()
         ->and($customers->sole()->customer_email)->toBe($lapsedCustomer->email)
         ->and($customers->sole()->days_since)->toBe(31);
 });
+
+test('the send reminder link is addressed from the bakery by name', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(store: makeStoreInfo(['name' => 'Sunrise Bakery'])));
+    Date::setTestNow('2026-10-06 12:00');
+    $customer = Customer::factory()->create(['name' => 'Ada Lovelace', 'email' => 'ada@example.test']);
+    Order::factory()->for($customer)->delivered()->create(['delivery_date' => '2026-06-01']);
+
+    $component = livewire(ReorderReminders::class);
+
+    $component
+        ->assertOk()
+        ->assertSeeHtml('mailto:ada@example.test?subject=We%20miss%20you%20at%20Sunrise%20Bakery%21')
+        ->assertSeeHtml('Warmly%2C%0ASunrise%20Bakery');
+});
