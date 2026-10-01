@@ -195,6 +195,8 @@ Controllers should receive the typed `TenantSettings` DTO when rendering storefr
 
 Central onboarding screens read denormalized product, category, and order counts from the tenant record instead of opening every tenant database during a web request. `tenants:sync-onboarding-metrics` reconciles those counts every fifteen minutes and should be run once immediately after deploying its central migration.
 
+The onboarding subdomain doubles as the tenant id and the bare domain row, so `StoreOnboardingRequest` lowercases and trims it before validating, requires a valid hostname label, rejects `config('kneadit.reserved_subdomains')`, and checks uniqueness against both `domains.domain` and `tenants.id`.
+
 Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
 
 ## Frontend

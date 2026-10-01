@@ -32,6 +32,44 @@ return [
 
     'marketing_url' => env('MARKETING_URL', 'https://getkneadit.test'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Reserved subdomains
+    |--------------------------------------------------------------------------
+    |
+    | Bakery subdomains (and tenant ids) that onboarding must refuse: common
+    | infrastructure hostnames, the central app hosts, and platform tenant ids
+    | (Tenant::DEMO_ID and ProvisionTestTenantCommand::TENANT_ID).
+    |
+    */
+
+    'reserved_subdomains' => [
+        'www',
+        'mail',
+        'admin',
+        'api',
+        'app',
+        'app-staging',
+        'blog',
+        'cdn',
+        'dev',
+        'ftp',
+        'help',
+        'imap',
+        'login',
+        'mx',
+        'ns',
+        'pop',
+        'smtp',
+        'staging',
+        'status',
+        'support',
+        'test',
+        'webmail',
+        'demo',
+        'browser-test',
+    ],
+
     'seed_admin' => [
         'name' => env('SEED_ADMIN_NAME', 'Local Platform Administrator'),
         'email' => env('SEED_ADMIN_EMAIL'),
