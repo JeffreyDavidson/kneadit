@@ -3,6 +3,7 @@
 namespace Database\Factories\Inventory;
 
 use App\Enums\Inventory\Allergen;
+use App\Enums\Inventory\MeasurementUnit;
 use App\Models\Inventory\Ingredient;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class IngredientFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
-            'unit' => fake()->randomElement(['kg', 'g', 'L', 'mL', 'cups', 'tbsp']),
+            'unit' => MeasurementUnit::Kilograms->value,
             'current_stock' => fake()->randomFloat(2, 10, 100),
             'low_stock_threshold' => 5.00,
             'cost_per_unit' => fake()->randomFloat(2, 1, 20),

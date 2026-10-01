@@ -5,10 +5,11 @@ namespace App\Services\Inventory;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Number;
 
 class ShoppingListService
 {
+    public function __construct(private readonly RecipeLineConverter $converter) {}
+
     /** @return array<int|string, array<string, mixed>> */
     public function generate(bool $includeUpcoming = false, ?string $startDate = null, ?string $endDate = null): array
     {
@@ -37,8 +38,12 @@ class ShoppingListService
             foreach ($order->orderItems as $item) {
                 if ($item->product?->recipe) {
                     foreach ($item->product->recipe->inventoryIngredients as $ingredient) {
-                        $rawQuantity = $ingredient->pivot->quantity ?? 0;
-                        $quantity = Number::parseFloat((string) (is_scalar($rawQuantity) ? $rawQuantity : 0)) ?: 0.0;
+                        $quantity = $this->converter->inStockUnit($item->product->recipe, $ingredient);
+
+                        if ($quantity === null) {
+                            continue;
+                        }
+
                         $needed = $quantity * $item->quantity;
                         $needs[$ingredient->id] = ($needs[$ingredient->id] ?? 0) + $needed;
                     }

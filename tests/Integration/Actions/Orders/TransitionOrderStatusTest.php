@@ -160,7 +160,7 @@ test('cancellation from Baking restocks ingredients with positive Restock adjust
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->baking()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 3]);
@@ -179,7 +179,7 @@ test('cancellation from Pending does not restock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $butter = Ingredient::factory()->create(['current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);
@@ -194,7 +194,7 @@ test('cancellation from Confirmed does not restock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $eggs = Ingredient::factory()->create(['current_stock' => 12.00]);
-    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 3.0, 'unit' => 'each']);
+    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 3.0, 'unit' => 'kg']);
 
     $order = Order::factory()->confirmed()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);

@@ -17,7 +17,7 @@ test('passes silently when projected demand fits inside stock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['current_stock' => 100.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 10]);
@@ -29,7 +29,7 @@ test('throws when single ingredient is short', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 3]);
@@ -44,8 +44,8 @@ test('aggregates demand across multiple items sharing an ingredient', function (
     $recipeA = Recipe::factory()->for($productA)->create();
     $recipeB = Recipe::factory()->for($productB)->create();
     $shared = Ingredient::factory()->create(['name' => 'Butter', 'current_stock' => 5.00]);
-    $recipeA->inventoryIngredients()->attach($shared->id, ['quantity' => 2.0, 'unit' => 'lb']);
-    $recipeB->inventoryIngredients()->attach($shared->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipeA->inventoryIngredients()->attach($shared->id, ['quantity' => 2.0, 'unit' => 'kg']);
+    $recipeB->inventoryIngredients()->attach($shared->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->create(['product_id' => $productA->id, 'quantity' => 2]);
@@ -61,8 +61,8 @@ test('lists every shortage in the exception message', function () {
     $recipe = Recipe::factory()->for($product)->create();
     $a = Ingredient::factory()->create(['name' => 'Vanilla', 'current_stock' => 0.50]);
     $b = Ingredient::factory()->create(['name' => 'Cocoa', 'current_stock' => 0.50]);
-    $recipe->inventoryIngredients()->attach($a->id, ['quantity' => 1.0, 'unit' => 'oz']);
-    $recipe->inventoryIngredients()->attach($b->id, ['quantity' => 1.0, 'unit' => 'oz']);
+    $recipe->inventoryIngredients()->attach($a->id, ['quantity' => 1.0, 'unit' => 'kg']);
+    $recipe->inventoryIngredients()->attach($b->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2]);
@@ -75,7 +75,7 @@ test('skips items whose product was deleted', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $sugar = Ingredient::factory()->create(['name' => 'Sugar', 'current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2]);
@@ -87,3 +87,21 @@ test('skips items whose product was deleted', function () {
 
     resolve(CheckOrderStockAvailability::class)($order);
 })->throwsNoExceptions();
+
+test('compares demand in the ingredient stock unit', function (float $stock, bool $throws) {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => $stock]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 500, 'unit' => 'g']);
+    $order = Order::factory()->pending()->create();
+    OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2]);
+
+    $check = fn () => resolve(CheckOrderStockAvailability::class)($order);
+
+    $throws
+        ? expect($check)->toThrow(InsufficientStockException::class, 'Flour')
+        : expect($check)->not->toThrow(InsufficientStockException::class);
+})->with([
+    '10 kg covers 1 kg of demand' => [10.00, false],
+    '0.9 kg does not' => [0.90, true],
+]);
