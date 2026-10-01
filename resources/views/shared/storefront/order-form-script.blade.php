@@ -431,7 +431,7 @@
                     formData.append(`items[${index}][quantity]`, item.quantity);
                 });
                 if (this.appliedCoupon) {
-                    formData.append('coupon_id', this.appliedCoupon.coupon_id);
+                    formData.append('coupon_code', this.appliedCoupon.code || this.couponCode);
                 }
                 if (this.appliedGiftCard) {
                     formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
