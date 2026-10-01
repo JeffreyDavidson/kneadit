@@ -10,6 +10,7 @@ use App\Services\Settings\TenantSettingsDefaults;
 use Filament\Forms\Components\Field;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 use function Pest\Livewire\livewire;
 
@@ -213,11 +214,12 @@ test('every field on the settings form has a matching page property and save key
     // Guard against the silent-drop bug shape: a field is added to the form
     // schema but never wired to a property or to toSettingsArray(), so the
     // baker's change is discarded on save. The field list is derived from the
-    // schema itself (hidden fields included), never hardcoded.
+    // schema itself (hidden fields included), never hardcoded. Repeater rows
+    // contribute nested fields, so each field is reduced to its top-level key.
     $page = livewire(ManageSettings::class)->instance();
 
     $fieldNames = collect($page->getSchema('content')->getFlatFields(withHidden: true))
-        ->map(fn (Field $field): string => $field->getName())
+        ->map(fn (Field $field): string => Str::before($field->getStatePath(), '.'))
         ->unique()
         ->values();
 
@@ -426,4 +428,68 @@ test('manage settings page ignores the tier threshold order while tiers are disa
         ->set('loyalty_tier_gold_threshold', 2000)
         ->call('save')
         ->assertHasNoErrors();
+});
+
+test('a fresh tenant opens the settings page with the default payment method selected', function () {
+    Setting::query()->where('key', 'payment_methods')->delete();
+
+    livewire(ManageSettings::class)
+        ->assertSet('payment_methods', [PaymentMethod::Cash->value])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(json_decode(settings('payment_methods'), true))->toBe([PaymentMethod::Cash->value]);
+});
+
+test('a fresh tenant opens the settings page with the array defaults', function (string $property, Closure $expected) {
+    Setting::query()->whereIn('key', ['payment_methods', 'catering_event_types', 'order_journey_steps'])->delete();
+
+    livewire(ManageSettings::class)
+        ->assertSet($property, $expected());
+})->with([
+    'catering event types' => ['catering_event_types', fn (): array => TenantSettingsDefaults::all()['catering_event_types']],
+    'order journey steps' => ['order_journey_steps', fn (): array => array_map(
+        fn (array $step): array => array_filter($step, is_string(...)),
+        config('kneadit.default_journey_steps'),
+    )],
+]);
+
+test('manage settings page rejects out-of-range numbers and saves nothing', function (string $property, int $value, string $rule) {
+    settings(['store_name' => 'Original Bakery']);
+
+    livewire(ManageSettings::class)
+        ->set('store_name', 'Changed Bakery')
+        ->set($property, $value)
+        ->call('save')
+        ->assertHasErrors([$property => $rule]);
+
+    expect(settings('store_name'))->toBe('Original Bakery')
+        ->and(settings($property))->toBeNull();
+})->with([
+    'negative abandoned cart hours' => ['abandoned_cart_recovery_hours', -1, 'min'],
+    'zero abandoned cart hours' => ['abandoned_cart_recovery_hours', 0, 'min'],
+    'negative abandoned cart coupon' => ['abandoned_cart_recovery_coupon_dollars', -1, 'min'],
+    'negative referral discount' => ['customer_referral_discount_dollars', -1, 'min'],
+    'negative modification window' => ['order_modification_window_minutes', -1, 'min'],
+    'pickup slot interval below five' => ['pickup_slot_interval_minutes', 4, 'min'],
+    'pickup slot interval above a day' => ['pickup_slot_interval_minutes', 1441, 'max'],
+    'zero pickup slots per window' => ['pickup_slot_max_per_window', 0, 'min'],
+    'negative sitewide sale percent' => ['sitewide_sale_percent', -1, 'min'],
+    'sitewide sale percent above 100' => ['sitewide_sale_percent', 101, 'max'],
+]);
+
+test('sendTestWebhook validates the form first and neither saves nor sends when it is invalid', function () {
+    Http::fake();
+
+    livewire(ManageSettings::class)
+        ->set('webhook_url', 'https://8.8.8.8/test')
+        ->set('webhook_secret', 'test-secret')
+        ->set('review_request_delay_hours', -5)
+        ->call('sendTestWebhook')
+        ->assertHasErrors(['review_request_delay_hours' => 'min']);
+
+    Http::assertNothingSent();
+
+    expect(WebhookDelivery::count())->toBe(0)
+        ->and(settings('webhook_url'))->not->toBe('https://8.8.8.8/test');
 });
