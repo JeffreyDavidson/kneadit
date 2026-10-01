@@ -28,6 +28,8 @@ test('the primary storefront is the custom domain without the platform port', fu
 
 test('a custom domain that routes to another bakery is ignored', function () {
     Tenant::factory()->create(['id' => 'other'])->createDomain(['domain' => 'taken.test']);
+    // AddCustomDomain now refuses another bakery's domain, so set the column
+    // directly, as data saved before that validation could have it.
     test()->tenant->update(['custom_domain' => 'taken.test']);
 
     expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
