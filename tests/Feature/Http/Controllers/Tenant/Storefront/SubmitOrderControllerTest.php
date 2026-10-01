@@ -2,10 +2,13 @@
 
 use App\Actions\Orders\CreateOrder;
 use App\DataTransferObjects\Settings\OnboardingSettings;
+use App\Enums\Orders\DeliveryType;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Exceptions\Orders\PickupSlotUnavailableException;
 use App\Models\Financial\Coupon;
 use App\Models\Financial\GiftCard;
 use App\Models\Inventory\Product;
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
@@ -343,3 +346,90 @@ test('storefront order only applies a coupon redeemed by its code', function (st
     'correct coupon code' => ['coupon_code', ' back-private ', 5.0, 1],
     'wrong coupon code' => ['coupon_code', 'BACK-WRONG', 0.0, 0],
 ]);
+
+/**
+ * Turns pickup slots on (08:00-10:00, 30 minutes, 2 per slot) for the weekday three days out.
+ *
+ * @return array<string, mixed> the order payload for a pickup on that day
+ */
+function pickupSlotOrderPayload(Product $product, ?string $time): array
+{
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings([
+            'pickupSlotsEnabled' => true,
+            'pickupSlotIntervalMinutes' => 30,
+            'pickupSlotMaxPerWindow' => 2,
+        ]),
+        store: makeStoreInfo(['name' => 'Test']),
+        onboarding: new OnboardingSettings(completedAt: now()->toDateTimeString()),
+    ));
+    $date = now()->addDays(3);
+    BusinessSchedule::factory()->create([
+        'day_of_week' => $date->dayOfWeek,
+        'is_open' => true,
+        'open_time' => '08:00',
+        'close_time' => '10:00',
+    ]);
+
+    return [
+        'customer_name' => 'Jane Doe',
+        'customer_email' => 'jane@example.com',
+        'delivery_type' => 'pickup',
+        'delivery_date' => $date->toDateString(),
+        'delivery_time' => $time,
+        'items' => [
+            ['product_id' => $product->id, 'quantity' => 1],
+        ],
+    ];
+}
+
+test('storefront pickup orders for a full slot get a form error and no order is created', function () {
+    $product = Product::factory()->create();
+    $payload = pickupSlotOrderPayload($product, '08:30');
+    Order::factory()->confirmed()->count(2)->create([
+        'delivery_date' => $payload['delivery_date'],
+        'delivery_time' => '08:30',
+        'delivery_type' => DeliveryType::Pickup->value,
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), $payload);
+
+    $response->assertSessionHasErrors(['delivery_time' => 'That pickup time is no longer available. Please choose another.'])
+        ->assertSessionHasInput('delivery_time', '08:30');
+    expect(Order::query()->count())->toBe(2);
+});
+
+test('storefront pickup orders require a time when slots are enabled', function () {
+    $payload = pickupSlotOrderPayload(Product::factory()->create(), null);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), $payload);
+
+    $response->assertSessionHasErrors(['delivery_time']);
+    expect(Order::query()->count())->toBe(0);
+});
+
+test('storefront pickup orders for an open slot are placed', function () {
+    $payload = pickupSlotOrderPayload(Product::factory()->create(), '08:30');
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), $payload);
+
+    $response->assertSessionHasNoErrors();
+    expect(Order::query()->sole()->delivery_time->format('H:i'))->toBe('08:30');
+});
+
+test('a slot that fills while the order is being placed becomes a form error', function () {
+    $createOrder = Double::for(CreateOrder::class);
+    $createOrder->expects('__invoke')->throws(new PickupSlotUnavailableException('2026-05-04', '08:30'));
+    app()->instance(CreateOrder::class, $createOrder);
+    $payload = pickupSlotOrderPayload(Product::factory()->create(), '08:30');
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), $payload);
+
+    $response->assertRedirect()
+        ->assertSessionHasErrors(['delivery_time' => 'That pickup time is no longer available. Please choose another.'])
+        ->assertSessionHasInput('delivery_time', '08:30');
+});
