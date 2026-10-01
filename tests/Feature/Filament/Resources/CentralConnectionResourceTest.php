@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
-use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Models\Staff\User;
 use Laravel\Pennant\Feature;
 
@@ -16,10 +15,5 @@ beforeEach(function () {
 
 test('BlogPosts list page can render', function () {
     livewire(ListBlogPosts::class)
-        ->assertOk();
-});
-
-test('EmailCampaigns list page can render', function () {
-    livewire(ListEmailCampaigns::class)
         ->assertOk();
 });

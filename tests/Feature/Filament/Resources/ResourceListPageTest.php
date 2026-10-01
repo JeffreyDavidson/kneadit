@@ -39,7 +39,7 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
-// BlogPosts and EmailCampaigns use the central connection and are tested separately.
+// BlogPosts use the central connection and are tested separately.
 dataset('resourceListPageGroups', [
     'Scheduling resources' => [
         ListBlockedDates::class,

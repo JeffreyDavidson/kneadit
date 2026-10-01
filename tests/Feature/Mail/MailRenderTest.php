@@ -8,7 +8,6 @@ use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Customers\ReviewRequestMail;
 use App\Mail\Marketing\CateringQuoteMail;
-use App\Mail\Marketing\CustomerBlastMail;
 use App\Mail\Orders\NewOrderMessageMail;
 use App\Mail\Orders\NewOrderNotificationMail;
 use App\Mail\Orders\OrderPlacedMail;
@@ -17,6 +16,7 @@ use App\Mail\Orders\PurchaseOrderMail;
 use App\Mail\Platform\HealthAlertMail;
 use App\Mail\Platform\NewSubscriberNotificationMail;
 use App\Mail\Platform\PaymentFailedMail;
+use App\Mail\Platform\PlatformCampaignMail;
 use App\Mail\Platform\ScheduledCheckinMail;
 use App\Mail\Platform\StaffInvitationMail;
 use App\Mail\Platform\TrialExpiredMail;
@@ -141,7 +141,7 @@ test('platform account mail classes render without errors', function () {
 });
 
 test('standalone operational mail classes render without errors', function () {
-    expect(new CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>')->render())
+    expect(new PlatformCampaignMail('Sale this weekend!', '<p>50% off all cakes</p>')->render())
         ->toBeString()
         ->not->toBeEmpty();
 

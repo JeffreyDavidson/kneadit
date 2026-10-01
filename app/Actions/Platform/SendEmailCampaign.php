@@ -6,26 +6,28 @@ use App\Enums\Marketing\EmailCampaignSegment;
 use App\Enums\Marketing\EmailCampaignStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Marketing\CampaignEmailQueued;
-use App\Models\Customers\Customer;
+use App\Exceptions\Platform\PlatformCampaignContextException;
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Platform\Tenant;
-use App\Services\Tenants\TenancyManager;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
+/**
+ * Sends a platform email campaign to the owner address of each bakery in the
+ * campaign's segment. Bakery customers are never recipients; bakeries email
+ * their own customers with customer campaigns.
+ */
 class SendEmailCampaign
 {
-    public function __construct(
-        private readonly TenancyManager $tenancyManager,
-    ) {}
-
     public function __invoke(EmailCampaign $campaign): void
     {
+        if (tenancy()->initialized) {
+            throw PlatformCampaignContextException::insideTenant();
+        }
+
         $campaign->update(['status' => EmailCampaignStatus::Sending]);
 
-        $emails = tenancy()->initialized
-            ? $this->currentTenantEmails()
-            : $this->emailsBySegment($campaign->target_segment);
+        $emails = $this->ownerEmails($campaign->target_segment);
 
         foreach ($emails as $email) {
             event(new CampaignEmailQueued($email, $campaign->subject, $campaign->body));
@@ -38,52 +40,27 @@ class SendEmailCampaign
         ]);
     }
 
-    /** @return Collection<int, string> */
-    private function currentTenantEmails(): Collection
+    /** @return Collection<int, non-empty-string> */
+    private function ownerEmails(EmailCampaignSegment $segment): Collection
     {
-        return Customer::query()
+        return $this->segmentTenants($segment)
             ->whereNotNull('email')
-            ->distinct()
             ->pluck('email')
-            ->map(function (mixed $email): string {
-                if (! is_string($email)) {
-                    throw new \UnexpectedValueException('Expected a customer email address to be a string.');
-                }
-
-                return $email;
-            })
+            ->filter(fn (mixed $email): bool => is_string($email) && $email !== '')
+            ->unique()
             ->values();
     }
 
-    /** @return Collection<int, string> */
-    private function emailsBySegment(EmailCampaignSegment $segment): Collection
-    {
-        $emails = [];
-
-        foreach ($this->filteredTenants($segment) as $tenant) {
-            $this->tenancyManager->withinTenant($tenant, function () use (&$emails): void {
-                array_push($emails, ...$this->currentTenantEmails()->all());
-            });
-        }
-
-        return collect($emails)->unique()->values();
-    }
-
-    /** @return EloquentCollection<int, Tenant> */
-    private function filteredTenants(EmailCampaignSegment $segment): EloquentCollection
+    /** @return Builder<Tenant> */
+    private function segmentTenants(EmailCampaignSegment $segment): Builder
     {
         $query = Tenant::query();
 
-        match ($segment) {
+        return match ($segment) {
             EmailCampaignSegment::All => $query->where('is_active', true),
             EmailCampaignSegment::Starter, EmailCampaignSegment::Growth, EmailCampaignSegment::Pro => $query->where('is_active', true)->where('plan', SubscriptionTier::from($segment->value)),
             EmailCampaignSegment::Trial => $query->whereNotNull('trial_ends_at')->where('trial_ends_at', '>', now()),
             EmailCampaignSegment::Inactive => $query->where('is_active', false),
         };
-
-        /** @var EloquentCollection<int, Tenant> $tenants */
-        $tenants = new EloquentCollection($query->get()->all());
-
-        return $tenants;
     }
 }
