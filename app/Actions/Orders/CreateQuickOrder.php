@@ -10,11 +10,15 @@ use App\Events\Orders\OrderCreated;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use Illuminate\Support\Facades\Config;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\DB;
 
 class CreateQuickOrder
 {
+    public function __construct(
+        private readonly TenantSettings $settings,
+    ) {}
+
     public function __invoke(CreateQuickOrderData $data): Order
     {
         $order = DB::transaction(function () use ($data) {
@@ -22,7 +26,7 @@ class CreateQuickOrder
 
             $subtotal = collect($data->orderItems)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
             $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value)
-                ? Config::float('kneadit.delivery_fees.5to10', 5.0)
+                ? $this->settings->orders->deliveryFee($data->deliveryTier ?? '', $subtotal)
                 : 0.00;
 
             $order = Order::query()->create([
