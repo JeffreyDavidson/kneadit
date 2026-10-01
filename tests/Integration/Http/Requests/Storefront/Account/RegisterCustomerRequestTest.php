@@ -61,6 +61,20 @@ test('email already used by a guest customer (no password) is allowed — regist
     expect($validator->passes())->toBeTrue();
 });
 
+test('email used by an account with a password is rejected when it differs only by case', function () {
+    Customer::factory()->create([
+        'email' => 'taken@example.com',
+        'password' => bcrypt('existing-secret'),
+    ]);
+
+    $validator = validator(
+        array_merge(validRegisterCustomerData(), ['email' => 'Taken@Example.com']),
+        (new RegisterCustomerRequest)->rules(),
+    );
+
+    expect($validator->errors()->has('email'))->toBeTrue();
+});
+
 test('valid input passes', function () {
     $validator = validator(validRegisterCustomerData(), (new RegisterCustomerRequest)->rules());
 

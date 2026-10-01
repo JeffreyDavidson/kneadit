@@ -21,6 +21,27 @@ test('placedByEmail returns only orders for the customer with that email', funct
         ->and($results->first()->is($mine))->toBeTrue();
 });
 
+test('placedByEmail ignores letter case and surrounding whitespace', function () {
+    $mine = Order::factory()->for(Customer::factory()->create(['email' => 'me@example.com']))->create();
+    Order::factory()->for(Customer::factory()->create(['email' => 'other@example.com']))->create();
+
+    $results = Order::query()->placedByEmail(' ME@Example.com ')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($mine))->toBeTrue();
+});
+
+test('forCustomerEmail ignores letter case and surrounding whitespace', function () {
+    $customer = Customer::factory()->create(['email' => 'baker@example.com']);
+    $order = Order::factory()->recycle($customer)->create();
+    Order::factory()->recycle(Customer::factory()->create(['email' => 'other@example.com']))->create();
+
+    $results = Order::query()->forCustomerEmail('Baker@Example.com ')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($order))->toBeTrue();
+});
+
 test('paid scope returns only paid orders', function () {
     Order::factory()->paid()->create();
     Order::factory()->unpaid()->create();

@@ -46,6 +46,19 @@ test('can create a customer via slide-over', function () {
     ]);
 });
 
+test('create customer rejects an email that differs only by case from an existing customer', function () {
+    Customer::factory()->create(['email' => 'jane@example.com']);
+
+    livewire(ListCustomers::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Jane Doe',
+            'email' => 'Jane@Example.com',
+        ])
+        ->assertHasFormErrors(['email' => 'unique']);
+
+    expect(Customer::query()->count())->toBe(1);
+});
+
 test('create customer validates required fields', function () {
     $cases = [
         [['name' => null, 'email' => 'test@test.com'], ['name' => 'required']],

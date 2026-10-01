@@ -31,6 +31,17 @@ test('for customer scope filters by email', function () {
         ->and($results->first()->id)->toBe($favorite->id);
 });
 
+test('for customer scope ignores letter case and surrounding whitespace', function () {
+    $favorite = CustomerFavorite::factory()->create([
+        'customer_email' => 'jane@example.com',
+    ]);
+
+    $results = CustomerFavorite::query()->forCustomer(' Jane@Example.com ')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->id)->toBe($favorite->id);
+});
+
 test('for product scope filters by product id', function () {
     $product = Product::factory()->create();
     $favorite = CustomerFavorite::factory()->create([

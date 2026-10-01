@@ -2,6 +2,7 @@
 
 namespace App\Models\Inventory;
 
+use App\Casts\EmailAddressCast;
 use Database\Factories\Inventory\ProductWaitlistFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -33,6 +34,7 @@ class ProductWaitlist extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'notified_at' => 'datetime',
             'created_at' => 'datetime',
         ];

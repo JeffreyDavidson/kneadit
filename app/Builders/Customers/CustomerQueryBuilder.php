@@ -7,6 +7,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Support\EmailAddress;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -98,7 +99,7 @@ class CustomerQueryBuilder extends Builder
 
     public function forEmail(string $email): static
     {
-        $this->where('email', $email);
+        $this->where('email', EmailAddress::normalize($email));
 
         return $this;
     }

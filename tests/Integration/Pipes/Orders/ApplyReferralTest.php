@@ -140,3 +140,43 @@ test('allows a new referral when the earlier referral for the same customer was 
 
     expect($result->referrer?->is($referrer))->toBeTrue();
 });
+
+test('rejects self-referral when the checkout email differs only by case', function () {
+    Customer::factory()->create(['email' => 'self@example.com', 'referral_code' => 'SELF1234']);
+    Session::put('referral_code', 'SELF1234');
+
+    $payload = makeReferralPayload(email: ' Self@Example.com ');
+    $result = new ApplyReferral(resolve(TenantSettings::class))->handle($payload, fn ($p) => $p);
+
+    expect($result->referrer)->toBeNull();
+});
+
+test('rejects an email with a prior order when the checkout email differs only by case', function () {
+    Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
+    Order::factory()
+        ->for(Customer::factory()->create(['email' => 'returning@example.com']))
+        ->delivered()
+        ->create();
+    Session::put('referral_code', 'ABC12345');
+
+    $payload = makeReferralPayload(email: 'Returning@Example.com');
+    $result = new ApplyReferral(resolve(TenantSettings::class))->handle($payload, fn ($p) => $p);
+
+    expect($result->referrer)->toBeNull();
+});
+
+test('rejects an already referred customer when the checkout email differs only by case', function () {
+    $referrer = Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
+    $referee = Customer::factory()->create(['email' => 'bob@example.com']);
+    CustomerReferral::factory()->create([
+        'referrer_customer_id' => $referrer->id,
+        'referred_customer_id' => $referee->id,
+        'status' => CustomerReferralStatus::Completed,
+    ]);
+    Session::put('referral_code', 'ABC12345');
+
+    $payload = makeReferralPayload(email: 'BOB@example.com');
+    $result = new ApplyReferral(resolve(TenantSettings::class))->handle($payload, fn ($p) => $p);
+
+    expect($result->referrer)->toBeNull();
+});

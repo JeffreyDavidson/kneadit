@@ -24,6 +24,36 @@ test('forgot-password sends a reset notification when the email matches a custom
     Notification::assertSentTo($customer, CustomerPasswordResetNotification::class);
 });
 
+test('forgot-password sends a reset notification when the email differs only by case', function (string $submitted) {
+    Notification::fake();
+
+    $customer = Customer::factory()->withPassword()->create(['email' => 'jane@example.com']);
+
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('account.password.email', [], false), ['email' => $submitted]);
+
+    Notification::assertSentTo($customer, CustomerPasswordResetNotification::class);
+})->with([
+    'mixed case' => 'Jane@Example.com',
+    'padded' => ' jane@example.com ',
+]);
+
+test('reset-password works when the email differs only by case', function () {
+    $customer = Customer::factory()->withPassword('old-password-1')->create(['email' => 'jane@example.com']);
+    $token = Password::broker('customers')->createToken($customer);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('account.password.update', [], false), [
+            'token' => $token,
+            'email' => 'Jane@Example.com',
+            'password' => 'new-password-1',
+            'password_confirmation' => 'new-password-1',
+        ]);
+
+    $response->assertRedirect(route('account.login.show', [], false));
+    expect(Hash::check('new-password-1', $customer->fresh()->password))->toBeTrue();
+});
+
 test('forgot-password still reports success for unknown emails to avoid leaking account existence', function () {
     Notification::fake();
 
