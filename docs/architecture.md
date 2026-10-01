@@ -13,12 +13,15 @@ Both surfaces share application code. The request host and tenancy middleware de
 
 The central connection is named `central`. It contains the platform tenant and domain records plus central concerns such as platform settings and subscription state. Every bakery has a separate SQLite database. `config/tenancy.php` uses `TenantSQLiteDatabaseManager`, with files rooted at `TENANT_DB_PATH` or `database_path()` when the variable is unset. `TenantDatabasePath` rejects path separators/traversal, and the manager refuses symlinks before connecting.
 
-Tenancy bootstraps four Laravel facilities:
+Tenancy bootstraps five Laravel facilities:
 
 - The database connection switches to the tenant database.
 - cache operations receive a tenant-specific tag.
 - the private CSV import disk receives a tenant-specific root.
 - queued work carries tenant context through `QueueTenancyBootstrapper`.
+- generated URLs point at the bakery through `TenantUrlBootstrapper` (see below).
+
+`TenantUrlBootstrapper` forces the URL root and scheme to the bakery's primary storefront while tenancy is active, so `route()`, `url()` and signed URLs built by the scheduler, queue workers and central panel actions (`withinTenant()`) point at the bakery instead of `APP_URL`, where bakery routes do not exist. `TenantUrlGenerator::primaryStorefront()` picks the URL: the bakery's custom domain when `tenants.custom_domain` is set and a `domains` row ties it to that bakery, otherwise `{subdomain}.{tenant domain}`. The scheme and tenant domain come from `APP_URL` and `tenancy.tenant_domain`, and a custom domain drops the platform port. The bootstrapper does nothing when the current request is already on a non-central host (the bakery's own subdomain or custom domain), so HTTP requests keep generating URLs on the host the customer is using, and `revert()` clears the override when tenancy ends. Signed bakery links (`signed`, not `signed:relative`) are therefore signed against the same host the customer opens. `MarketingUnsubscribeLinks` builds its host from the same resolver. The "Powered by KneadIt" link in `BaseMailable` uses `APP_URL` directly so it keeps pointing at the platform.
 
 Filesystem tenancy is deliberately scoped to the `imports` disk. Existing local/public asset URLs keep their established behavior, while sensitive imports cannot cross tenant roots.
 
