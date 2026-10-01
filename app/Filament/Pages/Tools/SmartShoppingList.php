@@ -7,6 +7,7 @@ use App\Events\Marketing\PurchaseOrderRequested;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Inventory\ShoppingListService;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -58,8 +59,9 @@ class SmartShoppingList extends Page
 
     public function mount(): void
     {
-        $this->startDate = now()->format('Y-m-d');
-        $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
+        $today = resolve(BakeryClock::class)->today();
+        $this->startDate = $today->toDateString();
+        $this->endDate = $today->addDays(Config::integer('orders.default_planning_days', 7))->toDateString();
         $this->supplierGroups = new Collection;
         $this->generateList();
     }
@@ -111,7 +113,7 @@ class SmartShoppingList extends Page
             storeName: $storeName,
             items: $group['items'],
             total: $group['total'],
-            requestedDate: now()->addDays($leadTimeDays)->format('Y-m-d'),
+            requestedDate: resolve(BakeryClock::class)->today()->addDays($leadTimeDays)->toDateString(),
         ));
 
         Notification::make()

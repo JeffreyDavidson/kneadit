@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Content\SocialPost;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
@@ -58,8 +59,9 @@ class SocialCalendar extends Page
 
     public function mount(): void
     {
-        $this->year = now()->year;
-        $this->month = now()->month;
+        $today = resolve(BakeryClock::class)->today();
+        $this->year = $today->year;
+        $this->month = $today->month;
         $this->loadPosts();
     }
 
@@ -126,6 +128,7 @@ class SocialCalendar extends Page
         $daysInMonth = $start->daysInMonth;
         $startDayOfWeek = $start->dayOfWeek; // 0 = Sunday
 
+        $today = resolve(BakeryClock::class)->today()->toDateString();
         $days = [];
 
         // Padding for days before the 1st
@@ -139,7 +142,7 @@ class SocialCalendar extends Page
                 'day' => $d,
                 'date' => $date,
                 'posts' => $this->posts[$date] ?? [],
-                'isToday' => $date === now()->format('Y-m-d'),
+                'isToday' => $date === $today,
             ];
         }
 

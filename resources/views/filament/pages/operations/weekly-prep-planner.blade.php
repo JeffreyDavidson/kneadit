@@ -129,7 +129,7 @@
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold {{ $dayOrders->isNotEmpty() ? 'text-blue-900' : 'text-gray-500' }}">
                                     {{ $day->format('l, F j') }}
-                                    @if ($day->isToday())
+                                    @if ($day->isSameDay(resolve(\App\Services\Scheduling\BakeryClock::class)->today()))
                                         <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                                             Today
                                         </span>

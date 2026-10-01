@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Customers\Schemas;
 
+use App\Services\Scheduling\BakeryClock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -41,7 +42,7 @@ class CustomerForm
                                 DatePicker::make('birthday')
                                     ->label('Birthday')
                                     ->displayFormat('M j')
-                                    ->maxDate(now()),
+                                    ->maxDate(resolve(BakeryClock::class)->today()),
                             ]),
 
                         Textarea::make('notes')

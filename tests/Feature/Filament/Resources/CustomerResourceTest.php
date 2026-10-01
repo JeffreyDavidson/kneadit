@@ -4,9 +4,11 @@ use App\Filament\Resources\Customers\CustomerResource;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Models\Customers\Customer;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
@@ -148,4 +150,17 @@ test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkActio
     expect(Customer::query()->count())->toBe(1)
         ->and(Customer::query()->find($kept->id))->not->toBeNull()
         ->and(Customer::query()->find($doomed->first()->id))->toBeNull();
+});
+
+test('customer birthday cannot be after the bakery-local today', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    livewire(ListCustomers::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'birthday' => '2026-10-06',
+        ])
+        ->assertHasFormErrors(['birthday']);
 });

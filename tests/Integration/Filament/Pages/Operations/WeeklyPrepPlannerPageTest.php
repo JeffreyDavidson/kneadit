@@ -1,7 +1,9 @@
 <?php
 
 use App\Filament\Pages\Operations\WeeklyPrepPlanner;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -61,4 +63,14 @@ test('get week summary returns array', function () {
     test()->page->mount();
 
     expect(test()->page->getWeekSummary())->toBeArray();
+});
+
+test('mount selects the bakery-local week in the Sunday evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    // Sunday 2026-10-04, 22:00 in New York; already Monday in UTC.
+    Date::setTestNow('2026-10-05 02:00');
+
+    test()->page->mount();
+
+    expect(test()->page->selectedWeekStart)->toBe('2026-09-28');
 });

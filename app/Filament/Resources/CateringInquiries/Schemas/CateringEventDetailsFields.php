@@ -6,6 +6,7 @@ namespace App\Filament\Resources\CateringInquiries\Schemas;
 
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\Support\CateringEventTypeOptions;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Field;
@@ -21,7 +22,7 @@ class CateringEventDetailsFields
         $eventDate = DatePicker::make('event_date')->required();
 
         if ($limitDateToTodayOrLater) {
-            $eventDate->minDate(now());
+            $eventDate->minDate(resolve(BakeryClock::class)->today());
         }
 
         return [

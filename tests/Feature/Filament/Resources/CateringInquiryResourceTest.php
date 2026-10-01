@@ -5,10 +5,12 @@ use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
@@ -176,4 +178,21 @@ test('resource returns global search result details', function () {
     expect($details)
         ->toHaveKey('Email', 'jane@example.com')
         ->toHaveKey('Event');
+});
+
+test('catering event date can be the bakery-local today in the evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    livewire(ListCateringInquiries::class)
+        ->callAction(CreateAction::class, data: [
+            'customer_name' => 'Jane Smith',
+            'customer_email' => 'jane@example.com',
+            'event_type' => 'Wedding',
+            'event_date' => '2026-10-05',
+            'guest_count' => 50,
+            'details' => 'Wedding cake and pastries for 50 guests.',
+            'status' => CateringInquiryStatus::Inquiry->value,
+        ])
+        ->assertHasNoFormErrors();
 });

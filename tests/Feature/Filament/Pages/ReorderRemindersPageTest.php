@@ -4,6 +4,7 @@ use App\Filament\Pages\Operations\ReorderReminders;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
@@ -62,4 +63,21 @@ test('customers are selected using their non-cancelled order history', function 
         ->and($customer->total_orders)->toBe(2)
         ->and((float) $customer->total_spent)->toBe(6000.0)
         ->and($customer->days_since)->toBe(70);
+});
+
+test('customers lapse and count days against the bakery-local date', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    $recentCustomer = Customer::factory()->create();
+    $lapsedCustomer = Customer::factory()->create();
+    Order::factory()->for($recentCustomer)->delivered()->create(['delivery_date' => '2026-09-06']);
+    Order::factory()->for($lapsedCustomer)->delivered()->create(['delivery_date' => '2026-09-04']);
+
+    $page = new ReorderReminders;
+    $page->threshold = 30;
+    $customers = $page->getCustomers();
+
+    expect($customers)->toHaveCount(1)
+        ->and($customers->sole()->customer_email)->toBe($lapsedCustomer->email)
+        ->and($customers->sole()->days_since)->toBe(31);
 });

@@ -144,6 +144,8 @@ A blocked capacity limit sets the max to 0. A blank or 0 max means "no limit her
 
 The storefront analytics page and the storefront views widget turn bakery-local day and week boundaries into instants in the app timezone before comparing them with `created_at`. Seasonal item availability (the `current`, `upcoming` and `expired` builder methods and `is_currently_available`), the birthday widget, and the Quick Order date picker's minimum date also use the bakery's local today.
 
+Admin page and form date defaults use the bakery-local date from `BakeryClock::today()` as well: the baking sheet, delivery route planner, weekly prep planner, order calendar and social calendar (including their today markers), the shopping list pages, reorder reminders, the catering event date minimum, the customer birthday maximum and the expense and income date defaults.
+
 All money columns are integer cents. Eloquent models use the project's money cast/value object; raw aggregates and direct database operations bypass casts and must explicitly preserve cents.
 
 ### Payment paths
