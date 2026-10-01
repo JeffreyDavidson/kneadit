@@ -12,6 +12,7 @@ use App\Models\Orders\Order;
 use App\Services\Orders\OrderAccessGuard;
 use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 
 class SubmitOrderController extends Controller
 {
@@ -19,31 +20,29 @@ class SubmitOrderController extends Controller
     {
         $content = settingsPageContent('order');
 
+        // Domain failures are thrown as validation errors so the handler answers
+        // the fetch-based form with a 422 and a plain form post with a redirect back.
         try {
             $order = $createOrder($request->toData());
         } catch (MinimumOrderAmountNotMetException $e) {
-            return back()
-                ->withInput()
-                ->withErrors(['items' => sprintf(
-                    'Minimum %s order is $%.2f. Please add more items to continue.',
-                    $e->deliveryType,
-                    $e->minimum,
-                )]);
+            throw ValidationException::withMessages(['items' => sprintf(
+                'Minimum %s order is $%.2f. Please add more items to continue.',
+                $e->deliveryType,
+                $e->minimum,
+            )]);
         } catch (InsufficientStockException $e) {
-            return back()
-                ->withInput()
-                ->withErrors(['items' => sprintf(
-                    'Sorry, we don\'t have enough %s in stock right now. Please reduce the quantity or remove an item.',
-                    implode(', ', $e->shortages),
-                )]);
+            throw ValidationException::withMessages(['items' => sprintf(
+                'Sorry, we don\'t have enough %s in stock right now. Please reduce the quantity or remove an item.',
+                implode(', ', $e->shortages),
+            )]);
         } catch (PickupSlotUnavailableException) {
-            return back()
-                ->withInput()
-                ->withErrors(['delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE]);
+            throw ValidationException::withMessages([
+                'delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE,
+            ]);
         }
 
         if (! $order instanceof Order) {
-            return back()->withErrors([
+            throw ValidationException::withMessages([
                 'delivery_date' => $content['flash_full'] ?? 'Sorry, this date is fully booked. Please choose another date.',
             ]);
         }

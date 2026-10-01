@@ -3,6 +3,7 @@
 use App\Actions\Orders\CreateOrder;
 use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Enums\Orders\DeliveryType;
+use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Exceptions\Orders\PickupSlotUnavailableException;
 use App\Models\Financial\Coupon;
@@ -14,6 +15,7 @@ use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\StripeCheckoutService;
+use Closure;
 use JMac\Testing\Double;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -467,3 +469,76 @@ test('a full pickup slot asked for as JSON returns the slot message under delive
     $response->assertUnprocessable()
         ->assertJsonValidationErrors(['delivery_time' => 'That pickup time is no longer available. Please choose another.']);
 });
+
+dataset('order domain failures', [
+    'below the minimum order amount' => [
+        fn () => new MinimumOrderAmountNotMetException(deliveryType: 'pickup', subtotal: 5.00, minimum: 15.00),
+        'items',
+        'Minimum pickup order is $15.00. Please add more items to continue.',
+    ],
+    'not enough stock' => [
+        fn () => new InsufficientStockException(['Flour', 'Butter']),
+        'items',
+        'Sorry, we don\'t have enough Flour, Butter in stock right now. Please reduce the quantity or remove an item.',
+    ],
+    'date fully booked' => [
+        fn () => null,
+        'delivery_date',
+        'Sorry, this date is fully booked. Please choose another date.',
+    ],
+    'pickup slot taken while ordering' => [
+        fn () => new PickupSlotUnavailableException('2026-05-04', '08:30'),
+        'delivery_time',
+        'That pickup time is no longer available. Please choose another.',
+    ],
+]);
+
+/**
+ * Makes the order pipeline fail the way the given outcome says: an exception is thrown, null is a cancelled order.
+ */
+function failOrderPipeline(Closure $outcome): void
+{
+    $failure = $outcome();
+    $createOrder = Double::for(CreateOrder::class);
+    $expectation = $createOrder->expects('__invoke');
+    $failure === null ? $expectation->returns(null) : $expectation->throws($failure);
+    app()->instance(CreateOrder::class, $createOrder);
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function domainFailureOrderPayload(): array
+{
+    return [
+        'customer_name' => 'Jane Doe',
+        'customer_email' => 'jane@example.com',
+        'delivery_type' => 'pickup',
+        'delivery_date' => now()->addDays(2)->toDateString(),
+        'items' => [
+            ['product_id' => Product::factory()->create()->id, 'quantity' => 1],
+        ],
+    ];
+}
+
+test('an order the pipeline rejects, asked for as JSON, returns a 422 with the message under its field', function (Closure $outcome, string $field, string $message) {
+    failOrderPipeline($outcome);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('order.store', [], false), domainFailureOrderPayload());
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors([$field => $message])
+        ->assertJsonPath('message', $message);
+})->with('order domain failures');
+
+test('an order the pipeline rejects, submitted as a form, redirects back with the error and the input', function (Closure $outcome, string $field, string $message) {
+    failOrderPipeline($outcome);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), domainFailureOrderPayload());
+
+    $response->assertRedirect()
+        ->assertSessionHasErrors([$field => $message])
+        ->assertSessionHasInput('customer_name', 'Jane Doe');
+})->with('order domain failures');
