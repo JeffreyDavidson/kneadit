@@ -104,16 +104,8 @@ class CustomDomain extends Page
             return;
         }
 
-        if (! $domainService->isValidFormat($domain)) {
-            Notification::make()
-                ->title('Invalid domain format')
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        resolve(AddCustomDomain::class)($tenant, $domain);
+        $domain = resolve(AddCustomDomain::class)($tenant, $domain);
+        $this->custom_domain = $domain;
         $this->refreshDnsStatus();
 
         $serverIp = $domainService->serverIp();

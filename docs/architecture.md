@@ -41,7 +41,7 @@ HTTP request
   -> response security headers and actor context
 ```
 
-Central domains are configured in `config/tenancy.php`; production includes `getkneadit.app` and `www.getkneadit.app`, while local development uses `app.getkneadit.test` for the application and retains `kneadit.test` as the tenant-development domain. The separate marketing site uses `getkneadit.test`. Tenant routes additionally apply `InitializeTenancyByDomainOrSubdomain` and reject access from central domains. This supports both bakery subdomains and domain records representing custom domains.
+Central domains are configured in `config/tenancy.php`; production includes `getkneadit.app` and `www.getkneadit.app`, while local development uses `app.getkneadit.test` for the application and retains `kneadit.test` as the tenant-development domain. The separate marketing site uses `getkneadit.test`. Tenant routes additionally apply `InitializeTenancyByDomainOrSubdomain` and reject access from central domains. This supports both bakery subdomains and domain records representing custom domains. `AddCustomDomain` normalizes a bakery's custom domain and rejects, with a validation error, anything that is not a valid hostname, is a central domain or a subdomain of the tenant domain, or already belongs to another bakery; replacing a domain releases the old record and Forge alias.
 
 An unknown tenant domain returns 404. If a central tenant record exists but its SQLite file does not, local development recreates and migrates it automatically. Production returns 503 and instructs the operator to run `php artisan tenants:doctor --fix`.
 
