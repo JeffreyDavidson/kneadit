@@ -3,6 +3,7 @@
 use App\Actions\Orders\CreateOrder;
 use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
+use App\Models\Financial\Coupon;
 use App\Models\Financial\GiftCard;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
@@ -306,4 +307,39 @@ test('storefront delivery orders pass validation with a bakery delivery tier', f
 })->with([
     'delivery on' => [true, true],
     'delivery off' => [false, false],
+]);
+
+test('storefront order only applies a coupon redeemed by its code', function (string $couponField, string $couponValue, float $expectedDiscount, int $expectedUses) {
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->allows('redirectToCheckout')->returns(null);
+    app()->instance(StripeCheckoutService::class, $stripeService);
+    $product = Product::factory()->create(['price' => 20.00]);
+    $coupon = Coupon::factory()->fixed()->create([
+        'code' => 'BACK-PRIVATE',
+        'fixed_amount' => 5.00,
+        'max_uses' => 1,
+    ]);
+    $payload = [
+        'customer_name' => 'Jane Doe',
+        'customer_email' => 'jane@example.com',
+        'delivery_type' => 'pickup',
+        'delivery_date' => now()->addDays(2)->toDateString(),
+        'items' => [
+            ['product_id' => $product->id, 'quantity' => 2],
+        ],
+        $couponField => $couponValue === 'id' ? $coupon->id : $couponValue,
+    ];
+
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), $payload);
+
+    $order = Order::query()->sole();
+    expect($order->discount_amount->dollars())->toBe($expectedDiscount)
+        ->and($order->total->dollars())->toBe(40.00 - $expectedDiscount)
+        ->and($order->coupon_id)->toBe($expectedDiscount > 0 ? $coupon->id : null)
+        ->and($coupon->refresh()->used_count)->toBe($expectedUses);
+})->with([
+    'numeric coupon id without the code' => ['coupon_id', 'id', 0.0, 0],
+    'correct coupon code' => ['coupon_code', ' back-private ', 5.0, 1],
+    'wrong coupon code' => ['coupon_code', 'BACK-WRONG', 0.0, 0],
 ]);
