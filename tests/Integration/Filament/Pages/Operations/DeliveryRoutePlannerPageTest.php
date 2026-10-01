@@ -1,7 +1,9 @@
 <?php
 
 use App\Filament\Pages\Operations\DeliveryRoutePlanner;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -46,4 +48,13 @@ test('get route stats returns array', function () {
     test()->page->mount();
 
     expect(test()->page->getRouteStats())->toBeArray();
+});
+
+test('mount selects the bakery-local date in the evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    test()->page->mount();
+
+    expect(test()->page->selectedDate)->toBe('2026-10-05');
 });

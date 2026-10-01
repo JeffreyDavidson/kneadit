@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Delivery\DeliveryRouteService;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -56,7 +57,7 @@ class DeliveryRoutePlanner extends Page
 
     public function mount(): void
     {
-        $this->selectedDate = now()->format('Y-m-d');
+        $this->selectedDate = resolve(BakeryClock::class)->today()->toDateString();
         $this->storeAddress = resolve(TenantSettings::class)->store->address ?? 'Store address not configured';
         $this->loadOrders();
     }

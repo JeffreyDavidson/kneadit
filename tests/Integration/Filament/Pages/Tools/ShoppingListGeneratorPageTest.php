@@ -2,7 +2,9 @@
 
 use App\Filament\Pages\Tools\ShoppingListGenerator;
 use App\Services\Orders\OrderIngredientAggregator;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -66,4 +68,14 @@ test('generate shopping list populates list', function () {
     test()->page->generateShoppingList(resolve(OrderIngredientAggregator::class));
 
     expect(test()->page->shoppingList)->toBeInstanceOf(Collection::class);
+});
+
+test('the planning window starts on the bakery-local date in the evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    test()->page->mount();
+
+    expect(test()->page->startDate)->toBe('2026-10-05')
+        ->and(test()->page->endDate)->toBe('2026-10-12');
 });

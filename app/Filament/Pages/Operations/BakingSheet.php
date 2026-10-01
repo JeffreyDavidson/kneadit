@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Operations;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Orders\OrderItem;
 use App\Queries\Orders\BakingSheetQuery;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
@@ -37,7 +38,7 @@ class BakingSheet extends Page
 
     public function mount(): void
     {
-        $this->selectedDate = now()->format('Y-m-d');
+        $this->selectedDate = resolve(BakeryClock::class)->today()->toDateString();
     }
 
     #[\Override]

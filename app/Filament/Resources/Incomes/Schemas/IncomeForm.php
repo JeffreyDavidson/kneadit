@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Incomes\Schemas;
 
 use App\Enums\Financial\IncomeSource;
 use App\Filament\Forms\Components\MoneyInput;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -39,7 +40,7 @@ class IncomeForm
 
                         DatePicker::make('date')
                             ->required()
-                            ->default(now()),
+                            ->default(resolve(BakeryClock::class)->today()),
 
                         Textarea::make('notes')
                             ->rows(3),

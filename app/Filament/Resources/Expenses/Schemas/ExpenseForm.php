@@ -8,6 +8,7 @@ use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Forms\Components\PercentageInput;
 use App\Filament\Support\AllowedFileTypes;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -42,7 +43,7 @@ class ExpenseForm
 
                         DatePicker::make('date')
                             ->required()
-                            ->default(now()),
+                            ->default(resolve(BakeryClock::class)->today()),
 
                         FileUpload::make('receipt_image')
                             ->label('Receipt Image')

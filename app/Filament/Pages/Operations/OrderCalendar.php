@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -57,8 +58,9 @@ class OrderCalendar extends Page
 
     public function mount(): void
     {
-        $this->currentYear = now()->year;
-        $this->currentMonth = now()->month;
+        $today = resolve(BakeryClock::class)->today();
+        $this->currentYear = $today->year;
+        $this->currentMonth = $today->month;
         $this->selectedDayOrders = (new Order)->newCollection();
         $this->loadOrderCounts();
     }
@@ -110,6 +112,7 @@ class OrderCalendar extends Page
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $startOfCalendar = $startOfMonth->copy()->startOfWeek();
         $endOfCalendar = $endOfMonth->copy()->endOfWeek();
+        $today = resolve(BakeryClock::class)->today();
 
         $days = collect();
         $current = $startOfCalendar->copy();
@@ -123,7 +126,7 @@ class OrderCalendar extends Page
                 'date' => $current->copy(),
                 'dateString' => $dateString,
                 'isCurrentMonth' => $current->month === $this->currentMonth,
-                'isToday' => $current->isToday(),
+                'isToday' => $current->isSameDay($today),
                 'orderCount' => $orderCount,
                 'colorClass' => $this->getColorClass($orderCount),
             ]);
