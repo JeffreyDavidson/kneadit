@@ -24,40 +24,45 @@
                     {{ $content['hero_title'] ?? 'Track Your Order' }}
                 </h1>
                 <p class="hero-fade-2 text-warm-100 mx-auto max-w-lg text-lg">
-                    {{ $content['hero_subtitle'] ?? 'Enter your email to see how your order is coming along.' }}
+                    {{ $content['hero_subtitle'] ?? 'Enter your email and we\'ll send you a link to see how your order is coming along.' }}
                 </p>
             </div>
         </x-storefront.hero-section>
 
-        {{-- Email Lookup Form --}}
-        <section class="bg-warm-100 relative py-16 md:py-20">
-            <div class="mx-auto max-w-xl px-4">
-                <form method="POST" action="{{ route('order.track.lookup') }}" class="hero-fade-3">
-                    @csrf
-                    <label
-                        for="email"
-                        class="text-warm-500 mb-3 block text-center text-xs font-medium tracking-[0.2em] uppercase"
-                    >{{ $content['email_label'] ?? 'Email Address' }}</label>
-                    <div class="flex gap-3">
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            class="track-input flex-1"
-                            placeholder="you@example.com"
-                            value="{{ old('email', $email ?? '') }}"
-                            required
-                        />
-                        <x-storefront.button type="submit" size="md" fontDisplay class="flex-shrink-0">
-                            {{ $content['lookup_button'] ?? 'Look Up' }}
-                        </x-storefront.button>
-                    </div>
-                    @error('email')
-                        <p class="mt-3 text-center text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </form>
-            </div>
-        </section>
+        {{-- Email Link Form (hidden once a signed link has opened the orders) --}}
+        @empty($orders)
+            <section class="bg-warm-100 relative py-16 md:py-20">
+                <div class="mx-auto max-w-xl px-4">
+                    <form method="POST" action="{{ route('order.track.lookup') }}" class="hero-fade-3">
+                        @csrf
+                        <label
+                            for="email"
+                            class="text-warm-500 mb-3 block text-center text-xs font-medium tracking-[0.2em] uppercase"
+                        >{{ $content['email_label'] ?? 'Email Address' }}</label>
+                        <div class="flex gap-3">
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                class="track-input flex-1"
+                                placeholder="you@example.com"
+                                value="{{ old('email') }}"
+                                required
+                            />
+                            <x-storefront.button type="submit" size="md" fontDisplay class="flex-shrink-0">
+                                {{ $content['lookup_button'] ?? 'Email Me a Link' }}
+                            </x-storefront.button>
+                        </div>
+                        @error('email')
+                            <p class="mt-3 text-center text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                        @session('status')
+                            <p class="text-warm-700 mt-3 text-center text-sm" role="status">{{ $value }}</p>
+                        @endsession
+                    </form>
+                </div>
+            </section>
+        @endempty
 
         @isset($orders)
             @if ($orders->isEmpty())

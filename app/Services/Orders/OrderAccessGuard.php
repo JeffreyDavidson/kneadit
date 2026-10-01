@@ -8,7 +8,7 @@ use App\Models\Orders\Order;
  * Tracks which orders the current session has been granted access to.
  *
  * Granting happens automatically after order placement, Stripe redirect-back,
- * and successful email-based order tracking. External access (e.g. opening
+ * and opening the signed tracking link emailed to the customer. External access (e.g. opening
  * an order link in a different browser) requires explicit email verification
  * via VerifyOrderAccessController, after which the order is added here.
  *

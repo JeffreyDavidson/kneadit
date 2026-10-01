@@ -32,6 +32,8 @@ class OrderTrackingTabSchema
                         TextInput::make('pageContent.order_tracking.lookup_button')
                             ->label('Lookup Button Text'),
                     ]),
+                    TextInput::make('pageContent.order_tracking.link_sent_message')
+                        ->label('Link Sent Message'),
                 ])->compact(),
                 Section::make('Empty State')->schema([
                     TextInput::make('pageContent.order_tracking.empty_heading')

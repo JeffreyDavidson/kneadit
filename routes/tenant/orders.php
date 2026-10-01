@@ -10,6 +10,7 @@ use App\Http\Controllers\Tenant\Orders\MessageController;
 use App\Http\Controllers\Tenant\Orders\ModifyOrderController;
 use App\Http\Controllers\Tenant\Orders\PickupSlotsController;
 use App\Http\Controllers\Tenant\Orders\ReorderController;
+use App\Http\Controllers\Tenant\Orders\ShowTrackedOrdersController;
 use App\Http\Controllers\Tenant\Orders\StripeCancelController;
 use App\Http\Controllers\Tenant\Orders\StripeSuccessController;
 use App\Http\Controllers\Tenant\Orders\TrackingController;
@@ -42,6 +43,8 @@ Route::get('order/stripe/cancel/{order:order_number}', StripeCancelController::c
 
 Route::get('track', [TrackingController::class, 'show'])->name('order.track');
 Route::post('track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:form-write');
+// Signed link emailed by the tracking form; opening it proves inbox ownership.
+Route::get('track/access/{customer}', ShowTrackedOrdersController::class)->name('order.track.access')->middleware('signed');
 
 // Order-by-number views require session-verified ownership.
 Route::middleware('order.access')->group(function () {

@@ -1,13 +1,11 @@
 <?php
 
+use App\Mail\Orders\OrderTrackingLinkMail;
 use App\Models\Customers\Customer;
-use App\Models\Inventory\Category;
-use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
 use App\Models\Platform\Setting;
-use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
+use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -43,13 +41,13 @@ test('biscotto tracking page uses the themed follow-up presentation', function (
         ->assertSee('Track Your Order');
 });
 
-test('tracking with valid email returns orders', function () {
-    $user = User::factory()->owner()->create();
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+const TRACKING_LINK_MESSAGE = "If we have orders for that email, we've sent you a link to view them.";
 
-    Order::factory()
+test('tracking with an email that has orders sends a link and shows no order data', function () {
+    Mail::fake();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    $order = Order::factory()
         ->for($customer)
-        ->recycle($user)
         ->confirmed()
         ->create(['order_number' => 'KN260308A001']);
 
@@ -58,80 +56,96 @@ test('tracking with valid email returns orders', function () {
             'email' => 'jane@example.com',
         ]);
 
-    $response->assertOk();
-    $response->assertSee('KN260308A001');
+    $response->assertRedirect(route('order.track', absolute: false));
+    $response->assertSessionHas('status', TRACKING_LINK_MESSAGE);
+    expect($response->getContent())->not->toContain('KN260308A001');
+    Mail::assertQueued(OrderTrackingLinkMail::class, fn (OrderTrackingLinkMail $mail) => $mail->hasTo('jane@example.com'));
+    withoutMiddleware(tenantMiddleware())
+        ->get(route('order.confirmation', ['order' => $order->order_number], false))
+        ->assertRedirect(route('order.verify.show', ['order' => $order->order_number], false));
 });
 
-test('tracking with no orders shows empty state', function () {
+test('the page shows the same message after any lookup', function () {
+    Mail::fake();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->followingRedirects()
+        ->post(route('order.track.lookup', absolute: false), [
+            'email' => 'nobody@example.com',
+        ]);
+
+    $response->assertOk()->assertSee(TRACKING_LINK_MESSAGE);
+});
+
+test('tracking with an unknown email responds the same way and sends no mail', function () {
+    Mail::fake();
+
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('order.track.lookup', absolute: false), [
             'email' => 'nobody@example.com',
         ]);
 
-    $response->assertOk();
+    $response->assertRedirect(route('order.track', absolute: false));
+    $response->assertSessionHas('status', TRACKING_LINK_MESSAGE);
+    Mail::assertNothingQueued();
 });
 
-test('tracking shows correct status for each order stage', function (string $status) {
-    $user = User::factory()->owner()->create();
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
-
-    Order::factory()
-        ->for($customer)
-        ->recycle($user)
-        ->create([
-            'order_number' => 'KN'.strtoupper($status),
-            'status' => $status,
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
+test('tracking with an email that has no orders sends no mail', function () {
+    Mail::fake();
+    Customer::factory()->create(['email' => 'jane@example.com']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('order.track.lookup', absolute: false), [
             'email' => 'jane@example.com',
         ]);
 
-    $response->assertOk();
-    expect(Order::query()->where('customer_id', $customer->id)->count())->toBe(1);
-})->with(['pending', 'confirmed', 'baking', 'ready', 'delivered']);
+    $response->assertSessionHas('status', TRACKING_LINK_MESSAGE);
+    Mail::assertNothingQueued();
+});
 
-test('orders display items and totals', function () {
-    $user = User::factory()->owner()->create();
-    $category = Category::factory()->create(['name' => 'Breads', 'slug' => 'breads']);
-
-    $product = Product::factory()->for($category)->create([
-        'name' => 'Baguette',
-        'slug' => 'baguette',
-        'price' => 5.00,
-    ]);
-
+test('a repeat lookup within the cooldown sends no second mail', function () {
+    Mail::fake();
     $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    Order::factory()->for($customer)->confirmed()->create();
 
-    $order = Order::factory()
-        ->for($customer)
-        ->recycle($user)
-        ->confirmed()
-        ->create([
-            'order_number' => 'KN260308ITEM',
-            'subtotal' => 15.00,
-            'total' => 15.00,
-        ]);
+    $first = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), ['email' => 'jane@example.com']);
+    $second = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), ['email' => 'jane@example.com']);
 
-    OrderItem::factory()
-        ->for($order)
-        ->for($product)
-        ->create([
-            'quantity' => 3,
-            'unit_price' => 5.00,
-        ]);
+    $second->assertSessionHas('status', TRACKING_LINK_MESSAGE);
+    Mail::assertQueuedCount(1);
+});
 
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('order.track.lookup', absolute: false), [
-            'email' => 'jane@example.com',
-        ]);
+test('a lookup after the cooldown sends a new mail', function () {
+    Mail::fake();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    Order::factory()->for($customer)->confirmed()->create();
 
-    $response->assertOk();
-    $response->assertSee('Baguette');
-    $response->assertSee('15.00');
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), ['email' => 'jane@example.com']);
+    test()->travel(6)->minutes();
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), ['email' => 'jane@example.com']);
+
+    Mail::assertQueuedCount(2);
+});
+
+test('the queued mail carries a signed link that expires in 30 minutes', function () {
+    Mail::fake();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    Order::factory()->for($customer)->confirmed()->create();
+
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), ['email' => 'jane@example.com']);
+
+    Mail::assertQueued(OrderTrackingLinkMail::class, function (OrderTrackingLinkMail $mail) use ($customer) {
+        parse_str((string) parse_url($mail->trackingUrl, PHP_URL_QUERY), $query);
+
+        return str_contains($mail->trackingUrl, "/track/access/{$customer->getKey()}")
+            && (int) $query['expires'] === now()->addMinutes(30)->getTimestamp()
+            && isset($query['signature']);
+    });
 });
 
 test('tracking requires email', function () {
@@ -139,22 +153,4 @@ test('tracking requires email', function () {
         ->post(route('order.track.lookup', absolute: false), []);
 
     $response->assertSessionHasErrors('email');
-});
-
-test('per-order links reference order_number, not the integer id (route binds by order_number)', function () {
-    $user = User::factory()->owner()->create();
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
-
-    $order = Order::factory()
-        ->for($customer)
-        ->recycle($user)
-        ->confirmed()
-        ->create(['order_number' => 'KN260308BIND']);
-
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('order.track.lookup', absolute: false), [
-            'email' => 'jane@example.com',
-        ]);
-
-    $response->assertOk()->assertSeeHtml("?reorder={$order->order_number}")->assertSeeHtml("loadMessages('{$order->order_number}')")->assertDontSeeHtml("?reorder={$order->id}\"")->assertDontSeeHtml("loadMessages({$order->id})");
 });
