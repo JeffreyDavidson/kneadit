@@ -32,6 +32,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
         $cutoffDate = $today->copy()->subDays($reminderDays);
 
         return Customer::query()
+            ->subscribedToMarketing()
             ->where('email', '!=', '')
             ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with([

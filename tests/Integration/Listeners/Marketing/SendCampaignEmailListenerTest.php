@@ -14,7 +14,7 @@ beforeEach(fn () => setUpTenantTest());
 test('it sends campaign email to the recipient', function () {
     Mail::fake();
 
-    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts this week.</p>');
+    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts this week.</p>', 'https://example.test/unsubscribe');
 
     $listener = new SendCampaignEmailListener;
     $listener->handle($event);
@@ -29,7 +29,7 @@ test('failed method logs a warning with email and error message', function () {
             && $context['email'] === 'subscriber@example.com'
             && $context['error'] === 'SMTP timeout');
 
-    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts.</p>');
+    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts.</p>', 'https://example.test/unsubscribe');
 
     $listener = new SendCampaignEmailListener;
     $listener->failed($event, new RuntimeException('SMTP timeout'));

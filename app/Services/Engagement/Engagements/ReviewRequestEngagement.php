@@ -8,7 +8,6 @@ use App\Models\Orders\Order;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Settings\TenantSettings;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class ReviewRequestEngagement implements CustomerEngagement
@@ -27,7 +26,7 @@ class ReviewRequestEngagement implements CustomerEngagement
             ->delivered()
             ->whereNull('review_request_sent_at')
             ->where('updated_at', '<=', now()->subHours($delayHours))
-            ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
+            ->whereIn('customer_id', Customer::query()->subscribedToMarketing()->whereNotNull('email')->select('id'))
             ->with('customer')
             ->get()
             ->map(function (Order $order): EngagementRecipient {

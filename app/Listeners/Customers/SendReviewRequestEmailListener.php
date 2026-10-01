@@ -12,7 +12,13 @@ class SendReviewRequestEmailListener extends SendEmailListener
     protected function getRecipient(object $event): ?string
     {
         /** @var ReviewRequested $event */
-        return $event->order->customer?->email;
+        $customer = $event->order->customer;
+
+        if ($customer === null || $customer->marketing_opted_out_at !== null) {
+            return null;
+        }
+
+        return $customer->email;
     }
 
     protected function getMailable(object $event): Mailable

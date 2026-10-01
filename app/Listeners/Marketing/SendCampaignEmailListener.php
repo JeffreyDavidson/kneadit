@@ -18,7 +18,7 @@ class SendCampaignEmailListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var CampaignEmailQueued $event */
-        return new CustomerBlastMail($event->subject, $event->body);
+        return new CustomerBlastMail($event->subject, $event->body, $event->unsubscribeUrl);
     }
 
     /** @return array<string, mixed> */

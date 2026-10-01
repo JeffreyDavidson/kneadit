@@ -56,6 +56,7 @@ use Illuminate\Support\Carbon;
  * @property-read float|null $total_spent Populated by ReorderReminders::getCustomers()
  * @property-read int|null $balance Populated by TopLoyaltyCustomersQuery::get()
  * @property Carbon|null $birthday
+ * @property Carbon|null $marketing_opted_out_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
@@ -63,7 +64,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'email', 'password', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday', 'referral_code')]
+#[Fillable('name', 'email', 'password', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday', 'referral_code', 'marketing_opted_out_at')]
 #[Hidden('password', 'remember_token')]
 #[ObservedBy([CustomerObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
@@ -88,6 +89,7 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
     {
         return [
             'birthday' => 'date',
+            'marketing_opted_out_at' => 'datetime',
             'phone' => PhoneNumberCast::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',

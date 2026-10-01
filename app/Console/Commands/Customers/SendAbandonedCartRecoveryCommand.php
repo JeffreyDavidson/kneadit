@@ -4,6 +4,7 @@ namespace App\Console\Commands\Customers;
 
 use App\Enums\Financial\CouponType;
 use App\Mail\Customers\AbandonedCartRecoveryMail;
+use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
 use App\Models\Orders\Cart;
 use App\Models\Platform\Tenant;
@@ -40,7 +41,7 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->update(['recovery_claimed_at' => null]);
 
                 $carts = Cart::query()
-                    ->whereNotNull('customer_email')
+                    ->forSubscribedCustomers()
                     ->whereNull('recovery_sent_at')
                     ->whereNull('recovery_claimed_at')
                     ->whereNull('converted_at')
@@ -49,7 +50,18 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->with('items.product')
                     ->get();
 
+                $customers = Customer::query()
+                    ->whereIn('email', $carts->pluck('customer_email')->all())
+                    ->get()
+                    ->keyBy('email');
+
                 foreach ($carts as $cart) {
+                    $customer = $customers->get($cart->customer_email);
+
+                    if (! $customer instanceof Customer) {
+                        continue;
+                    }
+
                     $claimed = Cart::query()
                         ->whereKey($cart->getKey())
                         ->whereNull('recovery_sent_at')
@@ -65,7 +77,7 @@ class SendAbandonedCartRecoveryCommand extends Command
                         : null;
 
                     try {
-                        Mail::to($cart->customer_email)->queue(new AbandonedCartRecoveryMail($cart, $coupon));
+                        Mail::to($cart->customer_email)->queue(new AbandonedCartRecoveryMail($cart, $customer, $coupon));
 
                         $cart->forceFill([
                             'recovery_sent_at' => now(),

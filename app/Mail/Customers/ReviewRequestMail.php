@@ -5,19 +5,24 @@ namespace App\Mail\Customers;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\MarketingMail;
 use App\Mail\Concerns\ResolvesTemplate;
+use App\Mail\Concerns\SendsMarketingMail;
+use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Services\Customers\MarketingUnsubscribeLinks;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\URL;
 
-class ReviewRequestMail extends BaseMailable
+class ReviewRequestMail extends BaseMailable implements MarketingMail
 {
     use BakerBranded;
     use ResolvesTemplate;
+    use SendsMarketingMail;
 
     public string $storeName;
 
@@ -39,6 +44,17 @@ class ReviewRequestMail extends BaseMailable
             ['order' => $this->order->order_number],
         );
         $this->orderItems = $this->order->orderItems()->with('product')->get();
+    }
+
+    public function unsubscribeUrl(): string
+    {
+        $customer = $this->order->customer;
+
+        if (! $customer instanceof Customer) {
+            throw new \LogicException('A review request needs the order\'s customer to build its unsubscribe link.');
+        }
+
+        return resolve(MarketingUnsubscribeLinks::class)->unsubscribe($customer);
     }
 
     public function envelope(): Envelope

@@ -197,6 +197,23 @@ Central onboarding screens read denormalized product, category, and order counts
 
 Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
 
+## Email marketing and unsubscribe
+
+Customers can opt out of marketing email. `customers.marketing_opted_out_at` (null = subscribed) is set by the customer from the unsubscribe link in any marketing email, or by staff through the Customers table's "Mark unsubscribed" action (for opt-outs received by phone or email). Staff cannot re-subscribe a customer; only the customer can, from the same link.
+
+**Marketing mails** (a message the customer did not specifically ask for) implement `MarketingMail` and use `SendsMarketingMail`:
+
+- `CustomerCampaignMail` (customer campaigns), `BulkCustomerMessageMail` (the Customers "Send message" bulk action) and `CustomerBlastMail` (the email-campaign blast).
+- The automated engagements: `HappyBirthdayMail`, `RepeatOrderReminderMail`, `ReviewRequestMail`, and `AbandonedCartRecoveryMail`.
+
+**Transactional mails** are never suppressed and carry no unsubscribe link: order placed, status, modified and messages, order tracking links, catering quotes, product-available alerts (the customer asked to be told), referral rewards (earned) and contact-message replies. Staff, supplier and platform notifications are not customer marketing either. For a new customer-facing mail, decide by asking whether the customer requested that specific message.
+
+Every marketing mail sends `List-Unsubscribe` and `List-Unsubscribe-Post: List-Unsubscribe=One-Click` (RFC 8058) and shows an "Unsubscribe" link in the shared email layout. `BaseMailable` passes `unsubscribeUrl` to the view for any `MarketingMail`. `MarketingUnsubscribeLinks` builds the link: a non-expiring URL signed against its path only (`signed:relative`) and prefixed with the bakery's storefront host, so it works from queued or scheduled sends where the request host is not the bakery's.
+
+`EmailUnsubscribesController` serves the link (routes in `routes/tenant/access.php`, outside the storefront-enabled check): `GET` shows a confirmation page, `POST` unsubscribes immediately and is CSRF-exempt because mail providers post without a token (the signature is the protection), and `DELETE` re-subscribes from the confirmation page.
+
+Senders skip opted-out customers in the query (`CustomerQueryBuilder::subscribedToMarketing()`), so recorded recipient counts exclude them: `ResolveCampaignRecipients`, `SendBulkCustomerMessage`, the three engagement recipient finders, `SendEmailCampaign` and `SendAbandonedCartRecoveryCommand`. The birthday, repeat-order and review-request listeners re-check just before sending. Abandoned-cart recovery only mails carts whose email matches an existing customer, because the opt-out lives on the customer record.
+
 ## Frontend
 
 Blade, Livewire, Alpine.js, Filament, and Tailwind CSS make up the UI. Vite builds separate central/application, storefront, tenant Filament, and central Filament entry points defined in `vite.config.js`. Inline scripts and styles use the request-scoped CSP nonce directive.

@@ -33,7 +33,7 @@ beforeEach(function () {
 });
 
 test('CustomerBlast has dynamic subject', function () {
-    $mail = new CustomerBlastMail('Spring Sale!', '<p>20% off</p>');
+    $mail = new CustomerBlastMail('Spring Sale!', '<p>20% off</p>', 'https://example.test/unsubscribe');
 
     expect($mail->envelope()->subject)->toBe('Spring Sale!');
 });

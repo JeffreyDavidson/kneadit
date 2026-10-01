@@ -59,7 +59,7 @@ class SendCustomerCampaign
                 'tracking_token' => $this->mintToken(),
             ]);
 
-            Mail::to($customer->email)->queue(new CustomerCampaignMail($campaign, $log->tracking_token));
+            Mail::to($customer->email)->queue(new CustomerCampaignMail($campaign, $customer, $log->tracking_token));
             $sent++;
         }
 

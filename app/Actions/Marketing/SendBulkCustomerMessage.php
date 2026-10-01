@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
  * (pickup window changes, "we have a question about your order", etc.).
  *
  * Returns the number of recipients actually queued (skips customers
- * with no email).
+ * with no email and customers who unsubscribed from marketing email).
  */
 class SendBulkCustomerMessage
 {
@@ -25,7 +25,7 @@ class SendBulkCustomerMessage
         $sent = 0;
 
         foreach ($customers as $customer) {
-            if (! $customer->email) {
+            if (! $customer->email || $customer->marketing_opted_out_at !== null) {
                 continue;
             }
 

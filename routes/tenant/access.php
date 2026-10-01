@@ -6,12 +6,14 @@ use App\Http\Controllers\Central\ConsumeImpersonationController;
 use App\Http\Controllers\Stripe\StripeConnectController;
 use App\Http\Controllers\Tenant\Invitations\AcceptInvitationController;
 use App\Http\Controllers\Tenant\Invitations\ShowInvitationController;
+use App\Http\Controllers\Tenant\Marketing\EmailUnsubscribesController;
 use App\Http\Controllers\Tenant\Marketing\PreviewCustomerCampaignController;
 use App\Http\Controllers\Tenant\Storefront\AppIconController;
 use App\Http\Controllers\Tenant\Storefront\DriverDashboardController;
 use App\Http\Controllers\Tenant\Storefront\ManifestController;
 use App\Http\Controllers\Tenant\Storefront\MarkOrderDeliveredController;
 use App\Http\Middleware\ResolveInvitation;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 
 Route::get('manifest.json', ManifestController::class)->name('manifest');
@@ -22,6 +24,17 @@ Route::get('stripe/connect', StripeConnectController::class)->middleware('auth')
 Route::get('admin/campaigns/{campaign}/preview', PreviewCustomerCampaignController::class)
     ->middleware(['auth', 'can:manager-staff'])
     ->name('campaign.preview');
+
+// Unsubscribe link in marketing emails. Signed against the path only, never expires, and sits
+// outside the storefront-enabled check so opting out always works. Mail providers POST here for
+// RFC 8058 one-click unsubscribe without a CSRF token; the signature is the protection.
+Route::middleware('signed:relative')->group(function () {
+    Route::post('email/unsubscribe/{customer}', [EmailUnsubscribesController::class, 'store'])
+        ->withoutMiddleware(PreventRequestForgery::class)
+        ->name('emailUnsubscribe.store');
+    Route::get('email/unsubscribe/{customer}', [EmailUnsubscribesController::class, 'show'])->name('emailUnsubscribe.show');
+    Route::delete('email/unsubscribe/{customer}', [EmailUnsubscribesController::class, 'destroy'])->name('emailUnsubscribe.destroy');
+});
 
 Route::prefix('driver')->name('driver.')->group(function () {
     Route::get('/', DriverDashboardController::class)->name('index');
