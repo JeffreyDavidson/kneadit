@@ -7,6 +7,7 @@ namespace App\Services\Scheduling;
 use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Settings\TenantSettings;
 use Closure;
+use Illuminate\Support\Facades\Date;
 use Throwable;
 
 /**
@@ -33,7 +34,7 @@ final readonly class LocalSendWindow
             return;
         }
 
-        $bakeryNow = new BakeryClock($settings)->now();
+        $bakeryNow = Date::now($settings->orders->timezone);
 
         if (! $schedule->isDue($bakeryNow)) {
             return;

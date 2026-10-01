@@ -84,7 +84,8 @@ class ApplicationBindingsServiceProvider extends ServiceProvider
         $this->app->scoped(SettingsManager::class);
         $this->app->scoped(PlatformSettingsManager::class);
         $this->app->scoped(TenantSettingsRegistry::class);
-        $this->app->scoped(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
+        // Not scoped: the registry caches the settings and TenancyManager flushes it on a tenant switch, so every resolve reflects the current tenant.
+        $this->app->bind(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
         foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
             $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
