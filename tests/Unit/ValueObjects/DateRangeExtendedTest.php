@@ -1,6 +1,11 @@
 <?php
 
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\DateRange;
+
+beforeEach(function () {
+    app()->instance(TenantSettings::class, makeTenantSettings());
+});
 
 test('isActive returns true when now is within range', function () {
     $range = DateRange::fromStrings(

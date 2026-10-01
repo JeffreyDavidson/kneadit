@@ -1,7 +1,12 @@
 <?php
 
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\DateRange;
 use Illuminate\Support\Facades\Date;
+
+beforeEach(function () {
+    app()->instance(TenantSettings::class, makeTenantSettings());
+});
 
 it('creates a date range from string dates with proper boundaries', function () {
     Date::setTestNow('2026-03-15 14:30:00');
@@ -70,4 +75,60 @@ it('expresses a bakery-local range in the app timezone without moving the instan
     expect($range->start->toDateTimeString())->toBe('2026-10-01 04:00:00')
         ->and($range->end->toDateTimeString())->toBe('2026-11-01 03:59:59')
         ->and($range->start->equalTo($start))->toBeTrue();
+});
+
+describe('bakery-local boundaries', function () {
+    beforeEach(function () {
+        app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+        Date::setTestNow('2026-10-06 01:00');
+    });
+
+    it('starts and ends this week at bakery-local midnight', function () {
+        $range = DateRange::thisWeek()->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-10-05 04:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-10-12 03:59:59');
+    });
+
+    it('starts and ends this month at bakery-local midnight', function () {
+        $range = DateRange::thisMonth()->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-10-01 04:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-11-01 03:59:59');
+    });
+
+    it('starts and ends this year at bakery-local midnight', function () {
+        $range = DateRange::thisYear()->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-01-01 05:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2027-01-01 04:59:59');
+    });
+
+    it('starts and ends the last days at bakery-local midnight', function () {
+        $range = DateRange::lastDays(7)->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-09-28 04:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-10-06 03:59:59');
+    });
+
+    it('covers a bakery-local day when built from strings', function () {
+        $range = DateRange::fromStrings('2026-10-05', '2026-10-05')->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-10-05 04:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-10-06 03:59:59');
+    });
+
+    it('covers a bakery-local month', function () {
+        $range = DateRange::forMonth(2026, 10)->inAppTimezone();
+
+        expect($range->start->toDateTimeString())->toBe('2026-10-01 04:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-11-01 03:59:59');
+    });
+
+    it('keeps the bakery-local calendar days for date column comparisons', function () {
+        $range = DateRange::thisWeek();
+
+        expect($range->start->toDateTimeString())->toBe('2026-10-05 00:00:00')
+            ->and($range->end->toDateTimeString())->toBe('2026-10-11 23:59:59');
+    });
 });

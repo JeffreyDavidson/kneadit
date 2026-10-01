@@ -5,6 +5,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Reports\Customers\CustomerReport;
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
 use Illuminate\Database\Events\QueryExecuted;
@@ -130,4 +131,41 @@ test('filters top customer aggregates to customers with paid orders in range', f
         ->and($result->topCustomers[0]->name)->toBe('Paying Customer')
         ->and($topCustomerQueries)->toHaveCount(1)
         ->and($topCustomerQueries[0])->toContain('where id in (select customer_id from orders');
+});
+
+test('counts a customer who joined at 8:30 pm bakery time on the last day in that day, not the next', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Customer::factory()->create(['created_at' => '2026-10-06 00:30:00']);
+    $report = new CustomerReport;
+
+    $onTheDay = $report->generate(DateRange::fromStrings('2026-10-05', '2026-10-05'));
+    $nextDay = $report->generate(DateRange::fromStrings('2026-10-06', '2026-10-06'));
+
+    expect($onTheDay->newCustomers)->toBe(1)
+        ->and($nextDay->newCustomers)->toBe(0);
+});
+
+test('leaves a customer who joined the previous bakery evening out of the next bakery day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Customer::factory()->create(['created_at' => '2026-10-05 02:00:00']);
+    $report = new CustomerReport;
+
+    $previousDay = $report->generate(DateRange::fromStrings('2026-10-04', '2026-10-04'));
+    $onTheDay = $report->generate(DateRange::fromStrings('2026-10-05', '2026-10-05'));
+
+    expect($previousDay->newCustomers)->toBe(1)
+        ->and($onTheDay->newCustomers)->toBe(0);
+});
+
+test('keeps date column order ranges on the bakery-local calendar days', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    $customer = Customer::factory()->create();
+    Order::factory()->for($customer)->paid()->create(['delivery_date' => '2026-10-05', 'total' => 40]);
+    $report = new CustomerReport;
+
+    $onTheDay = $report->generate(DateRange::fromStrings('2026-10-05', '2026-10-05'));
+    $nextDay = $report->generate(DateRange::fromStrings('2026-10-06', '2026-10-06'));
+
+    expect($onTheDay->totalCustomersWithOrders)->toBe(1)
+        ->and($nextDay->totalCustomersWithOrders)->toBe(0);
 });

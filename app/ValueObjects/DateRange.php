@@ -2,6 +2,7 @@
 
 namespace App\ValueObjects;
 
+use App\Services\Scheduling\BakeryClock;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
@@ -13,49 +14,56 @@ final readonly class DateRange
         public Carbon $end,
     ) {}
 
+    /**
+     * Whole bakery-local calendar days. Like every factory here, the range is
+     * built in the bakery timezone, so it reads as those days when compared
+     * with a date column; call inAppTimezone() before querying a timestamp.
+     */
     public static function fromStrings(string $startDate, string $endDate): self
     {
+        $timezone = self::now()->getTimezone();
+
         return new self(
-            Date::parse($startDate)->startOfDay(),
-            Date::parse($endDate)->endOfDay(),
+            Date::parse($startDate, $timezone)->startOfDay(),
+            Date::parse($endDate, $timezone)->endOfDay(),
         );
     }
 
     public static function thisWeek(): self
     {
         return new self(
-            Date::now()->startOfWeek(),
-            Date::now()->endOfWeek(),
+            self::now()->startOfWeek(),
+            self::now()->endOfWeek(),
         );
     }
 
     public static function thisMonth(): self
     {
         return new self(
-            Date::now()->startOfMonth(),
-            Date::now()->endOfMonth(),
+            self::now()->startOfMonth(),
+            self::now()->endOfMonth(),
         );
     }
 
     public static function thisYear(): self
     {
         return new self(
-            Date::now()->startOfYear(),
-            Date::now()->endOfYear(),
+            self::now()->startOfYear(),
+            self::now()->endOfYear(),
         );
     }
 
     public static function lastDays(int $days): self
     {
         return new self(
-            Date::now()->subDays($days)->startOfDay(),
-            Date::now()->endOfDay(),
+            self::now()->subDays($days)->startOfDay(),
+            self::now()->endOfDay(),
         );
     }
 
     public static function forMonth(int $year, int $month): self
     {
-        $start = Date::create($year, $month, 1)->startOfMonth();
+        $start = Date::create($year, $month, 1, 0, 0, 0, self::now()->getTimezone())->startOfMonth();
 
         return new self(
             $start,
@@ -102,5 +110,10 @@ final readonly class DateRange
     public function toArray(): array
     {
         return [$this->start, $this->end];
+    }
+
+    private static function now(): Carbon
+    {
+        return resolve(BakeryClock::class)->now();
     }
 }
