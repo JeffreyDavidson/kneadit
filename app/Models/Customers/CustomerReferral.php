@@ -2,11 +2,13 @@
 
 namespace App\Models\Customers;
 
+use App\Builders\Customers\CustomerReferralQueryBuilder;
 use App\Enums\Customers\CustomerReferralStatus;
 use App\Models\Financial\Coupon;
 use App\Models\Orders\Order;
 use Database\Factories\Customers\CustomerReferralFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('referrer_customer_id', 'referred_customer_id', 'order_id', 'reward_coupon_id', 'status', 'completed_at')]
+#[UseEloquentBuilder(CustomerReferralQueryBuilder::class)]
 #[UseFactory(CustomerReferralFactory::class)]
 class CustomerReferral extends Model
 {

@@ -73,7 +73,7 @@ class NotificationSettingsSection
 
                         Toggle::make('customer_referral_program_enabled')
                             ->label('Enable Customer Referral Program')
-                            ->helperText('Customers get a unique referral link. New customers using a link get $X off; the referrer gets a coupon worth the same amount when their referral places an order.'),
+                            ->helperText('Customers get a unique referral link. New customers using a link get $X off; the referrer gets a coupon worth the same amount once their referral\'s order is delivered.'),
 
                         Toggle::make('abandoned_cart_recovery_enabled')
                             ->label('Enable Abandoned Cart Recovery')

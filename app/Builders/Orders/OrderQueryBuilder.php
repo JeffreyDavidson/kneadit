@@ -145,6 +145,14 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
+    /** Orders placed by the customer with this email. */
+    public function placedByEmail(string $email): static
+    {
+        $this->whereHas('customer', fn (Builder $q) => $q->where('email', $email));
+
+        return $this;
+    }
+
     /**
      * Filter orders by customer email via relationship.
      */

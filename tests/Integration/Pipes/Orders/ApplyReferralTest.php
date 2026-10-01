@@ -5,6 +5,7 @@ use App\Enums\Customers\CustomerReferralStatus;
 use App\Enums\Orders\DeliveryType;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
+use App\Models\Orders\Order;
 use App\Pipes\Orders\ApplyReferral;
 use App\Pipes\Orders\OrderPipelineData;
 use App\Services\Settings\TenantSettings;
@@ -97,4 +98,45 @@ test('rejects when the referee has already been referred before', function () {
 
     expect($result->referrer)->toBeNull()
         ->and($result->discountAmount->dollars())->toBe(0.0);
+});
+
+dataset('referral eligibility by order history', [
+    'brand-new email' => [null, true],
+    'delivered past order' => ['delivered', false],
+    'pending past order' => ['pending', false],
+    'only a cancelled past order' => ['cancelled', true],
+]);
+
+test('applies the referral discount only to emails with no prior non-cancelled order', function (?string $priorOrderState, bool $discounted) {
+    Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
+    Session::put('referral_code', 'ABC12345');
+
+    if ($priorOrderState !== null) {
+        Order::factory()
+            ->for(Customer::factory()->create(['email' => 'returning@example.com']))
+            ->{$priorOrderState}()
+            ->create();
+    }
+
+    $payload = makeReferralPayload(email: 'returning@example.com');
+    $result = new ApplyReferral(resolve(TenantSettings::class))->handle($payload, fn ($p) => $p);
+
+    expect($result->referrer !== null)->toBe($discounted)
+        ->and($result->discountAmount->dollars())->toBe($discounted ? 10.0 : 0.0);
+})->with('referral eligibility by order history');
+
+test('allows a new referral when the earlier referral for the same customer was cancelled', function () {
+    $referrer = Customer::factory()->create(['email' => 'alice@example.com', 'referral_code' => 'ABC12345']);
+    $referee = Customer::factory()->create(['email' => 'bob@example.com']);
+    CustomerReferral::factory()->create([
+        'referrer_customer_id' => $referrer->id,
+        'referred_customer_id' => $referee->id,
+        'status' => CustomerReferralStatus::Cancelled,
+    ]);
+    Session::put('referral_code', 'ABC12345');
+
+    $payload = makeReferralPayload(email: 'bob@example.com');
+    $result = new ApplyReferral(resolve(TenantSettings::class))->handle($payload, fn ($p) => $p);
+
+    expect($result->referrer?->is($referrer))->toBeTrue();
 });
