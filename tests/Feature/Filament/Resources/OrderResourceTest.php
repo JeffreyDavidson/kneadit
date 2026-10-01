@@ -9,11 +9,13 @@ use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
+use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 
@@ -49,6 +51,39 @@ test('can render table columns', function () {
         ->assertCanRenderTableColumn('payment_status')
         ->assertCanRenderTableColumn('total')
         ->assertCanRenderTableColumn('delivery_date');
+});
+
+test('bulk deleting orders only removes those nothing financial happened on', function () {
+    test()->actingAs(User::factory()->manager()->create());
+    $deletable = Order::factory()->recycle(test()->customer)->pending()->unpaid()->create();
+    $paid = Order::factory()->recycle(test()->customer)->delivered()->create();
+    $refund = Refund::factory()->for($paid)->create();
+
+    livewire(ListOrders::class)
+        ->selectTableRecords([$deletable, $paid])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(
+            Notification::make()
+                ->warning()
+                ->title('Deleted 1 of 2')
+                ->body('<p>1 not deleted. Only managers can delete orders, and only pending or cancelled orders with no payment or refund. Cancel the rest instead.</p>')
+                ->persistent(),
+        );
+
+    expect(Order::query()->find($deletable->id))->toBeNull()
+        ->and(Order::query()->find($paid->id))->not->toBeNull()
+        ->and(Refund::query()->find($refund->id))->not->toBeNull();
+});
+
+test('bulk deleting orders is not allowed for staff', function () {
+    test()->actingAs(User::factory()->staff()->create());
+    $order = Order::factory()->recycle(test()->customer)->pending()->unpaid()->create();
+
+    livewire(ListOrders::class)
+        ->selectTableRecords([$order])
+        ->callAction(TestAction::make('delete')->table()->bulk());
+
+    expect(Order::query()->find($order->id))->not->toBeNull();
 });
 
 test('can render the view order page', function () {

@@ -80,6 +80,18 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         ];
     }
 
+    /**
+     * Whether an order in this status may be hard-deleted: only before work
+     * began (Pending) or after it was called off (Cancelled).
+     */
+    public function allowsDeletion(): bool
+    {
+        return match ($this) {
+            self::Pending, self::Cancelled => true,
+            self::Confirmed, self::Baking, self::Ready, self::Delivered => false,
+        };
+    }
+
     /** @return array<int, self> */
     public static function trackableStatuses(): array
     {

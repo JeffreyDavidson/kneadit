@@ -123,7 +123,10 @@ class OrdersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    AuthorizedDeleteBulkAction::make(),
+                    AuthorizedDeleteBulkAction::make()
+                        ->missingBulkAuthorizationFailureNotificationMessage(
+                            fn (int $failureCount): string => "{$failureCount} not deleted. Only managers can delete orders, and only pending or cancelled orders with no payment or refund. Cancel the rest instead.",
+                        ),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

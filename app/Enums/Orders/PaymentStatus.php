@@ -37,4 +37,16 @@ enum PaymentStatus: string implements HasColor, HasLabel
             self::Refunded => 'warning',
         };
     }
+
+    /**
+     * Whether an order with this payment status may be hard-deleted: only when
+     * no money was taken (Unpaid) or the payment was voided (Cancelled).
+     */
+    public function allowsDeletion(): bool
+    {
+        return match ($this) {
+            self::Unpaid, self::Cancelled => true,
+            self::Partial, self::Paid, self::Refunded => false,
+        };
+    }
 }
