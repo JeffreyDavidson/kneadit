@@ -103,6 +103,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 
 - **Platform and tenancy:** bakery registration, onboarding, domains, plans, trials, subscriptions, referrals, support, announcements, audits, impersonation, backups, and health.
 - **Storefront and content:** bakery home pages, menus, blogs, galleries, catering, gift cards, reviews, policies, branding, and PWA metadata.
+  Gift cards are issued by staff in the admin panel; the storefront Gift Cards page only checks balances and points customers to the bakery, because there is no paid online gift card checkout yet.
 - **Orders:** carts, checkout, capacity and stock validation, discounts, fulfillment, order messaging, tracking, invoices, payment state, and refunds.
 - **Inventory and production:** products, categories, ingredients, recipes, suppliers, stock adjustments, waitlists, seasonal items, and production planning.
 - **Customers and engagement:** customer profiles, favorites, notes, referrals, loyalty, campaigns, surveys, reviews, reminders, contact messages, and catering inquiries.
