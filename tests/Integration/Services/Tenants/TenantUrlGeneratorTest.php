@@ -28,7 +28,7 @@ test('the primary storefront is the custom domain without the platform port', fu
 
 test('a custom domain that routes to another bakery is ignored', function () {
     Tenant::factory()->create(['id' => 'other'])->createDomain(['domain' => 'taken.test']);
-    resolve(AddCustomDomain::class)(test()->tenant, 'taken.test');
+    test()->tenant->update(['custom_domain' => 'taken.test']);
 
     expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
         ->toBe('http://sunrise.kneadit.test:8000');
