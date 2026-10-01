@@ -126,6 +126,10 @@ If capacity rejects the request, the pipeline returns no order. Other domain val
 
 Staff quick orders skip this pipeline: the Quick Order form (`QuickOrderForm`) offers a Delivery Distance select built from the same Delivery Fee Tiers, and `CreateQuickOrder` prices delivery with `OrderSettings::deliveryFee()`. A bakery with no tiers configured gets a free-delivery quick order.
 
+### Customer order edits
+
+While the modification window is open, customers can change quantities and the tip on a pending, unpaid order (`ModifyOrder`). The order is re-priced inside the same transaction. `orders.original_subtotal` and `original_discount_amount` hold the values at placement (filled by `PersistOrder`, or on first edit for older orders). The aggregate discount is rescaled from them by `ModifiedOrderPricing`, never above the original, so undoing an edit restores it exactly. The coupon `Usage` transaction is scaled by the same proportion. The gift card draw is capped at what is left to pay and never grows; any unused part is credited back to the card and subtracted from the order's `Redemption` transaction, so a later cancellation (`ReverseOrderDiscounts`) refunds exactly the reduced amount (`AdjustOrderDiscountLedgers`). Delivery is not re-priced because the tier is not stored; an edit that lowers the subtotal below the pickup or delivery minimum, or below the free-delivery minimum for an order that qualified for free delivery, is rejected with `OrderNotModifiableException`.
+
 ### Date capacity
 
 `CapacityCalculator` decides how many active orders a delivery date can take. Both it and the storefront availability calendar (`AvailabilityService`) read the rules through `DateCapacityRules`, which loads everything for a date range in four queries. A date is unavailable when it is closed (an all-day `BlockedDate`, a closed day in Schedule Manager, or an active holiday whose `order_deadline` has passed; the deadline day itself stays open), or when its orders reach the max. Staff-created orders (quick orders, catering conversions) skip this check. The max comes from the first level that sets one, most specific first:

@@ -8,6 +8,7 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Audit\ActorContext;
 use App\Services\Orders\CheckOrderStockAvailability;
+use App\Services\Orders\ModifiedOrderPricing;
 use App\Services\Orders\OrderModificationGuard;
 use App\ValueObjects\Money;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,8 @@ class ModifyOrder
     public function __construct(
         private readonly OrderModificationGuard $guard,
         private readonly CheckOrderStockAvailability $checkStock,
+        private readonly ModifiedOrderPricing $pricing,
+        private readonly AdjustOrderDiscountLedgers $adjustLedgers,
     ) {}
 
     /**
@@ -65,24 +68,40 @@ class ModifyOrder
             // transaction) before we recompute totals or fire OrderModified.
             ($this->checkStock)($order);
 
-            $subtotalDollars = $order->orderItems->sum(
-                fn (OrderItem $item): float => $item->unit_price->dollars() * $item->quantity,
+            $newSubtotal = $order->orderItems->reduce(
+                fn (Money $carry, OrderItem $item): Money => $carry->add($item->unit_price->multiply($item->quantity)),
+                Money::zero(),
             );
 
-            $deliveryFeeDollars = $order->delivery_fee->dollars();
-            $discountDollars = $order->discount_amount->dollars();
-            $giftCardDollars = $order->gift_card_amount->dollars();
-            $tipDollars = $tipAmount !== null
-                ? max(0.0, $tipAmount)
-                : $order->tip_amount->dollars();
+            $this->pricing->assertMinimumsMet($order, $previousSubtotal, $newSubtotal);
 
-            $afterDiscount = max(0.0, $subtotalDollars + $deliveryFeeDollars - $discountDollars);
-            $totalDollars = max(0.0, $afterDiscount - $giftCardDollars) + $tipDollars;
+            // Discounts and the gift card were sized for the order as placed,
+            // so re-price them against the new subtotal. The placement values
+            // are recorded on first edit so later edits never drift.
+            $originalSubtotal = $order->original_subtotal ?? $previousSubtotal;
+            $originalDiscount = $order->original_discount_amount ?? $order->discount_amount;
+            $previousGiftCard = $order->gift_card_amount;
+
+            $newDiscount = $this->pricing->discount($originalDiscount, $originalSubtotal, $newSubtotal);
+            $beforeGiftCard = $newSubtotal
+                ->add($order->delivery_fee)
+                ->subtract($newDiscount)
+                ->max(Money::zero());
+            $newGiftCard = $this->pricing->giftCardAmount($previousGiftCard, $beforeGiftCard);
+            $tip = $tipAmount !== null
+                ? Money::fromDollars(max(0.0, $tipAmount))
+                : $order->tip_amount;
+
+            ($this->adjustLedgers)($order, $order->discount_amount, $newDiscount, $previousGiftCard, $newGiftCard);
 
             $order->forceFill([
-                'subtotal' => Money::fromDollars($subtotalDollars),
-                'tip_amount' => Money::fromDollars($tipDollars),
-                'total' => Money::fromDollars($totalDollars),
+                'original_subtotal' => $originalSubtotal,
+                'original_discount_amount' => $originalDiscount,
+                'subtotal' => $newSubtotal,
+                'discount_amount' => $newDiscount,
+                'gift_card_amount' => $newGiftCard,
+                'tip_amount' => $tip,
+                'total' => $beforeGiftCard->subtract($newGiftCard)->add($tip),
             ])->save();
 
             Log::info('Order modified', [

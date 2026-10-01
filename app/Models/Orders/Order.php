@@ -67,6 +67,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $delivery_date
  * @property Carbon|null $delivery_time
  * @property Money $subtotal
+ * @property Money|null $original_subtotal
+ * @property Money|null $original_discount_amount
  * @property Money $delivery_fee
  * @property Money $discount_amount
  * @property Money $gift_card_amount
@@ -78,7 +80,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('order_number', 'customer_id', 'catering_inquiry_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'tip_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id', 'pickup_contact_name', 'pickup_contact_phone', 'pickup_contact_email')]
+#[Fillable('order_number', 'customer_id', 'catering_inquiry_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'original_subtotal', 'delivery_fee', 'discount_amount', 'original_discount_amount', 'tip_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id', 'pickup_contact_name', 'pickup_contact_phone', 'pickup_contact_email')]
 #[ObservedBy([OrderObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 #[UseFactory(OrderFactory::class)]
@@ -104,8 +106,10 @@ class Order extends Model
     {
         return [
             'subtotal' => MoneyCentsCast::class,
+            'original_subtotal' => MoneyCentsCast::class,
             'delivery_fee' => MoneyCentsCast::class,
             'discount_amount' => MoneyCentsCast::class,
+            'original_discount_amount' => MoneyCentsCast::class,
             'gift_card_amount' => MoneyCentsCast::class,
             'tip_amount' => MoneyCentsCast::class,
             'total' => MoneyCentsCast::class,
