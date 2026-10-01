@@ -17,6 +17,7 @@
         </div>
     </template>
 </div>
+<x-storefront.order-field-error field="items" />
 
 <div x-show="cartItems.length === 0" class="mb-4 py-8 text-center">
     <div class="mb-3 text-4xl opacity-30">🧺</div>
@@ -45,6 +46,7 @@
         </button>
     </div>
     <div x-show="couponError" class="mt-2 text-sm text-red-400" x-text="couponError"></div>
+    <x-storefront.order-field-error field="coupon_code" />
     <div x-show="appliedCoupon" class="mt-2 text-sm text-green-400">
         ✓ <span x-text="appliedCoupon?.label"></span> applied!
     </div>
@@ -73,6 +75,7 @@
         </button>
     </div>
     <div x-show="giftCardError" class="mt-2 text-sm text-red-400" x-text="giftCardError"></div>
+    <x-storefront.order-field-error field="gift_card_code" />
     <div x-show="appliedGiftCard" class="mt-2 text-sm text-green-400">
         ✓ Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
     </div>
@@ -148,6 +151,7 @@
                 class="border-warm-600/15 text-warm-300 flex-1 rounded-lg border bg-white/[0.03] px-3 py-2 text-sm"
             />
         </div>
+        <x-storefront.order-field-error field="tip_amount" />
     </div>
 </div>
 
