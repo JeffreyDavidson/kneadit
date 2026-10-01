@@ -2,6 +2,7 @@
 
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\WeeklyRevenueChartWidget;
+use App\Models\Financial\Expense;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,4 +42,13 @@ test('leaves out revenue delivered in the following bakery-local week', function
     $chart = weeklyChartData();
 
     expect(array_sum($chart['datasets'][0]['data']))->toBe(0.0);
+});
+
+test('charts each expense as dollars at its business percentage on the right day', function () {
+    Expense::factory()->forDate('2026-10-06')->create(['amount' => 12.50, 'business_percentage' => 100]);
+    Expense::factory()->forDate('2026-10-08')->create(['amount' => 10.00, 'business_percentage' => 50]);
+
+    $chart = weeklyChartData();
+
+    expect($chart['datasets'][1]['data'])->toBe([0.0, 12.5, 0.0, 5.0, 0.0, 0.0, 0.0]);
 });
