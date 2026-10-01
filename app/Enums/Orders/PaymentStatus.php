@@ -18,6 +18,15 @@ enum PaymentStatus: string implements HasColor, HasLabel
         return ucfirst($this->value);
     }
 
+    /** Whether money is still owed, so the order can be marked paid. */
+    public function canBeMarkedPaid(): bool
+    {
+        return match ($this) {
+            self::Unpaid, self::Partial => true,
+            self::Paid, self::Cancelled, self::Refunded => false,
+        };
+    }
+
     public function getColor(): string
     {
         return match ($this) {

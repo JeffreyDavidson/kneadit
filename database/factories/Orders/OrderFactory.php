@@ -100,6 +100,14 @@ class OrderFactory extends Factory
     }
 
     /**
+     * Order has a deposit paid but the balance is outstanding.
+     */
+    public function partiallyPaid(): static
+    {
+        return $this->state(fn (array $attributes) => ['payment_status' => PaymentStatus::Partial]);
+    }
+
+    /**
      * Order has been paid.
      */
     public function paid(): static
