@@ -2,36 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Mail\Marketing;
+namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
-use App\Mail\Concerns\BakerBranded;
-use App\Mail\Concerns\MarketingMail;
-use App\Mail\Concerns\SendsMarketingMail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class CustomerBlastMail extends BaseMailable implements MarketingMail
+class PlatformCampaignMail extends BaseMailable
 {
-    use BakerBranded;
-    use SendsMarketingMail;
-
     public function __construct(
         public string $campaignSubject,
         public string $campaignBody,
-        public string $recipientUnsubscribeUrl,
     ) {}
-
-    public function unsubscribeUrl(): string
-    {
-        return $this->recipientUnsubscribeUrl;
-    }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: $this->bakerFrom(),
-            replyTo: array_filter([$this->bakerReplyTo()]),
             subject: $this->campaignSubject,
         );
     }
@@ -39,9 +25,10 @@ class CustomerBlastMail extends BaseMailable implements MarketingMail
     public function content(): Content
     {
         return new Content(
-            view: 'emails.marketing.customer-blast',
+            view: 'emails.platform.campaign',
             with: [
                 'body' => $this->campaignBody,
+                'emailSubject' => $this->campaignSubject,
             ],
         );
     }

@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Resources\CateringInquiries\Schemas\CateringInquiryForm;
-use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\Orders\Schemas\OrderForm;
@@ -18,18 +17,6 @@ test('catering inquiry form configure returns schema', function () {
 
 test('catering inquiry form schema has components', function () {
     $schema = CateringInquiryForm::configure(Schema::make());
-
-    expect($schema->getComponents())->not->toBeEmpty();
-});
-
-test('tenant email campaign form configure returns schema', function () {
-    $schema = EmailCampaignForm::configure(Schema::make());
-
-    expect($schema)->toBeInstanceOf(Schema::class);
-});
-
-test('tenant email campaign form schema has components', function () {
-    $schema = EmailCampaignForm::configure(Schema::make());
 
     expect($schema->getComponents())->not->toBeEmpty();
 });

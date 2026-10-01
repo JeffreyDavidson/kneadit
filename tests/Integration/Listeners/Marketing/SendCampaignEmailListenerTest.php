@@ -2,7 +2,7 @@
 
 use App\Events\Marketing\CampaignEmailQueued;
 use App\Listeners\Marketing\SendCampaignEmailListener;
-use App\Mail\Marketing\CustomerBlastMail;
+use App\Mail\Platform\PlatformCampaignMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -14,12 +14,12 @@ beforeEach(fn () => setUpTenantTest());
 test('it sends campaign email to the recipient', function () {
     Mail::fake();
 
-    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts this week.</p>', 'https://example.test/unsubscribe');
+    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts this week.</p>');
 
     $listener = new SendCampaignEmailListener;
     $listener->handle($event);
 
-    Mail::assertQueued(CustomerBlastMail::class, fn (CustomerBlastMail $mail) => $mail->hasTo('subscriber@example.com'));
+    Mail::assertQueued(PlatformCampaignMail::class, fn (PlatformCampaignMail $mail) => $mail->hasTo('subscriber@example.com'));
 });
 
 test('failed method logs a warning with email and error message', function () {
@@ -29,7 +29,7 @@ test('failed method logs a warning with email and error message', function () {
             && $context['email'] === 'subscriber@example.com'
             && $context['error'] === 'SMTP timeout');
 
-    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts.</p>', 'https://example.test/unsubscribe');
+    $event = new CampaignEmailQueued('subscriber@example.com', 'Spring Sale!', '<p>Big discounts.</p>');
 
     $listener = new SendCampaignEmailListener;
     $listener->failed($event, new RuntimeException('SMTP timeout'));

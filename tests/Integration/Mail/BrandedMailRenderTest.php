@@ -5,7 +5,6 @@ use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Customers\ReviewRequestMail;
 use App\Mail\Marketing\CateringQuoteMail;
-use App\Mail\Marketing\CustomerBlastMail;
 use App\Mail\Orders\NewOrderMessageMail;
 use App\Mail\Orders\PurchaseOrderMail;
 use App\Mail\Platform\StaffInvitationMail;
@@ -30,12 +29,6 @@ beforeEach(function () {
         'brand_color_primary' => '#d4920c',
         'brand_color_secondary' => '#1c1410',
     ]);
-});
-
-test('CustomerBlast has dynamic subject', function () {
-    $mail = new CustomerBlastMail('Spring Sale!', '<p>20% off</p>', 'https://example.test/unsubscribe');
-
-    expect($mail->envelope()->subject)->toBe('Spring Sale!');
 });
 
 test('RepeatOrderReminder has correct subject', function () {

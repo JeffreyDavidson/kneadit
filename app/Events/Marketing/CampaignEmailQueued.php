@@ -15,6 +15,5 @@ class CampaignEmailQueued implements ShouldDispatchAfterCommit
         public readonly string $email,
         public readonly string $subject,
         public readonly string $body,
-        public readonly string $unsubscribeUrl,
     ) {}
 }

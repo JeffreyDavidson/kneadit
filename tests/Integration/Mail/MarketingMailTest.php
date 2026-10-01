@@ -13,7 +13,6 @@ use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Customers\ReviewRequestMail;
 use App\Mail\Marketing\CateringQuoteMail;
-use App\Mail\Marketing\CustomerBlastMail;
 use App\Mail\Orders\NewOrderMessageMail;
 use App\Mail\Orders\OrderModifiedMail;
 use App\Mail\Orders\OrderPlacedMail;
@@ -44,7 +43,6 @@ beforeEach(function () {
 dataset('marketing mailables', [
     'customer campaign' => [fn (Customer $customer) => new CustomerCampaignMail(CustomerCampaign::factory()->create(), $customer, 'TRACKINGTOKEN')],
     'bulk customer message' => [fn (Customer $customer) => new BulkCustomerMessageMail($customer, 'Hello', 'A note for you')],
-    'customer blast' => [fn (Customer $customer) => new CustomerBlastMail('Sale', '<p>20% off</p>', resolve(MarketingUnsubscribeLinks::class)->unsubscribe($customer))],
     'happy birthday' => [fn (Customer $customer) => new HappyBirthdayMail($customer)],
     'repeat order reminder' => [fn (Customer $customer) => new RepeatOrderReminderMail($customer, 30)],
     'abandoned cart recovery' => [fn (Customer $customer) => new AbandonedCartRecoveryMail(Cart::factory()->withEmail($customer->email)->create(), $customer)],

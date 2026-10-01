@@ -107,6 +107,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 - **Orders:** carts, checkout, capacity and stock validation, discounts, fulfillment, order messaging, tracking, invoices, payment state, and refunds.
 - **Inventory and production:** products, categories, ingredients, recipes, suppliers, stock adjustments, waitlists, seasonal items, and production planning.
 - **Customers and engagement:** customer profiles, favorites, notes, referrals, loyalty, campaigns, surveys, reviews, reminders, contact messages, and catering inquiries.
+  Email campaigns have two separate paths. Bakeries email their own customers with customer campaigns (`CustomerCampaign` and `SendCustomerCampaign`, stored in the tenant database and managed in the bakery-admin panel). Platform email campaigns (`EmailCampaign`, stored centrally and managed only in the central panel) go to bakers: `SendEmailCampaign` picks the bakeries in the campaign's segment (All, Starter, Growth, Pro, Trial or Inactive), emails each bakery's owner address (`tenants.email`) once using `PlatformCampaignMail`, and records the unique count as `recipient_count`. It never enters a tenant database and throws `PlatformCampaignContextException` if called inside a tenant context.
 - **Financial:** income, expenses, coupons, gift cards, refunds, reporting, tax export, Stripe, and PayPal.
 - **Operations and staff:** schedules, blocked dates, holidays, capacity, check-ins, staff invitations and roles, activity logs, and webhook delivery.
 - **Analytics:** page and product-impression records use a keyed, pseudonymous visitor identifier. Raw network/device identifiers are not persisted, recording failures are reported without breaking storefront responses, and scheduled tenant-wide retention bounds stored history.
@@ -213,7 +214,7 @@ Customers can opt out of marketing email. `customers.marketing_opted_out_at` (nu
 
 **Marketing mails** (a message the customer did not specifically ask for) implement `MarketingMail` and use `SendsMarketingMail`:
 
-- `CustomerCampaignMail` (customer campaigns), `BulkCustomerMessageMail` (the Customers "Send message" bulk action) and `CustomerBlastMail` (the email-campaign blast).
+- `CustomerCampaignMail` (customer campaigns) and `BulkCustomerMessageMail` (the Customers "Send message" bulk action).
 - The automated engagements: `HappyBirthdayMail`, `RepeatOrderReminderMail`, `ReviewRequestMail`, and `AbandonedCartRecoveryMail`.
 
 **Transactional mails** are never suppressed and carry no unsubscribe link: order placed, status, modified and messages, order tracking links, catering quotes, product-available alerts (the customer asked to be told), referral rewards (earned) and contact-message replies. Staff, supplier and platform notifications are not customer marketing either. For a new customer-facing mail, decide by asking whether the customer requested that specific message.
@@ -222,7 +223,7 @@ Every marketing mail sends `List-Unsubscribe` and `List-Unsubscribe-Post: List-U
 
 `EmailUnsubscribesController` serves the link (routes in `routes/tenant/access.php`, outside the storefront-enabled check): `GET` shows a confirmation page, `POST` unsubscribes immediately and is CSRF-exempt because mail providers post without a token (the signature is the protection), and `DELETE` re-subscribes from the confirmation page.
 
-Senders skip opted-out customers in the query (`CustomerQueryBuilder::subscribedToMarketing()`), so recorded recipient counts exclude them: `ResolveCampaignRecipients`, `SendBulkCustomerMessage`, the three engagement recipient finders, `SendEmailCampaign` and `SendAbandonedCartRecoveryCommand`. The birthday, repeat-order and review-request listeners re-check just before sending. Abandoned-cart recovery only mails carts whose email matches an existing customer, because the opt-out lives on the customer record.
+Senders skip opted-out customers in the query (`CustomerQueryBuilder::subscribedToMarketing()`), so recorded recipient counts exclude them: `ResolveCampaignRecipients`, `SendBulkCustomerMessage`, the three engagement recipient finders and `SendAbandonedCartRecoveryCommand`. Platform email campaigns go to bakery owners, not customers, so they are not customer marketing. The birthday, repeat-order and review-request listeners re-check just before sending. Abandoned-cart recovery only mails carts whose email matches an existing customer, because the opt-out lives on the customer record.
 
 ## Frontend
 

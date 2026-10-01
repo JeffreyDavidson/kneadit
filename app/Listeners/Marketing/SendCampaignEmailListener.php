@@ -4,7 +4,7 @@ namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\CampaignEmailQueued;
 use App\Listeners\SendEmailListener;
-use App\Mail\Marketing\CustomerBlastMail;
+use App\Mail\Platform\PlatformCampaignMail;
 use Illuminate\Contracts\Mail\Mailable;
 
 class SendCampaignEmailListener extends SendEmailListener
@@ -18,7 +18,7 @@ class SendCampaignEmailListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var CampaignEmailQueued $event */
-        return new CustomerBlastMail($event->subject, $event->body, $event->unsubscribeUrl);
+        return new PlatformCampaignMail($event->subject, $event->body);
     }
 
     /** @return array<string, mixed> */
