@@ -2,36 +2,28 @@
 
 namespace App\Http\Controllers\Tenant\Orders;
 
-use App\Enums\Orders\OrderStatus;
+use App\Actions\Orders\SendOrderTrackingLink;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\TrackOrderRequest;
-use App\Models\Orders\Order;
-use App\Presenters\OrderTrackingPresenter;
-use App\Services\Orders\OrderAccessGuard;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class TrackingController extends Controller
 {
-    public function store(TrackOrderRequest $request, TenantSettings $settings): View
+    private const string DEFAULT_LINK_SENT_MESSAGE = "If we have orders for that email, we've sent you a link to view them.";
+
+    /**
+     * Email the customer a temporary link to their orders. The response is the
+     * same whether or not the address has orders, and no order data is shown.
+     */
+    public function store(TrackOrderRequest $request, SendOrderTrackingLink $sendTrackingLink): RedirectResponse
     {
-        $email = $request->string('email')->toString();
-        $orders = Order::query()->forCustomerEmail($email)->get();
-        $trackableStatuses = OrderStatus::trackableStatuses();
+        $sendTrackingLink($request->string('email')->toString());
 
-        // Successful email lookup proves ownership of every returned order
-        // for the duration of this session.
-        $orders->each(fn (Order $order) => OrderAccessGuard::grant($order));
-
-        return view('tenant.storefront.order-tracking', [
-            'settings' => $settings,
-            'storefrontTheme' => $settings->branding->storefrontTheme,
-            'orders' => $orders,
-            'email' => $email,
-            'content' => settingsPageContent('order_tracking'),
-            'trackableStatuses' => $trackableStatuses,
-            'trackedOrders' => $orders->map(fn (Order $o): OrderTrackingPresenter => OrderTrackingPresenter::for($o)),
-        ]);
+        return redirect()
+            ->route('order.track')
+            ->with('status', settingsPageContent('order_tracking')['link_sent_message'] ?? self::DEFAULT_LINK_SENT_MESSAGE);
     }
 
     public function show(TenantSettings $settings): View

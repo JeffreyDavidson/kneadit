@@ -377,9 +377,10 @@ class SettingSeeder extends Seeder
                 'order_tracking' => [
                     'hero_eyebrow' => 'Order Status',
                     'hero_title' => 'Track Your Order',
-                    'hero_subtitle' => 'Enter your email to see how your order is coming along.',
+                    'hero_subtitle' => "Enter your email and we'll send you a link to see how your order is coming along.",
                     'email_label' => 'Email Address',
-                    'lookup_button' => 'Look Up',
+                    'lookup_button' => 'Email Me a Link',
+                    'link_sent_message' => "If we have orders for that email, we've sent you a link to view them.",
                     'empty_heading' => 'No orders found',
                     'empty_description_prefix' => "We couldn't find any orders for",
                     'empty_hint' => "Make sure you're using the same email you ordered with.",
