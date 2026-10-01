@@ -20,6 +20,7 @@
 - Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.
 - Squash merge feature, fix, refactor, chore, docs, and test branches into `develop` through pull requests.
 - Squash merge `hotfix/` branches into `main`; merge `release/` branches into `main` with regular merge commits. Do not rebase-merge pull requests.
+- The release profile read by the `release` agent skill is in [docs/operations.md](docs/operations.md#release-profile).
 - Before merging, verify the pull request's head branch, base branch, and merge method.
 - Every new commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type: description`, with an optional scope (`type(scope): description`) and optional breaking-change marker (`type(scope)!: description`).
 - Use lowercase types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Use `feat` for new features and `fix` for bug fixes; branch prefixes such as `feature/`, `hotfix/`, and `release/` are not commit types.
