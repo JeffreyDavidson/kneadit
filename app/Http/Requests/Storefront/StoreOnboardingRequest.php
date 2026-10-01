@@ -3,12 +3,23 @@
 namespace App\Http\Requests\Storefront;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreOnboardingRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (! is_string($this->input('subdomain'))) {
+            return;
+        }
+
+        $this->merge(['subdomain' => Str::lower(trim($this->input('subdomain')))]);
     }
 
     /**
@@ -18,9 +29,26 @@ class StoreOnboardingRequest extends FormRequest
     {
         return [
             'store_name' => ['required', 'string', 'max:255'],
-            'subdomain' => ['required', 'string', 'max:63', 'alpha_dash', 'not_in:www,mail,admin,api,app,blog,cdn,dev,ftp,help,imap,login,mx,ns,pop,smtp,staging,status,support,test,webmail', 'unique:domains,domain'],
+            'subdomain' => [
+                'required',
+                'string',
+                'regex:/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/',
+                Rule::notIn(config()->array('kneadit.reserved_subdomains')),
+                'unique:domains,domain',
+                'unique:tenants,id',
+            ],
             'storefront_choice' => ['required', 'in:kneadit,own'],
             'external_website' => ['required_if:storefront_choice,own', 'nullable', 'url', 'max:255'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'subdomain.regex' => 'Use lowercase letters, numbers and hyphens, starting and ending with a letter or number.',
         ];
     }
 
