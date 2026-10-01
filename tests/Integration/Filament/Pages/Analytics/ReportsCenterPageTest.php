@@ -1,6 +1,8 @@
 <?php
 
 use App\Filament\Pages\Analytics\ReportsCenter;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
@@ -129,4 +131,40 @@ test('mount defaults the report range and year to the bakery-local date', functi
     expect(test()->page->startDate)->toBe('2026-12-01')
         ->and(test()->page->endDate)->toBe('2026-12-31')
         ->and(test()->page->selectedYear)->toBe(2026);
+});
+
+test('the customers report covers the bakery-local days of the selected range', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Customer::factory()->create(['created_at' => '2026-10-06 00:30:00']);
+    test()->page->mount();
+    test()->page->startDate = '2026-10-05';
+    test()->page->endDate = '2026-10-05';
+
+    test()->page->generateReport('customers');
+    $onTheDay = test()->page->reportData['newCustomers'];
+    test()->page->startDate = '2026-10-06';
+    test()->page->endDate = '2026-10-06';
+    test()->page->generateReport('customers');
+    $nextDay = test()->page->reportData['newCustomers'];
+
+    expect($onTheDay)->toBe(1)
+        ->and($nextDay)->toBe(0);
+});
+
+test('the sales report keeps delivery dates on the selected bakery-local days', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Order::factory()->paid()->create(['delivery_date' => '2026-10-05', 'total' => 40]);
+    test()->page->mount();
+    test()->page->startDate = '2026-10-05';
+    test()->page->endDate = '2026-10-05';
+
+    test()->page->generateReport('sales');
+    $onTheDay = test()->page->reportData['totalOrders'];
+    test()->page->startDate = '2026-10-06';
+    test()->page->endDate = '2026-10-06';
+    test()->page->generateReport('sales');
+    $nextDay = test()->page->reportData['totalOrders'];
+
+    expect($onTheDay)->toBe(1)
+        ->and($nextDay)->toBe(0);
 });
