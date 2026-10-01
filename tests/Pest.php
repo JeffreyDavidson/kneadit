@@ -884,3 +884,21 @@ function makeTenantSettings(
         ),
     );
 }
+
+/**
+ * The storefront order form only checks a date against the availability list
+ * once it has loaded, so browser tests wait for the list before picking a
+ * date. Any non-empty value means the fetch finished. assertScript() retries
+ * until the script returns true.
+ */
+function waitForOrderFormAvailability(mixed $page): void
+{
+    $page->assertScript(<<<'JS'
+        function () {
+            const form = Alpine.$data(document.querySelector('[data-test="order-form"]'));
+            const list = form.availabilityData;
+
+            return Array.isArray(list) ? list.length > 0 : Object.keys(list).length > 0;
+        }
+    JS);
+}

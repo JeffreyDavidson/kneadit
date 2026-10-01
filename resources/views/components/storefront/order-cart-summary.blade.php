@@ -36,6 +36,7 @@
             class="order-input flex-1"
         />
         <button type="button"
+                                    data-test="order-form-coupon-apply"
                                     @click="applyCoupon()"
                                     :disabled="! couponCode || isApplyingCoupon"
                                     class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
@@ -62,6 +63,7 @@
         />
         <button
             type="button"
+            data-test="order-form-gift-card-apply"
             @click="applyGiftCard()"
             :disabled="! giftCardCode || isApplyingGiftCard"
             class="bg-warm-500/15 text-warm-400 border-warm-500/30 rounded-xl border px-4 py-2 text-sm font-semibold transition-all"

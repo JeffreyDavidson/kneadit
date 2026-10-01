@@ -61,8 +61,8 @@
                 if (params.has('reorder')) {
                     fetch(`/order/reorder/${params.get('reorder')}`)
                         .then((r) => r.json())
-                        .then((data) => {
-                            this.cartItems = data.items.map((item) => ({
+                        .then((payload) => {
+                            this.cartItems = payload.data.items.map((item) => ({
                                 id: item.product_id,
                                 name: item.product_name,
                                 price: parseFloat(item.price),
@@ -76,7 +76,8 @@
             async loadAvailability() {
                 try {
                     const response = await fetch('/availability');
-                    this.availabilityData = await response.json();
+                    const payload = await response.json();
+                    this.availabilityData = payload.data;
                     this.unavailableDates = this.availabilityData.filter((d) => !d.available).map((d) => d.date);
                 } catch (e) {
                     console.error('Failed to load availability', e);
@@ -239,7 +240,7 @@
 
             calculateDiscount() {
                 if (this.appliedCoupon) {
-                    this.discountAmount = this.appliedCoupon.discount || 0;
+                    this.discountAmount = this.appliedCoupon.discount_amount || 0;
                 } else {
                     this.discountAmount = 0;
                 }
@@ -308,6 +309,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            Accept: 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({
@@ -315,13 +317,13 @@
                             subtotal: this.subtotal,
                         }),
                     });
-                    const data = await response.json();
-                    if (data.success) {
-                        this.appliedGiftCard = data;
+                    const payload = await response.json();
+                    if (response.ok) {
+                        this.appliedGiftCard = payload.data;
                         this.giftCardError = '';
                         this.calculateTotals();
                     } else {
-                        this.giftCardError = data.error || 'Invalid gift card';
+                        this.giftCardError = payload.message || 'Invalid gift card';
                         this.appliedGiftCard = null;
                         this.calculateTotals();
                     }
@@ -341,6 +343,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            Accept: 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({
@@ -348,13 +351,13 @@
                             subtotal: this.subtotal,
                         }),
                     });
-                    const data = await response.json();
-                    if (data.success) {
-                        this.appliedCoupon = data;
+                    const payload = await response.json();
+                    if (response.ok) {
+                        this.appliedCoupon = payload.data;
                         this.couponError = '';
                         this.calculateTotals();
                     } else {
-                        this.couponError = data.error || 'Invalid coupon';
+                        this.couponError = payload.message || 'Invalid coupon';
                         this.appliedCoupon = null;
                     }
                 } catch (error) {
@@ -404,11 +407,12 @@
 
                 try {
                     const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
-                    const data = await response.json();
-                    if (!data.available) {
+                    const payload = await response.json();
+                    const capacity = payload.data;
+                    if (!capacity.available) {
                         this.capacityError = 'This date is fully booked. Please choose another date.';
-                    } else if (data.usage_percent > 80) {
-                        this.capacityWarning = `This date is ${Math.round(data.usage_percent)}% full (${data.remaining} slots remaining).`;
+                    } else if (capacity.usage_percent > 80) {
+                        this.capacityWarning = `This date is ${Math.round(capacity.usage_percent)}% full (${capacity.remaining} slots remaining).`;
                     }
                 } catch (error) {
                     console.error('Error checking capacity:', error);
