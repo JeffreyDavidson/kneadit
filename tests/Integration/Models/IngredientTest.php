@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Inventory\AdjustIngredientStock;
+use App\Enums\Inventory\MeasurementUnit;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Inventory\StockStatus;
 use App\Exceptions\Inventory\StockWouldGoNegativeException;
@@ -111,3 +112,13 @@ test('cost per unit is stored correctly', function () {
 
     expect($ingredient->cost_per_unit->dollars())->toBe(12.75);
 });
+
+test('measurement unit resolves the stock unit to an enum and tolerates unknown values', function (string $unit, ?MeasurementUnit $expected) {
+    $ingredient = Ingredient::factory()->make(['unit' => $unit]);
+
+    expect($ingredient->measurement_unit)->toBe($expected)
+        ->and($ingredient->unit)->toBe($unit);
+})->with([
+    'known unit' => ['kg', MeasurementUnit::Kilograms],
+    'legacy unit' => ['liters', null],
+]);

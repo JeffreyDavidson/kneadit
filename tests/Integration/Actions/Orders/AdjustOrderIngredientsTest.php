@@ -8,6 +8,7 @@ use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -75,3 +76,60 @@ test('rejects adjustment types that are not usage or restock without touching st
     'adjustment' => StockAdjustmentType::Adjustment,
     'waste' => StockAdjustmentType::Waste,
 ]);
+
+test('usage and restock convert the recipe unit into the ingredient stock unit', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 500, 'unit' => 'g']);
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2]);
+    $adjust = resolve(AdjustOrderIngredients::class);
+
+    $adjust($order, StockAdjustmentType::Usage);
+    $afterUsage = $flour->fresh()->current_stock;
+    $adjust($order, StockAdjustmentType::Restock);
+    $afterRestock = $flour->fresh()->current_stock;
+
+    expect($afterUsage)->toBe('9.00')
+        ->and($afterRestock)->toBe('10.00');
+    assertDatabaseHas('stock_adjustments', [
+        'ingredient_id' => $flour->id,
+        'quantity' => -1.00,
+        'type' => 'usage',
+    ]);
+});
+
+test('usage rounds the converted quantity to the stock column precision', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'lbs', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 100, 'unit' => 'g']);
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 1]);
+
+    resolve(AdjustOrderIngredients::class)($order, StockAdjustmentType::Usage);
+
+    expect($flour->fresh()->current_stock)->toBe('9.78');
+});
+
+test('usage skips a line whose unit cannot be converted and logs a warning', function () {
+    $logger = Log::spy();
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create(['name' => 'Country Loaf']);
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'lbs', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2, 'unit' => 'cups']);
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2]);
+
+    resolve(AdjustOrderIngredients::class)($order, StockAdjustmentType::Usage);
+
+    expect($flour->fresh()->current_stock)->toBe('10.00');
+    assertDatabaseCount('stock_adjustments', 0);
+    $logger->shouldHaveReceived('warning')
+        ->withArgs(fn (string $message, array $context): bool => $context['recipe'] === 'Country Loaf'
+            && $context['ingredient'] === 'Flour'
+            && $context['recipe_unit'] === 'cups'
+            && $context['stock_unit'] === 'lbs')
+        ->once();
+});

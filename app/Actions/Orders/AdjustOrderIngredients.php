@@ -5,6 +5,7 @@ namespace App\Actions\Orders;
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Models\Orders\Order;
+use App\Services\Inventory\RecipeLineConverter;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -12,6 +13,7 @@ class AdjustOrderIngredients
 {
     public function __construct(
         private readonly AdjustIngredientStock $adjustStock,
+        private readonly RecipeLineConverter $converter,
     ) {}
 
     public function __invoke(Order $order, StockAdjustmentType $type): void
@@ -43,9 +45,14 @@ class AdjustOrderIngredients
 
                 foreach ($product->recipes as $recipe) {
                     foreach ($recipe->inventoryIngredients as $ingredient) {
-                        /** @var object{quantity: string, unit: string} $pivot */
-                        $pivot = $ingredient->pivot;
-                        $quantity = $direction * (float) $pivot->quantity * $orderItem->quantity;
+                        $perUnit = $this->converter->inStockUnit($recipe, $ingredient);
+
+                        if ($perUnit === null) {
+                            continue;
+                        }
+
+                        // The stock column is decimal(10,2), so round the converted amount at write.
+                        $quantity = round($direction * $perUnit * $orderItem->quantity, 2);
 
                         ($this->adjustStock)($ingredient, $quantity, $type, $notes);
                     }

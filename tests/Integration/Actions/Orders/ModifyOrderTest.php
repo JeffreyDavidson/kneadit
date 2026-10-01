@@ -148,7 +148,7 @@ test('throws InsufficientStockException when modification exceeds ingredient sto
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 10.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->unpaid()->create();
     $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00]);
@@ -166,7 +166,7 @@ test('rolls back item-quantity changes when stock check fails', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $sugar = Ingredient::factory()->create(['name' => 'Sugar', 'current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->unpaid()->create();
     $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 3, 'unit_price' => 10.00]);
@@ -187,8 +187,8 @@ test('reports every shortage when several ingredients fall short', function () {
     $recipe = Recipe::factory()->for($product)->create();
     $butter = Ingredient::factory()->create(['name' => 'Butter', 'current_stock' => 2.00]);
     $eggs = Ingredient::factory()->create(['name' => 'Eggs', 'current_stock' => 4.00]);
-    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
-    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 2.0, 'unit' => 'each']);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'kg']);
+    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->unpaid()->create();
     $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 1, 'unit_price' => 10.00]);
@@ -202,7 +202,7 @@ test('allows modification when stock is sufficient', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 100.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->unpaid()->create();
     $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00]);
@@ -218,7 +218,7 @@ test('allows decreasing quantity even when current order draw exceeds stock', fu
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 4.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->unpaid()->create();
     $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 5, 'unit_price' => 10.00]);

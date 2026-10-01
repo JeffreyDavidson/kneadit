@@ -11,6 +11,7 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 pest()->use(RefreshDatabase::class);
@@ -95,7 +96,7 @@ test('throws InsufficientStockException when projected ingredient draw exceeds s
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     expect(fn () => resolve(CreateOrder::class)(
         CreateOrderData::fromArray([
@@ -110,11 +111,55 @@ test('throws InsufficientStockException when projected ingredient draw exceeds s
     ))->toThrow(InsufficientStockException::class, 'Flour');
 });
 
+test('places an order when the recipe unit differs from the ingredient stock unit but the stock covers it', function () {
+    $product = Product::factory()->create(['price' => 10.00]);
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 500, 'unit' => 'g']);
+
+    $order = resolve(CreateOrder::class)(
+        CreateOrderData::fromArray([
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_date' => now()->addDays(5)->toDateString(),
+            'delivery_type' => DeliveryType::Pickup->value,
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 2],
+            ],
+        ])
+    );
+
+    expect($order)->not->toBeNull();
+});
+
+test('does not block an order over a recipe line with incompatible units', function () {
+    $logger = Log::spy();
+    $product = Product::factory()->create(['price' => 10.00]);
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'lbs', 'current_stock' => 1.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 500, 'unit' => 'cups']);
+
+    $order = resolve(CreateOrder::class)(
+        CreateOrderData::fromArray([
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_date' => now()->addDays(5)->toDateString(),
+            'delivery_type' => DeliveryType::Pickup->value,
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 2],
+            ],
+        ])
+    );
+
+    expect($order)->not->toBeNull();
+    $logger->shouldHaveReceived('warning')->once();
+});
+
 test('rolls back the entire order pipeline when stock check fails', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->create();
     $sugar = Ingredient::factory()->create(['name' => 'Sugar', 'current_stock' => 1.00]);
-    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $orderCountBefore = Order::query()->count();
 
@@ -141,7 +186,7 @@ test('allows placement when stock is sufficient', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $recipe = Recipe::factory()->for($product)->create();
     $butter = Ingredient::factory()->create(['name' => 'Butter', 'current_stock' => 100.00]);
-    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = resolve(CreateOrder::class)(
         CreateOrderData::fromArray([

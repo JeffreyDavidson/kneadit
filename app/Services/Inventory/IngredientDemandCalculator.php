@@ -6,8 +6,10 @@ namespace App\Services\Inventory;
 
 use App\DataTransferObjects\Inventory\IngredientDemandItem;
 
-final class IngredientDemandCalculator
+final readonly class IngredientDemandCalculator
 {
+    public function __construct(private RecipeLineConverter $converter) {}
+
     /**
      * @param  iterable<IngredientDemandItem>  $items
      * @return list<string>
@@ -19,9 +21,13 @@ final class IngredientDemandCalculator
         foreach ($items as $item) {
             foreach ($item->product->recipes as $recipe) {
                 foreach ($recipe->inventoryIngredients as $ingredient) {
-                    /** @var object{quantity: string, unit: string} $pivot */
-                    $pivot = $ingredient->pivot;
-                    $draw = (float) $pivot->quantity * $item->quantity;
+                    $perUnit = $this->converter->inStockUnit($recipe, $ingredient);
+
+                    if ($perUnit === null) {
+                        continue;
+                    }
+
+                    $draw = $perUnit * $item->quantity;
                     $existing = $byIngredientId[$ingredient->id] ?? null;
 
                     $byIngredientId[$ingredient->id] = [
@@ -36,7 +42,8 @@ final class IngredientDemandCalculator
         $shortages = [];
 
         foreach ($byIngredientId as $row) {
-            if ($row['demand'] > $row['available']) {
+            // Stock is held to 2 decimals, so demand is compared at that precision too.
+            if (round($row['demand'], 2) > $row['available']) {
                 $shortages[] = $row['name'];
             }
         }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Ingredients\Schemas;
 
 use App\Enums\Inventory\Allergen;
+use App\Enums\Inventory\MeasurementUnit;
 use App\Filament\Forms\Components\MoneyInput;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
@@ -32,19 +33,7 @@ class IngredientForm
 
                                 Select::make('unit')
                                     ->required()
-                                    ->options([
-                                        'oz' => 'Ounces (oz)',
-                                        'lbs' => 'Pounds (lbs)',
-                                        'g' => 'Grams (g)',
-                                        'kg' => 'Kilograms (kg)',
-                                        'cups' => 'Cups',
-                                        'tbsp' => 'Tablespoons',
-                                        'tsp' => 'Teaspoons',
-                                        'ml' => 'Milliliters (ml)',
-                                        'l' => 'Liters (l)',
-                                        'each' => 'Each',
-                                        'dozen' => 'Dozen',
-                                    ])
+                                    ->options(MeasurementUnit::class)
                                     ->searchable(),
                             ]),
 

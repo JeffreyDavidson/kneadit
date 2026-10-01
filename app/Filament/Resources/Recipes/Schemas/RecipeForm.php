@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Recipes\Schemas;
 
+use App\Enums\Inventory\MeasurementUnit;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
@@ -12,7 +13,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class RecipeForm
 {
@@ -96,6 +99,8 @@ class RecipeForm
                                     ->pluck('name', 'id')
                                     ->all())
                                 ->searchable()
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set, ?string $state): mixed => $set('unit', Ingredient::query()->find($state)?->measurement_unit?->value))
                                 ->required(),
 
                             TextInput::make('quantity')
@@ -104,7 +109,10 @@ class RecipeForm
                                 ->step(0.01),
 
                             Select::make('unit')
-                                ->options(self::measurementUnits())
+                                ->options(fn (Get $get): array => self::unitOptions($get('ingredient_id')))
+                                ->hint(fn (Get $get): ?string => self::unitHint($get('ingredient_id'), $get('unit')))
+                                ->hintColor('warning')
+                                ->hintIcon(Heroicon::ExclamationTriangle)
                                 ->required(),
                         ]),
                     ])
@@ -126,21 +134,27 @@ class RecipeForm
             ]);
     }
 
-    /** @return array<string, string> */
-    private static function measurementUnits(): array
+    /**
+     * The units a linked line can use: only those in the stock unit's dimension, since
+     * cups of flour can't be converted to a stock held in pounds without a density.
+     *
+     * @return array<string, string>
+     */
+    public static function unitOptions(mixed $ingredientId): array
     {
-        return [
-            'oz' => 'oz',
-            'lbs' => 'lbs',
-            'g' => 'g',
-            'kg' => 'kg',
-            'cups' => 'cups',
-            'tbsp' => 'tbsp',
-            'tsp' => 'tsp',
-            'ml' => 'ml',
-            'l' => 'l',
-            'each' => 'each',
-            'dozen' => 'dozen',
-        ];
+        if (blank($ingredientId)) {
+            return MeasurementUnit::options();
+        }
+
+        return MeasurementUnit::options(Ingredient::query()->whereKey($ingredientId)->first()?->measurement_unit?->dimension());
+    }
+
+    private static function unitHint(mixed $ingredientId, mixed $unit): ?string
+    {
+        if (! is_string($unit) || array_key_exists($unit, self::unitOptions($ingredientId))) {
+            return null;
+        }
+
+        return 'This unit can\'t be converted to the ingredient\'s stock unit, so the line is skipped when stock is checked and deducted. Pick another unit.';
     }
 }

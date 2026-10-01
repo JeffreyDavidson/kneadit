@@ -1,7 +1,11 @@
 <?php
 
+use App\Enums\Inventory\MeasurementUnit;
+use App\Enums\Inventory\UnitDimension;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\RecipeResource;
+use App\Filament\Resources\Recipes\Schemas\RecipeForm;
+use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Recipe;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
@@ -133,4 +137,33 @@ test('global search eloquent query eager loads product', function () {
     $query = RecipeResource::getGlobalSearchEloquentQuery();
 
     expect($query->getEagerLoads())->toHaveKey('product');
+});
+
+test('linked ingredient lines reject a unit from another dimension', function (string $stockUnit, string $recipeUnit) {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create(['unit' => $stockUnit]);
+
+    livewire(ListRecipes::class)
+        ->callAction(TestAction::make('edit')->table($recipe), data: [
+            'name' => $recipe->name,
+            'prep_time_minutes' => $recipe->prep_time_minutes,
+            'inventoryIngredients' => [
+                ['ingredient_id' => $ingredient->id, 'quantity' => 1, 'unit' => $recipeUnit],
+            ],
+        ])
+        ->assertHasFormErrors(['inventoryIngredients.0.unit']);
+
+    expect($recipe->inventoryIngredients()->count())->toBe(0);
+})->with([
+    'volume unit for an ingredient stocked in kg' => ['kg', 'cups'],
+    'mass unit for an ingredient stocked in ml' => ['ml', 'g'],
+    'count unit for an ingredient stocked in lbs' => ['lbs', 'each'],
+]);
+
+test('the unit options follow the dimension of the selected ingredient', function () {
+    $ingredient = Ingredient::factory()->create(['unit' => 'kg']);
+
+    expect(RecipeForm::unitOptions($ingredient->id))
+        ->toBe(MeasurementUnit::options(UnitDimension::Mass))
+        ->and(RecipeForm::unitOptions(null))->toBe(MeasurementUnit::options());
 });
