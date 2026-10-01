@@ -28,6 +28,12 @@ class PlatformOperations extends Page
     #[\Override]
     protected static ?int $navigationSort = 50;
 
+    /**
+     * Commands that otherwise wait for each bakery's local send time; an admin
+     * pressing "Run Now" means now, so they run with --force.
+     */
+    private const array BAKERY_LOCAL_SENDS = ['digest:weekly'];
+
     #[\Override]
     protected string $view = 'filament.central.pages.platform-operations';
 
@@ -72,7 +78,7 @@ class PlatformOperations extends Page
             [
                 'key' => 'digest:weekly',
                 'label' => 'Weekly Digest',
-                'description' => 'Send weekly digest email to all bakery owners.',
+                'description' => 'Send weekly digest email to all bakery owners, now rather than waiting for each bakery\'s Monday 08:00.',
                 'icon' => Heroicon::OutlinedNewspaper,
                 'color' => 'honey',
             ],
@@ -126,7 +132,7 @@ class PlatformOperations extends Page
         try {
             $startedAt = microtime(true);
             resolve(ScheduledTaskMonitor::class)->started($key);
-            $exit = Artisan::call($key);
+            $exit = Artisan::call($key, in_array($key, self::BAKERY_LOCAL_SENDS, true) ? ['--force' => true] : []);
             $output = trim(Artisan::output());
 
             platformSettings(['last_run_'.$key => now()->toIso8601String()]);

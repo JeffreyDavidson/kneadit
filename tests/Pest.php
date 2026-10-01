@@ -23,12 +23,15 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
+use JMac\Testing\Double;
 use Pest\Browser\Api\PendingAwaitablePage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -271,6 +274,33 @@ function setUpCentralTest(): void
     DB::purge('central');
     $pdo = DB::connection('sqlite')->getPdo();
     DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+}
+
+/**
+ * Makes tenant-looping commands run against the current database as one
+ * tenant, with that tenant's settings re-resolved for every pass. Set the
+ * bakery's settings (for example its timezone) with settings([...]) first.
+ */
+function runCommandsAsOneTenant(): void
+{
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('forEachTenant')->resolves(function (callable $callback): int {
+        $tenant = new Tenant;
+        $tenant->id = 'test-bakery';
+        $registry = resolve(TenantSettingsRegistry::class);
+        $registry->flush();
+
+        $callback($tenant, $registry->all());
+
+        return 0;
+    });
+    $tenancyManager->allows('withinTenant')->resolves(function (Tenant $tenant, callable $callback): mixed {
+        resolve(TenantSettingsRegistry::class)->flush();
+
+        return $callback($tenant);
+    });
+
+    app()->instance(TenancyManager::class, $tenancyManager);
 }
 
 function createCentralTables(): void
