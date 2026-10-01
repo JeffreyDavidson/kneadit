@@ -99,3 +99,16 @@ test('recent awards returns formatted array', function () {
     expect($awards)->toHaveCount(1)
         ->and($awards[0])->toHaveKeys(['customer', 'points', 'description', 'date'])->customer->toBe($customer->name)->points->toBe(75);
 });
+
+test('recent awards only include earned points', function () {
+    $customer = Customer::factory()->create();
+    LoyaltyPoint::factory()->earned(75)->for($customer)->create();
+    LoyaltyPoint::factory()->adjusted(-50)->for($customer)->create();
+    LoyaltyPoint::factory()->adjusted(20)->for($customer)->create();
+    LoyaltyPoint::factory()->redeemed(30)->for($customer)->create();
+
+    $awards = resolve(LoyaltyAnalytics::class)->recentAwards();
+
+    expect($awards)->toHaveCount(1)
+        ->and($awards[0]['points'])->toBe(75);
+});
