@@ -9,6 +9,7 @@ use App\Events\Marketing\CampaignEmailQueued;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Platform\Tenant;
+use App\Services\Customers\MarketingUnsubscribeLinks;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -17,56 +18,55 @@ class SendEmailCampaign
 {
     public function __construct(
         private readonly TenancyManager $tenancyManager,
+        private readonly MarketingUnsubscribeLinks $unsubscribeLinks,
     ) {}
 
     public function __invoke(EmailCampaign $campaign): void
     {
         $campaign->update(['status' => EmailCampaignStatus::Sending]);
 
-        $emails = tenancy()->initialized
-            ? $this->currentTenantEmails()
-            : $this->emailsBySegment($campaign->target_segment);
+        $recipients = tenancy()->initialized
+            ? $this->currentTenantRecipients()
+            : $this->recipientsBySegment($campaign->target_segment);
 
-        foreach ($emails as $email) {
-            event(new CampaignEmailQueued($email, $campaign->subject, $campaign->body));
+        foreach ($recipients as $email => $unsubscribeUrl) {
+            event(new CampaignEmailQueued((string) $email, $campaign->subject, $campaign->body, $unsubscribeUrl));
         }
 
         $campaign->update([
             'status' => EmailCampaignStatus::Sent,
             'sent_at' => now(),
-            'recipient_count' => $emails->count(),
+            'recipient_count' => $recipients->count(),
         ]);
     }
 
-    /** @return Collection<int, string> */
-    private function currentTenantEmails(): Collection
+    /**
+     * Each current-tenant customer who has not unsubscribed from marketing,
+     * keyed by email with their personal unsubscribe link as the value.
+     *
+     * @return Collection<string, string>
+     */
+    private function currentTenantRecipients(): Collection
     {
         return Customer::query()
+            ->subscribedToMarketing()
             ->whereNotNull('email')
-            ->distinct()
-            ->pluck('email')
-            ->map(function (mixed $email): string {
-                if (! is_string($email)) {
-                    throw new \UnexpectedValueException('Expected a customer email address to be a string.');
-                }
-
-                return $email;
-            })
-            ->values();
+            ->get()
+            ->mapWithKeys(fn (Customer $customer): array => [$customer->email => $this->unsubscribeLinks->unsubscribe($customer)]);
     }
 
-    /** @return Collection<int, string> */
-    private function emailsBySegment(EmailCampaignSegment $segment): Collection
+    /** @return Collection<string, string> */
+    private function recipientsBySegment(EmailCampaignSegment $segment): Collection
     {
-        $emails = [];
+        $recipients = new Collection;
 
         foreach ($this->filteredTenants($segment) as $tenant) {
-            $this->tenancyManager->withinTenant($tenant, function () use (&$emails): void {
-                array_push($emails, ...$this->currentTenantEmails()->all());
+            $this->tenancyManager->withinTenant($tenant, function () use (&$recipients): void {
+                $recipients = $recipients->union($this->currentTenantRecipients());
             });
         }
 
-        return collect($emails)->unique()->values();
+        return $recipients;
     }
 
     /** @return EloquentCollection<int, Tenant> */

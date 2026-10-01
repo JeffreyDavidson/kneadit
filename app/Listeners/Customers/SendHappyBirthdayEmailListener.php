@@ -12,6 +12,10 @@ class SendHappyBirthdayEmailListener extends SendEmailListener
     protected function getRecipient(object $event): ?string
     {
         /** @var CustomerBirthday $event */
+        if ($event->customer->marketing_opted_out_at !== null) {
+            return null;
+        }
+
         return $event->customer->email;
     }
 

@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Actions\Marketing\SendBulkCustomerMessage;
+use App\Actions\Marketing\UnsubscribeCustomerFromMarketing;
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Enums\Customers\CustomerStatus;
+use App\Enums\Customers\MarketingSubscription;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
@@ -18,6 +21,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -112,6 +116,13 @@ class CustomersTable
                     ))
                     ->toggleable(),
 
+                TextColumn::make('email_marketing')
+                    ->label('Email marketing')
+                    ->badge()
+                    ->getStateUsing(fn (Customer $record): MarketingSubscription => MarketingSubscription::resolve($record->marketing_opted_out_at))
+                    ->formatStateUsing(fn (MarketingSubscription $state, Customer $record): string => $state->labelSince($record->marketing_opted_out_at))
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -123,6 +134,19 @@ class CustomersTable
                     ->query(fn (Builder $query) => $query->whereHas('orders')
                         ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)))),
 
+                SelectFilter::make('email_marketing')
+                    ->label('Email marketing')
+                    ->options(MarketingSubscription::class)
+                    ->query(function (CustomerQueryBuilder $query, array $data): CustomerQueryBuilder {
+                        $value = $data['value'] ?? null;
+
+                        return match (is_string($value) ? MarketingSubscription::tryFrom($value) : null) {
+                            MarketingSubscription::Subscribed => $query->subscribedToMarketing(),
+                            MarketingSubscription::Unsubscribed => $query->unsubscribedFromMarketing(),
+                            null => $query,
+                        };
+                    }),
+
                 Filter::make('has_birthday_this_month')
                     ->label('Birthday This Month')
                     ->query(
@@ -133,6 +157,16 @@ class CustomersTable
             ->recordActions([
                 ViewAction::make(),
                 SlideOverEditAction::make(),
+                Action::make('markUnsubscribed')
+                    ->label('Mark unsubscribed')
+                    ->icon(Heroicon::OutlinedBellSlash)
+                    ->color('gray')
+                    ->authorize('update')
+                    ->requiresConfirmation()
+                    ->modalHeading('Mark as unsubscribed')
+                    ->modalDescription('Use this for opt-outs received by phone or email. They will stop getting marketing emails; order messages are unaffected. Only the customer can subscribe again, from the link in their emails.')
+                    ->visible(fn (Customer $record): bool => $record->marketing_opted_out_at === null)
+                    ->action(fn (Customer $record) => resolve(UnsubscribeCustomerFromMarketing::class)($record)),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -141,7 +175,7 @@ class CustomersTable
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->color('primary')
                         ->modalHeading('Send a message to selected customers')
-                        ->modalDescription('Drafts a one-off email to each selected customer who has an email address. No campaign record or open tracking — for ad-hoc operational messages.')
+                        ->modalDescription('Drafts a one-off email to each selected customer who has an email address, skipping customers who have unsubscribed from marketing emails. No campaign record or open tracking.')
                         ->modalSubmitActionLabel('Queue messages')
                         ->schema([
                             TextInput::make('subject')

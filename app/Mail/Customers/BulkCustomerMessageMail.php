@@ -6,7 +6,10 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\MarketingMail;
+use App\Mail\Concerns\SendsMarketingMail;
 use App\Models\Customers\Customer;
+use App\Services\Customers\MarketingUnsubscribeLinks;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -17,15 +20,21 @@ use Illuminate\Mail\Mailables\Envelope;
  * recipient log) — intended for ad-hoc messages like "your pickup
  * window changed" or "we have a question about your order".
  */
-class BulkCustomerMessageMail extends BaseMailable
+class BulkCustomerMessageMail extends BaseMailable implements MarketingMail
 {
     use BakerBranded;
+    use SendsMarketingMail;
 
     public function __construct(
         public Customer $customer,
         public string $messageSubject,
         public string $body,
     ) {}
+
+    public function unsubscribeUrl(): string
+    {
+        return resolve(MarketingUnsubscribeLinks::class)->unsubscribe($this->customer);
+    }
 
     public function envelope(): Envelope
     {

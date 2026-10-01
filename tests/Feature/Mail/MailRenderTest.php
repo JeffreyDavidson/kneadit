@@ -141,7 +141,7 @@ test('platform account mail classes render without errors', function () {
 });
 
 test('standalone operational mail classes render without errors', function () {
-    expect(new CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>')->render())
+    expect(new CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>', 'https://example.test/unsubscribe')->render())
         ->toBeString()
         ->not->toBeEmpty();
 

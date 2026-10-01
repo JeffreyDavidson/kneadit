@@ -7,6 +7,7 @@ use App\Mail\Marketing\CustomerBlastMail;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Platform\Tenant;
+use App\Services\Customers\MarketingUnsubscribeLinks;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Mail;
 use JMac\Testing\Double;
@@ -98,4 +99,21 @@ test('targets tenants for each campaign segment', function () {
     ]);
 
     resolve(SendEmailCampaign::class)($trialCampaign);
+});
+
+test('skips customers who unsubscribed from marketing and links each mail to its customer', function () {
+    Mail::fake();
+    expectTenantCampaignProcessing();
+
+    Tenant::factory()->starter()->create();
+    $subscribed = Customer::factory()->create(['email' => 'subscribed@example.com']);
+    Customer::factory()->unsubscribed()->create(['email' => 'unsubscribed@example.com']);
+    $campaign = EmailCampaign::factory()->create();
+
+    resolve(SendEmailCampaign::class)($campaign);
+
+    Mail::assertQueued(CustomerBlastMail::class, 1);
+    Mail::assertQueued(CustomerBlastMail::class, fn (CustomerBlastMail $mail): bool => $mail->hasTo('subscribed@example.com')
+        && $mail->unsubscribeUrl() === resolve(MarketingUnsubscribeLinks::class)->unsubscribe($subscribed));
+    expect($campaign->fresh()->recipient_count)->toBe(1);
 });
