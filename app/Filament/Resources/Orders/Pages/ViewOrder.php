@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Orders\Pages;
 
 use App\Actions\Orders\AddOrderNote;
+use App\Actions\Orders\MarkOrderPaid;
 use App\Actions\Orders\SendOrderMessage;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
@@ -85,6 +86,21 @@ class ViewOrder extends ViewRecord
                     } catch (InvalidOrderTransitionException $e) {
                         Notification::make()->title($e->getMessage())->danger()->send();
                     }
+                }),
+
+            Action::make('markPaid')
+                ->label('Mark Paid')
+                ->icon(Heroicon::OutlinedBanknotes)
+                ->color('success')
+                ->authorize('update')
+                ->requiresConfirmation()
+                ->modalHeading('Mark Order Paid')
+                ->modalDescription('Record that payment for this order has been received?')
+                ->visible(fn (): bool => $this->record->payment_status === PaymentStatus::Unpaid && $this->record->status !== OrderStatus::Cancelled)
+                ->action(function (): void {
+                    resolve(MarkOrderPaid::class)($this->record);
+
+                    Notification::make()->title('Order marked as paid')->success()->send();
                 }),
 
             Action::make('sendPayPalInvoice')

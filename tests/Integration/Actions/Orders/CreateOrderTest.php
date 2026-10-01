@@ -39,7 +39,9 @@ test('creates order with correct totals and items', function () {
         ->not->toBeNull()
         ->status->toBe(OrderStatus::Pending)
         ->and($order->subtotal->dollars())->toBe(25.00)
-        ->and($order->total->dollars())->toBe(25.00);
+        ->and($order->total->dollars())->toBe(25.00)
+        ->and($order->original_subtotal?->dollars())->toBe(25.00)
+        ->and($order->original_discount_amount?->dollars())->toBe(0.00);
 
     $order->load('orderItems', 'customer');
     expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');

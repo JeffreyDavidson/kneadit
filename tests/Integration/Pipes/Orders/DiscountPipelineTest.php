@@ -40,7 +40,7 @@ function createOrderWith(array $overrides = []): ?Order
 test('order with coupon stores discount_amount and creates coupon transaction', function () {
     $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00]);
 
-    $order = createOrderWith(['coupon_id' => $coupon->id]);
+    $order = createOrderWith(['coupon_code' => $coupon->code]);
 
     expect($order)
         ->not->toBeNull()
@@ -66,7 +66,7 @@ test('coupon transaction records only the coupon discount when discounts stack',
 
     $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00]);
 
-    $order = createOrderWith(['coupon_id' => $coupon->id]);
+    $order = createOrderWith(['coupon_code' => $coupon->code]);
 
     expect($order)
         ->not->toBeNull()
@@ -105,7 +105,7 @@ test('order with both coupon and gift card applies coupon first then gift card',
     $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 
     $order = createOrderWith([
-        'coupon_id' => $coupon->id,
+        'coupon_code' => $coupon->code,
         'gift_card_id' => $giftCard->id,
         'gift_card_code' => $giftCard->code,
     ]);
@@ -182,7 +182,7 @@ test('depleted gift card is not applied', function () {
 test('percentage coupon creates transaction with calculated amount', function () {
     $coupon = Coupon::factory()->percentage()->create(['percentage' => 25.00]); // 25%
 
-    $order = createOrderWith(['coupon_id' => $coupon->id]);
+    $order = createOrderWith(['coupon_code' => $coupon->code]);
 
     // 25% of $40 = $10
     expect($order->discount_amount->dollars())->toBe(10.00);

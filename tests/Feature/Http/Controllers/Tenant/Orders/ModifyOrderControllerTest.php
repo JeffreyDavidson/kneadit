@@ -82,3 +82,18 @@ test('modify endpoint returns session error when window has expired', function (
     $response->assertSessionHasErrors(['items']);
     expect(test()->order->fresh()->orderItems()->first()->quantity)->toBe(2);
 });
+
+test('modify endpoint returns session error when the edit drops the order below the minimum', function () {
+    settings(['minimum_pickup_order_amount' => '15']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
+        ->post(route('order.modify', test()->order), [
+            'items' => [
+                ['order_item_id' => test()->item->id, 'quantity' => 1],
+            ],
+        ]);
+
+    $response->assertSessionHasErrors(['items']);
+    expect(test()->order->fresh()->orderItems()->first()->quantity)->toBe(2);
+});

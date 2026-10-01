@@ -43,7 +43,7 @@ class StoreOrderRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id', new ProductAvailableOnDeliveryDate],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
-            'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
+            'coupon_code' => ['nullable', 'string', 'max:50'],
             'gift_card_id' => [
                 'nullable',
                 'integer',
