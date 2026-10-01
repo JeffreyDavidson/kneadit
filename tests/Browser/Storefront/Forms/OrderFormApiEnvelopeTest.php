@@ -15,27 +15,6 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit
 // assertNoJavaScriptErrors() runs before each submit: it only sees errors from
 // the current page, and the submit navigates away.
 
-function addLoavesToCart(mixed $page, int $quantity): void
-{
-    $increment = sprintf(
-        '[data-product-name="%s"] [data-test="order-form-product-increment"]',
-        BrowserTestFixtureSeeder::DELIVERY_PRODUCT_NAME,
-    );
-
-    foreach (range(1, $quantity) as $ignored) {
-        $page->click($increment);
-    }
-}
-
-function fillPickupOrderDetails(mixed $page, string $date): mixed
-{
-    return $page
-        ->fill('[data-test="order-form-customer-name"]', 'Availability Tester')
-        ->fill('[data-test="order-form-customer-email"]', 'availability-tester@example.com')
-        ->fill('[data-test="order-form-customer-phone"]', '555-0123')
-        ->fill('[data-test="order-form-delivery-date"]', $date);
-}
-
 test('a day the bakery is closed shows the closed message and blocks the order', function () use ($storefrontUrl) {
     $page = visit("{$storefrontUrl}/order");
 

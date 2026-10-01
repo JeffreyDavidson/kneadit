@@ -16,6 +16,7 @@
                 required
                 class="order-input"
             />
+            <x-storefront.order-field-error field="customer_name" />
         </div>
         <div>
             <label class="text-warm-400 mb-1 block text-xs font-medium">Email *</label>
@@ -27,10 +28,12 @@
                 required
                 class="order-input"
             />
+            <x-storefront.order-field-error field="customer_email" />
         </div>
         <div>
             <label class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
             <input type="tel" data-test="order-form-customer-phone" x-model="form.customer_phone" class="order-input" />
+            <x-storefront.order-field-error field="customer_phone" />
         </div>
         <div>
             <label class="text-warm-400 mb-1 block text-xs font-medium">Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
@@ -41,6 +44,7 @@
                 class="order-input"
                 max="{{ date('Y-m-d') }}"
             />
+            <x-storefront.order-field-error field="customer_birthday" />
         </div>
     </div>
 </div>
@@ -96,6 +100,7 @@
                     class="order-input"
                     rows="3"
                 ></textarea>
+                <x-storefront.order-field-error field="delivery_address" />
             </div>
             <div>
                 <label class="text-warm-400 mb-1 block text-xs font-medium">Distance</label>
@@ -114,6 +119,7 @@
                         </option>
                     @endforeach
                 </select>
+                <x-storefront.order-field-error field="delivery_tier" />
             </div>
             @if ($settings->orders->freeDeliveryMinimum)
                 <p class="text-warm-500 text-sm">
@@ -148,6 +154,7 @@
             />
             <div x-show="capacityWarning" class="mt-1 text-sm text-amber-400" x-text="capacityWarning"></div>
             <div x-show="capacityError" class="mt-1 text-sm text-red-400" x-text="capacityError"></div>
+            <x-storefront.order-field-error field="delivery_date" />
         </div>
         <div>
             @if ($settings->orders->pickupSlotsEnabled)
@@ -194,6 +201,7 @@
                     class="order-input"
                 />
             @endif
+            <x-storefront.order-field-error field="delivery_time" />
         </div>
     </div>
 </div>
@@ -215,6 +223,7 @@
                 placeholder="Their name"
                 class="order-input"
             />
+            <x-storefront.order-field-error field="pickup_contact_name" />
         </div>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
@@ -226,6 +235,7 @@
                     placeholder="555-0123"
                     class="order-input"
                 />
+                <x-storefront.order-field-error field="pickup_contact_phone" />
             </div>
             <div>
                 <label for="pickup-contact-email" class="text-warm-400 mb-1 block text-xs font-medium">Email</label>
@@ -236,6 +246,7 @@
                     placeholder="them@example.com"
                     class="order-input"
                 />
+                <x-storefront.order-field-error field="pickup_contact_email" />
             </div>
         </div>
         <p class="text-warm-500 text-xs">
@@ -254,6 +265,7 @@
         class="order-input"
         rows="3"
     ></textarea>
+    <x-storefront.order-field-error field="notes" />
 </div>
 
 @if (! empty($settings->payment->methodsAccepted))
@@ -300,4 +312,9 @@
     <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
 </x-storefront.button>
 
-<div x-show="submitError" class="mt-3 text-center text-sm text-red-400" x-text="submitError"></div>
+<div
+    x-show="submitError"
+    data-test="order-form-submit-error"
+    class="mt-3 text-center text-sm text-red-400"
+    x-text="submitError"
+></div>

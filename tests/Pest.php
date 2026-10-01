@@ -25,6 +25,7 @@ use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
+use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -901,4 +902,25 @@ function waitForOrderFormAvailability(mixed $page): void
             return Array.isArray(list) ? list.length > 0 : Object.keys(list).length > 0;
         }
     JS);
+}
+
+function addLoavesToCart(mixed $page, int $quantity): void
+{
+    $increment = sprintf(
+        '[data-product-name="%s"] [data-test="order-form-product-increment"]',
+        BrowserTestFixtureSeeder::DELIVERY_PRODUCT_NAME,
+    );
+
+    foreach (range(1, $quantity) as $ignored) {
+        $page->click($increment);
+    }
+}
+
+function fillPickupOrderDetails(mixed $page, string $date): mixed
+{
+    return $page
+        ->fill('[data-test="order-form-customer-name"]', 'Availability Tester')
+        ->fill('[data-test="order-form-customer-email"]', 'availability-tester@example.com')
+        ->fill('[data-test="order-form-customer-phone"]', '555-0123')
+        ->fill('[data-test="order-form-delivery-date"]', $date);
 }

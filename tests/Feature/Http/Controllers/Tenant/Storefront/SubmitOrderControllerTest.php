@@ -433,3 +433,37 @@ test('a slot that fills while the order is being placed becomes a form error', f
         ->assertSessionHasErrors(['delivery_time' => 'That pickup time is no longer available. Please choose another.'])
         ->assertSessionHasInput('delivery_time', '08:30');
 });
+
+test('an invalid order asked for as JSON returns a 422 with the errors keyed by field', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('order.store', [], false), [
+            'items' => [
+                ['product_id' => 0, 'quantity' => 1],
+            ],
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors([
+            'customer_name',
+            'customer_email',
+            'delivery_type',
+            'delivery_date',
+            'items.0.product_id',
+        ]);
+});
+
+test('a full pickup slot asked for as JSON returns the slot message under delivery_time', function () {
+    $product = Product::factory()->create();
+    $payload = pickupSlotOrderPayload($product, '08:30');
+    Order::factory()->confirmed()->count(2)->create([
+        'delivery_date' => $payload['delivery_date'],
+        'delivery_time' => '08:30',
+        'delivery_type' => DeliveryType::Pickup->value,
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('order.store', [], false), $payload);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['delivery_time' => 'That pickup time is no longer available. Please choose another.']);
+});

@@ -38,6 +38,7 @@
             giftCardAmount: 0,
             isSubmitting: false,
             submitError: '',
+            fieldErrors: {},
             capacityWarning: '',
             capacityError: '',
             minDate: @js($earliestDeliveryDate->toDateString()),
@@ -51,6 +52,15 @@
             saleDiscount: 0,
 
             init() {
+                Object.keys(this.form).forEach((field) => {
+                    this.$watch(`form.${field}`, () => this.clearFieldError(field));
+                });
+                this.$watch('couponCode', () => this.clearFieldError('coupon_code'));
+                this.$watch('giftCardCode', () => this.clearFieldError('gift_card_code'));
+                this.$watch('customTip', () => this.clearFieldError('tip_amount'));
+                this.$watch('tipPercent', () => this.clearFieldError('tip_amount'));
+                this.$watch('cartItems', () => this.clearFieldError('items'));
+
                 this.loadAvailability();
                 if (this.form.customer_email) {
                     this.loadFavorites();
@@ -59,9 +69,13 @@
 
                 const params = new URLSearchParams(window.location.search);
                 if (params.has('reorder')) {
-                    fetch(`/order/reorder/${params.get('reorder')}`)
-                        .then((r) => r.json())
+                    fetch(`/order/reorder/${params.get('reorder')}`, { headers: { Accept: 'application/json' } })
+                        .then((r) => (r.ok ? r.json() : null))
                         .then((payload) => {
+                            if (!payload) {
+                                return;
+                            }
+
                             this.cartItems = payload.data.items.map((item) => ({
                                 id: item.product_id,
                                 name: item.product_name,
@@ -69,8 +83,26 @@
                                 quantity: item.quantity,
                             }));
                             this.calculateTotals();
-                        });
+                        })
+                        .catch((error) => console.error('Failed to load the previous order', error));
                 }
+            },
+
+            clearFieldError(field) {
+                delete this.fieldErrors[field];
+            },
+
+            showFieldErrors(errors) {
+                // Cart line errors (items.0.product_id) show once, in the cart summary.
+                const aliases = { gift_card_id: 'gift_card_code' };
+                const fieldErrors = {};
+
+                Object.entries(errors).forEach(([key, messages]) => {
+                    const field = key.startsWith('items.') ? 'items' : (aliases[key] ?? key);
+                    fieldErrors[field] ??= messages[0];
+                });
+
+                this.fieldErrors = fieldErrors;
             },
 
             async loadAvailability() {
@@ -359,6 +391,7 @@
                     } else {
                         this.couponError = payload.message || 'Invalid coupon';
                         this.appliedCoupon = null;
+                        this.calculateTotals();
                     }
                 } catch (error) {
                     this.couponError = 'Error validating coupon';
@@ -423,6 +456,7 @@
                 if (!this.canSubmit) return;
                 this.isSubmitting = true;
                 this.submitError = '';
+                this.fieldErrors = {};
 
                 const formData = new FormData();
                 Object.keys(this.form).forEach((key) => {
@@ -449,10 +483,15 @@
                 try {
                     const response = await fetch('{{ route('order.store') }}', {
                         method: 'POST',
+                        headers: { Accept: 'application/json' },
                         body: formData,
                     });
                     if (response.ok) {
                         window.location.href = response.url;
+                    } else if (response.status === 422) {
+                        const payload = await response.json();
+                        this.showFieldErrors(payload.errors || {});
+                        this.submitError = payload.message || 'Please fix the highlighted fields.';
                     } else {
                         this.submitError = 'There was an error submitting your order. Please try again.';
                     }
