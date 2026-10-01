@@ -4,6 +4,7 @@ namespace App\Pipes\Orders;
 
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
 use Closure;
@@ -11,7 +12,10 @@ use Closure;
 /**
  * If a referral code is in the session and the program is enabled, find the
  * referrer, apply the configured discount to the order, and stash the
- * referrer on the payload so PersistReferralCompletion can record it later.
+ * referrer on the payload so PersistReferral can record it later.
+ *
+ * Only new customers qualify: an email with a prior non-cancelled order, or
+ * one that already has a referral that wasn't cancelled, gets no discount.
  *
  * Silently skips on any validation failure — referral is a perk, not a
  * blocker for the order itself.
@@ -42,8 +46,12 @@ class ApplyReferral
             return $next($payload);
         }
 
+        if (Order::query()->placedByEmail($payload->data->customerEmail)->active()->exists()) {
+            return $next($payload);
+        }
+
         $existingCustomer = Customer::query()->forEmail($payload->data->customerEmail)->first();
-        if ($existingCustomer && CustomerReferral::query()->where('referred_customer_id', $existingCustomer->id)->exists()) {
+        if ($existingCustomer && CustomerReferral::query()->forReferredCustomer($existingCustomer->id)->notCancelled()->exists()) {
             return $next($payload);
         }
 
