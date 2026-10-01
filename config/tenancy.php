@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use App\Tenancy\TenantFilesystemBootstrapper;
+use App\Tenancy\TenantUrlBootstrapper;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
@@ -50,6 +51,7 @@ return [
         CacheTenancyBootstrapper::class,
         TenantFilesystemBootstrapper::class,
         QueueTenancyBootstrapper::class,
+        TenantUrlBootstrapper::class,
         // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
     ],
 

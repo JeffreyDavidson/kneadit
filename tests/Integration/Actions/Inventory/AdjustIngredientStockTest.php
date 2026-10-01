@@ -27,7 +27,7 @@ test('it adjusts stock and creates adjustment record', function () {
         'type' => 'purchase',
         'notes' => 'Restocked',
     ]);
-    expect($ingredient->fresh()->current_stock)->toBe('60.00');
+    expect($ingredient->fresh()->current_stock)->toBe('60.0000');
 });
 
 test('throws when an adjustment would push stock below zero', function () {
@@ -37,7 +37,7 @@ test('throws when an adjustment would push stock below zero', function () {
         ->toThrow(StockWouldGoNegativeException::class);
 
     // Stock unchanged, no audit row written.
-    expect($ingredient->fresh()->current_stock)->toBe('5.00');
+    expect($ingredient->fresh()->current_stock)->toBe('5.0000');
     assertDatabaseMissing('stock_adjustments', ['ingredient_id' => $ingredient->id]);
 });
 
@@ -46,7 +46,7 @@ test('allows adjustments that bring stock exactly to zero', function () {
 
     resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage);
 
-    expect($ingredient->fresh()->current_stock)->toBe('0.00');
+    expect($ingredient->fresh()->current_stock)->toBe('0.0000');
 });
 
 test('rolls back the stock change when the adjustment record cannot be created', function () {
@@ -58,7 +58,7 @@ test('rolls back the stock change when the adjustment record cannot be created',
 
     expect(fn () => resolve(AdjustIngredientStock::class)($ingredient, -2, StockAdjustmentType::Usage))
         ->toThrow(RuntimeException::class, 'Could not create stock adjustment')
-        ->and($ingredient->fresh()->current_stock)->toBe('5.00');
+        ->and($ingredient->fresh()->current_stock)->toBe('5.0000');
     assertDatabaseMissing('stock_adjustments', ['ingredient_id' => $ingredient->id]);
 });
 
@@ -70,6 +70,6 @@ test('checks the latest stock value before allowing a deduction', function () {
 
     expect(fn () => resolve(AdjustIngredientStock::class)($staleIngredient, -2, StockAdjustmentType::Usage))
         ->toThrow(StockWouldGoNegativeException::class)
-        ->and($ingredient->fresh()->current_stock)->toBe('1.00')
+        ->and($ingredient->fresh()->current_stock)->toBe('1.0000')
         ->and($ingredient->stockAdjustments()->count())->toBe(1);
 });

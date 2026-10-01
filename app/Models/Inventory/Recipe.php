@@ -12,10 +12,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property array<int, array{name?: string, cost?: float, quantity?: float, unit?: string}> $ingredients
+ * @property-read Collection<int, RecipeIngredient> $ingredientLines
+ * @property-read int|null $ingredient_lines_count
  * @property-read Collection<int, Ingredient> $inventoryIngredients
  * @property-read int|null $inventory_ingredients_count
  * @property-read Product|null $product
@@ -60,5 +63,16 @@ class Recipe extends Model
     {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
             ->withPivot('quantity', 'unit');
+    }
+
+    /**
+     * The linked-ingredient lines as models, for editing their quantity and unit. The same
+     * `recipe_ingredients` rows are read as ingredients (with a pivot) via inventoryIngredients().
+     *
+     * @return HasMany<RecipeIngredient, $this>
+     */
+    public function ingredientLines(): HasMany
+    {
+        return $this->hasMany(RecipeIngredient::class);
     }
 }

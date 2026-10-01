@@ -51,8 +51,8 @@ class AdjustOrderIngredients
                             continue;
                         }
 
-                        // The stock column is decimal(10,2), so round the converted amount at write.
-                        $quantity = round($direction * $perUnit * $orderItem->quantity, 2);
+                        // The stock column is decimal(12,4), so round the converted amount at write.
+                        $quantity = round($direction * $perUnit * $orderItem->quantity, 4);
 
                         ($this->adjustStock)($ingredient, $quantity, $type, $notes);
                     }

@@ -30,6 +30,6 @@ class MarketingUnsubscribeLinks
             return URL::to($path);
         }
 
-        return "{$this->tenantUrls->storefront($tenant)}{$path}";
+        return "{$this->tenantUrls->primaryStorefront($tenant)}{$path}";
     }
 }

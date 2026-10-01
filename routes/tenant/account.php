@@ -31,10 +31,14 @@ Route::middleware('guest:customer')->group(function () {
 });
 
 Route::middleware('auth:customer')->group(function () {
-    Route::get('account', CustomerDashboardController::class)->name('account.dashboard');
-    Route::get('account/orders', OrderHistoryController::class)->name('account.orders');
-    Route::get('account/profile', [ProfileController::class, 'show'])->name('account.profile.show');
-    Route::post('account/profile', [ProfileController::class, 'update'])->name('account.profile.update')->middleware('throttle:form-write');
+    // Everything that exposes the account's data needs a verified email.
+    Route::middleware('customer.verified')->group(function () {
+        Route::get('account', CustomerDashboardController::class)->name('account.dashboard');
+        Route::get('account/orders', OrderHistoryController::class)->name('account.orders');
+        Route::get('account/profile', [ProfileController::class, 'show'])->name('account.profile.show');
+        Route::post('account/profile', [ProfileController::class, 'update'])->name('account.profile.update')->middleware('throttle:form-write');
+    });
+
     Route::post('account/logout', LogoutCustomerController::class)->name('account.logout');
 
     Route::get('account/email/verify', ShowEmailVerifyNoticeController::class)->name('account.email.verify.notice');

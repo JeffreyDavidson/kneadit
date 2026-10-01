@@ -17,7 +17,7 @@ test('redirects unauthenticated visitors to login', function () {
 });
 
 test('shows the customer their own orders', function () {
-    $customer = Customer::factory()->create();
+    $customer = Customer::factory()->verified()->create();
     Order::factory()->for($customer)->count(3)->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -29,7 +29,7 @@ test('shows the customer their own orders', function () {
 });
 
 test('does not leak orders belonging to another customer', function () {
-    $me = Customer::factory()->create();
+    $me = Customer::factory()->verified()->create();
     $someoneElse = Customer::factory()->create();
     Order::factory()->for($me)->count(2)->create();
     Order::factory()->for($someoneElse)->count(5)->create();
@@ -43,7 +43,7 @@ test('does not leak orders belonging to another customer', function () {
 });
 
 test('paginates at 20 orders per page', function () {
-    $customer = Customer::factory()->create();
+    $customer = Customer::factory()->verified()->create();
     Order::factory()->for($customer)->count(25)->create();
 
     $response = withoutMiddleware(tenantMiddleware())

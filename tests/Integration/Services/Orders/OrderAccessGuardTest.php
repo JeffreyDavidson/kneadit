@@ -42,8 +42,8 @@ test('canAccess is per-order — granting one order does not unlock another', fu
         ->and(OrderAccessGuard::canAccess($orderB))->toBeFalse();
 });
 
-test('authenticated customer matching the orders customer_id bypasses the session check', function () {
-    $customer = Customer::factory()->create();
+test('verified customer matching the orders customer_id bypasses the session check', function () {
+    $customer = Customer::factory()->verified()->create();
     $order = Order::factory()->for($customer)->create();
 
     auth('customer')->login($customer);
@@ -51,9 +51,28 @@ test('authenticated customer matching the orders customer_id bypasses the sessio
     expect(OrderAccessGuard::canAccess($order))->toBeTrue();
 });
 
+test('unverified customer matching the orders customer_id is not enough', function () {
+    $customer = Customer::factory()->unverified()->create();
+    $order = Order::factory()->for($customer)->create();
+
+    auth('customer')->login($customer);
+
+    expect(OrderAccessGuard::canAccess($order))->toBeFalse();
+});
+
+test('a session-granted order is accessible to an unverified customer', function () {
+    $customer = Customer::factory()->unverified()->create();
+    $order = Order::factory()->for($customer)->create();
+
+    auth('customer')->login($customer);
+    OrderAccessGuard::grant($order);
+
+    expect(OrderAccessGuard::canAccess($order))->toBeTrue();
+});
+
 test('authenticated customer who does NOT own the order is still blocked', function () {
     $owner = Customer::factory()->create();
-    $other = Customer::factory()->create();
+    $other = Customer::factory()->verified()->create();
     $order = Order::factory()->for($owner)->create();
 
     auth('customer')->login($other);

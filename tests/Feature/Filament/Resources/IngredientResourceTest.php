@@ -87,6 +87,25 @@ test('can render ingredient table columns', function () {
         ->assertCanRenderTableColumn('is_active');
 });
 
+test('the stock column shows 2 decimals unless that would show a small stock as 0', function (string $stock, string $expected) {
+    $ingredient = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => $stock]);
+
+    livewire(ListIngredients::class)
+        ->assertTableColumnFormattedStateSet('current_stock', $expected, $ingredient);
+})->with([
+    'a whole amount' => ['8', '8.00 kg'],
+    'an amount with many decimals' => ['9.9970', '10.00 kg'],
+    'a thousandth' => ['0.003', '0.003 kg'],
+]);
+
+test('the edit form keeps the stored digits of a small stock', function () {
+    $ingredient = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => '9.9970', 'low_stock_threshold' => '5']);
+
+    livewire(ListIngredients::class)
+        ->mountAction(TestAction::make('edit')->table($ingredient))
+        ->assertSchemaStateSet(['current_stock' => '9.997', 'low_stock_threshold' => '5.00']);
+});
+
 test('can edit an ingredient via table action', function () {
     $ingredient = Ingredient::factory()->create(['unit' => 'lbs']);
 

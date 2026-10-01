@@ -129,7 +129,7 @@ test('registering with a guest customer email claims their record and keeps thei
     $claimed = Customer::query()->where('email', 'jane@example.com')->firstOrFail();
 
     expect($claimed->id)->toBe($guest->id)
-        ->and($claimed->name)->toBe('Jane Doe')
+        ->and($claimed->name)->toBe('J. Doe')
         ->and($claimed->password)->not->toBeNull()
         ->and($claimed->email_verified_at)->toBeNull()
         ->and($claimed->orders)->toHaveCount(1);

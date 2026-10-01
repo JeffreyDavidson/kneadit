@@ -53,6 +53,15 @@ test('shortages is empty when demand exactly equals stock', function () {
     expect($shortages)->toBeEmpty();
 });
 
+test('shortages catches a demand a hundredth of the stock unit over the stock', function () {
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 0.002]);
+    $product = demandProductNeeding($flour, 1.0, 'g');
+
+    $shortages = resolve(IngredientDemandCalculator::class)->shortages([new IngredientDemandItem($product, 3)]);
+
+    expect($shortages)->toBe(['Flour']);
+});
+
 test('shortages names ingredients whose demand exceeds stock', function () {
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 5]);
     $product = demandProductNeeding($flour, 2.0);

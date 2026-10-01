@@ -17,7 +17,6 @@ use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\StaffInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\URL;
 
 pest()->use(RefreshDatabase::class);
 
@@ -55,8 +54,7 @@ test('PurchaseOrder has correct subject', function () {
 });
 
 test('StaffInvitationMail has correct subject with store name', function () {
-    URL::forceRootUrl('https://platform.kneadit.test');
-    URL::forceScheme('https');
+    config(['app.url' => 'https://platform.kneadit.test']);
 
     $invitation = StaffInvitation::factory()->create();
     $mail = new StaffInvitationMail($invitation, 'Test Bakery', 'https://example.test/accept');
