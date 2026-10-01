@@ -36,7 +36,9 @@ class SubmitOrderController extends Controller
                 implode(', ', $e->shortages),
             )]);
         } catch (PickupSlotUnavailableException) {
-            throw ValidationException::withMessages(['delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE]);
+            throw ValidationException::withMessages([
+                'delivery_time' => PickupSlotUnavailableException::CUSTOMER_MESSAGE,
+            ]);
         }
 
         if (! $order instanceof Order) {
