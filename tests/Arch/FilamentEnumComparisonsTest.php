@@ -26,11 +26,6 @@ test('Filament code does not compare $get() state to an enum value', function ()
             continue;
         }
 
-        // TODO: remove once PR #1220 (QuickOrderForm $get->enum fix) is merged.
-        if ($file->getFilename() === 'QuickOrderForm.php') {
-            continue;
-        }
-
         $contents = file_get_contents($file->getPathname());
 
         if ($contents === false) {

@@ -124,7 +124,7 @@ Storefront requests are validated by `StoreOrderRequest` (the API uses `StoreApi
 
 If capacity rejects the request, the pipeline returns no order. Other domain validation failures return targeted form errors. A successful transaction logs the placement and emits `OrderCreated`. The current session is granted access to the resulting order before redirecting to payment or confirmation.
 
-Staff quick orders skip this pipeline: the Quick Order form (`QuickOrderForm`) offers a Delivery Distance select built from the same Delivery Fee Tiers, and `CreateQuickOrder` prices delivery with `OrderSettings::deliveryFee()`. A bakery with no tiers configured gets a free-delivery quick order.
+Staff quick orders skip this pipeline: the Quick Order form (`QuickOrderForm`) offers a Delivery Distance select built from the same Delivery Fee Tiers, and `CreateQuickOrder` prices delivery with `OrderSettings::deliveryFee()`. A bakery with no tiers configured gets a free-delivery quick order. `CreateQuickOrderData` takes the payment method and delivery type as enums (the form's selects hand back enum instances), and the order stores the chosen delivery type. Every quick order needs a customer email, like storefront orders, because `orders.customer_id` is required and customers are keyed by email; an existing customer with that email is reused.
 
 ### Date capacity
 
