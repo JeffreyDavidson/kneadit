@@ -44,6 +44,8 @@ final class TenantSettingsDefaults
             'abandoned_cart_recovery_hours' => 24,
             'abandoned_cart_recovery_coupon_dollars' => 5,
             'low_review_alert_threshold' => 2,
+            'loyalty_program_name' => 'Rewards',
+            'loyalty_points_per_dollar' => 10,
             'loyalty_tiers_enabled' => false,
             'loyalty_tier_silver_threshold' => 500,
             'loyalty_tier_gold_threshold' => 2000,

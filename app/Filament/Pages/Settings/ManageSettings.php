@@ -173,6 +173,32 @@ class ManageSettings extends Page
     /** @var array<int, string> */
     public array $catering_event_types = [];
 
+    public ?string $loyalty_program_name = 'Rewards';
+
+    public ?int $loyalty_points_per_dollar = 10;
+
+    public bool $loyalty_tiers_enabled = false;
+
+    public ?int $loyalty_tier_silver_threshold = 500;
+
+    public ?int $loyalty_tier_gold_threshold = 2000;
+
+    public ?int $loyalty_tier_platinum_threshold = 5000;
+
+    public bool $loyalty_tier_perks_enabled = false;
+
+    public ?float $loyalty_tier_silver_multiplier = 1.0;
+
+    public ?float $loyalty_tier_gold_multiplier = 1.5;
+
+    public ?float $loyalty_tier_platinum_multiplier = 2.0;
+
+    public bool $loyalty_tier_silver_free_delivery = false;
+
+    public bool $loyalty_tier_gold_free_delivery = true;
+
+    public bool $loyalty_tier_platinum_free_delivery = true;
+
     public ?string $gift_card_preset_amounts = '';
 
     public ?int $gift_card_default_amount = 25;
@@ -343,6 +369,19 @@ class ManageSettings extends Page
             'catering_lead_time_days' => $this->catering_lead_time_days,
             'catering_deposit_percent' => $this->catering_deposit_percent,
             'catering_event_types' => $this->catering_event_types,
+            'loyalty_program_name' => $this->loyalty_program_name,
+            'loyalty_points_per_dollar' => $this->loyalty_points_per_dollar,
+            'loyalty_tiers_enabled' => $this->loyalty_tiers_enabled,
+            'loyalty_tier_silver_threshold' => $this->loyalty_tier_silver_threshold,
+            'loyalty_tier_gold_threshold' => $this->loyalty_tier_gold_threshold,
+            'loyalty_tier_platinum_threshold' => $this->loyalty_tier_platinum_threshold,
+            'loyalty_tier_perks_enabled' => $this->loyalty_tier_perks_enabled,
+            'loyalty_tier_silver_multiplier' => $this->loyalty_tier_silver_multiplier,
+            'loyalty_tier_gold_multiplier' => $this->loyalty_tier_gold_multiplier,
+            'loyalty_tier_platinum_multiplier' => $this->loyalty_tier_platinum_multiplier,
+            'loyalty_tier_silver_free_delivery' => $this->loyalty_tier_silver_free_delivery,
+            'loyalty_tier_gold_free_delivery' => $this->loyalty_tier_gold_free_delivery,
+            'loyalty_tier_platinum_free_delivery' => $this->loyalty_tier_platinum_free_delivery,
             'gift_card_preset_amounts' => $this->gift_card_preset_amounts,
             'gift_card_default_amount' => $this->gift_card_default_amount,
             'order_journey_steps' => $this->order_journey_steps,

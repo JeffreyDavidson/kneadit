@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Tenants\SaveTenantSettings;
+use App\DataTransferObjects\Settings\LoyaltySettings;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 
@@ -480,3 +481,116 @@ test('keeps every reader default when the settings page keys are omitted', funct
     'paypal invoice terms' => [fn () => resolve(SettingsManager::class)->get('paypal_invoice_terms', 'Something else.'), 'Payment due within 30 days.'],
     'default shelf life days' => [fn () => resolve(SettingsManager::class)->get('default_shelf_life_days', '99'), '3'],
 ]);
+
+test('saves the loyalty program settings and reads them back through the loyalty reader', function (array $input, Closure $read, mixed $expected) {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+        ...$input,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect($read(TenantSettings::resolve()->loyalty))->toBe($expected);
+})->with([
+    'program name' => [['loyalty_program_name' => 'Crumb Club'], fn (LoyaltySettings $loyalty): string => $loyalty->programName, 'Crumb Club'],
+    'points per dollar' => [['loyalty_points_per_dollar' => 4], fn (LoyaltySettings $loyalty): int => $loyalty->pointsPerDollar, 4],
+    'tiers enabled' => [['loyalty_tiers_enabled' => true], fn (LoyaltySettings $loyalty): bool => $loyalty->tiersEnabled, true],
+    'silver threshold' => [['loyalty_tier_silver_threshold' => 250], fn (LoyaltySettings $loyalty): int => $loyalty->tierSilverThreshold, 250],
+    'gold threshold' => [['loyalty_tier_gold_threshold' => 1500], fn (LoyaltySettings $loyalty): int => $loyalty->tierGoldThreshold, 1500],
+    'platinum threshold' => [['loyalty_tier_platinum_threshold' => 4000], fn (LoyaltySettings $loyalty): int => $loyalty->tierPlatinumThreshold, 4000],
+    'tier perks enabled' => [['loyalty_tier_perks_enabled' => true], fn (LoyaltySettings $loyalty): bool => $loyalty->tierPerksEnabled, true],
+    'silver multiplier' => [['loyalty_tier_silver_multiplier' => 1.2], fn (LoyaltySettings $loyalty): float => $loyalty->tierSilverMultiplier, 1.2],
+    'gold multiplier' => [['loyalty_tier_gold_multiplier' => 1.7], fn (LoyaltySettings $loyalty): float => $loyalty->tierGoldMultiplier, 1.7],
+    'platinum multiplier' => [['loyalty_tier_platinum_multiplier' => 3.0], fn (LoyaltySettings $loyalty): float => $loyalty->tierPlatinumMultiplier, 3.0],
+    'silver free delivery' => [['loyalty_tier_silver_free_delivery' => true], fn (LoyaltySettings $loyalty): bool => $loyalty->tierSilverFreeDelivery, true],
+    'gold free delivery off' => [['loyalty_tier_gold_free_delivery' => false], fn (LoyaltySettings $loyalty): bool => $loyalty->tierGoldFreeDelivery, false],
+    'platinum free delivery off' => [['loyalty_tier_platinum_free_delivery' => false], fn (LoyaltySettings $loyalty): bool => $loyalty->tierPlatinumFreeDelivery, false],
+]);
+
+test('keeps every loyalty reader default when the loyalty keys are omitted', function (Closure $read, mixed $expected) {
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect($read(TenantSettings::resolve()->loyalty))->toBe($expected);
+})->with([
+    'program name' => [fn (LoyaltySettings $loyalty): string => $loyalty->programName, 'Rewards'],
+    'points per dollar' => [fn (LoyaltySettings $loyalty): int => $loyalty->pointsPerDollar, 10],
+    'tiers enabled' => [fn (LoyaltySettings $loyalty): bool => $loyalty->tiersEnabled, false],
+    'silver threshold' => [fn (LoyaltySettings $loyalty): int => $loyalty->tierSilverThreshold, 500],
+    'gold threshold' => [fn (LoyaltySettings $loyalty): int => $loyalty->tierGoldThreshold, 2000],
+    'platinum threshold' => [fn (LoyaltySettings $loyalty): int => $loyalty->tierPlatinumThreshold, 5000],
+    'tier perks enabled' => [fn (LoyaltySettings $loyalty): bool => $loyalty->tierPerksEnabled, false],
+    'silver multiplier' => [fn (LoyaltySettings $loyalty): float => $loyalty->tierSilverMultiplier, 1.0],
+    'gold multiplier' => [fn (LoyaltySettings $loyalty): float => $loyalty->tierGoldMultiplier, 1.5],
+    'platinum multiplier' => [fn (LoyaltySettings $loyalty): float => $loyalty->tierPlatinumMultiplier, 2.0],
+    'silver free delivery' => [fn (LoyaltySettings $loyalty): bool => $loyalty->tierSilverFreeDelivery, false],
+    'gold free delivery' => [fn (LoyaltySettings $loyalty): bool => $loyalty->tierGoldFreeDelivery, true],
+    'platinum free delivery' => [fn (LoyaltySettings $loyalty): bool => $loyalty->tierPlatinumFreeDelivery, true],
+]);
+
+test('does not touch the loyalty master switch, which the loyalty dashboard owns', function () {
+    settings(['loyalty_enabled' => '0']);
+
+    $data = [
+        'store_name' => 'Test Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => '',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => '',
+        'deposit_policy' => '',
+        'refund_policy' => '',
+        'pickup_policy' => '',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+        'loyalty_program_name' => 'Crumb Club',
+    ];
+
+    resolve(SaveTenantSettings::class)($data);
+
+    expect(TenantSettings::resolve()->loyalty->enabled)->toBeFalse();
+});

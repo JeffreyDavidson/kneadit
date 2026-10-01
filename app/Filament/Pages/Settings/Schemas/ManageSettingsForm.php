@@ -8,6 +8,7 @@ use App\Filament\Pages\Settings\Schemas\ManageSettings\CateringSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\ComplianceSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\GiftCardsSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\IntegrationsSection;
+use App\Filament\Pages\Settings\Schemas\ManageSettings\LoyaltySection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\NotificationSettingsSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\OrderEmailsSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\OrderJourneySection;
@@ -27,6 +28,7 @@ class ManageSettingsForm
             OrderSettingsSection::make(),
             OrderJourneySection::make(),
             CateringSection::make(),
+            LoyaltySection::make(),
             NotificationSettingsSection::make(),
             OrderEmailsSection::make(),
             PaymentMethodsSection::make(),
