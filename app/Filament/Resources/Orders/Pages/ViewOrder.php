@@ -92,6 +92,7 @@ class ViewOrder extends ViewRecord
                 ->label('Mark Paid')
                 ->icon(Heroicon::OutlinedBanknotes)
                 ->color('success')
+                ->authorize('update')
                 ->requiresConfirmation()
                 ->modalHeading('Mark Order Paid')
                 ->modalDescription('Record that payment for this order has been received?')
