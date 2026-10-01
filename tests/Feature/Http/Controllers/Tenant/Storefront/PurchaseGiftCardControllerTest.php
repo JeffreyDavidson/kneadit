@@ -1,51 +1,30 @@
 <?php
 
 use App\Models\Financial\GiftCard;
-use App\Models\Platform\Setting;
-use App\Services\Settings\SettingsManager;
 
 use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('can purchase a gift card', function () {
+// Online gift card purchases are turned off until a paid checkout exists.
+test('the storefront no longer offers an online gift card purchase endpoint', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('giftCards.purchase', [], false), [
+        ->postJson('/gift-cards/purchase', [
             'purchaser_name' => 'Jane Doe',
             'purchaser_email' => 'jane@example.com',
-            'initial_balance' => 25.00,
+            'initial_balance' => 500,
         ]);
 
-    $response->assertOk()
-        ->assertJsonStructure(['data' => ['code', 'balance']]);
-
-    expect(GiftCard::query()->count())->toBe(1);
+    expect($response->status())->toBeIn([404, 405])
+        ->and(GiftCard::query()->count())->toBe(0);
 });
 
-test('purchase success message can be customized via page content', function () {
-    Setting::factory()->create([
-        'key' => 'page_content',
-        'value' => json_encode([
-            'gift_cards' => ['flash_purchased' => 'Gift card on its way!'],
-        ]),
-    ]);
-    resolve(SettingsManager::class)->flushCache();
-
+test('the gift cards page has no online purchase form', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('giftCards.purchase', [], false), [
-            'purchaser_name' => 'Jane Doe',
-            'purchaser_email' => 'jane@example.com',
-            'initial_balance' => 25.00,
-        ]);
+        ->get(route('storefront.giftCards', absolute: false));
 
     $response->assertOk()
-        ->assertJsonPath('message', 'Gift card on its way!');
-});
-
-test('purchase gift card validates required fields', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('giftCards.purchase', [], false), []);
-
-    $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['purchaser_name', 'purchaser_email', 'initial_balance']);
+        ->assertDontSeeHtml('data-test="gift-card-purchase-form"')
+        ->assertSeeHtml('data-test="gift-card-in-store-notice"')
+        ->assertSeeHtml('data-test="gift-card-balance-form"');
 });

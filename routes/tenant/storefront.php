@@ -15,7 +15,6 @@ use App\Http\Controllers\Tenant\Storefront\GalleryController;
 use App\Http\Controllers\Tenant\Storefront\LoyaltyController;
 use App\Http\Controllers\Tenant\Storefront\MenuController;
 use App\Http\Controllers\Tenant\Storefront\ProductWaitlistController;
-use App\Http\Controllers\Tenant\Storefront\PurchaseGiftCardController;
 use App\Http\Controllers\Tenant\Storefront\ReviewsIndexController;
 use App\Http\Controllers\Tenant\Storefront\ShowCateringController;
 use App\Http\Controllers\Tenant\Storefront\ShowGiftCardsController;
@@ -49,7 +48,6 @@ Route::post('rewards/check', [LoyaltyController::class, 'store'])->name('rewards
 
 // Gift Cards
 Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.giftCards');
-Route::post('gift-cards/purchase', PurchaseGiftCardController::class)->name('giftCards.purchase')->middleware('throttle:sensitive-write');
 Route::post('gift-cards/balance', CheckGiftCardBalanceController::class)->name('giftCards.balance')->middleware('throttle:form-write');
 
 // Catering
