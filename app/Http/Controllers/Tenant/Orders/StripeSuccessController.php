@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant\Orders;
 
+use App\Enums\Orders\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
 use App\Services\Orders\OrderAccessGuard;
@@ -29,6 +30,11 @@ class StripeSuccessController extends Controller
         }
 
         OrderAccessGuard::grant($order);
+
+        if ($completedOrder->payment_status !== PaymentStatus::Paid) {
+            return to_route('order.confirmation', $order)
+                ->with('warning', 'We received your payment, but the amount does not match your order total. Your order has been placed and the baker will review the payment and contact you.');
+        }
 
         return to_route('order.confirmation', $order)
             ->with('success', 'Payment successful! Your order has been placed.');

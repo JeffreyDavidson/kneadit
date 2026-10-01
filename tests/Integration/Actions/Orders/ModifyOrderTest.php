@@ -100,6 +100,16 @@ test('throws when order is already paid', function () {
     ]))->toThrow(OrderNotModifiableException::class);
 });
 
+test('throws with a clear reason when a card checkout is open for the order', function () {
+    $order = Order::factory()->pending()->unpaid()->create(['stripe_checkout_session_id' => 'cs_test_open', 'total' => 20.00]);
+    $item = OrderItem::factory()->for($order)->create(['quantity' => 1, 'unit_price' => 20.00]);
+
+    expect(fn () => resolve(ModifyOrder::class)($order, [
+        ['order_item_id' => $item->id, 'quantity' => 5],
+    ]))->toThrow(OrderNotModifiableException::class, 'Finish or cancel your card payment before changing this order.')
+        ->and($item->refresh()->quantity)->toBe(1);
+});
+
 test('throws when modification window has expired', function () {
     settings(['order_modification_window_minutes' => 5]);
 

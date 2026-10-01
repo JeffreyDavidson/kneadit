@@ -30,6 +30,7 @@ class ModifyOrder
      */
     public function __invoke(Order $order, array $items, ?float $tipAmount = null): Order
     {
+        throw_if($this->guard->hasOpenCheckout($order), OrderNotModifiableException::class, $order, 'Finish or cancel your card payment before changing this order.');
         throw_unless($this->guard->canModify($order), OrderNotModifiableException::class, $order, 'window expired or order ineligible');
 
         $previousSubtotal = $order->subtotal;

@@ -29,6 +29,13 @@ test('cannot modify a paid order', function () {
     expect(resolve(OrderModificationGuard::class)->canModify($order))->toBeFalse();
 });
 
+test('cannot modify an unpaid order while a card checkout is open', function () {
+    settings(['order_modification_window_minutes' => 30]);
+    $order = Order::factory()->pending()->unpaid()->create(['stripe_checkout_session_id' => 'cs_test_open']);
+
+    expect(resolve(OrderModificationGuard::class)->canModify($order))->toBeFalse();
+});
+
 test('can modify a fresh pending unpaid order within window', function () {
     settings(['order_modification_window_minutes' => 30]);
     $order = Order::factory()->pending()->unpaid()->create();

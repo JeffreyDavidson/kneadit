@@ -120,7 +120,7 @@ class StripeCheckoutService
             $paymentIntent = $session->payment_intent;
             $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : $paymentIntent;
 
-            return ($this->handleCheckoutComplete)($order, (string) ($paymentIntentId ?? ''));
+            return ($this->handleCheckoutComplete)($order, $paymentIntentId, (int) $session->amount_total);
         } catch (\Exception $e) {
             Log::error('Failed to verify checkout session', [
                 'session_id' => $sessionId,
@@ -134,12 +134,14 @@ class StripeCheckoutService
     /** @return list<array{coupon: string}> */
     private function buildDiscounts(Order $order, string $connectId): array
     {
-        if (! $order->discount_amount->isPositive()) {
+        $amountOff = $order->discount_amount->add($order->gift_card_amount);
+
+        if (! $amountOff->isPositive()) {
             return [];
         }
 
         $coupon = $this->stripe->coupons->create([
-            'amount_off' => $order->discount_amount->add($order->gift_card_amount)->cents(),
+            'amount_off' => $amountOff->cents(),
             'currency' => Config::string('cashier.currency', 'usd'),
             'duration' => 'once',
             'name' => 'Order Discount',
