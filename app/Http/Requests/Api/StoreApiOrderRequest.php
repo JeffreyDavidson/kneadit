@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
+use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,7 +27,7 @@ class StoreApiOrderRequest extends FormRequest
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:20'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.product_id' => ['required', 'exists:products,id', new ProductAvailableOnDeliveryDate],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'items.*.special_instructions' => ['nullable', 'string', 'max:500'],
             'delivery_date' => ['required', 'date', 'after_or_equal:'.$this->minimumDeliveryDate()],

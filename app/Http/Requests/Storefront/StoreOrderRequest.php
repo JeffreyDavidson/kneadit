@@ -4,6 +4,7 @@ namespace App\Http\Requests\Storefront;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
+use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -40,7 +41,7 @@ class StoreOrderRequest extends FormRequest
             'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', Rule::in(resolve(TenantSettings::class)->orders->deliveryTierKeys())],
             'notes' => ['nullable', 'string', 'max:500'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.product_id' => ['required', 'exists:products,id', new ProductAvailableOnDeliveryDate],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
             'gift_card_id' => [
