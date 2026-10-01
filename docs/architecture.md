@@ -168,7 +168,7 @@ For a positive-total order with Stripe enabled, `StripeCheckoutService` creates 
 
 Orders can also use enabled non-Stripe methods. PayPal support creates and sends invoices and the production scheduler checks invoice payment status hourly. Manual/cash flows proceed directly to confirmation. Refund behavior is payment-specific; Stripe refunds require a paid order and a captured payment-intent identifier, then record the refund transaction and transition payment status.
 
-In the bakery-admin Filament panel, the order form shows `status` read-only and `payment_status` read-only on edit, so saving the form never changes either. Status changes go through the table and view-page actions that call `TransitionOrderStatus`, and payments received outside checkout are recorded with the Mark Paid actions that call `MarkOrderPaid`. An order created from the admin form starts Pending.
+In the bakery-admin Filament panel, the order form shows `status` read-only and `payment_status` read-only on edit, so saving the form never changes either. Status changes go through the table and view-page actions that call `TransitionOrderStatus`, and payments received outside checkout are recorded with the Mark Paid actions that call `MarkOrderPaid`. Mark Paid is offered while `PaymentStatus::canBeMarkedPaid()` is true (Unpaid or Partial, so a catering order with a deposit can be settled) and the order isn't Cancelled. Send PayPal Invoice stays Unpaid-only because the invoice bills the full order total. An order created from the admin form starts Pending.
 
 ## Settings architecture
 

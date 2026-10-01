@@ -243,7 +243,7 @@ test('the markPaid table action auto-confirms a pending order paid by a non-manu
         ->status->toBe(OrderStatus::Confirmed);
 });
 
-test('the markPaid table action is only visible for unpaid orders that are not cancelled', function (string $state, bool $visible) {
+test('the markPaid table action is only visible for unpaid or partially paid orders that are not cancelled', function (string $state, bool $visible) {
     $order = Order::factory()->recycle(test()->customer)->{$state}()->create();
 
     $assertion = $visible ? 'assertActionVisible' : 'assertActionHidden';
@@ -253,14 +253,38 @@ test('the markPaid table action is only visible for unpaid orders that are not c
 })->with([
     'unpaid pending' => ['pending', true],
     'unpaid confirmed' => ['confirmed', true],
+    'partially paid' => ['partiallyPaid', true],
     'paid' => ['paid', false],
     'cancelled' => ['cancelled', false],
 ]);
+
+test('the markPaid table action marks a partially paid catering order as paid', function () {
+    $order = Order::factory()->recycle(test()->customer)->confirmed()->partiallyPaid()->create();
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('markPaid')->table($order))
+        ->assertNotified();
+
+    expect($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->status->toBe(OrderStatus::Confirmed);
+});
 
 test('the markPaid header action on the view order page marks the order as paid', function () {
     $order = Order::factory()->recycle(test()->customer)->create(['payment_method' => PaymentMethod::Cash]);
 
     livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->callAction('markPaid')
+        ->assertNotified();
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
+});
+
+test('the markPaid header action on the view order page marks a partially paid catering order as paid', function () {
+    $order = Order::factory()->recycle(test()->customer)->confirmed()->partiallyPaid()->create();
+
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->assertActionVisible('markPaid')
         ->callAction('markPaid')
         ->assertNotified();
 

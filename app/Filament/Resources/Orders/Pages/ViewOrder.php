@@ -96,7 +96,7 @@ class ViewOrder extends ViewRecord
                 ->requiresConfirmation()
                 ->modalHeading('Mark Order Paid')
                 ->modalDescription('Record that payment for this order has been received?')
-                ->visible(fn (): bool => $this->record->payment_status === PaymentStatus::Unpaid && $this->record->status !== OrderStatus::Cancelled)
+                ->visible(fn (): bool => $this->record->payment_status->canBeMarkedPaid() && $this->record->status !== OrderStatus::Cancelled)
                 ->action(function (): void {
                     resolve(MarkOrderPaid::class)($this->record);
 

@@ -200,7 +200,7 @@ class OrdersTable
                     ->success()
                     ->send();
             })
-            ->visible(fn (Order $record): bool => $record->payment_status === PaymentStatus::Unpaid && $record->status !== OrderStatus::Cancelled);
+            ->visible(fn (Order $record): bool => $record->payment_status->canBeMarkedPaid() && $record->status !== OrderStatus::Cancelled);
     }
 
     private static function statusTransitionAction(
