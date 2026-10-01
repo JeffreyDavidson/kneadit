@@ -289,3 +289,141 @@ test('manage settings page rejects invalid input on the server and saves nothing
     'catering deposit above 100' => ['catering_deposit_percent', 150, 'max'],
     'empty store name' => ['store_name', '', 'required'],
 ]);
+
+test('manage settings page renders the loyalty program section', function (string $label) {
+    livewire(ManageSettings::class)
+        ->assertSee($label);
+})->with([
+    'section heading' => 'Loyalty Program',
+    'program name' => 'Program Name',
+    'points per dollar' => 'Points Earned per Dollar',
+    'tiers toggle' => 'Enable Loyalty Tiers',
+]);
+
+test('the loyalty tier fields are hidden until tiers are enabled', function (string $label) {
+    livewire(ManageSettings::class)
+        ->assertDontSee($label)
+        ->set('loyalty_tiers_enabled', true)
+        ->assertSee($label);
+})->with([
+    'silver threshold' => 'Silver Threshold (points)',
+    'gold threshold' => 'Gold Threshold (points)',
+    'platinum threshold' => 'Platinum Threshold (points)',
+    'tier perks toggle' => 'Enable Tier Perks',
+]);
+
+test('the loyalty perk fields are hidden until tier perks are enabled', function (string $label) {
+    livewire(ManageSettings::class)
+        ->set('loyalty_tiers_enabled', true)
+        ->assertDontSee($label)
+        ->set('loyalty_tier_perks_enabled', true)
+        ->assertSee($label);
+})->with([
+    'silver multiplier' => 'Silver Points Multiplier',
+    'gold multiplier' => 'Gold Points Multiplier',
+    'platinum multiplier' => 'Platinum Points Multiplier',
+    'silver free delivery' => 'Silver Free Delivery',
+    'gold free delivery' => 'Gold Free Delivery',
+    'platinum free delivery' => 'Platinum Free Delivery',
+]);
+
+test('the loyalty settings load the reader defaults on mount', function () {
+    livewire(ManageSettings::class)
+        ->assertSet('loyalty_program_name', 'Rewards')
+        ->assertSet('loyalty_points_per_dollar', 10)
+        ->assertSet('loyalty_tiers_enabled', false)
+        ->assertSet('loyalty_tier_silver_threshold', 500)
+        ->assertSet('loyalty_tier_gold_threshold', 2000)
+        ->assertSet('loyalty_tier_platinum_threshold', 5000)
+        ->assertSet('loyalty_tier_perks_enabled', false)
+        ->assertSet('loyalty_tier_silver_multiplier', 1.0)
+        ->assertSet('loyalty_tier_gold_multiplier', 1.5)
+        ->assertSet('loyalty_tier_platinum_multiplier', 2.0)
+        ->assertSet('loyalty_tier_silver_free_delivery', false)
+        ->assertSet('loyalty_tier_gold_free_delivery', true)
+        ->assertSet('loyalty_tier_platinum_free_delivery', true);
+});
+
+test('manage settings page round-trips the loyalty settings through save and reload', function () {
+    livewire(ManageSettings::class)
+        ->set('loyalty_program_name', 'Crumb Club')
+        ->set('loyalty_points_per_dollar', 4)
+        ->set('loyalty_tiers_enabled', true)
+        ->set('loyalty_tier_silver_threshold', 250)
+        ->set('loyalty_tier_gold_threshold', 1500)
+        ->set('loyalty_tier_platinum_threshold', 4000)
+        ->set('loyalty_tier_perks_enabled', true)
+        ->set('loyalty_tier_silver_multiplier', 1.2)
+        ->set('loyalty_tier_gold_multiplier', 1.7)
+        ->set('loyalty_tier_platinum_multiplier', 3.0)
+        ->set('loyalty_tier_silver_free_delivery', true)
+        ->set('loyalty_tier_gold_free_delivery', false)
+        ->set('loyalty_tier_platinum_free_delivery', false)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $loyalty = TenantSettings::resolve()->loyalty;
+
+    expect($loyalty->programName)->toBe('Crumb Club')
+        ->and($loyalty->pointsPerDollar)->toBe(4)
+        ->and($loyalty->tiersEnabled)->toBeTrue()
+        ->and($loyalty->tierSilverThreshold)->toBe(250)
+        ->and($loyalty->tierGoldThreshold)->toBe(1500)
+        ->and($loyalty->tierPlatinumThreshold)->toBe(4000)
+        ->and($loyalty->tierPerksEnabled)->toBeTrue()
+        ->and($loyalty->tierSilverMultiplier)->toBe(1.2)
+        ->and($loyalty->tierGoldMultiplier)->toBe(1.7)
+        ->and($loyalty->tierPlatinumMultiplier)->toBe(3.0)
+        ->and($loyalty->tierSilverFreeDelivery)->toBeTrue()
+        ->and($loyalty->tierGoldFreeDelivery)->toBeFalse()
+        ->and($loyalty->tierPlatinumFreeDelivery)->toBeFalse();
+
+    livewire(ManageSettings::class)
+        ->assertSet('loyalty_program_name', 'Crumb Club')
+        ->assertSet('loyalty_points_per_dollar', 4)
+        ->assertSet('loyalty_tier_gold_threshold', 1500)
+        ->assertSet('loyalty_tier_silver_multiplier', 1.2)
+        ->assertSet('loyalty_tier_gold_free_delivery', false);
+});
+
+test('manage settings page leaves the loyalty master switch alone', function () {
+    settings(['loyalty_enabled' => '0']);
+
+    livewire(ManageSettings::class)
+        ->set('loyalty_program_name', 'Crumb Club')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(TenantSettings::resolve()->loyalty->enabled)->toBeFalse();
+});
+
+test('manage settings page rejects invalid loyalty input on the server and saves nothing', function (array $input, string $property, string $rule) {
+    settings(['loyalty_program_name' => 'Original Rewards']);
+
+    livewire(ManageSettings::class)
+        ->set('loyalty_program_name', 'Changed Rewards')
+        ->set('loyalty_tiers_enabled', true)
+        ->set('loyalty_tier_perks_enabled', true)
+        ->set($input)
+        ->call('save')
+        ->assertHasErrors([$property => $rule]);
+
+    expect(settings('loyalty_program_name'))->toBe('Original Rewards');
+})->with([
+    'empty program name' => [['loyalty_program_name' => ''], 'loyalty_program_name', 'required'],
+    'zero points per dollar' => [['loyalty_points_per_dollar' => 0], 'loyalty_points_per_dollar', 'min'],
+    'gold at or below silver' => [['loyalty_tier_silver_threshold' => 2000, 'loyalty_tier_gold_threshold' => 2000], 'loyalty_tier_gold_threshold', 'gt'],
+    'platinum at or below gold' => [['loyalty_tier_gold_threshold' => 6000, 'loyalty_tier_platinum_threshold' => 5000], 'loyalty_tier_platinum_threshold', 'gt'],
+    'silver multiplier below one' => [['loyalty_tier_silver_multiplier' => 0.5], 'loyalty_tier_silver_multiplier', 'min'],
+    'gold multiplier below one' => [['loyalty_tier_gold_multiplier' => 0.9], 'loyalty_tier_gold_multiplier', 'min'],
+    'platinum multiplier below one' => [['loyalty_tier_platinum_multiplier' => 0], 'loyalty_tier_platinum_multiplier', 'min'],
+]);
+
+test('manage settings page ignores the tier threshold order while tiers are disabled', function () {
+    livewire(ManageSettings::class)
+        ->set('loyalty_tiers_enabled', false)
+        ->set('loyalty_tier_silver_threshold', 3000)
+        ->set('loyalty_tier_gold_threshold', 2000)
+        ->call('save')
+        ->assertHasNoErrors();
+});
