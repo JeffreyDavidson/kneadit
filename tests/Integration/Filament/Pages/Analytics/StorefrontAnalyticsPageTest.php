@@ -84,3 +84,16 @@ test('starts the week on the bakery-local Monday', function () {
 
     expect($views)->toBe(1);
 });
+
+test('buckets the daily trend by the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    // 16:00 and 20:30 on 2026-10-05 in New York, then 23:00 on 2026-10-04.
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-05 20:00']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-06 00:30']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-05 03:00']);
+
+    $trend = test()->page->getDailyTrend();
+
+    expect($trend->pluck('views', 'date')->all())->toBe(['2026-10-04' => 1, '2026-10-05' => 2]);
+});

@@ -117,3 +117,19 @@ test('get upcoming birthdays treats the bakery-local day as today', function () 
         ->and($birthdays->first()->is_today)->toBeTrue()
         ->and($birthdays->last()->days_until)->toBe(1);
 });
+
+test('get upcoming birthdays refreshes cached days until after bakery-local midnight', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Cache::flush();
+    Customer::factory()->create(['name' => 'Soon Birthday', 'birthday' => '1990-10-07']);
+    // 23:30 on 2026-10-05 in New York.
+    Date::setTestNow('2026-10-06 03:30');
+    $before = test()->widget->getUpcomingBirthdays()->sole()->days_until;
+    // 00:10 on 2026-10-06 in New York, well inside the cache's fresh window.
+    Date::setTestNow('2026-10-06 04:10');
+
+    $after = test()->widget->getUpcomingBirthdays()->sole()->days_until;
+
+    expect($before)->toBe(2)
+        ->and($after)->toBe(1);
+});
