@@ -75,6 +75,7 @@ class QuickOrderForm
                         TextInput::make('customer_email')
                             ->label('Email')
                             ->email()
+                            ->required()
                             ->live(),
                     ]),
 

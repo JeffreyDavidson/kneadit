@@ -25,7 +25,8 @@ class CreateQuickOrder
             $customer = $this->findOrCreateCustomer($data);
 
             $subtotal = collect($data->orderItems)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
-            $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value)
+            $isDelivery = $data->deliveryType === DeliveryType::Delivery;
+            $deliveryFee = $isDelivery
                 ? $this->settings->orders->deliveryFee($data->deliveryTier ?? '', $subtotal)
                 : 0.00;
 
@@ -37,7 +38,8 @@ class CreateQuickOrder
                 'subtotal' => $subtotal,
                 'delivery_fee' => $deliveryFee,
                 'total' => $subtotal + $deliveryFee,
-                'delivery_address' => $data->deliveryType === DeliveryType::Delivery->value ? $data->deliveryAddress : null,
+                'delivery_type' => $data->deliveryType,
+                'delivery_address' => $isDelivery ? $data->deliveryAddress : null,
                 'delivery_date' => $data->deliveryDate,
                 'delivery_time' => $data->deliveryTime,
                 'notes' => $data->notes,
@@ -64,11 +66,10 @@ class CreateQuickOrder
 
     private function findOrCreateCustomer(CreateQuickOrderData $data): Customer
     {
-        if ($data->customerEmail) {
-            $customer = Customer::query()->forEmail($data->customerEmail)->first();
-            if ($customer) {
-                return $customer;
-            }
+        $customer = Customer::query()->forEmail($data->customerEmail)->first();
+
+        if ($customer) {
+            return $customer;
         }
 
         return Customer::query()->create([
