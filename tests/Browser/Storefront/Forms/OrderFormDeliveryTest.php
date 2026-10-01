@@ -12,8 +12,8 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit
 // The delivery tier <option> values are zero-based positions in the tenant's
 // delivery_fee_tiers setting, so the second distance option has the value "1".
 //
-// assertNoJavaScriptErrors() is intentionally omitted, as in OrderFormTest: the
-// order page has a pre-existing availability-loader console error.
+// assertNoJavaScriptErrors() runs before each submit: it only sees errors from
+// the current page, and the submit navigates away.
 
 function addDeliveryProductToCart(mixed $page, int $quantity): void
 {
@@ -42,10 +42,12 @@ function fillDeliveryOrderDetails(mixed $page, string $tierValue): mixed
 test('a delivery order on the second distance tier shows that tier fee and is placed', function () use ($storefrontUrl) {
     $page = visit("{$storefrontUrl}/order");
 
+    waitForOrderFormAvailability($page);
     addDeliveryProductToCart($page, 1);
     fillDeliveryOrderDetails($page, '1')
         ->assertSeeIn('[data-test="order-form-delivery-fee"]', '$12.00')
         ->assertSeeIn('[data-test="order-form-total"]', '$42.00')
+        ->assertNoJavaScriptErrors()
         ->click('[data-test="order-form-submit"]')
         ->waitForEvent('load')
         ->assertPathBeginsWith('/order/confirmation/')
@@ -57,11 +59,13 @@ test('a delivery order on the second distance tier shows that tier fee and is pl
 test('a delivery order at the free-delivery minimum has no delivery fee and is placed', function () use ($storefrontUrl) {
     $page = visit("{$storefrontUrl}/order");
 
+    waitForOrderFormAvailability($page);
     addDeliveryProductToCart($page, 2);
     fillDeliveryOrderDetails($page, '1')
         ->assertSeeIn('[data-test="order-form-subtotal"]', '$60.00')
         ->assertMissing('[data-test="order-form-delivery-fee"]')
         ->assertSeeIn('[data-test="order-form-total"]', '$60.00')
+        ->assertNoJavaScriptErrors()
         ->click('[data-test="order-form-submit"]')
         ->waitForEvent('load')
         ->assertPathBeginsWith('/order/confirmation/')
