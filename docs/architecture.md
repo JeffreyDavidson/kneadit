@@ -136,9 +136,11 @@ The storefront order form (`order-form-script.blade.php`) submits with `fetch` a
 
 ### Order access and tracking
 
-Order-by-number routes (`order.access` middleware, `EnsureOrderAccess`) require `OrderAccessGuard::canAccess()`: a logged-in customer who owns the order, or an order number the session has been granted. A session is granted an order by placing it, returning from Stripe, passing `VerifyOrderAccessController` (order number plus matching email), or opening a tracking link.
+Order-by-number routes (`order.access` middleware, `EnsureOrderAccess`) require `OrderAccessGuard::canAccess()`: a logged-in customer with a verified email who owns the order, or an order number the session has been granted. A session is granted an order by placing it, returning from Stripe, passing `VerifyOrderAccessController` (order number plus matching email), or opening a tracking link.
 
 The tracking form (`POST /track`) only emails a link and never shows orders. `TrackingController::store` always redirects back with the same "check your email" message (page content key `link_sent_message`), whether or not the address has orders. When it does, it queues `OrderTrackingLinkMail` to that address, at most one per customer every five minutes (`RateLimiter`). The mail holds a 30-minute `URL::temporarySignedRoute` to `GET /track/access/{customer}` (`order.track.access`, `signed` middleware). `ShowTrackedOrdersController` renders the order list for that customer and grants the session access to each order.
+
+Customer accounts: `RegisterCustomer` creates a customer, or claims an existing guest customer row with the same email (no password yet). A claim sets the password and clears `email_verified_at` but keeps the row's existing name and phone (blanks are filled from the form), and the customer is logged in straight away. Until the email is verified, the `customer.verified` middleware (`EnsureCustomerEmailIsVerified`) redirects `account`, `account/orders` and `account/profile` (GET and POST) to `account.email.verify.notice`, and returns 403 JSON on the favorites API (`api.favorites.index` and `api.favorites.toggle`). The verify notice, verify link, resend and logout stay reachable. The same rule applies to `OrderAccessGuard::canAccess()`: the customer-owns-order shortcut needs `hasVerifiedEmail()`. Session grants (just-placed order, Stripe return, order verify page, tracking link) are unaffected.
 
 ### Customer order edits
 

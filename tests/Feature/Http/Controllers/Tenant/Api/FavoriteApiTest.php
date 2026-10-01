@@ -9,7 +9,7 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(fn () => setUpTenantTest());
 
 test('favorites index returns favorites for customer email as JSON:API', function () {
-    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'alice@test.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->recycle($product)->create([
         'customer_email' => 'alice@test.com',
@@ -36,7 +36,7 @@ test('favorites endpoints require a customer account', function () {
 });
 
 test('favorites toggle adds product to favorites and returns JSON:API envelope', function () {
-    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'alice@test.com']);
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -60,7 +60,7 @@ test('favorites toggle adds product to favorites and returns JSON:API envelope',
 });
 
 test('favorites cannot be toggled for another customer', function () {
-    $customer = Customer::factory()->create(['email' => 'alice@test.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'alice@test.com']);
     $product = Product::factory()->create();
 
     withoutMiddleware(tenantMiddleware())
@@ -72,4 +72,26 @@ test('favorites cannot be toggled for another customer', function () {
         ->assertJsonPath('data.attributes.customer_email', 'alice@test.com');
 
     expect(CustomerFavorite::query()->where('customer_email', 'other@test.com')->exists())->toBeFalse();
+});
+
+test('favorites index is forbidden for a customer with an unverified email', function () {
+    $customer = Customer::factory()->unverified()->create(['email' => 'alice@test.com']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
+        ->getJson('/api/favorites');
+
+    $response->assertForbidden();
+});
+
+test('favorites toggle is forbidden for a customer with an unverified email', function () {
+    $customer = Customer::factory()->unverified()->create(['email' => 'alice@test.com']);
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
+        ->postJson('/api/favorites/toggle', ['product_id' => $product->id]);
+
+    $response->assertForbidden();
+    expect(CustomerFavorite::query()->where('customer_email', 'alice@test.com')->exists())->toBeFalse();
 });

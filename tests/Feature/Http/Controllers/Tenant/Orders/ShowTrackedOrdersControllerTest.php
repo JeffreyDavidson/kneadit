@@ -82,7 +82,8 @@ test('an expired link is rejected', function () {
     $response->assertForbidden();
 });
 
-test('a logged-in customer keeps direct access to their own order', function () {
+test('a logged-in customer with a verified email keeps direct access to their own order', function () {
+    test()->customer->markEmailAsVerified();
     $order = Order::factory()->for(test()->customer)->confirmed()->create();
 
     actingAs(test()->customer, 'customer');

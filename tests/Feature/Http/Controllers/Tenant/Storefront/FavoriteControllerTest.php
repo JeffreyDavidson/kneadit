@@ -9,7 +9,7 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(fn () => setUpTenantTest());
 
 test('can get favorites for an email', function () {
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->create([
         'customer_email' => 'jane@example.com',
@@ -25,7 +25,7 @@ test('can get favorites for an email', function () {
 });
 
 test('can toggle a favorite on', function () {
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -42,7 +42,7 @@ test('can toggle a favorite on', function () {
 });
 
 test('can toggle a favorite off', function () {
-    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'jane@example.com']);
     $product = Product::factory()->create();
     CustomerFavorite::factory()->create([
         'customer_email' => 'jane@example.com',

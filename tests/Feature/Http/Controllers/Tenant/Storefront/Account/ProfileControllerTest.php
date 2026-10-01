@@ -16,7 +16,7 @@ test('redirects unauthenticated visitors away from the profile form', function (
 });
 
 test('shows the profile form and session status for an authenticated customer', function () {
-    $customer = Customer::factory()->create(['name' => 'Alice']);
+    $customer = Customer::factory()->verified()->create(['name' => 'Alice']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
@@ -30,7 +30,7 @@ test('shows the profile form and session status for an authenticated customer', 
 });
 
 test('updates name + phone + birthday + address', function () {
-    $customer = Customer::factory()->create(['name' => 'Old Name']);
+    $customer = Customer::factory()->verified()->create(['name' => 'Old Name']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
@@ -54,7 +54,7 @@ test('updates name + phone + birthday + address', function () {
 });
 
 test('rejects empty name', function () {
-    $customer = Customer::factory()->create();
+    $customer = Customer::factory()->verified()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
@@ -66,7 +66,7 @@ test('rejects empty name', function () {
 });
 
 test('does not allow changing the email address via the profile form', function () {
-    $customer = Customer::factory()->create(['email' => 'original@example.com']);
+    $customer = Customer::factory()->verified()->create(['email' => 'original@example.com']);
 
     withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
@@ -79,7 +79,7 @@ test('does not allow changing the email address via the profile form', function 
 });
 
 test('rejects future birthday', function () {
-    $customer = Customer::factory()->create();
+    $customer = Customer::factory()->verified()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
