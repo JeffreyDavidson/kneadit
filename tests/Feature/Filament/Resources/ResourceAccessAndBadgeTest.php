@@ -2,7 +2,6 @@
 
 use App\Filament\Resources\CapacityLimits\CapacityLimitResource;
 use App\Filament\Resources\Coupons\CouponResource;
-use App\Filament\Resources\EmailCampaigns\EmailCampaignResource;
 use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource;
@@ -25,7 +24,6 @@ beforeEach(function () {
 dataset('proFeatureResources', [
     'pro resources' => [
         CapacityLimitResource::class,
-        EmailCampaignResource::class,
         LoyaltyRewardResource::class,
         IngredientResource::class,
         SocialPostResource::class,
@@ -77,8 +75,8 @@ test('growth-feature resources cannot be accessed when feature is inactive', fun
 
 test('resources show upgrade badges when tenant has no plan', function () {
     // tenant() returns null → meetsRequirement returns false → shows badge
-    expect(EmailCampaignResource::getNavigationBadge())->toBe('PRO');
+    expect(CapacityLimitResource::getNavigationBadge())->toBe('PRO');
     expect(CouponResource::getNavigationBadge())->toBe('GROWTH')
-        ->and(EmailCampaignResource::getNavigationBadgeColor())->toBe('warning')
+        ->and(CapacityLimitResource::getNavigationBadgeColor())->toBe('warning')
         ->and(CouponResource::getNavigationBadgeColor())->toBe('info');
 });

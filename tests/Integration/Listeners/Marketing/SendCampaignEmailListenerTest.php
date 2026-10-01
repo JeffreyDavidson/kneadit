@@ -2,7 +2,7 @@
 
 use App\Events\Marketing\CampaignEmailQueued;
 use App\Listeners\Marketing\SendCampaignEmailListener;
-use App\Mail\Marketing\CustomerBlastMail;
+use App\Mail\Platform\PlatformCampaignMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -19,7 +19,7 @@ test('it sends campaign email to the recipient', function () {
     $listener = new SendCampaignEmailListener;
     $listener->handle($event);
 
-    Mail::assertQueued(CustomerBlastMail::class, fn (CustomerBlastMail $mail) => $mail->hasTo('subscriber@example.com'));
+    Mail::assertQueued(PlatformCampaignMail::class, fn (PlatformCampaignMail $mail) => $mail->hasTo('subscriber@example.com'));
 });
 
 test('failed method logs a warning with email and error message', function () {
