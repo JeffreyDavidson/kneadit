@@ -8,6 +8,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,9 +59,12 @@ class CustomerReport
             ))
             ->all());
 
+        // created_at is stored in the app timezone; bucket by the bakery-local month.
+        $bakeryTimezone = resolve(BakeryClock::class)->now()->getTimezone();
+
         $acquisitionByMonth = Customer::query()->whereBetween('created_at', $createdBetween)
             ->get()
-            ->groupBy(fn (Customer $c) => $c->created_at?->format('Y-m') ?? '')
+            ->groupBy(fn (Customer $c): string => $c->created_at?->copy()->setTimezone($bakeryTimezone)->format('Y-m') ?? '')
             ->mapWithKeys(fn (Collection $customers, int|string $month): array => [
                 (string) $month => $customers->count(),
             ])
