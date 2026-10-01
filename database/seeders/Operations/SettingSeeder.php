@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Operations;
 
+use App\Enums\Orders\PaymentMethod;
 use App\Models\Platform\Setting;
 use Illuminate\Database\Seeder;
 
@@ -90,8 +91,8 @@ class SettingSeeder extends Seeder
                 'value' => '7.5',
             ],
             [
-                'key' => 'payment_methods_accepted',
-                'value' => json_encode(['cash', 'paypal', 'venmo', 'zelle']),
+                'key' => 'payment_methods',
+                'value' => json_encode([PaymentMethod::Cash->value, PaymentMethod::PayPal->value]),
             ],
             [
                 'key' => 'social_media_links',

@@ -4,9 +4,11 @@ use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Resources\Expenses\Pages\ListExpenses;
 use App\Models\Financial\Expense;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -130,4 +132,13 @@ test('amount range filter treats input as dollars (not cents)', function () {
         ->filterTable('amount', ['min_amount' => 100, 'max_amount' => 200])
         ->assertCanSeeTableRecords(collect([$inRange]))
         ->assertCanNotSeeTableRecords(collect([$belowRange, $aboveRange]));
+});
+
+test('new expenses default to the bakery-local date in the evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    livewire(ListExpenses::class)
+        ->mountAction(CreateAction::class)
+        ->assertSchemaStateSet(['date' => '2026-10-05']);
 });

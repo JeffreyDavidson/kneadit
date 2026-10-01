@@ -1,7 +1,9 @@
 <?php
 
 use App\Filament\Pages\Operations\OrderCalendar;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -129,4 +131,26 @@ test('load order counts populates order counts', function () {
     test()->page->loadOrderCounts();
 
     expect(test()->page->orderCounts)->toBeInstanceOf(Collection::class);
+});
+
+test('mount selects the bakery-local month at month end', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    // Wednesday 2026-09-30, 22:00 in New York; already October 1 in UTC.
+    Date::setTestNow('2026-10-01 02:00');
+
+    test()->page->mount();
+
+    expect(test()->page->currentYear)->toBe(2026)
+        ->and(test()->page->currentMonth)->toBe(9);
+});
+
+test('get calendar days flags the bakery-local day as today', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    test()->page->mount();
+    $todays = test()->page->getCalendarDays()->filter(fn (array $day) => $day['isToday'] === true);
+
+    expect($todays)->toHaveCount(1)
+        ->and($todays->sole()['dateString'])->toBe('2026-10-05');
 });

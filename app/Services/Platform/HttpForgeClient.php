@@ -3,11 +3,15 @@
 namespace App\Services\Platform;
 
 use App\Services\Platform\Contracts\ForgeClient;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 final readonly class HttpForgeClient implements ForgeClient
 {
@@ -41,7 +45,7 @@ final readonly class HttpForgeClient implements ForgeClient
             ]);
 
             if (! $response->successful()) {
-                Log::error('Forge: failed to add domain', ['domain' => $domain, 'status' => $response->status()]);
+                Log::error('Forge: failed to add domain', $this->failureContext($domain, $response));
 
                 return false;
             }
@@ -49,7 +53,7 @@ final readonly class HttpForgeClient implements ForgeClient
             Log::info('Forge: domain added', ['domain' => $domain]);
 
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Forge: addDomainAlias failed', ['error' => $e->getMessage()]);
 
             return false;
@@ -73,7 +77,7 @@ final readonly class HttpForgeClient implements ForgeClient
             );
 
             if (! $response->successful()) {
-                Log::error('Forge: SSL request failed', ['domain' => $domain, 'status' => $response->status()]);
+                Log::error('Forge: SSL request failed', $this->failureContext($domain, $response));
 
                 return false;
             }
@@ -81,7 +85,7 @@ final readonly class HttpForgeClient implements ForgeClient
             Log::info('Forge: SSL certificate requested', ['domain' => $domain]);
 
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Forge: obtainSslCertificate failed', ['error' => $e->getMessage()]);
 
             return false;
@@ -97,8 +101,16 @@ final readonly class HttpForgeClient implements ForgeClient
                 return true;
             }
 
-            return $this->request()->delete("{$this->domainsPath()}/{$domainId}")->successful();
-        } catch (\Throwable $e) {
+            $response = $this->request()->delete("{$this->domainsPath()}/{$domainId}");
+
+            if (! $response->successful()) {
+                Log::error('Forge: failed to remove domain', $this->failureContext($domain, $response));
+
+                return false;
+            }
+
+            return true;
+        } catch (Throwable $e) {
             Log::error('Forge: removeDomainAlias failed', ['error' => $e->getMessage()]);
 
             return false;
@@ -107,10 +119,31 @@ final readonly class HttpForgeClient implements ForgeClient
 
     private function request(): PendingRequest
     {
-        return Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withToken($this->token)
+        return Http::timeout(10)->connectTimeout(3)->retry(3, 100, $this->isTransientFailure(...), throw: false)->withToken($this->token)
             ->accept('application/vnd.api+json')
             ->contentType('application/vnd.api+json')
             ->baseUrl('https://forge.laravel.com/api');
+    }
+
+    /**
+     * Only connection errors, 5xx and 429 responses are worth retrying; a 4xx will never succeed.
+     */
+    private function isTransientFailure(Throwable $exception): bool
+    {
+        if ($exception instanceof ConnectionException) {
+            return true;
+        }
+
+        return $exception instanceof RequestException
+            && ($exception->response->serverError() || $exception->response->status() === 429);
+    }
+
+    /**
+     * @return array{domain: string, status: int, body: string}
+     */
+    private function failureContext(string $domain, Response $response): array
+    {
+        return ['domain' => $domain, 'status' => $response->status(), 'body' => $response->body()];
     }
 
     private function findDomainId(string $domain): ?string

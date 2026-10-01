@@ -1,6 +1,8 @@
 <?php
 
 use App\Filament\Pages\Analytics\ProductTrends;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -84,4 +86,16 @@ test('trends data property returns array', function () {
     test()->page->year = now()->year;
 
     expect(test()->page->trendsData)->toBeArray();
+});
+
+test('mount defaults to the bakery-local month', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-11-01 01:00');
+    test()->page->month = 0;
+    test()->page->year = 0;
+
+    test()->page->mount();
+
+    expect(test()->page->month)->toBe(10)
+        ->and(test()->page->year)->toBe(2026);
 });

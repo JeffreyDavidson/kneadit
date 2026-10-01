@@ -10,7 +10,8 @@ use App\Filament\Central\Widgets\RevenueOverview;
 use App\Models\Platform\SupportTicket;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -29,14 +30,14 @@ dataset('centralWidgets', [
 ]);
 
 test('central widget can render', function (string $widgetClass) {
-    Livewire::test($widgetClass)
+    livewire($widgetClass)
         ->assertOk();
 })->with('centralWidgets');
 
 test('needs attention widget renders Filament icons for inbox alerts', function () {
     SupportTicket::factory()->open()->create();
 
-    Livewire::test(NeedsAttention::class)
+    livewire(NeedsAttention::class)
         ->assertOk()
         ->assertSee('Open Inbox')
         ->assertSee('awaiting reply');
@@ -47,6 +48,6 @@ test('platform stats widget renders when daily ticket counts are integers', func
         'created_at' => now()->subDay(),
     ]);
 
-    Livewire::test(PlatformStats::class)
+    livewire(PlatformStats::class)
         ->assertOk();
 });

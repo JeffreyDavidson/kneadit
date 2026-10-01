@@ -6,8 +6,8 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 
 class UpcomingOrdersWidget extends Widget
 {
@@ -29,9 +29,12 @@ class UpcomingOrdersWidget extends Widget
     #[\Override]
     public static function canView(): bool
     {
+        $today = resolve(BakeryClock::class)->today();
+
         return Order::query()
             ->active()
-            ->whereBetween('delivery_date', [Date::today(), Date::today()->copy()->addDays(7)])
+            ->whereDate('delivery_date', '>=', $today)
+            ->whereDate('delivery_date', '<=', $today->copy()->addDays(7))
             ->exists();
     }
 
@@ -39,14 +42,15 @@ class UpcomingOrdersWidget extends Widget
     public function getUpcomingOrders(): array
     {
         $daysAhead = $this->daysAhead();
+        $today = resolve(BakeryClock::class)->today();
 
-        return $this->cached("upcoming_{$daysAhead}_".Date::today()->toDateString(), [600, 1200], function () use ($daysAhead): array {
-            $today = Date::today();
+        return $this->cached("upcoming_{$daysAhead}_{$today->toDateString()}", [600, 1200], function () use ($daysAhead, $today): array {
             $endDate = $today->copy()->addDays($daysAhead);
 
             $orders = Order::with('customer')->withCount('orderItems')
                 ->active()
-                ->whereBetween('delivery_date', [$today, $endDate])
+                ->whereDate('delivery_date', '>=', $today)
+                ->whereDate('delivery_date', '<=', $endDate)
                 ->oldest('delivery_date')
                 ->orderBy('delivery_time')
                 ->get();
@@ -59,8 +63,8 @@ class UpcomingOrdersWidget extends Widget
                 }
                 $date = $deliveryDate->format('Y-m-d');
                 $label = match (true) {
-                    $deliveryDate->isToday() => 'Today',
-                    $deliveryDate->isTomorrow() => 'Tomorrow',
+                    $deliveryDate->isSameDay($today) => 'Today',
+                    $deliveryDate->isSameDay($today->copy()->addDay()) => 'Tomorrow',
                     default => $deliveryDate->format('l, M j'),
                 };
 

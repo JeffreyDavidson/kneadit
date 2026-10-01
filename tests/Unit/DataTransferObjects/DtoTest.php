@@ -12,12 +12,12 @@ test('CreateOrderData::fromArray maps validated request data', function () {
         'delivery_date' => '2026-04-01',
         'delivery_type' => 'pickup',
         'items' => [['product_id' => 1, 'quantity' => 2]],
-        'coupon_id' => '5',
+        'coupon_code' => 'SAVE5',
     ]);
 
     expect($dto->customerName)->toBe('Jane')
         ->and($dto->items)->toHaveCount(1)
-        ->and($dto->couponId)->toBe(5)
+        ->and($dto->couponCode)->toBe('SAVE5')
         ->and($dto->notes)->toBeNull();
 });
 

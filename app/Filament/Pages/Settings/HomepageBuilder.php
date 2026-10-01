@@ -2,7 +2,11 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\DataTransferObjects\Settings\SettingValue;
+use App\Enums\Storefront\HeroStyle;
+use App\Enums\Storefront\StorefrontHeroImage;
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Filament\Support\AllowedFileTypes;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
@@ -12,6 +16,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * @phpstan-type HomepageSection array{visible: bool, order: int, ...<string, mixed>}
@@ -48,6 +55,17 @@ class HomepageBuilder extends Page
 
     public string $hero_secondary_cta_text = '';
 
+    public string $hero_style = 'split';
+
+    /**
+     * Pending hero image uploads, keyed by the setting they will replace.
+     *
+     * @var array<string, TemporaryUploadedFile>
+     */
+    public array $heroUploads = [];
+
+    private const int MAX_HERO_IMAGE_KILOBYTES = 5120;
+
     /** @var array<string, SectionMeta> */
     protected array $sectionMeta = [
         'hero' => ['label' => 'Hero Banner', 'description' => 'Full-screen welcome banner with store name and tagline'],
@@ -73,6 +91,7 @@ class HomepageBuilder extends Page
         $this->hero_tagline = $branding->heroTagline;
         $this->hero_primary_cta_text = $branding->heroPrimaryCtaText;
         $this->hero_secondary_cta_text = $branding->heroSecondaryCtaText;
+        $this->hero_style = (HeroStyle::tryFrom($branding->heroStyle) ?? HeroStyle::Split)->value;
     }
 
     /** @return array<string, HomepageSection> */
@@ -176,13 +195,38 @@ class HomepageBuilder extends Page
 
     public function save(): void
     {
+        $this->validate($this->heroRules());
+
         try {
+            $replacedPaths = [];
+            $heroImages = [];
+
+            foreach (StorefrontHeroImage::cases() as $image) {
+                $upload = $this->heroUploads[$image->value] ?? null;
+
+                if (! $upload instanceof TemporaryUploadedFile) {
+                    continue;
+                }
+
+                $path = $upload->store($this->heroDirectory(), 'public');
+
+                throw_if($path === false, \RuntimeException::class, 'The hero image could not be stored.');
+
+                $replacedPaths[] = SettingValue::nullableString(settings($image->value));
+                $heroImages[$image->value] = $path;
+            }
+
             resolve(SettingsManager::class)->setMany([
                 'homepage_sections' => json_encode($this->sections),
                 'hero_tagline' => $this->hero_tagline,
                 'hero_primary_cta_text' => $this->hero_primary_cta_text,
                 'hero_secondary_cta_text' => $this->hero_secondary_cta_text,
+                'hero_style' => $this->hero_style,
+                ...$heroImages,
             ]);
+
+            array_map($this->deleteStoredHeroImage(...), $replacedPaths);
+            $this->heroUploads = [];
 
             Notification::make()
                 ->title('Homepage sections saved!')
@@ -197,6 +241,44 @@ class HomepageBuilder extends Page
                 ->danger()
                 ->send();
         }
+    }
+
+    public function removeHeroImage(string $setting): void
+    {
+        $image = StorefrontHeroImage::tryFrom($setting);
+
+        if ($image === null) {
+            return;
+        }
+
+        $previousPath = SettingValue::nullableString(settings($image->value));
+
+        resolve(SettingsManager::class)->set($image->value, null);
+        unset($this->heroUploads[$image->value]);
+        $this->deleteStoredHeroImage($previousPath);
+
+        Notification::make()
+            ->title("{$image->getLabel()} removed")
+            ->success()
+            ->send();
+    }
+
+    public function heroImagePreviewUrl(StorefrontHeroImage $image): ?string
+    {
+        $upload = $this->heroUploads[$image->value] ?? null;
+
+        if ($upload instanceof TemporaryUploadedFile && $upload->isPreviewable()) {
+            return SettingValue::nullableString($upload->temporaryUrl());
+        }
+
+        $path = SettingValue::nullableString(settings($image->value));
+
+        return $path === null ? null : Storage::url($path);
+    }
+
+    public function hasStoredHeroImage(StorefrontHeroImage $image): bool
+    {
+        return SettingValue::nullableString(settings($image->value)) !== null;
     }
 
     public function resetToDefaultsAction(): Action
@@ -245,6 +327,46 @@ class HomepageBuilder extends Page
     public function getSectionMeta(string $key): array
     {
         return $this->sectionMeta[$key] ?? ['label' => ucfirst($key), 'description' => ''];
+    }
+
+    /** @return array<string, array<int, mixed>> */
+    private function heroRules(): array
+    {
+        $allowedKeys = implode(',', array_column(StorefrontHeroImage::cases(), 'value'));
+        $mimeTypes = implode(',', AllowedFileTypes::IMAGES);
+        $maxKilobytes = self::MAX_HERO_IMAGE_KILOBYTES;
+
+        return [
+            'hero_style' => ['required', Rule::enum(HeroStyle::class)],
+            'heroUploads' => ['array', "array:{$allowedKeys}"],
+            'heroUploads.*' => ['file', 'image', "mimetypes:{$mimeTypes}", "max:{$maxKilobytes}"],
+        ];
+    }
+
+    private function heroDirectory(): string
+    {
+        $tenantId = tenant('id');
+
+        return is_string($tenantId)
+            ? "tenants/{$tenantId}/storefront-heroes"
+            : 'storefront-heroes';
+    }
+
+    /**
+     * Only files this page uploaded are ever deleted, so a stored path that points
+     * elsewhere (legacy imports, other uploads) is left alone.
+     */
+    private function deleteStoredHeroImage(?string $path): void
+    {
+        if ($path === null || str_contains($path, '..')) {
+            return;
+        }
+
+        if (! str_starts_with($path, "{$this->heroDirectory()}/")) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 
     private function swapSectionOrder(string $firstKey, string $secondKey): void

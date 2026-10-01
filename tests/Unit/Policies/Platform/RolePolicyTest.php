@@ -4,6 +4,7 @@ use App\Enums\Staff\UserRole;
 use App\Models\Content\BlogPost;
 use App\Models\Content\GalleryPhoto;
 use App\Models\Content\SocialPost;
+use App\Models\Content\TenantBlogPost;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\ContactMessage;
 use App\Models\Customers\Customer;
@@ -32,6 +33,7 @@ use App\Models\Staff\User;
 use App\Policies\Content\BlogPostPolicy;
 use App\Policies\Content\CustomerPhotoPolicy;
 use App\Policies\Content\GalleryPhotoPolicy;
+use App\Policies\Content\TenantBlogPostPolicy;
 use App\Policies\Customers\CateringInquiryPolicy;
 use App\Policies\Customers\ContactMessagePolicy;
 use App\Policies\Customers\CustomerPolicy;
@@ -89,6 +91,7 @@ dataset('managerRolePolicyGroups', [
         [CustomerPhotoPolicy::class, CustomerPhoto::class],
         [CustomerPolicy::class, Customer::class],
         [GalleryPhotoPolicy::class, GalleryPhoto::class],
+        [TenantBlogPostPolicy::class, TenantBlogPost::class],
         [ReviewPolicy::class, Review::class],
         [WaitlistEntryPolicy::class, WaitlistEntry::class],
     ]],

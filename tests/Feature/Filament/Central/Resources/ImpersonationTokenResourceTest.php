@@ -6,9 +6,9 @@ use App\Models\Platform\ImpersonationToken;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
-use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,7 +17,7 @@ beforeEach(function () {
 });
 
 test('list page renders', function () {
-    Livewire::test(ListImpersonationTokens::class)->assertOk();
+    livewire(ListImpersonationTokens::class)->assertOk();
 });
 
 test('resource is read-only', function () {
@@ -42,6 +42,6 @@ test('list shows pending, consumed, and expired tokens', function () {
     ImpersonationToken::factory()->for($tenant)->consumed()->create();
     ImpersonationToken::factory()->for($tenant)->expired()->create();
 
-    Livewire::test(ListImpersonationTokens::class)
+    livewire(ListImpersonationTokens::class)
         ->assertCanSeeTableRecords(ImpersonationToken::all());
 });

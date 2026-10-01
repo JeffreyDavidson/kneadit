@@ -335,7 +335,7 @@
                     function loadMessages(orderId) {
                         fetch('/order/' + orderId + '/messages')
                             .then((r) => r.json())
-                            .then((data) => renderMessages(orderId, data.messages))
+                            .then((payload) => renderMessages(orderId, payload.data))
                             .catch(() => {
                                 const c = document.getElementById('messages-' + orderId);
                                 c.textContent = '';

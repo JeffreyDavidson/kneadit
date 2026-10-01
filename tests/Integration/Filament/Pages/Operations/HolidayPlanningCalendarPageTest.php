@@ -2,8 +2,10 @@
 
 use App\Filament\Pages\Operations\HolidayPlanningCalendar;
 use App\Models\Operations\Holiday;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -45,4 +47,15 @@ test('get holidays by month groups holidays', function () {
     $grouped = test()->page->getHolidaysByMonth();
 
     expect($grouped)->toBeInstanceOf(Collection::class);
+});
+
+test('get holidays by month keeps this bakery-local year and the next', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2027-01-01 01:00');
+    Holiday::factory()->create(['name' => 'Christmas', 'date' => '2026-12-25']);
+    test()->page->loadHolidays();
+
+    $months = test()->page->getHolidaysByMonth();
+
+    expect($months->keys()->all())->toBe(['2026-12']);
 });

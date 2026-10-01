@@ -1,13 +1,16 @@
 <?php
 
+use App\Events\Platform\WeeklyDigestRequested;
 use App\Filament\Central\Pages\PlatformOperations;
 use App\Models\Platform\PlatformSetting;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Artisan;
-use Livewire\Livewire;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -16,7 +19,7 @@ beforeEach(function () {
 });
 
 test('page renders', function () {
-    Livewire::test(PlatformOperations::class)->assertOk();
+    livewire(PlatformOperations::class)->assertOk();
 });
 
 test('catalog includes the expected commands', function () {
@@ -35,13 +38,13 @@ test('catalog includes the expected commands', function () {
 test('run invokes artisan command and stamps last run', function () {
     Artisan::shouldReceive('call')
         ->once()
-        ->with('health:check')
+        ->with('health:check', [])
         ->andReturn(0);
     Artisan::shouldReceive('output')
         ->once()
         ->andReturn('all checks passed');
 
-    Livewire::test(PlatformOperations::class)
+    livewire(PlatformOperations::class)
         ->call('run', 'health:check')
         ->assertOk();
 
@@ -51,8 +54,23 @@ test('run invokes artisan command and stamps last run', function () {
         ->toMatchArray(['status' => 'succeeded', 'exit_code' => 0]);
 });
 
+test('weekly digest button sends outside the bakery-local Monday 08:00', function () {
+    Event::fake([WeeklyDigestRequested::class]);
+    runCommandsAsOneTenant();
+    createTenant(['id' => 'test-bakery']);
+    User::factory()->owner()->create();
+    settings(['timezone' => 'America/New_York']);
+    Date::setTestNow('2026-10-07 19:00');
+
+    livewire(PlatformOperations::class)
+        ->call('run', 'digest:weekly')
+        ->assertOk();
+
+    Event::assertDispatchedTimes(WeeklyDigestRequested::class, 1);
+});
+
 test('run rejects unknown commands', function () {
-    Livewire::test(PlatformOperations::class)
+    livewire(PlatformOperations::class)
         ->call('run', 'platform:rm-rf-slash')
         ->assertOk();
 

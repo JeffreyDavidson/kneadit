@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Services\Stripe\StripeCheckoutService;
 use JMac\Testing\Double;
@@ -9,7 +10,7 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(fn () => setUpTenantTest());
 
 test('redirects to order confirmation with success message', function () {
-    $order = Order::factory()->create();
+    $order = Order::factory()->paid()->create();
 
     $stripeService = Double::for(StripeCheckoutService::class);
     $stripeService->expects('handleCheckoutComplete')->with('cs_test_123')->returns($order);
@@ -23,7 +24,7 @@ test('redirects to order confirmation with success message', function () {
 });
 
 test('calls handleCheckoutComplete when session_id is present', function () {
-    $order = Order::factory()->create();
+    $order = Order::factory()->paid()->create();
 
     $stripeService = Double::for(StripeCheckoutService::class);
     $stripeService->expects('handleCheckoutComplete')
@@ -49,6 +50,22 @@ test('rejects a missing session id', function () {
         ->get(route('order.stripe.success', $order, false));
 
     $response->assertForbidden();
+});
+
+test('flags a payment that needs review instead of confirming it as successful', function () {
+    $order = Order::factory()->unpaid()->create();
+
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('handleCheckoutComplete')->with('cs_test_123')->returns($order);
+    app()->instance(StripeCheckoutService::class, $stripeService);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));
+
+    $response->assertRedirect()
+        ->assertSessionMissing('success')
+        ->assertSessionHas('warning');
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid);
 });
 
 test('rejects an unverified or mismatched checkout session', function () {

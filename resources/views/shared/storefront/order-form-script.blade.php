@@ -38,6 +38,7 @@
             giftCardAmount: 0,
             isSubmitting: false,
             submitError: '',
+            fieldErrors: {},
             capacityWarning: '',
             capacityError: '',
             minDate: @js($earliestDeliveryDate->toDateString()),
@@ -51,6 +52,15 @@
             saleDiscount: 0,
 
             init() {
+                Object.keys(this.form).forEach((field) => {
+                    this.$watch(`form.${field}`, () => this.clearFieldError(field));
+                });
+                this.$watch('couponCode', () => this.clearFieldError('coupon_code'));
+                this.$watch('giftCardCode', () => this.clearFieldError('gift_card_code'));
+                this.$watch('customTip', () => this.clearFieldError('tip_amount'));
+                this.$watch('tipPercent', () => this.clearFieldError('tip_amount'));
+                this.$watch('cartItems', () => this.clearFieldError('items'));
+
                 this.loadAvailability();
                 if (this.form.customer_email) {
                     this.loadFavorites();
@@ -59,24 +69,47 @@
 
                 const params = new URLSearchParams(window.location.search);
                 if (params.has('reorder')) {
-                    fetch(`/order/reorder/${params.get('reorder')}`)
-                        .then((r) => r.json())
-                        .then((data) => {
-                            this.cartItems = data.items.map((item) => ({
+                    fetch(`/order/reorder/${params.get('reorder')}`, { headers: { Accept: 'application/json' } })
+                        .then((r) => (r.ok ? r.json() : null))
+                        .then((payload) => {
+                            if (!payload) {
+                                return;
+                            }
+
+                            this.cartItems = payload.data.items.map((item) => ({
                                 id: item.product_id,
                                 name: item.product_name,
                                 price: parseFloat(item.price),
                                 quantity: item.quantity,
                             }));
                             this.calculateTotals();
-                        });
+                        })
+                        .catch((error) => console.error('Failed to load the previous order', error));
                 }
+            },
+
+            clearFieldError(field) {
+                delete this.fieldErrors[field];
+            },
+
+            showFieldErrors(errors) {
+                // Cart line errors (items.0.product_id) show once, in the cart summary.
+                const aliases = { gift_card_id: 'gift_card_code' };
+                const fieldErrors = {};
+
+                Object.entries(errors).forEach(([key, messages]) => {
+                    const field = key.startsWith('items.') ? 'items' : (aliases[key] ?? key);
+                    fieldErrors[field] ??= messages[0];
+                });
+
+                this.fieldErrors = fieldErrors;
             },
 
             async loadAvailability() {
                 try {
                     const response = await fetch('/availability');
-                    this.availabilityData = await response.json();
+                    const payload = await response.json();
+                    this.availabilityData = payload.data;
                     this.unavailableDates = this.availabilityData.filter((d) => !d.available).map((d) => d.date);
                 } catch (e) {
                     console.error('Failed to load availability', e);
@@ -239,7 +272,7 @@
 
             calculateDiscount() {
                 if (this.appliedCoupon) {
-                    this.discountAmount = this.appliedCoupon.discount || 0;
+                    this.discountAmount = this.appliedCoupon.discount_amount || 0;
                 } else {
                     this.discountAmount = 0;
                 }
@@ -308,6 +341,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            Accept: 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({
@@ -315,13 +349,13 @@
                             subtotal: this.subtotal,
                         }),
                     });
-                    const data = await response.json();
-                    if (data.success) {
-                        this.appliedGiftCard = data;
+                    const payload = await response.json();
+                    if (response.ok) {
+                        this.appliedGiftCard = payload.data;
                         this.giftCardError = '';
                         this.calculateTotals();
                     } else {
-                        this.giftCardError = data.error || 'Invalid gift card';
+                        this.giftCardError = payload.message || 'Invalid gift card';
                         this.appliedGiftCard = null;
                         this.calculateTotals();
                     }
@@ -341,6 +375,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            Accept: 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({
@@ -348,14 +383,15 @@
                             subtotal: this.subtotal,
                         }),
                     });
-                    const data = await response.json();
-                    if (data.success) {
-                        this.appliedCoupon = data;
+                    const payload = await response.json();
+                    if (response.ok) {
+                        this.appliedCoupon = payload.data;
                         this.couponError = '';
                         this.calculateTotals();
                     } else {
-                        this.couponError = data.error || 'Invalid coupon';
+                        this.couponError = payload.message || 'Invalid coupon';
                         this.appliedCoupon = null;
+                        this.calculateTotals();
                     }
                 } catch (error) {
                     this.couponError = 'Error validating coupon';
@@ -404,11 +440,12 @@
 
                 try {
                     const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
-                    const data = await response.json();
-                    if (!data.available) {
+                    const payload = await response.json();
+                    const capacity = payload.data;
+                    if (!capacity.available) {
                         this.capacityError = 'This date is fully booked. Please choose another date.';
-                    } else if (data.usage_percent > 80) {
-                        this.capacityWarning = `This date is ${Math.round(data.usage_percent)}% full (${data.remaining} slots remaining).`;
+                    } else if (capacity.usage_percent > 80) {
+                        this.capacityWarning = `This date is ${Math.round(capacity.usage_percent)}% full (${capacity.remaining} slots remaining).`;
                     }
                 } catch (error) {
                     console.error('Error checking capacity:', error);
@@ -419,6 +456,7 @@
                 if (!this.canSubmit) return;
                 this.isSubmitting = true;
                 this.submitError = '';
+                this.fieldErrors = {};
 
                 const formData = new FormData();
                 Object.keys(this.form).forEach((key) => {
@@ -431,7 +469,7 @@
                     formData.append(`items[${index}][quantity]`, item.quantity);
                 });
                 if (this.appliedCoupon) {
-                    formData.append('coupon_id', this.appliedCoupon.coupon_id);
+                    formData.append('coupon_code', this.appliedCoupon.code || this.couponCode);
                 }
                 if (this.appliedGiftCard) {
                     formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
@@ -445,10 +483,15 @@
                 try {
                     const response = await fetch('{{ route('order.store') }}', {
                         method: 'POST',
+                        headers: { Accept: 'application/json' },
                         body: formData,
                     });
                     if (response.ok) {
                         window.location.href = response.url;
+                    } else if (response.status === 422) {
+                        const payload = await response.json();
+                        this.showFieldErrors(payload.errors || {});
+                        this.submitError = payload.message || 'Please fix the highlighted fields.';
                     } else {
                         this.submitError = 'There was an error submitting your order. Please try again.';
                     }

@@ -4,7 +4,8 @@ use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Models\Staff\User;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -14,11 +15,11 @@ beforeEach(function () {
 });
 
 test('BlogPosts list page can render', function () {
-    Livewire::test(ListBlogPosts::class)
+    livewire(ListBlogPosts::class)
         ->assertOk();
 });
 
 test('EmailCampaigns list page can render', function () {
-    Livewire::test(ListEmailCampaigns::class)
+    livewire(ListEmailCampaigns::class)
         ->assertOk();
 });

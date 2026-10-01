@@ -61,6 +61,10 @@ jobs:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: |
           cp .env.example .env
+          # The order submit resolves the Stripe client, which rejects an empty
+          # secret. A placeholder lets the fixture tenant (no Connect account)
+          # place orders without any Stripe call.
+          sed -i 's/^STRIPE_SECRET=.*/STRIPE_SECRET=sk_test_browser_smoke/' .env
           composer install --no-interaction --prefer-dist
           php artisan key:generate
           php artisan migrate:fresh --force

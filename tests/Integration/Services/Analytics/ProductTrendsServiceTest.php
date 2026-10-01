@@ -6,6 +6,7 @@ use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Analytics\ProductTrendsService;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -241,4 +242,23 @@ test('excludes cancelled orders from counts', function () {
     $result = (new ProductTrendsService)->calculate(2026, 3);
 
     expect($result)->toBeEmpty();
+});
+
+test('counts orders by the bakery-local month they were placed in', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    $category = Category::factory()->create();
+    $product = Product::factory()->inCategory($category)->create();
+
+    // 8:30 pm on Oct 31 in New York, which is already November in UTC.
+    $lastNight = Order::factory()->create(['created_at' => '2026-11-01 00:30:00', 'status' => OrderStatus::Pending]);
+    OrderItem::factory()->recycle($lastNight, $product)->create(['quantity' => 4]);
+    // 11:30 pm on Sep 30 in New York, which is already October in UTC.
+    $septemberEvening = Order::factory()->create(['created_at' => '2026-10-01 03:30:00', 'status' => OrderStatus::Pending]);
+    OrderItem::factory()->recycle($septemberEvening, $product)->create(['quantity' => 3]);
+
+    $result = (new ProductTrendsService)->calculate(2026, 10);
+
+    expect($result[0]['products'][0])
+        ->current->toBe(4)
+        ->previous->toBe(3);
 });

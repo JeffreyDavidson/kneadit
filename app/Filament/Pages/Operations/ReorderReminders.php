@@ -7,6 +7,8 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
+use App\Services\Scheduling\BakeryClock;
+use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -71,7 +73,8 @@ class ReorderReminders extends Page
     /** @return Collection<int, Customer> */
     public function getCustomers(): Collection
     {
-        $cutoff = Date::now()->subDays($this->threshold);
+        $today = resolve(BakeryClock::class)->today();
+        $cutoff = $today->copy()->subDays($this->threshold);
         $eligibleOrders = fn (Builder $query): Builder => $query
             ->where('status', '!=', OrderStatus::Cancelled)
             ->whereNotNull('delivery_date');
@@ -90,11 +93,20 @@ class ReorderReminders extends Page
                 ->where('delivery_date', '>', $cutoff))
             ->orderBy('last_order_date')
             ->get()
-            ->map(function (Customer $customer): Customer {
-                $customer->days_since = (int) floor(Date::parse($customer->last_order_date)->diffInDays(now()));
+            ->map(function (Customer $customer) use ($today): Customer {
+                $customer->days_since = (int) floor(Date::parse($customer->last_order_date)->startOfDay()->diffInDays($today));
 
                 return $customer;
             });
+    }
+
+    public function reminderMailto(Customer $customer): string
+    {
+        $storeName = resolve(TenantSettings::class)->store->name;
+        $subject = rawurlencode("We miss you at {$storeName}!");
+        $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n{$storeName}");
+
+        return "mailto:{$customer->customer_email}?subject={$subject}&body={$body}";
     }
 
     public function updatedThreshold(): void

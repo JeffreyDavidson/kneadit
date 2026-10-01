@@ -23,12 +23,16 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use App\Services\Settings\TenantSettingsRegistry;
+use App\Services\Tenants\TenancyManager;
+use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
+use JMac\Testing\Double;
 use Pest\Browser\Api\PendingAwaitablePage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -271,6 +275,33 @@ function setUpCentralTest(): void
     DB::purge('central');
     $pdo = DB::connection('sqlite')->getPdo();
     DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+}
+
+/**
+ * Makes tenant-looping commands run against the current database as one
+ * tenant, with that tenant's settings re-resolved for every pass. Set the
+ * bakery's settings (for example its timezone) with settings([...]) first.
+ */
+function runCommandsAsOneTenant(): void
+{
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('forEachTenant')->resolves(function (callable $callback): int {
+        $tenant = new Tenant;
+        $tenant->id = 'test-bakery';
+        $registry = resolve(TenantSettingsRegistry::class);
+        $registry->flush();
+
+        $callback($tenant, $registry->all());
+
+        return 0;
+    });
+    $tenancyManager->allows('withinTenant')->resolves(function (Tenant $tenant, callable $callback): mixed {
+        resolve(TenantSettingsRegistry::class)->flush();
+
+        return $callback($tenant);
+    });
+
+    app()->instance(TenancyManager::class, $tenancyManager);
 }
 
 function createCentralTables(): void
@@ -853,4 +884,43 @@ function makeTenantSettings(
             lowStockAlertsEnabled: false,
         ),
     );
+}
+
+/**
+ * The storefront order form only checks a date against the availability list
+ * once it has loaded, so browser tests wait for the list before picking a
+ * date. Any non-empty value means the fetch finished. assertScript() retries
+ * until the script returns true.
+ */
+function waitForOrderFormAvailability(mixed $page): void
+{
+    $page->assertScript(<<<'JS'
+        function () {
+            const form = Alpine.$data(document.querySelector('[data-test="order-form"]'));
+            const list = form.availabilityData;
+
+            return Array.isArray(list) ? list.length > 0 : Object.keys(list).length > 0;
+        }
+    JS);
+}
+
+function addLoavesToCart(mixed $page, int $quantity): void
+{
+    $increment = sprintf(
+        '[data-product-name="%s"] [data-test="order-form-product-increment"]',
+        BrowserTestFixtureSeeder::DELIVERY_PRODUCT_NAME,
+    );
+
+    foreach (range(1, $quantity) as $ignored) {
+        $page->click($increment);
+    }
+}
+
+function fillPickupOrderDetails(mixed $page, string $date): mixed
+{
+    return $page
+        ->fill('[data-test="order-form-customer-name"]', 'Availability Tester')
+        ->fill('[data-test="order-form-customer-email"]', 'availability-tester@example.com')
+        ->fill('[data-test="order-form-customer-phone"]', '555-0123')
+        ->fill('[data-test="order-form-delivery-date"]', $date);
 }

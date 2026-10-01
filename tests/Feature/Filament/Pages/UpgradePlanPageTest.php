@@ -5,7 +5,8 @@ use App\Filament\Pages\Platform\UpgradePlan;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -23,5 +24,5 @@ beforeEach(function () {
 });
 
 test('upgrade plan page renders for manager', function () {
-    Livewire::test(UpgradePlan::class)->assertOk();
+    livewire(UpgradePlan::class)->assertOk();
 });

@@ -44,7 +44,7 @@ class LoyaltyAnalytics
 
     public function outstandingPoints(): int
     {
-        return (int) LoyaltyPoint::query()->sum('points');
+        return LoyaltyPoint::query()->balance()->total;
     }
 
     /**
@@ -66,7 +66,7 @@ class LoyaltyAnalytics
     public function recentAwards(int $limit = 3): array
     {
         return LoyaltyPoint::with('customer')
-            ->where('points', '>', 0)
+            ->earned()
             ->latest()
             ->limit($limit)
             ->get()

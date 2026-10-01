@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Actions\Orders\MarkOrderPaid;
 use App\Actions\Orders\RefundStripePayment;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
@@ -79,6 +80,7 @@ class OrdersTable
                 self::statusTransitionAction('mark_ready', OrderStatus::Ready, Heroicon::OutlinedClock, 'success', 'Mark Ready', 'Mark this order as ready for pickup/delivery?', 'Order marked as ready', 'Mark Ready'),
                 self::statusTransitionAction('mark_delivered', OrderStatus::Delivered, Heroicon::OutlinedTruck, 'primary', 'Mark Delivered', 'Mark this order as delivered/completed?', 'Order marked as delivered', 'Mark Delivered'),
                 self::cancelOrderAction(),
+                self::markPaidAction(),
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
@@ -173,6 +175,32 @@ class OrdersTable
                     ->send();
             })
             ->visible(fn (Order $record): bool => in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($record)));
+    }
+
+    /**
+     * Record a payment taken outside checkout (typically cash). Goes through
+     * MarkOrderPaid so the payment is logged and non-manual payment methods
+     * auto-confirm a pending order.
+     */
+    private static function markPaidAction(): Action
+    {
+        return Action::make('markPaid')
+            ->label('Mark Paid')
+            ->icon(Heroicon::OutlinedBanknotes)
+            ->color('success')
+            ->authorize('update')
+            ->requiresConfirmation()
+            ->modalHeading('Mark Order Paid')
+            ->modalDescription('Record that payment for this order has been received?')
+            ->action(function (Order $record): void {
+                resolve(MarkOrderPaid::class)($record);
+
+                Notification::make()
+                    ->title('Order marked as paid')
+                    ->success()
+                    ->send();
+            })
+            ->visible(fn (Order $record): bool => $record->payment_status === PaymentStatus::Unpaid && $record->status !== OrderStatus::Cancelled);
     }
 
     private static function statusTransitionAction(

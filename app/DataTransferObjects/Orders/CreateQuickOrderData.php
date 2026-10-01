@@ -2,6 +2,9 @@
 
 namespace App\DataTransferObjects\Orders;
 
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\PaymentMethod;
+
 final readonly class CreateQuickOrderData
 {
     /**
@@ -9,15 +12,16 @@ final readonly class CreateQuickOrderData
      */
     public function __construct(
         public string $customerName,
-        public string $paymentMethod,
-        public string $deliveryType,
+        public string $customerEmail,
+        public PaymentMethod $paymentMethod,
+        public DeliveryType $deliveryType,
         public string $deliveryDate,
         public string $deliveryTime,
         public array $orderItems,
-        public ?string $customerEmail = null,
         public ?string $customerPhone = null,
         public ?string $deliveryAddress = null,
         public ?string $notes = null,
+        public ?string $deliveryTier = null,
     ) {}
 
     /**
@@ -25,18 +29,44 @@ final readonly class CreateQuickOrderData
      */
     public static function fromArray(array $data): self
     {
+        // Tier options are keyed by position, so the select state can be an int.
+        $deliveryTier = $data['delivery_tier'] ?? null;
+        $deliveryTier = is_int($deliveryTier) ? (string) $deliveryTier : $deliveryTier;
+
         return new self(
             customerName: self::stringValue($data['customer_name'] ?? null, 'customer_name'),
-            paymentMethod: self::stringValue($data['payment_method'] ?? null, 'payment_method'),
-            deliveryType: self::stringValue($data['delivery_type'] ?? null, 'delivery_type'),
+            customerEmail: self::stringValue($data['customer_email'] ?? null, 'customer_email'),
+            paymentMethod: self::enumValue($data['payment_method'] ?? null, PaymentMethod::class, 'payment_method'),
+            deliveryType: self::enumValue($data['delivery_type'] ?? null, DeliveryType::class, 'delivery_type'),
             deliveryDate: self::stringValue($data['delivery_date'] ?? null, 'delivery_date'),
             deliveryTime: self::stringValue($data['delivery_time'] ?? null, 'delivery_time'),
             orderItems: self::orderItems($data['order_items'] ?? []),
-            customerEmail: self::nullableStringValue($data['customer_email'] ?? null, 'customer_email'),
             customerPhone: self::nullableStringValue($data['customer_phone'] ?? null, 'customer_phone'),
             deliveryAddress: self::nullableStringValue($data['delivery_address'] ?? null, 'delivery_address'),
             notes: self::nullableStringValue($data['notes'] ?? null, 'notes'),
+            deliveryTier: self::nullableStringValue($deliveryTier, 'delivery_tier'),
         );
+    }
+
+    /**
+     * Filament selects backed by an enum hand back the enum instance; plain callers pass the backing value.
+     *
+     * @template T of \BackedEnum
+     *
+     * @param  class-string<T>  $enum
+     * @return T
+     */
+    private static function enumValue(mixed $value, string $enum, string $key): \BackedEnum
+    {
+        if ($value instanceof $enum) {
+            return $value;
+        }
+
+        if (! is_string($value)) {
+            throw new \UnexpectedValueException("Expected {$key} to be a string.");
+        }
+
+        return $enum::tryFrom($value) ?? throw new \UnexpectedValueException("Expected {$key} to be a valid value.");
     }
 
     private static function stringValue(mixed $value, string $key): string
@@ -61,6 +91,11 @@ final readonly class CreateQuickOrderData
     {
         if (is_int($value)) {
             return $value;
+        }
+
+        // Numeric inputs can dehydrate a whole number as a float (2.0).
+        if (is_float($value) && floor($value) === $value) {
+            return (int) $value;
         }
 
         if (! is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {

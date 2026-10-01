@@ -35,17 +35,13 @@ class ApplyCoupon
 
     private function resolveCoupon(OrderPipelineData $payload): ?Coupon
     {
-        if ($payload->data->couponId) {
-            return Coupon::query()->lockForUpdate()->find($payload->data->couponId);
+        if (! $payload->data->couponCode) {
+            return null;
         }
 
-        if ($payload->data->couponCode) {
-            return Coupon::query()
-                ->where('code', Str::upper(trim($payload->data->couponCode)))
-                ->lockForUpdate()
-                ->first();
-        }
-
-        return null;
+        return Coupon::query()
+            ->where('code', Str::upper(trim($payload->data->couponCode)))
+            ->lockForUpdate()
+            ->first();
     }
 }

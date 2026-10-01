@@ -2,8 +2,10 @@
 
 use App\Http\Requests\Api\StoreApiOrderRequest;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\SeasonalItem;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -119,6 +121,27 @@ test('valid pickup order passes', function () {
 
     expect($validator->passes())->toBeTrue();
 });
+
+test('seasonal availability is checked against the delivery date', function (string $deliveryDate, bool $available) {
+    Date::setTestNow('2026-09-30 10:00');
+    $product = Product::factory()->create();
+    SeasonalItem::factory()->recycle($product)->create(['available_from' => '2026-12-01', 'available_until' => '2026-12-24']);
+
+    $validator = validator(
+        array_merge(validApiOrderData(), [
+            'delivery_date' => $deliveryDate,
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+        ]),
+        (new StoreApiOrderRequest)->rules(),
+    );
+
+    expect($validator->errors()->has('items.0.product_id'))->toBe(! $available)
+        ->and($validator->errors()->has('delivery_date'))->toBeFalse();
+})->with([
+    'delivery date before the season' => ['2026-11-20', false],
+    'delivery date in the season' => ['2026-12-10', true],
+    'delivery date after the season' => ['2026-12-30', false],
+]);
 
 function validApiOrderData(): array
 {

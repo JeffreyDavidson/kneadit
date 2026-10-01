@@ -2,7 +2,9 @@
 
 use App\Filament\Pages\Analytics\FinanceSummary;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -45,3 +47,12 @@ test('profit colors distinguish losses from nonnegative results', function (floa
     'break even' => [0.0, 'green'],
     'loss' => [-25.0, 'red'],
 ]);
+
+test('finance summary defaults to the bakery-local year', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2027-01-01 01:00');
+
+    $component = livewire(FinanceSummary::class);
+
+    $component->assertSet('selectedYear', 2026);
+});

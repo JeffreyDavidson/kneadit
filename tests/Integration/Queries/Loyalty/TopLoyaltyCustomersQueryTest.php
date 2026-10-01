@@ -35,6 +35,23 @@ test('subtracts redeemed points from balance', function () {
         ->and((int) $result->first()->total_earned)->toBe(200);
 });
 
+test('includes adjustments in the balance and ranks by it', function () {
+    $adjusted = Customer::factory()->create();
+    LoyaltyPoint::factory()->recycle($adjusted)->earned(500)->create();
+    LoyaltyPoint::factory()->recycle($adjusted)->redeemed(100)->create();
+    LoyaltyPoint::factory()->recycle($adjusted)->adjusted(-50)->create();
+
+    $other = Customer::factory()->create();
+    LoyaltyPoint::factory()->recycle($other)->earned(380)->create();
+
+    $result = TopLoyaltyCustomersQuery::get();
+
+    expect($result->pluck('id')->all())->toBe([$other->id, $adjusted->id])
+        ->and((int) $result->first()->balance)->toBe(380)
+        ->and((int) $result->last()->balance)->toBe(350)
+        ->and((int) $result->last()->total_earned)->toBe(500);
+});
+
 test('respects the limit parameter', function () {
     Customer::factory()->count(3)->create()->each(function (Customer $customer) {
         LoyaltyPoint::factory()->recycle($customer)->earned(100)->create();

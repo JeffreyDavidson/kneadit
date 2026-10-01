@@ -42,17 +42,25 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
 | Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders |
+| Hourly, sends at 07:00 bakery-local | `inventory:send-low-stock-alert` | Send low-stock alerts |
+| Hourly, sends at 08:00 bakery-local | `birthday:send-emails` | Send birthday engagement email |
+| Hourly, sends at 10:00 bakery-local | `orders:send-repeat-reminders` | Send repeat-order reminders |
+| Hourly, sends Monday 08:00 bakery-local | `digest:weekly` | Send the weekly digest |
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
 | Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
-| Daily 07:00 | `inventory:send-low-stock-alert` | Send low-stock alerts |
-| Daily 08:00 | `birthday:send-emails` | Send birthday engagement email |
 | Daily 09:00 | `checkins:send` | Send scheduled check-ins |
-| Daily 10:00 | `orders:send-repeat-reminders` | Send repeat-order reminders |
 | Daily 10:00 | `trial:check` | Enforce/notify trial state |
-| Monday 08:00 | `digest:weekly` | Send the weekly digest |
+
+### Bakery-local send times
+
+The four tenant-facing sends above (`birthday:send-emails`, `orders:send-repeat-reminders`, `digest:weekly`, `inventory:send-low-stock-alert`) are scheduled hourly but each tenant is only processed when its own clock matches the send time: `App\Services\Scheduling\LocalSendWindow` reads the tenant's `timezone` order setting (UTC until set) and compares the local hour, and for the digest the local weekday. A bakery on a half-hour offset such as India is processed at the half-past local time, since the scheduler fires on the hour. Platform-level commands (backups, churn, trial checks, prunes) stay on fixed UTC times.
+
+Each command also records a per-tenant, per-bakery-local-date marker (`local-send:<command>:<Y-m-d>` in the tenant's `scheduled_notification_runs` table) before sending, so a retry, a manual run or a clock change cannot send twice on the same local day. The marker is released if the tenant's send throws, so the next run can retry. Underneath, the existing per-customer, per-user and per-tenant claims (`engagement:…`, `weekly-digest:…`, `low-stock:…`) still dedupe each recipient.
+
+For support runs, pass `--force` (for example `php artisan birthday:send-emails --force`) to process every tenant now regardless of local time. `--force` skips the hour check and the local-day marker, but the per-recipient claims above still stop a recipient receiving the same message twice in a day.
 
 The scheduler group requires a cache/lock backend compatible with `onOneServer()` and `withoutOverlapping()`. Because tasks run in the background, monitor command logs and process failures rather than relying solely on the scheduler invocation exit code.
 

@@ -1,11 +1,41 @@
 <?php
 
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use App\Services\Stripe\StripeCheckoutService;
 use App\Services\Stripe\StripeSettingsReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
+use Stripe\Checkout\Session;
+use Stripe\Service\Checkout\SessionService;
+use Stripe\StripeClient;
 
 pest()->use(RefreshDatabase::class);
+
+final class FakeStripeCheckoutClient extends StripeClient
+{
+    public object $checkout;
+
+    public function __construct(SessionService $sessions)
+    {
+        $this->checkout = (object) ['sessions' => $sessions];
+    }
+}
+
+function fakePaidCheckoutSession(int $amountTotal): void
+{
+    $sessions = Double::for(SessionService::class);
+    $sessions->expects('retrieve')->returns(Session::constructFrom([
+        'id' => 'cs_test_paid',
+        'payment_status' => 'paid',
+        'payment_intent' => 'pi_test_paid',
+        'amount_total' => $amountTotal,
+    ]));
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeCheckoutClient($sessions));
+}
 
 beforeEach(function () {
     setUpTenantTest();
@@ -100,3 +130,37 @@ test('handleCheckoutComplete returns null when no connect id', function () {
 
     expect($result)->toBeNull();
 });
+
+test('handleCheckoutComplete marks the order paid when the amount paid equals the order total', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $order = Order::factory()->unpaid()->create(['stripe_checkout_session_id' => 'cs_test_paid', 'total' => 50.00]);
+    fakePaidCheckoutSession(5000);
+
+    $result = resolve(StripeCheckoutService::class)->handleCheckoutComplete('cs_test_paid');
+
+    expect($result?->is($order))->toBeTrue()
+        ->and($order->refresh()->payment_status)->toBe(PaymentStatus::Paid)
+        ->and($order->stripe_payment_intent_id)->toBe('pi_test_paid');
+});
+
+test('handleCheckoutComplete leaves the order unpaid and notifies the baker when the amount paid differs', function (int $amountPaid) {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message): bool => str_contains($message, 'amount does not match'));
+    settings(['stripe_connect_id' => 'acct_test']);
+    $owner = User::factory()->owner()->create();
+    $order = Order::factory()->unpaid()->create(['stripe_checkout_session_id' => 'cs_test_paid', 'total' => 50.00]);
+    fakePaidCheckoutSession($amountPaid);
+
+    $result = resolve(StripeCheckoutService::class)->handleCheckoutComplete('cs_test_paid');
+
+    expect($result?->is($order))->toBeTrue()
+        ->and($result->payment_status)->toBe(PaymentStatus::Unpaid)
+        ->and($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid)
+        ->and($order->stripe_payment_intent_id)->toBe('pi_test_paid')
+        ->and($owner->notifications()->count())->toBe(1);
+})->with([
+    'lower than the order total' => 4000,
+    'higher than the order total' => 6000,
+]);

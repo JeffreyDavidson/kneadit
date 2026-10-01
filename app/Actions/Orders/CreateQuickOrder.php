@@ -10,19 +10,24 @@ use App\Events\Orders\OrderCreated;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use Illuminate\Support\Facades\Config;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\DB;
 
 class CreateQuickOrder
 {
+    public function __construct(
+        private readonly TenantSettings $settings,
+    ) {}
+
     public function __invoke(CreateQuickOrderData $data): Order
     {
         $order = DB::transaction(function () use ($data) {
             $customer = $this->findOrCreateCustomer($data);
 
             $subtotal = collect($data->orderItems)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
-            $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value)
-                ? Config::float('kneadit.delivery_fees.5to10', 5.0)
+            $isDelivery = $data->deliveryType === DeliveryType::Delivery;
+            $deliveryFee = $isDelivery
+                ? $this->settings->orders->deliveryFee($data->deliveryTier ?? '', $subtotal)
                 : 0.00;
 
             $order = Order::query()->create([
@@ -33,7 +38,8 @@ class CreateQuickOrder
                 'subtotal' => $subtotal,
                 'delivery_fee' => $deliveryFee,
                 'total' => $subtotal + $deliveryFee,
-                'delivery_address' => $data->deliveryType === DeliveryType::Delivery->value ? $data->deliveryAddress : null,
+                'delivery_type' => $data->deliveryType,
+                'delivery_address' => $isDelivery ? $data->deliveryAddress : null,
                 'delivery_date' => $data->deliveryDate,
                 'delivery_time' => $data->deliveryTime,
                 'notes' => $data->notes,
@@ -60,11 +66,10 @@ class CreateQuickOrder
 
     private function findOrCreateCustomer(CreateQuickOrderData $data): Customer
     {
-        if ($data->customerEmail) {
-            $customer = Customer::query()->forEmail($data->customerEmail)->first();
-            if ($customer) {
-                return $customer;
-            }
+        $customer = Customer::query()->forEmail($data->customerEmail)->first();
+
+        if ($customer) {
+            return $customer;
         }
 
         return Customer::query()->create([

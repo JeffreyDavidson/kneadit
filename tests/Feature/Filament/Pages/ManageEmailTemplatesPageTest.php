@@ -4,7 +4,8 @@ use App\Filament\Pages\Settings\ManageEmailTemplates;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -15,5 +16,5 @@ beforeEach(function () {
 });
 
 test('manage email templates page renders for manager', function () {
-    Livewire::test(ManageEmailTemplates::class)->assertOk();
+    livewire(ManageEmailTemplates::class)->assertOk();
 });

@@ -8,13 +8,17 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 
 class RepeatOrderReminderEngagement implements CustomerEngagement
 {
+    public function __construct(
+        private readonly BakeryClock $clock,
+    ) {}
+
     public function isEnabled(TenantSettings $settings): bool
     {
         return $settings->engagement->repeatRemindersEnabled;
@@ -24,7 +28,8 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
     public function findRecipients(TenantSettings $settings): Collection
     {
         $reminderDays = $settings->engagement->repeatReminderDays;
-        $cutoffDate = Date::today()->subDays($reminderDays);
+        $today = $this->clock->today();
+        $cutoffDate = $today->copy()->subDays($reminderDays);
 
         return Customer::query()
             ->where('email', '!=', '')
@@ -36,7 +41,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
                 'customerReminders',
             ])
             ->get()
-            ->map(function (Customer $customer) use ($cutoffDate, $reminderDays): ?\App\Services\Engagement\Contracts\EngagementRecipient {
+            ->map(function (Customer $customer) use ($today, $cutoffDate, $reminderDays): ?\App\Services\Engagement\Contracts\EngagementRecipient {
                 $lastOrder = $customer->orders->first();
 
                 if (! $lastOrder || $lastOrder->delivery_date?->isAfter($cutoffDate)) {
@@ -44,7 +49,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
                 }
 
                 $existingReminder = $customer->customerReminders->first();
-                if ($existingReminder && $existingReminder->next_reminder_date?->isFuture()) {
+                if ($existingReminder && $existingReminder->next_reminder_date?->isAfter($today)) {
                     return null;
                 }
 
@@ -54,7 +59,9 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
                     model: $customer,
                     context: [
                         'last_order_date' => $lastOrder->delivery_date,
-                        'days_since_last_order' => $lastOrder->delivery_date?->diffInDays(Date::today()),
+                        'days_since_last_order' => $lastOrder->delivery_date
+                            ? (int) $lastOrder->delivery_date->diffInDays($today, absolute: true)
+                            : null,
                         'reminder_days' => $reminderDays,
                     ],
                 );
@@ -78,7 +85,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             [
                 'last_order_date' => $recipient->context['last_order_date'],
                 'reminder_sent_at' => now(),
-                'next_reminder_date' => Date::today()->addDays($reminderDays),
+                'next_reminder_date' => $this->clock->today()->addDays($reminderDays),
             ],
         );
 

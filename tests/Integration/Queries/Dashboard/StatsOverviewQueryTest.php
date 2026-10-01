@@ -6,6 +6,7 @@ use App\Models\Engagement\PageView;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Queries\Dashboard\StatsOverviewQuery;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -51,11 +52,51 @@ test('returns seven-day charts and weekly revenue from grouped aggregates', func
     expect($data)->toMatchArray(['ordersChart' => [0, 0, 0, 0, 0, 0, 2], 'todaysOrders' => 2]);
 });
 
+test('counts the bakery-local day as today', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    Order::factory()->create(['delivery_date' => '2026-10-05']);
+
+    $data = resolve(StatsOverviewQuery::class)->get();
+
+    expect($data['todaysOrders'])->toBe(1)
+        ->and($data['ordersChart'])->toBe([0, 0, 0, 0, 0, 0, 1]);
+});
+
+test('keeps week boundaries in the bakery-local week', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-05 02:00');
+    Order::factory()->paid()->create(['delivery_date' => '2026-10-04', 'total' => 40]);
+    Order::factory()->paid()->create(['delivery_date' => '2026-09-27', 'total' => 25]);
+
+    $data = resolve(StatsOverviewQuery::class)->get();
+
+    expect($data['thisWeekRevenue'])->toBe(40.0)
+        ->and($data['lastWeekRevenue'])->toBe(25.0);
+});
+
 test('loads the complete dashboard dataset in five queries', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings());
     DB::flushQueryLog();
     DB::enableQueryLog();
 
     resolve(StatsOverviewQuery::class)->get();
 
     expect(DB::getQueryLog())->toHaveCount(5);
+});
+
+test('buckets pending orders and storefront views by the bakery-local day', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+    // 20:30 on 2026-10-05 in New York, then 23:30 on 2026-10-04.
+    Order::factory()->create(['status' => OrderStatus::Pending, 'created_at' => '2026-10-06 00:30']);
+    Order::factory()->create(['status' => OrderStatus::Pending, 'created_at' => '2026-10-05 03:30']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-06 00:30']);
+    PageView::factory()->create(['product_id' => null, 'created_at' => '2026-10-05 03:30']);
+
+    $data = resolve(StatsOverviewQuery::class)->get();
+
+    expect($data['pendingChart'])->toBe([0, 0, 0, 0, 0, 1, 1])
+        ->and($data['viewsChart'])->toBe([0, 0, 0, 0, 0, 1, 1])
+        ->and($data['viewsToday'])->toBe(1);
 });

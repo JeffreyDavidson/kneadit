@@ -11,7 +11,8 @@ use App\Models\Financial\Income;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -25,27 +26,27 @@ beforeEach(function () {
 test('CateringInquiries table renders with records', function () {
     CateringInquiry::factory()->create();
 
-    Livewire::test(ListCateringInquiries::class)
+    livewire(ListCateringInquiries::class)
         ->assertOk();
 });
 
 test('Incomes table renders with records', function () {
     Income::factory()->create();
 
-    Livewire::test(ListIncomes::class)
+    livewire(ListIncomes::class)
         ->assertOk();
 });
 
 test('LoyaltyRewards table renders with records', function () {
     LoyaltyReward::factory()->create();
 
-    Livewire::test(ListLoyaltyRewards::class)
+    livewire(ListLoyaltyRewards::class)
         ->assertOk();
 });
 
 test('SocialPosts table renders with records', function () {
     SocialPost::factory()->create();
 
-    Livewire::test(ListSocialPosts::class)
+    livewire(ListSocialPosts::class)
         ->assertOk();
 });

@@ -29,7 +29,7 @@ class ProductTrendsService
     {
         $counts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->whereBetween('orders.created_at', $range->toArray())
+            ->whereBetween('orders.created_at', $range->inAppTimezone()->toArray())
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')
             ->pluck('total_qty', 'product_id')

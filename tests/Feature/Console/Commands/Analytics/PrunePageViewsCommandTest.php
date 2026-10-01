@@ -6,6 +6,7 @@ use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Testing\PendingCommand;
 
 use function Pest\Laravel\artisan;
@@ -71,3 +72,19 @@ test('it accepts a positive retention override', function () {
 test('it rejects a non-positive retention window', function () {
     prunePageViewsCommand(['--days' => 0])->assertExitCode(2);
 });
+
+test('it prunes only page views strictly older than the retention cutoff', function (int $secondsPastCutoff, bool $expectPruned) {
+    Date::setTestNow('2026-09-30 12:00:00');
+
+    $view = PageView::factory()->create([
+        'created_at' => now()->subDays(30)->subSeconds($secondsPastCutoff),
+    ]);
+
+    prunePageViewsCommand(['--days' => 30])->assertSuccessful();
+
+    expect(PageView::query()->whereKey($view->id)->exists())->toBe(! $expectPruned);
+})->with([
+    'one second inside the window' => [-1, false],
+    'exactly at the cutoff' => [0, false],
+    'one second outside the window' => [1, true],
+]);

@@ -2,7 +2,8 @@
 
 use App\Filament\Widgets\AnnouncementBanner;
 use App\Models\Staff\User;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -10,6 +11,6 @@ beforeEach(function () {
 });
 
 test('announcement banner widget can render', function () {
-    Livewire::test(AnnouncementBanner::class)
+    livewire(AnnouncementBanner::class)
         ->assertOk();
 });

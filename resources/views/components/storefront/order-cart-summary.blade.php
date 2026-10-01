@@ -17,6 +17,7 @@
         </div>
     </template>
 </div>
+<x-storefront.order-field-error field="items" />
 
 <div x-show="cartItems.length === 0" class="mb-4 py-8 text-center">
     <div class="mb-3 text-4xl opacity-30">🧺</div>
@@ -35,15 +36,19 @@
             placeholder="Enter coupon"
             class="order-input flex-1"
         />
-        <button type="button"
-                                    @click="applyCoupon()"
-                                    :disabled="! couponCode || isApplyingCoupon"
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
-                                    :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-        <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
+        <button
+            type="button"
+            data-test="order-form-coupon-apply"
+            @click="applyCoupon()"
+            :disabled="! couponCode || isApplyingCoupon"
+            class="bg-warm-500/15 text-warm-400 border-warm-500/30 rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
+            :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
+        >
+            <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
         </button>
     </div>
     <div x-show="couponError" class="mt-2 text-sm text-red-400" x-text="couponError"></div>
+    <x-storefront.order-field-error field="coupon_code" />
     <div x-show="appliedCoupon" class="mt-2 text-sm text-green-400">
         ✓ <span x-text="appliedCoupon?.label"></span> applied!
     </div>
@@ -62,6 +67,7 @@
         />
         <button
             type="button"
+            data-test="order-form-gift-card-apply"
             @click="applyGiftCard()"
             :disabled="! giftCardCode || isApplyingGiftCard"
             class="bg-warm-500/15 text-warm-400 border-warm-500/30 rounded-xl border px-4 py-2 text-sm font-semibold transition-all"
@@ -71,6 +77,7 @@
         </button>
     </div>
     <div x-show="giftCardError" class="mt-2 text-sm text-red-400" x-text="giftCardError"></div>
+    <x-storefront.order-field-error field="gift_card_code" />
     <div x-show="appliedGiftCard" class="mt-2 text-sm text-green-400">
         ✓ Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
     </div>
@@ -146,16 +153,17 @@
                 class="border-warm-600/15 text-warm-300 flex-1 rounded-lg border bg-white/[0.03] px-3 py-2 text-sm"
             />
         </div>
+        <x-storefront.order-field-error field="tip_amount" />
     </div>
 </div>
 
 {{-- Totals --}}
 <div class="border-warm-700/20 space-y-2 border-t pt-4 text-sm">
-    <div class="flex justify-between">
+    <div data-test="order-form-subtotal" class="flex justify-between">
         <span class="text-warm-500">Subtotal</span>
         <span class="text-warm-300" x-text="'$' + subtotal.toFixed(2)"></span>
     </div>
-    <div x-show="deliveryFee > 0" class="flex justify-between">
+    <div x-show="deliveryFee > 0" data-test="order-form-delivery-fee" class="flex justify-between">
         <span class="text-warm-500">Delivery</span>
         <span class="text-warm-300" x-text="'$' + deliveryFee.toFixed(2)"></span>
     </div>
@@ -175,7 +183,7 @@
         <span class="text-warm-500">Tip</span>
         <span class="text-warm-300" x-text="'$' + tipAmount.toFixed(2)"></span>
     </div>
-    <div class="border-warm-700/20 flex justify-between border-t pt-3">
+    <div data-test="order-form-total" class="border-warm-700/20 flex justify-between border-t pt-3">
         <span class="font-display text-warm-100 text-lg font-bold">Total</span>
         <span class="font-display text-warm-400 text-2xl font-bold" x-text="'$' + total.toFixed(2)"></span>
     </div>

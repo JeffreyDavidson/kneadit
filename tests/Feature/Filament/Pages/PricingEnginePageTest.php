@@ -5,7 +5,8 @@ use App\Models\Inventory\Product;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,7 +19,7 @@ beforeEach(function () {
 test('pricing engine calculates with products', function () {
     Product::factory()->count(3)->create(['price' => 10.00, 'cost' => 4.00]);
 
-    Livewire::test(PricingEngine::class)
+    livewire(PricingEngine::class)
         ->call('calculate')
         ->assertOk();
 });

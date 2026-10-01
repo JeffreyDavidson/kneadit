@@ -35,6 +35,16 @@
             </div>
         </x-storefront.hero-section>
 
+        @session('warning')
+            <section class="bg-warm-900">
+                <div class="mx-auto max-w-5xl px-4 pt-8" role="status">
+                    <p class="bg-warm-500/10 border-warm-500/25 text-warm-300 rounded-2xl border p-4 text-sm">
+                        {{ $value }}
+                    </p>
+                </div>
+            </section>
+        @endsession
+
         {{-- Order Details --}}
         <section class="bg-warm-900">
             <div class="mx-auto max-w-5xl px-4 pb-24">

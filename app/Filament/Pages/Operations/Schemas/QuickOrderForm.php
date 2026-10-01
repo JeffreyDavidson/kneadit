@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages\Operations\Schemas;
 
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
+use App\Services\Scheduling\BakeryClock;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -72,6 +75,7 @@ class QuickOrderForm
                         TextInput::make('customer_email')
                             ->label('Email')
                             ->email()
+                            ->required()
                             ->live(),
                     ]),
 
@@ -163,7 +167,7 @@ class QuickOrderForm
                         DatePicker::make('delivery_date')
                             ->label('Requested Date')
                             ->required()
-                            ->minDate(today()),
+                            ->minDate(resolve(BakeryClock::class)->today()),
 
                         TimePicker::make('delivery_time')
                             ->label('Requested Time')
@@ -180,9 +184,18 @@ class QuickOrderForm
 
                         TextInput::make('delivery_address')
                             ->label('Delivery Address')
-                            ->visible(fn (Get $get): bool => $get('delivery_type') === DeliveryType::Delivery->value)
-                            ->required(fn (Get $get): bool => $get('delivery_type') === DeliveryType::Delivery->value),
+                            ->visible(fn (Get $get): bool => self::isDelivery($get))
+                            ->required(fn (Get $get): bool => self::isDelivery($get)),
                     ]),
+
+                    Select::make('delivery_tier')
+                        ->label('Delivery Distance')
+                        ->options(fn (): array => self::deliveryTierOptions())
+                        ->helperText(fn (): ?string => self::deliveryTierOptions() === []
+                            ? 'No delivery fee tiers are set up, so delivery is free. Add them in Settings → Order Settings.'
+                            : null)
+                        ->visible(fn (Get $get): bool => self::isDelivery($get))
+                        ->required(fn (Get $get): bool => self::isDelivery($get) && self::deliveryTierOptions() !== []),
                 ])
                 ->collapsible(),
 
@@ -212,5 +225,29 @@ class QuickOrderForm
             ])
                 ->alignEnd(),
         ];
+    }
+
+    /**
+     * Select state comes back from `$get()` as the enum, not its string value.
+     */
+    private static function isDelivery(Get $get): bool
+    {
+        return $get->enum('delivery_type', DeliveryType::class, isNullable: true) === DeliveryType::Delivery;
+    }
+
+    /**
+     * The bakery's Delivery Fee Tiers, keyed by tier position as the storefront submits them.
+     *
+     * @return array<int, string>
+     */
+    private static function deliveryTierOptions(): array
+    {
+        return collect(resolve(TenantSettings::class)->orders->deliveryFeeTiers)
+            ->map(fn (array $tier): string => sprintf(
+                '%s (%s)',
+                SettingValue::string($tier['description'] ?? null) ?: 'Delivery',
+                Number::currency(SettingValue::float($tier['fee'] ?? null, 0.0)),
+            ))
+            ->all();
     }
 }

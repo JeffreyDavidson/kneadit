@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\SettingsManager;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
@@ -55,10 +56,12 @@ class GoalTrackerWidget extends Widget
     #[Computed]
     public function monthlyData(): array
     {
-        return $this->cached('monthly_'.now()->format('Y-m'), [900, 1800], function (): array {
+        $now = resolve(BakeryClock::class)->now();
+
+        return $this->cached('monthly_'.$now->format('Y-m'), [900, 1800], function () use ($now): array {
             $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
-            $range = DateRange::thisMonth();
+            $range = new DateRange($now->copy()->startOfMonth(), $now->copy()->endOfMonth())->inAppTimezone();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
             $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
@@ -68,7 +71,7 @@ class GoalTrackerWidget extends Widget
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
             return [
-                'label' => now()->format('F Y'),
+                'label' => $now->format('F Y'),
                 'goal' => $goal,
                 'revenue' => $revenue,
                 'percentage' => $percentage,
@@ -80,10 +83,12 @@ class GoalTrackerWidget extends Widget
     #[Computed]
     public function yearlyData(): array
     {
-        return $this->cached('yearly_'.now()->format('Y'), [1800, 3600], function (): array {
+        $now = resolve(BakeryClock::class)->now();
+
+        return $this->cached('yearly_'.$now->format('Y'), [1800, 3600], function () use ($now): array {
             $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
-            $range = DateRange::thisYear();
+            $range = new DateRange($now->copy()->startOfYear(), $now->copy()->endOfYear())->inAppTimezone();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
             $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
@@ -93,7 +98,7 @@ class GoalTrackerWidget extends Widget
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
             return [
-                'label' => now()->format('Y'),
+                'label' => $now->format('Y'),
                 'goal' => $goal,
                 'revenue' => $revenue,
                 'percentage' => $percentage,

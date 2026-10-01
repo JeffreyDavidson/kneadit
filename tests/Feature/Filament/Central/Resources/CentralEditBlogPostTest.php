@@ -5,7 +5,8 @@ use App\Models\Content\BlogPost;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -27,7 +28,7 @@ test('edit blog post page renders with existing record', function () {
     /** @var BlogPost $post */
     $post = BlogPost::query()->findOrFail($id);
 
-    Livewire::test(EditBlogPost::class, ['record' => $post->getRouteKey()])
+    livewire(EditBlogPost::class, ['record' => $post->getRouteKey()])
         ->assertOk();
 });
 
@@ -45,6 +46,6 @@ test('edit blog post page exposes a delete header action', function () {
     /** @var BlogPost $post */
     $post = BlogPost::query()->findOrFail($id);
 
-    Livewire::test(EditBlogPost::class, ['record' => $post->getRouteKey()])
+    livewire(EditBlogPost::class, ['record' => $post->getRouteKey()])
         ->assertActionExists('delete');
 });

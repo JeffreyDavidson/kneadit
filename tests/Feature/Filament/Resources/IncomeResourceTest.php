@@ -4,9 +4,11 @@ use App\Enums\Financial\IncomeSource;
 use App\Filament\Resources\Incomes\Pages\ListIncomes;
 use App\Models\Financial\Income;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -113,4 +115,13 @@ test('can filter incomes by source', function () {
         ->filterTable('source', IncomeSource::FarmersMarket->value)
         ->assertCanSeeTableRecords(collect([$market]))
         ->assertCanNotSeeTableRecords(collect([$cash]));
+});
+
+test('new incomes default to the bakery-local date in the evening', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-10-06 01:00');
+
+    livewire(ListIncomes::class)
+        ->mountAction(CreateAction::class)
+        ->assertSchemaStateSet(['date' => '2026-10-05']);
 });

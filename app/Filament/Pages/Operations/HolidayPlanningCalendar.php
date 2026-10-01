@@ -7,6 +7,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Operations\Holiday;
 use App\Presenters\HolidayPresenter;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -72,7 +73,7 @@ class HolidayPlanningCalendar extends Page
     /** @return Collection<string, Collection<int, Holiday>> */
     public function getHolidaysByMonth(): Collection
     {
-        $currentYear = now()->year;
+        $currentYear = resolve(BakeryClock::class)->today()->year;
         $nextYear = $currentYear + 1;
 
         return $this->holidays

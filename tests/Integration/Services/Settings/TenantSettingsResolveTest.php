@@ -59,6 +59,21 @@ test('lead time comes from the admin setting, then the older key, then the defau
     'default when neither is set' => [[], 24],
 ]);
 
+test('accepted payment methods come from the admin setting, then the older key, then an empty list', function (array $stored, array $expected) {
+    settings($stored);
+
+    $methods = TenantSettings::resolve()->payment->methodsAccepted;
+
+    expect($methods)->toBe($expected);
+})->with([
+    'admin setting' => [['payment_methods' => json_encode(['cash', 'paypal'])], ['cash', 'paypal']],
+    'admin setting wins over the older key' => [['payment_methods' => json_encode(['paypal']), 'payment_methods_accepted' => json_encode(['cash'])], ['paypal']],
+    'older key when the admin setting is missing' => [['payment_methods_accepted' => json_encode(['cash', 'stripe'])], ['cash', 'stripe']],
+    'older key when the admin setting is empty' => [['payment_methods' => json_encode([]), 'payment_methods_accepted' => json_encode(['cash'])], ['cash']],
+    'unknown methods are dropped' => [['payment_methods' => json_encode(['cash', 'venmo', 42])], ['cash']],
+    'empty list when neither is set' => [[], []],
+]);
+
 test('timezone comes from settings and falls back to UTC', function (array $stored, string $expected) {
     settings($stored);
 

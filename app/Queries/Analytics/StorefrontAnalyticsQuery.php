@@ -9,6 +9,7 @@ use App\DataTransferObjects\Analytics\TopViewedProduct;
 use App\Models\Engagement\PageView;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -71,12 +72,13 @@ class StorefrontAnalyticsQuery
     /** @return Collection<int, DailyPageViewCount> */
     public function dailyTrend(int $days = 30): Collection
     {
-        $start = now()->subDays($days);
-        $counts = DateCountQuery::count(
+        $clock = resolve(BakeryClock::class);
+        $today = $clock->today();
+        $counts = DateCountQuery::countByLocalDay(
             PageView::query()->whereNull('product_id'),
-            'created_at',
-            $start,
-            now(),
+            $today->copy()->subDays($days),
+            $today,
+            $clock->now()->getTimezone(),
         );
 
         return collect($counts)

@@ -43,6 +43,13 @@ class OrderSettingsSection
                             ->helperText('Used for order lead time and Schedule Manager order cutoffs'),
                     ]),
 
+                TextInput::make('default_shelf_life_days')
+                    ->label('Default Shelf Life (days)')
+                    ->numeric()
+                    ->minValue(1)
+                    ->default(3)
+                    ->helperText('Prefills the Best By date on product labels.'),
+
                 Repeater::make('delivery_fee_tiers')
                     ->label('Delivery Fee Tiers')
                     ->helperText('Set how delivery fees scale with distance. Tiers should not overlap.')
@@ -105,6 +112,7 @@ class OrderSettingsSection
                 TextInput::make('order_modification_window_minutes')
                     ->label('Order Modification Window (minutes)')
                     ->numeric()
+                    ->minValue(0)
                     ->default(0)
                     ->helperText('How long after placing an order a customer can edit quantities/tip. 0 disables the feature.'),
 
@@ -138,12 +146,15 @@ class OrderSettingsSection
                         TextInput::make('pickup_slot_interval_minutes')
                             ->label('Slot Interval (minutes)')
                             ->numeric()
+                            ->minValue(5)
+                            ->maxValue(1440)
                             ->default(30)
                             ->helperText('How wide each pickup window is (e.g. 15, 30, 60).'),
 
                         TextInput::make('pickup_slot_max_per_window')
                             ->label('Max Orders per Slot')
                             ->numeric()
+                            ->minValue(1)
                             ->default(3)
                             ->helperText('Cap on how many orders can share a single pickup slot.'),
                     ]),

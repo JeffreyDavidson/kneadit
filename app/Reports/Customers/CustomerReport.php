@@ -17,7 +17,9 @@ class CustomerReport
 {
     public function generate(DateRange $range): CustomerReportResult
     {
-        $newCustomers = Customer::query()->whereBetween('created_at', $range->toArray())->count();
+        $createdBetween = $range->inAppTimezone()->toArray();
+
+        $newCustomers = Customer::query()->whereBetween('created_at', $createdBetween)->count();
 
         $paidOrdersInRange = static function (Builder $query) use ($range): void {
             $query->whereNotIn('status', [OrderStatus::Cancelled])
@@ -56,7 +58,7 @@ class CustomerReport
             ))
             ->all());
 
-        $acquisitionByMonth = Customer::query()->whereBetween('created_at', $range->toArray())
+        $acquisitionByMonth = Customer::query()->whereBetween('created_at', $createdBetween)
             ->get()
             ->groupBy(fn (Customer $c) => $c->created_at?->format('Y-m') ?? '')
             ->mapWithKeys(fn (Collection $customers, int|string $month): array => [

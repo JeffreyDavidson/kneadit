@@ -5,8 +5,9 @@ use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Pennant\Feature;
-use Livewire\Livewire;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -30,6 +31,6 @@ beforeEach(function () {
 });
 
 test('referral program page can render', function () {
-    Livewire::test(ReferralProgram::class)
+    livewire(ReferralProgram::class)
         ->assertOk();
 });

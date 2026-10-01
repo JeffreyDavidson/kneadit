@@ -8,6 +8,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Production\PrepScheduleService;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
@@ -62,7 +63,7 @@ class WeeklyPrepPlanner extends Page
 
     public function mount(): void
     {
-        $this->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
+        $this->selectedWeekStart = resolve(BakeryClock::class)->today()->startOfWeek()->toDateString();
         $this->loadWeeklyData();
     }
 

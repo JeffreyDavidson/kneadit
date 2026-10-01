@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Orders\OrderIngredientAggregator;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -56,8 +57,9 @@ class ShoppingListGenerator extends Page
 
     public function mount(): void
     {
-        $this->startDate = now()->format('Y-m-d');
-        $this->endDate = now()->addDays(Config::integer('orders.default_planning_days', 7))->format('Y-m-d');
+        $today = resolve(BakeryClock::class)->today();
+        $this->startDate = $today->toDateString();
+        $this->endDate = $today->addDays(Config::integer('orders.default_planning_days', 7))->toDateString();
         $this->shoppingList = new Collection;
     }
 

@@ -1,7 +1,10 @@
 <?php
 
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
@@ -99,3 +102,57 @@ test('it propagates exceptions during tenant context processing for webhook retr
     expect(fn () => resolve(HandleConnectCheckoutCompleted::class)($session))
         ->toThrow(Exception::class, 'Processing failed');
 });
+
+function connectCheckoutSession(int $amountTotal): array
+{
+    return [
+        'id' => 'cs_test_amount',
+        'payment_status' => 'paid',
+        'payment_intent' => 'pi_test_amount',
+        'amount_total' => $amountTotal,
+        'metadata' => [
+            'order_id' => 1,
+            'tenant_id' => 'amount-tenant',
+        ],
+    ];
+}
+
+function runWebhookWithinTenant(): void
+{
+    createTenant(['id' => 'amount-tenant', 'email' => 'amount@test.com']);
+
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->expects('withinTenant')
+        ->resolves(fn (Tenant $tenant, callable $callback): mixed => $callback($tenant));
+
+    app()->instance(TenancyManager::class, $tenancyManager);
+}
+
+test('it marks the order paid when the amount paid equals the order total', function () {
+    runWebhookWithinTenant();
+    $order = Order::factory()->unpaid()->create(['id' => 1, 'stripe_checkout_session_id' => 'cs_test_amount', 'total' => 50.00]);
+
+    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession(5000));
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid)
+        ->and($order->stripe_payment_intent_id)->toBe('pi_test_amount');
+});
+
+test('it leaves the order unpaid and notifies the baker when the amount paid differs', function (int $amountPaid) {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message): bool => str_contains($message, 'amount does not match'));
+    runWebhookWithinTenant();
+    $owner = User::factory()->owner()->create();
+    $order = Order::factory()->unpaid()->create(['id' => 1, 'stripe_checkout_session_id' => 'cs_test_amount', 'total' => 50.00]);
+
+    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession($amountPaid));
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid)
+        ->and($order->stripe_payment_intent_id)->toBe('pi_test_amount')
+        ->and($owner->notifications()->count())->toBe(1);
+})->with([
+    'lower than the order total' => 4000,
+    'higher than the order total' => 6000,
+]);

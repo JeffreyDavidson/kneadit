@@ -3,7 +3,6 @@
 namespace App\Actions\Stripe;
 
 use App\Actions\Customers\RecordCateringDeposit;
-use App\Actions\Orders\MarkOrderPaid;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
@@ -14,7 +13,7 @@ class HandleConnectCheckoutCompleted
 {
     public function __construct(
         private readonly TenancyManager $tenancyManager,
-        private readonly MarkOrderPaid $markOrderPaid,
+        private readonly HandleCheckoutComplete $handleCheckoutComplete,
         private readonly RecordCateringDeposit $recordCateringDeposit,
     ) {}
 
@@ -61,7 +60,7 @@ class HandleConnectCheckoutCompleted
         }
 
         try {
-            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
+            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
                 if ($cateringInquiryId) {
                     $inquiry = CateringInquiry::query()
                         ->whereKey($cateringInquiryId)
@@ -91,12 +90,13 @@ class HandleConnectCheckoutCompleted
 
                 $order = $orderQuery->first();
                 if ($order) {
-                    $order->forceFill(['stripe_payment_intent_id' => $paymentIntentId])->save();
-                    ($this->markOrderPaid)($order);
-                    Log::info('Order marked paid via webhook', [
-                        'order' => $order->order_number,
-                        'tenant' => $tenant->id,
-                    ]);
+                    $amountTotal = data_get($session, 'amount_total');
+
+                    ($this->handleCheckoutComplete)(
+                        $order,
+                        $paymentIntentId,
+                        is_numeric($amountTotal) ? (int) $amountTotal : -1,
+                    );
                 }
             });
         } catch (\Exception $e) {
