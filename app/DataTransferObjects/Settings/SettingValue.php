@@ -39,7 +39,9 @@ final readonly class SettingValue
     /** @return array<mixed> */
     public static function decodedList(mixed $value): array
     {
-        $decoded = json_decode(self::string($value, '[]'), true);
+        // Stored settings are JSON strings, but defaults (e.g. TenantSettingsDefaults)
+        // are already-decoded arrays and must be used as-is.
+        $decoded = is_array($value) ? $value : json_decode(self::string($value, '[]'), true);
 
         return is_array($decoded) && array_is_list($decoded) ? $decoded : [];
     }

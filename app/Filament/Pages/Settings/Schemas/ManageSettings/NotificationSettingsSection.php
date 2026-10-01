@@ -83,6 +83,7 @@ class NotificationSettingsSection
                 TextInput::make('customer_referral_discount_dollars')
                     ->label('Referral Discount ($)')
                     ->numeric()
+                    ->minValue(0)
                     ->default(10)
                     ->helperText('Both the referee and referrer get this discount amount.'),
 
@@ -91,12 +92,14 @@ class NotificationSettingsSection
                         TextInput::make('abandoned_cart_recovery_hours')
                             ->label('Abandonment Threshold (hours)')
                             ->numeric()
+                            ->minValue(1)
                             ->default(24)
                             ->helperText('How long a cart must sit idle before a recovery email is sent.'),
 
                         TextInput::make('abandoned_cart_recovery_coupon_dollars')
                             ->label('Recovery Coupon ($)')
                             ->numeric()
+                            ->minValue(0)
                             ->default(5)
                             ->helperText('Single-use coupon included in the recovery email. 0 disables the coupon (email still sent).'),
                     ]),

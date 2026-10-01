@@ -264,6 +264,9 @@ class ManageSettings extends Page
 
     public function sendTestWebhook(SaveTenantSettings $saveSettings): void
     {
+        // Same server-side validation as save(), since this persists the whole form.
+        $this->validate();
+
         // Persist any pending changes (URL/secret) before firing the test, so
         // the dispatch reads the current form state — not the last-saved state.
         $saveSettings($this->toSettingsArray());
