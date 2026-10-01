@@ -23,6 +23,7 @@ use App\Pipes\Orders\RecordCouponUsage;
 use App\Pipes\Orders\RecordGiftCardRedemption;
 use App\Pipes\Orders\ResolveCustomer;
 use App\Pipes\Orders\ValidateCapacity;
+use App\Pipes\Orders\ValidatePickupSlot;
 use App\Pipes\Orders\ValidateStockAvailability;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,7 @@ class CreateOrder
                 CalculateOrderTotals::class,
                 EnforceMinimumOrderAmount::class,
                 ValidateCapacity::class,
+                ValidatePickupSlot::class,
                 ValidateStockAvailability::class,
                 ApplySitewideSale::class,
                 ApplyCoupon::class,

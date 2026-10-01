@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
+use App\Rules\PickupSlotAvailable;
 use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
@@ -31,7 +32,7 @@ class StoreApiOrderRequest extends FormRequest
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'items.*.special_instructions' => ['nullable', 'string', 'max:500'],
             'delivery_date' => ['required', 'date', 'after_or_equal:'.$this->minimumDeliveryDate()],
-            'delivery_time' => ['nullable', 'string', 'max:20'],
+            'delivery_time' => ['nullable', 'string', 'max:20', new PickupSlotAvailable],
             'delivery_type' => ['required', Rule::in($this->allowedDeliveryTypes())],
             'delivery_address' => ['required_if:delivery_type,delivery', 'nullable', 'string', 'max:500'],
             'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', Rule::in(resolve(TenantSettings::class)->orders->deliveryTierKeys())],
