@@ -20,7 +20,13 @@ class InfrastructureServiceProvider extends ServiceProvider
     #[\Override]
     public function register(): void
     {
+        // Per-request scoped: SecurityHeaders middleware writes the nonce into
+        // the CSP header, the @cspnonce Blade directive emits it on inline
+        // <script>/<style> tags. Same value flows through the request.
         $this->app->scoped(CspNonce::class);
+
+        // Centralized Stripe client so Stripe-using actions can be tested with
+        // a mocked binding rather than instantiating the client themselves.
         $this->app->bind(StripeClient::class, fn (): StripeClient => new StripeClient(
             Config::string('cashier.secret', ''),
         ));
@@ -44,6 +50,11 @@ class InfrastructureServiceProvider extends ServiceProvider
         Cashier::useCustomerModel(User::class);
         Model::preventLazyLoading(! app()->isProduction());
 
+        // Surface cache reads that returned __PHP_Incomplete_Class — usually
+        // an Eloquent model/collection that was cached and then blocked by
+        // cache.serializable_classes on read (see .ai/skills/laravel-best-practices/rules/caching.md). Always log;
+        // additionally throw in non-production so developers see the bad
+        // write loudly during the read that exposes it.
         CacheRepository::handleUnserializableClassUsing(function (string $key, ?string $class): void {
             $message = sprintf(
                 'Cache returned __PHP_Incomplete_Class for key [%s] (original class: %s). Likely a model/collection cached against the project rule (see .ai/skills/laravel-best-practices/rules/caching.md).',
