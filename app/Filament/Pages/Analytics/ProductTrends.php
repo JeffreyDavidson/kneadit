@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ProductTrendsService;
+use App\Services\Scheduling\BakeryClock;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -71,11 +72,13 @@ class ProductTrends extends Page
 
     public function mount(): void
     {
+        $today = resolve(BakeryClock::class)->today();
+
         if ($this->month === 0) {
-            $this->month = now()->month;
+            $this->month = $today->month;
         }
         if ($this->year === 0) {
-            $this->year = now()->year;
+            $this->year = $today->year;
         }
     }
 

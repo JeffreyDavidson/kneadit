@@ -1,7 +1,9 @@
 <?php
 
 use App\Filament\Pages\Analytics\ReportsCenter;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -116,4 +118,15 @@ test('generate report with rfm type', function () {
 
     expect(test()->page->activeReport)->toBe('rfm')
         ->and(test()->page->reportData)->toHaveKeys(['total', 'segments']);
+});
+
+test('mount defaults the report range and year to the bakery-local date', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2027-01-01 01:00');
+
+    test()->page->mount();
+
+    expect(test()->page->startDate)->toBe('2026-12-01')
+        ->and(test()->page->endDate)->toBe('2026-12-31')
+        ->and(test()->page->selectedYear)->toBe(2026);
 });

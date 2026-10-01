@@ -3,8 +3,10 @@
 namespace App\Queries\Analytics;
 
 use App\Models\Orders\Order;
+use App\Services\Scheduling\BakeryClock;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 
 final class CustomerInsightsQuery
 {
@@ -37,10 +39,12 @@ final class CustomerInsightsQuery
      */
     public function averageOrderValues(?Carbon $now = null): array
     {
-        $now ??= now();
-        $thisMonthStart = $now->copy()->startOfMonth();
-        $nextMonthStart = $thisMonthStart->copy()->addMonth();
-        $lastMonthStart = $thisMonthStart->copy()->subMonth();
+        $now ??= resolve(BakeryClock::class)->now();
+        $appTimezone = Config::string('app.timezone');
+        $localMonthStart = $now->copy()->startOfMonth();
+        $thisMonthStart = $localMonthStart->copy()->setTimezone($appTimezone);
+        $nextMonthStart = $localMonthStart->copy()->addMonth()->setTimezone($appTimezone);
+        $lastMonthStart = $localMonthStart->copy()->subMonth()->setTimezone($appTimezone);
 
         $averages = Order::query()
             ->active()

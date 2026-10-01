@@ -60,3 +60,14 @@ it('creates a range for a specific month', function () {
 
     expect($range->start->toDateString())->toBe('2026-03-01')->and($range->end->toDateString())->toBe('2026-03-31')->and($range->start->toTimeString())->toBe('00:00:00')->and($range->end->toTimeString())->toBe('23:59:59');
 });
+
+it('expresses a bakery-local range in the app timezone without moving the instants', function () {
+    $start = Date::parse('2026-10-01 00:00:00', 'America/New_York');
+    $end = Date::parse('2026-10-31 23:59:59', 'America/New_York');
+
+    $range = new DateRange($start, $end)->inAppTimezone();
+
+    expect($range->start->toDateTimeString())->toBe('2026-10-01 04:00:00')
+        ->and($range->end->toDateTimeString())->toBe('2026-11-01 03:59:59')
+        ->and($range->start->equalTo($start))->toBeTrue();
+});

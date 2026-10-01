@@ -1,6 +1,9 @@
 <?php
 
 use App\Filament\Widgets\GoalTrackerWidget;
+use App\Models\Orders\Order;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -83,4 +86,26 @@ test('yearly data percentage is capped at 100', function () {
 
     expect($data['percentage'])->toBeLessThanOrEqual(100)
         ->and($data['percentage'])->toBeGreaterThanOrEqual(0);
+});
+
+test('monthly data covers the bakery-local month', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2026-11-01 01:00');
+    Order::factory()->create(['total' => 120, 'created_at' => '2026-10-31 12:00:00']);
+
+    $data = test()->widget->monthlyData;
+
+    expect($data['label'])->toBe('October 2026')
+        ->and($data['revenue'])->toBe(120.0);
+});
+
+test('yearly data covers the bakery-local year', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+    Date::setTestNow('2027-01-01 01:00');
+    Order::factory()->create(['total' => 120, 'created_at' => '2026-12-31 12:00:00']);
+
+    $data = test()->widget->yearlyData;
+
+    expect($data['label'])->toBe('2026')
+        ->and($data['revenue'])->toBe(120.0);
 });

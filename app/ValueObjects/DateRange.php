@@ -3,6 +3,7 @@
 namespace App\ValueObjects;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 
 final readonly class DateRange
@@ -59,6 +60,21 @@ final readonly class DateRange
         return new self(
             $start,
             $start->copy()->endOfMonth(),
+        );
+    }
+
+    /**
+     * The same instants expressed in the app timezone, which is how timestamp
+     * columns are stored, so a range built from bakery-local boundaries can be
+     * bound straight into a query.
+     */
+    public function inAppTimezone(): self
+    {
+        $timezone = Config::string('app.timezone');
+
+        return new self(
+            $this->start->copy()->setTimezone($timezone),
+            $this->end->copy()->setTimezone($timezone),
         );
     }
 

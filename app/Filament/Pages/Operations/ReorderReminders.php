@@ -8,6 +8,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Services\Scheduling\BakeryClock;
+use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -97,6 +98,15 @@ class ReorderReminders extends Page
 
                 return $customer;
             });
+    }
+
+    public function reminderMailto(Customer $customer): string
+    {
+        $storeName = resolve(TenantSettings::class)->store->name;
+        $subject = rawurlencode("We miss you at {$storeName}!");
+        $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n{$storeName}");
+
+        return "mailto:{$customer->customer_email}?subject={$subject}&body={$body}";
     }
 
     public function updatedThreshold(): void

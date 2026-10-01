@@ -33,7 +33,8 @@ class PrepScheduleService
         }
 
         $weeklyOrders = collect(Order::with(['customer', 'orderItems.product.recipes'])
-            ->whereBetween('delivery_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->whereDate('delivery_date', '>=', $startDate->toDateString())
+            ->whereDate('delivery_date', '<=', $endDate->toDateString())
             ->oldest('delivery_date')
             ->orderBy('delivery_time')
             ->get()
