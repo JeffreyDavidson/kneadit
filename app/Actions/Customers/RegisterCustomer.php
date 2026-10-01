@@ -8,8 +8,11 @@ class RegisterCustomer
 {
     /**
      * Register a new customer, or claim an existing guest customer record
-     * (matched by email, no password yet). In the claim case any pre-existing
-     * orders stay linked via customer_id and surface once the email is verified.
+     * (matched by email, no password yet). In the claim case the existing name
+     * and phone are kept (a blank phone or name is filled from the submitted
+     * data), the password is set, and any pre-existing orders stay linked via
+     * customer_id. Order history and order pages are only reachable once the
+     * email is verified (see EnsureCustomerEmailIsVerified and OrderAccessGuard).
      *
      * @param  array<string, mixed>  $data
      */
@@ -18,9 +21,9 @@ class RegisterCustomer
         $customer = Customer::query()->firstOrNew(['email' => $data['email']]);
 
         $customer->fill([
-            'name' => $data['name'],
+            'name' => filled($customer->name) ? $customer->name : $data['name'],
             'password' => $data['password'],
-            'phone' => $data['phone'] ?? $customer->phone,
+            'phone' => filled($customer->phone) ? $customer->phone : ($data['phone'] ?? null),
         ]);
 
         // Treat this as a fresh identity — any previous verification was against

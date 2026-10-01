@@ -26,7 +26,7 @@ Route::name('api.')->group(function () {
         Route::get('capacity/{date}', ApiCapacityController::class)->name('capacity.show');
         Route::get('reviews', [ApiReviewController::class, 'index'])->name('reviews.index');
         Route::get('gallery', ApiGalleryController::class)->name('gallery.index');
-        Route::get('favorites', [ApiFavoriteController::class, 'index'])->name('favorites.index');
+        Route::get('favorites', [ApiFavoriteController::class, 'index'])->name('favorites.index')->middleware('customer.verified');
     });
 
     // Write endpoints — tighter limit
@@ -35,7 +35,7 @@ Route::name('api.')->group(function () {
         Route::post('coupon/validate', CouponValidationController::class)->name('coupon.validate');
         Route::post('reviews', [ApiReviewController::class, 'store'])->name('reviews.store');
         Route::post('contact', ApiContactController::class)->name('contact.store');
-        Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('favorites.toggle');
+        Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('favorites.toggle')->middleware('customer.verified');
         Route::post('waitlist', ApiWaitlistController::class)->name('waitlist.store');
     });
 });

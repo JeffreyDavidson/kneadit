@@ -3,6 +3,7 @@
 namespace App\Services\Orders;
 
 use App\Models\Orders\Order;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 /**
  * Tracks which orders the current session has been granted access to.
@@ -12,8 +13,9 @@ use App\Models\Orders\Order;
  * an order link in a different browser) requires explicit email verification
  * via VerifyOrderAccessController, after which the order is added here.
  *
- * Authenticated customers viewing their own orders bypass the session gate
- * entirely — the customer_id match is proof enough.
+ * Authenticated customers with a verified email viewing their own orders
+ * bypass the session gate — the customer_id match is proof enough. An
+ * unverified customer account gets no access from the match alone.
  */
 final class OrderAccessGuard
 {
@@ -40,7 +42,7 @@ final class OrderAccessGuard
     {
         $customer = auth('customer')->user();
 
-        if ($customer && $order->customer_id === $customer->getKey()) {
+        if ($customer instanceof MustVerifyEmail && $customer->hasVerifiedEmail() && $order->customer_id === $customer->getKey()) {
             return true;
         }
 
