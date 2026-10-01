@@ -49,13 +49,23 @@ class OrderForm
                 ]),
 
                 Grid::make(2)->components([
+                    // Read-only everywhere: a disabled field is never saved, so a new
+                    // order takes the model's Pending default and later changes go
+                    // through the TransitionOrderStatus actions on the table and the
+                    // view page (inventory, discount reversal, loyalty, emails).
                     Select::make('status')
                         ->options(OrderStatus::class)
-                        ->required(),
+                        ->default(OrderStatus::Pending)
+                        ->disabled(),
 
+                    // Editable on create only. Marking an existing order paid goes
+                    // through the Mark Paid actions so MarkOrderPaid logs it and
+                    // auto-confirms non-manual payment methods.
                     Select::make('payment_status')
                         ->options(PaymentStatus::class)
-                        ->required(),
+                        ->default(PaymentStatus::Unpaid)
+                        ->required()
+                        ->disabledOn('edit'),
                 ]),
 
                 Select::make('payment_method')

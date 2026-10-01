@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
+use App\Events\Orders\OrderDelivered;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
@@ -11,7 +13,9 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Livewire\livewire;
 
@@ -160,3 +164,112 @@ test('global search eloquent query eager loads customer', function () {
 
     expect($query->getEagerLoads())->toHaveKey('customer');
 });
+
+test('editing an order cannot change its status', function () {
+    Event::fake([OrderDelivered::class]);
+    $order = Order::factory()->recycle(test()->customer)->create();
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('edit')->table($order), data: ['status' => OrderStatus::Delivered->value])
+        ->assertHasNoFormErrors();
+
+    expect($order->refresh()->status)->toBe(OrderStatus::Pending);
+    Event::assertNotDispatched(OrderDelivered::class);
+});
+
+test('editing an order cannot change its payment status', function () {
+    $order = Order::factory()->recycle(test()->customer)->create();
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('edit')->table($order), data: ['payment_status' => PaymentStatus::Paid->value])
+        ->assertHasNoFormErrors();
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid);
+});
+
+test('editing an order still saves its other fields', function () {
+    $order = Order::factory()->recycle(test()->customer)->create();
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('edit')->table($order), data: ['notes' => 'Leave at the side door'])
+        ->assertHasNoFormErrors();
+
+    expect($order->refresh()->notes)->toBe('Leave at the side door');
+});
+
+test('an order created from the admin form always starts pending', function (OrderStatus $submitted) {
+    $baker = User::factory()->create();
+
+    livewire(ListOrders::class)
+        ->callAction('create', data: [
+            'order_number' => 'ORD-ADMIN-1',
+            'customer_id' => test()->customer->id,
+            'status' => $submitted->value,
+            'payment_status' => PaymentStatus::Unpaid->value,
+            'payment_method' => PaymentMethod::Cash->value,
+            'user_id' => $baker->id,
+            'subtotal' => 25,
+            'total' => 25,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect(Order::query()->where('order_number', 'ORD-ADMIN-1')->sole()->status)->toBe(OrderStatus::Pending);
+})->with([
+    'delivered' => OrderStatus::Delivered,
+    'cancelled' => OrderStatus::Cancelled,
+    'pending' => OrderStatus::Pending,
+]);
+
+test('the markPaid table action marks a manual-payment order as paid without confirming it', function () {
+    $order = Order::factory()->recycle(test()->customer)->create(['payment_method' => PaymentMethod::Cash]);
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('markPaid')->table($order))
+        ->assertNotified();
+
+    expect($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->status->toBe(OrderStatus::Pending);
+});
+
+test('the markPaid table action auto-confirms a pending order paid by a non-manual method', function () {
+    $order = Order::factory()->recycle(test()->customer)->create(['payment_method' => PaymentMethod::Stripe]);
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('markPaid')->table($order));
+
+    expect($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->status->toBe(OrderStatus::Confirmed);
+});
+
+test('the markPaid table action is only visible for unpaid orders that are not cancelled', function (string $state, bool $visible) {
+    $order = Order::factory()->recycle(test()->customer)->{$state}()->create();
+
+    $assertion = $visible ? 'assertActionVisible' : 'assertActionHidden';
+
+    livewire(ListOrders::class)
+        ->{$assertion}(TestAction::make('markPaid')->table($order));
+})->with([
+    'unpaid pending' => ['pending', true],
+    'unpaid confirmed' => ['confirmed', true],
+    'paid' => ['paid', false],
+    'cancelled' => ['cancelled', false],
+]);
+
+test('the markPaid header action on the view order page marks the order as paid', function () {
+    $order = Order::factory()->recycle(test()->customer)->create(['payment_method' => PaymentMethod::Cash]);
+
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->callAction('markPaid')
+        ->assertNotified();
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
+});
+
+test('the markPaid header action on the view order page is hidden for paid and cancelled orders', function (string $state) {
+    $order = Order::factory()->recycle(test()->customer)->{$state}()->create();
+
+    livewire(ViewOrder::class, ['record' => $order->getRouteKey()])
+        ->assertActionHidden('markPaid');
+})->with(['paid', 'cancelled']);
