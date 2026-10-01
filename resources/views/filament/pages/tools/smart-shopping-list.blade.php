@@ -1,3 +1,4 @@
+@use(App\Support\StockQuantity)
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Controls --}}
@@ -108,7 +109,7 @@
                                 </td>
                                 <td class="px-6 py-3 text-right">
                                     <span class="{{ $item['current_stock'] <= 0 ? 'text-danger-600' : 'text-warning-600' }}">
-                                        {{ $item['current_stock'] }} {{ $item['unit'] }}
+                                        {{ StockQuantity::display($item['current_stock']) }} {{ $item['unit'] }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-right font-medium">

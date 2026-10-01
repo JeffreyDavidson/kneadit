@@ -36,7 +36,7 @@ test('deducts ingredient stock based on recipe quantities and order item quantit
 
     resolve(DeductIngredientsForOrder::class)($order);
 
-    expect($flour->fresh()->current_stock)->toBe('98.50');
+    expect($flour->fresh()->current_stock)->toBe('98.5000');
 });
 
 test('records ingredient deductions as usage adjustments tagged with the order number', function () {

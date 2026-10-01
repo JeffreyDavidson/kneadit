@@ -167,7 +167,7 @@ test('cancellation from Baking restocks ingredients with positive Restock adjust
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($flour->fresh()->current_stock)->toBe('16.00');
+    expect($flour->fresh()->current_stock)->toBe('16.0000');
 
     $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->first();
     expect($restock)->not->toBeNull()
@@ -186,7 +186,7 @@ test('cancellation from Pending does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($butter->fresh()->current_stock)->toBe('5.00')
+    expect($butter->fresh()->current_stock)->toBe('5.0000')
         ->and($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
@@ -201,7 +201,7 @@ test('cancellation from Confirmed does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($eggs->fresh()->current_stock)->toBe('12.00')
+    expect($eggs->fresh()->current_stock)->toBe('12.0000')
         ->and($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
