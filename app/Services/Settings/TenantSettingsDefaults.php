@@ -70,6 +70,7 @@ final class TenantSettingsDefaults
             'catering_enabled' => false,
             'catering_minimum_guests' => 10,
             'catering_lead_time_days' => 14,
+            'catering_deposit_percent' => 25,
             // Per-email toggles. All default true for backwards compatibility —
             // existing tenants keep getting every email until they opt one out.
             'email_order_placed_enabled' => true,

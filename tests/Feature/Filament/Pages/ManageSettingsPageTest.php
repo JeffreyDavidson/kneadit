@@ -7,6 +7,7 @@ use App\Models\Platform\Setting;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsDefaults;
+use Filament\Forms\Components\Field;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
@@ -17,6 +18,13 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     test()->actingAs(User::factory()->owner()->create());
+
+    // save() validates the form, which requires a store name and at least one
+    // payment method; a fresh tenant stores neither.
+    settings([
+        'store_name' => 'Test Bakery',
+        'payment_methods' => json_encode([PaymentMethod::Cash->value]),
+    ]);
 });
 
 test('manage settings page can save store name', function () {
@@ -200,3 +208,84 @@ test('every key the form sends is persisted by SaveTenantSettings', function () 
 
     expect($sentKeys)->each->toBeIn($persistedKeys);
 });
+
+test('every field on the settings form has a matching page property and save key', function () {
+    // Guard against the silent-drop bug shape: a field is added to the form
+    // schema but never wired to a property or to toSettingsArray(), so the
+    // baker's change is discarded on save. The field list is derived from the
+    // schema itself (hidden fields included), never hardcoded.
+    $page = livewire(ManageSettings::class)->instance();
+
+    $fieldNames = collect($page->getSchema('content')->getFlatFields(withHidden: true))
+        ->map(fn (Field $field): string => $field->getName())
+        ->unique()
+        ->values();
+
+    $sentKeys = array_keys(new ReflectionMethod($page, 'toSettingsArray')->invoke($page));
+
+    expect($fieldNames)->not->toBeEmpty()
+        ->and($fieldNames->reject(fn (string $name): bool => property_exists($page, $name))->values()->all())->toBeEmpty()
+        ->and($fieldNames->reject(fn (string $name): bool => in_array($name, $sentKeys, true))->values()->all())->toBeEmpty();
+});
+
+test('manage settings page saves fields that used to be discarded', function (string $property, mixed $value, Closure $read) {
+    livewire(ManageSettings::class)
+        ->set('store_name', 'Test Bakery')
+        ->set($property, $value)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($read(TenantSettings::resolve()))->toBe($value);
+})->with([
+    'catering deposit percent' => ['catering_deposit_percent', 40, fn (TenantSettings $s): int => $s->catering->depositPercent],
+    'low stock alerts' => ['low_stock_alerts_enabled', true, fn (TenantSettings $s): bool => $s->inventory->lowStockAlertsEnabled],
+    'customer referral program' => ['customer_referral_program_enabled', true, fn (TenantSettings $s): bool => $s->engagement->customerReferralProgramEnabled],
+    'customer referral discount' => ['customer_referral_discount_dollars', 15, fn (TenantSettings $s): int => $s->engagement->customerReferralDiscountDollars],
+    'abandoned cart recovery' => ['abandoned_cart_recovery_enabled', true, fn (TenantSettings $s): bool => $s->engagement->abandonedCartRecoveryEnabled],
+    'abandoned cart recovery hours' => ['abandoned_cart_recovery_hours', 48, fn (TenantSettings $s): int => $s->engagement->abandonedCartRecoveryHours],
+    'abandoned cart recovery coupon' => ['abandoned_cart_recovery_coupon_dollars', 8, fn (TenantSettings $s): int => $s->engagement->abandonedCartRecoveryCouponDollars],
+    'order modification window' => ['order_modification_window_minutes', 30, fn (TenantSettings $s): int => $s->orders->modificationWindowMinutes],
+    'pickup slots' => ['pickup_slots_enabled', true, fn (TenantSettings $s): bool => $s->orders->pickupSlotsEnabled],
+    'pickup slot interval' => ['pickup_slot_interval_minutes', 60, fn (TenantSettings $s): int => $s->orders->pickupSlotIntervalMinutes],
+    'pickup slot capacity' => ['pickup_slot_max_per_window', 5, fn (TenantSettings $s): int => $s->orders->pickupSlotMaxPerWindow],
+    'sitewide sale' => ['sitewide_sale_enabled', true, fn (TenantSettings $s): bool => $s->orders->sitewideSaleEnabled],
+    'sitewide sale percent' => ['sitewide_sale_percent', 10, fn (TenantSettings $s): int => $s->orders->sitewideSalePercent],
+    'sitewide sale label' => ['sitewide_sale_label', 'Summer Sale', fn (TenantSettings $s): string => $s->orders->sitewideSaleLabel],
+]);
+
+test('the previously discarded fields load the reader defaults on mount', function () {
+    livewire(ManageSettings::class)
+        ->assertSet('catering_deposit_percent', 25)
+        ->assertSet('low_stock_alerts_enabled', false)
+        ->assertSet('customer_referral_program_enabled', false)
+        ->assertSet('customer_referral_discount_dollars', 10)
+        ->assertSet('abandoned_cart_recovery_enabled', false)
+        ->assertSet('abandoned_cart_recovery_hours', 24)
+        ->assertSet('abandoned_cart_recovery_coupon_dollars', 5)
+        ->assertSet('order_modification_window_minutes', 0)
+        ->assertSet('pickup_slots_enabled', false)
+        ->assertSet('pickup_slot_interval_minutes', 30)
+        ->assertSet('pickup_slot_max_per_window', 3)
+        ->assertSet('sitewide_sale_enabled', false)
+        ->assertSet('sitewide_sale_percent', 0)
+        ->assertSet('sitewide_sale_label', 'Sale');
+});
+
+test('manage settings page rejects invalid input on the server and saves nothing', function (string $property, mixed $value, string $rule) {
+    settings(['store_name' => 'Original Bakery']);
+
+    livewire(ManageSettings::class)
+        ->set('store_name', 'Changed Bakery')
+        ->set($property, $value)
+        ->call('save')
+        ->assertHasErrors([$property => $rule]);
+
+    expect(settings('store_name'))->toBe('Original Bakery');
+})->with([
+    'birthday discount above 100' => ['birthday_discount_percentage', 500, 'max'],
+    'negative review delay' => ['review_request_delay_hours', -5, 'min'],
+    'malformed store website' => ['store_website', 'not a url', 'url'],
+    'malformed store email' => ['store_email', 'not an email', 'email'],
+    'catering deposit above 100' => ['catering_deposit_percent', 150, 'max'],
+    'empty store name' => ['store_name', '', 'required'],
+]);

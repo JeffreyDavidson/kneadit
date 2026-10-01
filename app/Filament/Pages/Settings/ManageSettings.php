@@ -71,6 +71,20 @@ class ManageSettings extends Page
 
     public ?string $minimum_delivery_order_amount = '0';
 
+    public ?int $order_modification_window_minutes = 0;
+
+    public bool $pickup_slots_enabled = false;
+
+    public ?int $pickup_slot_interval_minutes = 30;
+
+    public ?int $pickup_slot_max_per_window = 3;
+
+    public bool $sitewide_sale_enabled = false;
+
+    public ?int $sitewide_sale_percent = 0;
+
+    public ?string $sitewide_sale_label = 'Sale';
+
     public bool $repeat_reminders_enabled = false;
 
     public ?int $repeat_reminder_days = 30;
@@ -88,6 +102,18 @@ class ManageSettings extends Page
     public ?int $review_request_delay_hours = 24;
 
     public bool $weekly_digest_enabled = true;
+
+    public bool $low_stock_alerts_enabled = false;
+
+    public bool $customer_referral_program_enabled = false;
+
+    public ?int $customer_referral_discount_dollars = 10;
+
+    public bool $abandoned_cart_recovery_enabled = false;
+
+    public ?int $abandoned_cart_recovery_hours = 24;
+
+    public ?int $abandoned_cart_recovery_coupon_dollars = 5;
 
     public bool $email_order_placed_enabled = true;
 
@@ -142,6 +168,8 @@ class ManageSettings extends Page
 
     public ?int $catering_lead_time_days = 14;
 
+    public ?int $catering_deposit_percent = 25;
+
     /** @var array<int, string> */
     public array $catering_event_types = [];
 
@@ -177,6 +205,10 @@ class ManageSettings extends Page
 
     public function save(SaveTenantSettings $saveSettings): void
     {
+        // Field rules otherwise only run in the browser; enforce them here so a
+        // tampered or stale request cannot persist invalid values.
+        $this->validate();
+
         try {
             $saveSettings($this->toSettingsArray());
 
@@ -261,6 +293,13 @@ class ManageSettings extends Page
             'delivery_fee_tiers' => $this->delivery_fee_tiers,
             'minimum_pickup_order_amount' => $this->minimum_pickup_order_amount,
             'minimum_delivery_order_amount' => $this->minimum_delivery_order_amount,
+            'order_modification_window_minutes' => $this->order_modification_window_minutes,
+            'pickup_slots_enabled' => $this->pickup_slots_enabled,
+            'pickup_slot_interval_minutes' => $this->pickup_slot_interval_minutes,
+            'pickup_slot_max_per_window' => $this->pickup_slot_max_per_window,
+            'sitewide_sale_enabled' => $this->sitewide_sale_enabled,
+            'sitewide_sale_percent' => $this->sitewide_sale_percent,
+            'sitewide_sale_label' => $this->sitewide_sale_label,
             'repeat_reminders_enabled' => $this->repeat_reminders_enabled,
             'repeat_reminder_days' => $this->repeat_reminder_days,
             'birthday_program_enabled' => $this->birthday_program_enabled,
@@ -270,6 +309,12 @@ class ManageSettings extends Page
             'review_requests_enabled' => $this->review_requests_enabled,
             'review_request_delay_hours' => $this->review_request_delay_hours,
             'weekly_digest_enabled' => $this->weekly_digest_enabled,
+            'low_stock_alerts_enabled' => $this->low_stock_alerts_enabled,
+            'customer_referral_program_enabled' => $this->customer_referral_program_enabled,
+            'customer_referral_discount_dollars' => $this->customer_referral_discount_dollars,
+            'abandoned_cart_recovery_enabled' => $this->abandoned_cart_recovery_enabled,
+            'abandoned_cart_recovery_hours' => $this->abandoned_cart_recovery_hours,
+            'abandoned_cart_recovery_coupon_dollars' => $this->abandoned_cart_recovery_coupon_dollars,
             'email_order_placed_enabled' => $this->email_order_placed_enabled,
             'email_order_confirmed_enabled' => $this->email_order_confirmed_enabled,
             'email_order_baking_enabled' => $this->email_order_baking_enabled,
@@ -296,6 +341,7 @@ class ManageSettings extends Page
             'catering_enabled' => $this->catering_enabled,
             'catering_minimum_guests' => $this->catering_minimum_guests,
             'catering_lead_time_days' => $this->catering_lead_time_days,
+            'catering_deposit_percent' => $this->catering_deposit_percent,
             'catering_event_types' => $this->catering_event_types,
             'gift_card_preset_amounts' => $this->gift_card_preset_amounts,
             'gift_card_default_amount' => $this->gift_card_default_amount,
