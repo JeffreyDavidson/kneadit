@@ -28,6 +28,9 @@ class ReviewRequestMail extends BaseMailable implements MarketingMail
 
     public string $reviewUrl;
 
+    /** @var array<int, string> */
+    public array $starUrls;
+
     /** @var Collection<int, OrderItem> */
     public Collection $orderItems;
 
@@ -43,6 +46,17 @@ class ReviewRequestMail extends BaseMailable implements MarketingMail
             now()->addDays(60),
             ['order' => $this->order->order_number],
         );
+        // Each star carries its rating as a signed parameter. Appending ?rating=N to
+        // $reviewUrl would change the query string and invalidate the signature (403).
+        $this->starUrls = collect(range(1, 5))
+            ->mapWithKeys(fn (int $rating): array => [
+                $rating => URL::temporarySignedRoute(
+                    'storefront.submitReview',
+                    now()->addDays(60),
+                    ['order' => $this->order->order_number, 'rating' => $rating],
+                ),
+            ])
+            ->all();
         $this->orderItems = $this->order->orderItems()->with('product')->get();
     }
 

@@ -20,13 +20,16 @@ class ShowReviewFormController extends Controller
 
         $order->load(['customer', 'orderItems.product']);
         $content = settingsPageContent('submit_review');
+        $prefilledRating = $request->integer('rating');
 
         return view('tenant.storefront.submit-review', [
             'settings' => $settings,
             'order' => $order,
             'content' => $content,
             'ratingDescriptions' => $content['rating_descriptions'] ?? config('kneadit.default_rating_descriptions'),
-            'prefilledRating' => $request->query('rating'),
+            'prefilledRating' => $prefilledRating >= 1 && $prefilledRating <= 5
+                ? $prefilledRating
+                : null,
         ]);
     }
 }

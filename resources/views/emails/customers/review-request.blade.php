@@ -10,6 +10,7 @@
 /** @var string|null $logoUrl */
 /** @var \App\Models\Orders\Order $order */
 /** @var string $reviewUrl */
+/** @var array<int, string> $starUrls */
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\OrderItem> $orderItems */
 @endphp
 
@@ -36,9 +37,9 @@
     </p>
 
     <div style="text-align: center; margin-bottom: 25px;">
-        @for ($i = 1; $i <= 5; $i++)
-            <a href="{{ $reviewUrl }}?rating={{ $i }}" style="text-decoration: none; font-size: 36px; margin: 0 3px;">⭐</a>
-        @endfor
+        @foreach ($starUrls as $starUrl)
+            <a href="{{ $starUrl }}" style="text-decoration: none; font-size: 36px; margin: 0 3px;">⭐</a>
+        @endforeach
     </div>
 
     <div style="text-align: center;">
