@@ -17,6 +17,7 @@ use App\Models\Financial\Coupon;
 use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
+use App\Models\Financial\Refund;
 use App\Models\Staff\User;
 use App\Observers\LogsActivityObserver;
 use App\Observers\Orders\OrderObserver;
@@ -50,6 +51,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $messages_count
  * @property-read Collection<int, OrderItem> $orderItems
  * @property-read int|null $order_items_count
+ * @property-read Collection<int, Refund> $refunds
+ * @property-read int|null $refunds_count
  * @property-read Collection<int, Review> $reviews
  * @property-read int|null $reviews_count
  * @property-read Collection<int, SurveyResponse> $surveyResponses
@@ -185,6 +188,14 @@ class Order extends Model
     public function loyaltyPoints(): HasMany
     {
         return $this->hasMany(LoyaltyPoint::class);
+    }
+
+    /**
+     * @return HasMany<Refund, $this>
+     */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class);
     }
 
     /**
