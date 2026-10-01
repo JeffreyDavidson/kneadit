@@ -15,7 +15,7 @@ use Illuminate\Queue\Attributes\Backoff;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 
 #[Tries(3)]
 #[Backoff([10, 60, 300])]
@@ -43,7 +43,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
             'storePhone' => $store->phone ?? '',
             'storeAddress' => $store->address ?? '',
             'logoUrl' => $store->logoUrl(),
-            'platformHomeUrl' => URL::route('home'),
+            'platformHomeUrl' => Config::string('app.url'),
         ]);
 
         if (! $this instanceof MarketingMail) {

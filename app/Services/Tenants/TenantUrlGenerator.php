@@ -7,12 +7,37 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
+use Stancl\Tenancy\Database\Models\Domain;
 
 final class TenantUrlGenerator
 {
     public function storefront(Tenant $tenant): string
     {
         return Str::rtrim((string) $this->tenantUri($tenant), '/');
+    }
+
+    /**
+     * The URL customers should be sent to: the bakery's custom domain when it
+     * has one that routes to it, otherwise its subdomain storefront.
+     *
+     * A custom domain only counts when a `domains` row ties it to this tenant,
+     * because that row is what makes the host reach the bakery. DNS state is
+     * not stored anywhere, so a domain saved but not yet pointed at the server
+     * is still used.
+     */
+    public function primaryStorefront(Tenant $tenant): string
+    {
+        $customDomain = $tenant->custom_domain;
+
+        if (! is_string($customDomain) || $customDomain === '') {
+            return $this->storefront($tenant);
+        }
+
+        if (! Domain::query()->where('domain', $customDomain)->where('tenant_id', $tenant->id)->exists()) {
+            return $this->storefront($tenant);
+        }
+
+        return Str::rtrim((string) $this->tenantUri($tenant)->withHost($customDomain)->withPort(null), '/');
     }
 
     public function storefrontHost(Tenant $tenant): string
