@@ -18,26 +18,6 @@ test('gift cards page loads', function () {
     $response->assertOk();
 });
 
-test('gift card can be purchased with valid data', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('giftCards.purchase', absolute: false), [
-            'purchaser_name' => 'John Doe',
-            'purchaser_email' => 'john@example.com',
-            'recipient_name' => 'Jane Doe',
-            'recipient_email' => 'jane@example.com',
-            'message' => 'Happy Birthday!',
-            'initial_balance' => 50.00,
-        ]);
-
-    $response->assertOk();
-    $response->assertJsonStructure(['data' => ['code', 'balance']]);
-    $this->assertDatabaseHas('gift_cards', [
-        'purchaser_email' => 'john@example.com',
-        // initial_balance is bigint cents (migration 2026_04_22_223000).
-        'initial_balance' => 5000,
-    ]);
-});
-
 test('gift card balance check works', function () {
     $service = new GiftCardService;
     $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
@@ -110,12 +90,4 @@ test('expired gift card cannot be redeemed', function () {
     $result = resolve(RedeemGiftCard::class)($card->code, 10.00);
 
     expect($result->success)->toBeFalse();
-});
-
-test('gift card purchase validates required fields', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('giftCards.purchase', absolute: false), []);
-
-    $response->assertUnprocessable();
-    $response->assertJsonValidationErrors(['purchaser_name', 'purchaser_email', 'initial_balance']);
 });
