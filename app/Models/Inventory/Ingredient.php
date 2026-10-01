@@ -60,8 +60,8 @@ class Ingredient extends Model
     protected function casts(): array
     {
         return [
-            'current_stock' => 'decimal:2',
-            'low_stock_threshold' => 'decimal:2',
+            'current_stock' => 'decimal:4',
+            'low_stock_threshold' => 'decimal:4',
             'cost_per_unit' => MoneyCentsCast::class,
             'allergens' => AsEnumCollection::of(Allergen::class),
             'is_active' => 'boolean',

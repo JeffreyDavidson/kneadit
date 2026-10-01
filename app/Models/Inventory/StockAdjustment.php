@@ -32,7 +32,7 @@ class StockAdjustment extends Model
     protected function casts(): array
     {
         return [
-            'quantity' => 'decimal:2',
+            'quantity' => 'decimal:4',
             'created_at' => 'datetime',
             'type' => StockAdjustmentType::class,
         ];

@@ -42,8 +42,8 @@ final readonly class IngredientDemandCalculator
         $shortages = [];
 
         foreach ($byIngredientId as $row) {
-            // Stock is held to 2 decimals, so demand is compared at that precision too.
-            if (round($row['demand'], 2) > $row['available']) {
+            // Stock is held to 4 decimals, so demand is compared at that precision too.
+            if (round($row['demand'], 4) > $row['available']) {
                 $shortages[] = $row['name'];
             }
         }

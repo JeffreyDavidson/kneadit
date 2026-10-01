@@ -9,6 +9,7 @@ use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Ingredient;
+use App\Support\StockQuantity;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
@@ -34,7 +35,7 @@ class IngredientsTable
 
                 TextColumn::make('current_stock')
                     ->label('Stock')
-                    ->formatStateUsing(fn (Ingredient $record): string => $record->current_stock.' '.$record->unit)
+                    ->formatStateUsing(fn (Ingredient $record): string => StockQuantity::display($record->current_stock).' '.$record->unit)
                     ->sortable(),
 
                 TextColumn::make('stock_status')

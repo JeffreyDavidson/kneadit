@@ -1,12 +1,18 @@
 <?php
 
+use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Inventory\MeasurementUnit;
 use App\Enums\Inventory\UnitDimension;
+use App\Enums\Orders\OrderStatus;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\RecipeResource;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
+use App\Models\Inventory\RecipeIngredient;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,7 +82,7 @@ test('can create a recipe with ingredients', function () {
         'ingredients' => [
             $keys[0] => ['name' => 'Bread Flour', 'quantity' => '500', 'unit' => 'g'],
         ],
-        'inventoryIngredients' => [],
+        'ingredientLines' => [],
     ]);
 
     $component->callMountedAction()
@@ -147,11 +153,11 @@ test('linked ingredient lines reject a unit from another dimension', function (s
         ->callAction(TestAction::make('edit')->table($recipe), data: [
             'name' => $recipe->name,
             'prep_time_minutes' => $recipe->prep_time_minutes,
-            'inventoryIngredients' => [
+            'ingredientLines' => [
                 ['ingredient_id' => $ingredient->id, 'quantity' => 1, 'unit' => $recipeUnit],
             ],
         ])
-        ->assertHasFormErrors(['inventoryIngredients.0.unit']);
+        ->assertHasFormErrors(['ingredientLines.0.unit']);
 
     expect($recipe->inventoryIngredients()->count())->toBe(0);
 })->with([
@@ -166,4 +172,117 @@ test('the unit options follow the dimension of the selected ingredient', functio
     expect(RecipeForm::unitOptions($ingredient->id))
         ->toBe(MeasurementUnit::options(UnitDimension::Mass))
         ->and(RecipeForm::unitOptions(null))->toBe(MeasurementUnit::options());
+});
+
+test('saving a recipe with linked ingredient lines writes the pivot rows', function () {
+    $flour = Ingredient::factory()->create(['unit' => 'kg']);
+    $butter = Ingredient::factory()->create(['unit' => 'lbs']);
+
+    livewire(ListRecipes::class)
+        ->callAction('create', data: [
+            'name' => 'Shortbread',
+            'prep_time_minutes' => 30,
+            'instructions' => 'Mix and bake.',
+            'ingredients' => [],
+            'ingredientLines' => [
+                ['ingredient_id' => $flour->id, 'quantity' => 500, 'unit' => 'g'],
+                ['ingredient_id' => $butter->id, 'quantity' => 0.25, 'unit' => 'lbs'],
+            ],
+        ])
+        ->assertHasNoFormErrors();
+
+    $recipe = Recipe::query()->where('name', 'Shortbread')->sole();
+
+    expect(Ingredient::query()->count())->toBe(2)
+        ->and($recipe->ingredientLines)->toHaveCount(2)
+        ->and($recipe->inventoryIngredients->pluck('pivot.quantity', 'id')->map(fn ($quantity): float => (float) $quantity)->all())
+        ->toBe([$flour->id => 500.0, $butter->id => 0.25])
+        ->and($recipe->inventoryIngredients->pluck('pivot.unit', 'id')->all())
+        ->toBe([$flour->id => 'g', $butter->id => 'lbs']);
+});
+
+test('editing a recipe shows the saved quantity and unit of each linked line', function () {
+    $recipe = Recipe::factory()->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg']);
+    RecipeIngredient::factory()->for($recipe)->for($flour)->create(['quantity' => 500, 'unit' => 'g']);
+
+    $component = livewire(ListRecipes::class)
+        ->mountAction(TestAction::make('edit')->table($recipe));
+
+    $lines = array_values($component->get('mountedActions.0.data.ingredientLines'));
+
+    expect($lines)->toHaveCount(1)
+        ->and((int) $lines[0]['ingredient_id'])->toBe($flour->id)
+        ->and((float) $lines[0]['quantity'])->toBe(500.0)
+        ->and($lines[0]['unit'])->toBe('g');
+});
+
+test('editing a recipe updates a changed line, detaches a removed one and keeps the rest', function () {
+    $recipe = Recipe::factory()->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg']);
+    $butter = Ingredient::factory()->create(['unit' => 'lbs']);
+    $flourLine = RecipeIngredient::factory()->for($recipe)->for($flour)->create(['quantity' => 500, 'unit' => 'g']);
+    RecipeIngredient::factory()->for($recipe)->for($butter)->create(['quantity' => 1, 'unit' => 'lbs']);
+
+    livewire(ListRecipes::class)
+        ->mountAction(TestAction::make('edit')->table($recipe))
+        ->set('mountedActions.0.data.ingredientLines', [
+            "record-{$flourLine->id}" => ['ingredient_id' => $flour->id, 'quantity' => 750, 'unit' => 'g'],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $recipe->refresh();
+
+    expect($recipe->ingredientLines)->toHaveCount(1)
+        ->and($recipe->ingredientLines->first())
+        ->id->toBe($flourLine->id)
+        ->ingredient_id->toBe($flour->id)
+        ->unit->toBe('g')
+        ->and((float) $recipe->ingredientLines->first()->quantity)->toBe(750.0)
+        ->and($recipe->inventoryIngredients()->count())->toBe(1);
+});
+
+test('the same ingredient cannot be linked twice on one recipe', function () {
+    $flour = Ingredient::factory()->create(['unit' => 'kg']);
+
+    livewire(ListRecipes::class)
+        ->callAction('create', data: [
+            'name' => 'Shortbread',
+            'prep_time_minutes' => 30,
+            'instructions' => 'Mix and bake.',
+            'ingredients' => [],
+            'ingredientLines' => [
+                ['ingredient_id' => $flour->id, 'quantity' => 500, 'unit' => 'g'],
+                ['ingredient_id' => $flour->id, 'quantity' => 1, 'unit' => 'kg'],
+            ],
+        ])
+        ->assertHasFormErrors(['ingredientLines.0.ingredient_id', 'ingredientLines.1.ingredient_id']);
+
+    expect(Recipe::query()->count())->toBe(0);
+});
+
+test('a recipe saved through the form deducts stock when its order moves to baking', function () {
+    $product = Product::factory()->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 10]);
+
+    livewire(ListRecipes::class)
+        ->callAction('create', data: [
+            'product_id' => $product->id,
+            'name' => 'Boule',
+            'prep_time_minutes' => 30,
+            'instructions' => 'Mix and bake.',
+            'ingredients' => [],
+            'ingredientLines' => [
+                ['ingredient_id' => $flour->id, 'quantity' => 500, 'unit' => 'g'],
+            ],
+        ])
+        ->assertHasNoFormErrors();
+
+    $order = Order::factory()->confirmed()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 4]);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking);
+
+    expect($flour->fresh()->current_stock)->toBe('8.0000');
 });

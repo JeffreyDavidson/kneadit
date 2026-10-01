@@ -6,6 +6,7 @@ use App\Enums\Inventory\MeasurementUnit;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
+use App\Support\StockQuantity;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -86,7 +87,7 @@ class RecipeForm
             ->columnSpanFull()
             ->description('Link to tracked ingredients for automatic stock management')
             ->components([
-                Repeater::make('inventoryIngredients')
+                Repeater::make('ingredientLines')
                     ->relationship()
                     ->schema([
                         Grid::make(3)->components([
@@ -99,6 +100,7 @@ class RecipeForm
                                     ->pluck('name', 'id')
                                     ->all())
                                 ->searchable()
+                                ->distinct()
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, ?string $state): mixed => $set('unit', Ingredient::query()->find($state)?->measurement_unit?->value))
                                 ->required(),
@@ -106,7 +108,8 @@ class RecipeForm
                             TextInput::make('quantity')
                                 ->numeric()
                                 ->required()
-                                ->step(0.01),
+                                ->step(0.0001)
+                                ->formatStateUsing(fn (float|int|string|null $state): ?string => blank($state) ? null : StockQuantity::input($state)),
 
                             Select::make('unit')
                                 ->options(fn (Get $get): array => self::unitOptions($get('ingredient_id')))
@@ -118,7 +121,7 @@ class RecipeForm
                     ])
                     ->columns(1)
                     ->addActionLabel('Link Ingredient')
-                    ->reorderable()
+                    ->reorderable(false)
                     ->collapsible(),
             ]);
     }
