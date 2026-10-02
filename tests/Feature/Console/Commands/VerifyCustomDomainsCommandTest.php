@@ -25,6 +25,7 @@ function verifyCustomDomainsCommand(): PendingCommand
 
 test('command verifies a domain that points at the server', function () {
     fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => true]);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
     Log::shouldReceive('info')->once()->with('Custom domain verified.', ['tenant' => $tenant->id, 'domain' => 'shop.example.com']);
 
@@ -37,8 +38,9 @@ test('command verifies a domain that points at the server', function () {
 
 test('command clears the verification and logs when DNS stopped pointing at the server', function () {
     fakeDnsRecords(['shop.example.com' => '198.51.100.7']);
+    fakeHttpsProbe(['shop.example.com' => true]);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()->subDay()]);
-    Log::shouldReceive('warning')->once()->with('Custom domain no longer verified.', ['tenant' => $tenant->id, 'domain' => 'shop.example.com']);
+    Log::shouldReceive('warning')->once()->with('Custom domain no longer verified.', ['tenant' => $tenant->id, 'domain' => 'shop.example.com', 'reason' => 'dns']);
 
     verifyCustomDomainsCommand()
         ->expectsOutput('Custom domains checked: 1; verified: 0; unverified: 1; changed: 1.')
@@ -47,8 +49,33 @@ test('command clears the verification and logs when DNS stopped pointing at the 
     expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
 });
 
+test('command clears the verification and logs the reason when HTTPS stopped answering', function () {
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => false]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()->subDay()]);
+    Log::shouldReceive('warning')->once()->with('Custom domain no longer verified.', ['tenant' => $tenant->id, 'domain' => 'shop.example.com', 'reason' => 'https']);
+
+    verifyCustomDomainsCommand()
+        ->expectsOutput('Custom domains checked: 1; verified: 0; unverified: 1; changed: 1.')
+        ->assertSuccessful();
+
+    expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('command logs why a domain that was never verified is still unverified', function () {
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => false]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
+    Log::shouldReceive('info')->once()->with('Custom domain not verified.', ['tenant' => $tenant->id, 'domain' => 'shop.example.com', 'reason' => 'https']);
+
+    verifyCustomDomainsCommand()
+        ->expectsOutput('Custom domains checked: 1; verified: 0; unverified: 1; changed: 0.')
+        ->assertSuccessful();
+});
+
 test('command leaves a domain whose state did not change alone and logs nothing', function () {
     fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => true]);
     $verifiedAt = now()->subDay();
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => $verifiedAt]);
     Log::shouldReceive('info', 'warning')->never();

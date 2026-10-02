@@ -12,26 +12,36 @@
                 <code class="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:bg-blue-800">{{ config('services.forge.server_ip') }}</code>
             </li>
             <li>Save the changes and wait for DNS propagation (up to 48 hours)</li>
-            <li>Come back here and click "Verify DNS"</li>
+            <li>Come back here and click "Verify domain"</li>
         </ol>
     </div>
 
     {{-- Status --}}
     @if ($this->dns_status)
+        @php($dnsOk = $this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Verified)
         <div @class([
             'rounded-xl border p-4',
-            'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' => $this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Verified,
-            'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20' => $this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Pending,
+            'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' => $dnsOk && $this->https_ok,
+            'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20' => ! ($dnsOk && $this->https_ok),
         ])>
-            <div class="flex items-center gap-2">
-                @if ($this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Verified)
-                    <x-filament::icon icon="heroicon-o-check-circle" class="h-5 w-5 text-green-600" />
-                    <span class="text-sm font-medium text-green-800 dark:text-green-200">DNS Verified — Your domain is active!</span>
-                @else
-                    <x-filament::icon icon="heroicon-o-clock" class="h-5 w-5 text-yellow-600" />
-                    <span class="text-sm font-medium text-yellow-800 dark:text-yellow-200">DNS Pending — Domain not yet pointing to our server</span>
+            <ul class="space-y-1 text-sm font-medium">
+                <li class="flex items-center gap-2">
+                    <x-filament::icon
+                        :icon="$dnsOk ? 'heroicon-o-check-circle' : 'heroicon-o-clock'"
+                        :class="$dnsOk ? 'h-5 w-5 text-green-600' : 'h-5 w-5 text-yellow-600'"
+                    />
+                    <span>{{ $dnsOk ? 'DNS: OK' : 'DNS: not pointing here' }}</span>
+                </li>
+                @if ($dnsOk)
+                    <li class="flex items-center gap-2">
+                        <x-filament::icon
+                            :icon="$this->https_ok ? 'heroicon-o-check-circle' : 'heroicon-o-clock'"
+                            :class="$this->https_ok ? 'h-5 w-5 text-green-600' : 'h-5 w-5 text-yellow-600'"
+                        />
+                        <span>{{ $this->https_ok ? 'HTTPS: OK' : 'HTTPS: no valid certificate yet' }}</span>
+                    </li>
                 @endif
-            </div>
+            </ul>
         </div>
     @endif
 
@@ -41,7 +51,7 @@
             @if ($this->verifiedOn)
                 Verified on {{ $this->verifiedOn }}. Links in your emails and messages use {{ $this->linkBaseUrl }}.
             @else
-                Not verified: links in your emails and messages use {{ $this->subdomainUrl }} until DNS is verified.
+                Not verified: links in your emails and messages use {{ $this->subdomainUrl }} until your domain points here and answers over HTTPS.
             @endif
         </p>
     @endif

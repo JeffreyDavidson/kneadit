@@ -7,8 +7,10 @@ namespace App\Filament\Central\Resources\TenantResource\Pages;
 use App\Actions\Platform\AddCustomDomain;
 use App\Actions\Platform\RemoveCustomDomain;
 use App\Actions\Platform\VerifyCustomDomain;
+use App\Enums\Platform\DomainCheck;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
+use App\Services\Platform\CustomDomainService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -98,28 +100,56 @@ class EditTenant extends EditRecord
                         ->send();
                 }),
             Action::make('verifyCustomDomain')
-                ->label('Verify DNS')
+                ->label('Verify domain')
                 ->icon(Heroicon::OutlinedCheckBadge)
                 ->color('gray')
                 ->authorize('platform-admin')
                 ->visible(fn (): bool => filled($this->record->custom_domain))
                 ->action(function (): void {
-                    $verified = resolve(VerifyCustomDomain::class)($this->record);
+                    $check = resolve(VerifyCustomDomain::class)($this->record);
 
-                    if (! $verified) {
-                        Notification::make()
+                    $notification = match ($check) {
+                        DomainCheck::Verified => Notification::make()
+                            ->title('Domain verified')
+                            ->body('DNS: OK. HTTPS: OK.')
+                            ->success(),
+                        DomainCheck::HttpsUnavailable => Notification::make()
+                            ->title('DNS OK, no HTTPS certificate yet')
+                            ->body("DNS: OK. HTTPS: {$this->record->custom_domain} has no valid certificate yet. Links use the subdomain until it does.")
+                            ->warning(),
+                        DomainCheck::DnsMissing => Notification::make()
                             ->title('DNS not configured')
-                            ->body("{$this->record->custom_domain} is not pointing at the server yet.")
-                            ->warning()
-                            ->send();
+                            ->body("DNS: {$this->record->custom_domain} is not pointing at the server yet.")
+                            ->warning(),
+                    };
 
-                        return;
-                    }
+                    $notification->send();
+                }),
+            Action::make('requestSslCertificate')
+                ->label('Request SSL certificate')
+                ->icon(Heroicon::OutlinedLockClosed)
+                ->color('gray')
+                ->authorize('platform-admin')
+                ->visible(fn (): bool => filled($this->record->custom_domain))
+                ->action(function (): void {
+                    $requested = resolve(CustomDomainService::class)->provisionSsl((string) $this->record->custom_domain);
 
-                    Notification::make()
-                        ->title('DNS verified')
-                        ->success()
-                        ->send();
+                    $notification = match ($requested) {
+                        true => Notification::make()
+                            ->title('SSL certificate requested')
+                            ->body('Let\'s Encrypt is issuing the certificate. Run Verify domain again in a minute or two.')
+                            ->success(),
+                        false => Notification::make()
+                            ->title('SSL certificate request failed')
+                            ->body('Forge did not accept the request. Check the domain in Forge.')
+                            ->danger(),
+                        null => Notification::make()
+                            ->title('Forge is not configured')
+                            ->body('Issue the certificate in Forge directly.')
+                            ->warning(),
+                    };
+
+                    $notification->send();
                 }),
         ];
     }
