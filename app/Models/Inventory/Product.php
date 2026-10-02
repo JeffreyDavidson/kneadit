@@ -9,6 +9,7 @@ use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
+use App\Observers\Inventory\ProductObserver;
 use App\Observers\LogsActivityObserver;
 use App\ValueObjects\Money;
 use Database\Factories\Inventory\ProductFactory;
@@ -55,7 +56,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'slug', 'description', 'price', 'category_id', 'is_active', 'is_featured', 'image', 'cost')]
-#[ObservedBy(LogsActivityObserver::class)]
+#[ObservedBy([LogsActivityObserver::class, ProductObserver::class])]
 #[UseEloquentBuilder(ProductQueryBuilder::class)]
 #[UseFactory(ProductFactory::class)]
 class Product extends Model
