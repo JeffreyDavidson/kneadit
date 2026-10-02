@@ -23,6 +23,7 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Platform\Contracts\DnsResolver;
+use App\Services\Platform\Contracts\HttpsProbe;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
@@ -290,6 +291,20 @@ function fakeDnsRecords(array $records): void
     $resolver->allows('ipv4')->andReturnUsing(fn (string $domain): ?string => $records[$domain] ?? null);
 
     app()->instance(DnsResolver::class, $resolver);
+}
+
+/**
+ * Replaces the HTTPS probe so tests never touch the network. Pass whether each
+ * domain answers over HTTPS with a valid certificate; any other domain does not.
+ *
+ * @param  array<string, bool>  $domains
+ */
+function fakeHttpsProbe(array $domains): void
+{
+    $probe = Mockery::mock(HttpsProbe::class);
+    $probe->allows('serves')->andReturnUsing(fn (string $domain): bool => $domains[$domain] ?? false);
+
+    app()->instance(HttpsProbe::class, $probe);
 }
 
 /**

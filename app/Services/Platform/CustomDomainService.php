@@ -2,7 +2,9 @@
 
 namespace App\Services\Platform;
 
+use App\Enums\Platform\DomainCheck;
 use App\Services\Platform\Contracts\DnsResolver;
+use App\Services\Platform\Contracts\HttpsProbe;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
@@ -12,6 +14,7 @@ class CustomDomainService
     public function __construct(
         private readonly ForgeService $forge,
         private readonly DnsResolver $dns,
+        private readonly HttpsProbe $https,
     ) {}
 
     public function serverIp(): string
@@ -60,6 +63,28 @@ class CustomDomainService
     public function isDnsVerified(string $domain): bool
     {
         return $this->dns->ipv4($domain) === $this->serverIp();
+    }
+
+    public function isServingHttps(string $domain): bool
+    {
+        return $this->https->serves($domain);
+    }
+
+    /**
+     * A domain is usable in links only when DNS points at the server and the
+     * server answers HTTPS for it. The HTTPS probe is skipped while DNS is wrong.
+     */
+    public function verify(string $domain): DomainCheck
+    {
+        if (! $this->isDnsVerified($domain)) {
+            return DomainCheck::DnsMissing;
+        }
+
+        if (! $this->isServingHttps($domain)) {
+            return DomainCheck::HttpsUnavailable;
+        }
+
+        return DomainCheck::Verified;
     }
 
     public function provisionSsl(string $domain): ?bool

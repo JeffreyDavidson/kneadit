@@ -14,6 +14,7 @@ use App\Enums\Inventory\StockStatus;
 use App\Enums\Operations\ActivityAction;
 use App\Enums\Orders\SenderType;
 use App\Enums\Platform\DnsVerificationStatus;
+use App\Enums\Platform\DomainCheck;
 use App\Enums\Storefront\HeroStyle;
 use App\Enums\Storefront\StorefrontHeroImage;
 use App\Enums\Storefront\StorefrontTheme;
@@ -27,6 +28,7 @@ test('every case has a non-empty label', function () {
         ActivityAction::class,
         CaptionStyle::class,
         DnsVerificationStatus::class,
+        DomainCheck::class,
         PageType::class,
         ReferralStatus::class,
         CouponTransactionType::class,

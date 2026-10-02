@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 #[Signature('tenants:verify-custom-domains')]
-#[Description('Re-check DNS for every bakery custom domain and record whether it is verified')]
+#[Description('Re-check DNS and HTTPS for every bakery custom domain and record whether it is verified')]
 class VerifyCustomDomainsCommand extends Command
 {
     public function handle(VerifyCustomDomain $verify): int
@@ -21,26 +21,32 @@ class VerifyCustomDomainsCommand extends Command
 
         foreach (Tenant::query()->whereNotNull('custom_domain')->where('custom_domain', '!=', '')->cursor() as $tenant) {
             $wasVerified = $tenant->custom_domain_verified_at !== null;
-            $isVerified = $verify($tenant);
+            $check = $verify($tenant);
+            $isVerified = $check->isVerified();
 
             $checked++;
             $verified += (int) $isVerified;
-
-            if ($wasVerified === $isVerified) {
-                continue;
-            }
-
-            $changed++;
+            $changed += (int) ($wasVerified !== $isVerified);
 
             $context = ['tenant' => $tenant->id, 'domain' => $tenant->custom_domain];
 
             if ($isVerified) {
-                Log::info('Custom domain verified.', $context);
+                if (! $wasVerified) {
+                    Log::info('Custom domain verified.', $context);
+                }
 
                 continue;
             }
 
-            Log::warning('Custom domain no longer verified.', $context);
+            $context['reason'] = $check->value;
+
+            if ($wasVerified) {
+                Log::warning('Custom domain no longer verified.', $context);
+
+                continue;
+            }
+
+            Log::info('Custom domain not verified.', $context);
         }
 
         $unverified = $checked - $verified;

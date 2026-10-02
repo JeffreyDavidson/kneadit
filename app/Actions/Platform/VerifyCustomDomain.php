@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Platform;
 
+use App\Enums\Platform\DomainCheck;
 use App\Models\Platform\Tenant;
 use App\Services\Platform\CustomDomainService;
 
@@ -14,31 +15,33 @@ class VerifyCustomDomain
     ) {}
 
     /**
-     * Checks the bakery's custom domain against DNS and records the outcome: the
-     * verification time is set when the domain points at the server and cleared
-     * when it does not (or when the bakery has no custom domain). Links only use
-     * the custom domain while it is verified.
+     * Checks the bakery's custom domain and records the outcome: the verification
+     * time is set when the domain points at the server and answers over HTTPS, and
+     * cleared when either check fails (or when the bakery has no custom domain).
+     * Links only use the custom domain while it is verified.
      *
      * A domain that is already verified keeps its original verification time.
-     *
-     * @return bool Whether the domain is verified after the check.
      */
-    public function __invoke(Tenant $tenant): bool
+    public function __invoke(Tenant $tenant): DomainCheck
     {
         $domain = $tenant->custom_domain;
 
-        if (! is_string($domain) || $domain === '' || ! $this->domains->isDnsVerified($domain)) {
+        $check = is_string($domain) && $domain !== ''
+            ? $this->domains->verify($domain)
+            : DomainCheck::DnsMissing;
+
+        if (! $check->isVerified()) {
             if ($tenant->custom_domain_verified_at !== null) {
                 $tenant->update(['custom_domain_verified_at' => null]);
             }
 
-            return false;
+            return $check;
         }
 
         if ($tenant->custom_domain_verified_at === null) {
             $tenant->update(['custom_domain_verified_at' => now()]);
         }
 
-        return true;
+        return $check;
     }
 }

@@ -6,6 +6,7 @@ use App\Actions\Platform\AddCustomDomain;
 use App\Actions\Platform\RemoveCustomDomain;
 use App\Actions\Platform\VerifyCustomDomain;
 use App\Enums\Platform\DnsVerificationStatus;
+use App\Enums\Platform\DomainCheck;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Platform\Tenant;
@@ -50,6 +51,8 @@ class CustomDomain extends Page
     public ?string $custom_domain = '';
 
     public ?DnsVerificationStatus $dns_status = null;
+
+    public ?bool $https_ok = null;
 
     public ?string $ssl_status = null;
 
@@ -98,6 +101,7 @@ class CustomDomain extends Page
         if ($domain === '' || $domain === '0') {
             resolve(RemoveCustomDomain::class)($tenant);
             $this->dns_status = null;
+            $this->https_ok = null;
             $this->ssl_status = null;
 
             Notification::make()
@@ -110,61 +114,91 @@ class CustomDomain extends Page
 
         $domain = resolve(AddCustomDomain::class)($tenant, $domain);
         $this->custom_domain = $domain;
-        $this->refreshDnsStatus();
+        $check = $this->refreshDnsStatus();
 
         $serverIp = $domainService->serverIp();
 
         Notification::make()
             ->title('Custom domain saved')
-            ->body($this->dns_status === DnsVerificationStatus::Verified
-                ? 'DNS is correctly configured! SSL will be provisioned automatically.'
+            ->body($check?->dnsPointsHere()
+                ? 'DNS is correctly configured!'
                 : "Please configure your DNS records — point an A record to {$serverIp}")
             ->success()
             ->send();
 
-        if ($this->dns_status === DnsVerificationStatus::Verified) {
+        if ($check === DomainCheck::HttpsUnavailable) {
             $this->handleSslProvisioning($domain);
         }
     }
 
     public function verifyDns(): void
     {
-        $this->refreshDnsStatus();
+        $check = $this->refreshDnsStatus();
 
-        if ($this->dns_status === DnsVerificationStatus::Verified) {
+        if ($check === DomainCheck::Verified) {
             Notification::make()
-                ->title('DNS Verified!')
-                ->body('Your domain is correctly pointing to our servers. Provisioning SSL...')
+                ->title('Domain verified!')
+                ->body('Your domain points to our servers and answers over HTTPS.')
                 ->success()
                 ->send();
-
-            $this->handleSslProvisioning((string) $this->custom_domain);
-        } else {
-            $serverIp = resolve(CustomDomainService::class)->serverIp();
-
-            Notification::make()
-                ->title('DNS Not Configured')
-                ->body("Your domain is not yet pointing to {$serverIp}. DNS changes can take up to 48 hours.")
-                ->warning()
-                ->send();
-        }
-    }
-
-    /**
-     * Checks DNS for the saved domain and records the result, so links only use the
-     * custom domain once it is verified.
-     */
-    private function refreshDnsStatus(): void
-    {
-        if (in_array($this->custom_domain, [null, '', '0'], true)) {
-            $this->dns_status = null;
 
             return;
         }
 
-        $this->dns_status = resolve(VerifyCustomDomain::class)($this->currentTenant())
+        if ($check === DomainCheck::HttpsUnavailable) {
+            Notification::make()
+                ->title('DNS OK, no HTTPS certificate yet')
+                ->body('Your domain points to our servers, but it has no valid SSL certificate yet. Request one below. Links use your bakery subdomain until HTTPS works.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $serverIp = resolve(CustomDomainService::class)->serverIp();
+
+        Notification::make()
+            ->title('DNS Not Configured')
+            ->body("Your domain is not yet pointing to {$serverIp}. DNS changes can take up to 48 hours.")
+            ->warning()
+            ->send();
+    }
+
+    public function requestSsl(): void
+    {
+        $this->handleSslProvisioning((string) $this->custom_domain);
+    }
+
+    /**
+     * Whether the saved domain points at the server but has no working HTTPS yet,
+     * which is when asking for a certificate makes sense.
+     */
+    public function canRequestSsl(): bool
+    {
+        return $this->dns_status === DnsVerificationStatus::Verified && $this->https_ok === false;
+    }
+
+    /**
+     * Checks DNS and HTTPS for the saved domain and records the result, so links only
+     * use the custom domain once it is verified.
+     */
+    private function refreshDnsStatus(): ?DomainCheck
+    {
+        if (in_array($this->custom_domain, [null, '', '0'], true)) {
+            $this->dns_status = null;
+            $this->https_ok = null;
+
+            return null;
+        }
+
+        $check = resolve(VerifyCustomDomain::class)($this->currentTenant());
+
+        $this->dns_status = $check->dnsPointsHere()
             ? DnsVerificationStatus::Verified
             : DnsVerificationStatus::Pending;
+        $this->https_ok = $check->dnsPointsHere() ? $check->isVerified() : null;
+
+        return $check;
     }
 
     /**
@@ -203,6 +237,12 @@ class CustomDomain extends Page
         if ($result === null) {
             $this->ssl_status = 'manual';
 
+            Notification::make()
+                ->title('SSL must be set up manually')
+                ->body('Please contact support to set up SSL for your domain.')
+                ->warning()
+                ->send();
+
             return;
         }
 
@@ -231,9 +271,14 @@ class CustomDomain extends Page
                 ->label('Save Domain')
                 ->action('save'),
             Action::make('verify')
-                ->label('Verify DNS')
+                ->label('Verify domain')
                 ->color('gray')
                 ->action('verifyDns'),
+            Action::make('requestSsl')
+                ->label('Request SSL certificate')
+                ->color('gray')
+                ->visible(fn (): bool => $this->canRequestSsl())
+                ->action('requestSsl'),
         ];
     }
 
