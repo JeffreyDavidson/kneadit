@@ -19,10 +19,18 @@
         @if ($showPreview && ! empty($selectedProducts))
             @php
                 $products = $this->getSelectedProductModels();
+                $labels = $products->mapWithKeys(fn ($product) => [$product->id => \App\Presenters\ProductLabelPresenter::for($product)]);
                 $dims = $this->getLabelDimensions();
                 $storeName = $this->getStoreName();
                 $allergyDisclaimer = $this->getAllergyDisclaimer();
             @endphp
+
+            @foreach ($labels->filter(fn ($label) => $label->hasUnweighedIngredients()) as $label)
+                <p class="ordering-note">
+                    {{ $label->product->name }}: some ingredients use volume or count units, so their position on the
+                    label is approximate. Use weight units for exact ordering.
+                </p>
+            @endforeach
 
             <div class="print-area" id="label-print-area">
                 <div
@@ -30,6 +38,11 @@
                     style="display: grid; grid-template-columns: repeat({{ $dims['cols'] }}, 1fr); gap: 4px; padding: 0.25in;"
                 >
                     @foreach ($products as $product)
+                        @php
+                            $label = $labels[$product->id];
+                            $ingredientNames = $label->ingredientNames();
+                            $allergenStatement = $label->allergenStatement();
+                        @endphp
                         @for ($i = 0; $i < $quantity; $i++)
                             <div
                                 class="label-card"
@@ -77,7 +90,7 @@
 
                                 @if ($labelSize !== 'small')
                                     {{-- Ingredients --}}
-                                    @if ($product->recipe && $product->recipe->ingredients)
+                                    @if ($ingredientNames !== [])
                                         <div
                                             style="
                                                 font-size: 6px;
@@ -88,7 +101,22 @@
                                             "
                                         >
                                             <strong>Ingredients:</strong>
-                                            {{ Str::limit(is_array($product->recipe->ingredients) ? implode(', ', $product->recipe->ingredients) : $product->recipe->ingredients, $labelSize === 'medium' ? 80 : 150) }}
+                                            {{ Str::limit(implode(', ', $ingredientNames), $labelSize === 'medium' ? 80 : 150) }}
+                                        </div>
+                                    @endif
+
+                                    {{-- Allergens --}}
+                                    @if ($allergenStatement)
+                                        <div
+                                            style="
+                                                font-size: 6px;
+                                                color: #333;
+                                                text-align: center;
+                                                font-weight: bold;
+                                                margin: 1px 0;
+                                            "
+                                        >
+                                            {{ $allergenStatement }}
                                         </div>
                                     @endif
 
@@ -159,7 +187,20 @@
 
     @pushOnce('styles')
         <style @cspnonce>
+            .ordering-note {
+                font-size: 0.875rem;
+                color: #8a4b00;
+                background: #fff4e0;
+                border: 1px solid #f0c987;
+                border-radius: 6px;
+                padding: 8px 12px;
+            }
+
             @media print {
+                .ordering-note {
+                    display: none !important;
+                }
+
                 /* Why labels were spilling to a 2nd page: `visibility: hidden`
                    keeps elements in layout, so the dashboard's sidebar +
                    topbar + page heading + form all still reserved their
