@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Builders\Customers;
 
 use App\Models\Customers\CustomerFavorite;
+use App\Support\EmailAddress;
 use Illuminate\Database\Eloquent\Builder;
 
 /** @extends Builder<CustomerFavorite> */
@@ -12,7 +13,7 @@ class CustomerFavoriteQueryBuilder extends Builder
 {
     public function forCustomer(string $email): static
     {
-        $this->where('customer_email', $email);
+        $this->where('customer_email', EmailAddress::normalize($email));
 
         return $this;
     }

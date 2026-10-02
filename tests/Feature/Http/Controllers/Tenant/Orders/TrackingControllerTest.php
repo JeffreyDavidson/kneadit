@@ -65,6 +65,24 @@ test('tracking with an email that has orders sends a link and shows no order dat
         ->assertRedirect(route('order.verify.show', ['order' => $order->order_number], false));
 });
 
+test('tracking with an email that differs only by case still sends the link', function (string $submitted) {
+    Mail::fake();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+    Order::factory()->for($customer)->confirmed()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), [
+            'email' => $submitted,
+        ]);
+
+    $response->assertSessionHas('status', TRACKING_LINK_MESSAGE);
+    Mail::assertQueued(OrderTrackingLinkMail::class, fn (OrderTrackingLinkMail $mail) => $mail->hasTo('jane@example.com'));
+})->with([
+    'mixed case' => 'Jane@Example.com',
+    'upper case' => 'JANE@EXAMPLE.COM',
+    'padded' => ' jane@example.com ',
+]);
+
 test('the page shows the same message after any lookup', function () {
     Mail::fake();
 

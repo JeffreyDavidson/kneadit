@@ -33,12 +33,13 @@ class AddCustomDomain
             return $domain;
         }
 
-        // Replacing a domain: release the old one (domain record and Forge alias) first.
+        // Replacing a domain: release the old one (domain record, Forge alias and verification) first.
         if ($tenant->custom_domain) {
             ($this->removeCustomDomain)($tenant);
         }
 
-        $tenant->update(['custom_domain' => $domain]);
+        // A new domain is unverified until its DNS has been checked.
+        $tenant->update(['custom_domain' => $domain, 'custom_domain_verified_at' => null]);
 
         if (! Domain::query()->where('domain', $domain)->exists()) {
             $tenant->createDomain(['domain' => $domain]);

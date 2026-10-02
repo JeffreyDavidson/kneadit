@@ -26,6 +26,22 @@ test('it creates a waitlist entry for a product', function () {
         ->and($entry->notified_at)->toBeNull();
 });
 
+test('it does not create a second entry when re-joining with an email that differs only by case', function () {
+    $product = Product::factory()->create();
+    ProductWaitlist::factory()->create([
+        'product_id' => $product->id,
+        'customer_email' => 'jane@example.com',
+    ]);
+
+    $entry = resolve(JoinProductWaitlist::class)(
+        productId: $product->id,
+        customerEmail: 'Jane@Example.com',
+    );
+
+    expect($entry->wasRecentlyCreated)->toBeFalse()
+        ->and(ProductWaitlist::query()->count())->toBe(1);
+});
+
 test('it resets notified_at when re-joining a waitlist', function () {
     $product = Product::factory()->create();
 

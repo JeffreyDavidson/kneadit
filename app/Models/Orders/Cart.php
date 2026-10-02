@@ -3,6 +3,7 @@
 namespace App\Models\Orders;
 
 use App\Builders\Orders\CartQueryBuilder;
+use App\Casts\EmailAddressCast;
 use Database\Factories\Orders\CartFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -43,6 +44,7 @@ class Cart extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'last_activity_at' => 'datetime',
             'expires_at' => 'datetime',
             'recovery_sent_at' => 'datetime',

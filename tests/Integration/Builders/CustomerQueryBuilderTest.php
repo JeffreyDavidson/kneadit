@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
@@ -43,6 +44,27 @@ test('forEmail filters customers by email', function () {
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($target->id);
+});
+
+test('forEmail ignores letter case and surrounding whitespace', function (string $lookup) {
+    $target = Customer::factory()->create(['email' => 'bob@example.com']);
+    Customer::factory()->create(['email' => 'alice@example.com']);
+
+    $results = Customer::query()->forEmail($lookup)->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($target))->toBeTrue();
+})->with([
+    'upper case with trailing space' => 'BOB@example.com ',
+    'mixed case' => 'Bob@Example.com',
+    'leading space' => ' bob@example.com',
+]);
+
+test('a customer email is stored lowercased and trimmed', function () {
+    $customer = Customer::factory()->create(['email' => '  Bob@Example.COM ']);
+
+    expect($customer->email)->toBe('bob@example.com')
+        ->and(Customer::query()->whereKey($customer->id)->value('email'))->toBe('bob@example.com');
 });
 
 test('forReferralCode filters customers by referral code', function () {
@@ -144,3 +166,20 @@ test('withRfmMetrics projects lifetime paid order metrics', function () {
         ->and(Arr::integer($result->getAttributes(), 'monetary_cents'))->toBe(2_500)
         ->and(Date::parse((string) $result->getAttribute('last_order_at'))->toDateString())->toBe('2026-09-01');
 });
+
+test('withOpenOrder keeps only customers with a pending, confirmed, baking or ready order', function (OrderStatus $status, bool $expected) {
+    $customer = Customer::factory()->create();
+    Order::factory()->recycle($customer)->create(['status' => $status]);
+    Customer::factory()->create();
+
+    $ids = Customer::query()->withOpenOrder()->pluck('id');
+
+    expect($ids->contains($customer->id))->toBe($expected);
+})->with([
+    'pending' => [OrderStatus::Pending, true],
+    'confirmed' => [OrderStatus::Confirmed, true],
+    'baking' => [OrderStatus::Baking, true],
+    'ready' => [OrderStatus::Ready, true],
+    'delivered' => [OrderStatus::Delivered, false],
+    'cancelled' => [OrderStatus::Cancelled, false],
+]);

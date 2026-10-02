@@ -4,6 +4,7 @@ namespace App\Services\Carts;
 
 use App\Models\Inventory\Product;
 use App\Models\Orders\Cart;
+use App\Support\EmailAddress;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -104,7 +105,7 @@ class CartManager
 
     public function updateContact(Cart $cart, ?string $email, ?string $name): void
     {
-        $email = $email !== null && trim($email) !== '' ? trim($email) : null;
+        $email = $email !== null && trim($email) !== '' ? EmailAddress::normalize($email) : null;
         $name = $name !== null && trim($name) !== '' ? trim($name) : null;
 
         if ($cart->customer_email === $email && $cart->customer_name === $name) {

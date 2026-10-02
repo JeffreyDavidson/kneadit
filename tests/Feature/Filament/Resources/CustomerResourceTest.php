@@ -1,14 +1,22 @@
 <?php
 
+use App\Enums\Marketing\BulkMessagePurpose;
 use App\Filament\Resources\Customers\CustomerResource;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
+use App\Mail\Concerns\MarketingMail;
+use App\Mail\Customers\BulkCustomerMessageMail;
+use App\Mail\Customers\OrderUpdateMessageMail;
 use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Mail;
 
 use function Pest\Livewire\livewire;
 
@@ -44,6 +52,19 @@ test('can create a customer via slide-over', function () {
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
+});
+
+test('create customer rejects an email that differs only by case from an existing customer', function () {
+    Customer::factory()->create(['email' => 'jane@example.com']);
+
+    livewire(ListCustomers::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Jane Doe',
+            'email' => 'Jane@Example.com',
+        ])
+        ->assertHasFormErrors(['email' => 'unique']);
+
+    expect(Customer::query()->count())->toBe(1);
 });
 
 test('create customer validates required fields', function () {
@@ -202,4 +223,76 @@ test('customer birthday cannot be after the bakery-local today', function () {
             'birthday' => '2026-10-06',
         ])
         ->assertHasFormErrors(['birthday']);
+});
+
+dataset('bulk message purposes and customers', [
+    'order update, opted out with an open order' => [
+        BulkMessagePurpose::OrderUpdate,
+        fn (): Customer => Customer::factory()->unsubscribed()->has(Order::factory()->confirmed())->create(),
+        OrderUpdateMessageMail::class,
+        '1 sent',
+    ],
+    'order update, subscribed with an open order' => [
+        BulkMessagePurpose::OrderUpdate,
+        fn (): Customer => Customer::factory()->has(Order::factory()->ready())->create(),
+        OrderUpdateMessageMail::class,
+        '1 sent',
+    ],
+    'order update, no open order' => [
+        BulkMessagePurpose::OrderUpdate,
+        fn (): Customer => Customer::factory()->has(Order::factory()->delivered())->create(),
+        null,
+        '0 sent; 1 skipped (no open order)',
+    ],
+    'promotion, opted out' => [
+        BulkMessagePurpose::Promotion,
+        fn (): Customer => Customer::factory()->unsubscribed()->has(Order::factory()->confirmed())->create(),
+        null,
+        '0 sent; 1 skipped (unsubscribed)',
+    ],
+    'promotion, subscribed' => [
+        BulkMessagePurpose::Promotion,
+        fn (): Customer => Customer::factory()->create(),
+        BulkCustomerMessageMail::class,
+        '1 sent',
+    ],
+]);
+
+test('bulk send message honours the chosen purpose', function (BulkMessagePurpose $purpose, Closure $makeCustomer, ?string $expectedMail, string $expectedTitle) {
+    Mail::fake();
+    $customer = $makeCustomer();
+
+    livewire(ListCustomers::class)
+        ->selectTableRecords([$customer])
+        ->callAction(TestAction::make('sendMessage')->table()->bulk(), data: [
+            'purpose' => $purpose,
+            'subject' => 'Pickup window changed',
+            'body' => 'Pickup is now 3pm to 5pm.',
+        ])
+        ->assertNotified(Notification::make()->success()->title($expectedTitle));
+
+    if ($expectedMail === null) {
+        Mail::assertNothingQueued();
+
+        return;
+    }
+
+    Mail::assertQueued($expectedMail, 1);
+    Mail::assertQueued($expectedMail, fn (Mailable $mail): bool => $mail->hasTo($customer->email)
+        && $mail instanceof MarketingMail === ($purpose === BulkMessagePurpose::Promotion));
+})->with('bulk message purposes and customers');
+
+test('bulk send message requires a purpose', function () {
+    Mail::fake();
+    $customer = Customer::factory()->create();
+
+    livewire(ListCustomers::class)
+        ->selectTableRecords([$customer])
+        ->callAction(TestAction::make('sendMessage')->table()->bulk(), data: [
+            'subject' => 'Hello',
+            'body' => 'A note.',
+        ])
+        ->assertHasFormErrors(['purpose' => 'required']);
+
+    Mail::assertNothingQueued();
 });

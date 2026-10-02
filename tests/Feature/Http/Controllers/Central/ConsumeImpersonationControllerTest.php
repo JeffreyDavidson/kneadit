@@ -2,6 +2,7 @@
 
 use App\Actions\Platform\ConsumeImpersonationToken;
 use App\Http\Controllers\Central\ConsumeImpersonationController;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,10 +23,16 @@ function impersonationRequest(string $path): Request
 beforeEach(function () {
     setUpCentralTest();
 
+    tenancy()->initialize(Tenant::factory()->create(['id' => 'sunrise']));
+
     $tenantMigrationPath = database_path('migrations/tenant');
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+});
+
+afterEach(function () {
+    tenancy()->end();
 });
 
 test('consume impersonation logs in user and redirects to admin', function () {
@@ -34,7 +41,7 @@ test('consume impersonation logs in user and redirects to admin', function () {
 
     $action = Double::for(ConsumeImpersonationToken::class);
     $action->expects('__invoke')
-        ->with('valid-token-123', '10.0.0.1')
+        ->with('valid-token-123', 'sunrise', '10.0.0.1')
         ->returns($user);
 
     $controller = new ConsumeImpersonationController;

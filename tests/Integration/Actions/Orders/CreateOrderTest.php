@@ -6,6 +6,7 @@ use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Exceptions\Orders\InsufficientStockException;
 use App\Mail\Orders\OrderPlacedMail;
+use App\Models\Customers\Customer;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
@@ -46,6 +47,26 @@ test('creates order with correct totals and items', function () {
 
     $order->load('orderItems', 'customer');
     expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
+});
+
+test('checkout with an email that differs only by case reuses the existing customer', function () {
+    $existing = Customer::factory()->create(['email' => 'bob@example.com']);
+    $product = Product::factory()->create(['price' => 12.50]);
+
+    $order = resolve(CreateOrder::class)(
+        CreateOrderData::fromArray([
+            'customer_name' => 'Bob',
+            'customer_email' => 'Bob@Example.com',
+            'delivery_date' => now()->addDays(5)->toDateString(),
+            'delivery_type' => DeliveryType::Pickup->value,
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+        ])
+    );
+
+    expect($order?->customer_id)->toBe($existing->id)
+        ->and(Customer::query()->count())->toBe(1);
 });
 
 test('returns null when capacity is full', function () {

@@ -7,6 +7,7 @@ namespace App\Builders\Orders;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
+use App\Support\EmailAddress;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -148,7 +149,7 @@ class OrderQueryBuilder extends Builder
     /** Orders placed by the customer with this email. */
     public function placedByEmail(string $email): static
     {
-        $this->whereHas('customer', fn (Builder $q) => $q->where('email', $email));
+        $this->whereHas('customer', fn (Builder $q) => $q->where('email', EmailAddress::normalize($email)));
 
         return $this;
     }
@@ -158,7 +159,7 @@ class OrderQueryBuilder extends Builder
      */
     public function forCustomerEmail(string $email): static
     {
-        $this->whereHas('customer', fn (Builder $q) => $q->where('email', $email))
+        $this->whereHas('customer', fn (Builder $q) => $q->where('email', EmailAddress::normalize($email)))
             ->with(['customer', 'orderItems.product', 'messages'])
             ->latest()
             ->limit(50);

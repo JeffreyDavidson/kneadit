@@ -7,6 +7,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Support\EmailAddress;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -89,6 +90,21 @@ class CustomerQueryBuilder extends Builder
         return $this;
     }
 
+    /**
+     * Customers with at least one open order (pending, confirmed, baking or ready).
+     */
+    public function withOpenOrder(): static
+    {
+        $this->whereExists(
+            Order::query()
+                ->select('id')
+                ->whereColumn('orders.customer_id', 'customers.id')
+                ->outstanding(),
+        );
+
+        return $this;
+    }
+
     public function newThisWeek(): static
     {
         $this->where('created_at', '>=', now()->startOfWeek());
@@ -98,7 +114,7 @@ class CustomerQueryBuilder extends Builder
 
     public function forEmail(string $email): static
     {
-        $this->where('email', $email);
+        $this->where('email', EmailAddress::normalize($email));
 
         return $this;
     }

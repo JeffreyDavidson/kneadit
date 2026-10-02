@@ -145,7 +145,7 @@ class LabelGenerator extends Page
     /** @return Collection<int, Product> */
     public function getSelectedProductModels(): Collection
     {
-        return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe')->get();
+        return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe.inventoryIngredients')->get();
     }
 
     /** @return array<string, mixed> */

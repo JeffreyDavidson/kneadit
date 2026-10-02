@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\CateringInquiryQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Casts\MoneyCentsCast;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
@@ -53,6 +54,7 @@ class CateringInquiry extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'status' => CateringInquiryStatus::class,
             'event_date' => 'date',
             'guest_count' => 'integer',

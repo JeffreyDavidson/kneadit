@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\CustomerPhotoQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Casts\StripTagsCast;
 use App\Models\Inventory\Product;
 use App\Policies\Content\CustomerPhotoPolicy;
@@ -37,6 +38,7 @@ class CustomerPhoto extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',
             'customer_name' => StripTagsCast::class,

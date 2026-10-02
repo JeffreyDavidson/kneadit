@@ -35,6 +35,17 @@
         </div>
     @endif
 
+    {{-- Link status --}}
+    @if (tenant()->custom_domain)
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+            @if ($this->verifiedOn)
+                Verified on {{ $this->verifiedOn }}. Links in your emails and messages use {{ $this->linkBaseUrl }}.
+            @else
+                Not verified: links in your emails and messages use {{ $this->subdomainUrl }} until DNS is verified.
+            @endif
+        </p>
+    @endif
+
     {{-- Plan Note --}}
     <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">

@@ -87,6 +87,14 @@ test('updateContact normalizes whitespace and persists', function () {
         ->customer_name->toBe('Alice');
 });
 
+test('updateContact stores the email lowercased', function () {
+    $cart = Cart::factory()->create();
+
+    resolve(CartManager::class)->updateContact($cart, 'Alice@Example.COM', 'Alice');
+
+    expect($cart->fresh()->customer_email)->toBe('alice@example.com');
+});
+
 test('updateContact treats empty strings as null', function () {
     $cart = Cart::factory()->withEmail('alice@example.com')->create();
 

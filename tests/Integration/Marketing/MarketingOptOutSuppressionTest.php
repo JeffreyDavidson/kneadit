@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Marketing\SendBulkCustomerMessage;
 use App\Actions\Marketing\SendCustomerCampaign;
+use App\Enums\Marketing\BulkMessagePurpose;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\CustomerBirthday;
@@ -51,7 +52,7 @@ dataset('marketing senders', [
         return Mail::queued(CustomerCampaignMail::class)->isNotEmpty();
     }],
     'bulk customer message' => [function (Customer $customer): bool {
-        resolve(SendBulkCustomerMessage::class)([$customer], 'Subject', 'Body');
+        resolve(SendBulkCustomerMessage::class)([$customer], BulkMessagePurpose::Promotion, 'Subject', 'Body');
 
         return Mail::queued(BulkCustomerMessageMail::class)->isNotEmpty();
     }],
@@ -123,9 +124,9 @@ test('a bulk message counts only the customers it actually mails', function () {
     $subscribed = Customer::factory()->create();
     $optedOut = Customer::factory()->unsubscribed()->create();
 
-    $sent = resolve(SendBulkCustomerMessage::class)([$subscribed, $optedOut], 'Subject', 'Body');
+    $outcome = resolve(SendBulkCustomerMessage::class)([$subscribed, $optedOut], BulkMessagePurpose::Promotion, 'Subject', 'Body');
 
-    expect($sent)->toBe(1);
+    expect($outcome->sent)->toBe(1);
     Mail::assertQueued(BulkCustomerMessageMail::class, 1);
 });
 

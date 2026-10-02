@@ -158,6 +158,17 @@
             border-top: 1px solid var(--hairline);
         }
 
+        .ordering-note {
+            font-family: system-ui, sans-serif;
+            font-size: 12px;
+            color: #8a4b00;
+            background: #fff4e0;
+            border: 1px solid #f0c987;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 24px;
+        }
+
         .no-data {
             font-style: italic;
             color: var(--muted);
@@ -169,7 +180,8 @@
                 background: white;
                 padding: 0;
             }
-            .toolbar {
+            .toolbar,
+            .ordering-note {
                 display: none;
             }
             .label {
@@ -203,6 +215,12 @@
         <div class="section-heading">Ingredients</div>
         @if (count($label->ingredientNames()) > 0)
             <p class="ingredients">{{ implode(', ', $label->ingredientNames()) }}.</p>
+            @if ($label->hasUnweighedIngredients())
+                <p class="ordering-note">
+                    Some ingredients use volume or count units, so their position on the label is approximate. Use
+                    weight units for exact ordering.
+                </p>
+            @endif
         @else
             <p class="no-data">No recipe on file for this product. Add ingredients in the Recipes section.</p>
         @endif

@@ -2,6 +2,7 @@
 
 namespace App\Models\Engagement;
 
+use App\Casts\EmailAddressCast;
 use Database\Factories\Engagement\CustomerCampaignLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -35,6 +36,7 @@ class CustomerCampaignLog extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'opened_at' => 'datetime',
         ];
     }
