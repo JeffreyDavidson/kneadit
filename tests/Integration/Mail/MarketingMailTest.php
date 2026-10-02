@@ -9,6 +9,7 @@ use App\Mail\Customers\ContactMessageReplyMail;
 use App\Mail\Customers\CustomerCampaignMail;
 use App\Mail\Customers\CustomerReferralRewardMail;
 use App\Mail\Customers\HappyBirthdayMail;
+use App\Mail\Customers\OrderUpdateMessageMail;
 use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Customers\ReviewRequestMail;
@@ -50,6 +51,7 @@ dataset('marketing mailables', [
 ]);
 
 dataset('transactional mailables', [
+    'bulk order update message' => [fn (Customer $customer) => new OrderUpdateMessageMail($customer, 'Pickup changed', 'Pickup is now 3pm')],
     'order placed' => [fn (Customer $customer) => new OrderPlacedMail(Order::factory()->for($customer)->create())],
     'order status' => [fn (Customer $customer) => new OrderStatusMail(Order::factory()->for($customer)->create(), OrderStatus::Confirmed)],
     'order modified' => [fn (Customer $customer) => new OrderModifiedMail(Order::factory()->for($customer)->create(), Money::fromCents(1000), Money::fromCents(2000))],

@@ -7,6 +7,7 @@ use App\Actions\Marketing\UnsubscribeCustomerFromMarketing;
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Enums\Customers\CustomerStatus;
 use App\Enums\Customers\MarketingSubscription;
+use App\Enums\Marketing\BulkMessagePurpose;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
@@ -15,6 +16,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -175,9 +177,12 @@ class CustomersTable
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->color('primary')
                         ->modalHeading('Send a message to selected customers')
-                        ->modalDescription('Drafts a one-off email to each selected customer who has an email address, skipping customers who have unsubscribed from marketing emails. No campaign record or open tracking.')
+                        ->modalDescription('Sends a one-off email to each selected customer who has an email address. Choose whether it is an order update or a promotion; promotions skip customers who unsubscribed from marketing emails. No campaign record or open tracking.')
                         ->modalSubmitActionLabel('Queue messages')
                         ->schema([
+                            Radio::make('purpose')
+                                ->options(BulkMessagePurpose::class)
+                                ->required(),
                             TextInput::make('subject')
                                 ->required()
                                 ->maxLength(255),
@@ -190,14 +195,21 @@ class CustomersTable
                             /** @var array<int, Customer> $customers */
                             $customers = $records->all();
 
-                            $sent = resolve(SendBulkCustomerMessage::class)(
+                            $purpose = $data['purpose'] ?? null;
+
+                            if (! $purpose instanceof BulkMessagePurpose) {
+                                return;
+                            }
+
+                            $outcome = resolve(SendBulkCustomerMessage::class)(
                                 $customers,
+                                $purpose,
                                 messageSubject: Arr::string($data, 'subject'),
                                 body: Arr::string($data, 'body'),
                             );
 
                             Notification::make()
-                                ->title("Message queued to {$sent} recipient(s)")
+                                ->title($outcome->summary($purpose))
                                 ->success()
                                 ->send();
                         })
