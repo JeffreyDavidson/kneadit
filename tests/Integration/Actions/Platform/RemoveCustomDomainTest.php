@@ -35,3 +35,12 @@ test('handles tenant with no custom domain', function () {
 
     expect($tenant->refresh()->custom_domain)->toBeNull();
 });
+
+test('clears the verification along with the domain', function () {
+    $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com', 'custom_domain_verified_at' => now()]);
+    $tenant->domains()->create(['domain' => 'old.example.com']);
+
+    resolve(RemoveCustomDomain::class)($tenant);
+
+    expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});

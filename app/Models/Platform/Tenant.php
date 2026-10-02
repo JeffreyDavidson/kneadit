@@ -40,6 +40,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property Carbon|null $onboarding_metrics_synced_at
  * @property array<array-key, mixed>|null $data
  * @property string|null $custom_domain
+ * @property Carbon|null $custom_domain_verified_at
  * @property-read Collection<int, Domain> $domains
  * @property-read int|null $domains_count
  * @property-read Collection<int, TenantNote> $notes
@@ -90,6 +91,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'is_active',
             'is_demo',
             'custom_domain',
+            'custom_domain_verified_at',
             'last_login_at',
             'onboarding_products_count',
             'onboarding_categories_count',
@@ -108,6 +110,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
             'is_demo' => 'boolean',
+            'custom_domain_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'onboarding_products_count' => 'integer',
             'onboarding_categories_count' => 'integer',

@@ -2,6 +2,8 @@
 
 use App\Enums\Platform\DnsVerificationStatus;
 use App\Filament\Pages\Settings\CustomDomain;
+use App\Models\Platform\Tenant;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -30,6 +32,8 @@ test('check dns sets null when no domain', function () {
 });
 
 test('check dns sets pending for unknown domain', function () {
+    fakeDnsRecords([]);
+    app()->instance(TenantContract::class, new Tenant(['id' => 'sunrise', 'custom_domain' => 'nonexistent-test-domain-12345.com']));
     test()->page->custom_domain = 'nonexistent-test-domain-12345.com';
 
     $method = new ReflectionMethod(CustomDomain::class, 'refreshDnsStatus');

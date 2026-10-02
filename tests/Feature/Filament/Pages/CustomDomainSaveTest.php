@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\Platform\DnsVerificationStatus;
 use App\Filament\Pages\Settings\CustomDomain;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\Date;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stancl\Tenancy\Database\Models\Domain;
 
@@ -36,4 +38,71 @@ test('saving a pasted URL stores the normalized hostname', function () {
 
     expect(test()->tenant->refresh()->custom_domain)->toBe('shop.example.com')
         ->and(Domain::query()->where('domain', 'shop.example.com')->exists())->toBeTrue();
+});
+
+test('verifying DNS marks the domain verified when it points at the server', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    Date::setTestNow('2026-10-01 09:30');
+    test()->tenant->update(['custom_domain' => 'shop.example.com']);
+
+    livewire(CustomDomain::class)
+        ->call('verifyDns')
+        ->assertSet('dns_status', DnsVerificationStatus::Verified);
+
+    expect(test()->tenant->refresh()->custom_domain_verified_at->toDateTimeString())->toBe('2026-10-01 09:30:00');
+});
+
+test('verifying DNS clears the verification when the domain no longer points at the server', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '198.51.100.7']);
+    test()->tenant->update(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()]);
+
+    livewire(CustomDomain::class)
+        ->call('verifyDns')
+        ->assertSet('dns_status', DnsVerificationStatus::Pending);
+
+    expect(test()->tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('saving a domain whose DNS is already correct verifies it', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+
+    livewire(CustomDomain::class)
+        ->set('custom_domain', 'shop.example.com')
+        ->call('save');
+
+    expect(test()->tenant->refresh()->custom_domain_verified_at)->not->toBeNull();
+});
+
+test('saving a domain whose DNS is not set up leaves it unverified', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords([]);
+
+    livewire(CustomDomain::class)
+        ->set('custom_domain', 'shop.example.com')
+        ->call('save');
+
+    expect(test()->tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('the page says links use the subdomain until the domain is verified', function () {
+    config(['services.forge.server_ip' => '203.0.113.10', 'app.url' => 'http://kneadit.test', 'tenancy.tenant_domain' => 'kneadit.test']);
+    fakeDnsRecords([]);
+    test()->tenant->update(['custom_domain' => 'shop.example.com']);
+
+    livewire(CustomDomain::class)
+        ->assertSee('Not verified')
+        ->assertSee(sprintf('http://%s.kneadit.test', test()->tenant->id));
+});
+
+test('the page shows when the domain was verified', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    Date::setTestNow('2026-10-01 09:30');
+    test()->tenant->update(['custom_domain' => 'shop.example.com']);
+
+    livewire(CustomDomain::class)
+        ->assertSee('Verified on Oct 1, 2026');
 });

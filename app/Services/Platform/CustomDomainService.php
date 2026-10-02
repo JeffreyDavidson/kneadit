@@ -2,6 +2,7 @@
 
 namespace App\Services\Platform;
 
+use App\Services\Platform\Contracts\DnsResolver;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
@@ -10,6 +11,7 @@ class CustomDomainService
 {
     public function __construct(
         private readonly ForgeService $forge,
+        private readonly DnsResolver $dns,
     ) {}
 
     public function serverIp(): string
@@ -57,9 +59,7 @@ class CustomDomainService
 
     public function isDnsVerified(string $domain): bool
     {
-        $ip = gethostbyname($domain);
-
-        return $ip === $this->serverIp();
+        return $this->dns->ipv4($domain) === $this->serverIp();
     }
 
     public function provisionSsl(string $domain): ?bool

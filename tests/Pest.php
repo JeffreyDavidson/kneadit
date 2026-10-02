@@ -22,6 +22,7 @@ use App\Listeners\Platform\SendWelcomeBakerEmailListener;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Platform\Contracts\DnsResolver;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
@@ -275,6 +276,20 @@ function setUpCentralTest(): void
     DB::purge('central');
     $pdo = DB::connection('sqlite')->getPdo();
     DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+}
+
+/**
+ * Replaces the DNS lookup so tests never touch the network. Pass the IPv4
+ * address each domain should resolve to; any other domain does not resolve.
+ *
+ * @param  array<string, string>  $records
+ */
+function fakeDnsRecords(array $records): void
+{
+    $resolver = Mockery::mock(DnsResolver::class);
+    $resolver->allows('ipv4')->andReturnUsing(fn (string $domain): ?string => $records[$domain] ?? null);
+
+    app()->instance(DnsResolver::class, $resolver);
 }
 
 /**
