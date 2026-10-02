@@ -2,12 +2,15 @@
 
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\ProductResource;
+use App\Mail\Customers\ProductAvailableMail;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\ProductWaitlist;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 
 use function Pest\Livewire\livewire;
 
@@ -165,4 +168,25 @@ test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction
     expect(Product::query()->count())->toBe(1)
         ->and(Product::query()->find($kept->id))->not->toBeNull()
         ->and(Product::query()->find($doomed->first()->id))->toBeNull();
+});
+
+test('notify waitlist action is hidden for an inactive product', function () {
+    $product = Product::factory()->inactive()->create();
+    ProductWaitlist::factory()->for($product)->create(['notified_at' => null]);
+
+    livewire(ListProducts::class)
+        ->assertActionHidden(TestAction::make('notifyWaitlist')->table($product));
+});
+
+test('notify waitlist action emails waiting customers for an active product', function () {
+    Mail::fake();
+    $product = Product::factory()->create();
+    ProductWaitlist::factory()->for($product)->count(2)->create(['notified_at' => null]);
+
+    livewire(ListProducts::class)
+        ->assertActionVisible(TestAction::make('notifyWaitlist')->table($product))
+        ->callAction(TestAction::make('notifyWaitlist')->table($product));
+
+    Mail::assertQueued(ProductAvailableMail::class, 2);
+    expect(ProductWaitlist::query()->whereNull('notified_at')->count())->toBe(0);
 });

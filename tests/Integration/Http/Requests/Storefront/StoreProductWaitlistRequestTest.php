@@ -9,7 +9,7 @@ pest()->use(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('required fields are enforced', function (string $field) {
-    $product = Product::factory()->create();
+    $product = Product::factory()->inactive()->create();
 
     $data = ['product_id' => $product->id, 'customer_email' => 'a@b.com'];
     unset($data[$field]);
@@ -29,7 +29,7 @@ test('product_id must reference an existing product', function () {
 });
 
 test('customer_email must be valid', function () {
-    $product = Product::factory()->create();
+    $product = Product::factory()->inactive()->create();
 
     $validator = validator([
         'product_id' => $product->id,
@@ -40,7 +40,7 @@ test('customer_email must be valid', function () {
 });
 
 test('valid signup passes', function () {
-    $product = Product::factory()->create();
+    $product = Product::factory()->inactive()->create();
 
     $validator = validator([
         'product_id' => $product->id,
@@ -49,4 +49,15 @@ test('valid signup passes', function () {
     ], (new StoreProductWaitlistRequest)->rules());
 
     expect($validator->passes())->toBeTrue();
+});
+
+test('an available product cannot be joined', function () {
+    $product = Product::factory()->create();
+
+    $validator = validator([
+        'product_id' => $product->id,
+        'customer_email' => 'early@example.com',
+    ], (new StoreProductWaitlistRequest)->rules());
+
+    expect($validator->errors()->first('product_id'))->toBe('This item is available now.');
 });

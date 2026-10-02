@@ -57,3 +57,24 @@ test('returns 0 when waitlist is empty', function () {
     expect(resolve(NotifyProductWaitlist::class)($product))->toBe(0);
     Mail::assertNothingQueued();
 });
+
+test('does nothing and returns 0 for an inactive product', function () {
+    $product = Product::factory()->inactive()->create();
+    ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'a@example.com']);
+
+    $count = resolve(NotifyProductWaitlist::class)($product);
+
+    expect($count)->toBe(0);
+    Mail::assertNothingQueued();
+    expect(ProductWaitlist::query()->whereNotNull('notified_at')->count())->toBe(0);
+});
+
+test('leaves entries un-notified when queueing the mail fails', function () {
+    $product = Product::factory()->create();
+    ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'a@example.com']);
+    ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'b@example.com']);
+    Mail::shouldReceive('to')->andThrow(new RuntimeException('queue down'));
+
+    expect(fn () => resolve(NotifyProductWaitlist::class)($product))->toThrow(RuntimeException::class)
+        ->and(ProductWaitlist::query()->whereNotNull('notified_at')->count())->toBe(0);
+});

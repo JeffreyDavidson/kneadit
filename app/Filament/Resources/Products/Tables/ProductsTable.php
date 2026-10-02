@@ -90,10 +90,10 @@ class ProductsTable
                     ->label(fn (Product $record): string => 'Notify Waitlist ('.($record->waitlist_entries_count ?? 0).')')
                     ->icon(Heroicon::OutlinedBellAlert)
                     ->color('warning')
-                    ->visible(fn (Product $record): bool => ($record->waitlist_entries_count ?? 0) > 0)
+                    ->visible(fn (Product $record): bool => $record->is_active && ($record->waitlist_entries_count ?? 0) > 0)
                     ->requiresConfirmation()
                     ->modalHeading(fn (Product $record): string => "Notify {$record->waitlist_entries_count} customer(s) that {$record->name} is back?")
-                    ->modalDescription('Each customer will be emailed and marked as notified so they won\'t be re-emailed on the next run.')
+                    ->modalDescription('Each customer will be emailed once and marked as notified.')
                     ->action(function (Product $record): void {
                         $count = resolve(NotifyProductWaitlist::class)($record);
 
