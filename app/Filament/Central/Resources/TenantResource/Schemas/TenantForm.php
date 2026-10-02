@@ -71,7 +71,10 @@ class TenantForm
                             TextInput::make('custom_domain')
                                 ->label('Custom Domain')
                                 ->placeholder('sweetbakes.com')
-                                ->helperText('Optional — baker can use their own domain'),
+                                ->disabled()
+                                ->dehydrated(false)
+                                ->hint(fn (?Tenant $record): ?string => self::customDomainStatus($record))
+                                ->helperText('Change it with the custom domain actions at the top of the bakery\'s edit page, or from the bakery\'s Settings → Custom Domain page.'),
                         ]),
                         TextInput::make('external_website')
                             ->label('External Website')
@@ -102,5 +105,18 @@ class TenantForm
                         ]),
                     ]),
             ]);
+    }
+
+    private static function customDomainStatus(?Tenant $record): ?string
+    {
+        if (! $record instanceof Tenant || ! $record->custom_domain) {
+            return null;
+        }
+
+        if ($record->custom_domain_verified_at === null) {
+            return 'Not verified';
+        }
+
+        return "Verified {$record->custom_domain_verified_at->format('M j, Y')}";
     }
 }
