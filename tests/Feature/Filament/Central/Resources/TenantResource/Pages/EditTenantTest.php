@@ -3,6 +3,7 @@
 use App\Filament\Central\Resources\TenantResource\Pages\EditTenant;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Platform\Contracts\ForgeClient;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Date;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -89,19 +90,20 @@ test('the remove and verify actions are hidden while the bakery has no custom do
         ->assertActionVisible('setCustomDomain');
 });
 
-test('verifying DNS records the verification time when the domain points at the server', function () {
+test('verifying the domain records the verification time when the domain points at the server', function () {
     Date::setTestNow('2026-10-01 09:30');
     fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => true]);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
 
     livewire(EditTenant::class, ['record' => $tenant->getKey()])
         ->callAction('verifyCustomDomain')
-        ->assertNotified('DNS verified');
+        ->assertNotified('Domain verified');
 
     expect($tenant->refresh()->custom_domain_verified_at->toDateTimeString())->toBe('2026-10-01 09:30:00');
 });
 
-test('verifying DNS warns and leaves the domain unverified when it does not point at the server', function () {
+test('verifying the domain warns and leaves the domain unverified when it does not point at the server', function () {
     fakeDnsRecords(['shop.example.com' => '198.51.100.7']);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
 
@@ -110,4 +112,35 @@ test('verifying DNS warns and leaves the domain unverified when it does not poin
         ->assertNotified('DNS not configured');
 
     expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('verifying the domain reports a missing HTTPS certificate when only HTTPS fails', function () {
+    fakeDnsRecords(['shop.example.com' => '203.0.113.10']);
+    fakeHttpsProbe(['shop.example.com' => false]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()]);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->callAction('verifyCustomDomain')
+        ->assertNotified('DNS OK, no HTTPS certificate yet');
+
+    expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('platform admins can request an SSL certificate for the bakery domain', function () {
+    config(['services.forge.token' => 't', 'services.forge.organization' => 'o', 'services.forge.server_id' => '1', 'services.forge.site_id' => '2']);
+    $forge = Mockery::mock(ForgeClient::class);
+    $forge->expects('obtainSslCertificate')->with('shop.example.com')->andReturn(true);
+    app()->instance(ForgeClient::class, $forge);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->callAction('requestSslCertificate')
+        ->assertNotified('SSL certificate requested');
+});
+
+test('the SSL certificate action is hidden while the bakery has no custom domain', function () {
+    $tenant = Tenant::factory()->create(['custom_domain' => null]);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->assertActionHidden('requestSslCertificate');
 });

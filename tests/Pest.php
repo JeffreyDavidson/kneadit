@@ -23,6 +23,7 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Platform\Contracts\DnsResolver;
+use App\Services\Platform\Contracts\HttpsProbe;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use App\Services\Tenants\TenancyManager;
@@ -279,6 +280,40 @@ function setUpCentralTest(): void
 }
 
 /**
+ * Like setUpCentralTest(), but leaves out the tenant tables, which is what the
+ * central database looks like in production. Tenant tables only appear once a
+ * test's Tenancy double enters a tenant.
+ */
+function setUpCentralOnlyTest(): void
+{
+    config(['tenancy.central_domains' => ['localhost']]);
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+
+    test()->artisan('migrate:fresh');
+
+    createCentralTables();
+
+    DB::purge('central');
+    $pdo = DB::connection('sqlite')->getPdo();
+    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+}
+
+/**
+ * Stands in for switching to a bakery's database after setUpCentralOnlyTest():
+ * creates the tenant tables in the one shared test database, once.
+ */
+function createTenantTablesOnce(): void
+{
+    if (Schema::hasTable('settings')) {
+        return;
+    }
+
+    // The test database holds both sides, and the central and tenant blog_posts tables would collide.
+    Schema::dropIfExists('blog_posts');
+    test()->artisan('migrate', ['--path' => database_path('migrations/tenant'), '--realpath' => true]);
+}
+
+/**
  * Replaces the DNS lookup so tests never touch the network. Pass the IPv4
  * address each domain should resolve to; any other domain does not resolve.
  *
@@ -290,6 +325,20 @@ function fakeDnsRecords(array $records): void
     $resolver->allows('ipv4')->andReturnUsing(fn (string $domain): ?string => $records[$domain] ?? null);
 
     app()->instance(DnsResolver::class, $resolver);
+}
+
+/**
+ * Replaces the HTTPS probe so tests never touch the network. Pass whether each
+ * domain answers over HTTPS with a valid certificate; any other domain does not.
+ *
+ * @param  array<string, bool>  $domains
+ */
+function fakeHttpsProbe(array $domains): void
+{
+    $probe = Mockery::mock(HttpsProbe::class);
+    $probe->allows('serves')->andReturnUsing(fn (string $domain): bool => $domains[$domain] ?? false);
+
+    app()->instance(HttpsProbe::class, $probe);
 }
 
 /**

@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Platform\DomainCheck;
+use App\Services\Platform\Contracts\HttpsProbe;
 use App\Services\Platform\CustomDomainService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -57,6 +59,33 @@ test('isDnsVerified is true when the domain resolves to the server address', fun
 test('isDnsVerified is false when the domain resolves to a different address', function () {
     expect(resolve(CustomDomainService::class)->isDnsVerified('localhost'))->toBeFalse();
 });
+
+test('verify reports which part of the check failed', function (bool $dnsOk, bool $httpsOk, DomainCheck $expected) {
+    fakeDnsRecords(['shop.example.com' => $dnsOk ? '203.0.113.10' : '198.51.100.7']);
+    fakeHttpsProbe(['shop.example.com' => $httpsOk]);
+
+    expect(resolve(CustomDomainService::class)->verify('shop.example.com'))->toBe($expected);
+})->with([
+    'DNS and HTTPS ok' => [true, true, DomainCheck::Verified],
+    'DNS ok, HTTPS failing' => [true, false, DomainCheck::HttpsUnavailable],
+    'DNS missing, HTTPS ok' => [false, true, DomainCheck::DnsMissing],
+    'DNS missing, HTTPS failing' => [false, false, DomainCheck::DnsMissing],
+]);
+
+test('verify skips the HTTPS probe while DNS does not point at the server', function () {
+    fakeDnsRecords([]);
+    $probe = Mockery::mock(HttpsProbe::class);
+    $probe->shouldNotReceive('serves');
+    app()->instance(HttpsProbe::class, $probe);
+
+    expect(resolve(CustomDomainService::class)->verify('shop.example.com'))->toBe(DomainCheck::DnsMissing);
+});
+
+test('isServingHttps follows the HTTPS probe', function (bool $serves) {
+    fakeHttpsProbe(['shop.example.com' => $serves]);
+
+    expect(resolve(CustomDomainService::class)->isServingHttps('shop.example.com'))->toBe($serves);
+})->with([true, false]);
 
 test('provisionSsl returns null without calling Forge when it is not configured', function () {
     config(['services.forge.token' => '']);
