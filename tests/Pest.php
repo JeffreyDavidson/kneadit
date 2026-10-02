@@ -968,6 +968,30 @@ function waitForOrderFormAvailability(mixed $page): void
     JS);
 }
 
+/**
+ * Wait until the tracking page has finished loading one order's messages, so a
+ * test does not type into the thread (or send a message) while the initial
+ * fetch is still in flight and could overwrite what the test just did.
+ */
+function waitForOrderMessagesLoaded(mixed $page, string $orderNumber): mixed
+{
+    return $page->assertScript(
+        sprintf(
+            <<<'JS'
+                function () {
+                    const messages = document.getElementById('messages-%1$s');
+                    const input = document.getElementById('msg-input-%1$s');
+
+                    return messages !== null
+                        && input !== null
+                        && !messages.textContent.includes('Loading messages...');
+                }
+            JS,
+            $orderNumber,
+        ),
+    );
+}
+
 function addLoavesToCart(mixed $page, int $quantity): void
 {
     $increment = sprintf(
