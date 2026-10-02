@@ -20,10 +20,15 @@ class NotifyProductWaitlist
      * that hasn't been notified yet, and mark them notified atomically.
      *
      * Returns the number of notifications queued. Returns 0 (and does nothing)
-     * when the tenant has disabled the product_available email toggle.
+     * when the product is not active, or when the tenant has disabled the
+     * product_available email toggle.
      */
     public function __invoke(Product $product): int
     {
+        if (! $product->is_active) {
+            return 0;
+        }
+
         if (! $this->engagementSettings->emailProductAvailableEnabled) {
             return 0;
         }

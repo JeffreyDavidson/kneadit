@@ -41,7 +41,11 @@ test('the tracking page loads the messages for each order', function () use ($vi
 test('a message sent from the tracking page appears in the thread', function () use ($visitTrackedOrders) {
     $message = 'Browser test message '.bin2hex(random_bytes(4));
 
-    $visitTrackedOrders()
+    // Wait for the order's initial message fetch to land first; otherwise a
+    // slow response could arrive after the send and overwrite the thread.
+    $page = $visitTrackedOrders();
+
+    waitForOrderMessagesLoaded($page, 'BROWSER-TEST-RFM-1')
         ->fill('#msg-input-BROWSER-TEST-RFM-1', $message)
         ->click('#msg-input-BROWSER-TEST-RFM-1 ~ button')
         ->assertSeeIn('#messages-BROWSER-TEST-RFM-1', $message)
