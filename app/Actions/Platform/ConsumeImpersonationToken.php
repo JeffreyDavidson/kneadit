@@ -7,22 +7,25 @@ use App\Models\Staff\User;
 
 class ConsumeImpersonationToken
 {
-    public function __invoke(string $token, ?string $consumerIp = null): User
+    public function __invoke(string $token, ?string $tenantId, ?string $consumerIp = null): User
     {
-        $record = ImpersonationToken::query()
+        abort_if($tenantId === null, 403, 'Invalid or expired impersonation token.');
+
+        // Claim the token with one conditional UPDATE so two simultaneous
+        // requests cannot both consume it. The token is marked consumed (not
+        // deleted) so the audit log retains a record of every successful
+        // impersonation, and it only matches the bakery it was issued for.
+        $claimed = ImpersonationToken::query()
             ->where('token', hash('sha256', $token))
+            ->where('tenant_id', $tenantId)
             ->whereNull('consumed_at')
             ->where('expires_at', '>', now())
-            ->first();
+            ->update([
+                'consumed_at' => now(),
+                'consumer_ip' => $consumerIp,
+            ]);
 
-        abort_unless((bool) $record, 403, 'Invalid or expired impersonation token.');
-
-        // Mark consumed (don't delete) so the audit log retains a record of
-        // every successful impersonation.
-        $record->update([
-            'consumed_at' => now(),
-            'consumer_ip' => $consumerIp,
-        ]);
+        abort_unless($claimed === 1, 403, 'Invalid or expired impersonation token.');
 
         $user = User::query()->owners()->first()
             ?? User::query()->first();
