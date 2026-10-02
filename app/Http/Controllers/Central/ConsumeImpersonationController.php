@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Actions\Platform\ConsumeImpersonationToken;
 use App\Http\Controllers\Controller;
+use App\Models\Platform\Tenant;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,9 @@ class ConsumeImpersonationController extends Controller
 {
     public function __invoke(string $token, Request $request, ConsumeImpersonationToken $consumeToken): RedirectResponse
     {
-        $user = $consumeToken($token, $request->ip());
+        $tenant = tenancy()->tenant;
+
+        $user = $consumeToken($token, $tenant instanceof Tenant ? $tenant->id : null, $request->ip());
 
         // Flush any prior session data (e.g. the platform admin's password_hash_web
         // carried in via the shared SESSION_DOMAIN cookie). Without this,
