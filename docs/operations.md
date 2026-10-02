@@ -49,6 +49,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
 | Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
+| Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
 | Daily 09:00 | `checkins:send` | Send scheduled check-ins |
@@ -79,6 +80,8 @@ php artisan migrate --force
 php artisan tenants:migrate --force
 php artisan tenants:sync-onboarding-metrics
 ```
+
+After the release that added `tenants.custom_domain_verified_at`, run `php artisan tenants:verify-custom-domains` once on the server after migrating. Bakeries that already had a custom domain start unverified (their links use the `{subdomain}` URL) until this command, the daily schedule or the bakery's "Verify DNS" button marks them verified. The migration deliberately makes no network calls.
 
 Tenant provisioning runs tenant migrations automatically. Existing tenant migrations are forward-only history and must not be edited after merge.
 

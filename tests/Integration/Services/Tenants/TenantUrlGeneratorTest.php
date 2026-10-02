@@ -19,18 +19,26 @@ test('the primary storefront is the subdomain when the bakery has no custom doma
         ->toBe('http://sunrise.kneadit.test:8000');
 });
 
-test('the primary storefront is the custom domain without the platform port', function () {
+test('the primary storefront is the custom domain without the platform port once DNS is verified', function () {
     resolve(AddCustomDomain::class)(test()->tenant, 'sweetdreams.test');
+    test()->tenant->update(['custom_domain_verified_at' => now()]);
 
     expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
         ->toBe('http://sweetdreams.test');
+});
+
+test('the primary storefront is the subdomain while the custom domain is unverified', function () {
+    resolve(AddCustomDomain::class)(test()->tenant, 'sweetdreams.test');
+
+    expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
+        ->toBe('http://sunrise.kneadit.test:8000');
 });
 
 test('a custom domain that routes to another bakery is ignored', function () {
     Tenant::factory()->create(['id' => 'other'])->createDomain(['domain' => 'taken.test']);
     // AddCustomDomain now refuses another bakery's domain, so set the column
     // directly, as data saved before that validation could have it.
-    test()->tenant->update(['custom_domain' => 'taken.test']);
+    test()->tenant->update(['custom_domain' => 'taken.test', 'custom_domain_verified_at' => now()]);
 
     expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
         ->toBe('http://sunrise.kneadit.test:8000');

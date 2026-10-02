@@ -20,16 +20,16 @@ final class TenantUrlGenerator
      * The URL customers should be sent to: the bakery's custom domain when it
      * has one that routes to it, otherwise its subdomain storefront.
      *
-     * A custom domain only counts when a `domains` row ties it to this tenant,
-     * because that row is what makes the host reach the bakery. DNS state is
-     * not stored anywhere, so a domain saved but not yet pointed at the server
-     * is still used.
+     * A custom domain only counts when its DNS has been verified as pointing at
+     * the server (`custom_domain_verified_at`), so links never use a domain that
+     * is saved but not yet set up, and when a `domains` row ties it to this
+     * tenant, because that row is what makes the host reach the bakery.
      */
     public function primaryStorefront(Tenant $tenant): string
     {
         $customDomain = $tenant->custom_domain;
 
-        if (! is_string($customDomain) || $customDomain === '') {
+        if (! is_string($customDomain) || $customDomain === '' || $tenant->custom_domain_verified_at === null) {
             return $this->storefront($tenant);
         }
 

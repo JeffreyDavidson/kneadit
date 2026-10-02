@@ -104,3 +104,30 @@ test('replacing the custom domain removes the old domain record and alias', func
         ->and(Domain::query()->where('domain', 'old.example.com')->exists())->toBeFalse()
         ->and(Domain::query()->where('domain', 'new.example.com')->where('tenant_id', $tenant->id)->exists())->toBeTrue();
 });
+
+test('saving a new domain leaves it unverified', function () {
+    $tenant = Tenant::factory()->create();
+
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
+
+    expect($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
+test('replacing a verified domain clears the verification', function () {
+    $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com', 'custom_domain_verified_at' => now()]);
+    $tenant->createDomain(['domain' => 'old.example.com']);
+
+    resolve(AddCustomDomain::class)($tenant, 'new.example.com');
+
+    expect($tenant->refresh()->custom_domain)->toBe('new.example.com')
+        ->and($tenant->custom_domain_verified_at)->toBeNull();
+});
+
+test('saving the same verified domain again keeps the verification', function () {
+    $tenant = Tenant::factory()->create(['custom_domain' => 'custom.example.com', 'custom_domain_verified_at' => now()]);
+    $tenant->createDomain(['domain' => 'custom.example.com']);
+
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
+
+    expect($tenant->refresh()->custom_domain_verified_at)->not->toBeNull();
+});

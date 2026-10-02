@@ -28,5 +28,6 @@ Schedule::withoutOverlapping()
         Schedule::command('platform:audit-free-forever')->dailyAt('06:00')->name('platform:audit-free-forever');
         Schedule::command('webhooks:prune')->dailyAt('04:00')->name('webhooks:prune');
         Schedule::command('analytics:prune-page-views')->dailyAt('04:15')->name('analytics:prune-page-views');
+        Schedule::command('tenants:verify-custom-domains')->dailyAt('05:30')->name('tenants:verify-custom-domains');
         Schedule::command('tenants:sync-onboarding-metrics')->everyFifteenMinutes()->name('tenants:sync-onboarding-metrics');
     });

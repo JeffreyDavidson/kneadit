@@ -110,12 +110,21 @@ test('ending tenancy restores the central root', function () {
     expect(route('home'))->toBe('http://localhost');
 });
 
-test('a bakery with a custom domain links to that domain', function () {
+test('a bakery with a verified custom domain links to that domain', function () {
     resolve(AddCustomDomain::class)(test()->tenant, 'sweetdreams.test');
+    test()->tenant->update(['custom_domain_verified_at' => now()]);
     tenancy()->initialize(test()->tenant->refresh());
 
     expect(route('storefront.submitReview', ['order' => 'ORD-1']))
         ->toStartWith('https://sweetdreams.test/review/ORD-1');
+});
+
+test('a bakery with an unverified custom domain keeps linking to its subdomain', function () {
+    resolve(AddCustomDomain::class)(test()->tenant, 'sweetdreams.test');
+    tenancy()->initialize(test()->tenant->refresh());
+
+    expect(route('storefront.submitReview', ['order' => 'ORD-1']))
+        ->toStartWith('https://sunrise.example.test/review/ORD-1');
 });
 
 test('requests already on a bakery host keep that host', function () {

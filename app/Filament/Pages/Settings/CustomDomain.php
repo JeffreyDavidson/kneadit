@@ -4,11 +4,14 @@ namespace App\Filament\Pages\Settings;
 
 use App\Actions\Platform\AddCustomDomain;
 use App\Actions\Platform\RemoveCustomDomain;
+use App\Actions\Platform\VerifyCustomDomain;
 use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Platform\Tenant;
 use App\Services\Platform\CustomDomainService;
+use App\Services\Settings\TenantSettings;
+use App\Services\Tenants\TenantUrlGenerator;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +22,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\Computed;
 
 class CustomDomain extends Page
 {
@@ -146,6 +150,10 @@ class CustomDomain extends Page
         }
     }
 
+    /**
+     * Checks DNS for the saved domain and records the result, so links only use the
+     * custom domain once it is verified.
+     */
     private function refreshDnsStatus(): void
     {
         if (in_array($this->custom_domain, [null, '', '0'], true)) {
@@ -154,9 +162,38 @@ class CustomDomain extends Page
             return;
         }
 
-        $this->dns_status = resolve(CustomDomainService::class)->isDnsVerified($this->custom_domain)
+        $this->dns_status = resolve(VerifyCustomDomain::class)($this->currentTenant())
             ? DnsVerificationStatus::Verified
             : DnsVerificationStatus::Pending;
+    }
+
+    /**
+     * The day DNS was verified in the bakery's timezone, or null while it is not verified.
+     */
+    #[Computed]
+    public function verifiedOn(): ?string
+    {
+        return $this->currentTenant()->custom_domain_verified_at
+            ?->setTimezone(resolve(TenantSettings::class)->orders->timezone)
+            ->format('M j, Y');
+    }
+
+    /**
+     * The storefront address links in emails and messages currently use.
+     */
+    #[Computed]
+    public function linkBaseUrl(): string
+    {
+        return resolve(TenantUrlGenerator::class)->primaryStorefront($this->currentTenant());
+    }
+
+    /**
+     * The subdomain address links use while the custom domain is not verified.
+     */
+    #[Computed]
+    public function subdomainUrl(): string
+    {
+        return resolve(TenantUrlGenerator::class)->storefront($this->currentTenant());
     }
 
     private function handleSslProvisioning(string $domain): void

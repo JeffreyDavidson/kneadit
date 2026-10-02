@@ -24,6 +24,6 @@ class RemoveCustomDomain
             }
         }
 
-        $tenant->update(['custom_domain' => null]);
+        $tenant->update(['custom_domain' => null, 'custom_domain_verified_at' => null]);
     }
 }
