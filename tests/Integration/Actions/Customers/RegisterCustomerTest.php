@@ -41,6 +41,19 @@ test('claiming a guest customer keeps its existing name and phone', function () 
         ->and(Customer::query()->count())->toBe(1);
 });
 
+test('claiming a guest customer matches an email that differs only by case', function (string $submitted) {
+    $guest = Customer::factory()->create(['email' => 'new@example.com', 'name' => 'Original Name']);
+
+    $customer = app(RegisterCustomer::class)(registrationData(['email' => $submitted]));
+
+    expect($customer->is($guest))->toBeTrue()
+        ->and($customer->email)->toBe('new@example.com')
+        ->and(Customer::query()->count())->toBe(1);
+})->with([
+    'mixed case' => 'New@Example.com',
+    'padded' => ' new@example.com ',
+]);
+
 test('claiming a guest customer fills a missing phone', function () {
     Customer::factory()->create(['email' => 'new@example.com', 'name' => 'Original Name', 'phone' => null]);
 

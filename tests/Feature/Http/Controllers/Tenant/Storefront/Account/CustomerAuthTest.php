@@ -58,6 +58,38 @@ test('login authenticates a customer with valid credentials', function () {
     expect(auth('customer')->id())->toBe($customer->id);
 });
 
+test('login authenticates when the email differs only by case', function (string $submitted) {
+    $customer = Customer::factory()->withPassword('password123')->create(['email' => 'jane@example.com']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('account.login', [], false), [
+            'email' => $submitted,
+            'password' => 'password123',
+        ]);
+
+    $response->assertRedirect(route('account.dashboard', [], false));
+    expect(auth('customer')->id())->toBe($customer->id);
+})->with([
+    'mixed case' => 'Jane@Example.com',
+    'padded' => ' jane@example.com ',
+]);
+
+test('register claims a guest record when the email differs only by case', function () {
+    $guest = Customer::factory()->create(['email' => 'jane@example.com', 'password' => null]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('account.register', [], false), [
+            'name' => 'Jane Doe',
+            'email' => 'Jane@Example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+    $response->assertRedirect(route('account.email.verify.notice', [], false));
+    expect(Customer::query()->count())->toBe(1)
+        ->and(auth('customer')->id())->toBe($guest->id);
+});
+
 test('login rejects invalid credentials', function () {
     Customer::factory()->withPassword('password123')->create(['email' => 'jane@example.com']);
 

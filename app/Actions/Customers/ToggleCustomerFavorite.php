@@ -9,8 +9,8 @@ class ToggleCustomerFavorite
     public function __invoke(string $email, int $productId): bool
     {
         $favorite = CustomerFavorite::query()
-            ->where('customer_email', $email)
-            ->where('product_id', $productId)
+            ->forCustomer($email)
+            ->forProduct($productId)
             ->first();
 
         if ($favorite) {

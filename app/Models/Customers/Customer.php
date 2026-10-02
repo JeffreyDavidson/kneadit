@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\CustomerQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Casts\PhoneNumberCast;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
@@ -88,6 +89,7 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
     protected function casts(): array
     {
         return [
+            'email' => EmailAddressCast::class,
             'birthday' => 'date',
             'marketing_opted_out_at' => 'datetime',
             'phone' => PhoneNumberCast::class,

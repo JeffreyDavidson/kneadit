@@ -19,7 +19,7 @@ class SendOrderTrackingLink
     public function __invoke(string $email): void
     {
         $customer = Customer::query()
-            ->where('email', $email)
+            ->forEmail($email)
             ->has('orders')
             ->first();
 

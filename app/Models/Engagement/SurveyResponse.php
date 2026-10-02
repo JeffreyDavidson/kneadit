@@ -2,6 +2,7 @@
 
 namespace App\Models\Engagement;
 
+use App\Casts\EmailAddressCast;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\SurveyResponseObserver;
 use Database\Factories\Engagement\SurveyResponseFactory;
@@ -37,6 +38,7 @@ class SurveyResponse extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'answers' => 'array',
             'created_at' => 'datetime',
         ];

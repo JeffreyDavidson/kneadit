@@ -6,6 +6,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReferral;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
+use App\Support\EmailAddress;
 use App\ValueObjects\Money;
 use Closure;
 
@@ -42,7 +43,7 @@ class ApplyReferral
             return $next($payload);
         }
 
-        if (strcasecmp($referrer->email, $payload->data->customerEmail) === 0) {
+        if (EmailAddress::normalize($referrer->email) === EmailAddress::normalize($payload->data->customerEmail)) {
             return $next($payload);
         }
 

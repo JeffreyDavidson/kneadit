@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\WaitlistEntryQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\WaitlistStatus;
@@ -41,6 +42,7 @@ class WaitlistEntry extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'requested_date' => 'date',
             'status' => WaitlistStatus::class,
             'notes' => StripTagsCast::class,

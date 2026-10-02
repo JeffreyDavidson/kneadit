@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Customers\Schemas;
 
 use App\Services\Scheduling\BakeryClock;
+use App\Support\EmailAddress;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -30,6 +31,7 @@ class CustomerForm
                                 TextInput::make('email')
                                     ->email()
                                     ->required()
+                                    ->mutateStateForValidationUsing(fn (mixed $state): mixed => is_string($state) ? EmailAddress::normalize($state) : $state)
                                     ->unique(),
                             ]),
 

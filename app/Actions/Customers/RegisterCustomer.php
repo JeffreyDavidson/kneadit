@@ -3,6 +3,8 @@
 namespace App\Actions\Customers;
 
 use App\Models\Customers\Customer;
+use App\Support\EmailAddress;
+use InvalidArgumentException;
 
 class RegisterCustomer
 {
@@ -18,7 +20,9 @@ class RegisterCustomer
      */
     public function __invoke(array $data): Customer
     {
-        $customer = Customer::query()->firstOrNew(['email' => $data['email']]);
+        throw_unless(is_string($data['email']), InvalidArgumentException::class, 'The registration email must be a string.');
+
+        $customer = Customer::query()->firstOrNew(['email' => EmailAddress::normalize($data['email'])]);
 
         $customer->fill([
             'name' => filled($customer->name) ? $customer->name : $data['name'],

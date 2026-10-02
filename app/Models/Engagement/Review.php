@@ -3,6 +3,7 @@
 namespace App\Models\Engagement;
 
 use App\Builders\Customers\ReviewQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Casts\StripTagsCast;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
@@ -45,6 +46,7 @@ class Review extends Model
     protected function casts(): array
     {
         return [
+            'customer_email' => EmailAddressCast::class,
             'rating' => 'integer',
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',

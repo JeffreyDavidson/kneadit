@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\CustomerFavoriteQueryBuilder;
+use App\Casts\EmailAddressCast;
 use App\Models\Inventory\Product;
 use Database\Factories\Customers\CustomerFavoriteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -28,6 +29,14 @@ class CustomerFavorite extends Model
 {
     /** @use HasFactory<CustomerFavoriteFactory> */
     use HasFactory;
+
+    #[\Override]
+    protected function casts(): array
+    {
+        return [
+            'customer_email' => EmailAddressCast::class,
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>

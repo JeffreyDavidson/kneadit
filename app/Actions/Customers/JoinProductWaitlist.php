@@ -4,6 +4,7 @@ namespace App\Actions\Customers;
 
 use App\Events\Customers\ProductWaitlistJoined;
 use App\Models\Inventory\ProductWaitlist;
+use App\Support\EmailAddress;
 
 class JoinProductWaitlist
 {
@@ -11,7 +12,7 @@ class JoinProductWaitlist
     {
         $entry = ProductWaitlist::query()->updateOrCreate([
             'product_id' => $productId,
-            'customer_email' => $customerEmail,
+            'customer_email' => EmailAddress::normalize($customerEmail),
         ], [
             'customer_name' => $customerName,
             'notified_at' => null,
