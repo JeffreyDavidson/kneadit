@@ -3,15 +3,16 @@
 namespace App\Presenters;
 
 use App\Enums\Inventory\Allergen;
+use App\Enums\Inventory\MeasurementUnit;
+use App\Enums\Inventory\UnitDimension;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Number;
 
 /**
  * Formats a Product for a printable compliance label — ingredients ordered
- * by weight descending (per FDA rules) and a "Contains: …" allergen statement
+ * by weight descending (per FDA rules; see ingredientNames()) and a "Contains: …" allergen statement
  * derived from the union of its recipe ingredients' allergen tags.
  */
 final readonly class ProductLabelPresenter
@@ -26,8 +27,11 @@ final readonly class ProductLabelPresenter
     }
 
     /**
-     * Ingredient names ordered by quantity descending — the FDA expects
-     * ingredients listed by weight from most to least.
+     * Ingredient names ordered by weight, heaviest first — the FDA expects ingredients
+     * listed by weight from most to least. Each linked recipe line is converted to grams
+     * (equal weights keep the order they were entered in). A line in a volume, count or
+     * unknown unit can't be weighed without a density, so it is listed after every weighed
+     * line, in the order entered.
      *
      * @return list<string>
      */
@@ -39,22 +43,40 @@ final readonly class ProductLabelPresenter
             return [];
         }
 
-        /** @var list<string> $relational */
-        $relational = $recipe->inventoryIngredients
-            ->sortByDesc(function (Ingredient $ingredient): float {
-                $quantity = $ingredient->pivot->quantity ?? 0;
+        $weighed = [];
+        $unweighed = [];
 
-                return Number::parseFloat((string) (is_scalar($quantity) ? $quantity : 0)) ?: 0.0;
-            })
-            ->pluck('name')
-            ->values()
-            ->all();
+        foreach ($recipe->inventoryIngredients as $ingredient) {
+            $grams = $this->grams($ingredient);
 
-        if (! empty($relational)) {
-            return $relational;
+            if ($grams === null) {
+                $unweighed[] = $ingredient->name;
+
+                continue;
+            }
+
+            $weighed[] = ['name' => $ingredient->name, 'grams' => $grams];
+        }
+
+        usort($weighed, fn (array $a, array $b): int => $b['grams'] <=> $a['grams']);
+
+        $names = [...array_column($weighed, 'name'), ...$unweighed];
+
+        if ($names !== []) {
+            return $names;
         }
 
         return $this->fallbackIngredientNames($recipe);
+    }
+
+    /**
+     * True when a linked recipe line can't be weighed (volume, count or unknown unit), so its
+     * position on the label is approximate. Shown to the baker on screen, never on the printed label.
+     */
+    public function hasUnweighedIngredients(): bool
+    {
+        return $this->product->recipe?->inventoryIngredients
+            ->contains(fn (Ingredient $ingredient): bool => $this->grams($ingredient) === null) ?? false;
     }
 
     /**
@@ -98,6 +120,22 @@ final readonly class ProductLabelPresenter
         $labels = Collection::make($allergens)->map(fn (Allergen $a): string => $a->getLabel())->all();
 
         return 'Contains: '.implode(', ', $labels).'.';
+    }
+
+    /**
+     * The line's weight in grams, or null when its unit isn't a known mass unit.
+     */
+    private function grams(Ingredient $ingredient): ?float
+    {
+        /** @var object{quantity: string, unit: string} $pivot */
+        $pivot = $ingredient->pivot;
+        $unit = MeasurementUnit::tryFrom($pivot->unit);
+
+        if (! $unit instanceof MeasurementUnit || $unit->dimension() !== UnitDimension::Mass) {
+            return null;
+        }
+
+        return $unit->convert((float) $pivot->quantity, MeasurementUnit::Grams);
     }
 
     /** @return list<string> */

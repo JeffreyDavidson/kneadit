@@ -20,23 +20,70 @@ test('returns empty ingredient list and no allergen statement when product has n
         ->and($presenter->allergenStatement())->toBeNull();
 });
 
-test('orders ingredients by quantity descending from the recipe pivot', function () {
+dataset('ingredient orderings', [
+    'pounds outweigh a smaller number of grams' => [
+        [['Flour', 500, 'g'], ['Sugar', 2, 'lbs']],
+        ['Sugar', 'Flour'],
+        false,
+    ],
+    'kilograms beat a larger number of grams' => [
+        [['Butter', 900, 'g'], ['Flour', 1, 'kg']],
+        ['Flour', 'Butter'],
+        false,
+    ],
+    'ounces and grams are compared as weights' => [
+        [['Salt', 20, 'g'], ['Yeast', 1, 'oz'], ['Sugar', 100, 'g']],
+        ['Sugar', 'Yeast', 'Salt'],
+        false,
+    ],
+    'equal weights keep the entry order' => [
+        [['Flour', 1000, 'g'], ['Sugar', 1, 'kg'], ['Salt', 1000, 'g']],
+        ['Flour', 'Sugar', 'Salt'],
+        false,
+    ],
+    'weighed lines come before volume lines' => [
+        [['Milk', 4, 'cups'], ['Flour', 500, 'g'], ['Salt', 5, 'g']],
+        ['Flour', 'Salt', 'Milk'],
+        true,
+    ],
+    'weighed lines come before count lines' => [
+        [['Eggs', 12, 'each'], ['Salt', 5, 'g']],
+        ['Salt', 'Eggs'],
+        true,
+    ],
+    'a legacy unit is treated as unweighed' => [
+        [['Mystery', 9, 'pinch'], ['Salt', 5, 'g']],
+        ['Salt', 'Mystery'],
+        true,
+    ],
+    'all volume lines keep the entry order' => [
+        [['Salt', 1, 'tsp'], ['Flour', 4, 'cups'], ['Milk', 2, 'cups']],
+        ['Salt', 'Flour', 'Milk'],
+        true,
+    ],
+]);
+
+test('orders linked ingredients by their weight in grams', function (array $lines, array $expectedNames, bool $hasUnweighed) {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
 
-    $flour = Ingredient::factory()->create(['name' => 'Flour']);
-    $salt = Ingredient::factory()->create(['name' => 'Salt']);
-    $sugar = Ingredient::factory()->create(['name' => 'Sugar']);
-
-    $recipe->inventoryIngredients()->attach([
-        $flour->id => ['quantity' => 4.00, 'unit' => 'cups'],
-        $salt->id => ['quantity' => 0.5, 'unit' => 'tsp'],
-        $sugar->id => ['quantity' => 1.5, 'unit' => 'cups'],
-    ]);
+    foreach ($lines as [$name, $quantity, $unit]) {
+        $recipe->inventoryIngredients()->attach(
+            Ingredient::factory()->create(['name' => $name]),
+            ['quantity' => $quantity, 'unit' => $unit],
+        );
+    }
 
     $presenter = ProductLabelPresenter::for($product->fresh());
 
-    expect($presenter->ingredientNames())->toBe(['Flour', 'Sugar', 'Salt']);
+    expect($presenter->ingredientNames())->toBe($expectedNames)
+        ->and($presenter->hasUnweighedIngredients())->toBe($hasUnweighed);
+})->with('ingredient orderings');
+
+test('reports no unweighed ingredients when the product has no recipe', function () {
+    $presenter = ProductLabelPresenter::for(Product::factory()->create());
+
+    expect($presenter->hasUnweighedIngredients())->toBeFalse();
 });
 
 test('derives allergen statement from the union of linked ingredient allergens', function () {
