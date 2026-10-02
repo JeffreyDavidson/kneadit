@@ -16,6 +16,8 @@ use Illuminate\Support\Collection;
  * - one of the RfmSegment values → only customers that fall into that
  *   segment per RfmClassifier.
  *
+ * Customers who have unsubscribed from marketing email are never returned.
+ *
  * Returns a Collection of Customer models (with email + name); the caller
  * is responsible for queuing the actual mail.
  */
@@ -30,6 +32,7 @@ class ResolveCampaignRecipients
     {
         $rows = Customer::query()
             ->withRfmMetrics()
+            ->subscribedToMarketing()
             ->whereNotNull('email')
             ->get();
 

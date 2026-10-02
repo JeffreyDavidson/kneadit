@@ -29,6 +29,7 @@ class BirthdayEngagement implements CustomerEngagement
         $today = $this->clock->today();
 
         return Customer::query()
+            ->subscribedToMarketing()
             ->whereNotNull('birthday')
             ->where('email', '!=', '')
             ->whereMonth('birthday', $today->month)

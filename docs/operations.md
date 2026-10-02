@@ -184,7 +184,7 @@ release_notes: docs/releases/YYYY-MM-DD-vX.Y.Z.md   # summary, highlights, datab
 github_release: optional         # titles look like "v1.35.0 - <short name>"
 staging: develop deploys to staging; during release hardening staging may point at the release branch for review
 promote: pushing main deploys production through Laravel Forge; the tag push triggers the browser smoke workflow
-sync_integration: merge-back     # merge main into develop after the release
+sync_integration: merge-back     # merge origin/main into develop locally and push develop directly; no PR (PRs only flow upward)
 breaking_changes: ask            # decide the bump per release when a commit carries `!` or a BREAKING CHANGE footer
 ```
 

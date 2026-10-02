@@ -11,6 +11,16 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
+test('placedByEmail returns only orders for the customer with that email', function () {
+    $mine = Order::factory()->for(Customer::factory()->create(['email' => 'me@example.com']))->create();
+    Order::factory()->for(Customer::factory()->create(['email' => 'other@example.com']))->create();
+
+    $results = Order::query()->placedByEmail('me@example.com')->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($mine))->toBeTrue();
+});
+
 test('paid scope returns only paid orders', function () {
     Order::factory()->paid()->create();
     Order::factory()->unpaid()->create();

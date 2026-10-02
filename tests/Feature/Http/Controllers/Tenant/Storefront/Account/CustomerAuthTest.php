@@ -88,7 +88,7 @@ test('dashboard redirects guests to the login page', function () {
 });
 
 test('dashboard shows the signed-in customer name', function () {
-    $customer = Customer::factory()->withPassword()->create(['name' => 'Ada Lovelace']);
+    $customer = Customer::factory()->verified()->withPassword()->create(['name' => 'Ada Lovelace']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')

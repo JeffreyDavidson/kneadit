@@ -1,3 +1,4 @@
+@use(App\Support\StockQuantity)
 @extends('emails.layout')
 
 @php
@@ -19,10 +20,10 @@
             <div style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="font-weight: 600; color: {{ $secondaryColor }};">{{ $ingredient->name }}</div>
-                    <div style="font-size: 13px; color: #666;">Threshold: {{ $ingredient->low_stock_threshold }} {{ $ingredient->unit }}</div>
+                    <div style="font-size: 13px; color: #666;">Threshold: {{ StockQuantity::display($ingredient->low_stock_threshold) }} {{ $ingredient->unit }}</div>
                 </div>
                 <div style="font-weight: 700; color: {{ (float) $ingredient->current_stock <= 0 ? '#b91c1c' : $primaryColor }};">
-                    {{ $ingredient->current_stock }} {{ $ingredient->unit }}
+                    {{ StockQuantity::display($ingredient->current_stock) }} {{ $ingredient->unit }}
                 </div>
             </div>
         @endforeach

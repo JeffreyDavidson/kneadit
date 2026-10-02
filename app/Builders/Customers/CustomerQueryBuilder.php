@@ -72,6 +72,23 @@ class CustomerQueryBuilder extends Builder
         return $this;
     }
 
+    /**
+     * Customers who can still receive marketing email (have not unsubscribed).
+     */
+    public function subscribedToMarketing(): static
+    {
+        $this->whereNull('marketing_opted_out_at');
+
+        return $this;
+    }
+
+    public function unsubscribedFromMarketing(): static
+    {
+        $this->whereNotNull('marketing_opted_out_at');
+
+        return $this;
+    }
+
     public function newThisWeek(): static
     {
         $this->where('created_at', '>=', now()->startOfWeek());

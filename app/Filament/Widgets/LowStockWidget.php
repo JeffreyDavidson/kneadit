@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\Inventory\StockStatus;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\Ingredient;
+use App\Support\StockQuantity;
 use Filament\Widgets\Widget;
 
 class LowStockWidget extends Widget
@@ -33,10 +34,10 @@ class LowStockWidget extends Widget
             ->map(fn (Ingredient $ingredient): array => [
                 'id' => $ingredient->id,
                 'name' => $ingredient->name,
-                'current_stock' => $ingredient->current_stock,
+                'current_stock' => StockQuantity::display($ingredient->current_stock),
                 'unit' => $ingredient->unit,
-                'reorder_qty' => max(0, $ingredient->low_stock_threshold - $ingredient->current_stock),
-                'threshold' => $ingredient->low_stock_threshold,
+                'reorder_qty' => StockQuantity::display(max(0, $ingredient->low_stock_threshold - $ingredient->current_stock)),
+                'threshold' => StockQuantity::display($ingredient->low_stock_threshold),
                 'supplier' => $ingredient->supplier,
                 'status_color' => $this->statusColor(StockStatus::resolve($ingredient)),
             ])

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Ingredients\Schemas;
 
 use App\Enums\Inventory\Allergen;
+use App\Enums\Inventory\MeasurementUnit;
 use App\Filament\Forms\Components\MoneyInput;
+use App\Support\StockQuantity;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -32,19 +34,7 @@ class IngredientForm
 
                                 Select::make('unit')
                                     ->required()
-                                    ->options([
-                                        'oz' => 'Ounces (oz)',
-                                        'lbs' => 'Pounds (lbs)',
-                                        'g' => 'Grams (g)',
-                                        'kg' => 'Kilograms (kg)',
-                                        'cups' => 'Cups',
-                                        'tbsp' => 'Tablespoons',
-                                        'tsp' => 'Teaspoons',
-                                        'ml' => 'Milliliters (ml)',
-                                        'l' => 'Liters (l)',
-                                        'each' => 'Each',
-                                        'dozen' => 'Dozen',
-                                    ])
+                                    ->options(MeasurementUnit::class)
                                     ->searchable(),
                             ]),
 
@@ -54,13 +44,15 @@ class IngredientForm
                                     ->numeric()
                                     ->default(0)
                                     ->required()
-                                    ->step(0.01),
+                                    ->step(0.0001)
+                                    ->formatStateUsing(fn (float|int|string|null $state): ?string => blank($state) ? null : StockQuantity::input($state)),
 
                                 TextInput::make('low_stock_threshold')
                                     ->numeric()
                                     ->default(0)
                                     ->required()
-                                    ->step(0.01)
+                                    ->step(0.0001)
+                                    ->formatStateUsing(fn (float|int|string|null $state): ?string => blank($state) ? null : StockQuantity::input($state))
                                     ->helperText('Alert when stock falls below this level'),
                             ]),
 

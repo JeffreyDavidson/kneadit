@@ -13,12 +13,15 @@ Both surfaces share application code. The request host and tenancy middleware de
 
 The central connection is named `central`. It contains the platform tenant and domain records plus central concerns such as platform settings and subscription state. Every bakery has a separate SQLite database. `config/tenancy.php` uses `TenantSQLiteDatabaseManager`, with files rooted at `TENANT_DB_PATH` or `database_path()` when the variable is unset. `TenantDatabasePath` rejects path separators/traversal, and the manager refuses symlinks before connecting.
 
-Tenancy bootstraps four Laravel facilities:
+Tenancy bootstraps five Laravel facilities:
 
 - The database connection switches to the tenant database.
 - cache operations receive a tenant-specific tag.
 - the private CSV import disk receives a tenant-specific root.
 - queued work carries tenant context through `QueueTenancyBootstrapper`.
+- generated URLs point at the bakery through `TenantUrlBootstrapper` (see below).
+
+`TenantUrlBootstrapper` forces the URL root and scheme to the bakery's primary storefront while tenancy is active, so `route()`, `url()` and signed URLs built by the scheduler, queue workers and central panel actions (`withinTenant()`) point at the bakery instead of `APP_URL`, where bakery routes do not exist. `TenantUrlGenerator::primaryStorefront()` picks the URL: the bakery's custom domain when `tenants.custom_domain` is set and a `domains` row ties it to that bakery, otherwise `{subdomain}.{tenant domain}`. The scheme and tenant domain come from `APP_URL` and `tenancy.tenant_domain`, and a custom domain drops the platform port. The bootstrapper does nothing when the current request is already on a non-central host (the bakery's own subdomain or custom domain), so HTTP requests keep generating URLs on the host the customer is using, and `revert()` clears the override when tenancy ends. Signed bakery links (`signed`, not `signed:relative`) are therefore signed against the same host the customer opens. `MarketingUnsubscribeLinks` builds its host from the same resolver. The "Powered by KneadIt" link in `BaseMailable` uses `APP_URL` directly so it keeps pointing at the platform.
 
 Filesystem tenancy is deliberately scoped to the `imports` disk. Existing local/public asset URLs keep their established behavior, while sensitive imports cannot cross tenant roots.
 
@@ -38,7 +41,7 @@ HTTP request
   -> response security headers and actor context
 ```
 
-Central domains are configured in `config/tenancy.php`; production includes `getkneadit.app` and `www.getkneadit.app`, while local development uses `app.getkneadit.test` for the application and retains `kneadit.test` as the tenant-development domain. The separate marketing site uses `getkneadit.test`. Tenant routes additionally apply `InitializeTenancyByDomainOrSubdomain` and reject access from central domains. This supports both bakery subdomains and domain records representing custom domains.
+Central domains are configured in `config/tenancy.php`; production includes `getkneadit.app` and `www.getkneadit.app`, while local development uses `app.getkneadit.test` for the application and retains `kneadit.test` as the tenant-development domain. The separate marketing site uses `getkneadit.test`. Tenant routes additionally apply `InitializeTenancyByDomainOrSubdomain` and reject access from central domains. This supports both bakery subdomains and domain records representing custom domains. `AddCustomDomain` normalizes a bakery's custom domain and rejects, with a validation error, anything that is not a valid hostname, is a central domain or a subdomain of the tenant domain, or already belongs to another bakery; replacing a domain releases the old record and Forge alias.
 
 An unknown tenant domain returns 404. If a central tenant record exists but its SQLite file does not, local development recreates and migrates it automatically. Production returns 503 and instructs the operator to run `php artisan tenants:doctor --fix`.
 
@@ -124,6 +127,8 @@ Storefront requests are validated by `StoreOrderRequest` (the API uses `StoreApi
 5. Record coupon/gift-card/referral effects and persist line items.
 6. Mark the cart converted.
 
+Customer referrals follow the order through its lifecycle. `ApplyReferral` discounts only new customers: an email with a prior non-cancelled order, or an already-referred customer whose referral wasn't cancelled, gets no discount. `PersistReferral` records the referral as Pending and fires nothing. When the order is delivered, `CompleteCustomerReferralListener` marks it Completed and fires `CustomerReferralCompleted`; when the order is cancelled, `CancelCustomerReferralListener` marks it Cancelled and no reward is issued. `SendCustomerReferralRewardEmailListener` mails the referrer's coupon, which `RewardReferrer` creates at most once per referral (a repeated event or retried job reuses the existing coupon).
+
 If capacity rejects the request, the pipeline returns no order. If no cart line is orderable (every product was deactivated or removed since the cart was built), `CalculateOrderTotals` throws `NoOrderableItemsException`, so the customer is told to review the cart instead of that the date is full. Other domain validation failures return targeted form errors. A successful transaction logs the placement and emits `OrderCreated`. The current session is granted access to the resulting order before redirecting to payment or confirmation.
 
 Staff quick orders skip this pipeline: the Quick Order form (`QuickOrderForm`) offers a Delivery Distance select built from the same Delivery Fee Tiers, and `CreateQuickOrder` prices delivery with `OrderSettings::deliveryFee()`. A bakery with no tiers configured gets a free-delivery quick order. `CreateQuickOrderData` takes the payment method and delivery type as enums (the form's selects hand back enum instances), and the order stores the chosen delivery type. `QuickOrder::createOrder()` reports any exception before showing the generic error notification. Every quick order needs a customer email, like storefront orders, because `orders.customer_id` is required and customers are keyed by email; an existing customer with that email is reused.
@@ -132,9 +137,11 @@ The storefront order form (`order-form-script.blade.php`) submits with `fetch` a
 
 ### Order access and tracking
 
-Order-by-number routes (`order.access` middleware, `EnsureOrderAccess`) require `OrderAccessGuard::canAccess()`: a logged-in customer who owns the order, or an order number the session has been granted. A session is granted an order by placing it, returning from Stripe, passing `VerifyOrderAccessController` (order number plus matching email), or opening a tracking link.
+Order-by-number routes (`order.access` middleware, `EnsureOrderAccess`) require `OrderAccessGuard::canAccess()`: a logged-in customer with a verified email who owns the order, or an order number the session has been granted. A session is granted an order by placing it, returning from Stripe, passing `VerifyOrderAccessController` (order number plus matching email), or opening a tracking link.
 
 The tracking form (`POST /track`) only emails a link and never shows orders. `TrackingController::store` always redirects back with the same "check your email" message (page content key `link_sent_message`), whether or not the address has orders. When it does, it queues `OrderTrackingLinkMail` to that address, at most one per customer every five minutes (`RateLimiter`). The mail holds a 30-minute `URL::temporarySignedRoute` to `GET /track/access/{customer}` (`order.track.access`, `signed` middleware). `ShowTrackedOrdersController` renders the order list for that customer and grants the session access to each order.
+
+Customer accounts: `RegisterCustomer` creates a customer, or claims an existing guest customer row with the same email (no password yet). A claim sets the password and clears `email_verified_at` but keeps the row's existing name and phone (blanks are filled from the form), and the customer is logged in straight away. Until the email is verified, the `customer.verified` middleware (`EnsureCustomerEmailIsVerified`) redirects `account`, `account/orders` and `account/profile` (GET and POST) to `account.email.verify.notice`, and returns 403 JSON on the favorites API (`api.favorites.index` and `api.favorites.toggle`). The verify notice, verify link, resend and logout stay reachable. The same rule applies to `OrderAccessGuard::canAccess()`: the customer-owns-order shortcut needs `hasVerifiedEmail()`. Session grants (just-placed order, Stripe return, order verify page, tracking link) are unaffected.
 
 ### Customer order edits
 
@@ -143,6 +150,12 @@ While the modification window is open, customers can change quantities and the t
 ### Deleting orders
 
 Orders are hard-deleted (no soft deletes), and deleting cascades to the order's refunds and messages, so deletion is restricted to orders nothing financial happened on. `OrderDeletionGuard::canDelete()` allows it only when the status allows deletion (`OrderStatus::allowsDeletion()`: Pending or Cancelled), the payment status allows it (`PaymentStatus::allowsDeletion()`: Unpaid or Cancelled), and the order has no refunds. `OrderPolicy::delete()` additionally requires the Manager role or above; staff cancel instead. Every other order is cancelled, which keeps the record. The Orders table's bulk delete skips orders the policy denies and the notification says how many were not deleted. `OrderObserver::deleting()` runs `ReverseOrderDiscounts` before the row goes, so the coupon use and gift card draw are given back the same as on cancellation (idempotent, so an order that was already cancelled is not reversed twice).
+
+### Ingredient units and stock
+
+An ingredient has a stock unit (`ingredients.unit`), and each linked recipe line (`recipe_ingredients.unit`) has its own. Both come from the `MeasurementUnit` enum, which knows each unit's dimension (`UnitDimension`: mass, volume or count) and its factor to the dimension's base unit (grams, millilitres, each), so `MeasurementUnit::convert()` converts within a dimension and returns null across dimensions. The columns stay plain strings so a legacy value that isn't a known unit still displays; `Ingredient::measurement_unit` resolves it to the enum or null.
+
+Everything that compares or moves stock goes through `RecipeLineConverter::inStockUnit()`, which expresses a recipe line's quantity in the ingredient's stock unit at full precision: the stock check (`IngredientDemandCalculator`, used by `ValidateStockAvailability` and `CheckOrderStockAvailability`), the Baking deduction and cancellation restock (`AdjustOrderIngredients`), and the upcoming-order needs in `ShoppingListService`. Stock and recipe quantities (`ingredients.current_stock` and `low_stock_threshold`, `recipe_ingredients.quantity`, `stock_adjustments.quantity`) are `decimal(12,4)`, so a 1 g draw from stock held in kg (0.001) isn't lost. The stock check compares at 4 decimals and `AdjustOrderIngredients` rounds the converted amount to 4 decimals at write. The UI shows stock to 2 decimals unless that would show a small amount as 0 (`StockQuantity::display()`), and editable fields keep every stored digit (`StockQuantity::input()`). A line that can't be converted (different dimensions, or an unknown unit) is skipped with a logged warning rather than blocking the order. A recipe's linked lines live in the `recipe_ingredients` table, which is read two ways: `Recipe::inventoryIngredients()` (a BelongsToMany with the quantity and unit as pivot columns) feeds deduction, demand and labels, and `Recipe::ingredientLines()` (a HasMany over the `RecipeIngredient` model) is what the recipe form's relationship repeater saves, since Filament's repeater can only create and update rows of a HasMany. The form rejects linking the same ingredient twice on one recipe. `RecipeForm` limits a linked line's units to the selected ingredient's dimension and shows a warning hint on a saved line that no longer fits.
 
 ### Date capacity
 
@@ -196,7 +209,26 @@ Controllers should receive the typed `TenantSettings` DTO when rendering storefr
 
 Central onboarding screens read denormalized product, category, and order counts from the tenant record instead of opening every tenant database during a web request. `tenants:sync-onboarding-metrics` reconciles those counts every fifteen minutes and should be run once immediately after deploying its central migration.
 
+The onboarding subdomain doubles as the tenant id and the bare domain row, so `StoreOnboardingRequest` lowercases and trims it before validating, requires a valid hostname label, rejects `config('kneadit.reserved_subdomains')`, and checks uniqueness against both `domains.domain` and `tenants.id`.
+
 Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
+
+## Email marketing and unsubscribe
+
+Customers can opt out of marketing email. `customers.marketing_opted_out_at` (null = subscribed) is set by the customer from the unsubscribe link in any marketing email, or by staff through the Customers table's "Mark unsubscribed" action (for opt-outs received by phone or email). Staff cannot re-subscribe a customer; only the customer can, from the same link.
+
+**Marketing mails** (a message the customer did not specifically ask for) implement `MarketingMail` and use `SendsMarketingMail`:
+
+- `CustomerCampaignMail` (customer campaigns) and `BulkCustomerMessageMail` (the Customers "Send message" bulk action).
+- The automated engagements: `HappyBirthdayMail`, `RepeatOrderReminderMail`, `ReviewRequestMail`, and `AbandonedCartRecoveryMail`.
+
+**Transactional mails** are never suppressed and carry no unsubscribe link: order placed, status, modified and messages, order tracking links, catering quotes, product-available alerts (the customer asked to be told), referral rewards (earned) and contact-message replies. Staff, supplier and platform notifications are not customer marketing either. For a new customer-facing mail, decide by asking whether the customer requested that specific message.
+
+Every marketing mail sends `List-Unsubscribe` and `List-Unsubscribe-Post: List-Unsubscribe=One-Click` (RFC 8058) and shows an "Unsubscribe" link in the shared email layout. `BaseMailable` passes `unsubscribeUrl` to the view for any `MarketingMail`. `MarketingUnsubscribeLinks` builds the link: a non-expiring URL signed against its path only (`signed:relative`) and prefixed with the bakery's storefront host, so it works from queued or scheduled sends where the request host is not the bakery's.
+
+`EmailUnsubscribesController` serves the link (routes in `routes/tenant/access.php`, outside the storefront-enabled check): `GET` shows a confirmation page, `POST` unsubscribes immediately and is CSRF-exempt because mail providers post without a token (the signature is the protection), and `DELETE` re-subscribes from the confirmation page.
+
+Senders skip opted-out customers in the query (`CustomerQueryBuilder::subscribedToMarketing()`), so recorded recipient counts exclude them: `ResolveCampaignRecipients`, `SendBulkCustomerMessage`, the three engagement recipient finders and `SendAbandonedCartRecoveryCommand`. Platform email campaigns go to bakery owners, not customers, so they are not customer marketing. The birthday, repeat-order and review-request listeners re-check just before sending. Abandoned-cart recovery only mails carts whose email matches an existing customer, because the opt-out lives on the customer record.
 
 ## Frontend
 

@@ -18,7 +18,7 @@ use App\Pipes\Orders\MarkCartConverted;
 use App\Pipes\Orders\OrderPipelineData;
 use App\Pipes\Orders\PersistOrder;
 use App\Pipes\Orders\PersistOrderItems;
-use App\Pipes\Orders\PersistReferralCompletion;
+use App\Pipes\Orders\PersistReferral;
 use App\Pipes\Orders\RecordCouponUsage;
 use App\Pipes\Orders\RecordGiftCardRedemption;
 use App\Pipes\Orders\ResolveCustomer;
@@ -58,7 +58,7 @@ class CreateOrder
                 RecordCouponUsage::class,
                 RecordGiftCardRedemption::class,
                 PersistOrderItems::class,
-                PersistReferralCompletion::class,
+                PersistReferral::class,
                 MarkCartConverted::class,
             ])
             ->thenReturn());

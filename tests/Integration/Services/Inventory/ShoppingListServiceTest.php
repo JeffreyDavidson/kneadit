@@ -16,7 +16,7 @@ test('generates shopping list with low stock ingredients', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
     Ingredient::factory()->create(['current_stock' => 100, 'low_stock_threshold' => 5]);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate();
 
     expect($result)->toBeArray()->not->toBeEmpty();
@@ -25,7 +25,7 @@ test('generates shopping list with low stock ingredients', function () {
 test('returns empty list when all stock is sufficient', function () {
     Ingredient::factory()->create(['current_stock' => 100, 'low_stock_threshold' => 5]);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate();
 
     expect($result)->toBeArray()->toBeEmpty();
@@ -52,7 +52,7 @@ test('includes upcoming order needs when enabled with date range', function () {
         'unit_price' => 10.00,
     ]);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate(
         includeUpcoming: true,
         startDate: now()->format('Y-m-d'),
@@ -88,9 +88,9 @@ test('upcoming order ingredient needs increase the suggested quantity', function
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 5, 'unit_price' => 10.00]);
 
     // Without upcoming: just the low-stock baseline (threshold * 2 - current).
-    $without = (new ShoppingListService)->generate(includeUpcoming: false);
+    $without = resolve(ShoppingListService::class)->generate(includeUpcoming: false);
     // With upcoming for the order's date range: should add 5 * 4 = 20kg.
-    $with = (new ShoppingListService)->generate(
+    $with = resolve(ShoppingListService::class)->generate(
         includeUpcoming: true,
         startDate: now()->format('Y-m-d'),
         endDate: now()->addWeek()->format('Y-m-d'),
@@ -105,7 +105,7 @@ test('upcoming order ingredient needs increase the suggested quantity', function
 test('skips upcoming needs when not enabled', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $resultWithout = $service->generate(includeUpcoming: false);
     $resultWith = $service->generate(includeUpcoming: true, startDate: null, endDate: null);
 
@@ -128,7 +128,7 @@ test('groups ingredients by supplier with best price', function () {
         'sku' => 'FL-001',
     ]);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate();
 
     expect($result)->toHaveKey($supplier->id)
@@ -149,7 +149,7 @@ test('accumulates supplier totals from rounded item subtotals', function () {
         ]);
     }
 
-    $result = (new ShoppingListService)->generate();
+    $result = resolve(ShoppingListService::class)->generate();
 
     expect($result[$supplier->id]['items'])->toHaveCount(3)
         ->and(array_column($result[$supplier->id]['items'], 'subtotal'))->toBe([0.7, 1.4, 2.31])
@@ -159,7 +159,7 @@ test('accumulates supplier totals from rounded item subtotals', function () {
 test('ingredients without suppliers go into no supplier group', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate();
 
     expect($result)->toHaveKey('none')
@@ -173,8 +173,40 @@ test('skips ingredient when needed quantity is zero', function () {
         'low_stock_threshold' => 0,
     ]);
 
-    $service = new ShoppingListService;
+    $service = resolve(ShoppingListService::class);
     $result = $service->generate();
 
     expect($result)->toBeEmpty();
+});
+
+test('upcoming order needs are expressed in the ingredient stock unit', function () {
+    $ingredient = Ingredient::factory()->lowStock()->create([
+        'name' => 'Flour',
+        'unit' => 'kg',
+        'current_stock' => 0,
+        'low_stock_threshold' => 5,
+    ]);
+    $product = Product::factory()->create();
+    $product->recipe()->create([
+        'name' => 'Loaf',
+        'ingredients' => json_encode([['name' => 'Flour', 'quantity' => 500]]),
+        'instructions' => 'Mix.',
+    ])->inventoryIngredients()->attach($ingredient->id, ['quantity' => 500, 'unit' => 'g']);
+
+    $order = Order::factory()->confirmed()->create([
+        'delivery_date' => now()->addDays(3)->format('Y-m-d'),
+    ]);
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 4, 'unit_price' => 10.00]);
+
+    $without = resolve(ShoppingListService::class)->generate(includeUpcoming: false);
+    $with = resolve(ShoppingListService::class)->generate(
+        includeUpcoming: true,
+        startDate: now()->format('Y-m-d'),
+        endDate: now()->addWeek()->format('Y-m-d'),
+    );
+
+    $needWithout = collect($without)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'];
+    $needWith = collect($with)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'];
+
+    expect($needWith)->toBe($needWithout + 2.0);
 });

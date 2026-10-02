@@ -59,6 +59,14 @@ class CustomerFactory extends Factory
     }
 
     /**
+     * Customer has unsubscribed from marketing emails.
+     */
+    public function unsubscribed(): static
+    {
+        return $this->state(fn (array $attributes) => ['marketing_opted_out_at' => now()]);
+    }
+
+    /**
      * Customer has a full address.
      */
     public function withAddress(): static

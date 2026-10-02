@@ -42,3 +42,24 @@ test('mints a single-use fixed coupon for the referrer and queues the reward ema
             && $mail->coupon->is($coupon),
     );
 });
+
+test('a repeated event or retried job mints no second coupon', function () {
+    $referral = CustomerReferral::factory()->completed()->create();
+    $event = new CustomerReferralCompleted($referral);
+
+    (new SendCustomerReferralRewardEmailListener)->handle($event);
+    (new SendCustomerReferralRewardEmailListener)->handle($event);
+
+    $coupon = $referral->fresh()->rewardCoupon;
+
+    expect(Coupon::query()->count())->toBe(1);
+
+    Mail::assertQueued(
+        CustomerReferralRewardMail::class,
+        2,
+    );
+    Mail::assertQueued(
+        CustomerReferralRewardMail::class,
+        fn (CustomerReferralRewardMail $mail): bool => $mail->coupon->is($coupon),
+    );
+});

@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use App\Builders\Inventory\IngredientQueryBuilder;
 use App\Casts\MoneyCentsCast;
 use App\Enums\Inventory\Allergen;
+use App\Enums\Inventory\MeasurementUnit;
 use App\Observers\LogsActivityObserver;
 use App\ValueObjects\Money;
 use Database\Factories\Inventory\IngredientFactory;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
  *
+ * @property-read MeasurementUnit|null $measurement_unit
  * @property-read Pivot|null $pivot
  * @property Money|null $cost_per_unit
  *
@@ -57,12 +60,23 @@ class Ingredient extends Model
     protected function casts(): array
     {
         return [
-            'current_stock' => 'decimal:2',
-            'low_stock_threshold' => 'decimal:2',
+            'current_stock' => 'decimal:4',
+            'low_stock_threshold' => 'decimal:4',
             'cost_per_unit' => MoneyCentsCast::class,
             'allergens' => AsEnumCollection::of(Allergen::class),
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * The stock unit as an enum, or null for a legacy value that isn't a known unit.
+     * The raw `unit` column stays a string so unknown values still display and save.
+     *
+     * @return Attribute<MeasurementUnit|null, never>
+     */
+    protected function measurementUnit(): Attribute
+    {
+        return Attribute::get(fn (): ?MeasurementUnit => MeasurementUnit::tryFrom($this->unit));
     }
 
     /**

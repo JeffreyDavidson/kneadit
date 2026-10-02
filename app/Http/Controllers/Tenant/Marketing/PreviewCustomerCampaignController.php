@@ -6,12 +6,18 @@ namespace App\Http\Controllers\Tenant\Marketing;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Customers\CustomerCampaignMail;
+use App\Models\Customers\Customer;
 use App\Models\Engagement\CustomerCampaign;
 
 class PreviewCustomerCampaignController extends Controller
 {
     public function __invoke(CustomerCampaign $campaign): CustomerCampaignMail
     {
-        return new CustomerCampaignMail($campaign, trackingToken: null);
+        // Stand-in recipient so the preview shows the unsubscribe footer; its link points nowhere real.
+        $recipient = new Customer;
+        $recipient->id = 0;
+        $recipient->name = 'Preview customer';
+
+        return new CustomerCampaignMail($campaign, $recipient);
     }
 }

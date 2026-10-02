@@ -155,7 +155,7 @@ test('customer mailables resolve their custom templates', function () {
 test('AbandonedCartRecoveryMail resolves default and custom templates', function () {
     $cart = Cart::factory()->create(['customer_name' => 'Maya']);
 
-    $defaultMail = new AbandonedCartRecoveryMail($cart);
+    $defaultMail = new AbandonedCartRecoveryMail($cart, Customer::factory()->create());
 
     expect($defaultMail->envelope()->subject)->toBe('You left something in your cart')
         ->and($defaultMail->content()->view)->toBe('emails.customers.abandoned-cart-recovery');
@@ -166,7 +166,7 @@ test('AbandonedCartRecoveryMail resolves default and custom templates', function
         'body' => '<p>Your cart is waiting</p>',
     ]);
 
-    $customMail = new AbandonedCartRecoveryMail($cart);
+    $customMail = new AbandonedCartRecoveryMail($cart, Customer::factory()->create());
 
     expect($customMail->envelope()->subject)->toBe('Hey Maya, come back to Test Bakery')
         ->and($customMail->content()->view)->toBe('emails.custom-template');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\DataTransferObjects\Settings\SettingValue;
+use App\Mail\Concerns\MarketingMail;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
@@ -14,7 +15,7 @@ use Illuminate\Queue\Attributes\Backoff;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 
 #[Tries(3)]
 #[Backoff([10, 60, 300])]
@@ -34,7 +35,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
         $tenant = tenancy()->tenant;
         $secondaryColor = $tenant instanceof Tenant ? $tenant->brand_color_secondary : null;
 
-        return array_merge(SettingValue::map(parent::buildViewData()), [
+        $data = array_merge(SettingValue::map(parent::buildViewData()), [
             'storeName' => $store->name,
             'primaryColor' => $settings->branding->brandColorPrimary,
             'secondaryColor' => $secondaryColor ?? '#1c1410',
@@ -42,7 +43,13 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
             'storePhone' => $store->phone ?? '',
             'storeAddress' => $store->address ?? '',
             'logoUrl' => $store->logoUrl(),
-            'platformHomeUrl' => URL::route('home'),
+            'platformHomeUrl' => Config::string('app.url'),
         ]);
+
+        if (! $this instanceof MarketingMail) {
+            return $data;
+        }
+
+        return [...$data, 'unsubscribeUrl' => $this->unsubscribeUrl()];
     }
 }

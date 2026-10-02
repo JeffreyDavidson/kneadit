@@ -152,6 +152,45 @@ test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkActio
         ->and(Customer::query()->find($doomed->first()->id))->toBeNull();
 });
 
+test('email marketing column shows subscribed and unsubscribed customers', function () {
+    Date::setTestNow('2026-10-06 12:00');
+    $subscribed = Customer::factory()->create();
+    $unsubscribed = Customer::factory()->unsubscribed()->create(['marketing_opted_out_at' => '2026-09-20 09:00']);
+
+    livewire(ListCustomers::class)
+        ->assertTableColumnExists('email_marketing')
+        ->assertTableColumnFormattedStateSet('email_marketing', 'Subscribed', $subscribed)
+        ->assertTableColumnFormattedStateSet('email_marketing', 'Unsubscribed since Sep 20, 2026', $unsubscribed);
+});
+
+test('email marketing filter narrows the table to subscribed or unsubscribed customers', function (string $value, bool $expectsSubscribed) {
+    $subscribed = Customer::factory()->create();
+    $unsubscribed = Customer::factory()->unsubscribed()->create();
+
+    livewire(ListCustomers::class)
+        ->filterTable('email_marketing', $value)
+        ->assertCanSeeTableRecords($expectsSubscribed ? [$subscribed] : [$unsubscribed])
+        ->assertCanNotSeeTableRecords($expectsSubscribed ? [$unsubscribed] : [$subscribed]);
+})->with([
+    'subscribed' => ['subscribed', true],
+    'unsubscribed' => ['unsubscribed', false],
+]);
+
+test('staff can mark a customer unsubscribed but cannot re-subscribe them', function () {
+    Date::setTestNow('2026-10-06 12:00');
+    $customer = Customer::factory()->create();
+    $alreadyOptedOut = Customer::factory()->unsubscribed()->create();
+
+    livewire(ListCustomers::class)
+        ->assertActionHidden(TestAction::make('markUnsubscribed')->table($alreadyOptedOut))
+        ->callAction(TestAction::make('markUnsubscribed')->table($customer));
+
+    expect($customer->fresh()->marketing_opted_out_at?->toDateTimeString())->toBe('2026-10-06 12:00:00')
+        ->and($alreadyOptedOut->fresh()->marketing_opted_out_at)->not->toBeNull();
+    livewire(ListCustomers::class)
+        ->assertActionDoesNotExist(TestAction::make('resubscribe')->table($alreadyOptedOut));
+});
+
 test('customer birthday cannot be after the bakery-local today', function () {
     app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
     Date::setTestNow('2026-10-06 01:00');

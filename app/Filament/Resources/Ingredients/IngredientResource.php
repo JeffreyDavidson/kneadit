@@ -8,6 +8,7 @@ use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Filament\Resources\Ingredients\Schemas\IngredientForm;
 use App\Filament\Resources\Ingredients\Tables\IngredientsTable;
 use App\Models\Inventory\Ingredient;
+use App\Support\StockQuantity;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -85,7 +86,7 @@ class IngredientResource extends Resource
     {
         return [
             'Supplier' => $record->supplier ?? 'N/A',
-            'Stock' => $record->current_stock.' '.($record->unit ?? ''),
+            'Stock' => StockQuantity::display($record->current_stock).' '.($record->unit ?? ''),
         ];
     }
 

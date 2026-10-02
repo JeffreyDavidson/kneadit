@@ -160,14 +160,14 @@ test('cancellation from Baking restocks ingredients with positive Restock adjust
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
-    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
     $order = Order::factory()->baking()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 3]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($flour->fresh()->current_stock)->toBe('16.00');
+    expect($flour->fresh()->current_stock)->toBe('16.0000');
 
     $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->first();
     expect($restock)->not->toBeNull()
@@ -179,14 +179,14 @@ test('cancellation from Pending does not restock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $butter = Ingredient::factory()->create(['current_stock' => 5.00]);
-    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'kg']);
 
     $order = Order::factory()->pending()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($butter->fresh()->current_stock)->toBe('5.00')
+    expect($butter->fresh()->current_stock)->toBe('5.0000')
         ->and($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
@@ -194,14 +194,14 @@ test('cancellation from Confirmed does not restock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
     $eggs = Ingredient::factory()->create(['current_stock' => 12.00]);
-    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 3.0, 'unit' => 'each']);
+    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 3.0, 'unit' => 'kg']);
 
     $order = Order::factory()->confirmed()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($eggs->fresh()->current_stock)->toBe('12.00')
+    expect($eggs->fresh()->current_stock)->toBe('12.0000')
         ->and($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
