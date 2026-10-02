@@ -37,6 +37,43 @@ test('label page renders the product name, ingredients, and allergen statement',
         ->assertSee('Made in a home kitchen');
 });
 
+test('label page orders ingredients by weight and warns when some lines are not weighed', function () {
+    actingAs(User::factory()->owner()->create());
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+
+    $recipe->inventoryIngredients()->attach([
+        Ingredient::factory()->create(['name' => 'Milk'])->id => ['quantity' => 2, 'unit' => 'cups'],
+        Ingredient::factory()->create(['name' => 'Flour'])->id => ['quantity' => 500, 'unit' => 'g'],
+        Ingredient::factory()->create(['name' => 'Sugar'])->id => ['quantity' => 2, 'unit' => 'lbs'],
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('admin.products.label', $product, false));
+
+    $response->assertOk()
+        ->assertSee('Sugar, Flour, Milk.')
+        ->assertSee('Some ingredients use volume or count units, so their position on the label is approximate.');
+});
+
+test('label page shows no ordering warning when every line is weighed', function () {
+    actingAs(User::factory()->owner()->create());
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+
+    $recipe->inventoryIngredients()->attach([
+        Ingredient::factory()->create(['name' => 'Flour'])->id => ['quantity' => 500, 'unit' => 'g'],
+        Ingredient::factory()->create(['name' => 'Sugar'])->id => ['quantity' => 2, 'unit' => 'lbs'],
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('admin.products.label', $product, false));
+
+    $response->assertOk()
+        ->assertSee('Sugar, Flour.')
+        ->assertDontSee('position on the label is approximate');
+});
+
 test('label page shows a helpful message when no recipe is linked', function () {
     actingAs(User::factory()->owner()->create());
     $product = Product::factory()->create(['name' => 'Mystery Loaf']);
