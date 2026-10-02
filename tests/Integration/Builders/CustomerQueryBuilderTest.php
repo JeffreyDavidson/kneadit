@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\ValueObjects\DateRange;
@@ -165,3 +166,20 @@ test('withRfmMetrics projects lifetime paid order metrics', function () {
         ->and(Arr::integer($result->getAttributes(), 'monetary_cents'))->toBe(2_500)
         ->and(Date::parse((string) $result->getAttribute('last_order_at'))->toDateString())->toBe('2026-09-01');
 });
+
+test('withOpenOrder keeps only customers with a pending, confirmed, baking or ready order', function (OrderStatus $status, bool $expected) {
+    $customer = Customer::factory()->create();
+    Order::factory()->recycle($customer)->create(['status' => $status]);
+    Customer::factory()->create();
+
+    $ids = Customer::query()->withOpenOrder()->pluck('id');
+
+    expect($ids->contains($customer->id))->toBe($expected);
+})->with([
+    'pending' => [OrderStatus::Pending, true],
+    'confirmed' => [OrderStatus::Confirmed, true],
+    'baking' => [OrderStatus::Baking, true],
+    'ready' => [OrderStatus::Ready, true],
+    'delivered' => [OrderStatus::Delivered, false],
+    'cancelled' => [OrderStatus::Cancelled, false],
+]);

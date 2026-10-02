@@ -90,6 +90,21 @@ class CustomerQueryBuilder extends Builder
         return $this;
     }
 
+    /**
+     * Customers with at least one open order (pending, confirmed, baking or ready).
+     */
+    public function withOpenOrder(): static
+    {
+        $this->whereExists(
+            Order::query()
+                ->select('id')
+                ->whereColumn('orders.customer_id', 'customers.id')
+                ->outstanding(),
+        );
+
+        return $this;
+    }
+
     public function newThisWeek(): static
     {
         $this->where('created_at', '>=', now()->startOfWeek());
