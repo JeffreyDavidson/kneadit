@@ -103,16 +103,15 @@ test('command processes tenant with unpaid paypal orders', function () {
         ->assertSuccessful();
 });
 
-test('command injects payment collaborators', function () {
+test('command resolves tenant-dependent collaborators per tenant', function () {
     $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
-        ->toContain('PaymentVerifier $paymentVerifier')
-        ->toContain('MarkOrderPaid $markOrderPaid')
-        ->not->toContain('resolve(PaymentVerifier::class)')
-        ->not->toContain('resolve(MarkOrderPaid::class)')
+        ->toContain('resolve(MarkOrderPaid::class)')
+        ->toContain('resolve(PaymentVerifier::class)')
+        ->toContain('resolve(SettingsManager::class)')
         ->toContain("'paypal_client_id'")
-        ->toContain('SettingsManager $settingsManager');
+        ->not->toContain('SettingsManager $settingsManager');
 });
 
 test('command source skips orders without paypal invoice id', function () {

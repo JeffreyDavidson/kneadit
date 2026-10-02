@@ -19,25 +19,23 @@ use Throwable;
 #[Description('Check PayPal invoice payment statuses and update orders across all tenants')]
 class CheckPayPalPaymentsCommand extends Command
 {
-    public function handle(
-        TenancyManager $tenancyManager,
-        PaymentVerifier $paymentVerifier,
-        MarkOrderPaid $markOrderPaid,
-        SettingsManager $settingsManager,
-    ): int {
+    public function handle(TenancyManager $tenancyManager): int
+    {
         // Skip entirely if PayPal isn't configured at the platform level
         if (! config('services.paypal.client_id')) {
             return Command::SUCCESS;
         }
 
         $failures = $tenancyManager->forEachTenant(
-            function (Tenant $tenant) use ($paymentVerifier, $markOrderPaid, $settingsManager): void {
+            function (Tenant $tenant): void {
                 // Skip tenants without PayPal configured
-                if (! $settingsManager->get('paypal_client_id')) {
+                if (! resolve(SettingsManager::class)->get('paypal_client_id')) {
                     return;
                 }
 
-                $this->processTenant($tenant, $paymentVerifier, $markOrderPaid);
+                // Built per tenant: the verifier reads that tenant's PayPal credentials when it is created,
+                // and marking an order paid reads the tenant's settings.
+                $this->processTenant($tenant, resolve(PaymentVerifier::class), resolve(MarkOrderPaid::class));
             },
             function (Tenant $tenant, Throwable $e): void {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");

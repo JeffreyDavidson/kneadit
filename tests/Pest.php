@@ -279,6 +279,40 @@ function setUpCentralTest(): void
 }
 
 /**
+ * Like setUpCentralTest(), but leaves out the tenant tables, which is what the
+ * central database looks like in production. Tenant tables only appear once a
+ * test's Tenancy double enters a tenant.
+ */
+function setUpCentralOnlyTest(): void
+{
+    config(['tenancy.central_domains' => ['localhost']]);
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+
+    test()->artisan('migrate:fresh');
+
+    createCentralTables();
+
+    DB::purge('central');
+    $pdo = DB::connection('sqlite')->getPdo();
+    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+}
+
+/**
+ * Stands in for switching to a bakery's database after setUpCentralOnlyTest():
+ * creates the tenant tables in the one shared test database, once.
+ */
+function createTenantTablesOnce(): void
+{
+    if (Schema::hasTable('settings')) {
+        return;
+    }
+
+    // The test database holds both sides, and the central and tenant blog_posts tables would collide.
+    Schema::dropIfExists('blog_posts');
+    test()->artisan('migrate', ['--path' => database_path('migrations/tenant'), '--realpath' => true]);
+}
+
+/**
  * Replaces the DNS lookup so tests never touch the network. Pass the IPv4
  * address each domain should resolve to; any other domain does not resolve.
  *
