@@ -41,7 +41,10 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
+require_once __DIR__.'/Support/Bootstrap/ParallelTestIsolation.php';
 require_once __DIR__.'/Support/Bootstrap/TenantDatabaseCleanup.php';
+
+isolateParallelTemporaryDirectory();
 
 /*
  * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
@@ -80,6 +83,10 @@ pest()->extend(TestCase::class)
             'app.url' => 'http://localhost',
             'tenancy.tenant_domain' => null,
         ]);
+
+        if (parallelTestToken() !== null) {
+            config(['tenancy.tenant_db_path' => testTenantDatabaseDirectory()]);
+        }
 
         URL::forceRootUrl(null);
         URL::setRequest(Request::create('http://localhost'));
