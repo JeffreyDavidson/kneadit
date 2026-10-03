@@ -34,6 +34,7 @@ it('creates an active starter tenant with a trial, contact details and a matchin
 
     expect($tenant)->toBeInstanceOf(Tenant::class)
         ->and($tenant->id)->toBe('recordbakery')
+        ->and($tenant->user_id)->toBe(test()->user->id)
         ->and($tenant->name)->toBe('Test Baker')
         ->and($tenant->email)->toBe('baker@test.com')
         ->and($tenant->plan)->toBe(SubscriptionTier::Starter)

@@ -21,6 +21,7 @@ class CreateTenantRecord
         return DB::transaction(function () use ($user, $storeName, $subdomain, $useKneadItStorefront, $externalWebsite): Tenant {
             $tenant = Tenant::query()->create([
                 'id' => $subdomain,
+                'user_id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'plan' => SubscriptionTier::Starter->value,

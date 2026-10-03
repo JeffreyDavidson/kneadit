@@ -3,10 +3,12 @@
 use App\Enums\Customers\ReferralStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
+use App\Http\Middleware\EnsureSubscribed;
 use App\Models\Customers\Referral;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -145,6 +147,20 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         && $event->tenant->id === $sub
         && str_contains($event->adminUrl, "{$sub}.")
         && str_ends_with($event->adminUrl, '/admin'));
+});
+
+test('a free-forever grant on a signed-up tenant lets its owner past the subscription check', function () {
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+    submitOnboarding($user, ['subdomain' => $sub]);
+    Tenant::query()->findOrFail($sub)->update(['free_forever' => true]);
+    $request = Request::create('/admin');
+    $request->setUserResolver(fn (): User => $user);
+
+    $response = (new EnsureSubscribed)
+        ->handle($request, fn (): Response => response('OK'));
+
+    expect($response->getContent())->toBe('OK');
 });
 
 test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {

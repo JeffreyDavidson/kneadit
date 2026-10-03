@@ -19,6 +19,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
 /**
  * @property string $id
+ * @property int|null $user_id
  * @property string $name
  * @property string $email
  * @property SubscriptionTier $plan
@@ -77,6 +78,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'id',
+            'user_id',
             'name',
             'email',
             'plan',
