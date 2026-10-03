@@ -85,7 +85,7 @@ jobs:
       - name: Run tests
         run: |
           echo "Runner CPUs: $(nproc)"
-          php artisan test --parallel --processes=4 --ci --compact --exclude-testsuite=Browser --log-junit="$RUNNER_TEMP/pest-junit.xml"
+          vendor/bin/pest --parallel --processes=4 --ci --compact --exclude-testsuite=Browser --log-junit="$RUNNER_TEMP/pest-junit.xml"
 
       - name: Upload Pest timing report
         if: ${{ !cancelled() }}
