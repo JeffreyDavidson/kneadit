@@ -90,7 +90,7 @@
         ],
         "test:application": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan test --exclude-testsuite=Browser"
+            "@php artisan test --parallel --exclude-testsuite=Browser"
         ],
         "test:browser": [
             "Composer\\Config::disableProcessTimeout",

@@ -16,8 +16,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    @unlink(database_path('provisionbakery'));
-    @unlink(database_path('provisionownsite'));
+    @unlink(testTenantDatabaseFile('provisionbakery'));
+    @unlink(testTenantDatabaseFile('provisionownsite'));
 });
 
 it('copies the owner into the tenant database keeping the central password hash and verifying the email', function () {

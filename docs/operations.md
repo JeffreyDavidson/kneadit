@@ -195,6 +195,8 @@ breaking_changes: ask            # decide the bump per release when a commit car
 
 Pest suites are organized as Unit, Integration, Feature, Arch, and Browser. `composer test` and CI intentionally exclude Browser; `php artisan test` includes it unless a suite is excluded.
 
+`composer test` and CI run the suite in parallel (`--parallel`; CI uses 4 processes). Each worker gets its own tenant database directory and temporary directory (`tests/Support/Bootstrap/ParallelTestIsolation.php`), so tests that touch tenant database files or the system temp directory must use `testTenantDatabaseFile()` or `testTenantDatabaseDirectory()` instead of `database_path('tenant…')`, and must not share fixed paths with a test in another file. A serial run (no `--parallel`) is unchanged.
+
 Useful commands:
 
 ```bash

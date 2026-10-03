@@ -18,9 +18,9 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    @unlink(database_path('tenanttestbakery'));
-    @unlink(database_path('tenantfailbakery'));
-    @unlink(database_path('tenantownsite'));
+    @unlink(testTenantDatabaseFile('tenanttestbakery'));
+    @unlink(testTenantDatabaseFile('tenantfailbakery'));
+    @unlink(testTenantDatabaseFile('tenantownsite'));
 });
 
 it('creates a tenant with domain and seeds the tenant database', function () {
@@ -89,5 +89,5 @@ it('rolls back the central tenant + domain row when tenant-DB seeding fails', fu
     // the central tenant on failure. The caller sees an all-or-nothing
     // outcome: no orphan central row, no leftover SQLite file.
     expect(Tenant::query()->whereKey('failbakery')->exists())->toBeFalse()
-        ->and(file_exists(database_path('tenantfailbakery')))->toBeFalse();
+        ->and(file_exists(testTenantDatabaseFile('tenantfailbakery')))->toBeFalse();
 });

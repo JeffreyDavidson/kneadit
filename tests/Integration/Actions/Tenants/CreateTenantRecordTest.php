@@ -17,8 +17,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    @unlink(database_path('recordbakery'));
-    @unlink(database_path('recordownsite'));
+    @unlink(testTenantDatabaseFile('recordbakery'));
+    @unlink(testTenantDatabaseFile('recordownsite'));
 });
 
 it('creates an active starter tenant with a trial, contact details and a matching domain', function () {

@@ -21,7 +21,7 @@ function tenantDatabaseCleanup(): Closure
         DB::purge('tenant');
 
         gc_collect_cycles();
-        foreach (glob(database_path('tenant*')) ?: [] as $file) {
+        foreach (glob(testTenantDatabaseDirectory().'/tenant*') ?: [] as $file) {
             if (! is_file($file)) {
                 continue;
             }
