@@ -2,6 +2,7 @@
 
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Support\Facades\Event;
 use Laravel\Cashier\Cashier;
 use Laravel\Cashier\Subscription;
@@ -10,11 +11,10 @@ use Stancl\Tenancy\Events\TenantDeleted;
 /**
  * Stands in for Cashier's subscription so cancel() never calls Stripe.
  */
+#[Table(name: 'subscriptions')]
 class CancelRecordingSubscription extends Subscription
 {
     public static bool $failCancel = false;
-
-    protected $table = 'subscriptions';
 
     #[Override]
     public function getForeignKey(): string
@@ -33,7 +33,7 @@ class CancelRecordingSubscription extends Subscription
     }
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     setUpCentralTest();
     Event::fake([TenantDeleted::class]);
     Cashier::useSubscriptionModel(CancelRecordingSubscription::class);
@@ -56,7 +56,7 @@ function ownerWithSubscription(string $email = 'owner@example.com', string $stat
     return $owner;
 }
 
-test('deleting a bakery cancels its owner\'s subscription at the end of the period', function () {
+test('deleting a bakery cancels its owner\'s subscription at the end of the period', function (): void {
     $owner = ownerWithSubscription();
     createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email]);
 
@@ -67,7 +67,7 @@ test('deleting a bakery cancels its owner\'s subscription at the end of the peri
         ->and($subscription->onGracePeriod())->toBeTrue();
 });
 
-test('deleting a bakery keeps the subscription when the owner has another bakery', function () {
+test('deleting a bakery keeps the subscription when the owner has another bakery', function (): void {
     $owner = ownerWithSubscription();
     createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email]);
     createTenantWithDomain('second-shop', attributes: ['email' => $owner->email]);
@@ -77,7 +77,7 @@ test('deleting a bakery keeps the subscription when the owner has another bakery
     expect($owner->subscription('default')->ends_at)->toBeNull();
 });
 
-test('deleting a bakery leaves an already canceled subscription alone', function () {
+test('deleting a bakery leaves an already canceled subscription alone', function (): void {
     $owner = ownerWithSubscription(status: 'canceled');
     $owner->subscription('default')->forceFill(['ends_at' => now()->subDay()])->save();
     createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email]);
@@ -88,7 +88,7 @@ test('deleting a bakery leaves an already canceled subscription alone', function
     expect(Tenant::query()->find('sweet-treats'))->toBeNull();
 });
 
-test('deleting a bakery whose owner has no subscription still deletes it', function () {
+test('deleting a bakery whose owner has no subscription still deletes it', function (): void {
     $owner = User::factory()->owner()->create(['email' => 'owner@example.com']);
     createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email]);
 
@@ -97,7 +97,7 @@ test('deleting a bakery whose owner has no subscription still deletes it', funct
     expect(Tenant::query()->find('sweet-treats'))->toBeNull();
 });
 
-test('the bakery is not deleted when Stripe refuses the cancel', function () {
+test('the bakery is not deleted when Stripe refuses the cancel', function (): void {
     $owner = ownerWithSubscription();
     createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email]);
     CancelRecordingSubscription::$failCancel = true;

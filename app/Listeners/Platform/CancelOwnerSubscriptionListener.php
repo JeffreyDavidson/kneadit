@@ -4,6 +4,7 @@ namespace App\Listeners\Platform;
 
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Laravel\Cashier\Subscription;
 use Stancl\Tenancy\Events\DeletingTenant;
 
 /**
@@ -37,7 +38,7 @@ class CancelOwnerSubscriptionListener
 
         $subscription = $owner->subscription('default');
 
-        if ($subscription === null || ! $subscription->valid() || $subscription->canceled()) {
+        if (! $subscription instanceof Subscription || ! $subscription->valid() || $subscription->canceled()) {
             return;
         }
 
