@@ -6,7 +6,9 @@ use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -53,4 +55,25 @@ test('prevents removing the last owner', function () {
 
     expect(fn () => resolve(RemoveStaffMember::class)($owner->id, $manager->id))
         ->toThrow(RuntimeException::class, "Can't remove the last owner.");
+});
+
+test('two owners removing each other at the same moment leaves one owner', function () {
+    $first = User::factory()->owner()->create();
+    $second = User::factory()->owner()->create();
+
+    // SQLite ignores row locks and one process cannot race itself, so let the
+    // other owner's removal commit right after this request's first owner count.
+    $interleaved = false;
+    DB::listen(function (QueryExecuted $query) use (&$interleaved, $first, $second): void {
+        if ($interleaved || ! str_contains($query->sql, 'count(*)')) {
+            return;
+        }
+
+        $interleaved = true;
+        resolve(RemoveStaffMember::class)($second->id, $first->id);
+    });
+
+    expect(fn () => resolve(RemoveStaffMember::class)($first->id, $second->id))
+        ->toThrow(RuntimeException::class, "Can't remove the last owner.")
+        ->and(User::query()->owners()->pluck('id')->all())->toBe([$first->id]);
 });
