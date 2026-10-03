@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Tenants\CreateTenantRecord;
 use App\Http\Middleware\EnsureSubscribed;
 use App\Models\Staff\User;
 use Illuminate\Http\Request;
@@ -67,6 +68,22 @@ test('allows free-forever tenants through without a subscription', function () {
     $response = $middleware->handle($request, fn () => new Response('OK'));
 
     expect($response->getContent())->toBe('OK');
+});
+
+test('allows an onboarded free-forever tenant through without a subscription', function () {
+    $user = User::factory()->owner()->create();
+    resolve(CreateTenantRecord::class)($user, 'Comp Bakery', 'compbakery', true, null)
+        ->forceFill(['free_forever' => true])
+        ->save();
+
+    $request = Request::create('/admin');
+    $request->setUserResolver(fn () => $user);
+
+    $response = (new EnsureSubscribed)->handle($request, fn () => new Response('OK'));
+
+    expect($response->getContent())->toBe('OK');
+
+    @unlink(testTenantDatabaseFile('tenantcompbakery'));
 });
 
 test('aborts with 403 for wrong plan when plan parameter specified', function () {
