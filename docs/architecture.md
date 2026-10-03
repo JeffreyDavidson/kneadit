@@ -217,7 +217,9 @@ Central onboarding screens read denormalized product, category, and order counts
 
 The onboarding subdomain doubles as the tenant id and the bare domain row, so `StoreOnboardingRequest` lowercases and trims it before validating, requires a valid hostname label, rejects `config('kneadit.reserved_subdomains')`, and checks uniqueness against both `domains.domain` and `tenants.id`.
 
-Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction and links the tenant to its owner (`tenants.user_id`, which `User::tenants()` and the free-forever checks read), `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
+Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
+
+An account owns at most one bakery. `CreateTenantRecord` writes the owner to `tenants.user_id` and refuses a user who already has a bakery with `UserAlreadyHasBakeryException`; the unique index on `tenants.user_id` enforces the rule under concurrent submissions (a unique violation is treated as the same outcome). `GET /onboarding` redirects an owner to their bakery admin via `TenantUrlGenerator::admin()`, and `POST /onboarding` redirects there with an error flash. Tenants without an owner (demo, browser-test and seed tenants, and tenants created in the central admin) leave `user_id` NULL, which the index allows.
 
 ## Email marketing and unsubscribe
 
