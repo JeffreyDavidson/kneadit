@@ -1,14 +1,13 @@
 <?php
 
+use App\Actions\Platform\ProcessTrialExpirations;
 use App\Enums\Customers\ReferralStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
-use App\Http\Middleware\EnsureSubscribed;
 use App\Models\Customers\Referral;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -149,18 +148,15 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         && str_ends_with($event->adminUrl, '/admin'));
 });
 
-test('a free-forever grant on a signed-up tenant lets its owner past the subscription check', function () {
+test('a free-forever grant on a signed-up tenant keeps its storefront open after the trial ends', function () {
     $user = createSignupUser();
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
-    Tenant::query()->findOrFail($sub)->update(['free_forever' => true]);
-    $request = Request::create('/admin');
-    $request->setUserResolver(fn (): User => $user);
+    Tenant::query()->findOrFail($sub)->update(['free_forever' => true, 'trial_ends_at' => now()->subDay()]);
 
-    $response = (new EnsureSubscribed)
-        ->handle($request, fn (): Response => response('OK'));
+    resolve(ProcessTrialExpirations::class)();
 
-    expect($response->getContent())->toBe('OK');
+    expect(Tenant::query()->findOrFail($sub)->storefront_enabled)->toBeTrue();
 });
 
 test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {

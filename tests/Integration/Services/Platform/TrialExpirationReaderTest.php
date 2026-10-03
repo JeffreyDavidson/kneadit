@@ -60,17 +60,18 @@ test('tenantsExpired yields tenants whose trial passed and storefront still on',
         ->and($tenants[0]->id)->toBe('expired-active');
 });
 
-test('userFor returns the user matching tenant email', function () {
-    $user = User::factory()->create(['email' => 'baker@example.com']);
-    createTenant(['id' => 'baker-bakery', 'email' => 'baker@example.com']);
+test('userFor returns the owner linked by user_id even when their email has changed', function () {
+    $owner = User::factory()->create(['email' => 'new-address@example.com']);
+    createTenant(['id' => 'baker-bakery', 'email' => 'old-address@example.com', 'user_id' => $owner->id]);
     $tenant = Tenant::query()->find('baker-bakery');
 
-    expect(resolve(TrialExpirationReader::class)->userFor($tenant)->id)->toBe($user->id);
+    expect(resolve(TrialExpirationReader::class)->userFor($tenant)?->id)->toBe($owner->id);
 });
 
-test('userFor returns null when no user matches the tenant email', function () {
-    createTenant(['id' => 'orphan', 'email' => 'noone@example.com']);
-    $tenant = Tenant::query()->find('orphan');
+test('userFor returns null when the tenant has no linked owner, even if a user shares its email', function () {
+    User::factory()->create(['email' => 'baker@example.com']);
+    createTenant(['id' => 'unowned', 'email' => 'baker@example.com', 'user_id' => null]);
+    $tenant = Tenant::query()->find('unowned');
 
     expect(resolve(TrialExpirationReader::class)->userFor($tenant))->toBeNull();
 });

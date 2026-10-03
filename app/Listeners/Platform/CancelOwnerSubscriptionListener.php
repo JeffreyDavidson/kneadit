@@ -14,8 +14,8 @@ use Stancl\Tenancy\Events\DeletingTenant;
  * Runs synchronously on purpose: a queued job would run after the tenant
  * is gone, and could not stop the delete.
  *
- * The owner is matched by email, as TrialExpirationReader::userFor() does,
- * because tenants.user_id is not populated at signup.
+ * The owner is still matched by email. Signup now records tenants.user_id
+ * (see Tenant::owner()), so this lookup can move to it in a follow-up.
  */
 class CancelOwnerSubscriptionListener
 {

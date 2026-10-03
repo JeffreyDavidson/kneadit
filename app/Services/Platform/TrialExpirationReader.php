@@ -45,11 +45,12 @@ class TrialExpirationReader
     }
 
     /**
-     * Returns the user account that owns the tenant, or null if no
-     * matching user exists.
+     * Returns the user account that owns the tenant (tenants.user_id), or
+     * null when the tenant has no linked owner. Matching by email is avoided
+     * because an owner can change their login email.
      */
     public function userFor(Tenant $tenant): ?User
     {
-        return User::query()->where('email', $tenant->email)->first();
+        return $tenant->owner;
     }
 }
