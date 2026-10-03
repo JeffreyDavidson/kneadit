@@ -2,8 +2,10 @@ name: Tests
 
 on:
   workflow_dispatch:
+  # develop pushes catch breakage between PRs that each passed against an older develop.
+  # They run only the TIA job (impacted tests, full-suite fallback) to stay fast.
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -57,6 +59,8 @@ jobs:
 
   tests:
     name: Pest
+    # develop pushes rely on the TIA job below; PRs and main pushes run the full suite.
+    if: github.ref != 'refs/heads/develop'
     runs-on: ubuntu-latest
     # The suite runs in parallel (about 5 to 7 minutes on a 4 vCPU runner). The serial run
     # took 16 to 20 minutes and kept hitting the old 20 minute limit.
