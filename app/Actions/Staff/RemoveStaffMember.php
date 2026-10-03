@@ -4,6 +4,7 @@ namespace App\Actions\Staff;
 
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\DB;
 
 class RemoveStaffMember
 {
@@ -13,8 +14,21 @@ class RemoveStaffMember
 
         throw_if($user->id === $currentUserId, \RuntimeException::class, "You can't remove yourself.");
 
-        throw_if($user->role === UserRole::Owner && User::query()->owners()->count() <= 1, \RuntimeException::class, "Can't remove the last owner.");
+        $this->guardLastOwner($user, User::query()->owners()->count());
 
-        $user->delete();
+        // Two owners removing each other at once could both pass the count
+        // above, so lock the owner rows and count again before deleting.
+        DB::transaction(function () use ($userId): void {
+            $user = User::query()->lockForUpdate()->findOrFail($userId);
+
+            $this->guardLastOwner($user, User::query()->owners()->lockForUpdate()->count());
+
+            $user->delete();
+        });
+    }
+
+    private function guardLastOwner(User $user, int $ownerCount): void
+    {
+        throw_if($user->role === UserRole::Owner && $ownerCount <= 1, \RuntimeException::class, "Can't remove the last owner.");
     }
 }
