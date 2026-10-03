@@ -178,3 +178,45 @@ test('returns summary counts', function () {
         'failures' => 0,
     ]);
 });
+
+test('does not pause a free-forever storefront after its trial ends', function () {
+    Event::fake([TrialExpired::class]);
+
+    User::factory()->create(['email' => 'comped@test.com']);
+
+    createTenant([
+        'id' => 'comped-bakery',
+        'name' => 'Comped',
+        'email' => 'comped@test.com',
+        'trial_ends_at' => now()->subDay(),
+        'is_active' => true,
+        'storefront_enabled' => true,
+        'free_forever' => true,
+    ]);
+
+    resolve(ProcessTrialExpirations::class)();
+
+    $tenant = DB::table('tenants')->where('id', 'comped-bakery')->first();
+
+    expect($tenant->storefront_enabled)->toBeTruthy();
+    Event::assertNotDispatched(TrialExpired::class);
+});
+
+test('does not send trial reminders to a free-forever tenant', function () {
+    Event::fake([TrialReminding::class]);
+
+    User::factory()->create(['email' => 'comped-reminder@test.com']);
+
+    createTenant([
+        'id' => 'comped-reminder-bakery',
+        'name' => 'Comped',
+        'email' => 'comped-reminder@test.com',
+        'trial_ends_at' => now()->addDays(7)->startOfDay(),
+        'is_active' => true,
+        'free_forever' => true,
+    ]);
+
+    resolve(ProcessTrialExpirations::class)();
+
+    Event::assertNotDispatched(TrialReminding::class);
+});
