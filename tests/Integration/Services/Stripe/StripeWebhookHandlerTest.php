@@ -67,7 +67,7 @@ test('subscription updated syncs the plan to the owner\'s bakery after an email 
 
 test('subscription updated logs a warning and changes nothing when the customer owns no bakery', function () {
     Config::set('kneadit.stripe_prices', ['starter' => 'price_starter', 'growth' => 'price_growth']);
-    Log::spy();
+    $logger = Log::spy();
     User::factory()->create(['stripe_id' => 'cus_no_bakery', 'email' => 'baker@example.com']);
     createTenant(['id' => 'unowned-bakery', 'email' => 'baker@example.com', 'user_id' => null, 'plan' => 'starter']);
 
@@ -75,5 +75,5 @@ test('subscription updated logs a warning and changes nothing when the customer 
         ->handleSubscriptionUpdated(['customer' => 'cus_no_bakery', 'items' => ['data' => [['price' => ['id' => 'price_growth']]]]]);
 
     expect(Tenant::query()->findOrFail('unowned-bakery')->plan)->toBe(SubscriptionTier::Starter);
-    Log::shouldHaveReceived('warning')->with('Tenant not found for subscription update', ['stripe_customer' => 'cus_no_bakery']);
+    $logger->shouldHaveReceived('warning')->with('Tenant not found for subscription update', ['stripe_customer' => 'cus_no_bakery']);
 });
