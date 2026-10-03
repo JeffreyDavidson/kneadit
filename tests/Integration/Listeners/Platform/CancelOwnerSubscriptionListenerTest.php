@@ -103,7 +103,6 @@ test('the bakery is not deleted when Stripe refuses the cancel', function (): vo
     CancelRecordingSubscription::$failCancel = true;
 
     expect(fn () => Tenant::query()->findOrFail('sweet-treats')->delete())
-        ->toThrow(RuntimeException::class, 'Stripe is unavailable.');
-
-    expect(Tenant::query()->find('sweet-treats'))->not->toBeNull();
+        ->toThrow(RuntimeException::class, 'Stripe is unavailable.')
+        ->and(Tenant::query()->find('sweet-treats'))->not->toBeNull();
 });
