@@ -173,6 +173,20 @@ test('owner can bulk-delete selected customers via the AuthorizedDeleteBulkActio
         ->and(Customer::query()->find($doomed->first()->id))->toBeNull();
 });
 
+test('bulk delete keeps customers who have orders, and their orders', function () {
+    $withOrder = Customer::factory()->create();
+    $order = Order::factory()->for($withOrder)->create();
+    $withoutOrder = Customer::factory()->create();
+
+    livewire(ListCustomers::class)
+        ->selectTableRecords([$withOrder, $withoutOrder])
+        ->callAction(TestAction::make('delete')->table()->bulk());
+
+    expect(Customer::query()->find($withOrder->id))->not->toBeNull()
+        ->and(Order::query()->find($order->id))->not->toBeNull()
+        ->and(Customer::query()->find($withoutOrder->id))->toBeNull();
+});
+
 test('email marketing column shows subscribed and unsubscribed customers', function () {
     Date::setTestNow('2026-10-06 12:00');
     $subscribed = Customer::factory()->create();
