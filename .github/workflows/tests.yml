@@ -2,8 +2,9 @@ name: Tests
 
 on:
   workflow_dispatch:
+  # develop pushes catch breakage between PRs that each passed against an older develop.
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
