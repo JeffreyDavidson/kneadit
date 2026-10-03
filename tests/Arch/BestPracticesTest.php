@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Listeners\Platform\CancelOwnerSubscriptionListener;
 use App\Listeners\Platform\RecordScheduledTaskStatusListener;
 use App\Listeners\QueuedListener;
 use App\Mail\BaseMailable;
@@ -188,6 +189,9 @@ arch('all listeners should extend QueuedListener')
         // Scheduler lifecycle events contain process-local task objects and
         // must be recorded synchronously rather than serialized to a queue.
         RecordScheduledTaskStatusListener::class,
+        // Must cancel billing before the tenant is deleted, so a Stripe
+        // failure can stop the delete.
+        CancelOwnerSubscriptionListener::class,
     ]);
 
 test('all listeners have retry configuration', function () {
