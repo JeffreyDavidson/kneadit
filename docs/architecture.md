@@ -220,6 +220,8 @@ The onboarding subdomain doubles as the tenant id and the bare domain row, so `S
 
 Tenant onboarding is coordinated by `CompleteTenantOnboarding`. `CreateTenantRecord` owns the central tenant/domain transaction, `ProvisionTenantOwner` seeds the tenant owner and settings inside tenant context, and `CreateTenant` provides compensating cleanup if provisioning fails. The orchestrator then completes any referral and emits `TenantOnboarded`; the HTTP controller retains only session logout/rotation and redirect concerns.
 
+An account owns at most one bakery. `CreateTenantRecord` writes the owner to `tenants.user_id` and refuses a user who already has a bakery with `UserAlreadyHasBakeryException`; the unique index on `tenants.user_id` enforces the rule under concurrent submissions (a unique violation is treated as the same outcome). `GET /onboarding` redirects an owner to their bakery admin via `TenantUrlGenerator::admin()`, and `POST /onboarding` redirects there with an error flash. Tenants without an owner (demo, browser-test and seed tenants, and tenants created in the central admin) leave `user_id` NULL, which the index allows.
+
 ## Email marketing and unsubscribe
 
 Customers can opt out of marketing email. `customers.marketing_opted_out_at` (null = subscribed) is set by the customer from the unsubscribe link in any marketing email, or by staff through the Customers table's "Mark unsubscribed" action (for opt-outs received by phone or email). Staff cannot re-subscribe a customer; only the customer can, from the same link.
