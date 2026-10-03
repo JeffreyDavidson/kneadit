@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Platform;
 
 use App\Models\Platform\Tenant;
@@ -14,8 +16,9 @@ use Stancl\Tenancy\Events\DeletingTenant;
  * Runs synchronously on purpose: a queued job would run after the tenant
  * is gone, and could not stop the delete.
  *
- * The owner is still matched by email. Signup now records tenants.user_id
- * (see Tenant::owner()), so this lookup can move to it in a follow-up.
+ * The owner is the bakery's linked account (tenants.user_id). A bakery with
+ * no linked owner cancels nothing. An owner has at most one bakery (unique
+ * index), so cancelling never affects another bakery.
  */
 class CancelOwnerSubscriptionListener
 {
@@ -24,20 +27,11 @@ class CancelOwnerSubscriptionListener
         /** @var Tenant $tenant */
         $tenant = $event->tenant;
 
-        // Staff users share this model, so pin the lookup to the central
-        // database in case the tenant is deleted while tenancy is initialized.
-        $owner = User::on('central')->where('email', $tenant->email)->first();
+        // The relation inherits the tenant's central connection, so this stays
+        // correct if the tenant is deleted while tenancy is initialized.
+        $owner = $tenant->owner;
 
         if (! $owner instanceof User) {
-            return;
-        }
-
-        $hasAnotherBakery = Tenant::query()
-            ->where('email', $tenant->email)
-            ->whereKeyNot($tenant->getTenantKey())
-            ->exists();
-
-        if ($hasAnotherBakery) {
             return;
         }
 

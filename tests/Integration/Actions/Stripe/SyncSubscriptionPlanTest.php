@@ -1,42 +1,33 @@
 <?php
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
-use Illuminate\Support\Facades\DB;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
 
 beforeEach(fn () => setUpCentralTest());
 
-test('updates tenant plan from stripe price id', function () {
-    createTenant(['email' => 'baker@test.com', 'plan' => 'starter']);
+test('updates the tenant plan from the stripe price id', function () {
+    createTenant(['plan' => 'starter']);
+    $tenant = Tenant::query()->findOrFail('test-bakery');
 
     resolve(SyncSubscriptionPlan::class)(
-        'baker@test.com',
+        $tenant,
         'price_growth',
-        ['price_growth' => 'growth', 'price_pro' => 'pro']
+        ['price_growth' => 'growth', 'price_pro' => 'pro'],
     );
 
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
-    expect($tenant->plan)->toBe('growth');
+    expect($tenant->refresh()->plan)->toBe(SubscriptionTier::Growth);
 });
 
-test('does not update for unknown price id', function () {
-    createTenant(['email' => 'baker@test.com', 'plan' => 'starter']);
+test('does not update for an unknown price id', function () {
+    createTenant(['plan' => 'starter']);
+    $tenant = Tenant::query()->findOrFail('test-bakery');
 
     resolve(SyncSubscriptionPlan::class)(
-        'baker@test.com',
+        $tenant,
         'price_unknown',
-        ['price_growth' => 'growth']
+        ['price_growth' => 'growth'],
     );
 
-    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
-    expect($tenant->plan)->toBe('starter');
-});
-
-test('does not update when tenant email is not found', function () {
-    resolve(SyncSubscriptionPlan::class)(
-        'nonexistent@test.com',
-        'price_growth',
-        ['price_growth' => 'growth']
-    );
-
-    expect(DB::table('tenants')->where('email', 'nonexistent@test.com')->exists())->toBeFalse();
+    expect($tenant->refresh()->plan)->toBe(SubscriptionTier::Starter);
 });

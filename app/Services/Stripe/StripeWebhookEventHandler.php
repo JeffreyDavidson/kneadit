@@ -31,8 +31,14 @@ final readonly class StripeWebhookEventHandler
             return;
         }
 
+        if ($lookup['tenant'] === null) {
+            Log::warning('Tenant not found for subscription update', ['stripe_customer' => $stripeCustomerId]);
+
+            return;
+        }
+
         ($this->syncSubscriptionPlan)(
-            tenantEmail: $lookup['user']->email,
+            tenant: $lookup['tenant'],
             stripePriceId: $stripePriceId,
             priceMap: $this->payloadParser->priceMap(),
         );
