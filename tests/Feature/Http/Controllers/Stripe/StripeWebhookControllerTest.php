@@ -65,6 +65,7 @@ test('failed webhook requests can retry and successful duplicates are acknowledg
     config(['kneadit.stripe_prices' => ['growth' => 'price_retry_request']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_retry_request']);
+    Tenant::factory()->for($user, 'owner')->create(['email' => $user->email]);
     $attempts = 0;
     $syncSubscriptionPlan = Mockery::mock(SyncSubscriptionPlan::class);
     $syncSubscriptionPlan->shouldReceive('__invoke')
@@ -130,7 +131,7 @@ test('subscription update webhook persists the subscription and syncs the tenant
     config(['kneadit.stripe_prices' => ['growth' => 'price_growth_webhook']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_subscription_update']);
-    $tenant = Tenant::factory()->create([
+    $tenant = Tenant::factory()->for($user, 'owner')->create([
         'email' => $user->email,
         'plan' => SubscriptionTier::Starter,
     ]);
@@ -178,7 +179,7 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
     $priceMap = array_flip(config('kneadit.stripe_prices'));
 
     resolve(SyncSubscriptionPlan::class)(
-        tenantEmail: $user->email,
+        tenant: $tenant,
         stripePriceId: 'price_growth_id',
         priceMap: $priceMap,
     );
@@ -193,7 +194,7 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
     $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
     resolve(SyncSubscriptionPlan::class)(
-        tenantEmail: $user->email,
+        tenant: $tenant,
         stripePriceId: 'price_nonexistent',
         priceMap: array_flip(config('kneadit.stripe_prices')),
     );
