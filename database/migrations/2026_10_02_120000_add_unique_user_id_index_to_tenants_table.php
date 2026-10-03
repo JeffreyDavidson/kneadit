@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -59,7 +60,7 @@ return new class extends Migration
 
         foreach (DB::table('tenants')->whereNull('user_id')->get(['id', 'email']) as $tenant) {
             $userIds = DB::table('users')
-                ->whereRaw('lower(email) = ?', [mb_strtolower(is_string($tenant->email) ? $tenant->email : '')])
+                ->where(new Expression('lower(email)'), '=', mb_strtolower(is_string($tenant->email) ? $tenant->email : ''))
                 ->pluck('id');
 
             if ($userIds->count() !== 1 || in_array($userIds->first(), $owned, true)) {
