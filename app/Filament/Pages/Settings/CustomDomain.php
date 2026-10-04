@@ -54,6 +54,8 @@ class CustomDomain extends Page
 
     public ?bool $https_ok = null;
 
+    public bool $via_proxy = false;
+
     public ?string $ssl_status = null;
 
     public function mount(): void
@@ -102,6 +104,7 @@ class CustomDomain extends Page
             resolve(RemoveCustomDomain::class)($tenant);
             $this->dns_status = null;
             $this->https_ok = null;
+            $this->via_proxy = false;
             $this->ssl_status = null;
 
             Notification::make()
@@ -135,10 +138,12 @@ class CustomDomain extends Page
     {
         $check = $this->refreshDnsStatus();
 
-        if ($check === DomainCheck::Verified) {
+        if ($check?->isVerified()) {
             Notification::make()
                 ->title('Domain verified!')
-                ->body('Your domain points to our servers and answers over HTTPS.')
+                ->body($check->isProxied()
+                    ? 'Your domain is served through a proxy (for example Cloudflare) and reaches our servers over HTTPS.'
+                    : 'Your domain points to our servers and answers over HTTPS.')
                 ->success()
                 ->send();
 
@@ -187,6 +192,7 @@ class CustomDomain extends Page
         if (in_array($this->custom_domain, [null, '', '0'], true)) {
             $this->dns_status = null;
             $this->https_ok = null;
+            $this->via_proxy = false;
 
             return null;
         }
@@ -197,6 +203,7 @@ class CustomDomain extends Page
             ? DnsVerificationStatus::Verified
             : DnsVerificationStatus::Pending;
         $this->https_ok = $check->dnsPointsHere() ? $check->isVerified() : null;
+        $this->via_proxy = $check->isProxied();
 
         return $check;
     }

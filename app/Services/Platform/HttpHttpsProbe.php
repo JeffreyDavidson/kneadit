@@ -10,16 +10,21 @@ use Illuminate\Support\Facades\Http;
 
 final readonly class HttpHttpsProbe implements HttpsProbe
 {
-    public function serves(string $domain): bool
+    public function __construct(
+        private CustomDomainProof $proof,
+    ) {}
+
+    public function proves(string $domain): bool
     {
         try {
-            return Http::timeout(5)
+            $response = Http::timeout(5)
                 ->connectTimeout(3)
                 ->withoutRedirecting()
-                ->get("https://{$domain}/up")
-                ->successful();
+                ->get("https://{$domain}/".CustomDomainProof::PATH);
         } catch (ConnectionException) {
             return false;
         }
+
+        return $response->successful() && $this->proof->matches($domain, $response->body());
     }
 }

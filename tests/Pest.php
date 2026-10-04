@@ -343,7 +343,7 @@ function fakeDnsRecords(array $records): void
 function fakeHttpsProbe(array $domains): void
 {
     $probe = Mockery::mock(HttpsProbe::class);
-    $probe->allows('serves')->andReturnUsing(fn (string $domain): bool => $domains[$domain] ?? false);
+    $probe->allows('proves')->andReturnUsing(fn (string $domain): bool => $domains[$domain] ?? false);
 
     app()->instance(HttpsProbe::class, $probe);
 }

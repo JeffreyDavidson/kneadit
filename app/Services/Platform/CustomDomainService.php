@@ -65,22 +65,30 @@ class CustomDomainService
         return $this->dns->ipv4($domain) === $this->serverIp();
     }
 
-    public function isServingHttps(string $domain): bool
+    /**
+     * Whether the domain answers over HTTPS with the ownership proof only this application
+     * can produce for that exact host.
+     */
+    public function hasOwnershipProof(string $domain): bool
     {
-        return $this->https->serves($domain);
+        return $this->https->proves($domain);
     }
 
     /**
-     * A domain is usable in links only when DNS points at the server and the
-     * server answers HTTPS for it. The HTTPS probe is skipped while DNS is wrong.
+     * A domain is usable in links when it reaches this application over HTTPS: either its
+     * A record is the server address and it answers with the ownership proof, or it
+     * resolves elsewhere (a proxy such as Cloudflare) yet still answers with the proof.
+     * A domain that does not answer with the proof is neither pointing here nor proxied here.
      */
     public function verify(string $domain): DomainCheck
     {
         if (! $this->isDnsVerified($domain)) {
-            return DomainCheck::DnsMissing;
+            return $this->hasOwnershipProof($domain)
+                ? DomainCheck::VerifiedThroughProxy
+                : DomainCheck::DnsMissing;
         }
 
-        if (! $this->isServingHttps($domain)) {
+        if (! $this->hasOwnershipProof($domain)) {
             return DomainCheck::HttpsUnavailable;
         }
 
