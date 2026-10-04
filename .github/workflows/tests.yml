@@ -3,7 +3,7 @@ name: Tests
 on:
   workflow_dispatch:
   # develop pushes catch breakage between PRs that each passed against an older develop.
-  # They run only the TIA job (impacted tests, full-suite fallback) to stay fast.
+  # They run only the parallel Pest job; the TIA job is skipped for them.
   push:
     branches: [main, develop]
   pull_request:
@@ -59,8 +59,6 @@ jobs:
 
   tests:
     name: Pest
-    # develop pushes rely on the TIA job below; PRs and main pushes run the full suite.
-    if: github.ref != 'refs/heads/develop'
     runs-on: ubuntu-latest
     # The suite runs in parallel (about 5 to 7 minutes on a 4 vCPU runner). The serial run
     # took 16 to 20 minutes and kept hitting the old 20 minute limit.
@@ -102,6 +100,9 @@ jobs:
 
   tia:
     name: Pest Test Impact Analysis
+    # Skipped on develop pushes: the baseline is recorded from main, so the diff there
+    # covers all unreleased work and the run is slower than the parallel Pest job.
+    if: github.ref != 'refs/heads/develop'
     runs-on: ubuntu-latest
     # TIA can take substantially longer than the regular suite when PCOV builds
     # the dependency graph; keep it bounded while allowing the impacted run to finish.
