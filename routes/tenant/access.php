@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Central\ConsumeImpersonationController;
 use App\Http\Controllers\Stripe\StripeConnectController;
+use App\Http\Controllers\Tenant\DomainProofController;
 use App\Http\Controllers\Tenant\Invitations\AcceptInvitationController;
 use App\Http\Controllers\Tenant\Invitations\ShowInvitationController;
 use App\Http\Controllers\Tenant\Marketing\EmailUnsubscribesController;
@@ -13,8 +14,13 @@ use App\Http\Controllers\Tenant\Storefront\DriverDashboardController;
 use App\Http\Controllers\Tenant\Storefront\ManifestController;
 use App\Http\Controllers\Tenant\Storefront\MarkOrderDeliveredController;
 use App\Http\Middleware\ResolveInvitation;
+use App\Services\Platform\CustomDomainProof;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
+
+// Ownership proof for custom domains served through a proxy. Outside the storefront-enabled
+// check so a paused storefront does not flip its domain to unverified.
+Route::get(CustomDomainProof::PATH, DomainProofController::class)->name('domainProof');
 
 Route::get('manifest.json', ManifestController::class)->name('manifest');
 Route::get('icons/icon-{size}.png', AppIconController::class)->name('app.icon');

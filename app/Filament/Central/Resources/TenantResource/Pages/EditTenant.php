@@ -113,6 +113,10 @@ class EditTenant extends EditRecord
                             ->title('Domain verified')
                             ->body('DNS: OK. HTTPS: OK.')
                             ->success(),
+                        DomainCheck::VerifiedThroughProxy => Notification::make()
+                            ->title('Domain verified')
+                            ->body('DNS: served through a proxy (for example Cloudflare). HTTPS: OK.')
+                            ->success(),
                         DomainCheck::HttpsUnavailable => Notification::make()
                             ->title('DNS OK, no HTTPS certificate yet')
                             ->body("DNS: OK. HTTPS: {$this->record->custom_domain} has no valid certificate yet. Links use the subdomain until it does.")

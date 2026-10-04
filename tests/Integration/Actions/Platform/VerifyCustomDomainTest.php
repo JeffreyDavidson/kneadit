@@ -49,9 +49,31 @@ test('an already verified domain keeps its original verification time', function
     expect($tenant->refresh()->custom_domain_verified_at->equalTo($verifiedAt))->toBeTrue();
 });
 
+test('a proxied domain that answers with the proof is verified', function () {
+    fakeDnsRecords(['shop.example.com' => '104.21.0.1']);
+    fakeHttpsProbe(['shop.example.com' => true]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
+
+    $result = resolve(VerifyCustomDomain::class)($tenant);
+
+    expect($result)->toBe(DomainCheck::VerifiedThroughProxy)
+        ->and($tenant->refresh()->custom_domain_verified_at->toDateTimeString())->toBe('2026-10-01 09:30:00');
+});
+
+test('a proxied domain that does not answer with the proof stays unverified', function () {
+    fakeDnsRecords(['shop.example.com' => '104.21.0.1']);
+    fakeHttpsProbe(['shop.example.com' => false]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()->subDay()]);
+
+    $result = resolve(VerifyCustomDomain::class)($tenant);
+
+    expect($result)->toBe(DomainCheck::DnsMissing)
+        ->and($tenant->refresh()->custom_domain_verified_at)->toBeNull();
+});
+
 test('missing DNS clears the verification', function () {
     fakeDnsRecords([]);
-    fakeHttpsProbe(['shop.example.com' => true]);
+    fakeHttpsProbe([]);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com', 'custom_domain_verified_at' => now()->subDay()]);
 
     $result = resolve(VerifyCustomDomain::class)($tenant);

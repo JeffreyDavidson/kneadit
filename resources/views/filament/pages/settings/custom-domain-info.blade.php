@@ -30,7 +30,7 @@
                         :icon="$dnsOk ? 'heroicon-o-check-circle' : 'heroicon-o-clock'"
                         :class="$dnsOk ? 'h-5 w-5 text-green-600' : 'h-5 w-5 text-yellow-600'"
                     />
-                    <span>{{ $dnsOk ? 'DNS: OK' : 'DNS: not pointing here' }}</span>
+                    <span>{{ $this->via_proxy ? 'DNS: served through a proxy (Cloudflare)' : ($dnsOk ? 'DNS: OK' : 'DNS: not pointing here') }}</span>
                 </li>
                 @if ($dnsOk)
                     <li class="flex items-center gap-2">
@@ -51,7 +51,7 @@
             @if ($this->verifiedOn)
                 Verified on {{ $this->verifiedOn }}. Links in your emails and messages use {{ $this->linkBaseUrl }}.
             @else
-                Not verified: links in your emails and messages use {{ $this->subdomainUrl }} until your domain points here and answers over HTTPS.
+                Not verified: links in your emails and messages use {{ $this->subdomainUrl }} until your domain reaches us and answers over HTTPS.
             @endif
         </p>
     @endif

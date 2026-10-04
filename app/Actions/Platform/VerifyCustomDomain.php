@@ -16,8 +16,8 @@ class VerifyCustomDomain
 
     /**
      * Checks the bakery's custom domain and records the outcome: the verification
-     * time is set when the domain points at the server and answers over HTTPS, and
-     * cleared when either check fails (or when the bakery has no custom domain).
+     * time is set when the domain reaches the server (directly, or through a proxy that
+     * passes the ownership proof) over HTTPS, and cleared when the check fails (or when the bakery has no custom domain).
      * Links only use the custom domain while it is verified.
      *
      * A domain that is already verified keeps its original verification time.

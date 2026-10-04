@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\Platform\DomainCheck;
-use App\Services\Platform\Contracts\HttpsProbe;
 use App\Services\Platform\CustomDomainService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -68,23 +67,21 @@ test('verify reports which part of the check failed', function (bool $dnsOk, boo
 })->with([
     'DNS and HTTPS ok' => [true, true, DomainCheck::Verified],
     'DNS ok, HTTPS failing' => [true, false, DomainCheck::HttpsUnavailable],
-    'DNS missing, HTTPS ok' => [false, true, DomainCheck::DnsMissing],
-    'DNS missing, HTTPS failing' => [false, false, DomainCheck::DnsMissing],
+    'proxied, proof ok' => [false, true, DomainCheck::VerifiedThroughProxy],
+    'not pointing here and no proof' => [false, false, DomainCheck::DnsMissing],
 ]);
 
-test('verify skips the HTTPS probe while DNS does not point at the server', function () {
+test('verify treats a domain with no DNS record and no proof as not pointing here', function () {
     fakeDnsRecords([]);
-    $probe = Mockery::mock(HttpsProbe::class);
-    $probe->shouldNotReceive('serves');
-    app()->instance(HttpsProbe::class, $probe);
+    fakeHttpsProbe([]);
 
     expect(resolve(CustomDomainService::class)->verify('shop.example.com'))->toBe(DomainCheck::DnsMissing);
 });
 
-test('isServingHttps follows the HTTPS probe', function (bool $serves) {
+test('hasOwnershipProof follows the HTTPS probe', function (bool $serves) {
     fakeHttpsProbe(['shop.example.com' => $serves]);
 
-    expect(resolve(CustomDomainService::class)->isServingHttps('shop.example.com'))->toBe($serves);
+    expect(resolve(CustomDomainService::class)->hasOwnershipProof('shop.example.com'))->toBe($serves);
 })->with([true, false]);
 
 test('provisionSsl returns null without calling Forge when it is not configured', function () {

@@ -82,6 +82,7 @@ test('saving a domain whose DNS is already correct verifies it', function () {
 test('saving a domain whose DNS is not set up leaves it unverified', function () {
     config(['services.forge.server_ip' => '203.0.113.10']);
     fakeDnsRecords([]);
+    fakeHttpsProbe([]);
 
     livewire(CustomDomain::class)
         ->set('custom_domain', 'shop.example.com')
@@ -93,6 +94,7 @@ test('saving a domain whose DNS is not set up leaves it unverified', function ()
 test('the page says links use the subdomain until the domain is verified', function () {
     config(['services.forge.server_ip' => '203.0.113.10', 'app.url' => 'http://kneadit.test', 'tenancy.tenant_domain' => 'kneadit.test']);
     fakeDnsRecords([]);
+    fakeHttpsProbe([]);
     test()->tenant->update(['custom_domain' => 'shop.example.com']);
 
     livewire(CustomDomain::class)
@@ -134,6 +136,21 @@ test('the page shows DNS and HTTPS as OK and no certificate request once the dom
         ->assertSee('DNS: OK')
         ->assertSee('HTTPS: OK')
         ->assertDontSee('Request SSL certificate');
+});
+
+test('the page shows a proxied domain as served through a proxy and verified', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '104.21.0.1']);
+    fakeHttpsProbe(['shop.example.com' => true]);
+    test()->tenant->update(['custom_domain' => 'shop.example.com']);
+
+    livewire(CustomDomain::class)
+        ->assertSee('served through a proxy')
+        ->assertSee('HTTPS: OK')
+        ->assertDontSee('DNS: not pointing here')
+        ->assertDontSee('Request SSL certificate');
+
+    expect(test()->tenant->refresh()->custom_domain_verified_at)->not->toBeNull();
 });
 
 test('the page offers no certificate request while DNS is not pointing at the server', function () {
