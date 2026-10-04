@@ -19,7 +19,7 @@ beforeEach(function () {
     // Persistent local 'tenantdemo' SQLite (kept across test runs for the
     // central WidgetCatalog page) would conflict with the factory's
     // CreateDatabase job — wipe it before each test that recreates it.
-    @unlink(database_path('tenantdemo'));
+    @unlink(testTenantDatabaseFile('tenantdemo'));
 });
 
 test('returns placeholder when demo tenant has not been provisioned', function () {

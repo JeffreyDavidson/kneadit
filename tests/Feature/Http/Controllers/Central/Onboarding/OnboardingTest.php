@@ -2,14 +2,22 @@
 
 use App\Actions\Tenants\CompleteTenantOnboarding;
 use App\Console\Commands\Tenants\ProvisionTestTenantCommand;
+use App\Events\Platform\TenantOnboarded;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Tenants\TenantUrlGenerator;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\actingAs;
 
 beforeEach(function () {
     setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
+});
+
+afterEach(function () {
+    @unlink(testTenantDatabaseFile('tenantfirst-bakery'));
+    @unlink(testTenantDatabaseFile('tenantsecond-bakery'));
 });
 
 dataset('invalid onboarding subdomains', [
@@ -113,3 +121,37 @@ test('every platform tenant id is a reserved subdomain', function (string $tenan
     'demo' => Tenant::DEMO_ID,
     'browser test' => ProvisionTestTenantCommand::TENANT_ID,
 ]);
+
+test('a user who already has a bakery is sent to it instead of the onboarding form', function () {
+    $user = User::factory()->owner()->create();
+    $tenant = Tenant::factory()->create(['id' => 'first-bakery', 'user_id' => $user->id]);
+
+    $response = actingAs($user)
+        ->get(route('onboarding.show'));
+
+    $response->assertRedirect(resolve(TenantUrlGenerator::class)->admin($tenant));
+});
+
+test('a user who already has a bakery cannot onboard a second one', function () {
+    $user = User::factory()->owner()->create();
+    $tenant = Tenant::factory()->create(['id' => 'first-bakery', 'user_id' => $user->id]);
+
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), onboardingPayload('second-bakery'));
+
+    $response->assertRedirect(resolve(TenantUrlGenerator::class)->admin($tenant));
+    $response->assertSessionHas('error', 'Your account already has a bakery.');
+    expect(Tenant::query()->count())->toBe(1)
+        ->and(file_exists(testTenantDatabaseFile('tenantsecond-bakery')))->toBeFalse();
+});
+
+test('a user without a bakery can onboard one and owns it', function () {
+    Event::fake([TenantOnboarded::class]);
+    $user = User::factory()->owner()->create();
+
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), onboardingPayload('first-bakery'));
+
+    $response->assertRedirect();
+    expect($user->tenants()->pluck('id')->all())->toBe(['first-bakery']);
+});

@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Platform\ProcessTrialExpirations;
 use App\Enums\Customers\ReferralStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
@@ -145,6 +146,17 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         && $event->tenant->id === $sub
         && str_contains($event->adminUrl, "{$sub}.")
         && str_ends_with($event->adminUrl, '/admin'));
+});
+
+test('a free-forever grant on a signed-up tenant keeps its storefront open after the trial ends', function () {
+    $user = createSignupUser();
+    $sub = uniqueSubdomain();
+    submitOnboarding($user, ['subdomain' => $sub]);
+    Tenant::query()->findOrFail($sub)->update(['free_forever' => true, 'trial_ends_at' => now()->subDay()]);
+
+    resolve(ProcessTrialExpirations::class)();
+
+    expect(Tenant::query()->findOrFail($sub)->storefront_enabled)->toBeTrue();
 });
 
 test('onboarding with an external storefront stores its URL and disables the KneadIt storefront', function () {

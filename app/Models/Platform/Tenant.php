@@ -4,10 +4,12 @@ namespace App\Models\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Customers\Referral;
+use App\Models\Staff\User;
 use Database\Factories\Platform\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
@@ -19,6 +21,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
 /**
  * @property string $id
+ * @property int|null $user_id
  * @property string $name
  * @property string $email
  * @property SubscriptionTier $plan
@@ -41,6 +44,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property array<array-key, mixed>|null $data
  * @property string|null $custom_domain
  * @property Carbon|null $custom_domain_verified_at
+ * @property-read User|null $owner
  * @property-read Collection<int, Domain> $domains
  * @property-read int|null $domains_count
  * @property-read Collection<int, TenantNote> $notes
@@ -77,6 +81,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'id',
+            'user_id',
             'name',
             'email',
             'plan',
@@ -117,6 +122,18 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'onboarding_orders_count' => 'integer',
             'onboarding_metrics_synced_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The central user account that owns this bakery. Null for demo and
+     * platform tenants, and for older bakeries that could not be matched.
+     * The related query inherits this model's central connection.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

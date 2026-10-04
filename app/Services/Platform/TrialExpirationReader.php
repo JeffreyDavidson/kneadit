@@ -8,8 +8,8 @@ use Generator;
 
 /**
  * Locates tenants in the trial-expiration funnel and resolves the user
- * account that owns each tenant. The action decides eligibility — the
- * reader only owns the queries.
+ * account that owns each tenant. Free-forever tenants are never in the
+ * funnel. The action decides eligibility — the reader only owns the queries.
  */
 class TrialExpirationReader
 {
@@ -25,6 +25,7 @@ class TrialExpirationReader
         yield from Tenant::query()
             ->whereDate('trial_ends_at', $targetDate)
             ->where('is_active', true)
+            ->where('free_forever', false)
             ->cursor();
     }
 
@@ -39,15 +40,17 @@ class TrialExpirationReader
             ->where('trial_ends_at', '<', now())
             ->where('is_active', true)
             ->where('storefront_enabled', true)
+            ->where('free_forever', false)
             ->cursor();
     }
 
     /**
-     * Returns the user account that owns the tenant, or null if no
-     * matching user exists.
+     * Returns the user account that owns the tenant (tenants.user_id), or
+     * null when the tenant has no linked owner. Matching by email is avoided
+     * because an owner can change their login email.
      */
     public function userFor(Tenant $tenant): ?User
     {
-        return User::query()->where('email', $tenant->email)->first();
+        return $tenant->owner;
     }
 }

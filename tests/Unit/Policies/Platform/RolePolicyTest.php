@@ -7,7 +7,6 @@ use App\Models\Content\SocialPost;
 use App\Models\Content\TenantBlogPost;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\ContactMessage;
-use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerPhoto;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Engagement\CustomerCampaign;
@@ -35,7 +34,6 @@ use App\Policies\Content\GalleryPhotoPolicy;
 use App\Policies\Content\TenantBlogPostPolicy;
 use App\Policies\Customers\CateringInquiryPolicy;
 use App\Policies\Customers\ContactMessagePolicy;
-use App\Policies\Customers\CustomerPolicy;
 use App\Policies\Customers\ReviewPolicy;
 use App\Policies\Customers\WaitlistEntryPolicy;
 use App\Policies\Engagement\CouponPolicy;
@@ -87,7 +85,6 @@ dataset('managerRolePolicyGroups', [
         [CateringInquiryPolicy::class, CateringInquiry::class],
         [ContactMessagePolicy::class, ContactMessage::class],
         [CustomerPhotoPolicy::class, CustomerPhoto::class],
-        [CustomerPolicy::class, Customer::class],
         [GalleryPhotoPolicy::class, GalleryPhoto::class],
         [TenantBlogPostPolicy::class, TenantBlogPost::class],
         [ReviewPolicy::class, Review::class],
