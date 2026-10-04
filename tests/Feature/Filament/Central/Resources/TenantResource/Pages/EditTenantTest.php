@@ -103,8 +103,22 @@ test('verifying the domain records the verification time when the domain points 
     expect($tenant->refresh()->custom_domain_verified_at->toDateTimeString())->toBe('2026-10-01 09:30:00');
 });
 
+test('verifying a proxied domain reports it as verified through the proxy', function () {
+    config(['services.forge.server_ip' => '203.0.113.10']);
+    fakeDnsRecords(['shop.example.com' => '104.21.0.1']);
+    fakeHttpsProbe(['shop.example.com' => true]);
+    $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->callAction('verifyCustomDomain')
+        ->assertNotified('Domain verified');
+
+    expect($tenant->refresh()->custom_domain_verified_at)->not->toBeNull();
+});
+
 test('verifying the domain warns and leaves the domain unverified when it does not point at the server', function () {
     fakeDnsRecords(['shop.example.com' => '198.51.100.7']);
+    fakeHttpsProbe([]);
     $tenant = Tenant::factory()->create(['custom_domain' => 'shop.example.com']);
 
     livewire(EditTenant::class, ['record' => $tenant->getKey()])

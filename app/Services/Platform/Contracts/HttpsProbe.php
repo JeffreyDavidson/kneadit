@@ -7,9 +7,9 @@ namespace App\Services\Platform\Contracts;
 interface HttpsProbe
 {
     /**
-     * Whether the domain answers its health URL over HTTPS with a valid certificate
-     * and a 2xx status. Timeouts, TLS errors, other statuses and redirects all count
-     * as not serving.
+     * Whether the domain answers over HTTPS with a valid certificate and the ownership
+     * proof only this application can produce for that exact host. Timeouts, TLS errors,
+     * non-2xx statuses, redirects and a missing or wrong proof all count as not proven.
      */
-    public function serves(string $domain): bool;
+    public function proves(string $domain): bool;
 }
