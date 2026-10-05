@@ -488,6 +488,16 @@ function createCentralTables(): void
             $table->string('consumer_ip', 45)->nullable();
             $table->timestamp('created_at')->nullable();
         },
+        'billing_handoff_tokens' => function ($table) {
+            $table->id();
+            $table->string('token_hash', 64)->unique();
+            $table->string('tenant_id')->index();
+            $table->unsignedBigInteger('user_id');
+            $table->timestamp('expires_at');
+            $table->timestamp('consumed_at')->nullable();
+            $table->string('consumer_ip', 45)->nullable();
+            $table->timestamp('created_at')->nullable();
+        },
         'blog_posts' => function ($table) {
             $table->id();
             $table->string('title');

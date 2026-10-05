@@ -3,6 +3,7 @@
 namespace App\Services\Tenants;
 
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -62,7 +63,44 @@ final class TenantUrlGenerator
             ->withPath(URL::route('impersonate.consume', ['token' => $token], absolute: false));
     }
 
+    /** The bakery admin's Upgrade Plan page, which is where its owner reaches billing. */
+    public function billing(Tenant $tenant): string
+    {
+        return (string) $this->tenantUri($tenant)
+            ->withPath(URL::route('filament.admin.pages.upgrade-plan', absolute: false));
+    }
+
+    /** The bakery admin billing page for the bakery this account owns, if it owns one. */
+    public function billingForOwner(User $owner): ?string
+    {
+        $tenant = $owner->tenants()->first();
+
+        return $tenant instanceof Tenant ? $this->billing($tenant) : null;
+    }
+
+    /**
+     * The central URL that redeems a billing handoff token. It is built from
+     * the application URL, not a route() call, because route() under tenancy
+     * would be rewritten onto the bakery's host.
+     */
+    public function billingHandoff(string $token): string
+    {
+        return (string) $this->centralUri()
+            ->withPath(URL::route('billing.handoff', ['token' => $token], absolute: false));
+    }
+
     private function tenantUri(Tenant $tenant): Uri
+    {
+        $uri = $this->centralUri();
+        $configuredTenantDomain = Config::get('tenancy.tenant_domain');
+        $tenantDomain = is_string($configuredTenantDomain) && $configuredTenantDomain !== ''
+            ? $configuredTenantDomain
+            : $uri->host();
+
+        return $uri->withHost("{$tenant->id}.{$tenantDomain}");
+    }
+
+    private function centralUri(): Uri
     {
         $uri = Uri::of(Config::string('app.url'));
         $host = $uri->host();
@@ -71,14 +109,8 @@ final class TenantUrlGenerator
             throw new \UnexpectedValueException('The application URL must contain a host.');
         }
 
-        $configuredTenantDomain = Config::get('tenancy.tenant_domain');
-        $tenantDomain = is_string($configuredTenantDomain) && $configuredTenantDomain !== ''
-            ? $configuredTenantDomain
-            : $host;
-
         return $uri
             ->withScheme($uri->scheme() ?: 'https')
-            ->withHost("{$tenant->id}.{$tenantDomain}")
             ->withPath('/')
             ->replaceQuery([])
             ->withoutFragment();

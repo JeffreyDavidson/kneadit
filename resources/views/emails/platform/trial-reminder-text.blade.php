@@ -8,15 +8,17 @@
 /** @var string|null $logoUrl */
 /** @var \App\Models\Staff\User $user */
 /** @var int $daysLeft */
-/** @var string $billingPlansUrl */
+/** @var string|null $billingUrl */
 @endphp
 
 Hi {{ $user->name }},
 
 Your KneadIt free trial for {{ $storeName }} ends {{ $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days" }}.
 
+@if ($billingUrl)
 Subscribe now to keep your bakery running without interruption:
-{{ $billingPlansUrl }}
+{{ $billingUrl }}
+@endif
 @if ($daysLeft <= 3)
 
 After your trial expires, your storefront will be paused until you subscribe.

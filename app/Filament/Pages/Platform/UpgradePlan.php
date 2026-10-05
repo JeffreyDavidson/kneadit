@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages\Platform;
 
+use App\Actions\Platform\CreateBillingHandoffToken;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Platform\Tenant;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 
 class UpgradePlan extends Page
 {
@@ -96,9 +99,32 @@ class UpgradePlan extends Page
         ];
     }
 
-    public function redirectToBilling(): void
+    /** @return array<int, Action> */
+    #[\Override]
+    protected function getHeaderActions(): array
     {
-        $this->redirect(route('billing.plans'));
+        return [
+            Action::make('manageBilling')
+                ->label('Manage billing')
+                ->icon(Heroicon::OutlinedCreditCard)
+                ->authorize('manage-billing')
+                ->visible(fn (): bool => $this->hasLinkedOwner())
+                ->action(function (CreateBillingHandoffToken $createToken): void {
+                    $this->redirect($createToken($this->tenant()));
+                }),
+        ];
+    }
+
+    /** Whether the Upgrade buttons can hand the signed-in owner off to central billing. */
+    public function canManageBilling(): bool
+    {
+        return Gate::allows('manage-billing') && $this->hasLinkedOwner();
+    }
+
+    /** A bakery with no linked owner account has nobody to sign in to billing, so billing is not offered. */
+    private function hasLinkedOwner(): bool
+    {
+        return $this->tenant()->user_id !== null;
     }
 
     private function tenant(): Tenant

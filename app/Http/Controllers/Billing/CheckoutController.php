@@ -20,6 +20,12 @@ class CheckoutController extends Controller
         $priceId = Config::get("kneadit.stripe_prices.{$tier->value}");
         abort_unless(is_string($priceId) && $priceId !== '', 404, 'Plan not found.');
 
+        // A bakery the platform comps has no plan to buy.
+        if ($user->tenants()->where('free_forever', true)->exists()) {
+            return to_route('billing.plans')
+                ->with('error', 'Your bakery has a complimentary plan, so there is nothing to subscribe to.');
+        }
+
         if ($user->subscribed('default')) {
             return to_route('billing.plans')
                 ->with('error', 'You already have a subscription. Use Switch to change plans.');

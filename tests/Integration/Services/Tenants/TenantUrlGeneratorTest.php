@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Platform\AddCustomDomain;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use App\Services\Tenants\TenantUrlGenerator;
 
 beforeEach(function () {
@@ -32,6 +33,18 @@ test('the primary storefront is the subdomain while the custom domain is unverif
 
     expect(resolve(TenantUrlGenerator::class)->primaryStorefront(test()->tenant->refresh()))
         ->toBe('http://sunrise.kneadit.test:8000');
+});
+
+test('the billing URL for an owner points at their bakery admin billing page', function () {
+    $owner = User::factory()->owner()->create();
+    test()->tenant->update(['user_id' => $owner->id]);
+
+    expect(resolve(TenantUrlGenerator::class)->billingForOwner($owner))
+        ->toBe('http://sunrise.kneadit.test:8000/admin/upgrade-plan');
+});
+
+test('there is no billing URL for an owner without a bakery', function () {
+    expect(resolve(TenantUrlGenerator::class)->billingForOwner(User::factory()->owner()->create()))->toBeNull();
 });
 
 test('a custom domain that routes to another bakery is ignored', function () {

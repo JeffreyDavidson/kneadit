@@ -33,6 +33,10 @@ class AuthServiceProvider extends ServiceProvider
         // the bakery owner may configure, test or inspect them.
         Gate::define('manage-webhooks', fn (User $user): bool => $user->role->meetsRequirement(UserRole::Owner));
 
+        // Billing is the bakery owner's; the handoff signs them in to the central
+        // billing pages as the account that owns the bakery.
+        Gate::define('manage-billing', fn (User $user): bool => $user->role->meetsRequirement(UserRole::Owner));
+
         Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => SubscriptionTier::resolve($user)?->meetsRequirement($tier) ?? false);
 
         // Send unauthenticated storefront customers to their own login page instead of

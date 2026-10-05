@@ -7,13 +7,14 @@ use App\Mail\Platform\ScheduledCheckinMail;
 use App\Mail\Platform\TrialExpiredMail;
 use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\WelcomeBakerMail;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\URL;
 
-pest()->use(RefreshDatabase::class);
+beforeEach(function () {
+    setUpCentralTest();
 
-beforeEach(fn () => setUpTenantTest());
+    config(['app.url' => 'http://kneadit.test', 'tenancy.tenant_domain' => 'kneadit.test']);
+});
 
 test('HealthAlertMail has correct subject and renders', function () {
     $mail = new HealthAlertMail('Test alert');
@@ -22,16 +23,16 @@ test('HealthAlertMail has correct subject and renders', function () {
     expect($mail->render())->toBeString();
 });
 
-test('PaymentFailedMail has correct subject and renders', function () {
-    URL::forceRootUrl('https://mail.kneadit.test');
-    URL::forceScheme('https');
+test('PaymentFailedMail has correct subject and links to the bakery admin billing page', function () {
     $user = User::factory()->owner()->create();
+    Tenant::factory()->create(['id' => 'sunrise', 'user_id' => $user->id]);
     $mail = new PaymentFailedMail($user);
 
     $mail->assertHasSubject('⚠️ Payment failed — action needed');
     expect($mail->render())
         ->toBeString()
-        ->toContain('https://mail.kneadit.test/billing/portal');
+        ->toContain('http://sunrise.kneadit.test/admin/upgrade-plan')
+        ->not->toContain('/billing/portal');
 });
 
 test('ScheduledCheckinMail has correct subject and renders', function () {
@@ -49,28 +50,35 @@ test('ScheduledCheckinMail has correct subject and renders', function () {
         ->toContain('https://test-bakery.kneadit.test/admin/help-center');
 });
 
-test('TrialExpiredMail has correct subject and renders', function () {
-    URL::forceRootUrl('https://mail.kneadit.test');
-    URL::forceScheme('https');
+test('TrialExpiredMail has correct subject and links to the bakery admin billing page', function () {
     $user = User::factory()->owner()->create();
+    Tenant::factory()->create(['id' => 'sunrise', 'user_id' => $user->id]);
     $mail = new TrialExpiredMail($user, 'https://test-tenant.kneadit.test/admin');
 
     $mail->assertHasSubject('Your KneadIt trial has expired');
     expect($mail->render())
         ->toBeString()
-        ->toContain('https://mail.kneadit.test/billing/plans')
-        ->toContain('https://test-tenant.kneadit.test/admin');
+        ->toContain('http://sunrise.kneadit.test/admin/upgrade-plan')
+        ->toContain('https://test-tenant.kneadit.test/admin')
+        ->not->toContain('/billing/plans');
 });
 
-test('TrialReminderMail has correct subject for 7 days and renders', function () {
-    URL::forceRootUrl('https://mail.kneadit.test');
-    URL::forceScheme('https');
+test('TrialReminderMail has correct subject for 7 days and links to the bakery admin billing page', function () {
     $user = User::factory()->owner()->create();
+    Tenant::factory()->create(['id' => 'sunrise', 'user_id' => $user->id]);
     $mail = new TrialReminderMail($user, 'Test Bakery', 7);
 
     expect($mail->render())
         ->toBeString()
-        ->toContain('https://mail.kneadit.test/billing/plans');
+        ->toContain('http://sunrise.kneadit.test/admin/upgrade-plan')
+        ->not->toContain('/billing/plans');
+});
+
+test('billing mails for an owner with no bakery omit the billing link instead of failing', function () {
+    $user = User::factory()->owner()->create();
+
+    expect(new TrialReminderMail($user, 'Test Bakery', 7)->render())->not->toContain('upgrade-plan')
+        ->and(new PaymentFailedMail($user)->render())->not->toContain('upgrade-plan');
 });
 
 test('WelcomeBaker has correct subject and renders', function () {
