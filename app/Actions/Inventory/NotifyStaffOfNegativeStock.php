@@ -9,8 +9,9 @@ use App\Support\StockQuantity;
 use Filament\Notifications\Notification;
 
 /**
- * Tells every staff member which ingredients a bake left below zero. Starting to
- * bake always goes through; this is how the shortfall gets noticed and reordered.
+ * Tells staff which ingredients a bake left below zero: a toast for whoever pressed
+ * Start Baking and a bell notification for every staff member. Starting to bake always
+ * goes through; this is how the shortfall gets noticed and reordered.
  */
 class NotifyStaffOfNegativeStock
 {
@@ -27,10 +28,13 @@ class NotifyStaffOfNegativeStock
             ->map(fn (IngredientShortfall $shortfall): string => "{$shortfall->ingredient->name} is now ".StockQuantity::display($shortfall->shortfall)." {$shortfall->ingredient->unit} below zero.")
             ->implode(' ');
 
-        Notification::make()
+        $notification = Notification::make()
             ->title("Order {$order->order_number} is baking without enough stock")
             ->body("{$body} Check your ingredient counts and reorder.")
-            ->warning()
-            ->sendToDatabase(User::query()->get(), isEventDispatched: true);
+            ->warning();
+
+        // A toast for the person who just pressed Start Baking, and a bell notification for everyone.
+        $notification->send();
+        $notification->sendToDatabase(User::query()->get(), isEventDispatched: true);
     }
 }

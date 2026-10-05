@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Inventory\StockAdjustmentType;
 use App\Filament\Resources\Ingredients\IngredientResource;
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Models\Inventory\Ingredient;
@@ -204,4 +205,38 @@ test('resource returns global search result details', function () {
     expect($details)
         ->toHaveKey('Supplier', 'King Arthur')
         ->toHaveKey('Stock');
+});
+
+test('recording usage or waste above the stock on hand shows an error and records nothing', function (StockAdjustmentType $type) {
+    $ingredient = Ingredient::factory()->create(['name' => 'Rye Flour', 'unit' => 'kg', 'current_stock' => 2]);
+
+    livewire(ListIngredients::class)
+        ->callAction(TestAction::make('record_stock')->table($ingredient), data: ['type' => $type->value, 'quantity' => 5, 'notes' => ''])
+        ->assertNotified('Not enough Rye Flour on hand');
+
+    expect($ingredient->fresh()->current_stock)->toBe('2.0000')
+        ->and(StockAdjustment::query()->where('ingredient_id', $ingredient->id)->count())->toBe(0);
+})->with([
+    'usage' => StockAdjustmentType::Usage,
+    'waste' => StockAdjustmentType::Waste,
+]);
+
+test('recording usage within the stock on hand subtracts it', function () {
+    $ingredient = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 2]);
+
+    livewire(ListIngredients::class)
+        ->callAction(TestAction::make('record_stock')->table($ingredient), data: ['type' => StockAdjustmentType::Usage->value, 'quantity' => 1.5, 'notes' => ''])
+        ->assertNotNotified('Not enough '.$ingredient->name.' on hand');
+
+    expect($ingredient->fresh()->current_stock)->toBe('0.5000');
+});
+
+test('recording a purchase for selected ingredients adds the stock with or without notes', function () {
+    $ingredients = Ingredient::factory()->count(2)->create(['current_stock' => 1]);
+
+    livewire(ListIngredients::class)
+        ->selectTableRecords($ingredients)
+        ->callAction(TestAction::make('record_purchase')->table()->bulk(), data: ['quantity' => 4, 'notes' => null]);
+
+    expect($ingredients->map(fn (Ingredient $ingredient): string => $ingredient->fresh()->current_stock)->all())->toBe(['5.0000', '5.0000']);
 });
