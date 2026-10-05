@@ -8,6 +8,9 @@ final readonly class BrandingSettings
 {
     public const string DEFAULT_BRAND_COLOR = '#d4920c';
 
+    /** The only format a brand color may be saved in, and the only one safe to print into a style attribute. */
+    public const string HEX_COLOR_PATTERN = '/^#[0-9a-fA-F]{6}$/';
+
     private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
     private const string CATERING_HERO_IMAGE = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
@@ -45,6 +48,19 @@ final readonly class BrandingSettings
             loyaltyHeroImage: SettingValue::nullableString(settings('loyalty_hero_image')),
             giftCardsHeroImage: SettingValue::nullableString(settings('gift_cards_hero_image')),
         );
+    }
+
+    /**
+     * A stored color that is safe to print into CSS: the color itself when it is a six digit hex
+     * color, otherwise the default. Colors saved before validation existed can be anything.
+     */
+    public static function safeColor(?string $color, string $default = self::DEFAULT_BRAND_COLOR): string
+    {
+        if ($color === null || preg_match(self::HEX_COLOR_PATTERN, $color) !== 1) {
+            return $default;
+        }
+
+        return $color;
     }
 
     public function heroImageUrl(): string

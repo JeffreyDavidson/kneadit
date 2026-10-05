@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Filament\Support\AllowedFileTypes;
 use App\Services\Settings\SettingsManager;
@@ -44,9 +45,11 @@ final class BrandingStep extends OnboardingStep
                         Grid::make(2)->schema([
                             ColorPicker::make('branding.color_primary')
                                 ->label('Primary Color')
+                                ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->required(),
                             ColorPicker::make('branding.color_secondary')
                                 ->label('Secondary Color')
+                                ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->required(),
                         ]),
                         FileUpload::make('branding.store_logo')

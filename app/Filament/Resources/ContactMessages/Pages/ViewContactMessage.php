@@ -75,7 +75,7 @@ class ViewContactMessage extends ViewRecord
 
                     Notification::make()
                         ->title('Reply sent')
-                        ->body('Email sent to '.$this->record->email)
+                        ->body('Email sent to '.e($this->record->email))
                         ->success()
                         ->send();
                 }),

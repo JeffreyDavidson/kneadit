@@ -73,13 +73,14 @@ class ApplyCateringDepositPayment
         ]);
 
         $paid = Money::fromDollars($amountDollars)->formatted();
+        $customerName = e($inquiry->customer_name);
         $reason = $depositRecorded
             ? 'a deposit was already recorded for this inquiry'
             : "the inquiry is now marked {$inquiry->status->getLabel()}";
 
         Notification::make()
-            ->title("Catering deposit payment needs review for {$inquiry->customer_name}")
-            ->body("{$inquiry->customer_name} paid {$paid} by card, but {$reason}. The payment was not recorded, so refund it in Stripe or update the inquiry if it should count.")
+            ->title("Catering deposit payment needs review for {$customerName}")
+            ->body("{$customerName} paid {$paid} by card, but {$reason}. The payment was not recorded, so refund it in Stripe or update the inquiry if it should count.")
             ->warning()
             ->sendToDatabase(User::query()->owners()->get());
     }
