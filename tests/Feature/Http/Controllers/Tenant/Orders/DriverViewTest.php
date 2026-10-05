@@ -33,10 +33,27 @@ function createDeliveryOrder(array $attrs = []): Order
         ], $attrs));
 }
 
+test('driver page requires a signed-in staff member', function () {
+    settings(['store_name' => 'Test Bakery']);
+    createDeliveryOrder([
+        'order_number' => 'ORD-PRIVATE',
+        'delivery_address' => '42 Private Lane',
+    ]);
+
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->get(route('driver.index', [], false));
+
+    $response->assertRedirect(route('filament.admin.auth.login'));
+    $response->assertDontSee('ORD-PRIVATE');
+    $response->assertDontSee('42 Private Lane');
+});
+
 test('driver page loads', function () {
     settings(['store_name' => 'Test Bakery']);
 
-    $response = withoutMiddleware(test()->driverMiddleware)->get(route('driver.index', [], false));
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
 
     $response->assertOk();
 });
@@ -45,7 +62,9 @@ test('driver page shows todays delivery orders', function () {
     settings(['store_name' => 'Test Bakery']);
     $order = createDeliveryOrder(['order_number' => 'ORD-001']);
 
-    $response = withoutMiddleware(test()->driverMiddleware)->get(route('driver.index', [], false));
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
 
     $response->assertOk();
     $response->assertSee('ORD-001');
@@ -55,7 +74,9 @@ test('driver page hides pickup orders', function () {
     settings(['store_name' => 'Test Bakery']);
     createDeliveryOrder(['order_number' => 'ORD-PICKUP', 'delivery_address' => '']);
 
-    $response = withoutMiddleware(test()->driverMiddleware)->get(route('driver.index', [], false));
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
 
     $response->assertOk();
     $response->assertDontSee('ORD-PICKUP');
@@ -65,7 +86,9 @@ test('driver page hides past orders', function () {
     settings(['store_name' => 'Test Bakery']);
     createDeliveryOrder(['order_number' => 'ORD-OLD', 'delivery_date' => today()->subDay()]);
 
-    $response = withoutMiddleware(test()->driverMiddleware)->get(route('driver.index', [], false));
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
 
     $response->assertOk();
     $response->assertDontSee('ORD-OLD');

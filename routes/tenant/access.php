@@ -42,9 +42,10 @@ Route::middleware('signed:relative')->group(function () {
     Route::delete('email/unsubscribe/{customer}', [EmailUnsubscribesController::class, 'destroy'])->name('emailUnsubscribe.destroy');
 });
 
-Route::prefix('driver')->name('driver.')->group(function () {
+// Lists customers' names, addresses and notes, so both routes need a signed-in staff member.
+Route::prefix('driver')->name('driver.')->middleware('auth')->group(function () {
     Route::get('/', DriverDashboardController::class)->name('index');
-    Route::post('{order:order_number}/delivered', MarkOrderDeliveredController::class)->name('delivered')->middleware('auth');
+    Route::post('{order:order_number}/delivered', MarkOrderDeliveredController::class)->name('delivered');
 });
 
 Route::get('invite/{token}', ShowInvitationController::class)->name('invitation.show')->middleware(ResolveInvitation::class);
