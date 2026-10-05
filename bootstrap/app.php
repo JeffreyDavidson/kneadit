@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Middleware\AuthenticateCustomerSession;
 use App\Http\Middleware\EnsureCustomerEmailIsVerified;
 use App\Http\Middleware\EnsureOrderAccess;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetActorContext;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -50,6 +52,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'order.access' => EnsureOrderAccess::class,
             'customer.verified' => EnsureCustomerEmailIsVerified::class,
         ]);
+
+        // Laravel runs auth middleware before anything else, so without this the
+        // customer session check would run after `auth:customer` had already passed.
+        $middleware->prependToPriorityList(
+            before: AuthenticatesRequests::class,
+            prepend: AuthenticateCustomerSession::class,
+        );
 
         $middleware->redirectTo(guests: '/login', users: '/billing/plans');
     })
