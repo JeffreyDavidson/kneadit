@@ -48,6 +48,7 @@ test('every scheduled command is covered by the central-database guard', functio
         'inventory:send-low-stock-alert',
         'carts:send-abandonment-emails',
         'webhooks:prune',
+        'activity-log:prune',
         'analytics:prune-page-views',
         'campaigns:send-scheduled',
     ];
@@ -114,6 +115,7 @@ test('a scheduled tenant command never reads tenant tables before entering a ten
     'inventory:send-low-stock-alert',
     'carts:send-abandonment-emails',
     'webhooks:prune',
+    'activity-log:prune',
     'analytics:prune-page-views',
     'campaigns:send-scheduled',
 ]);

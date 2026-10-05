@@ -60,6 +60,7 @@ class AbandonedCartRecoveryMail extends BaseMailable implements MarketingMail
             view: 'emails.customers.abandoned-cart-recovery',
             with: [
                 'cart' => $this->cart,
+                'customer' => $this->customer,
                 'coupon' => $this->coupon,
                 'recoveryUrl' => $this->recoveryUrl(),
             ],
@@ -81,7 +82,7 @@ class AbandonedCartRecoveryMail extends BaseMailable implements MarketingMail
     private function placeholders(): array
     {
         return [
-            'customer_name' => $this->cart->customer_name ?: 'there',
+            'customer_name' => $this->customer->name,
             'store_name' => resolve(TenantSettings::class)->store->name,
             'recovery_url' => $this->recoveryUrl(),
             'coupon_code' => $this->coupon instanceof Coupon ? $this->coupon->code : '',

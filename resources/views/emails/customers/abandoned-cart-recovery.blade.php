@@ -2,6 +2,7 @@
 
 @php
 /** @var App\Models\Orders\Cart $cart */
+/** @var App\Models\Customers\Customer $customer */
 /** @var App\Models\Financial\Coupon|null $coupon */
 /** @var string $recoveryUrl */
 /** @var string $primaryColor */
@@ -11,7 +12,7 @@
 @section('title', 'You left something in your cart')
 
 @section('content')
-    <p style="margin: 0 0 15px;">Hi {{ $cart->customer_name ?: 'there' }},</p>
+    <p style="margin: 0 0 15px;">Hi {{ $customer->name }},</p>
 
     <p style="margin: 0 0 20px;">Looks like you started building an order but didn't get to check out. Your items are still saved — just one click to pick up where you left off.</p>
 

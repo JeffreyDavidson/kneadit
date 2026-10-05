@@ -45,7 +45,7 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->update(['recovery_claimed_at' => null]);
 
                 $carts = Cart::query()
-                    ->forSubscribedCustomers()
+                    ->forRecoverableCustomers()
                     ->whereNull('recovery_sent_at')
                     ->whereNull('recovery_claimed_at')
                     ->whereNull('converted_at')
@@ -56,19 +56,25 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->with('items.product')
                     ->get();
 
-                $customers = Customer::query()
-                    ->whereIn('email', $carts->pluck('customer_email')->all())
+                $customersById = Customer::query()
+                    ->whereIn('id', $carts->pluck('customer_id')->filter()->all())
+                    ->get()
+                    ->keyBy('id');
+                $customersByEmail = Customer::query()
+                    ->whereIn('email', $carts->pluck('customer_email')->filter()->all())
                     ->get()
                     ->keyBy('email');
 
                 foreach ($carts as $cart) {
-                    $customer = $customers->get($cart->customer_email);
+                    $customer = $cart->customer_id === null
+                        ? $customersByEmail->get($cart->customer_email)
+                        : $customersById->get($cart->customer_id);
 
                     if (! $customer instanceof Customer) {
                         continue;
                     }
 
-                    if ($this->orderedSinceLastActivity($cart)) {
+                    if ($this->orderedSinceLastActivity($cart, $customer)) {
                         $cart->forceFill(['converted_at' => now()])->save();
 
                         continue;
@@ -89,7 +95,7 @@ class SendAbandonedCartRecoveryCommand extends Command
                         : null;
 
                     try {
-                        Mail::to($cart->customer_email)->queue(new AbandonedCartRecoveryMail($cart, $customer, $coupon));
+                        Mail::to($customer->email)->queue(new AbandonedCartRecoveryMail($cart, $customer, $coupon));
 
                         $cart->forceFill([
                             'recovery_sent_at' => now(),
@@ -117,14 +123,10 @@ class SendAbandonedCartRecoveryCommand extends Command
      * bakery entered) still has an open cart. An order for the same email placed
      * after the cart was last touched means there is nothing to recover.
      */
-    private function orderedSinceLastActivity(Cart $cart): bool
+    private function orderedSinceLastActivity(Cart $cart, Customer $customer): bool
     {
-        if ($cart->customer_email === null) {
-            return false;
-        }
-
         return Order::query()
-            ->placedByEmail($cart->customer_email)
+            ->placedByEmail($customer->email)
             ->where('created_at', '>', $cart->last_activity_at ?? $cart->created_at)
             ->exists();
     }

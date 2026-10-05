@@ -2,6 +2,7 @@
 
 namespace App\Observers\Customers;
 
+use App\Actions\Customers\EraseCustomerPersonalRecords;
 use App\Actions\Customers\GenerateCustomerReferralCode;
 use App\Models\Customers\Customer;
 
@@ -15,5 +16,12 @@ class CustomerObserver
         if (! $customer->referral_code) {
             resolve(GenerateCustomerReferralCode::class)($customer);
         }
+    }
+
+    // Records keyed on the email (favorites, waitlists, carts and so on) have no
+    // foreign key to cascade from, so they are cleaned up here.
+    public function deleted(Customer $customer): void
+    {
+        resolve(EraseCustomerPersonalRecords::class)($customer->id, $customer->email);
     }
 }

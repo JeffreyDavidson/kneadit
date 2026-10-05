@@ -20,13 +20,23 @@ class CartQueryBuilder extends Builder
     }
 
     /**
-     * Carts whose email belongs to a customer who can still receive marketing
-     * email. A cart with no matching customer is left out: without a customer
-     * record there is nothing to carry an opt-out.
+     * Carts a recovery email may go to: the cart of a signed-in customer, or a
+     * guest cart whose email belongs to a customer who verified it, and in both
+     * cases only a customer who can still receive marketing email. A guest cart
+     * typed with an address nobody has proved they own is left out, otherwise
+     * anyone could make us email a stranger.
      */
-    public function forSubscribedCustomers(): static
+    public function forRecoverableCustomers(): static
     {
-        $this->whereIn('customer_email', Customer::query()->subscribedToMarketing()->select('email'));
+        $this->where(function (self $query): void {
+            $query
+                ->whereIn('customer_id', Customer::query()->subscribedToMarketing()->select('id'))
+                ->orWhere(function (self $guest): void {
+                    $guest
+                        ->whereNull('customer_id')
+                        ->whereIn('customer_email', Customer::query()->subscribedToMarketing()->emailVerified()->select('email'));
+                });
+        });
 
         return $this;
     }

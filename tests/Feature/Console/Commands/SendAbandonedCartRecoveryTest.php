@@ -55,7 +55,7 @@ describe('a customer who has already ordered', function () {
     });
 
     test('is not emailed or given a coupon, and the cart is marked converted', function () {
-        $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
+        $customer = Customer::factory()->verified()->create(['email' => 'buyer@example.com']);
         $cart = Cart::factory()->withEmail('Buyer@Example.com')->create(['last_activity_at' => '2026-10-03 12:00']);
         CartItem::factory()->for($cart)->create();
         Order::factory()->for($customer)->create(['created_at' => '2026-10-04 12:00']);
@@ -68,7 +68,7 @@ describe('a customer who has already ordered', function () {
     });
 
     test('is still emailed when the order was placed before the cart was last touched', function () {
-        $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
+        $customer = Customer::factory()->verified()->create(['email' => 'buyer@example.com']);
         $cart = Cart::factory()->withEmail('buyer@example.com')->create(['last_activity_at' => '2026-10-03 12:00']);
         CartItem::factory()->for($cart)->create();
         Order::factory()->for($customer)->create(['created_at' => '2026-10-01 12:00']);
@@ -91,7 +91,7 @@ describe('a cart that has been sitting for a while', function () {
             'abandoned_cart_recovery_hours' => '24',
             'abandoned_cart_recovery_coupon_dollars' => '0',
         ]);
-        Customer::factory()->create(['email' => 'shopper@example.com']);
+        Customer::factory()->verified()->create(['email' => 'shopper@example.com']);
     });
 
     test('is not emailed when its last activity was more than a week ago', function () {
@@ -118,6 +118,75 @@ describe('a cart that has been sitting for a while', function () {
             'last_activity_at' => '2026-10-13 12:00',
             'expires_at' => '2026-10-14 12:00',
         ]);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertNotQueued(AbandonedCartRecoveryMail::class);
+    });
+});
+
+describe('who a recovery email may go to', function () {
+    beforeEach(function () {
+        runCommandsAsOneTenant();
+        Mail::fake();
+        Date::setTestNow('2026-10-05 12:00');
+        settings([
+            'abandoned_cart_recovery_enabled' => '1',
+            'abandoned_cart_recovery_hours' => '24',
+            'abandoned_cart_recovery_coupon_dollars' => '5',
+        ]);
+    });
+
+    test('a guest cart typed with an unverified customer email gets nothing', function () {
+        Customer::factory()->unverified()->create(['email' => 'victim@example.com', 'name' => 'Vic Tim']);
+        $cart = Cart::factory()->withEmail('victim@example.com')->create([
+            'customer_name' => 'Click here to claim your prize',
+            'last_activity_at' => '2026-10-03 12:00',
+        ]);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertNotQueued(AbandonedCartRecoveryMail::class);
+        expect(Coupon::query()->count())->toBe(0);
+    });
+
+    test('a cart from a signed-in customer is emailed at the stored address and greets the stored name', function () {
+        $customer = Customer::factory()->unverified()->create(['email' => 'ada@example.com', 'name' => 'Ada Lovelace']);
+        $cart = Cart::factory()->signedInAs($customer)->create([
+            'customer_name' => 'Click here to claim your prize',
+            'last_activity_at' => '2026-10-03 12:00',
+        ]);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertQueued(AbandonedCartRecoveryMail::class, function (AbandonedCartRecoveryMail $mail): bool {
+            $html = $mail->render();
+
+            return $mail->hasTo('ada@example.com')
+                && str_contains($html, 'Hi Ada Lovelace,')
+                && ! str_contains($html, 'Click here to claim your prize');
+        });
+    });
+
+    test('a signed-in cart is emailed at the customer current address, not the one typed into the cart', function () {
+        $customer = Customer::factory()->verified()->create(['email' => 'ada@example.com']);
+        $cart = Cart::factory()->signedInAs($customer)->create([
+            'customer_email' => 'someone-else@example.com',
+            'last_activity_at' => '2026-10-03 12:00',
+        ]);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertQueued(AbandonedCartRecoveryMail::class, fn (AbandonedCartRecoveryMail $mail): bool => $mail->hasTo('ada@example.com') && ! $mail->hasTo('someone-else@example.com'));
+    });
+
+    test('a signed-in cart of a customer who unsubscribed gets nothing', function () {
+        $customer = Customer::factory()->verified()->unsubscribed()->create();
+        $cart = Cart::factory()->signedInAs($customer)->create(['last_activity_at' => '2026-10-03 12:00']);
         CartItem::factory()->for($cart)->create();
 
         artisan('carts:send-abandonment-emails')->assertSuccessful();

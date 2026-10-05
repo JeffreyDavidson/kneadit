@@ -100,7 +100,7 @@ test('cart recovery skips a paused bakery and mints no coupon', function (?strin
         'abandoned_cart_recovery_hours' => '24',
         'abandoned_cart_recovery_coupon_dollars' => '5',
     ]);
-    Customer::factory()->create(['email' => 'buyer@example.com']);
+    Customer::factory()->verified()->create(['email' => 'buyer@example.com']);
     $cart = Cart::factory()->withEmail('buyer@example.com')->create(['last_activity_at' => '2026-10-03 12:00']);
     CartItem::factory()->for($cart)->create();
 

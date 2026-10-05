@@ -56,3 +56,20 @@ test('adds a customer note through the page', function () {
         'created_by' => Auth::id(),
     ]);
 });
+
+test('a manager anonymises a customer who has orders, and the action is gone afterwards', function () {
+    test()->actingAs(User::factory()->manager()->create());
+    $customer = Customer::factory()->create(['name' => 'Maya Patel', 'email' => 'maya@example.com']);
+    $order = Order::factory()->for($customer)->create();
+
+    livewire(ViewCustomer::class, ['record' => $customer->getRouteKey()])
+        ->assertActionVisible('anonymise')
+        ->callAction('anonymise')
+        ->assertNotified('Customer anonymised');
+
+    expect($customer->fresh()->name)->toBe("Deleted customer #{$customer->id}")
+        ->and($order->fresh()->customer_id)->toBe($customer->id);
+
+    livewire(ViewCustomer::class, ['record' => $customer->getRouteKey()])
+        ->assertActionHidden('anonymise');
+});
