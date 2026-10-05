@@ -39,11 +39,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => SubscriptionTier::resolve($user)?->meetsRequirement($tier) ?? false);
 
-        // Send unauthenticated storefront customers to their own login page instead of
-        // the platform /login (which is for bakery staff).
-        Authenticate::redirectUsing(
-            fn (Request $request): string => $request->is('account*') ? route('account.login.show') : route('login'),
-        );
+        // Send signed-out visitors to the right sign-in: customers to the storefront login,
+        // drivers (bakery staff) to the bakery admin, everyone else to the platform /login.
+        Authenticate::redirectUsing(fn (Request $request): string => match (true) {
+            $request->is('account*') => route('account.login.show'),
+            $request->is('driver*') => route('filament.admin.auth.login'),
+            default => route('login'),
+        });
 
         // Record the password a customer signed in with (including a remember-cookie login), so
         // AuthenticateCustomerSession can end the session if the password is changed afterwards.
