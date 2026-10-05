@@ -34,7 +34,7 @@ class SendWeeklyDigestCommand extends Command
     ): int {
         $schedule = new LocalSendSchedule('digest:weekly', self::SEND_HOUR, self::SEND_DAY);
         $force = $this->option('force') === true;
-        $tenants = Tenant::query()->cursor();
+        $tenants = Tenant::query()->lazyById();
         $failures = 0;
 
         foreach ($tenants as $tenant) {

@@ -38,7 +38,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
 | Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
-| Every 30 minutes | `health:check` | Application health checks. A failing check mails the platform address in-process (not queued, and `HealthAlertMail` reads no tenant settings so it still renders when the database is down) at most once every 6 hours, and a check that passes again sends one recovered mail |
+| Every 30 minutes | `health:check` | Application health checks (listed under "Health checks" below). A failing check mails the platform address in-process (not queued, and `HealthAlertMail` reads no tenant settings so it still renders when the database is down) at most once every 6 hours, and a check that passes again sends one recovered mail |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
 | Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders; a cart is skipped (and marked converted) when an order for its email was placed after the cart was last touched |
@@ -263,5 +263,27 @@ For an incident, determine the active layer before changing data:
 4. Inspect failed jobs and recent scheduler/health output.
 5. For payments, compare the order state with Stripe/PayPal using the recorded external identifiers and webhook delivery history.
 6. Repair with an existing idempotent command/action where possible; take a backup before manual data correction.
+
+### Health checks
+
+`health:check` runs these checks (classes in `App\Services\Platform\HealthChecks`). Each failing check alerts at most once every 6 hours, and a check that passes again sends one recovered mail.
+
+| Check | Fails when |
+| --- | --- |
+| Database connection, users table, tenant DB directory, storage/logs, homepage | The central database does not open or answer, the tenant database directory is not writable or is missing a database, `storage/logs` is not writable, or the homepage does not answer 2xx |
+| Disk space | Free space on the application volume is under 20% of the disk or under 5 GB |
+| Redis | A Redis connection used by the cache (including its lock connection), the queue or the session does not answer `PING`. Passes without connecting when none of them uses Redis |
+| Scheduler heartbeat | No scheduled task has started within 70 minutes (read from the `scheduled_task_status:*` platform settings, which `RecordScheduledTaskStatusListener` writes). Something is scheduled at least every 15 minutes, so this means the scheduler stopped |
+| Nightwatch agent | Nightwatch is enabled (`NIGHTWATCH_ENABLED`) and nothing accepts a TCP connection on `nightwatch.ingest.uri` (default `127.0.0.1:2407`). Nothing is sent. Without the agent the app reports nothing to Nightwatch |
+
+The Platform Operations page shows each scheduled task's last status. Scheduled tasks run in the background, so `RecordScheduledTaskStatusListener` records `running` when a task starts, ignores the `ScheduledTaskFinished` event Laravel fires right after launching it (no exit code yet), and records the real outcome from `ScheduledBackgroundTaskFinished`: exit code 0 is `succeeded`, anything else is `failed` with the exit code.
+
+### Redis "Connection refused" during server reboots
+
+When the server reboots, Redis stops before the queue worker does, so the worker keeps running for a moment and logs `Connection refused` against Redis (and cache writes in that window fail). A burst of these around a reboot or restart that stops on its own is expected. What to look for otherwise: the `Redis` health check failing after the server is back up, a `Connection refused` that continues, or a full disk (a full disk blocks Redis writes too, so check disk space first).
+
+### Central database "database is locked"
+
+Scheduled commands that loop over central rows (tenants, check-ins) load the rows first (`->get()`, or `lazyById()` for a table that can grow large) and then write. Do not iterate them with `->cursor()`: a cursor keeps a WAL read snapshot open, and when another process commits meanwhile (a dozen scheduled tasks write status rows at :00 and :30), SQLite rejects this connection's next write immediately with `database is locked`, without waiting for `busy_timeout`.
 
 Minimum production monitoring should alert on `/up` failure, queue backlog/failed jobs, scheduler silence, backup failure or age, tenant database filesystem capacity, repeated webhook failure, and elevated 5xx/Sentry error rates.

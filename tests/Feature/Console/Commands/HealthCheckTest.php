@@ -2,6 +2,7 @@
 
 use App\Mail\Platform\HealthAlertMail;
 use App\Services\Platform\HealthChecks\HomepageRespondsCheck;
+use App\Services\Platform\ScheduledTaskMonitor;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -17,6 +18,9 @@ beforeEach(function () {
     setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
     config(['mail.platform_notify' => 'test@example.com']);
+
+    // A scheduler that has run recently, so the heartbeat check passes.
+    resolve(ScheduledTaskMonitor::class)->started('health:check');
 
     // Point storage to a real writable temp directory so the health check passes
     $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
@@ -69,6 +73,28 @@ test('health check verifies disk space', function () {
         ->assertSuccessful();
 });
 
+test('health check verifies the scheduler heartbeat', function () {
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Scheduler running')
+        ->assertSuccessful();
+});
+
+test('health check fails and alerts when the scheduler has gone quiet', function () {
+    Mail::fake();
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+    Date::setTestNow(now()->addMinutes(71));
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Scheduler silent')
+        ->assertFailed();
+
+    Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => str_contains($mail->alertMessage, 'Scheduler silent'));
+});
+
 test('health check verifies storage writable', function () {
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
@@ -108,9 +134,11 @@ describe('alerting', function () {
     test('the same failing check does not alert again inside the cooldown', function () {
         Http::fake(['*' => Http::response('Server Error', 500)]);
         Date::setTestNow('2026-10-05 12:00');
+        resolve(ScheduledTaskMonitor::class)->started('health:check');
 
         artisan('health:check')->assertFailed();
         Date::setTestNow('2026-10-05 17:59');
+        resolve(ScheduledTaskMonitor::class)->started('health:check');
         artisan('health:check')->assertFailed();
 
         Mail::assertSentCount(1);
@@ -119,9 +147,11 @@ describe('alerting', function () {
     test('the same failing check alerts again once the cooldown has passed', function () {
         Http::fake(['*' => Http::response('Server Error', 500)]);
         Date::setTestNow('2026-10-05 12:00');
+        resolve(ScheduledTaskMonitor::class)->started('health:check');
 
         artisan('health:check')->assertFailed();
         Date::setTestNow('2026-10-05 18:01');
+        resolve(ScheduledTaskMonitor::class)->started('health:check');
         artisan('health:check')->assertFailed();
 
         Mail::assertSentCount(2);

@@ -50,7 +50,7 @@ class PlatformOperations extends Page
             [
                 'key' => 'health:check',
                 'label' => 'Health Check',
-                'description' => 'Run platform health checks (database, disk space, homepage, storage logs) and alert on failures.',
+                'description' => 'Run platform health checks (database, disk space, Redis, scheduler, Nightwatch, homepage, storage logs) and alert on failures.',
                 'icon' => Heroicon::OutlinedHeart,
                 'color' => 'emerald',
             ],

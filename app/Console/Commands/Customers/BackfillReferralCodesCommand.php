@@ -31,7 +31,7 @@ class BackfillReferralCodesCommand extends Command
 
                 Customer::query()
                     ->whereNull('referral_code')
-                    ->cursor()
+                    ->lazyById()
                     ->each(function (Customer $customer) use (&$count): void {
                         ($this->generator)($customer);
                         $count++;

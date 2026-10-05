@@ -26,7 +26,7 @@ class TrialExpirationReader
             ->whereDate('trial_ends_at', $targetDate)
             ->where('is_active', true)
             ->where('free_forever', false)
-            ->cursor();
+            ->lazyById();
     }
 
     /**
@@ -42,7 +42,7 @@ class TrialExpirationReader
             ->where('is_active', true)
             ->whereNull('paused_at')
             ->where('free_forever', false)
-            ->cursor();
+            ->lazyById();
     }
 
     /**

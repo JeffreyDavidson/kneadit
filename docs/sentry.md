@@ -33,6 +33,10 @@ to touch it; the SDK simply skips capture.
   but **not** SQL bindings (avoid leaking PII like customer emails into
   the breadcrumb payload).
 
+## Release
+
+`config/sentry.php` sets `release` to `SENTRY_RELEASE` when it is set, and otherwise to the deployed commit, the same value Nightwatch reports as its deployment id (`NIGHTWATCH_DEPLOY`, then `LARAVEL_CLOUD_DEPLOY_UUID`, `FORGE_DEPLOY_COMMIT`, `VAPOR_COMMIT_HASH`). On Forge that is `FORGE_DEPLOY_COMMIT`, so each issue is tied to the deploy that produced it.
+
 ## Sensitive-data posture
 
 `send_default_pii` is `false` (the package default). User context we attach
