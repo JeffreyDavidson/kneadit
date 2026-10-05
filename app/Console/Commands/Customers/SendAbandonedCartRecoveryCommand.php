@@ -7,6 +7,7 @@ use App\Mail\Customers\AbandonedCartRecoveryMail;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
 use App\Models\Orders\Cart;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
@@ -62,6 +63,12 @@ class SendAbandonedCartRecoveryCommand extends Command
                         continue;
                     }
 
+                    if ($this->orderedSinceLastActivity($cart)) {
+                        $cart->forceFill(['converted_at' => now()])->save();
+
+                        continue;
+                    }
+
                     $claimed = Cart::query()
                         ->whereKey($cart->getKey())
                         ->whereNull('recovery_sent_at')
@@ -97,6 +104,24 @@ class SendAbandonedCartRecoveryCommand extends Command
         );
 
         return $failures > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    /**
+     * The cart is only marked converted from the cookie on the device that
+     * placed the order, so a customer who ordered elsewhere (or whose order the
+     * bakery entered) still has an open cart. An order for the same email placed
+     * after the cart was last touched means there is nothing to recover.
+     */
+    private function orderedSinceLastActivity(Cart $cart): bool
+    {
+        if ($cart->customer_email === null) {
+            return false;
+        }
+
+        return Order::query()
+            ->placedByEmail($cart->customer_email)
+            ->where('created_at', '>', $cart->last_activity_at ?? $cart->created_at)
+            ->exists();
     }
 
     private function mintCoupon(int $dollars): Coupon

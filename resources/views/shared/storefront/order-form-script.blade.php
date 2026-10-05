@@ -179,6 +179,9 @@
             },
 
             scheduleCartSync() {
+                if (this.isSubmitting) {
+                    return;
+                }
                 if (this.cartSyncTimer) {
                     clearTimeout(this.cartSyncTimer);
                 }
@@ -454,6 +457,8 @@
 
             async submitOrder() {
                 if (!this.canSubmit) return;
+                clearTimeout(this.cartSyncTimer);
+                this.cartSyncTimer = null;
                 this.isSubmitting = true;
                 this.submitError = '';
                 this.fieldErrors = {};

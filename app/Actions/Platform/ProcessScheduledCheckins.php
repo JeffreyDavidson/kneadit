@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Log;
 
 class ProcessScheduledCheckins
 {
+    /** How many days after its due date a check-in can still be sent. */
+    private const int LATE_DAYS = 7;
+
     public function __construct(private readonly TenantUrlGenerator $tenantUrls) {}
 
     /** @return array{sent: int, skipped_no_email: int, failures: int, no_active_checkins: bool} */
@@ -33,8 +36,12 @@ class ProcessScheduledCheckins
         $failures = 0;
 
         foreach ($checkins as $checkin) {
-            $targetDate = Date::today()->subDays($checkin->days_after_signup);
-            $tenants = Tenant::query()->whereDate('created_at', $targetDate)->cursor();
+            // A run that was missed still goes out on the next one, up to a week late. The checkin_logs row makes each send happen once.
+            $dueDate = Date::today()->subDays($checkin->days_after_signup);
+            $tenants = Tenant::query()
+                ->whereDate('created_at', '<=', $dueDate)
+                ->whereDate('created_at', '>=', $dueDate->copy()->subDays(self::LATE_DAYS))
+                ->cursor();
 
             /** @var Tenant $tenant */
             foreach ($tenants as $tenant) {

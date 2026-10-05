@@ -20,7 +20,6 @@ use App\Events\Orders\OrderDelivered;
 use App\Events\Orders\OrderMessageSent;
 use App\Events\Orders\OrderModified;
 use App\Events\Orders\OrderStatusChanged;
-use App\Events\Platform\HealthCheckFailed;
 use App\Events\Platform\PaymentFailed;
 use App\Events\Platform\ScheduledCheckinDue;
 use App\Events\Platform\StaffInvitationSent;
@@ -51,7 +50,6 @@ use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Listeners\Orders\SendOrderStatusEmailListener;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Listeners\Platform\RecordScheduledTaskStatusListener;
-use App\Listeners\Platform\SendHealthCheckAlertListener;
 use App\Listeners\Platform\SendPaymentFailedAlertListener;
 use App\Listeners\Platform\SendPaymentFailedEmailListener;
 use App\Listeners\Platform\SendScheduledCheckinEmailListener;
@@ -145,9 +143,6 @@ class EventServiceProvider extends ServiceProvider
         TenantOnboarded::class => [
             NotifyPlatformOfNewTenantListener::class,
             SendWelcomeBakerEmailListener::class,
-        ],
-        HealthCheckFailed::class => [
-            SendHealthCheckAlertListener::class,
         ],
         PaymentFailed::class => [
             SendPaymentFailedAlertListener::class,
