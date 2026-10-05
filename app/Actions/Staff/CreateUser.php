@@ -3,6 +3,7 @@
 namespace App\Actions\Staff;
 
 use App\Models\Staff\User;
+use App\Support\EmailAddress;
 use Illuminate\Auth\Events\Registered;
 
 class CreateUser
@@ -14,7 +15,7 @@ class CreateUser
     {
         $user = User::query()->create([
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => EmailAddress::normalize($data['email']),
             'password' => $data['password'],
         ]);
 

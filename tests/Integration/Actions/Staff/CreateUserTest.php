@@ -38,3 +38,16 @@ test('dispatches Registered event', function () {
 
     Event::assertDispatched(Registered::class);
 });
+
+test('stores the email lowercased and trimmed', function () {
+    Event::fake([Registered::class]);
+
+    $user = resolve(CreateUser::class)([
+        'name' => 'Jane Baker',
+        'email' => ' Jane@Example.com ',
+        'password' => 'secret123',
+    ]);
+
+    expect($user->email)->toBe('jane@example.com');
+    test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+});

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\AuthenticateCustomerSession;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -23,6 +24,7 @@ Route::middleware([
     'web',
     InitializeTenancyByDomainOrSubdomain::class,
     PreventAccessFromCentralDomains::class,
+    AuthenticateCustomerSession::class,
 ])->group(function () {
     // Note: The "/" route is handled by RootController in web.php
     // to avoid overriding the central domain landing page.

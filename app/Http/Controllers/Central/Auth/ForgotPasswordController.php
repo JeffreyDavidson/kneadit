@@ -12,14 +12,16 @@ class ForgotPasswordController extends Controller
 {
     public function store(ForgotPasswordRequest $request): RedirectResponse
     {
-
         $status = Password::sendResetLink($request->validated());
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', __($status))
-            : back()->withErrors([
+        if ($status === Password::RESET_THROTTLED) {
+            return back()->withErrors([
                 'email' => __($status),
             ]);
+        }
+
+        // Same answer whether or not an account has this email, so the form can't be used to find accounts.
+        return back()->with('status', "If an account exists for that email, we've sent a reset link.");
     }
 
     public function show(): View
