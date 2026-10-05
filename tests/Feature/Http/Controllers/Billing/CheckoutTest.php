@@ -2,10 +2,38 @@
 
 use App\Http\Controllers\Billing\CheckoutController;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use JMac\Testing\Double;
 use Laravel\Cashier\Checkout;
 use Laravel\Cashier\Subscription;
 use Laravel\Cashier\SubscriptionBuilder;
+
+/**
+ * Stands in for the signed-in user so the controller's newSubscription() call
+ * returns a doubled builder and never reaches Stripe.
+ */
+#[Table(name: 'users')]
+final class CheckoutBuilderUser extends User
+{
+    public ?SubscriptionBuilder $fakeBuilder = null;
+
+    /** @var list<string> */
+    public array $requestedPrices = [];
+
+    #[Override]
+    public function getForeignKey(): string
+    {
+        return 'user_id';
+    }
+
+    #[Override]
+    public function newSubscription(string $type, string|array $prices = []): SubscriptionBuilder
+    {
+        $this->requestedPrices = (array) $prices;
+
+        return $this->fakeBuilder ?? parent::newSubscription($type, $prices);
+    }
+}
 
 beforeEach(function () {
     setUpCentralTest();
@@ -65,10 +93,12 @@ test('checkout gives a first-time subscriber the trial', function () {
     $builder->expects('allowPromotionCodes')->returns($builder);
     $builder->expects('checkout')->returns(Double::for(Checkout::class));
 
-    $subject = Double::for($user)->passthru();
-    $subject->expects('newSubscription')->with('default', 'price_starter_test')->returns($builder);
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
 
     app(CheckoutController::class)($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
 
 test('checkout gives no trial to a returning subscriber whose subscription ended', function () {
@@ -89,8 +119,10 @@ test('checkout gives no trial to a returning subscriber whose subscription ended
     $builder->expects('allowPromotionCodes')->returns($builder);
     $builder->expects('checkout')->returns(Double::for(Checkout::class));
 
-    $subject = Double::for($user)->passthru();
-    $subject->expects('newSubscription')->with('default', 'price_starter_test')->returns($builder);
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
 
     app(CheckoutController::class)($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
