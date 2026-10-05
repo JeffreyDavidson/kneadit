@@ -132,3 +132,10 @@ it('rethrows a unique violation that is not about the owner', function () {
     expect(fn () => resolve(CreateTenantRecord::class)(test()->user, 'Second', 'recordsecond', true, null))
         ->toThrow(UniqueConstraintViolationException::class);
 });
+
+it('stores the subdomain on the tenant', function () {
+    $tenant = resolve(CreateTenantRecord::class)(test()->user, 'Record Bakery', 'recordbakery', true, null);
+
+    expect(DB::table('tenants')->where('id', 'recordbakery')->value('subdomain'))->toBe('recordbakery')
+        ->and($tenant->subdomain)->toBe('recordbakery');
+});

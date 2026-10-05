@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Storefront;
 
+use App\Models\Platform\Tenant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -29,16 +30,45 @@ class StoreOnboardingRequest extends FormRequest
     {
         return [
             'store_name' => ['required', 'string', 'max:255'],
-            'subdomain' => [
-                'required',
-                'string',
-                'regex:/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/',
-                Rule::notIn(config()->array('kneadit.reserved_subdomains')),
-                'unique:domains,domain',
-                'unique:tenants,id',
-            ],
+            'subdomain' => self::subdomainRules(),
             'storefront_choice' => ['required', 'in:kneadit,own'],
             'external_website' => ['required_if:storefront_choice,own', 'nullable', 'url', 'max:255'],
+        ];
+    }
+
+    /**
+     * The rules a bakery subdomain must pass, shared with ChangeTenantSubdomain. A bakery
+     * that is changing its subdomain does not collide with its own id, subdomain or
+     * domain rows, so those are excluded for `$changing`.
+     *
+     * @return array<int, mixed>
+     */
+    public static function subdomainRules(?Tenant $changing = null): array
+    {
+        $domainRule = Rule::unique('domains', 'domain');
+
+        if ($changing instanceof Tenant) {
+            $domainRule->whereNot('tenant_id', $changing->id);
+        }
+
+        return [
+            'required',
+            'string',
+            'regex:/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/',
+            Rule::notIn(config()->array('kneadit.reserved_subdomains')),
+            $domainRule,
+            Rule::unique('tenants', 'id')->ignore($changing?->id, 'id'),
+            Rule::unique('tenants', 'subdomain')->ignore($changing?->id, 'id'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function subdomainMessages(): array
+    {
+        return [
+            'subdomain.regex' => 'Use lowercase letters, numbers and hyphens, starting and ending with a letter or number.',
         ];
     }
 
@@ -47,9 +77,7 @@ class StoreOnboardingRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'subdomain.regex' => 'Use lowercase letters, numbers and hyphens, starting and ending with a letter or number.',
-        ];
+        return self::subdomainMessages();
     }
 
     public function subdomain(): string
