@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Middleware\InitializeTenancyIfNeeded;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JMac\Testing\Double;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 test('passes through when tenancy is already initialized', function () {

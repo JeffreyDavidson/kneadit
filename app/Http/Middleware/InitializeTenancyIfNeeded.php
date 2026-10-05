@@ -4,13 +4,13 @@ namespace App\Http\Middleware;
 
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException;
 use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Symfony\Component\HttpFoundation\Response;
 
 class InitializeTenancyIfNeeded
