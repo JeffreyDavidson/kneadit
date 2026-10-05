@@ -14,9 +14,7 @@ use App\Events\Marketing\CampaignEmailQueued;
 use App\Events\Marketing\CateringInquiryReceived;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Events\Marketing\PurchaseOrderRequested;
-use App\Events\Orders\OrderCancelled;
 use App\Events\Orders\OrderCreated;
-use App\Events\Orders\OrderDelivered;
 use App\Events\Orders\OrderMessageSent;
 use App\Events\Orders\OrderModified;
 use App\Events\Orders\OrderStatusChanged;
@@ -39,17 +37,12 @@ use App\Listeners\Marketing\NotifyBakerOfCateringInquiryListener;
 use App\Listeners\Marketing\SendCampaignEmailListener;
 use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
-use App\Listeners\Orders\DispatchOrderCancelledWebhookListener;
-use App\Listeners\Orders\DispatchOrderCreatedWebhookListener;
-use App\Listeners\Orders\DispatchOrderDeliveredWebhookListener;
-use App\Listeners\Orders\DispatchOrderWebhookListener;
 use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
 use App\Listeners\Orders\SendOrderMessageEmailListener;
 use App\Listeners\Orders\SendOrderModifiedEmailListener;
 use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Listeners\Orders\SendOrderStatusEmailListener;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
-use App\Listeners\Platform\RecordScheduledTaskStatusListener;
 use App\Listeners\Platform\SendPaymentFailedAlertListener;
 use App\Listeners\Platform\SendPaymentFailedEmailListener;
 use App\Listeners\Platform\SendScheduledCheckinEmailListener;
@@ -58,9 +51,6 @@ use App\Listeners\Platform\SendTrialExpiredEmailListener;
 use App\Listeners\Platform\SendTrialReminderEmailListener;
 use App\Listeners\Platform\SendWeeklyDigestEmailListener;
 use App\Listeners\Platform\SendWelcomeBakerEmailListener;
-use Illuminate\Console\Events\ScheduledTaskFailed;
-use Illuminate\Console\Events\ScheduledTaskFinished;
-use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -74,15 +64,6 @@ class EventServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, list<class-string>> */
     protected array $listen = [
-        ScheduledTaskStarting::class => [
-            RecordScheduledTaskStatusListener::class,
-        ],
-        ScheduledTaskFinished::class => [
-            RecordScheduledTaskStatusListener::class,
-        ],
-        ScheduledTaskFailed::class => [
-            RecordScheduledTaskStatusListener::class,
-        ],
         ContactMessageReceived::class => [
             NotifyBakerOfContactMessageListener::class,
         ],
@@ -122,7 +103,6 @@ class EventServiceProvider extends ServiceProvider
         OrderCreated::class => [
             SendOrderPlacedEmailListener::class,
             NotifyBakerOfNewOrderListener::class,
-            DispatchOrderCreatedWebhookListener::class,
         ],
         OrderMessageSent::class => [
             SendOrderMessageEmailListener::class,
@@ -132,13 +112,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderStatusChanged::class => [
             SendOrderStatusEmailListener::class,
-            DispatchOrderWebhookListener::class,
-        ],
-        OrderCancelled::class => [
-            DispatchOrderCancelledWebhookListener::class,
-        ],
-        OrderDelivered::class => [
-            DispatchOrderDeliveredWebhookListener::class,
         ],
         TenantOnboarded::class => [
             NotifyPlatformOfNewTenantListener::class,

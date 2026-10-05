@@ -27,6 +27,8 @@ use Illuminate\Support\Str;
 
 /**
  * @property CouponType $type
+ * @property int|null $customer_id
+ * @property int|null $birthday_year
  * @property-read Collection<int, CouponTransaction> $transactions
  * @property-read int|null $transactions_count
  * @property-read Collection<int, Order> $orders
@@ -44,7 +46,7 @@ use Illuminate\Support\Str;
  *
  * @mixin \Eloquent
  */
-#[Fillable('code', 'type', 'fixed_amount', 'percentage', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
+#[Fillable('code', 'type', 'fixed_amount', 'percentage', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active', 'customer_id', 'birthday_year')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
 #[UseFactory(CouponFactory::class)]

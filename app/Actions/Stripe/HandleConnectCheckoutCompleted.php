@@ -2,7 +2,7 @@
 
 namespace App\Actions\Stripe;
 
-use App\Actions\Customers\RecordCateringDeposit;
+use App\Actions\Customers\ApplyCateringDepositPayment;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
@@ -14,7 +14,7 @@ class HandleConnectCheckoutCompleted
     public function __construct(
         private readonly TenancyManager $tenancyManager,
         private readonly HandleCheckoutComplete $handleCheckoutComplete,
-        private readonly RecordCateringDeposit $recordCateringDeposit,
+        private readonly ApplyCateringDepositPayment $applyCateringDepositPayment,
     ) {}
 
     public function __invoke(mixed $session): void
@@ -25,7 +25,7 @@ class HandleConnectCheckoutCompleted
         $cateringInquiryId = data_get($metadata, 'catering_inquiry_id');
         $tenantId = data_get($metadata, 'tenant_id');
 
-        if (! $sessionId) {
+        if (! is_string($sessionId) || $sessionId === '') {
             return;
         }
 
@@ -62,22 +62,22 @@ class HandleConnectCheckoutCompleted
         try {
             $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
                 if ($cateringInquiryId) {
-                    $inquiry = CateringInquiry::query()
-                        ->whereKey($cateringInquiryId)
-                        ->where('stripe_checkout_session_id', $sessionId)
-                        ->first();
+                    $inquiry = CateringInquiry::query()->whereKey($cateringInquiryId)->first();
 
-                    if ($inquiry && ! $inquiry->deposit_paid_at) {
-                        $inquiry->forceFill(['stripe_payment_intent_id' => $paymentIntentId])->save();
-                        $amountTotal = data_get($session, 'amount_total', 0);
-                        $depositAmount = is_numeric($amountTotal) ? ((int) $amountTotal) / 100 : 0;
+                    if (! $inquiry) {
+                        Log::warning('No catering inquiry for checkout session', ['session_id' => $sessionId]);
 
-                        ($this->recordCateringDeposit)(
-                            $inquiry,
-                            $depositAmount,
-                            $paymentIntentId,
-                        );
+                        return;
                     }
+
+                    $amountTotal = data_get($session, 'amount_total', 0);
+
+                    ($this->applyCateringDepositPayment)(
+                        $inquiry,
+                        $sessionId,
+                        $paymentIntentId,
+                        is_numeric($amountTotal) ? ((int) $amountTotal) / 100 : 0,
+                    );
 
                     return;
                 }

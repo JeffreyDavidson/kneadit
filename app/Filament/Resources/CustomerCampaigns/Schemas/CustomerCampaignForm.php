@@ -50,7 +50,7 @@ class CustomerCampaignForm
                             ->label('Send at (optional)')
                             ->seconds(false)
                             ->minDate(now())
-                            ->helperText('Leave blank to send manually with the "Send Now" action. Otherwise the scheduled command will queue the campaign within an hour of this time.'),
+                            ->helperText('Leave blank to send manually with the "Send Now" action. Otherwise the scheduled command will queue the campaign within 15 minutes of this time.'),
                     ]),
             ]);
     }

@@ -119,6 +119,19 @@ test('can filter gift cards by depleted status', function () {
         ->assertCanNotSeeTableRecords(collect([$active]));
 });
 
+test('can filter gift cards by active and expired status', function () {
+    $active = GiftCard::factory()->create();
+    $expired = GiftCard::factory()->expired()->create();
+
+    livewire(ListGiftCards::class)
+        ->filterTable('status', GiftCardStatus::Active->value)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$expired]))
+        ->filterTable('status', GiftCardStatus::Expired->value)
+        ->assertCanSeeTableRecords(collect([$expired]))
+        ->assertCanNotSeeTableRecords(collect([$active]));
+});
+
 test('can render the view gift card page', function () {
     $giftCard = GiftCard::factory()->create();
 
