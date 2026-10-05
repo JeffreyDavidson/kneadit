@@ -7,6 +7,7 @@ namespace App\Filament\Actions;
 use App\Actions\Orders\RefundStripePayment;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
@@ -56,6 +57,10 @@ class RefundOrderAction extends Action
                     $user instanceof User ? $user : null,
                     is_string($reason) && $reason !== '' ? $reason : null,
                 );
+            } catch (OrderRefundInProgressException $exception) {
+                Notification::make()->title($exception->getMessage())->warning()->send();
+
+                return;
             } catch (StripeRefundFailedException $exception) {
                 Notification::make()
                     ->title('Stripe could not refund this order')
@@ -66,9 +71,19 @@ class RefundOrderAction extends Action
                 return;
             }
 
+            if (! $refund) {
+                Notification::make()
+                    ->title('Nothing to refund')
+                    ->body('This order was already refunded, or has no Stripe payment to refund.')
+                    ->warning()
+                    ->send();
+
+                return;
+            }
+
             Notification::make()
                 ->title('Order refunded')
-                ->body($refund ? "Refunded {$refund->amount->formatted()} to the customer." : null)
+                ->body("Refunded {$refund->amount->formatted()} to the customer.")
                 ->success()
                 ->send();
         });
