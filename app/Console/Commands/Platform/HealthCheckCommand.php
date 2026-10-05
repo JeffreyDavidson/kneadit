@@ -7,6 +7,9 @@ use App\Services\Platform\HealthChecks\Contracts\HealthCheck;
 use App\Services\Platform\HealthChecks\DatabaseConnectionCheck;
 use App\Services\Platform\HealthChecks\DiskSpaceCheck;
 use App\Services\Platform\HealthChecks\HomepageRespondsCheck;
+use App\Services\Platform\HealthChecks\NightwatchAgentCheck;
+use App\Services\Platform\HealthChecks\RedisConnectionCheck;
+use App\Services\Platform\HealthChecks\SchedulerHeartbeatCheck;
 use App\Services\Platform\HealthChecks\StorageLogsCheck;
 use App\Services\Platform\HealthChecks\TenantDbDirectoryCheck;
 use App\Services\Platform\HealthChecks\UsersTableCheck;
@@ -29,6 +32,9 @@ class HealthCheckCommand extends Command
         UsersTableCheck::class,
         TenantDbDirectoryCheck::class,
         DiskSpaceCheck::class,
+        RedisConnectionCheck::class,
+        SchedulerHeartbeatCheck::class,
+        NightwatchAgentCheck::class,
         StorageLogsCheck::class,
         HomepageRespondsCheck::class,
     ];
