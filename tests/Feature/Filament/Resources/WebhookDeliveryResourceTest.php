@@ -4,6 +4,7 @@ use App\Filament\Resources\WebhookDeliveries\Pages\ListWebhookDeliveries;
 use App\Filament\Resources\WebhookDeliveries\WebhookDeliveryResource;
 use App\Models\Operations\WebhookDelivery;
 use App\Models\Staff\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -86,5 +87,5 @@ test('owners see the redeliver action', function () {
     $delivery = WebhookDelivery::factory()->create();
 
     livewire(ListWebhookDeliveries::class)
-        ->assertTableActionVisible('redeliver', $delivery);
+        ->assertActionVisible(TestAction::make('redeliver')->table($delivery));
 });
