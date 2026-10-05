@@ -7,6 +7,7 @@ use App\Http\Controllers\Billing\ShowPlansController;
 use App\Http\Controllers\Billing\SwapPlanController;
 use App\Http\Controllers\Stripe\StripeConnectWebhookController;
 use App\Http\Controllers\Stripe\StripeWebhookController;
+use App\Http\Middleware\RequireStripeWebhookSecret;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('billing')->name('billing.')->group(function () {
@@ -19,6 +20,7 @@ Route::middleware(['web', 'auth'])->prefix('billing')->name('billing.')->group(f
 
 // Stripe webhooks (excluded from CSRF)
 Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+    ->middleware(RequireStripeWebhookSecret::class)
     ->name('cashier.webhook');
 
 // Stripe Connect webhooks (for connected account events)

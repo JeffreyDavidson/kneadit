@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use JMac\Testing\Double;
+use Laravel\Cashier\Subscription;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -76,6 +77,33 @@ test('SubscriptionTier::resolve returns null for unknown stripe price', function
     ]);
 
     expect(SubscriptionTier::resolve($user))->toBeNull();
+});
+
+test('SubscriptionTier::resolve ignores a cancelled subscription whose end date has passed', function () {
+    config(['kneadit.stripe_prices.growth' => 'price_growth_test']);
+
+    $user = User::factory()->owner()->create();
+    Subscription::factory()
+        ->for($user, 'owner')
+        ->withPrice('price_growth_test')
+        ->state(['stripe_status' => 'canceled', 'ends_at' => now()->subDay()])
+        ->create();
+
+    expect(SubscriptionTier::resolve($user))->toBeNull()
+        ->and(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Starter))->toBeFalse();
+});
+
+test('SubscriptionTier::resolve keeps the plan while a cancelled subscription is on its grace period', function () {
+    config(['kneadit.stripe_prices.growth' => 'price_growth_test']);
+
+    $user = User::factory()->owner()->create();
+    Subscription::factory()
+        ->for($user, 'owner')
+        ->withPrice('price_growth_test')
+        ->state(['stripe_status' => 'active', 'ends_at' => now()->addDays(5)])
+        ->create();
+
+    expect(SubscriptionTier::resolve($user))->toBe(SubscriptionTier::Growth);
 });
 
 test('SubscriptionTier::resolve returns Pro for users whose tenant has free_forever', function () {
