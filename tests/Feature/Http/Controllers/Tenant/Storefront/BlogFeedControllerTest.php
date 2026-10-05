@@ -28,3 +28,22 @@ test('blog feed limits results to 20 most recent posts', function () {
     $response->assertOk()
         ->assertViewHas('posts', fn ($posts) => $posts->count() === 20);
 });
+
+test('blog feed is well-formed XML with titles escaped once', function () {
+    TenantBlogPost::factory()->published()->create([
+        'title' => 'Bread & Butter',
+        'slug' => 'bread-and-butter',
+        'excerpt' => 'Salt & "pepper" <3',
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.blog.feed', [], false));
+
+    $feed = simplexml_load_string($response->getContent());
+
+    expect($feed)->not->toBeFalse()
+        ->and((string) $feed->channel->link)->toBe(url('/blog'))
+        ->and((string) $feed->channel->item[0]->title)->toBe('Bread & Butter')
+        ->and((string) $feed->channel->item[0]->description)->toBe('Salt & "pepper" <3')
+        ->and((string) $feed->channel->item[0]->link)->toBe(route('storefront.blog.show', 'bread-and-butter'));
+});

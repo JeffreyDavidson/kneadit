@@ -116,10 +116,11 @@ return [
      * https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper.
      */
     'filesystem' => [
-        /** Only the sensitive import disk is isolated by this bootstrapper. */
+        /** Only the sensitive import and receipt disks are isolated by this bootstrapper. */
         'suffix_base' => 'tenant',
         'disks' => [
             'imports',
+            'receipts',
         ],
 
         /**
@@ -128,12 +129,13 @@ return [
          * See https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper
          */
         'root_override' => [
-            // Only sensitive imports are tenant-prefixed. Existing public/local
+            // Only sensitive imports and receipts are tenant-prefixed. Existing public/local
             // asset behavior remains unchanged until its migration is planned.
             'imports' => '%storage_path%/app/private/csv-imports/tenant%tenant%/',
+            'receipts' => '%storage_path%/app/private/receipts/tenant%tenant%/',
         ],
 
-        /** Keep framework storage paths stable; root_override isolates imports. */
+        /** Keep framework storage paths stable; root_override isolates imports and receipts. */
         'suffix_storage_path' => false,
 
         /**

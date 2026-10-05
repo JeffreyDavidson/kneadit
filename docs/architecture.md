@@ -17,13 +17,13 @@ Tenancy bootstraps five Laravel facilities:
 
 - The database connection switches to the tenant database.
 - cache operations receive a tenant-specific tag.
-- the private CSV import disk receives a tenant-specific root.
+- the private CSV import and expense receipt disks receive a tenant-specific root.
 - queued work carries tenant context through `QueueTenancyBootstrapper`.
 - generated URLs point at the bakery through `TenantUrlBootstrapper` (see below).
 
 `TenantUrlBootstrapper` forces the URL root and scheme to the bakery's primary storefront while tenancy is active, so `route()`, `url()` and signed URLs built by the scheduler, queue workers and central panel actions (`withinTenant()`) point at the bakery instead of `APP_URL`, where bakery routes do not exist. `TenantUrlGenerator::primaryStorefront()` picks the URL: the bakery's custom domain when `tenants.custom_domain` is set, `tenants.custom_domain_verified_at` is set (when last checked, the domain reached this application over HTTPS, either directly or through a proxy; see `VerifyCustomDomain` below) and a `domains` row ties it to that bakery, otherwise `{subdomain}.{tenant domain}`. The scheme and tenant domain come from `APP_URL` and `tenancy.tenant_domain`, and a custom domain drops the platform port. The bootstrapper does nothing when the current request is already on a non-central host (the bakery's own subdomain or custom domain), so HTTP requests keep generating URLs on the host the customer is using, and `revert()` clears the override when tenancy ends. Signed bakery links (`signed`, not `signed:relative`) are therefore signed against the same host the customer opens. `MarketingUnsubscribeLinks` builds its host from the same resolver. The "Powered by KneadIt" link in `BaseMailable` uses `APP_URL` directly so it keeps pointing at the platform.
 
-Filesystem tenancy is deliberately scoped to the `imports` disk. Existing local/public asset URLs keep their established behavior, while sensitive imports cannot cross tenant roots.
+Filesystem tenancy is deliberately scoped to the `imports` and `receipts` disks. Existing local/public asset URLs keep their established behavior, while sensitive imports and receipts cannot cross tenant roots.
 
 Tenant creation runs database creation and tenant migrations synchronously from `TenancyServiceProvider`. Tenant deletion removes the tenant database synchronously. Central migrations live in `database/migrations`; tenant migrations live in `database/migrations/tenant` and are run through `tenants:migrate`.
 
@@ -40,6 +40,8 @@ HTTP request
   -> route/controller/Filament/Livewire handling
   -> response security headers and actor context
 ```
+
+The `web` group adds `SecurityHeaders` (frame, content-type, referrer and permissions headers plus the CSP). The two Filament panels have their own middleware stack, so each lists `SecurityHeaders::withoutCsp()`: the same headers minus the CSP, because Filament and Livewire print inline scripts that carry no nonce, which an enforced CSP would block.
 
 Central domains are configured in `config/tenancy.php`; production includes `getkneadit.app` and `www.getkneadit.app`, while local development uses `app.getkneadit.test` for the application and retains `kneadit.test` as the tenant-development domain. The separate marketing site uses `getkneadit.test`. Tenant routes additionally apply `InitializeTenancyByDomainOrSubdomain` and reject access from central domains. This supports both bakery subdomains and domain records representing custom domains. `AddCustomDomain` normalizes a bakery's custom domain and rejects, with a validation error, anything that is not a valid hostname, is a central domain or a subdomain of the tenant domain, or already belongs to another bakery; replacing a domain releases the old record and Forge alias. A new or replaced domain starts unverified (`AddCustomDomain` and `RemoveCustomDomain` clear `custom_domain_verified_at`). `VerifyCustomDomain` asks `CustomDomainService::verify()` for a `DomainCheck` (`Verified`, `VerifiedThroughProxy`, `DnsMissing` or `HttpsUnavailable`). Ownership is proven by the `HttpsProbe` contract (`HttpHttpsProbe`: `GET https://{domain}/.well-known/kneadit-domain-proof`, certificate checked, no redirects followed, 5 s timeout, constant-time comparison; faked in tests with `fakeDnsRecords()` and `fakeHttpsProbe()`). The proof is `CustomDomainProof`, an HMAC-SHA256 of the requested host keyed with `APP_KEY`, served by `DomainProofController` on any host with a `domains` row (outside the storefront-enabled check, so a paused storefront keeps answering; `Cache-Control: no-store, private`; 404 on central domains), so a proof for one host never verifies another. Two paths verify a domain: **direct** (DNS from the `DnsResolver` contract, `PhpDnsResolver` in production, equals the server IP and the proof passes; DNS right but no proof is `HttpsUnavailable`) and **proxied** (the A record is not the server IP, as with Cloudflare's proxy, but the proof still passes: `VerifiedThroughProxy`). A domain that is neither pointing here nor answering with the proof is `DnsMissing`. No Cloudflare API call or IP-range detection is involved. The timestamp is set when either path passes and cleared otherwise. The Settings → Custom Domain page runs it on load, on save and on "Verify domain", shows the DNS and HTTPS parts separately, and offers **Request SSL certificate** (Forge) when DNS is right but HTTPS is not; the daily `tenants:verify-custom-domains` command re-checks every bakery with a custom domain, clearing the timestamp (and logging the reason, `dns` or `https`) when a domain stops qualifying. In the central panel the bakery form shows the custom domain read-only (disabled, never saved from the form) with its verification status; platform admins change it from the **Set custom domain**, **Remove custom domain** and **Verify domain** and **Request SSL certificate** actions on the bakery's Edit page, which call `AddCustomDomain`, `RemoveCustomDomain` and `VerifyCustomDomain`, so the admin panel gets the same validation, `domains` row, Forge alias and verification reset.
 
@@ -60,7 +62,7 @@ The root URL is deliberately universal: the global middleware establishes centra
 `routes/tenant.php` is the tenant route composition entry point. Its outer group owns tenant initialization and central-domain protection before loading:
 
 - `routes/tenant/access.php` for PWA metadata, invitations, tenant impersonation consumption, driver links, campaign previews, and Stripe Connect.
-- `routes/tenant/admin.php` for authenticated tenant admin utilities such as invoices and product labels.
+- `routes/tenant/admin.php` for authenticated tenant admin utilities such as invoices, product labels and expense receipts.
 - `routes/tenant/storefront.php` for public bakery content and storefront commerce.
 - `routes/tenant/account.php` for customer account authentication, profile, orders, and email verification.
 - `routes/tenant/orders.php` for checkout, order access, payment callbacks, cart, capacity, and order-related AJAX endpoints.
@@ -114,7 +116,7 @@ See [Application refactoring roadmap](refactoring-roadmap.md) for the completed 
 - **Financial:** income, expenses, coupons, gift cards, refunds, reporting, tax export, Stripe, and PayPal.
 - **Operations and staff:** schedules, blocked dates, holidays, capacity, check-ins, staff invitations and roles, activity logs, and webhook delivery.
 - **Analytics:** page and product-impression records use a keyed, pseudonymous visitor identifier. Raw network/device identifiers are not persisted, recording failures are reported without breaking storefront responses, and scheduled tenant-wide retention bounds stored history.
-- **Storage:** intentionally public assets remain on the established `public` disk. Sensitive CSV imports use a dedicated private disk that is neither directly served nor shared across tenant roots; all configured disks fail loudly on storage errors.
+- **Storage:** intentionally public assets remain on the established `public` disk. Sensitive CSV imports and expense receipts use dedicated private disks that are neither directly served nor shared across tenant roots; receipts are shown through `admin.expenses.receipt` (`ShowExpenseReceiptController`, `can:view,expense`, so Manager and above), which falls back to the public disk for receipts uploaded before the private disk existed; all configured disks fail loudly on storage errors.
 
 ## Order lifecycle
 
