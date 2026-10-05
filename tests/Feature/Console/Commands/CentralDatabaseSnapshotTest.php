@@ -32,15 +32,14 @@ beforeEach(function () {
 
     setUpCentralOnlyTest();
 
-    test()->otherProcess = new PDO('sqlite:'.test()->walDatabasePath);
-    test()->otherProcess->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    test()->otherProcess->exec('PRAGMA busy_timeout = 5000');
+    // A second connection to the same file, with the same settings, standing in for the other process.
+    config(['database.connections.wal_other' => config('database.connections.sqlite')]);
 
     Date::setTestNow('2026-10-05 09:30');
 });
 
 afterEach(function () {
-    test()->otherProcess = null;
+    DB::purge('wal_other');
     DB::purge('sqlite');
     DB::purge('central');
 
@@ -54,7 +53,12 @@ afterEach(function () {
 /** Commits a write from a second connection, the way a scheduled task in another process would. */
 function commitFromAnotherProcess(): void
 {
-    test()->otherProcess->exec("INSERT INTO platform_settings (key, value, created_at, updated_at) VALUES ('probe-".Str::random(6)."', '1', '2026-10-05 09:30:00', '2026-10-05 09:30:00')");
+    DB::connection('wal_other')->table('platform_settings')->insert([
+        'key' => 'probe-'.Str::random(6),
+        'value' => '1',
+        'created_at' => '2026-10-05 09:30:00',
+        'updated_at' => '2026-10-05 09:30:00',
+    ]);
 }
 
 test('the test database is a WAL file', function () {
