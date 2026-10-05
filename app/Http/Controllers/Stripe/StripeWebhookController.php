@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Stripe;
 use App\Services\Stripe\StripeWebhookEventHandler;
 use App\Services\Stripe\StripeWebhookIdempotency;
 use App\Services\Stripe\StripeWebhookPayloadParser;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,24 +16,6 @@ class StripeWebhookController extends WebhookController
         private readonly StripeWebhookIdempotency $idempotency,
     ) {
         parent::__construct();
-    }
-
-    /**
-     * Cashier only verifies signatures when a secret is configured, so refuse
-     * to process anything without one outside local development and tests.
-     */
-    #[\Override]
-    public function handleWebhook(Request $request): ?Response
-    {
-        $secret = Config::get('cashier.webhook.secret');
-
-        if ((! is_string($secret) || $secret === '') && ! app()->environment(['local', 'testing'])) {
-            Log::error('STRIPE_WEBHOOK_SECRET not configured');
-
-            return response('Webhook secret not configured', 500);
-        }
-
-        return parent::handleWebhook($request);
     }
 
     /** @param array<string, mixed> $payload */
