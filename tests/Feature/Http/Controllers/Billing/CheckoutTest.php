@@ -130,6 +130,29 @@ test('checkout ends the Stripe trial when the bakery trial ends', function () {
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
 
+test('checkout passes a bakery trial ending within 48 hours on unchanged because Cashier lifts it to the Stripe minimum', function () {
+    Date::setTestNow('2026-10-05 09:00');
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
+
+    $user = User::factory()->owner()->create();
+    Tenant::factory()->create(['user_id' => $user->id, 'trial_ends_at' => now()->addHours(30)]);
+
+    $builder = Double::for(SubscriptionBuilder::class);
+    $builder->expects('trialUntil')
+        ->with(Argument::satisfies(fn (mixed $date): bool => $date instanceof CarbonInterface
+            && $date->toDateTimeString() === '2026-10-06 15:00:00'))
+        ->returns($builder);
+    $builder->expects('allowPromotionCodes')->returns($builder);
+    $builder->expects('checkout')->returns(Double::for(Checkout::class));
+
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
+
+    app(CheckoutController::class)($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBe(['price_starter_test']);
+});
+
 test('checkout gives no Stripe trial once the bakery trial has ended', function () {
     Date::setTestNow('2026-10-05 09:00');
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
