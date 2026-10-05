@@ -12,7 +12,8 @@ final readonly class LoyaltyBalance
         public int $earned,
         public int $redeemed,
         public int $adjusted,
+        public int $reversed = 0,
     ) {
-        $this->total = $this->earned + $this->adjusted - $this->redeemed;
+        $this->total = $this->earned + $this->adjusted - $this->redeemed - $this->reversed;
     }
 }

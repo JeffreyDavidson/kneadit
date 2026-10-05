@@ -80,3 +80,48 @@ describe('a customer who has already ordered', function () {
             ->and($cart->fresh()->converted_at)->toBeNull();
     });
 });
+
+describe('a cart that has been sitting for a while', function () {
+    beforeEach(function () {
+        runCommandsAsOneTenant();
+        Mail::fake();
+        Date::setTestNow('2026-10-15 12:00');
+        settings([
+            'abandoned_cart_recovery_enabled' => '1',
+            'abandoned_cart_recovery_hours' => '24',
+            'abandoned_cart_recovery_coupon_dollars' => '0',
+        ]);
+        Customer::factory()->create(['email' => 'shopper@example.com']);
+    });
+
+    test('is not emailed when its last activity was more than a week ago', function () {
+        $cart = Cart::factory()->withEmail('shopper@example.com')->create(['last_activity_at' => '2026-10-05 12:00']);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertNotQueued(AbandonedCartRecoveryMail::class);
+        expect($cart->fresh()->recovery_sent_at)->toBeNull();
+    });
+
+    test('is emailed when its last activity was two days ago', function () {
+        $cart = Cart::factory()->withEmail('shopper@example.com')->create(['last_activity_at' => '2026-10-13 12:00']);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertQueued(AbandonedCartRecoveryMail::class, fn (AbandonedCartRecoveryMail $mail): bool => $mail->hasTo('shopper@example.com'));
+    });
+
+    test('is not emailed once it has expired', function () {
+        $cart = Cart::factory()->withEmail('shopper@example.com')->create([
+            'last_activity_at' => '2026-10-13 12:00',
+            'expires_at' => '2026-10-14 12:00',
+        ]);
+        CartItem::factory()->for($cart)->create();
+
+        artisan('carts:send-abandonment-emails')->assertSuccessful();
+
+        Mail::assertNotQueued(AbandonedCartRecoveryMail::class);
+    });
+});

@@ -184,6 +184,7 @@ class LoyaltyPageViewModel
             LoyaltyPointType::Earned => 'text-green-600',
             LoyaltyPointType::Redeemed => 'text-red-600',
             LoyaltyPointType::Adjusted => 'text-yellow-600',
+            LoyaltyPointType::Reversed => 'text-red-600',
         };
     }
 }

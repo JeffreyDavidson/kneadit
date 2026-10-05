@@ -33,7 +33,7 @@ class LoyaltyPointFactory extends Factory
      */
     public function earned(int $points = 100): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'type' => LoyaltyPointType::Earned,
             'points' => $points,
         ]);
@@ -44,7 +44,7 @@ class LoyaltyPointFactory extends Factory
      */
     public function redeemed(int $points = 100): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'type' => LoyaltyPointType::Redeemed,
             'points' => $points,
         ]);
@@ -55,8 +55,19 @@ class LoyaltyPointFactory extends Factory
      */
     public function adjusted(int $points = 50): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'type' => LoyaltyPointType::Adjusted,
+            'points' => $points,
+        ]);
+    }
+
+    /**
+     * Points were taken back after an order was refunded.
+     */
+    public function reversed(int $points = 100): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'type' => LoyaltyPointType::Reversed,
             'points' => $points,
         ]);
     }

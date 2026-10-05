@@ -35,6 +35,17 @@ test('subtracts redeemed points from balance', function () {
         ->and((int) $result->first()->total_earned)->toBe(200);
 });
 
+test('subtracts reversed points from balance', function () {
+    $customer = Customer::factory()->create();
+    LoyaltyPoint::factory()->recycle($customer)->earned(200)->create();
+    LoyaltyPoint::factory()->recycle($customer)->reversed(80)->create();
+
+    $result = TopLoyaltyCustomersQuery::get();
+
+    expect((int) $result->first()->balance)->toBe(120)
+        ->and((int) $result->first()->total_earned)->toBe(200);
+});
+
 test('includes adjustments in the balance and ranks by it', function () {
     $adjusted = Customer::factory()->create();
     LoyaltyPoint::factory()->recycle($adjusted)->earned(500)->create();

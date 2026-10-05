@@ -1,11 +1,15 @@
 <?php
 
 use App\Actions\Orders\RefundStripePayment;
+use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Orders\PaymentStatus;
 use App\Exceptions\Stripe\StripeRefundFailedException;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Loyalty\CustomerLoyalty;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
@@ -106,4 +110,40 @@ test('refunds connected payments through the tenant Stripe account', function ()
     $refund = resolve(RefundStripePayment::class)($order);
 
     expect($refund?->stripe_refund_id)->toBe('re_test_connect');
+});
+
+function fakeStripeRefundSucceeding(): void
+{
+    $refundService = Double::for(RefundService::class);
+    $refundService->allows('create')->returns((object) ['id' => 're_test_points']);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+}
+
+test('a full refund takes back the points the order earned, once', function () {
+    fakeStripeRefundSucceeding();
+    $customer = Customer::factory()->create();
+    LoyaltyPoint::factory()->for($customer)->earned(40)->create(['order_id' => null]);
+    $order = Order::factory()->for($customer)->paid()->create(['stripe_payment_intent_id' => 'pi_test_points']);
+    LoyaltyPoint::factory()->for($customer)->earned(250)->create(['order_id' => $order->id]);
+
+    resolve(RefundStripePayment::class)($order);
+    resolve(RefundStripePayment::class)($order->fresh());
+
+    $reversals = LoyaltyPoint::query()->forOrder($order)->where('type', LoyaltyPointType::Reversed)->get();
+    expect($reversals)->toHaveCount(1)
+        ->and($reversals->first()->points)->toBe(250)
+        ->and(resolve(CustomerLoyalty::class)->balance($customer)->total)->toBe(40);
+});
+
+test('a failed Stripe refund leaves the order points alone', function () {
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')->throws(InvalidRequestException::factory('Nope.', 400, null, null));
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+    $customer = Customer::factory()->create();
+    $order = Order::factory()->for($customer)->paid()->create(['stripe_payment_intent_id' => 'pi_test_failed']);
+    LoyaltyPoint::factory()->for($customer)->earned(250)->create(['order_id' => $order->id]);
+
+    expect(fn () => resolve(RefundStripePayment::class)($order))->toThrow(StripeRefundFailedException::class)
+        ->and(resolve(CustomerLoyalty::class)->balance($customer)->total)->toBe(250);
 });

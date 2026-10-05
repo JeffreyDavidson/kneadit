@@ -6,6 +6,7 @@ use App\Actions\Orders\MarkOrderPaid;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use App\Services\Loyalty\LoyaltyLedger;
 use App\Services\PayPal\PaymentVerifier;
 use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
@@ -82,6 +83,7 @@ class CheckPayPalPaymentsCommand extends Command
                 }),
                 'REFUNDED' => tap($order, function (Order $o): void {
                     $o->update(['payment_status' => PaymentStatus::Refunded]);
+                    resolve(LoyaltyLedger::class)->reverseOrder($o);
                     $this->warn("  ⚠ #{$o->order_number} refunded");
                 }),
                 default => null,
