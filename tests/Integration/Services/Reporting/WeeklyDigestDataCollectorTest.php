@@ -77,9 +77,9 @@ test('the digest weeks follow the bakery-local clock, not UTC', function () {
         orders: makeOrderSettings(['timezone' => 'Asia/Tokyo']),
     ));
     Date::setTestNow('2026-10-04 23:00');
-    Order::factory()->create(['total' => 10.00, 'created_at' => '2026-09-30 03:00:00']);
-    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-09-23 03:00:00']);
-    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-10-04 20:00:00']);
+    Order::factory()->create(['total' => 10.00, 'created_at' => '2026-09-30 03:00:00', 'delivery_date' => null]);
+    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-09-23 03:00:00', 'delivery_date' => null]);
+    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-10-04 20:00:00', 'delivery_date' => null]);
     Customer::factory()->create(['created_at' => '2026-09-29 03:00:00']);
     Customer::factory()->create(['created_at' => '2026-10-04 20:00:00']);
     Order::factory()->create(['delivery_date' => '2026-10-06']);
