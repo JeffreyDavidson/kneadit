@@ -10,6 +10,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard\Step;
@@ -52,7 +53,11 @@ final class PaymentsStep extends OnboardingStep
             ->icon(Heroicon::OutlinedCreditCard)
             ->description('How you get paid')
             ->schema([
+                Text::make('Only the bakery owner can set up payments. You can finish onboarding now and the owner can choose payment methods later in Settings.')
+                    ->visible(fn (): bool => ! Gate::allows('manage-payments')),
+
                 Section::make('Payment Collection')
+                    ->visible(fn (): bool => Gate::allows('manage-payments'))
                     ->description('Choose how you want to collect payments from customers.')
                     ->schema([
                         CheckboxList::make('payments.payment_methods')
@@ -77,7 +82,7 @@ final class PaymentsStep extends OnboardingStep
                             ->schema([
                                 View::make('filament.pages.shared.stripe-connect-status'),
                             ])
-                            ->visible(fn (Get $get): bool => Gate::allows('manage-payments') && in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
+                            ->visible(fn (Get $get): bool => in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
 
                         Section::make('PayPal Connection')
                             ->description('Connect your PayPal Business account.')
@@ -99,7 +104,7 @@ final class PaymentsStep extends OnboardingStep
                                     ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
                                     ->default(true),
                             ])
-                            ->visible(fn (Get $get): bool => Gate::allows('manage-payments') && in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
+                            ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                     ])
                     ->footerActions([])
                     ->footerActionsAlignment(null),
@@ -109,6 +114,12 @@ final class PaymentsStep extends OnboardingStep
 
     public static function save(array $data): void
     {
+        // Payment methods and credentials are owner-only; for anyone else the
+        // step saves nothing, whatever the client sends.
+        if (! Gate::allows('manage-payments')) {
+            return;
+        }
+
         $methods = self::normalizePaymentMethods($data['payment_methods'] ?? []);
         $methods = $methods !== [] ? $methods : [PaymentMethod::Cash->value];
 
@@ -117,9 +128,8 @@ final class PaymentsStep extends OnboardingStep
             'payment_method' => $methods[0],
         ];
 
-        // Only the owner may change the PayPal credentials, and the secret is
-        // only replaced when a new one is entered.
-        if (Gate::allows('manage-payments') && in_array(PaymentMethod::PayPal->value, $methods, true)) {
+        // The PayPal secret is only replaced when a new one is entered.
+        if (in_array(PaymentMethod::PayPal->value, $methods, true)) {
             $settings['paypal_client_id'] = $data['paypal_client_id'];
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
 

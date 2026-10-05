@@ -618,6 +618,7 @@ describe('payment credentials are owner-only and write-only', function () {
         test()->actingAs(User::factory()->manager()->create());
 
         livewire(ManageSettings::class)
+            ->assertDontSee('Accepted Payment Methods')
             ->assertDontSee('PayPal Client ID')
             ->assertDontSee('PayPal Client Secret')
             ->assertDontSee('PayPal Sandbox Mode')
@@ -633,6 +634,32 @@ describe('payment credentials are owner-only and write-only', function () {
 
         livewire(ManageSettings::class)
             ->assertDontSee('Connect with Stripe');
+    });
+
+    test('an owner with Stripe and PayPal ticked renders the page without the stored secret anywhere', function () {
+        settings(['payment_methods' => json_encode([PaymentMethod::Stripe->value, PaymentMethod::PayPal->value])]);
+
+        $component = livewire(ManageSettings::class)
+            ->assertSuccessful()
+            ->assertSee('Stripe Connected')
+            ->assertSee('PayPal Client Secret');
+
+        expect($component->html())->not->toContain('stored-paypal-secret')
+            ->and(json_encode($component->snapshot))->not->toContain('stored-paypal-secret');
+    });
+
+    test('a manager with Stripe and PayPal ticked gets no payment section and no secret', function () {
+        settings(['payment_methods' => json_encode([PaymentMethod::Stripe->value, PaymentMethod::PayPal->value])]);
+        test()->actingAs(User::factory()->manager()->create());
+
+        $component = livewire(ManageSettings::class)
+            ->assertSuccessful()
+            ->assertDontSee('Accepted Payment Methods')
+            ->assertDontSee('Stripe Connected')
+            ->assertDontSee('PayPal Client Secret');
+
+        expect($component->html())->not->toContain('stored-paypal-secret')
+            ->and(json_encode($component->snapshot))->not->toContain('stored-paypal-secret');
     });
 
     test('an owner sees the client id but never receives the stored secret', function () {
@@ -652,13 +679,25 @@ describe('payment credentials are owner-only and write-only', function () {
             ->set('paypal_client_id', 'attacker-client-id')
             ->set('paypal_client_secret', 'attacker-secret')
             ->set('paypal_sandbox', false)
+            ->set('paypal_invoice_terms', 'Attacker terms')
+            ->set('payment_methods', [PaymentMethod::Cash->value])
             ->call('save');
 
         expect(settings('store_name'))->toBe('Renamed Bakery')
+            ->and(settings('payment_methods'))->toBe('["paypal"]')
+            ->and(settings('paypal_invoice_terms'))->not->toBe('Attacker terms')
             ->and(settings('paypal_client_id'))->toBe('stored-client-id')
             ->and(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
             ->and(settings('paypal_sandbox'))->toBe('1')
             ->and(settings('stripe_connect_id'))->toBe('acct_stored');
+    });
+
+    test('an owner can change the accepted payment methods', function () {
+        livewire(ManageSettings::class)
+            ->set('payment_methods', [PaymentMethod::Cash->value, PaymentMethod::Stripe->value])
+            ->call('save');
+
+        expect(settings('payment_methods'))->toBe('["cash","stripe"]');
     });
 
     test('an owner entering a new secret saves it encrypted', function () {

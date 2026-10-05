@@ -471,7 +471,7 @@ describe('payment credentials are owner-only and write-only', function () {
         'manager' => ['manager', ''],
     ]);
 
-    test('a manager saving the step changes the methods but never the credentials', function () {
+    test('a manager saving the step changes nothing', function () {
         test()->actingAs(User::factory()->manager()->create());
 
         PaymentsStep::save([
@@ -481,7 +481,7 @@ describe('payment credentials are owner-only and write-only', function () {
             'paypal_sandbox' => false,
         ]);
 
-        expect(settings('payment_methods'))->toBe('["paypal","stripe"]')
+        expect(settings('payment_methods'))->toBe('["paypal","cash"]')
             ->and(settings('paypal_client_id'))->toBe('stored-client-id')
             ->and(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
             ->and(settings('paypal_sandbox'))->toBe('1');

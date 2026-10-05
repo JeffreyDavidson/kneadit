@@ -18,6 +18,7 @@ class PaymentMethodsSection
     public static function make(): Section
     {
         return Section::make('Payment Methods')
+            ->visible(fn (): bool => Gate::allows('manage-payments'))
             ->description('Configure how you collect payments from customers')
             ->schema([
                 CheckboxList::make('payment_methods')
@@ -32,7 +33,7 @@ class PaymentMethodsSection
                     ->columnSpanFull(),
 
                 View::make('filament.pages.shared.stripe-connect-status')
-                    ->visible(fn (Get $get): bool => Gate::allows('manage-payments') && in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
 
                 Grid::make(2)
                     ->schema([
@@ -44,7 +45,7 @@ class PaymentMethodsSection
                             ->password()
                             ->placeholder(fn (): string => filled(settings('paypal_client_secret')) ? 'Set — enter a new value to replace it' : 'Your PayPal Client Secret'),
                     ])
-                    ->visible(fn (Get $get): bool => Gate::allows('manage-payments') && in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
 
                 Textarea::make('paypal_invoice_terms')
                     ->label('PayPal Invoice Terms')
@@ -57,7 +58,7 @@ class PaymentMethodsSection
                 Toggle::make('paypal_sandbox')
                     ->label('PayPal Sandbox Mode')
                     ->helperText('Enable to test payments without real money')
-                    ->visible(fn (Get $get): bool => Gate::allows('manage-payments') && in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
+                    ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
             ]);
     }
 

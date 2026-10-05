@@ -231,7 +231,7 @@ class ManageSettings extends Page
             $state['webhook_secret'] = '';
         }
 
-        // Payment credentials are owner-only, and the PayPal secret is
+        // Payment settings are owner-only, and the PayPal secret is
         // write-only: it is never loaded, so the field starts empty and a new
         // value is only written when one is entered.
         if (! $this->canManagePayments()) {
@@ -330,6 +330,14 @@ class ManageSettings extends Page
         return Gate::allows('manage-payments');
     }
 
+    /** @return array<int, string> */
+    private function storedPaymentMethods(): array
+    {
+        $methods = SettingValue::stringList(settings('payment_methods'));
+
+        return $methods === [] ? [PaymentMethod::Cash->value] : $methods;
+    }
+
     /**
      * @param  array<string, mixed>  $state
      */
@@ -391,12 +399,13 @@ class ManageSettings extends Page
             'email_product_available_enabled' => $this->email_product_available_enabled,
             'allergy_disclaimer' => $this->allergy_disclaimer,
             'revenue_cap' => $this->revenue_cap,
-            'payment_methods' => $this->payment_methods,
-            // Users who cannot manage payments keep the stored credentials, and the
-            // secret is only replaced when the owner enters a new one.
+            // Users who cannot manage payments keep the stored methods, credentials
+            // and invoice terms, and the secret is only replaced when the owner
+            // enters a new one.
+            'payment_methods' => $this->canManagePayments() ? $this->payment_methods : $this->storedPaymentMethods(),
             'paypal_client_id' => $this->canManagePayments() ? $this->paypal_client_id : settings('paypal_client_id', ''),
             'paypal_client_secret' => $this->canManagePayments() && filled($this->paypal_client_secret) ? $this->paypal_client_secret : settings('paypal_client_secret', ''),
-            'paypal_invoice_terms' => $this->paypal_invoice_terms,
+            'paypal_invoice_terms' => $this->canManagePayments() ? $this->paypal_invoice_terms : settings('paypal_invoice_terms', 'Payment due within 30 days.'),
             'paypal_sandbox' => $this->canManagePayments() ? $this->paypal_sandbox : SettingValue::bool(settings('paypal_sandbox'), true),
             // Users who cannot manage webhooks keep whatever is stored, whatever
             // the (client-controlled) properties say.
