@@ -11,12 +11,14 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
+use Illuminate\Support\Facades\Gate;
 
 class PaymentMethodsSection
 {
     public static function make(): Section
     {
         return Section::make('Payment Methods')
+            ->visible(fn (): bool => Gate::allows('manage-payments'))
             ->description('Configure how you collect payments from customers')
             ->schema([
                 CheckboxList::make('payment_methods')
@@ -40,7 +42,8 @@ class PaymentMethodsSection
                             ->placeholder('Your PayPal Client ID'),
                         TextInput::make('paypal_client_secret')
                             ->label('PayPal Client Secret')
-                            ->password(),
+                            ->password()
+                            ->placeholder(fn (): string => filled(settings('paypal_client_secret')) ? 'Set — enter a new value to replace it' : 'Your PayPal Client Secret'),
                     ])
                     ->visible(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
 

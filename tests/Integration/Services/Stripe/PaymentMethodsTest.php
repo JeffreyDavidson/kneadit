@@ -1,9 +1,15 @@
 <?php
 
 use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
+use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 
-beforeEach(fn () => setUpTenantTest());
+beforeEach(function () {
+    setUpTenantTest();
+
+    // Payment methods are owner-only.
+    test()->actingAs(User::factory()->owner()->create());
+});
 
 test('payment step stores payment methods as json array', function () {
     PaymentsStep::save([

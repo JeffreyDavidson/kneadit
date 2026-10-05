@@ -26,7 +26,6 @@ use App\Models\Inventory\Supplier;
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Operations\Holiday;
-use App\Models\Platform\Setting;
 use App\Models\Staff\User;
 use App\Policies\Content\BlogPostPolicy;
 use App\Policies\Content\CustomerPhotoPolicy;
@@ -52,7 +51,6 @@ use App\Policies\Inventory\SupplierPolicy;
 use App\Policies\Operations\BlockedDatePolicy;
 use App\Policies\Operations\CapacityLimitPolicy;
 use App\Policies\Operations\HolidayPolicy;
-use App\Policies\Operations\SettingPolicy;
 use App\Policies\Platform\EmailCampaignPolicy;
 
 function rolePolicyResult(string $policyClass, string $ability, User $user, ?object $model = null): bool
@@ -79,7 +77,6 @@ dataset('managerRolePolicyGroups', [
         [BlockedDatePolicy::class, BlockedDate::class],
         [CapacityLimitPolicy::class, CapacityLimit::class],
         [HolidayPolicy::class, Holiday::class],
-        [SettingPolicy::class, Setting::class],
     ]],
     'Customer and content policies' => [[
         [CateringInquiryPolicy::class, CateringInquiry::class],
