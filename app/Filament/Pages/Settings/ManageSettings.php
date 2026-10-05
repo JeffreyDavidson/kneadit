@@ -15,7 +15,6 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 
 class ManageSettings extends Page
@@ -300,9 +299,9 @@ class ManageSettings extends Page
     public function resetToDefaults(TenantSettingsFormMapper $formMapper): void
     {
         $defaults = TenantSettingsDefaults::all();
-        $this->applySettings(Arr::except(
+        $this->applySettings(array_diff_key(
             $formMapper->fromSettings($defaults, $defaults),
-            TenantSettingsDefaults::integrationKeys(),
+            array_flip(TenantSettingsDefaults::integrationKeys()),
         ));
 
         Notification::make()

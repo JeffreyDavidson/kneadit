@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Platform;
 
 use App\Models\Platform\BillingHandoffToken;
@@ -16,8 +18,8 @@ class PruneExpiredTokensCommand extends Command
     {
         $cutoff = now()->subDays((int) $this->option('days'));
 
-        $impersonation = ImpersonationToken::query()->where('expires_at', '<', $cutoff)->delete();
-        $billingHandoff = BillingHandoffToken::query()->where('expires_at', '<', $cutoff)->delete();
+        $impersonation = ImpersonationToken::query()->toBase()->where('expires_at', '<', $cutoff)->delete();
+        $billingHandoff = BillingHandoffToken::query()->toBase()->where('expires_at', '<', $cutoff)->delete();
 
         $this->info("Pruned {$impersonation} impersonation and {$billingHandoff} billing handoff tokens (cutoff: {$cutoff->toIso8601String()})");
 
