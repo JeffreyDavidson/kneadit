@@ -5,6 +5,7 @@ use App\Enums\Financial\GiftCardTransactionType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
@@ -12,6 +13,7 @@ use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Tests\Support\Stripe\FakeRefundStripeClient;
 
 pest()->use(RefreshDatabase::class);
@@ -93,6 +95,21 @@ test('cancelling the same paid order twice from a stale copy refunds it once', f
     expect(fn () => resolve(CancelOrder::class)($stale))->toThrow(InvalidOrderTransitionException::class)
         ->and(Refund::query()->count())->toBe(1);
     $stripe->verify();
+});
+
+test('cancelling an order whose refund another request is making is refused without a Stripe call', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    $stripe = FakeRefundStripeClient::untouched();
+    $order = Order::factory()->confirmed()->paid()->create([
+        'stripe_payment_intent_id' => 'pi_cancel_claimed',
+        'refund_claimed_at' => '2026-10-05 11:58:00',
+    ]);
+
+    expect(fn () => resolve(CancelOrder::class)($order))->toThrow(OrderRefundInProgressException::class)
+        ->and($order->refresh())
+        ->status->toBe(OrderStatus::Confirmed)
+        ->payment_status->toBe(PaymentStatus::Paid);
+    $stripe->unused();
 });
 
 test('cancelling credits a gift card with what was redeemed even if the order amount was tampered with', function () {

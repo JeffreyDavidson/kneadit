@@ -9,6 +9,7 @@ use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
@@ -69,6 +70,10 @@ class CancelOrderAction extends Action
                     ->body($exception->getPrevious()?->getMessage())
                     ->danger()
                     ->send();
+
+                return;
+            } catch (OrderRefundInProgressException $exception) {
+                Notification::make()->title($exception->getMessage())->warning()->send();
 
                 return;
             } catch (InvalidOrderTransitionException $exception) {

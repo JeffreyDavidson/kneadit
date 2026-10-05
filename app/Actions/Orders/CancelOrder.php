@@ -4,11 +4,11 @@ namespace App\Actions\Orders;
 
 use App\Enums\Orders\OrderStatus;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
-use Illuminate\Support\Facades\DB;
 
 /**
  * The one way staff cancel an order. A paid Stripe order is refunded first and
@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @throws InvalidOrderTransitionException when the order's status can't move to Cancelled
  * @throws StripeRefundFailedException when Stripe refuses the refund
+ * @throws OrderRefundInProgressException when another request is already refunding the order
  */
 class CancelOrder
 {
@@ -31,23 +32,22 @@ class CancelOrder
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund
     {
-        // Re-read under a lock and check on the fresh copy, so a second request
-        // holding a stale one (a double tap, or two tabs) is refused before it
-        // reaches Stripe. The status change below re-checks under its own lock.
-        $refund = DB::transaction(function () use ($order, $initiatedBy, $reason): ?Refund {
-            $locked = Order::query()->lockForUpdate()->findOrFail($order->id);
-            $order->setRawAttributes($locked->getAttributes(), true);
+        // Check on a fresh copy so a request holding a stale one (a double tap,
+        // or two tabs) is refused before it reaches Stripe. No transaction
+        // spans the refund, which calls Stripe: RefundStripePayment claims the
+        // refund atomically instead, and the status change re-checks under its
+        // own short lock.
+        $order->refresh();
 
-            throw_unless(
-                in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($order), true),
-                InvalidOrderTransitionException::class,
-                $order,
-                $order->status,
-                OrderStatus::Cancelled,
-            );
+        throw_unless(
+            in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($order), true),
+            InvalidOrderTransitionException::class,
+            $order,
+            $order->status,
+            OrderStatus::Cancelled,
+        );
 
-            return ($this->refundStripePayment)($order, $initiatedBy, $reason);
-        });
+        $refund = ($this->refundStripePayment)($order, $initiatedBy, $reason);
 
         ($this->transitionOrderStatus)($order, OrderStatus::Cancelled);
 
