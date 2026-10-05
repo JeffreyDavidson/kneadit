@@ -299,7 +299,10 @@ class ManageSettings extends Page
     public function resetToDefaults(TenantSettingsFormMapper $formMapper): void
     {
         $defaults = TenantSettingsDefaults::all();
-        $this->applySettings($formMapper->fromSettings($defaults, $defaults));
+        $this->applySettings(array_diff_key(
+            $formMapper->fromSettings($defaults, $defaults),
+            array_flip(TenantSettingsDefaults::integrationKeys()),
+        ));
 
         Notification::make()
             ->title('Settings reset to defaults')

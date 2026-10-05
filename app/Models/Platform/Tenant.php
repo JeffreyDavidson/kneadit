@@ -35,6 +35,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property bool $storefront_enabled
  * @property Carbon|null $paused_at
  * @property-read bool $is_paused
+ * @property-read bool $storefront_set_up
  * @property string|null $external_website
  * @property bool $is_active
  * @property bool $is_demo
@@ -153,6 +154,19 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return Attribute::make(
             get: fn (): bool => $this->paused_at !== null,
+        );
+    }
+
+    /**
+     * Whether the storefront onboarding step is done: the bakery either uses a
+     * KneadIt storefront or has said it runs its own website.
+     *
+     * @return Attribute<bool, never>
+     */
+    protected function storefrontSetUp(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): bool => $this->storefront_enabled || filled($this->external_website),
         );
     }
 

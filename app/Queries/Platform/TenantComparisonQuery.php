@@ -50,7 +50,7 @@ class TenantComparisonQuery
             $setupChecks = [
                 ! empty($tenant->store_name),
                 ! empty($tenant->store_logo),
-                (bool) $tenant->storefront_enabled,
+                $tenant->storefront_set_up,
                 ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
                 $metrics->totalProducts > 0,
                 $metrics->totalCategories > 0,

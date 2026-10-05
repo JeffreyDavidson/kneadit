@@ -112,3 +112,28 @@ test('maps tenant health metrics into scored rows and summary statistics', funct
         'total' => 2,
     ]);
 });
+
+test('the storefront setup step counts for a bakery that uses its own website', function (bool $storefrontEnabled, ?string $externalWebsite, int $expectedSetupScore) {
+    $tenant = Tenant::factory()->make([
+        'store_name' => null,
+        'store_logo' => null,
+        'storefront_enabled' => $storefrontEnabled,
+        'external_website' => $externalWebsite,
+        'brand_color_primary' => BrandingSettings::DEFAULT_BRAND_COLOR,
+    ]);
+    $metrics = new TenantHealthMetrics(
+        tenant: $tenant,
+        lastUserActivityAt: null,
+        totalOrders: 0,
+        totalProducts: 0,
+        totalCategories: 0,
+    );
+
+    $score = resolve(TenantHealthService::class)->calculateHealthScore($tenant, $metrics);
+
+    expect($score->setupScore)->toBe($expectedSetupScore);
+})->with([
+    'KneadIt storefront' => [true, null, 4],
+    'own website' => [false, 'https://sunrise.example', 4],
+    'neither' => [false, null, 0],
+]);

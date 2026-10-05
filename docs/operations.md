@@ -38,7 +38,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
 | Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
-| Every 30 minutes | `health:check` | Application health checks. A failing check mails the platform address in-process (not queued) at most once every 6 hours, and a check that passes again sends one recovered mail |
+| Every 30 minutes | `health:check` | Application health checks. A failing check mails the platform address in-process (not queued, and `HealthAlertMail` reads no tenant settings so it still renders when the database is down) at most once every 6 hours, and a check that passes again sends one recovered mail |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
 | Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders; a cart is skipped (and marked converted) when an order for its email was placed after the cart was last touched |
@@ -49,6 +49,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
 | Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
+| Daily 04:30 | `platform:prune-expired-tokens` | Delete impersonation and billing handoff tokens that expired more than 7 days ago, consumed or not |
 | Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS and HTTPS (`https://{domain}/up` must answer 2xx with a valid certificate) for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
@@ -59,7 +60,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 
 The four tenant-facing sends above (`birthday:send-emails`, `orders:send-repeat-reminders`, `digest:weekly`, `inventory:send-low-stock-alert`) are scheduled hourly but each tenant is only processed when its own clock matches the send time: `App\Services\Scheduling\LocalSendWindow` reads the tenant's `timezone` order setting (UTC until set) and compares the local hour, and for the digest the local weekday. A bakery on a half-hour offset such as India is processed at the half-past local time, since the scheduler fires on the hour. Platform-level commands (backups, churn, trial checks, prunes) stay on fixed UTC times.
 
-Each command also records a per-tenant, per-bakery-local-date marker (`local-send:<command>:<Y-m-d>` in the tenant's `scheduled_notification_runs` table) before sending, so a retry, a manual run or a clock change cannot send twice on the same local day. The marker is released if the tenant's send throws, so the next run can retry. Underneath, the existing per-customer, per-user and per-tenant claims (`engagement:…`, `weekly-digest:…`, `low-stock:…`) still dedupe each recipient.
+Each command also records a per-tenant, per-bakery-local-date marker (`local-send:<command>:<Y-m-d>` in the tenant's `scheduled_notification_runs` table) before sending, so a retry, a manual run or a clock change cannot send twice on the same local day. The marker is released if the tenant's send throws, so the next run can retry. Underneath, the existing per-customer, per-user and per-tenant claims (`engagement:…`, `weekly-digest:…`, `low-stock:…`) still dedupe each recipient. The `engagement:…` key ends in the bakery-local date (`BakeryClock::today()`), so it matches the send window.
 
 For support runs, pass `--force` (for example `php artisan birthday:send-emails --force`) to process every tenant now regardless of local time. `--force` skips the hour check and the local-day marker, but the per-recipient claims above still stop a recipient receiving the same message twice in a day.
 

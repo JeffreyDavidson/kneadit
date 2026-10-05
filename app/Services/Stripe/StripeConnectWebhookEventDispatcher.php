@@ -12,7 +12,7 @@ class StripeConnectWebhookEventDispatcher
         private readonly HandleConnectCheckoutCompleted $handleCheckoutCompleted,
     ) {}
 
-    public function dispatch(string $type, mixed $data): void
+    public function dispatch(string $type, mixed $data, ?string $account = null): void
     {
         if ($type === 'account.updated') {
             ($this->handleAccountUpdated)($data);
@@ -21,7 +21,7 @@ class StripeConnectWebhookEventDispatcher
         }
 
         if ($type === 'checkout.session.completed') {
-            ($this->handleCheckoutCompleted)($data);
+            ($this->handleCheckoutCompleted)($data, $account);
         }
     }
 }

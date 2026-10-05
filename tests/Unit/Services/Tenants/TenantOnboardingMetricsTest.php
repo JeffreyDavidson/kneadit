@@ -34,6 +34,8 @@ test('completed counts individual onboarding checks', function (array $overrides
 })->with([
     'store logo' => [['store_logo' => 'logo.png'], 1],
     'storefront enabled' => [['storefront_enabled' => true], 1],
+    'own website instead of a KneadIt storefront' => [['storefront_enabled' => false, 'external_website' => 'https://sunrise.example'], 1],
+    'no storefront and no own website' => [['storefront_enabled' => false, 'external_website' => null], 0],
     'custom brand color' => [['brand_color_primary' => '#ff0000'], 1],
     'default brand color' => [['brand_color_primary' => '#d4920c'], 0],
 ]);

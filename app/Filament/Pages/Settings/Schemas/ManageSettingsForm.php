@@ -52,7 +52,7 @@ class ManageSettingsForm
                     ->action('resetToDefaults')
                     ->requiresConfirmation()
                     ->modalHeading('Reset Settings')
-                    ->modalDescription('Are you sure you want to reset all settings to their default values?'),
+                    ->modalDescription('Are you sure you want to reset your settings to their default values? Webhook and PayPal connections are kept.'),
             ])
                 ->alignEnd()
                 ->columnSpanFull(),

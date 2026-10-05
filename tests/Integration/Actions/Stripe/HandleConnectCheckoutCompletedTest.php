@@ -11,12 +11,15 @@ use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
 
-beforeEach(fn () => setUpCentralTest());
+beforeEach(function () {
+    setUpCentralTest();
+    settings(['stripe_connect_id' => 'acct_connected']);
+});
 
 test('it does nothing when session has no id', function () {
     $session = ['id' => null, 'metadata' => []];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    resolve(HandleConnectCheckoutCompleted::class)($session, 'acct_connected');
 
     expect(true)->toBeTrue();
 });
@@ -33,7 +36,7 @@ test('it does nothing when tenant id is missing from metadata', function () {
         'metadata' => ['order_id' => 1],
     ];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    resolve(HandleConnectCheckoutCompleted::class)($session, 'acct_connected');
 });
 
 test('it does nothing when tenant is not found', function () {
@@ -51,7 +54,7 @@ test('it does nothing when tenant is not found', function () {
         ],
     ];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    resolve(HandleConnectCheckoutCompleted::class)($session, 'acct_connected');
 });
 
 test('it processes checkout session within tenant context', function () {
@@ -75,7 +78,7 @@ test('it processes checkout session within tenant context', function () {
         ],
     ];
 
-    resolve(HandleConnectCheckoutCompleted::class)($session);
+    resolve(HandleConnectCheckoutCompleted::class)($session, 'acct_connected');
 });
 
 test('it propagates exceptions during tenant context processing for webhook retry', function () {
@@ -134,7 +137,7 @@ test('it marks the order paid when the amount paid equals the order total', func
     runWebhookWithinTenant();
     $order = Order::factory()->unpaid()->create(['id' => 1, 'stripe_checkout_session_id' => 'cs_test_amount', 'total' => 50.00]);
 
-    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession(5000));
+    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession(5000), 'acct_connected');
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid)
         ->and($order->stripe_payment_intent_id)->toBe('pi_test_amount');
@@ -149,7 +152,7 @@ test('it leaves the order unpaid and notifies the baker when the amount paid dif
     $owner = User::factory()->owner()->create();
     $order = Order::factory()->unpaid()->create(['id' => 1, 'stripe_checkout_session_id' => 'cs_test_amount', 'total' => 50.00]);
 
-    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession($amountPaid));
+    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession($amountPaid), 'acct_connected');
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid)
         ->and($order->stripe_payment_intent_id)->toBe('pi_test_amount')
@@ -180,7 +183,7 @@ test('it records a catering deposit paid on a session that is not the latest one
     runWebhookWithinTenant();
     $inquiry = CateringInquiry::factory()->quoted()->create(['stripe_checkout_session_id' => 'cs_test_newer']);
 
-    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry), 'acct_connected');
 
     expect($inquiry->refresh()->deposit_paid_at)->not->toBeNull()
         ->and($inquiry->deposit_amount?->dollars())->toBe(250.00)
@@ -198,7 +201,7 @@ test('it does not record a catering deposit for an inquiry that no longer accept
     $owner = User::factory()->owner()->create();
     $inquiry = CateringInquiry::factory()->create(['status' => $status, 'stripe_checkout_session_id' => 'cs_test_older']);
 
-    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry), 'acct_connected');
 
     expect($inquiry->refresh()->deposit_paid_at)->toBeNull()
         ->and($inquiry->status)->toBe($status)
@@ -222,7 +225,7 @@ test('it leaves a recorded catering deposit unchanged when another session is pa
         'stripe_payment_intent_id' => 'pi_test_first',
     ]);
 
-    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry, 'cs_test_second', 'pi_test_second'));
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry, 'cs_test_second', 'pi_test_second'), 'acct_connected');
 
     expect($inquiry->refresh()->deposit_amount?->dollars())->toBe(100.00)
         ->and($inquiry->deposit_reference)->toBe('pi_test_first')
@@ -240,8 +243,40 @@ test('it does not alert the baker when the same catering payment is delivered ag
         'stripe_payment_intent_id' => 'pi_test_older',
     ]);
 
-    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry), 'acct_connected');
 
     expect($inquiry->refresh()->deposit_reference)->toBe('pi_test_older')
         ->and($owner->notifications()->count())->toBe(0);
+});
+
+test('it ignores an order payment sent for a different connected account', function (?string $account) {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context): bool => str_contains($message, 'does not match')
+            && $context['session_id'] === 'cs_test_amount');
+    runWebhookWithinTenant();
+    $order = Order::factory()->unpaid()->create(['id' => 1, 'stripe_checkout_session_id' => 'cs_test_amount', 'total' => 50.00]);
+
+    resolve(HandleConnectCheckoutCompleted::class)(connectCheckoutSession(5000), $account);
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid)
+        ->and($order->stripe_payment_intent_id)->toBeNull();
+})->with([
+    'another bakery account' => 'acct_other',
+    'no account on the event' => null,
+]);
+
+test('it ignores a catering deposit sent for a different connected account', function () {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message): bool => str_contains($message, 'does not match'));
+    runWebhookWithinTenant();
+    $inquiry = CateringInquiry::factory()->quoted()->create(['stripe_checkout_session_id' => 'cs_test_older']);
+
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry), 'acct_other');
+
+    expect($inquiry->refresh()->deposit_paid_at)->toBeNull()
+        ->and($inquiry->status)->toBe(CateringInquiryStatus::Quoted);
 });
