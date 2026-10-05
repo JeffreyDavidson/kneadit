@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 
 test('application filesystem disks fail loudly on storage errors', function (string $disk) {
     expect(Config::get("filesystems.disks.{$disk}.throw"))->toBeTrue();
-})->with(['local', 'imports', 'public', 's3']);
+})->with(['local', 'imports', 'receipts', 'public', 's3']);
 
 test('CSV imports use a private non-servable tenant-aware disk', function () {
     expect(Config::get('filesystems.disks.imports.root'))
@@ -18,6 +18,16 @@ test('CSV imports use a private non-servable tenant-aware disk', function () {
         ->toBe('%storage_path%/app/private/csv-imports/tenant%tenant%/')
         ->and(Config::array('tenancy.bootstrappers'))->toContain(TenantFilesystemBootstrapper::class)
         ->and(Config::get('tenancy.filesystem.suffix_storage_path'))->toBeFalse();
+});
+
+test('expense receipts use a private non-servable tenant-aware disk', function () {
+    expect(Config::get('filesystems.disks.receipts.root'))
+        ->toBe(storage_path('app/private/receipts'))
+        ->and(Config::get('filesystems.disks.receipts.visibility'))->toBe('private')
+        ->and(Config::get('filesystems.disks.receipts.serve'))->toBeFalse()
+        ->and(Config::array('tenancy.filesystem.disks'))->toContain('receipts')
+        ->and(Config::get('tenancy.filesystem.root_override.receipts'))
+        ->toBe('%storage_path%/app/private/receipts/tenant%tenant%/');
 });
 
 test('public storage link targets the configured public disk root', function () {

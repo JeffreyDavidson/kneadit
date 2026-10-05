@@ -57,6 +57,14 @@ return [
             'throw' => true,
         ],
 
+        'receipts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/receipts'),
+            'serve' => false,
+            'visibility' => 'private',
+            'throw' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => $publicStoragePath,

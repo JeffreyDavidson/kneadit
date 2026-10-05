@@ -8,6 +8,7 @@ use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Forms\Components\PercentageInput;
 use App\Filament\Support\AllowedFileTypes;
+use App\Models\Financial\Expense;
 use App\Services\Scheduling\BakeryClock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Symfony\Component\Mime\MimeTypes;
 
 class ExpenseForm
 {
@@ -49,7 +51,12 @@ class ExpenseForm
                             ->label('Receipt Image')
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
-                            ->directory('receipts')
+                            ->disk('receipts')
+                            ->visibility('private')
+                            // Receipts saved before the private disk existed are on the public disk,
+                            // so don't drop a path just because it isn't on this one.
+                            ->fetchFileInformation(false)
+                            ->getUploadedFileUsing(fn (string $file, ?Expense $record): ?array => self::receiptPreview($file, $record))
                             ->maxSize(5120) // 5MB
                             ->preventFilePathTampering(),
 
@@ -70,5 +77,25 @@ class ExpenseForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * Describes a stored receipt for the upload field, pointing it at the authorised
+     * receipt route because the private disk has no public URL.
+     *
+     * @return array{name: string, size: int, type: ?string, url: string}|null
+     */
+    private static function receiptPreview(string $file, ?Expense $record): ?array
+    {
+        if (! $record instanceof Expense) {
+            return null;
+        }
+
+        return [
+            'name' => basename($file),
+            'size' => 0,
+            'type' => MimeTypes::getDefault()->getMimeTypes(pathinfo($file, PATHINFO_EXTENSION))[0] ?? null,
+            'url' => route('admin.expenses.receipt', $record),
+        ];
     }
 }

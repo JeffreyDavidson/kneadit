@@ -6,6 +6,7 @@ use App\Filament\Central\Pages\Appearance;
 use App\Filament\Central\Pages\Dashboard;
 use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;
 use App\Filament\Shared\PanelThemes;
+use App\Http\Middleware\SecurityHeaders;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -104,6 +105,7 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Central/Widgets'), for: 'App\Filament\Central\Widgets')
             ->middleware([
+                SecurityHeaders::withoutCsp(),
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,

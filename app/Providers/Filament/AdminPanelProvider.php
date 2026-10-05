@@ -8,6 +8,7 @@ use App\Filament\Pages\Platform\Messages;
 use App\Filament\Shared\PanelThemes;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
+use App\Http\Middleware\SecurityHeaders;
 use App\Services\Settings\SettingsManager;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -131,6 +132,7 @@ class AdminPanelProvider extends PanelProvider
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([])
             ->middleware([
+                SecurityHeaders::withoutCsp(),
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 PreventAccessFromCentralDomains::class,

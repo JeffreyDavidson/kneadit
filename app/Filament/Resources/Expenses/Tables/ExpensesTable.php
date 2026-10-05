@@ -10,6 +10,7 @@ use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Tables\Columns\MoneyColumn;
+use App\Models\Financial\Expense;
 use App\ValueObjects\Percentage;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Columns\ImageColumn;
@@ -48,6 +49,9 @@ class ExpensesTable
 
                 ImageColumn::make('receipt_image')
                     ->label('Receipt')
+                    ->state(fn (Expense $record): ?string => $record->receipt_image
+                        ? route('admin.expenses.receipt', $record)
+                        : null)
                     ->height(50)
                     ->width(50),
 
