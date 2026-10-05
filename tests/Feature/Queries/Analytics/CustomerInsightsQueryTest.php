@@ -3,6 +3,7 @@
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Queries\Analytics\CustomerInsightsQuery;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 
@@ -47,9 +48,9 @@ test('calculates current and previous month averages while excluding cancelled o
     ]);
 
     expect(resolve(CustomerInsightsQuery::class)->averageOrderValues($now))
-        ->toBe([
-            'this_month' => 12000.0,
-            'last_month' => 8000.0,
+        ->toEqual([
+            'this_month' => Money::fromDollars(120),
+            'last_month' => Money::fromDollars(80),
         ]);
 });
 
@@ -57,8 +58,8 @@ test('returns zero averages when there are no active orders', function () {
     $now = Carbon::create(2026, 9, 15, 12) ?? throw new RuntimeException('Unable to create test date.');
 
     expect(resolve(CustomerInsightsQuery::class)->averageOrderValues($now))
-        ->toBe([
-            'this_month' => 0.0,
-            'last_month' => 0.0,
+        ->toEqual([
+            'this_month' => Money::zero(),
+            'last_month' => Money::zero(),
         ]);
 });

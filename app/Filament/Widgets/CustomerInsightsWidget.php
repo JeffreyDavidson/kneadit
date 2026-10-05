@@ -52,8 +52,8 @@ class CustomerInsightsWidget extends Widget
             $averages = resolve(CustomerInsightsQuery::class)->averageOrderValues();
 
             return [
-                'value' => round($averages['this_month'], 2),
-                'trend' => $averages['this_month'] >= $averages['last_month'] ? 'up' : 'down',
+                'value' => $averages['this_month'],
+                'trend' => $averages['this_month']->cents() >= $averages['last_month']->cents() ? 'up' : 'down',
             ];
         });
     }

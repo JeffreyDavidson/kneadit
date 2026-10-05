@@ -61,12 +61,10 @@ class GoalTrackerWidget extends Widget
         return $this->cached('monthly_'.$now->format('Y-m'), [900, 1800], function () use ($now): array {
             $storedGoal = resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 5000.0;
-            $range = new DateRange($now->copy()->startOfMonth(), $now->copy()->endOfMonth())->inAppTimezone();
+            $range = new DateRange($now->copy()->startOfMonth(), $now->copy()->endOfMonth());
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
-                ->active()
-                ->sum('total') / 100);
+            $revenue = (float) ((int) Order::query()->revenueInDateRange($range)->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
@@ -88,12 +86,10 @@ class GoalTrackerWidget extends Widget
         return $this->cached('yearly_'.$now->format('Y'), [1800, 3600], function () use ($now): array {
             $storedGoal = resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $goal = is_numeric($storedGoal) ? (float) $storedGoal : 50000.0;
-            $range = new DateRange($now->copy()->startOfYear(), $now->copy()->endOfYear())->inAppTimezone();
+            $range = new DateRange($now->copy()->startOfYear(), $now->copy()->endOfYear());
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
-            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
-                ->active()
-                ->sum('total') / 100);
+            $revenue = (float) ((int) Order::query()->revenueInDateRange($range)->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 

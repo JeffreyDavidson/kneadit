@@ -16,7 +16,22 @@ final class CsvValueSanitizer
             return $value;
         }
 
-        return preg_match('/\A[=+\-@]/', $value) === 1 ? "'{$value}" : $value;
+        // Excel and Sheets also run a formula that follows a leading tab or carriage return.
+        return preg_match('/\A[=+\-@\t\r]/', $value) === 1 ? "'{$value}" : $value;
+    }
+
+    /**
+     * Sanitizes every value of a nested array, leaving the keys alone.
+     *
+     * @param  array<array-key, mixed>  $values
+     * @return array<array-key, mixed>
+     */
+    public static function deep(array $values): array
+    {
+        return array_map(
+            fn (mixed $value): mixed => is_array($value) ? self::deep($value) : self::sanitize($value),
+            $values,
+        );
     }
 
     /**

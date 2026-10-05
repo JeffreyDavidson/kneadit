@@ -36,7 +36,7 @@ class FinancialCalculator
     /** @return array{totalRevenue: Money, totalExpenses: Money, netProfit: Money} */
     private function yearlyTotals(int $year): array
     {
-        $orderRevenue = Money::fromCents((int) Order::query()->paidInYear($year)->sum('total'));
+        $orderRevenue = Money::fromCents((int) Order::query()->revenueInYear($year)->sum('total'));
         $otherIncome = Money::fromCents((int) Income::query()->forYear($year)->sum('amount'));
         $totalRevenue = $orderRevenue->add($otherIncome);
 
@@ -52,7 +52,7 @@ class FinancialCalculator
     /** @return Collection<int, MonthlyFinancials> */
     private function monthlyBreakdown(int $year): Collection
     {
-        $orderRevenueByMonth = Order::query()->paidInYear($year)
+        $orderRevenueByMonth = Order::query()->revenueInYear($year)
             ->whereNotNull('delivery_date')
             ->select('delivery_date')
             ->selectRaw('SUM(total) as amount_in_cents')

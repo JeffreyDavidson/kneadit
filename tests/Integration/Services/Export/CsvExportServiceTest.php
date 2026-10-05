@@ -204,3 +204,18 @@ it('writes categories CSV with data', function () {
         ->toContain('pastries')
         ->toContain('Fresh pastries');
 });
+
+it('writes product and order money columns in dollars, not cents', function () {
+    DB::table('customers')->insert(['id' => 1, 'name' => 'Test Customer', 'email' => 'test@example.com', 'created_at' => '2026-01-01 00:00:00', 'updated_at' => '2026-01-01 00:00:00']);
+    DB::table('categories')->insert(['id' => 1, 'name' => 'Bread', 'slug' => 'bread', 'is_active' => true, 'sort_order' => 0, 'created_at' => '2026-01-01 00:00:00', 'updated_at' => '2026-01-01 00:00:00']);
+    DB::table('products')->insert(['id' => 5, 'name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 850, 'category_id' => 1, 'is_active' => true, 'created_at' => '2026-01-01 00:00:00', 'updated_at' => '2026-01-01 00:00:00']);
+    DB::table('orders')->insert(['id' => 1, 'order_number' => 'ORD-000001', 'customer_id' => 1, 'status' => 'pending', 'payment_status' => 'unpaid', 'subtotal' => 2050, 'total' => 2050, 'created_at' => '2026-01-01 00:00:00', 'updated_at' => '2026-01-01 00:00:00']);
+    DB::table('order_items')->insert(['id' => 1, 'order_id' => 1, 'product_id' => 5, 'quantity' => 2, 'unit_price' => 1025, 'created_at' => '2026-01-01 00:00:00', 'updated_at' => '2026-01-01 00:00:00']);
+
+    $productRow = str_getcsv(explode("\n", trim(new CsvExportService()->toString('products')))[1], escape: '\\');
+    $orderRow = str_getcsv(explode("\n", trim(new CsvExportService()->toString('orders')))[1], escape: '\\');
+
+    expect($productRow[4])->toBe('8.50')
+        ->and($orderRow[3])->toBe('20.50')
+        ->and($orderRow[6])->toBe('10.25');
+});
