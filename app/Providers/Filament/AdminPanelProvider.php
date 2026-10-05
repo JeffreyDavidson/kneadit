@@ -4,9 +4,11 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard\Dashboard;
+use App\Filament\Pages\Platform\Messages;
 use App\Filament\Shared\PanelThemes;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
+use App\Http\Middleware\SecurityHeaders;
 use App\Services\Settings\SettingsManager;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -82,6 +84,7 @@ class AdminPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Messages')
                     ->url(fn (): string => route('filament.admin.pages.messages'))
+                    ->visible(fn (): bool => Messages::canAccess())
                     ->icon('heroicon-o-envelope'),
                 MenuItem::make()
                     ->label('Help')
@@ -129,6 +132,7 @@ class AdminPanelProvider extends PanelProvider
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([])
             ->middleware([
+                SecurityHeaders::withoutCsp(),
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 PreventAccessFromCentralDomains::class,

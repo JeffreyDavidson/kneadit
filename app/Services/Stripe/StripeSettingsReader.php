@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Stripe;
 
+use App\Enums\Financial\StripeConnectStatus;
 use App\Services\Settings\SettingsManager;
 
 /**
@@ -40,10 +41,20 @@ class StripeSettingsReader
             return $this->isEnabled = false;
         }
 
-        $connectId = $this->connectId();
-        $chargesEnabled = $this->settings->get('stripe_connect_charges_enabled', '0');
+        return $this->isEnabled = $this->connectStatus() === StripeConnectStatus::ChargesEnabled;
+    }
 
-        return $this->isEnabled = $connectId !== null && $chargesEnabled === '1';
+    public function connectStatus(): StripeConnectStatus
+    {
+        if ($this->connectId() === null) {
+            return StripeConnectStatus::NotConnected;
+        }
+
+        if ($this->settings->get('stripe_connect_charges_enabled', '0') !== '1') {
+            return StripeConnectStatus::ChargesPending;
+        }
+
+        return StripeConnectStatus::ChargesEnabled;
     }
 
     public function connectId(): ?string

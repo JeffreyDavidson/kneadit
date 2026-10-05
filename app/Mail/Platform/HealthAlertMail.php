@@ -22,6 +22,22 @@ class HealthAlertMail extends BaseMailable
         );
     }
 
+    /**
+     * A platform email about the platform being unhealthy: it must render even
+     * when the database is down, so it skips the bakery branding data that
+     * BaseMailable reads from the tenant settings.
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function buildViewData(): array
+    {
+        return [
+            'alertMessage' => $this->alertMessage,
+            'alertSubject' => $this->alertSubject,
+        ];
+    }
+
     public function content(): Content
     {
         return new Content(

@@ -5,7 +5,9 @@ use App\Filament\Central\Resources\FreeForeverGrants\Pages\ListFreeForeverGrants
 use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -49,4 +51,19 @@ test('list shows active and revoked grants', function () {
 
     livewire(ListFreeForeverGrants::class)
         ->assertCanSeeTableRecords(FreeForeverGrant::all());
+});
+
+test('revoking a grant escapes the bakery name in the notification', function () {
+    $name = '<a href="https://evil.example">Sign in</a>';
+    $tenant = Tenant::factory()->create(['store_name' => $name]);
+    $grant = FreeForeverGrant::factory()->for($tenant)->create(['granted_by_user_id' => null]);
+
+    livewire(ListFreeForeverGrants::class)
+        ->callAction(TestAction::make('revoke')->table($grant))
+        ->assertNotified(
+            Notification::make()
+                ->title('Grant revoked')
+                ->body('Tenant '.e($name).' is no longer free forever.')
+                ->success(),
+        );
 });

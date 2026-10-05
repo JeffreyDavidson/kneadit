@@ -9,6 +9,7 @@ use App\Services\Notifications\ScheduledNotificationRunTracker;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use JMac\Testing\Double;
 
 function makeFakeTenantSettings(): TenantSettings
@@ -146,6 +147,8 @@ test('handles recipient dispatch failure gracefully', function () {
             $tenant = new Tenant;
             $tenant->id = 'test-bakery';
 
+            app()->instance(TenantSettings::class, $settings);
+
             $callback($tenant, $settings);
 
             return 0;
@@ -181,4 +184,63 @@ test('calls error callback when tenant processing fails', function () {
     $failures = $dispatcher->dispatch($engagement, $output);
 
     expect($failures)->toBe(1);
+});
+
+test('the per-recipient claim key uses the bakery-local date', function () {
+    $customer = new Customer;
+    $customer->name = 'Jane Doe';
+    $customer->email = 'jane@example.com';
+
+    $recipient = new EngagementRecipient(
+        email: 'jane@example.com',
+        name: 'Jane Doe',
+        model: $customer,
+    );
+
+    $settings = makeTenantSettings(orders: makeOrderSettings(['timezone' => 'Asia/Tokyo']));
+    app()->instance(TenantSettings::class, $settings);
+
+    $engagement = Double::for(CustomerEngagement::class);
+    $engagement->allows('isEnabled')->returns(true);
+    $engagement->allows('findRecipients')->returns(collect([$recipient]));
+    $engagement->allows('dispatchForRecipient');
+
+    $tenancyManager = Double::for(TenancyManager::class);
+    $tenancyManager->allows('forEachTenant')
+        ->resolves(function (callable $callback) use ($settings) {
+            $tenant = new Tenant;
+            $tenant->id = 'tokyo-bakery';
+
+            $callback($tenant, $settings);
+
+            return 0;
+        });
+
+    $output = Double::for(Command::class);
+    $output->allows('info')->returns($output);
+
+    $tracker = new class extends ScheduledNotificationRunTracker
+    {
+        /** @var list<string> */
+        public array $claimed = [];
+
+        public function claim(string $notificationKey): bool
+        {
+            $this->claimed[] = $notificationKey;
+
+            return true;
+        }
+    };
+
+    $dispatcher = new EngagementDispatcher($tenancyManager, $tracker);
+
+    // 08:30 and 10:00 on 5 October in Tokyo, but 4 and 5 October in UTC.
+    Date::setTestNow('2026-10-04 23:30:00');
+    $dispatcher->dispatch($engagement, $output);
+    Date::setTestNow('2026-10-05 01:00:00');
+    $dispatcher->dispatch($engagement, $output);
+
+    expect($tracker->claimed)->toHaveCount(2)
+        ->and($tracker->claimed[0])->toBe($tracker->claimed[1])
+        ->and($tracker->claimed[0])->toEndWith(':2026-10-05');
 });

@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace App\Services\Platform;
 
 use App\DataTransferObjects\Settings\SettingValue;
+use App\Models\Platform\PlatformSetting;
 use App\Services\Settings\PlatformSettingsManager;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\Date;
 use Throwable;
 
 class ScheduledTaskMonitor
 {
+    private const string KEY_PREFIX = 'scheduled_task_status:';
+
     public function __construct(
         private readonly PlatformSettingsManager $settings,
     ) {}
@@ -50,6 +55,40 @@ class ScheduledTaskMonitor
         ]);
     }
 
+    /** When any scheduled task last started, or null when none ever has. */
+    public function lastStartedAt(): ?CarbonInterface
+    {
+        $latest = null;
+
+        foreach (PlatformSetting::query()->where('key', 'like', self::KEY_PREFIX.'%')->pluck('value') as $value) {
+            $startedAt = is_string($value) ? (SettingValue::map(json_decode($value, true))['started_at'] ?? null) : null;
+
+            if (! is_string($startedAt)) {
+                continue;
+            }
+
+            $startedAt = Date::parse($startedAt);
+
+            if ($latest === null || $startedAt->gt($latest)) {
+                $latest = $startedAt;
+            }
+        }
+
+        return $latest;
+    }
+
+    /** Time since the task last started, or 0 when no start was recorded. */
+    public function secondsSinceStart(string $task): float
+    {
+        $startedAt = $this->status($task)['started_at'] ?? null;
+
+        if (! is_string($startedAt)) {
+            return 0.0;
+        }
+
+        return max(0.0, Date::parse($startedAt)->diffInSeconds(now()));
+    }
+
     /** @return array<string, mixed> */
     public function status(string $task): array
     {
@@ -72,6 +111,6 @@ class ScheduledTaskMonitor
 
     private function key(string $task): string
     {
-        return "scheduled_task_status:{$task}";
+        return self::KEY_PREFIX.$task;
     }
 }

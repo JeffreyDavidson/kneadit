@@ -2,9 +2,12 @@
 
 use App\Filament\Pages\Platform\Messages;
 use App\Models\Platform\PlatformMessage;
+use App\Models\Platform\Tenant;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 beforeEach(function () {
     setUpCentralTest();
+    app()->instance(TenantContract::class, Tenant::factory()->create(['id' => 'test']));
     test()->page = new Messages;
 });
 

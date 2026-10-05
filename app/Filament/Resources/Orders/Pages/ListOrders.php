@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Orders\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
+use App\Filament\Resources\Orders\Schemas\OrderForm;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -22,7 +23,8 @@ class ListOrders extends ListRecords
             // Filament slide-over is wider, which created an asymmetric pair.
             CreateAction::make()
                 ->slideOver()
-                ->modalWidth('md'),
+                ->modalWidth('md')
+                ->mutateDataUsing(OrderForm::withComputedTotal(...)),
         ];
     }
 }

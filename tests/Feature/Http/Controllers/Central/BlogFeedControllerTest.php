@@ -36,6 +36,22 @@ test('blog feed renders category enum labels', function () {
         ->assertSeeHtml('<category>Baker Tips</category>');
 });
 
+test('blog feed is well-formed XML with titles and excerpts escaped once', function () {
+    BlogPost::factory()
+        ->published()
+        ->create([
+            'title' => 'Bread & Butter',
+            'slug' => 'bread-and-butter',
+            'excerpt' => 'Salt & "pepper" <3',
+        ]);
+
+    $feed = simplexml_load_string(get(route('blog.feed'))->assertOk()->getContent());
+
+    expect($feed)->not->toBeFalse()
+        ->and((string) $feed->channel->item[0]->title)->toBe('Bread & Butter')
+        ->and((string) $feed->channel->item[0]->description)->toBe('Salt & "pepper" <3');
+});
+
 test('blog feed generates item URLs from the blog show route', function () {
     URL::forceRootUrl('https://kneadit.test');
     URL::forceScheme('https');

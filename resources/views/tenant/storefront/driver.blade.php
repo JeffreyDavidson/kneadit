@@ -13,13 +13,17 @@
             <a href="/admin" class="admin-link">← Admin</a>
         </div>
         <div class="header-meta">
-            <span>{{ now()->format('l, M j') }}</span>
+            <span>{{ $today->format('l, M j') }}</span>
             <span>{{ $orders->count() }} {{ Str::plural('delivery', $orders->count()) }}</span>
         </div>
     </div>
 
     @session('success')
         <div class="flash flash-success">✅ {{ $value }}</div>
+    @endsession
+
+    @session('error')
+        <div class="flash flash-error">{{ $value }}</div>
     @endsession
 
     <div class="pull-hint">Pull down to refresh</div>

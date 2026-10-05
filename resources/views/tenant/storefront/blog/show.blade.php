@@ -1,12 +1,15 @@
 @php
-    // Body comes in as plain text with \n\n paragraph breaks. Split, escape,
-    // then rehydrate the limited inline markdown we use (**bold**) so the
-    // article reads like a real article instead of a wall of text.
-    $rawParagraphs = preg_split("/\n\n+/", trim((string) $post->body));
-    $paragraphs = collect($rawParagraphs)
-        ->map(fn (string $p): string => preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', e(trim($p))));
+    // The admin edits the body in a rich text editor, so it is stored as HTML. Older posts
+    // were plain text (blank-line paragraphs and **bold**); those are converted to HTML
+    // first. Either way the result goes through clean() before it is printed unescaped.
+    $body = (string) $post->body;
+    $bodyHtml = $body === strip_tags($body)
+        ? collect(preg_split("/\n\n+/", trim($body)))
+            ->map(fn (string $p): string => '<p>'.preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', e(trim($p))).'</p>')
+            ->implode('')
+        : $body;
 
-    $readingTime = max(1, (int) ceil(str_word_count((string) $post->body) / 200));
+    $readingTime = max(1, (int) ceil(str_word_count(strip_tags($body)) / 200));
     $publishedDate = $post->published_at?->format('F j, Y') ?? '';
     $authorName = $post->author_name ?: ($settings->store->name ?? 'The Bakery');
     $tagList = is_array($post->tags) ? $post->tags : [];
@@ -40,6 +43,50 @@
             .article-body strong {
                 color: var(--warm-700);
                 font-weight: 600;
+            }
+
+            /* Rich text from the editor: headings, lists, quotes and links need
+           explicit styles because the base reset strips them. */
+            .article-body h2,
+            .article-body h3 {
+                font-family: var(--font-display);
+                font-weight: 500;
+                line-height: 1.2;
+                margin: 2em 0 0.6em;
+            }
+
+            .article-body h2 {
+                font-size: 1.75rem;
+            }
+
+            .article-body h3 {
+                font-size: 1.375rem;
+            }
+
+            .article-body ul,
+            .article-body ol {
+                margin: 0 0 1.4em;
+                padding-left: 1.5em;
+            }
+
+            .article-body ul {
+                list-style: disc;
+            }
+
+            .article-body ol {
+                list-style: decimal;
+            }
+
+            .article-body blockquote {
+                margin: 0 0 1.4em;
+                padding-left: 1.25rem;
+                border-left: 2px solid var(--warm-500);
+                font-style: italic;
+            }
+
+            .article-body a {
+                text-decoration: underline;
+                text-underline-offset: 3px;
             }
 
             /* The empty-state placeholder for posts without a featured image.
@@ -235,9 +282,7 @@
             {{-- Body: paragraph-wrapped, drop cap on the first paragraph,
              generous line-height tuned for long-form reading. --}}
             <div class="article-body font-body" style="color: var(--warm-700); font-size: 1.0625rem; line-height: 1.72">
-                @foreach ($paragraphs as $paragraph)
-                    <p>{!! $paragraph !!}</p>
-                @endforeach
+                {!! clean($bodyHtml) !!}
             </div>
 
             {{-- End-of-article flourish: short hairline + asterisk + short hairline,

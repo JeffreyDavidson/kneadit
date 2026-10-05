@@ -19,7 +19,7 @@ class VerifyCustomDomainsCommand extends Command
         $verified = 0;
         $changed = 0;
 
-        foreach (Tenant::query()->whereNotNull('custom_domain')->where('custom_domain', '!=', '')->cursor() as $tenant) {
+        foreach (Tenant::query()->whereNotNull('custom_domain')->where('custom_domain', '!=', '')->lazyById() as $tenant) {
             $wasVerified = $tenant->custom_domain_verified_at !== null;
             $check = $verify($tenant);
             $isVerified = $check->isVerified();

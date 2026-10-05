@@ -6,6 +6,7 @@ use App\Actions\Customers\ApplyCateringDepositPayment;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 
@@ -15,9 +16,10 @@ class HandleConnectCheckoutCompleted
         private readonly TenancyManager $tenancyManager,
         private readonly HandleCheckoutComplete $handleCheckoutComplete,
         private readonly ApplyCateringDepositPayment $applyCateringDepositPayment,
+        private readonly SettingsManager $settings,
     ) {}
 
-    public function __invoke(mixed $session): void
+    public function __invoke(mixed $session, ?string $connectedAccountId = null): void
     {
         $sessionId = data_get($session, 'id');
         $metadata = data_get($session, 'metadata');
@@ -60,7 +62,21 @@ class HandleConnectCheckoutCompleted
         }
 
         try {
-            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $orderId, $cateringInquiryId, $paymentIntentId, $session): void {
+            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $orderId, $cateringInquiryId, $paymentIntentId, $session, $connectedAccountId, $tenantId): void {
+                // The tenant comes from session metadata, so the event's own Connect
+                // account must be the one this bakery connected.
+                $storedAccountId = $this->settings->get('stripe_connect_id');
+
+                if ($connectedAccountId === null || $connectedAccountId !== $storedAccountId) {
+                    Log::warning('Stripe Connect account does not match the bakery for checkout session', [
+                        'session_id' => $sessionId,
+                        'tenant_id' => $tenantId,
+                        'account_id' => $connectedAccountId,
+                    ]);
+
+                    return;
+                }
+
                 if ($cateringInquiryId) {
                     $inquiry = CateringInquiry::query()->whereKey($cateringInquiryId)->first();
 

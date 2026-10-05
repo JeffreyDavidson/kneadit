@@ -4,6 +4,7 @@ namespace App\Queries\Analytics;
 
 use App\Models\Orders\Order;
 use App\Services\Scheduling\BakeryClock;
+use App\ValueObjects\Money;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -35,7 +36,7 @@ final class CustomerInsightsQuery
     }
 
     /**
-     * @return array{this_month: float, last_month: float}
+     * @return array{this_month: Money, last_month: Money}
      */
     public function averageOrderValues(?Carbon $now = null): array
     {
@@ -61,12 +62,15 @@ final class CustomerInsightsQuery
             )
             ->first();
 
-        $thisMonth = $averages->this_month ?? 0;
-        $lastMonth = $averages->last_month ?? 0;
-
+        // orders.total is bigint cents, so AVG(total) is an average in cents.
         return [
-            'this_month' => is_numeric($thisMonth) ? (float) $thisMonth : 0.0,
-            'last_month' => is_numeric($lastMonth) ? (float) $lastMonth : 0.0,
+            'this_month' => $this->averageInCents($averages->this_month ?? 0),
+            'last_month' => $this->averageInCents($averages->last_month ?? 0),
         ];
+    }
+
+    private function averageInCents(mixed $average): Money
+    {
+        return Money::fromCents(is_numeric($average) ? (int) round((float) $average) : 0);
     }
 }

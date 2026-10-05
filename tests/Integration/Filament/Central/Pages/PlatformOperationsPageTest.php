@@ -5,6 +5,10 @@ use App\Filament\Central\Pages\PlatformOperations;
 use App\Models\Platform\PlatformSetting;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Console\Events\ScheduledBackgroundTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
@@ -52,6 +56,19 @@ test('run invokes artisan command and stamps last run', function () {
         ->not->toBeNull()
         ->and((new PlatformOperations)->getTaskStatus('health:check'))
         ->toMatchArray(['status' => 'succeeded', 'exit_code' => 0]);
+});
+
+test('a background scheduled task that exited 0 shows as succeeded', function () {
+    $task = resolve(Schedule::class)->command('health:check')->runInBackground()->name('health:check');
+
+    event(new ScheduledTaskStarting($task));
+    event(new ScheduledTaskFinished($task, 0.01));
+    $task->exitCode = 0;
+    event(new ScheduledBackgroundTaskFinished($task));
+
+    livewire(PlatformOperations::class)
+        ->assertSee('Succeeded')
+        ->assertDontSee('Failed');
 });
 
 test('weekly digest button sends outside the bakery-local Monday 08:00', function () {

@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Builders\Orders\CartQueryBuilder;
 use App\Casts\EmailAddressCast;
+use App\Models\Customers\Customer;
 use Database\Factories\Orders\CartFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -11,12 +12,14 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $cart_token
+ * @property int|null $customer_id
  * @property string|null $customer_email
  * @property string|null $customer_name
  * @property Carbon|null $last_activity_at
@@ -32,7 +35,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('cart_token', 'customer_email', 'customer_name', 'last_activity_at', 'expires_at', 'recovery_sent_at', 'recovery_claimed_at', 'converted_at')]
+#[Fillable('cart_token', 'customer_id', 'customer_email', 'customer_name', 'last_activity_at', 'expires_at', 'recovery_sent_at', 'recovery_claimed_at', 'converted_at')]
 #[UseEloquentBuilder(CartQueryBuilder::class)]
 #[UseFactory(CartFactory::class)]
 class Cart extends Model
@@ -51,6 +54,12 @@ class Cart extends Model
             'recovery_claimed_at' => 'datetime',
             'converted_at' => 'datetime',
         ];
+    }
+
+    /** @return BelongsTo<Customer, $this> */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     /** @return HasMany<CartItem, $this> */

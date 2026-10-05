@@ -11,6 +11,7 @@ use App\Reports\Financial\FinancialReport;
 use App\Reports\Inventory\InventoryReport;
 use App\Reports\Inventory\ProductReport;
 use App\Reports\Orders\SalesReport;
+use App\Services\Export\CsvValueSanitizer;
 use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\DateRange;
 use Filament\Pages\Page;
@@ -98,6 +99,7 @@ class ReportsCenter extends Page
 
     public function exportCsv(): void
     {
-        $this->dispatch('export-csv', data: $this->reportData, type: $this->activeReport);
+        // The browser builds the CSV from this payload, so neutralise spreadsheet formulas here, as the server-side exports do.
+        $this->dispatch('export-csv', data: CsvValueSanitizer::deep($this->reportData), type: $this->activeReport);
     }
 }

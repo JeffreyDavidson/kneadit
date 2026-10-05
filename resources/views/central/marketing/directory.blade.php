@@ -51,7 +51,8 @@
                 @foreach ($bakeries as $bakery)
                     <div
                         class="bakery-card"
-                        x-show="search === '' || '{{ strtolower($bakery['name']) }}'.includes(search.toLowerCase())"
+                        data-name="{{ mb_strtolower($bakery['name']) }}"
+                        x-show="search === '' || $el.dataset.name.includes(search.toLowerCase())"
                         x-transition
                     >
                         <div class="bakery-stripe" style="background: {{ $bakery['color'] }}"></div>

@@ -4,7 +4,6 @@ namespace App\Builders\Customers;
 
 use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Orders\OrderStatus;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Support\EmailAddress;
@@ -26,15 +25,20 @@ class CustomerQueryBuilder extends Builder
 
     /**
      * Eager-load aggregate order metrics (count, total sum, last order date)
-     * onto each customer. Cancelled orders are excluded from count and sum.
+     * onto each customer. Cancelled orders are excluded from the count and last
+     * order date; the sum (lifetime value) and revenue_orders_count only cover
+     * revenue orders (paid, not cancelled).
      */
     public function withOrderMetrics(): static
     {
         $this->withCount(['orders' => function (OrderQueryBuilder $q): void {
             $q->active();
         }])
+            ->withCount(['orders as revenue_orders_count' => function (OrderQueryBuilder $q): void {
+                $q->revenue();
+            }])
             ->withSum(['orders' => function (OrderQueryBuilder $q): void {
-                $q->active();
+                $q->revenue();
             }], 'total')
             ->addSelect([
                 'last_order_date' => Order::query()->select('created_at')
@@ -50,7 +54,7 @@ class CustomerQueryBuilder extends Builder
     public function withPaidOrderMetrics(DateRange $range): static
     {
         $paidOrders = function (OrderQueryBuilder $query) use ($range): void {
-            $query->active()->paidInDateRange($range);
+            $query->revenueInDateRange($range);
         };
 
         $this->withSum(['orders as total_spend' => $paidOrders], 'total')
@@ -61,11 +65,11 @@ class CustomerQueryBuilder extends Builder
 
     public function withRfmMetrics(): static
     {
-        $paidOrders = function (Builder $query): void {
-            $query->where('payment_status', PaymentStatus::Paid);
+        $paidOrders = function (OrderQueryBuilder $query): void {
+            $query->revenue();
         };
 
-        $this->whereHas('orders', $paidOrders)
+        $this->whereIn('id', Order::query()->revenue()->select('customer_id'))
             ->withCount(['orders as frequency' => $paidOrders])
             ->withSum(['orders as monetary_cents' => $paidOrders], 'total')
             ->withMax(['orders as last_order_at' => $paidOrders], 'delivery_date');
@@ -79,6 +83,14 @@ class CustomerQueryBuilder extends Builder
     public function subscribedToMarketing(): static
     {
         $this->whereNull('marketing_opted_out_at');
+
+        return $this;
+    }
+
+    /** Customers who have verified their email address. */
+    public function emailVerified(): static
+    {
+        $this->whereNotNull('email_verified_at');
 
         return $this;
     }

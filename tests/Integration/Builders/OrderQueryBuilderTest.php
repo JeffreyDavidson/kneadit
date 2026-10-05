@@ -102,23 +102,37 @@ test('byStatus filters orders by given status', function () {
         ->and($results->first()->status)->toBe(OrderStatus::Baking);
 });
 
-test('paidInYear returns paid orders within the given year', function () {
+test('revenue returns only paid orders that are not cancelled', function () {
+    $counted = Order::factory()->paid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->create(['payment_status' => PaymentStatus::Refunded, 'delivery_date' => '2026-06-15']);
+    Order::factory()->partiallyPaid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->unpaid()->create(['delivery_date' => '2026-06-15']);
+
+    $results = Order::query()->revenue()->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($counted))->toBeTrue();
+});
+
+test('revenueInYear returns revenue orders delivered within the given year', function () {
     Order::factory()->paid()->create(['delivery_date' => '2026-06-15']);
     Order::factory()->paid()->create(['delivery_date' => '2025-06-15']);
     Order::factory()->unpaid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-06-15']);
 
-    $results = Order::query()->paidInYear(2026)->get();
+    $results = Order::query()->revenueInYear(2026)->get();
 
     expect($results)->toHaveCount(1);
 });
 
-test('paidInDateRange returns paid orders within the date range', function () {
-    Order::factory()->paid()->create(['delivery_date' => '2026-03-15']);
+test('revenueInDateRange returns revenue orders delivered within the date range', function () {
+    Order::factory()->paid()->create(['delivery_date' => '2026-03-31']);
     Order::factory()->paid()->create(['delivery_date' => '2026-05-01']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-03-15']);
     Order::factory()->unpaid()->create(['delivery_date' => '2026-03-15']);
 
-    $range = DateRange::fromStrings('2026-03-01', '2026-03-31');
-    $results = Order::query()->paidInDateRange($range)->get();
+    $results = Order::query()->revenueInDateRange(DateRange::fromStrings('2026-03-01', '2026-03-31'))->get();
 
     expect($results)->toHaveCount(1);
 });
@@ -134,21 +148,30 @@ test('inDateRange returns orders within the date range regardless of payment sta
     expect($results)->toHaveCount(2);
 });
 
-test('forDeliveryOnDate returns orders with delivery address and active statuses on given date', function () {
+test('forDeliveryOnDate returns ready orders with a delivery address on the given date', function () {
     $date = now()->addDays(3);
 
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => '123 Main St',
         'delivery_time' => '10:00',
     ]);
-    // Excluded: no delivery address
+    // Excluded: not out for delivery yet
     Order::factory()->confirmed()->create([
+        'delivery_date' => $date,
+        'delivery_address' => '1 Early Rd',
+    ]);
+    Order::factory()->baking()->create([
+        'delivery_date' => $date,
+        'delivery_address' => '2 Early Rd',
+    ]);
+    // Excluded: no delivery address
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => null,
     ]);
     // Excluded: empty delivery address
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => '',
     ]);
@@ -158,7 +181,7 @@ test('forDeliveryOnDate returns orders with delivery address and active statuses
         'delivery_address' => '456 Oak Ave',
     ]);
     // Excluded: different date
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => now()->addDays(5),
         'delivery_address' => '789 Pine Rd',
     ]);

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers\Pages;
 
 use App\Actions\Customers\AddCustomerNote;
+use App\Actions\Customers\AnonymiseCustomer;
 use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Filament\Resources\Customers\CustomerResource;
@@ -60,6 +61,26 @@ class ViewCustomer extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('anonymise')
+                ->label('Anonymise')
+                ->icon(Heroicon::OutlinedShieldExclamation)
+                ->color('danger')
+                ->authorize('anonymise')
+                ->requiresConfirmation()
+                ->modalHeading('Anonymise this customer?')
+                ->modalDescription('Their name, email, phone, address, birthday and notes are replaced for good, they are signed out and unsubscribed, your notes about them are deleted, and their favorites, carts, waitlists, photos and survey responses are deleted. Their orders stay for your records. This cannot be undone.')
+                ->modalSubmitActionLabel('Anonymise customer')
+                ->action(function (AnonymiseCustomer $anonymiseCustomer): void {
+                    $anonymiseCustomer($this->record);
+
+                    $this->record->refresh();
+
+                    Notification::make()
+                        ->title('Customer anonymised')
+                        ->success()
+                        ->send();
+                }),
+
             Action::make('adjustPoints')
                 ->label('Adjust Points')
                 ->icon(Heroicon::OutlinedAdjustmentsHorizontal)

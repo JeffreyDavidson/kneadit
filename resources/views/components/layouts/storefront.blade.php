@@ -28,7 +28,7 @@
     <x-layouts.storefront-styles />
 
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="{{ tenant()->brand_color_primary ?? '#d4920c' }}" />
+    <meta name="theme-color" content="{{ $settings->branding->brandColorPrimary }}" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
@@ -37,7 +37,7 @@
     @else
         <link
             rel="icon"
-            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr($settings->store->name, 0, 1) }}</text></svg>"
+            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode($settings->branding->brandColorPrimary) }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr($settings->store->name, 0, 1) }}</text></svg>"
             type="image/svg+xml"
         />
         @endif

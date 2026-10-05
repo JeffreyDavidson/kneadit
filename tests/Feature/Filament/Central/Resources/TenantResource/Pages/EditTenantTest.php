@@ -182,3 +182,29 @@ test('platform admins can resume a paused bakery from its edit page', function (
 
     expect($tenant->refresh()->paused_at)->toBeNull();
 });
+
+test('brand colors must be six digit hex colors', function (string $field, string $value) {
+    $tenant = Tenant::factory()->create();
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->fillForm([$field => $value])
+        ->call('save')
+        ->assertHasFormErrors([$field]);
+
+    expect($tenant->refresh()->{$field})->not->toBe($value);
+})->with([
+    'primary css break-out' => ['brand_color_primary', 'red;}body{display:none'],
+    'secondary named color' => ['brand_color_secondary', 'red'],
+    'primary short hex' => ['brand_color_primary', '#fff'],
+]);
+
+test('a valid hex brand color saves', function () {
+    $tenant = Tenant::factory()->create();
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->fillForm(['brand_color_primary' => '#AbCdEf'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($tenant->refresh()->brand_color_primary)->toBe('#AbCdEf');
+});

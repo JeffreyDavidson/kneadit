@@ -1,6 +1,7 @@
 @inject('tenantUrls', 'App\Services\Tenants\TenantUrlGenerator')
 
 @php
+    use App\DataTransferObjects\Settings\BrandingSettings;
     use Carbon\Carbon;
 
     $stats = $this->getTenantStats();
@@ -254,7 +255,7 @@
                     <div class="border-honey/12 bg-warm-black flex items-center gap-3 rounded-xl border p-4">
                         <div
                             class="border-honey/20 h-12 w-12 shrink-0 rounded-lg border"
-                            style="background: {{ $tenant->brand_color_primary ?: '#d4920c' }}"
+                            style="background: {{ BrandingSettings::safeColor($tenant->brand_color_primary) }}"
                         ></div>
                         <div class="min-w-0 flex-1">
                             <div class="text-cinnamon mb-0.5 text-[0.7rem] font-semibold tracking-[0.1em] uppercase">
@@ -268,7 +269,7 @@
                     <div class="border-honey/12 bg-warm-black flex items-center gap-3 rounded-xl border p-4">
                         <div
                             class="border-honey/20 h-12 w-12 shrink-0 rounded-lg border"
-                            style="background: {{ $tenant->brand_color_secondary ?: '#e8b04a' }}"
+                            style="background: {{ BrandingSettings::safeColor($tenant->brand_color_secondary, '#e8b04a') }}"
                         ></div>
                         <div class="min-w-0 flex-1">
                             <div class="text-cinnamon mb-0.5 text-[0.7rem] font-semibold tracking-[0.1em] uppercase">

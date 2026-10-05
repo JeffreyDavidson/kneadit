@@ -9,14 +9,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SecurityHeaders
 {
+    /** Middleware parameter that leaves out the CSP, for the Filament panels. */
+    public const string WITHOUT_CSP = 'without-csp';
+
     public function __construct(private readonly CspNonce $nonce) {}
+
+    /**
+     * The middleware string for the Filament panels. They get the frame, content-type,
+     * referrer and permissions headers but not the CSP, because Filament and Livewire
+     * print inline scripts that carry no nonce, which an enforced CSP would block.
+     */
+    public static function withoutCsp(): string
+    {
+        return sprintf('%s:%s', self::class, self::WITHOUT_CSP);
+    }
 
     /**
      * Add security headers to every response.
      *
      * @param  Closure(Request): Response  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$options): Response
     {
         $response = $next($request);
 
@@ -24,6 +37,10 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), geolocation=(), microphone=()');
+
+        if (in_array(self::WITHOUT_CSP, $options, true)) {
+            return $response;
+        }
 
         $response->headers->set($this->cspHeader(), $this->csp());
 

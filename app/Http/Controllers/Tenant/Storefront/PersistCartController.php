@@ -22,6 +22,7 @@ class PersistCartController extends Controller
             $cart,
             $request->filled('customer_email') ? $request->string('customer_email')->toString() : null,
             $request->filled('customer_name') ? $request->string('customer_name')->toString() : null,
+            $request->customer(),
         );
 
         $manager->replaceItems($cart, $itemPayloadNormalizer->products($request->array('items')));

@@ -133,3 +133,46 @@ test('does not recurse when writing ActivityLog rows', function () {
 
     expect($activityLogSelfEntries)->toBe(0);
 });
+
+test('records the password and remember token keys as redacted when a customer resets their password', function () {
+    $customer = Customer::factory()->create();
+    ActivityLog::query()->delete();
+
+    $customer->forceFill(['password' => 'a-new-password', 'remember_token' => 'remember-me-token'])->save();
+
+    $log = ActivityLog::query()
+        ->where('model_type', Customer::class)
+        ->where('model_id', $customer->id)
+        ->sole();
+
+    expect($log->properties['changes'])->toHaveKeys(['password', 'remember_token'])
+        ->and($log->properties['changes']['password'])->toBe('[redacted]')
+        ->and($log->properties['changes']['remember_token'])->toBe('[redacted]')
+        ->and(json_encode($log->properties))->not->toContain($customer->fresh()->password)
+        ->and(json_encode($log->properties))->not->toContain('remember-me-token');
+});
+
+test('a remember-me sign-in logs the remember token as redacted', function () {
+    $customer = Customer::factory()->withPassword()->create();
+    ActivityLog::query()->delete();
+
+    auth('customer')->login($customer, remember: true);
+
+    $log = ActivityLog::query()
+        ->where('model_type', Customer::class)
+        ->where('model_id', $customer->id)
+        ->sole();
+
+    expect($log->properties['changes'])->toBe(['remember_token' => '[redacted]']);
+});
+
+test('still records ordinary changes in the clear', function () {
+    $customer = Customer::factory()->create(['name' => 'Before']);
+    ActivityLog::query()->delete();
+
+    $customer->update(['name' => 'After']);
+
+    $log = ActivityLog::query()->where('model_type', Customer::class)->sole();
+
+    expect($log->properties['changes']['name'])->toBe('After');
+});

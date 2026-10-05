@@ -55,6 +55,19 @@ test('send nudge with valid tenant records nudge', function () {
     expect(test()->page->sentNudges)->toContain($tenant->id);
 });
 
+test('the nudge and trial notifications escape the bakery name', function (string $method) {
+    $tenant = Tenant::factory()->onTrial()->create(['store_name' => '<a href="https://evil.example">Sign in</a>']);
+
+    test()->page->{$method}($tenant->id);
+
+    $body = collect(session('filament.notifications'))->sole()['body'];
+    expect($body)->not->toContain('<a')
+        ->and($body)->toContain('&lt;a href=');
+})->with([
+    'nudge' => 'sendNudge',
+    'trial extension' => 'extendTrial',
+]);
+
 test('suggest upgrade does not throw', function () {
     test()->page->suggestUpgrade('some-tenant-id');
 

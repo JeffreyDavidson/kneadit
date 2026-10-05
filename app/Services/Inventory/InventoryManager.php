@@ -4,6 +4,7 @@ namespace App\Services\Inventory;
 
 use App\Actions\Orders\DeductIngredientsForOrder;
 use App\Actions\Orders\RestockIngredientsForOrder;
+use App\DataTransferObjects\Inventory\IngredientShortfall;
 use App\Exceptions\Orders\CapacityExceededException;
 use App\Models\Orders\Order;
 use Carbon\Carbon;
@@ -39,16 +40,20 @@ class InventoryManager
      * Deduct all ingredients for an order's items.
      * Walks order -> items -> products -> recipes -> ingredients
      * in a DB transaction, creating StockAdjustment audit records.
+     * Stock may end up below zero; the ingredients that did are returned.
+     *
+     * @return array<int, IngredientShortfall>
      */
-    public function deductForOrder(Order $order): void
+    public function deductForOrder(Order $order): array
     {
-        ($this->deductIngredients)($order);
+        return ($this->deductIngredients)($order);
     }
 
     /**
      * Restock all ingredients an order previously consumed. Used when an order
      * is cancelled after the Baking transition has already deducted its stock.
-     * Creates positive-quantity StockAdjustment audit records of type Restock.
+     * Reverses the order's recorded usage (not the current recipes) with
+     * positive-quantity StockAdjustment audit records of type Restock.
      */
     public function restockForOrder(Order $order): void
     {

@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings;
 use App\Actions\Operations\RegenerateWebhookSecret;
 use App\Actions\Operations\SendTestWebhook;
 use App\Actions\Tenants\SaveTenantSettings;
+use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Settings\Schemas\ManageSettingsForm;
@@ -230,6 +231,15 @@ class ManageSettings extends Page
             $state['webhook_secret'] = '';
         }
 
+        // Payment settings are owner-only, and the PayPal secret is
+        // write-only: it is never loaded, so the field starts empty and a new
+        // value is only written when one is entered.
+        if (! $this->canManagePayments()) {
+            $state['paypal_client_id'] = '';
+        }
+
+        $state['paypal_client_secret'] = '';
+
         $this->applySettings($state);
     }
 
@@ -299,7 +309,10 @@ class ManageSettings extends Page
     public function resetToDefaults(TenantSettingsFormMapper $formMapper): void
     {
         $defaults = TenantSettingsDefaults::all();
-        $this->applySettings($formMapper->fromSettings($defaults, $defaults));
+        $this->applySettings(array_diff_key(
+            $formMapper->fromSettings($defaults, $defaults),
+            array_flip(TenantSettingsDefaults::integrationKeys()),
+        ));
 
         Notification::make()
             ->title('Settings reset to defaults')
@@ -310,6 +323,19 @@ class ManageSettings extends Page
     private function canManageWebhooks(): bool
     {
         return Gate::allows('manage-webhooks');
+    }
+
+    private function canManagePayments(): bool
+    {
+        return Gate::allows('manage-payments');
+    }
+
+    /** @return array<int, string> */
+    private function storedPaymentMethods(): array
+    {
+        $methods = SettingValue::stringList(settings('payment_methods'));
+
+        return $methods === [] ? [PaymentMethod::Cash->value] : $methods;
     }
 
     /**
@@ -373,11 +399,14 @@ class ManageSettings extends Page
             'email_product_available_enabled' => $this->email_product_available_enabled,
             'allergy_disclaimer' => $this->allergy_disclaimer,
             'revenue_cap' => $this->revenue_cap,
-            'payment_methods' => $this->payment_methods,
-            'paypal_client_id' => $this->paypal_client_id,
-            'paypal_client_secret' => $this->paypal_client_secret,
-            'paypal_invoice_terms' => $this->paypal_invoice_terms,
-            'paypal_sandbox' => $this->paypal_sandbox,
+            // Users who cannot manage payments keep the stored methods, credentials
+            // and invoice terms, and the secret is only replaced when the owner
+            // enters a new one.
+            'payment_methods' => $this->canManagePayments() ? $this->payment_methods : $this->storedPaymentMethods(),
+            'paypal_client_id' => $this->canManagePayments() ? $this->paypal_client_id : settings('paypal_client_id', ''),
+            'paypal_client_secret' => $this->canManagePayments() && filled($this->paypal_client_secret) ? $this->paypal_client_secret : settings('paypal_client_secret', ''),
+            'paypal_invoice_terms' => $this->canManagePayments() ? $this->paypal_invoice_terms : settings('paypal_invoice_terms', 'Payment due within 30 days.'),
+            'paypal_sandbox' => $this->canManagePayments() ? $this->paypal_sandbox : SettingValue::bool(settings('paypal_sandbox'), true),
             // Users who cannot manage webhooks keep whatever is stored, whatever
             // the (client-controlled) properties say.
             'webhook_url' => $this->canManageWebhooks() ? $this->webhook_url : settings('webhook_url', ''),

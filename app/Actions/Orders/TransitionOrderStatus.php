@@ -2,6 +2,7 @@
 
 namespace App\Actions\Orders;
 
+use App\Actions\Inventory\NotifyStaffOfNegativeStock;
 use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderCancelled;
 use App\Events\Orders\OrderDelivered;
@@ -26,20 +27,26 @@ class TransitionOrderStatus
     public function __construct(
         private readonly InventoryManager $inventoryManager,
         private readonly ReverseOrderDiscounts $reverseOrderDiscounts,
+        private readonly NotifyStaffOfNegativeStock $notifyStaffOfNegativeStock,
     ) {}
 
     public function __invoke(Order $order, OrderStatus $to): Order
     {
-        $from = $order->status;
-        $allowed = self::TRANSITIONS[$from->value] ?? [];
+        [$from, $shortfalls] = DB::transaction(function () use ($order, $to): array {
+            // Two taps or two tabs hold stale copies of the same order, so check the status
+            // again on the locked row: whichever transition commits first wins and the other
+            // is refused before it can send its emails or webhooks a second time.
+            $locked = Order::query()->whereKey($order->getKey())->lockForUpdate()->firstOrFail();
+            $order->setRawAttributes($locked->getAttributes(), true);
+            $from = $order->status;
+            $shortfalls = [];
 
-        throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
+            throw_unless(in_array($to->value, self::TRANSITIONS[$from->value] ?? []), InvalidOrderTransitionException::class, $order, $from, $to);
 
-        DB::transaction(function () use ($order, $from, $to): void {
             $order->update(['status' => $to]);
 
             if ($to === OrderStatus::Baking) {
-                $this->inventoryManager->deductForOrder($order);
+                $shortfalls = $this->inventoryManager->deductForOrder($order);
             }
 
             if ($to === OrderStatus::Cancelled) {
@@ -53,7 +60,11 @@ class TransitionOrderStatus
                     $this->inventoryManager->restockForOrder($order);
                 }
             }
+
+            return [$from, $shortfalls];
         });
+
+        ($this->notifyStaffOfNegativeStock)($order, $shortfalls);
 
         Log::info('Order status transitioned', [
             'order_id' => $order->id,

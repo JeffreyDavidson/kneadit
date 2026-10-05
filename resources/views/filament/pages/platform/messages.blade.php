@@ -1,3 +1,5 @@
+@use('App\Enums\Platform\PlatformSenderType')
+
 <x-filament-panels::page>
     @if ($viewingMessage && $this->getViewingRecord())
         @php $record = $this->getViewingRecord(); @endphp
@@ -15,20 +17,17 @@
             {{-- Original --}}
             <div @class([
                 'rounded-xl border border-honey p-4',
-                'bg-espresso' => $record->sender_type === 'admin',
-                'bg-warm-black' => $record->sender_type !== 'admin',
+                'bg-espresso' => $record->sender_type === PlatformSenderType::Admin,
+                'bg-warm-black' => $record->sender_type !== PlatformSenderType::Admin,
             ])>
                 <div class="mb-2 flex items-center justify-between">
                     <span @class([
                         'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-warm-black',
-                        'bg-honey' => $record->sender_type === 'admin',
-                        'bg-golden' => $record->sender_type !== 'admin',
+                        'bg-honey' => $record->sender_type === PlatformSenderType::Admin,
+                        'bg-golden' => $record->sender_type !== PlatformSenderType::Admin,
                     ])>
-                        <x-filament::icon
-                            :icon="$record->sender_type === 'admin' ? 'heroicon-o-shield-check' : 'heroicon-o-building-storefront'"
-                            class="h-3.5 w-3.5"
-                        />
-                        {{ $record->sender_type === 'admin' ? 'KneadIt Team' : 'You' }}
+                        <x-filament::icon :icon="$record->sender_type->inboxIcon()" class="h-3.5 w-3.5" />
+                        {{ $record->sender_type->inboxLabel() }}
                     </span>
                     <span class="text-butter text-xs">{{ $record->created_at->diffForHumans() }}</span>
                 </div>
@@ -39,20 +38,17 @@
             @foreach ($this->getThread() as $reply)
                 <div @class([
                     'rounded-xl border p-4 ml-6',
-                    'bg-espresso border-honey' => $reply->sender_type === 'admin',
-                    'bg-warm-black border-golden' => $reply->sender_type !== 'admin',
+                    'bg-espresso border-honey' => $reply->sender_type === PlatformSenderType::Admin,
+                    'bg-warm-black border-golden' => $reply->sender_type !== PlatformSenderType::Admin,
                 ])>
                     <div class="mb-2 flex items-center justify-between">
                         <span @class([
                             'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-warm-black',
-                            'bg-honey' => $reply->sender_type === 'admin',
-                            'bg-golden' => $reply->sender_type !== 'admin',
+                            'bg-honey' => $reply->sender_type === PlatformSenderType::Admin,
+                            'bg-golden' => $reply->sender_type !== PlatformSenderType::Admin,
                         ])>
-                            <x-filament::icon
-                                :icon="$reply->sender_type === 'admin' ? 'heroicon-o-shield-check' : 'heroicon-o-building-storefront'"
-                                class="h-3.5 w-3.5"
-                            />
-                            {{ $reply->sender_type === 'admin' ? 'KneadIt Team' : 'You' }}
+                            <x-filament::icon :icon="$reply->sender_type->inboxIcon()" class="h-3.5 w-3.5" />
+                            {{ $reply->sender_type->inboxLabel() }}
                         </span>
                         <span class="text-butter text-xs">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
@@ -81,7 +77,7 @@
         </div>
     @else
         <div class="space-y-3">
-            @forelse ($this->getMessages() as $msg)
+            @forelse ($this->inboxMessages() as $msg)
                 <div
                     wire:click="viewThread({{ $msg->id }})"
                     @class([

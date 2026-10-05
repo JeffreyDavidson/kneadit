@@ -52,7 +52,7 @@ class LowStockWidget extends Widget
     private function statusColor(StockStatus $status): string
     {
         return match ($status) {
-            StockStatus::Out => '#dc2626',
+            StockStatus::Out, StockStatus::Negative => '#dc2626',
             StockStatus::Low => '#e8b04a',
             StockStatus::Good => '#6b9e3a',
         };

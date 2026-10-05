@@ -38,6 +38,14 @@ class DatabaseLegacySettingsImporter implements LegacySettingsImporter
         foreach (['storefront_theme' => 'biscotto', 'admin_theme' => 'honey', 'storefront_enabled' => '1'] as $key => $value) {
             $this->upsert($key, $value, now());
         }
+
+        // An imported bakery is already set up, so it skips the onboarding wizard.
+        DB::table('settings')->insertOrIgnore([
+            'key' => 'onboarding_completed_at',
+            'value' => now()->toISOString(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     private function normalize(string $key, mixed $value): mixed

@@ -164,6 +164,54 @@ test('is idempotent when called twice', function () {
             ->where('type', CouponTransactionType::Reversal)->count())->toBe(1);
 });
 
+test('credits the gift card with what was redeemed, not the stored order amount', function () {
+    $giftCard = GiftCard::factory()->create([
+        'initial_balance' => 10.00,
+        'current_balance' => 0.00,
+    ]);
+    $order = Order::factory()
+        ->recycle(test()->user)
+        ->create([
+            'gift_card_id' => $giftCard->id,
+            'gift_card_amount' => 50.00,
+        ]);
+
+    GiftCardTransaction::factory()->redemption()->create([
+        'gift_card_id' => $giftCard->id,
+        'order_id' => $order->id,
+        'amount' => -10.00,
+    ]);
+
+    resolve(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+    resolve(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+
+    $refund = GiftCardTransaction::query()
+        ->where('order_id', $order->id)
+        ->where('type', GiftCardTransactionType::Refund)
+        ->sole();
+
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(10.00)
+        ->and($refund->amount->dollars())->toBe(10.00);
+});
+
+test('credits no gift card balance when the order has no redemption on the ledger', function () {
+    $giftCard = GiftCard::factory()->create([
+        'initial_balance' => 10.00,
+        'current_balance' => 0.00,
+    ]);
+    $order = Order::factory()
+        ->recycle(test()->user)
+        ->create([
+            'gift_card_id' => $giftCard->id,
+            'gift_card_amount' => 50.00,
+        ]);
+
+    resolve(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(0.00)
+        ->and(GiftCardTransaction::query()->where('order_id', $order->id)->count())->toBe(0);
+});
+
 test('gift card reversal is idempotent when called twice', function () {
     $giftCard = GiftCard::factory()->create([
         'initial_balance' => 50.00,

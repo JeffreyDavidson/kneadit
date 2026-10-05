@@ -66,7 +66,34 @@ test('webhook controller delegates event routing to the dispatcher', function ()
 
     expect($source)
         ->toContain(StripeConnectWebhookEventDispatcher::class)
-        ->toContain('$dispatcher->dispatch($type, $data)');
+        ->toContain('$dispatcher->dispatch($type, $data');
+});
+
+test('webhook controller passes the connected account of the event to the dispatcher', function () {
+    config([
+        'kneadit.stripe_connect.webhook_secret' => 'whsec_test_secret',
+        'cache.default' => 'array',
+    ]);
+    $payload = json_encode([
+        'id' => 'evt_connect_account',
+        'object' => 'event',
+        'type' => 'checkout.session.completed',
+        'account' => 'acct_connected',
+        'data' => ['object' => ['id' => 'cs_test_123']],
+    ]);
+    $timestamp = time();
+    $signature = hash_hmac('sha256', "{$timestamp}.{$payload}", 'whsec_test_secret');
+
+    $dispatcher = Mockery::mock(StripeConnectWebhookEventDispatcher::class);
+    $dispatcher->shouldReceive('dispatch')->once()->with('checkout.session.completed', Mockery::any(), 'acct_connected');
+    app()->instance(StripeConnectWebhookEventDispatcher::class, $dispatcher);
+
+    $response = test()->call('POST', '/stripe/connect-webhook', [], [], [], [
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_STRIPE_SIGNATURE' => "t={$timestamp},v1={$signature}",
+    ], $payload);
+
+    $response->assertOk();
 });
 
 test('webhook controller implements idempotency via cache', function () {

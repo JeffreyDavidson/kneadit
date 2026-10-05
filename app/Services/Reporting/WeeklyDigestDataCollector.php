@@ -10,6 +10,7 @@ use App\Queries\Customers\AtRiskCustomersQuery;
 use App\Queries\Reporting\WeeklyDigestQuery;
 use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
 use Illuminate\Support\Facades\Config;
 
@@ -22,7 +23,7 @@ class WeeklyDigestDataCollector
 
     public function collect(): WeeklyDigestData
     {
-        // The weeks are bakery-local Monday to Sunday. created_at holds UTC instants, so those bounds are converted; delivery_date is a plain date and uses the local dates.
+        // The weeks are bakery-local Monday to Sunday. created_at holds UTC instants, so those bounds are converted; delivery_date is a plain date and uses the local dates. Orders and revenue are the revenue orders (paid, not cancelled) delivered last week, like every other revenue figure.
         $now = $this->clock->now();
         $weekStart = $now->copy()->subWeek()->startOfWeek();
         $weekEnd = $now->copy()->subWeek()->endOfWeek();
@@ -31,8 +32,9 @@ class WeeklyDigestDataCollector
         $weekStartUtc = $weekStart->copy()->utc();
         $weekEndUtc = $weekEnd->copy()->utc();
 
-        $weekOrders = Order::query()->whereBetween('created_at', [$weekStartUtc, $weekEndUtc]);
-        $weekOrderStats = $weekOrders
+        $weekRange = new DateRange($weekStart, $weekEnd);
+        $weekOrderStats = Order::query()
+            ->revenueInDateRange($weekRange)
             ->toBase()
             ->selectRaw('COUNT(*) as total_orders, COALESCE(SUM(total), 0) as total_revenue')
             ->first();
@@ -53,7 +55,7 @@ class WeeklyDigestDataCollector
                 'new_customers' => $newCustomers,
                 'avg_order_value' => $averageOrderValue,
             ],
-            topProducts: WeeklyDigestQuery::topProducts($weekStartUtc, $weekEndUtc),
+            topProducts: WeeklyDigestQuery::topProducts($weekRange),
             atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
                 ->map(fn (Customer $customer): array => [
                     'name' => $customer->name,

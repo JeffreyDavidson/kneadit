@@ -99,27 +99,28 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
-    public function paidInYear(int $year): static
+    /**
+     * The single definition of revenue: paid (not part-paid, refunded or
+     * unpaid) and not cancelled. Every revenue figure starts from this, and is
+     * dated by delivery_date, the bakery-local date the order is fulfilled.
+     */
+    public function revenue(): static
     {
-        $this->whereYear('delivery_date', $year)
-            ->where('payment_status', PaymentStatus::Paid);
+        $this->active()->paid();
 
         return $this;
     }
 
-    public function paidInMonth(int $year, int $month): static
+    public function revenueInYear(int $year): static
     {
-        $this->whereYear('delivery_date', $year)
-            ->whereMonth('delivery_date', $month)
-            ->where('payment_status', PaymentStatus::Paid);
+        $this->revenue()->whereYear('delivery_date', $year);
 
         return $this;
     }
 
-    public function paidInDateRange(DateRange $range): static
+    public function revenueInDateRange(DateRange $range): static
     {
-        $this->whereBetween('delivery_date', $range->toArray())
-            ->where('payment_status', PaymentStatus::Paid);
+        $this->revenue()->inDateRange($range);
 
         return $this;
     }
@@ -132,14 +133,14 @@ class OrderQueryBuilder extends Builder
     }
 
     /**
-     * Filter orders for delivery on a specific date with active delivery statuses.
+     * Filter orders for delivery on a specific date that are ready to go out the door.
      */
     public function forDeliveryOnDate(Carbon $date): static
     {
         $this->with(['customer', 'orderItems.product'])
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
-            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
+            ->ready()
             ->whereDate('delivery_date', $date)
             ->orderBy('delivery_time');
 

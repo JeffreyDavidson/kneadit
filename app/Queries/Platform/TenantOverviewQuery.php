@@ -36,7 +36,7 @@ final readonly class TenantOverviewQuery
                 'products' => Product::query()->count(),
                 'orders' => Order::query()->count(),
                 // orders.total is bigint cents (migration 2026_04_22_201500).
-                'revenue' => (float) ((int) Order::query()->sum('total') / 100),
+                'revenue' => (float) ((int) Order::query()->revenue()->sum('total') / 100),
                 'customers' => Customer::query()->count(),
                 'reviews' => Review::query()->count(),
                 'last_order' => is_string($lastOrder) ? $lastOrder : null,

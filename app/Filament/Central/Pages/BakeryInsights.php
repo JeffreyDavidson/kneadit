@@ -90,7 +90,7 @@ class BakeryInsights extends Page
 
         Notification::make()
             ->title('Trial Extended')
-            ->body(($tenant->store_name ?? $tenant->name)." trial extended to {$newEnd->format('M j, Y')}.")
+            ->body(e($tenant->store_name ?? $tenant->name)." trial extended to {$newEnd->format('M j, Y')}.")
             ->success()
             ->send();
     }
@@ -107,7 +107,7 @@ class BakeryInsights extends Page
 
         resolve(SendTenantNudge::class)($tenant);
 
-        $storeName = $tenant->store_name ?? $tenant->name;
+        $storeName = e($tenant->store_name ?? $tenant->name);
         $this->sentNudges[] = $tenantId;
 
         Notification::make()

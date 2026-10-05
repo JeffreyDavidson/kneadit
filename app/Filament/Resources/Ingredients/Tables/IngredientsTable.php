@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Ingredients\Tables;
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Inventory\StockStatus;
+use App\Exceptions\Inventory\StockWouldGoNegativeException;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
@@ -15,6 +16,7 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -63,11 +65,13 @@ class IngredientsTable
                     ->options([
                         'low' => 'Low Stock',
                         'out' => 'Out of Stock',
+                        'negative' => 'Negative Stock',
                     ])
                     ->query(fn (Builder $query, array $data) => match ($data['value'] ?? null) {
                         'low' => $query->where('current_stock', '>', 0)
                             ->whereColumn('current_stock', '<=', 'low_stock_threshold'),
                         'out' => $query->where('current_stock', '<=', 0),
+                        'negative' => $query->where('current_stock', '<', 0),
                         default => $query,
                     }),
                 SelectFilter::make('is_active')
@@ -97,12 +101,24 @@ class IngredientsTable
                     ])
                     ->action(function (Ingredient $record, array $data): void {
                         $qty = Arr::float($data, 'quantity');
-                        $type = StockAdjustmentType::from(Arr::string($data, 'type'));
-                        $notes = Arr::string($data, 'notes', '');
+                        // Filament casts a Select with enum options back to the enum.
+                        $type = $data['type'] instanceof StockAdjustmentType
+                            ? $data['type']
+                            : StockAdjustmentType::from(Arr::string($data, 'type'));
+                        $notes = filled($data['notes'] ?? null) ? Arr::string($data, 'notes') : null;
                         if (in_array($type, [StockAdjustmentType::Usage, StockAdjustmentType::Waste])) {
                             $qty = -$qty;
                         }
-                        resolve(AdjustIngredientStock::class)($record, $qty, $type, $notes !== '' ? $notes : null);
+
+                        try {
+                            resolve(AdjustIngredientStock::class)($record, $qty, $type, $notes);
+                        } catch (StockWouldGoNegativeException) {
+                            Notification::make()
+                                ->title("Not enough {$record->name} on hand")
+                                ->body('There are '.StockQuantity::display($record->current_stock)." {$record->unit} in stock, so that much can't be taken out. Nothing was recorded.")
+                                ->danger()
+                                ->send();
+                        }
                     }),
                 SlideOverEditAction::make(),
             ])
@@ -123,10 +139,10 @@ class IngredientsTable
                         ])
                         ->action(function (Collection $records, array $data): void {
                             $quantity = Arr::float($data, 'quantity');
-                            $notes = Arr::string($data, 'notes', '');
+                            $notes = filled($data['notes'] ?? null) ? Arr::string($data, 'notes') : null;
                             /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
-                                resolve(AdjustIngredientStock::class)($ingredient, $quantity, StockAdjustmentType::Purchase, $notes !== '' ? $notes : null);
+                                resolve(AdjustIngredientStock::class)($ingredient, $quantity, StockAdjustmentType::Purchase, $notes);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),

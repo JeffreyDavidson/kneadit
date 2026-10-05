@@ -38,7 +38,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
 | Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
-| Every 30 minutes | `health:check` | Application health checks. A failing check mails the platform address in-process (not queued) at most once every 6 hours, and a check that passes again sends one recovered mail |
+| Every 30 minutes | `health:check` | Application health checks (listed under "Health checks" below). A failing check mails the platform address in-process (not queued, and `HealthAlertMail` reads no tenant settings so it still renders when the database is down) at most once every 6 hours, and a check that passes again sends one recovered mail |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
 | Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders; a cart is skipped (and marked converted) when an order for its email was placed after the cart was last touched |
@@ -49,6 +49,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
 | Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
+| Daily 04:30 | `platform:prune-expired-tokens` | Delete impersonation and billing handoff tokens that expired more than 7 days ago, consumed or not |
 | Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS and HTTPS (`https://{domain}/up` must answer 2xx with a valid certificate) for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
@@ -59,7 +60,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 
 The four tenant-facing sends above (`birthday:send-emails`, `orders:send-repeat-reminders`, `digest:weekly`, `inventory:send-low-stock-alert`) are scheduled hourly but each tenant is only processed when its own clock matches the send time: `App\Services\Scheduling\LocalSendWindow` reads the tenant's `timezone` order setting (UTC until set) and compares the local hour, and for the digest the local weekday. A bakery on a half-hour offset such as India is processed at the half-past local time, since the scheduler fires on the hour. Platform-level commands (backups, churn, trial checks, prunes) stay on fixed UTC times.
 
-Each command also records a per-tenant, per-bakery-local-date marker (`local-send:<command>:<Y-m-d>` in the tenant's `scheduled_notification_runs` table) before sending, so a retry, a manual run or a clock change cannot send twice on the same local day. The marker is released if the tenant's send throws, so the next run can retry. Underneath, the existing per-customer, per-user and per-tenant claims (`engagement:…`, `weekly-digest:…`, `low-stock:…`) still dedupe each recipient.
+Each command also records a per-tenant, per-bakery-local-date marker (`local-send:<command>:<Y-m-d>` in the tenant's `scheduled_notification_runs` table) before sending, so a retry, a manual run or a clock change cannot send twice on the same local day. The marker is released if the tenant's send throws, so the next run can retry. Underneath, the existing per-customer, per-user and per-tenant claims (`engagement:…`, `weekly-digest:…`, `low-stock:…`) still dedupe each recipient. The `engagement:…` key ends in the bakery-local date (`BakeryClock::today()`), so it matches the send window.
 
 For support runs, pass `--force` (for example `php artisan birthday:send-emails --force`) to process every tenant now regardless of local time. `--force` skips the hour check and the local-day marker, but the per-recipient claims above still stop a recipient receiving the same message twice in a day.
 
@@ -262,5 +263,27 @@ For an incident, determine the active layer before changing data:
 4. Inspect failed jobs and recent scheduler/health output.
 5. For payments, compare the order state with Stripe/PayPal using the recorded external identifiers and webhook delivery history.
 6. Repair with an existing idempotent command/action where possible; take a backup before manual data correction.
+
+### Health checks
+
+`health:check` runs these checks (classes in `App\Services\Platform\HealthChecks`). Each failing check alerts at most once every 6 hours, and a check that passes again sends one recovered mail.
+
+| Check | Fails when |
+| --- | --- |
+| Database connection, users table, tenant DB directory, storage/logs, homepage | The central database does not open or answer, the tenant database directory is not writable or is missing a database, `storage/logs` is not writable, or the homepage does not answer 2xx |
+| Disk space | Free space on the application volume is under 20% of the disk or under 5 GB |
+| Redis | A Redis connection used by the cache (including its lock connection), the queue or the session does not answer `PING`. Passes without connecting when none of them uses Redis |
+| Scheduler heartbeat | No scheduled task has started within 70 minutes (read from the `scheduled_task_status:*` platform settings, which `RecordScheduledTaskStatusListener` writes). Something is scheduled at least every 15 minutes, so this means the scheduler stopped |
+| Nightwatch agent | Nightwatch is enabled (`NIGHTWATCH_ENABLED`) and nothing accepts a TCP connection on `nightwatch.ingest.uri` (default `127.0.0.1:2407`). Nothing is sent. Without the agent the app reports nothing to Nightwatch |
+
+The Platform Operations page shows each scheduled task's last status. Scheduled tasks run in the background, so `RecordScheduledTaskStatusListener` records `running` when a task starts, ignores the `ScheduledTaskFinished` event Laravel fires right after launching it (no exit code yet), and records the real outcome from `ScheduledBackgroundTaskFinished`: exit code 0 is `succeeded`, anything else is `failed` with the exit code.
+
+### Redis "Connection refused" during server reboots
+
+When the server reboots, Redis stops before the queue worker does, so the worker keeps running for a moment and logs `Connection refused` against Redis (and cache writes in that window fail). A burst of these around a reboot or restart that stops on its own is expected. What to look for otherwise: the `Redis` health check failing after the server is back up, a `Connection refused` that continues, or a full disk (a full disk blocks Redis writes too, so check disk space first).
+
+### Central database "database is locked"
+
+Scheduled commands that loop over central rows (tenants, check-ins) load the rows first (`->get()`, or `lazyById()` for a table that can grow large) and then write. Do not iterate them with `->cursor()`: a cursor keeps a WAL read snapshot open, and when another process commits meanwhile (a dozen scheduled tasks write status rows at :00 and :30), SQLite rejects this connection's next write immediately with `database is locked`, without waiting for `busy_timeout`.
 
 Minimum production monitoring should alert on `/up` failure, queue backlog/failed jobs, scheduler silence, backup failure or age, tenant database filesystem capacity, repeated webhook failure, and elevated 5xx/Sentry error rates.

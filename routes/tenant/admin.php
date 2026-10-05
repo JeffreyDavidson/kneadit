@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Tenant\Admin\InvoiceController;
 use App\Http\Controllers\Tenant\Admin\PrintProductLabelController;
+use App\Http\Controllers\Tenant\Admin\ShowExpenseReceiptController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('orders/{order:order_number}/invoice', InvoiceController::class)->name('orders.invoice');
     Route::get('products/{product}/label', PrintProductLabelController::class)->name('products.label');
+    Route::get('expenses/{expense}/receipt', ShowExpenseReceiptController::class)
+        ->middleware('can:view,expense')
+        ->name('expenses.receipt');
 });

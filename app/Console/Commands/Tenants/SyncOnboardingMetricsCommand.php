@@ -19,7 +19,7 @@ class SyncOnboardingMetricsCommand extends Command
         $synced = 0;
         $failed = 0;
 
-        foreach (Tenant::query()->cursor() as $tenant) {
+        foreach (Tenant::query()->lazyById() as $tenant) {
             try {
                 $metrics->sync($tenant);
                 $synced++;

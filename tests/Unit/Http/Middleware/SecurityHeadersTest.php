@@ -76,3 +76,19 @@ test('CSP header includes a nonce token in script-src and style-src', function (
         ->not->toContain("script-src 'self' {$token} 'unsafe-inline'")
         ->not->toContain("script-src-elem 'self' {$token} 'unsafe-inline'");
 });
+
+test('security headers middleware can skip the CSP for the admin panels', function () {
+    $middleware = new SecurityHeaders(new CspNonce);
+
+    $response = $middleware->handle(
+        Request::create('/test'),
+        fn () => new Response('OK'),
+        SecurityHeaders::WITHOUT_CSP,
+    );
+
+    expect($response->headers->get('X-Content-Type-Options'))->toBe('nosniff')
+        ->and($response->headers->get('X-Frame-Options'))->toBe('SAMEORIGIN')
+        ->and($response->headers->get('Referrer-Policy'))->toBe('strict-origin-when-cross-origin')
+        ->and($response->headers->has('Content-Security-Policy'))->toBeFalse()
+        ->and($response->headers->has('Content-Security-Policy-Report-Only'))->toBeFalse();
+});

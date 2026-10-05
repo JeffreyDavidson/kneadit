@@ -20,7 +20,7 @@ class ProcessScheduledCheckins
     /** @return array{sent: int, skipped_no_email: int, failures: int, no_active_checkins: bool} */
     public function __invoke(): array
     {
-        $checkins = ScheduledCheckin::query()->where('is_active', true)->cursor();
+        $checkins = ScheduledCheckin::query()->where('is_active', true)->get();
 
         if ($checkins->isEmpty()) {
             return [
@@ -41,7 +41,7 @@ class ProcessScheduledCheckins
             $tenants = Tenant::query()
                 ->whereDate('created_at', '<=', $dueDate)
                 ->whereDate('created_at', '>=', $dueDate->copy()->subDays(self::LATE_DAYS))
-                ->cursor();
+                ->get();
 
             /** @var Tenant $tenant */
             foreach ($tenants as $tenant) {

@@ -41,6 +41,20 @@ test('throws when an adjustment would push stock below zero', function () {
     assertDatabaseMissing('stock_adjustments', ['ingredient_id' => $ingredient->id]);
 });
 
+test('goes below zero when negative stock is allowed and returns the resulting stock', function () {
+    $ingredient = Ingredient::factory()->create(['current_stock' => 5]);
+
+    $resulting = resolve(AdjustIngredientStock::class)($ingredient, -8, StockAdjustmentType::Usage, allowNegative: true);
+
+    expect($resulting)->toBe(-3.0)
+        ->and($ingredient->fresh()->current_stock)->toBe('-3.0000');
+    assertDatabaseHas('stock_adjustments', [
+        'ingredient_id' => $ingredient->id,
+        'quantity' => -8.00,
+        'type' => 'usage',
+    ]);
+});
+
 test('allows adjustments that bring stock exactly to zero', function () {
     $ingredient = Ingredient::factory()->create(['current_stock' => 5]);
 

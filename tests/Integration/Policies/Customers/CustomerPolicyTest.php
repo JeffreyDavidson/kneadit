@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Customers\AnonymiseCustomer;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
@@ -32,6 +33,25 @@ test('nobody can delete a customer who has orders', function (string $role) {
 
     expect((new CustomerPolicy)->delete($user, $customer))->toBeFalse();
 })->with('managerRoles');
+
+test('managers and owners can anonymise a customer who has orders', function (string $role) {
+    $user = User::factory()->{$role}()->create();
+    $customer = Customer::factory()->create();
+    Order::factory()->for($customer)->create();
+
+    expect((new CustomerPolicy)->anonymise($user, $customer))->toBeTrue();
+})->with('managerRoles');
+
+test('nobody can anonymise a customer who is already anonymised', function () {
+    $customer = Customer::factory()->create();
+    resolve(AnonymiseCustomer::class)($customer);
+
+    expect((new CustomerPolicy)->anonymise(User::factory()->owner()->create(), $customer->fresh()))->toBeFalse();
+});
+
+test('staff cannot anonymise a customer', function () {
+    expect((new CustomerPolicy)->anonymise(User::factory()->staff()->create(), Customer::factory()->create()))->toBeFalse();
+});
 
 test('staff cannot manage customers', function () {
     $staff = User::factory()->staff()->create();

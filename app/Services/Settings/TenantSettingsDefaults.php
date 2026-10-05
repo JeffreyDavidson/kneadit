@@ -14,6 +14,23 @@ use App\Enums\Orders\PaymentMethod;
  */
 final class TenantSettingsDefaults
 {
+    /**
+     * Credentials and endpoints for outside services. "Reset to defaults" leaves
+     * these alone: wiping them silently disconnects the integration on the next save.
+     *
+     * @return list<string>
+     */
+    public static function integrationKeys(): array
+    {
+        return [
+            'webhook_url',
+            'webhook_secret',
+            'paypal_client_id',
+            'paypal_client_secret',
+            'paypal_sandbox',
+        ];
+    }
+
     /** @return array<string, mixed> */
     public static function all(): array
     {
