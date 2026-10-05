@@ -19,7 +19,6 @@ use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Reviews\Pages\ListReviews;
-use App\Filament\Resources\Settings\Pages\ListSettings;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
@@ -74,7 +73,6 @@ dataset('resourceListPageGroups', [
     ],
     'Content resources' => [
         ListGalleryPhotos::class,
-        ListSettings::class,
         ListSocialPosts::class,
     ],
 ]);
