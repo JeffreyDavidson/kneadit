@@ -22,7 +22,7 @@ class TenantOnboardingMetrics
         return [
             'store_name' => filled($tenant->store_name),
             'store_logo' => filled($tenant->store_logo),
-            'storefront_enabled' => $tenant->storefront_enabled,
+            'storefront_enabled' => $tenant->storefront_set_up,
             'brand_customized' => filled($tenant->brand_color_primary)
                 && $tenant->brand_color_primary !== BrandingSettings::DEFAULT_BRAND_COLOR,
             'has_products' => $tenant->onboarding_products_count > 0,
