@@ -10,6 +10,8 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Enums\Orders\SenderType;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Filament\Actions\CancelOrderAction;
+use App\Filament\Actions\RefundOrderAction;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Orders\Order;
 use App\Services\PayPal\InvoiceService;
@@ -64,7 +66,9 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         $allowedTransitions = TransitionOrderStatus::allowedTransitions($this->record);
+        // Cancelling has its own action (below) because it can refund the order.
         $options = collect($allowedTransitions)
+            ->reject(fn (OrderStatus $status): bool => $status === OrderStatus::Cancelled)
             ->mapWithKeys(fn (OrderStatus $status): array => [$status->value => $status->name])
             ->all();
 
@@ -87,6 +91,10 @@ class ViewOrder extends ViewRecord
                         Notification::make()->title($e->getMessage())->danger()->send();
                     }
                 }),
+
+            CancelOrderAction::make(),
+
+            RefundOrderAction::make(),
 
             Action::make('markPaid')
                 ->label('Mark Paid')

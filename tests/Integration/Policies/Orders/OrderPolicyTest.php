@@ -71,3 +71,46 @@ test('nobody can delete an order that has a refund', function (string $role) {
 
     expect((new OrderPolicy)->delete($user, $order))->toBeFalse();
 })->with('deleteCapableRoles');
+
+dataset('orderPaymentsWithMoneyTaken', [
+    'paid' => PaymentStatus::Paid,
+    'partially paid' => PaymentStatus::Partial,
+]);
+
+dataset('orderPaymentsWithNoMoneyTaken', [
+    'unpaid' => PaymentStatus::Unpaid,
+    'payment cancelled' => PaymentStatus::Cancelled,
+    'refunded' => PaymentStatus::Refunded,
+]);
+
+test('staff can cancel an order only while no money has been taken', function (PaymentStatus $paymentStatus) {
+    $staff = User::factory()->staff()->create();
+    $order = Order::factory()->create(['payment_status' => $paymentStatus]);
+
+    expect((new OrderPolicy)->cancel($staff, $order))->toBeTrue();
+})->with('orderPaymentsWithNoMoneyTaken');
+
+test('staff cannot cancel an order that has been paid', function (PaymentStatus $paymentStatus) {
+    $staff = User::factory()->staff()->create();
+    $order = Order::factory()->create(['payment_status' => $paymentStatus]);
+
+    expect((new OrderPolicy)->cancel($staff, $order))->toBeFalse();
+})->with('orderPaymentsWithMoneyTaken');
+
+test('managers and owners can cancel any order', function (string $role, PaymentStatus $paymentStatus) {
+    $user = User::factory()->{$role}()->create();
+    $order = Order::factory()->create(['payment_status' => $paymentStatus]);
+
+    expect((new OrderPolicy)->cancel($user, $order))->toBeTrue();
+})->with('deleteCapableRoles')->with([...PaymentStatus::cases()]);
+
+test('only managers and owners can refund an order', function (string $role, bool $allowed) {
+    $user = User::factory()->{$role}()->create();
+    $order = Order::factory()->cancelled()->paid()->create();
+
+    expect((new OrderPolicy)->refund($user, $order))->toBe($allowed);
+})->with([
+    'staff' => ['staff', false],
+    'manager' => ['manager', true],
+    'owner' => ['owner', true],
+]);
