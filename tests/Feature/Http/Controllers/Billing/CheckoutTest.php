@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Billing\CheckoutController;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Http\RedirectResponse;
 use JMac\Testing\Double;
 use Laravel\Cashier\Checkout;
 use Laravel\Cashier\Subscription;
@@ -78,6 +80,27 @@ test('checkout refuses to start a second subscription', function () {
         ->assertSessionHas('error', 'You already have a subscription. Use Switch to change plans.');
 
     expect($user->subscriptions()->count())->toBe(1);
+});
+
+test('checkout refuses a free-forever bakery owner without calling Stripe', function () {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
+
+    $user = User::factory()->owner()->create();
+    Tenant::factory()->create(['free_forever' => true, 'user_id' => $user->id]);
+
+    $builder = Double::for(SubscriptionBuilder::class);
+    $builder->expects('trialDays')->never();
+    $builder->expects('checkout')->never();
+
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
+
+    $response = app(CheckoutController::class)($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBeEmpty()
+        ->and($response)->toBeInstanceOf(RedirectResponse::class)
+        ->and($response->getTargetUrl())->toBe(route('billing.plans'))
+        ->and(session('error'))->toBe('Your bakery has a complimentary plan, so there is nothing to subscribe to.');
 });
 
 test('checkout gives a first-time subscriber the trial', function () {

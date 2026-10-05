@@ -66,9 +66,13 @@
 
                         {{-- Action Button --}}
                         <div class="mt-5">
-                            @if ($isUpgrade)
+                            @if ($isUpgrade && ! $this->canManageBilling())
+                                <div class="bg-brand-50 text-brand-500 w-full rounded-xl px-4 py-3 text-center text-[0.9rem] font-semibold">
+                                    Ask your bakery owner to upgrade
+                                </div>
+                            @elseif ($isUpgrade)
                                 <button
-                                    wire:click="redirectToBilling"
+                                    wire:click="mountAction('manageBilling')"
                                     class="w-full px-4 py-3 rounded-xl font-bold text-[0.9rem] text-center cursor-pointer border-0 text-white bg-gradient-to-br {{ $key === 'pro' ? 'from-brand-900 to-brand-700' : 'from-honey to-golden' }} shadow-md hover:-translate-y-px transition-all"
                                 >
                                     Upgrade to {{ $plan['name'] }}

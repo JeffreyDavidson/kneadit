@@ -4,6 +4,7 @@ use App\Http\Middleware\AuthenticateCustomerSession;
 use App\Http\Middleware\EnsureCustomerEmailIsVerified;
 use App\Http\Middleware\EnsureOrderAccess;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
+use App\Http\Middleware\PreventAccessFromTenantDomains;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetActorContext;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -58,6 +59,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prependToPriorityList(
             before: AuthenticatesRequests::class,
             prepend: AuthenticateCustomerSession::class,
+        );
+
+        // A bakery host must get the 404 before the auth redirect sends a guest to /login.
+        $middleware->prependToPriorityList(
+            before: AuthenticatesRequests::class,
+            prepend: PreventAccessFromTenantDomains::class,
         );
 
         $middleware->redirectTo(guests: '/login', users: '/billing/plans');
