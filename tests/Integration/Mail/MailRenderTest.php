@@ -9,6 +9,8 @@ use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -21,6 +23,16 @@ test('HealthAlertMail has correct subject and renders', function () {
 
     $mail->assertHasSubject('⚠️ KneadIt Health Check Alert');
     expect($mail->render())->toBeString();
+});
+
+test('HealthAlertMail renders and sends without touching the settings or the database', function () {
+    app()->bind(TenantSettings::class, fn () => throw new RuntimeException('The database is down.'));
+    $mail = new HealthAlertMail('Database connection failed');
+
+    $sent = $mail->to('ops@example.com')->send(Mail::mailer('array'));
+
+    expect($mail->render())->toContain('Database connection failed')
+        ->and($sent)->not->toBeNull();
 });
 
 test('PaymentFailedMail has correct subject and links to the bakery admin billing page', function () {
