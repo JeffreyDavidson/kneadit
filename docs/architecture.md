@@ -64,7 +64,7 @@ The root URL is deliberately universal: the global middleware establishes centra
 - `routes/tenant/storefront.php` for public bakery content and storefront commerce.
 - `routes/tenant/account.php` for customer account authentication, profile, orders, and email verification.
 - `routes/tenant/orders.php` for checkout, order access, payment callbacks, cart, capacity, and order-related AJAX endpoints.
-- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups.
+- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups. The resources are JSON:API resources that load whatever `?include=` names, so each controller eager-loads the relations it exposes with the storefront's filter (active products, approved reviews); a relation loaded that way is not re-queried by the include, so an inactive product cannot leak. `/api/menu` always includes its products. `/api/capacity/{date}` validates the date as `Y-m-d` (422 otherwise).
 
 Routes that access tenant models belong under the tenant loader, even when their controllers are used by an admin-facing page. This keeps route middleware, model binding, and database tenancy context aligned.
 

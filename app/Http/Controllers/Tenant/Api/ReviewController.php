@@ -8,6 +8,7 @@ use App\Http\Requests\Api\IndexReviewsRequest;
 use App\Http\Requests\Api\StoreApiReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Engagement\Review;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -15,7 +16,10 @@ class ReviewController extends Controller
 {
     public function index(IndexReviewsRequest $request): AnonymousResourceCollection
     {
-        $query = Review::query()->approved()->with('product');
+        // Constrained so ?include=product can't expose an inactive product.
+        $query = Review::query()->approved()->with([
+            'product' => fn (BelongsTo $q) => $q->where('is_active', true),
+        ]);
 
         if ($request->boolean('featured')) {
             $query->where('is_featured', true);

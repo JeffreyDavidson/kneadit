@@ -40,6 +40,25 @@ test('reviews endpoint returns all approved when featured is not requested', fun
         ->assertJsonCount(2, 'data');
 });
 
+test('reviews include exposes active products but hides inactive ones', function () {
+    $active = Product::factory()->active()->create();
+    $inactive = Product::factory()->inactive()->create();
+    $activeReview = Review::factory()->approved()->for($active)->create();
+    $inactiveReview = Review::factory()->approved()->for($inactive)->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson('/api/reviews?include=product');
+
+    $response->assertOk()->assertJsonCount(2, 'data');
+
+    $data = collect($response->json('data'))->keyBy('id');
+
+    expect(collect($response->json('included'))->pluck('id')->all())->toBe([(string) $active->id])
+        ->and($response->getContent())->not->toContain($inactive->name)
+        ->and($data[(string) $activeReview->id]['relationships']['product']['data']['id'])->toBe((string) $active->id)
+        ->and($data[(string) $inactiveReview->id]['relationships']['product']['data'])->toBeNull();
+});
+
 test('store review creates review and returns a JSON:API resource', function () {
     $product = Product::factory()->create();
 
