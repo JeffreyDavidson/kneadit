@@ -103,6 +103,13 @@
                 </span>
             @endif
 
+            @if ($tenant->is_paused)
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/15 px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-red-400 uppercase">
+                    <x-heroicon-o-pause-circle class="h-3 w-3" />
+                    Paused
+                </span>
+            @endif
+
             @if ($tenant->storefront_enabled)
                 <span class="bg-espresso border-honey/15 text-parchment inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
                     <x-heroicon-o-building-storefront class="h-3 w-3" />

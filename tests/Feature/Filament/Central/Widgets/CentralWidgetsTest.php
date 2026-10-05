@@ -8,6 +8,7 @@ use App\Filament\Central\Widgets\RecentAuditLog;
 use App\Filament\Central\Widgets\RecentTenants;
 use App\Filament\Central\Widgets\RevenueOverview;
 use App\Models\Platform\SupportTicket;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
 
@@ -41,6 +42,21 @@ test('needs attention widget renders Filament icons for inbox alerts', function 
         ->assertOk()
         ->assertSee('Open Inbox')
         ->assertSee('awaiting reply');
+});
+
+test('needs attention widget counts paused bakeries by paused_at, not by the storefront setting', function () {
+    Tenant::factory()->count(2)->create(['paused_at' => now()->subDay()]);
+    Tenant::factory()->create(['storefront_enabled' => false, 'external_website' => 'https://own-site.example.com']);
+
+    livewire(NeedsAttention::class)
+        ->assertSee('2 paused bakeries');
+});
+
+test('needs attention widget shows no paused item while nothing is paused', function () {
+    Tenant::factory()->create(['storefront_enabled' => false]);
+
+    livewire(NeedsAttention::class)
+        ->assertDontSee('paused');
 });
 
 test('platform stats widget renders when daily ticket counts are integers', function () {

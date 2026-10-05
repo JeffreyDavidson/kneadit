@@ -2,6 +2,8 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
+use App\Actions\Platform\PauseTenant;
+use App\Actions\Platform\ResumeTenant;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Platform\FreeForeverGrant;
@@ -73,6 +75,14 @@ class TenantsTable
                     ->boolean()
                     ->toggleable(),
 
+                IconColumn::make('is_paused')
+                    ->label('Paused')
+                    ->boolean()
+                    ->trueColor('danger')
+                    ->falseColor('gray')
+                    ->tooltip('Paused bakeries take no orders and send no customer emails')
+                    ->toggleable(),
+
                 TextColumn::make('trial_ends_at')
                     ->label('Trial Ends')
                     ->date()
@@ -93,6 +103,10 @@ class TenantsTable
                     ->label('Active'),
                 TernaryFilter::make('storefront_enabled')
                     ->label('Storefront'),
+                TernaryFilter::make('paused')
+                    ->label('Paused')
+                    ->nullable()
+                    ->attribute('paused_at'),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
@@ -129,20 +143,20 @@ class TenantsTable
                         ->requiresConfirmation()
                         ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))
                         ->deselectRecordsAfterCompletion(),
-                    BulkAction::make('enable_storefront')
-                        ->label('Enable storefronts')
-                        ->icon(Heroicon::OutlinedBuildingStorefront)
+                    BulkAction::make('resume')
+                        ->label('Resume bakeries')
+                        ->icon(Heroicon::OutlinedPlayCircle)
                         ->authorize('platform-admin')
                         ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => true]))
+                        ->action(fn (Collection $records, ResumeTenant $resumeTenant) => $records->each(fn (Tenant $tenant) => $resumeTenant($tenant)))
                         ->deselectRecordsAfterCompletion(),
-                    BulkAction::make('disable_storefront')
-                        ->label('Disable storefronts')
-                        ->icon(Heroicon::OutlinedBuildingStorefront)
+                    BulkAction::make('pause')
+                        ->label('Pause bakeries')
+                        ->icon(Heroicon::OutlinedPauseCircle)
                         ->color('danger')
                         ->authorize('platform-admin')
                         ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => false]))
+                        ->action(fn (Collection $records, PauseTenant $pauseTenant) => $records->each(fn (Tenant $tenant) => $pauseTenant($tenant)))
                         ->deselectRecordsAfterCompletion(),
                     BulkAction::make('extend_trial')
                         ->label('Extend trial 30 days')

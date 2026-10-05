@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\AuthenticateCustomerSession;
+use App\Http\Middleware\EnsureBakeryNotPaused;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -42,8 +43,11 @@ Route::middleware([
         require __DIR__.'/tenant/orders.php';
     });
 
-    // Tenant Storefront API (JSON, no CSRF)
+    // Tenant Storefront API (JSON, no CSRF). Not behind EnsureStorefrontEnabled, because
+    // a bakery that uses its own website may call the API from there; a paused bakery
+    // is refused instead.
     Route::prefix('api')
+        ->middleware(EnsureBakeryNotPaused::class)
         ->withoutMiddleware(PreventRequestForgery::class)
         ->group(function () {
             require __DIR__.'/tenant/api.php';
