@@ -4,9 +4,8 @@ namespace App\Reports\Inventory;
 
 use App\DataTransferObjects\Inventory\ProductReportProduct;
 use App\DataTransferObjects\Inventory\ProductReportResult;
-use App\Enums\Orders\OrderStatus;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use App\Support\ProfitMargin;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
@@ -18,13 +17,8 @@ class ProductReport
 {
     public function generate(DateRange $range): ProductReportResult
     {
-        $paidOrdersInRange = static fn (EloquentBuilder $query): EloquentBuilder => $query
-            ->whereNotIn('status', [OrderStatus::Cancelled])
-            ->whereBetween('delivery_date', $range->toArray())
-            ->where('payment_status', PaymentStatus::Paid);
-
         $paidOrderItemsInRange = static fn (EloquentBuilder $query): EloquentBuilder => $query
-            ->whereHas('order', $paidOrdersInRange);
+            ->whereIn('order_id', Order::query()->revenueInDateRange($range)->select('id'));
 
         $products = array_values(Product::query()
             ->withSum(['orderItems as units_sold' => $paidOrderItemsInRange], 'quantity')

@@ -32,8 +32,9 @@ class WeeklyDigestDataCollector
         $weekStartUtc = $weekStart->copy()->utc();
         $weekEndUtc = $weekEnd->copy()->utc();
 
+        $weekRange = new DateRange($weekStart, $weekEnd);
         $weekOrderStats = Order::query()
-            ->revenueInDateRange(new DateRange($weekStart, $weekEnd))
+            ->revenueInDateRange($weekRange)
             ->toBase()
             ->selectRaw('COUNT(*) as total_orders, COALESCE(SUM(total), 0) as total_revenue')
             ->first();
@@ -54,7 +55,7 @@ class WeeklyDigestDataCollector
                 'new_customers' => $newCustomers,
                 'avg_order_value' => $averageOrderValue,
             ],
-            topProducts: WeeklyDigestQuery::topProducts($weekStartUtc, $weekEndUtc),
+            topProducts: WeeklyDigestQuery::topProducts($weekRange),
             atRiskCustomers: AtRiskCustomersQuery::get(Config::integer('analytics.at_risk_threshold_days', 30), 5)
                 ->map(fn (Customer $customer): array => [
                     'name' => $customer->name,

@@ -4,14 +4,11 @@ namespace App\Reports\Customers;
 
 use App\DataTransferObjects\Customers\CustomerReportResult;
 use App\DataTransferObjects\Customers\CustomerReportTopCustomer;
-use App\Enums\Orders\OrderStatus;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\BakeryClock;
 use App\ValueObjects\DateRange;
 use App\ValueObjects\Money;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class CustomerReport
@@ -22,26 +19,23 @@ class CustomerReport
 
         $newCustomers = Customer::query()->whereBetween('created_at', $createdBetween)->count();
 
-        $paidOrdersInRange = static function (Builder $query) use ($range): void {
-            $query->whereNotIn('status', [OrderStatus::Cancelled])
-                ->where('payment_status', PaymentStatus::Paid)
-                ->whereBetween('delivery_date', $range->toArray());
-        };
-
         $totalCustomersWithOrders = Customer::query()
-            ->whereHas('orders', $paidOrdersInRange)
+            ->whereIn('id', Order::query()->revenueInDateRange($range)->select('customer_id'))
             ->count();
 
         $repeatCustomers = Customer::query()
-            ->whereHas('orders', $paidOrdersInRange, '>=', 2)
+            ->whereIn('id', Order::query()
+                ->revenueInDateRange($range)
+                ->select('customer_id')
+                ->groupBy('customer_id')
+                ->havingRaw('COUNT(*) >= 2'))
             ->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
         $topCustomers = array_values(Customer::query()
             ->whereIn('id', Order::query()
-                ->active()
-                ->paidInDateRange($range)
+                ->revenueInDateRange($range)
                 ->select('customer_id'))
             ->withPaidOrderMetrics($range)
             ->orderByDesc('total_spend')

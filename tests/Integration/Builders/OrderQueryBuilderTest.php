@@ -137,17 +137,6 @@ test('revenueInDateRange returns revenue orders delivered within the date range'
     expect($results)->toHaveCount(1);
 });
 
-test('paidInDateRange returns paid orders within the date range', function () {
-    Order::factory()->paid()->create(['delivery_date' => '2026-03-15']);
-    Order::factory()->paid()->create(['delivery_date' => '2026-05-01']);
-    Order::factory()->unpaid()->create(['delivery_date' => '2026-03-15']);
-
-    $range = DateRange::fromStrings('2026-03-01', '2026-03-31');
-    $results = Order::query()->paidInDateRange($range)->get();
-
-    expect($results)->toHaveCount(1);
-});
-
 test('inDateRange returns orders within the date range regardless of payment status', function () {
     Order::factory()->paid()->create(['delivery_date' => '2026-03-15']);
     Order::factory()->unpaid()->create(['delivery_date' => '2026-03-20']);
