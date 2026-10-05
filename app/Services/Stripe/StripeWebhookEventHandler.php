@@ -9,6 +9,7 @@ use App\Events\Platform\PaymentFailed;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Queries\Platform\StripeCustomerLookupQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Subscription;
 use Stripe\Subscription as StripeSubscription;
@@ -145,7 +146,7 @@ final readonly class StripeWebhookEventHandler
         $hasOtherValidSubscription = Subscription::query()
             ->where('user_id', $owner->id)
             ->where('type', 'default')
-            ->when($endedSubscriptionId !== null, fn ($query) => $query->where('stripe_id', '!=', $endedSubscriptionId))
+            ->when($endedSubscriptionId !== null, fn (Builder $query) => $query->where('stripe_id', '!=', $endedSubscriptionId))
             ->get()
             ->contains(fn (Subscription $subscription): bool => $subscription->valid());
 

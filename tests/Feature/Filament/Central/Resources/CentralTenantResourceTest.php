@@ -2,6 +2,7 @@
 
 use App\Filament\Central\Resources\TenantResource\Pages\ListTenants;
 use App\Models\Staff\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -85,12 +86,16 @@ test('platform admins can pause and resume bakeries in bulk', function () {
     createTestTenant('rustic-loaf');
     $records = ['sweet-bakes', 'rustic-loaf'];
 
-    livewire(ListTenants::class)->callTableBulkAction('pause', $records);
+    livewire(ListTenants::class)
+        ->selectTableRecords($records)
+        ->callAction(TestAction::make('pause')->table()->bulk());
 
     expect(DB::table('tenants')->whereIn('id', $records)->whereNotNull('paused_at')->count())->toBe(2)
         ->and(DB::table('tenants')->whereIn('id', $records)->where('storefront_enabled', true)->count())->toBe(2);
 
-    livewire(ListTenants::class)->callTableBulkAction('resume', $records);
+    livewire(ListTenants::class)
+        ->selectTableRecords($records)
+        ->callAction(TestAction::make('resume')->table()->bulk());
 
     expect(DB::table('tenants')->whereIn('id', $records)->whereNull('paused_at')->count())->toBe(2);
 });
