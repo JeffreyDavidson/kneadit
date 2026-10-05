@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\SettingValue;
 use App\Mail\Concerns\MarketingMail;
 use App\Models\Platform\Tenant;
@@ -38,7 +39,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
         $data = array_merge(SettingValue::map(parent::buildViewData()), [
             'storeName' => $store->name,
             'primaryColor' => $settings->branding->brandColorPrimary,
-            'secondaryColor' => $secondaryColor ?? '#1c1410',
+            'secondaryColor' => BrandingSettings::safeColor($secondaryColor, '#1c1410'),
             'storeEmail' => $store->email ?? '',
             'storePhone' => $store->phone ?? '',
             'storeAddress' => $store->address ?? '',
