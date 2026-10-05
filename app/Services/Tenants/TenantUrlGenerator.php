@@ -4,6 +4,7 @@ namespace App\Services\Tenants;
 
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -49,6 +50,16 @@ final class TenantUrlGenerator
     public function admin(Tenant $tenant): string
     {
         return (string) $this->tenantUri($tenant)->withPath('/admin');
+    }
+
+    /**
+     * The platform admin panel. It is built from the application URL, not from
+     * the Filament panel, because the panel needs a current request domain and a
+     * queued job has none.
+     */
+    public function centralAdmin(): string
+    {
+        return (string) $this->centralUri()->withPath(Filament::getPanel('central')->getPath());
     }
 
     public function helpCenter(Tenant $tenant): string

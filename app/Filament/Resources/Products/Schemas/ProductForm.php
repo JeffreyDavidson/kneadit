@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Filament\Forms\Components\CategorySelect;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Support\AllowedFileTypes;
-use App\Models\Inventory\Category;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -47,10 +46,7 @@ class ProductForm
 
                 MoneyInput::make('price')->required(),
 
-                Select::make('category_id')
-                    ->label('Category')
-                    ->options(Category::query()->pluck('name', 'id'))
-                    ->required(),
+                CategorySelect::make('category_id')->required(),
 
                 Textarea::make('description')
                     ->rows(3)

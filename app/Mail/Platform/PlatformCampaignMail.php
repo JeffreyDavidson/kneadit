@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\BaseMailable;
+use App\Mail\PlatformMailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class PlatformCampaignMail extends BaseMailable
+class PlatformCampaignMail extends PlatformMailable
 {
     public function __construct(
         public string $campaignSubject,

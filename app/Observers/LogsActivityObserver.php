@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Enums\Operations\ActivityAction;
 use App\Models\Operations\ActivityLog;
+use App\Models\Staff\User;
 use App\Services\Audit\ActivityLogRedactor;
 use App\Services\Audit\ActorContext;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,23 @@ class LogsActivityObserver
     }
 
     /**
+     * The actor's id only when that user exists in the database the log is
+     * written to. While a bakery is being set up the actor is the central
+     * account, which has no row in the bakery's own users table, so the log
+     * keeps just the name.
+     */
+    private function actorIdInThisDatabase(): ?int
+    {
+        $id = ActorContext::id();
+
+        if ($id === null) {
+            return null;
+        }
+
+        return User::query()->whereKey($id)->exists() ? $id : null;
+    }
+
+    /**
      * @param  array<string, mixed>  $changes
      */
     private function log(Model $model, ActivityAction $action, array $changes = []): void
@@ -42,7 +60,7 @@ class LogsActivityObserver
             $modelKey = is_scalar($modelKey) ? (string) $modelKey : 'unknown';
 
             ActivityLog::query()->create([
-                'user_id' => ActorContext::id(),
+                'user_id' => $this->actorIdInThisDatabase(),
                 'user_name' => ActorContext::name(),
                 'action' => $action,
                 'model_type' => $model::class,
