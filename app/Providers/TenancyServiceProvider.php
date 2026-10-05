@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Console\Commands\Tenants\SeedTenantDatabasesCommand;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain as AppInitializeTenancyByDomainOrSubdomain;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\ConnectionResolverInterface;
@@ -144,6 +145,7 @@ class TenancyServiceProvider extends ServiceProvider
             Middleware\InitializeTenancyByDomain::class,
             Middleware\InitializeTenancyBySubdomain::class,
             Middleware\InitializeTenancyByDomainOrSubdomain::class,
+            AppInitializeTenancyByDomainOrSubdomain::class,
             Middleware\InitializeTenancyByPath::class,
             Middleware\InitializeTenancyByRequestData::class,
         ];

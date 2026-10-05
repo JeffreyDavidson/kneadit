@@ -4,8 +4,8 @@ declare(strict_types=1);
 use App\Http\Controllers\Central\ConsumeImpersonationController;
 use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Controller;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Illuminate\Support\Facades\DB;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 

@@ -24,6 +24,7 @@ use App\Services\Tenants\DatabaseLegacyReviewImporter;
 use App\Services\Tenants\DatabaseLegacySchedulingImporter;
 use App\Services\Tenants\DatabaseLegacySettingsImporter;
 use App\Support\Csp\CspNonce;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\RateLimiting\Unlimited;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Cashier\Cashier;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stripe\StripeClient;
 
 dataset('named rate limiters', [
