@@ -12,12 +12,13 @@ class HealthAlertMail extends BaseMailable
 {
     public function __construct(
         public string $alertMessage,
+        public string $alertSubject = '⚠️ KneadIt Health Check Alert',
     ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '⚠️ KneadIt Health Check Alert',
+            subject: $this->alertSubject,
         );
     }
 

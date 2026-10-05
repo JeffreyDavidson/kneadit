@@ -38,10 +38,10 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Frequency | Command | Responsibility |
 | --- | --- | --- |
 | Every 15 minutes | `tenants:sync-onboarding-metrics` | Reconcile central onboarding counts from tenant databases |
-| Every 30 minutes | `health:check` | Application health checks |
+| Every 30 minutes | `health:check` | Application health checks. A failing check mails the platform address in-process (not queued) at most once every 6 hours, and a check that passes again sends one recovered mail |
 | Hourly | `paypal:check-payments` | Reconcile PayPal invoices |
 | Hourly | `reviews:send-requests` | Send eligible review requests |
-| Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders |
+| Hourly | `carts:send-abandonment-emails` | Send abandoned-cart reminders; a cart is skipped (and marked converted) when an order for its email was placed after the cart was last touched |
 | Hourly, sends at 07:00 bakery-local | `inventory:send-low-stock-alert` | Send low-stock alerts |
 | Hourly, sends at 08:00 bakery-local | `birthday:send-emails` | Send birthday engagement email |
 | Hourly, sends at 10:00 bakery-local | `orders:send-repeat-reminders` | Send repeat-order reminders |
@@ -52,7 +52,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS and HTTPS (`https://{domain}/up` must answer 2xx with a valid certificate) for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
-| Daily 09:00 | `checkins:send` | Send scheduled check-ins |
+| Daily 09:00 | `checkins:send` | Send scheduled check-ins; a missed run is made up on later runs for up to 7 days, once per check-in and bakery (`checkin_logs`) |
 | Daily 10:00 | `trial:check` | Enforce/notify trial state |
 
 ### Bakery-local send times
