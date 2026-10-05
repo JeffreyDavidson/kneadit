@@ -7,11 +7,10 @@ namespace App\Listeners\Orders;
 use App\Events\Orders\OrderStatusChanged;
 use App\Listeners\QueuedListener;
 use App\Services\Platform\WebhookService;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;
 
-class DispatchOrderWebhookListener extends QueuedListener implements ShouldBeUnique
+class DispatchOrderWebhookListener extends QueuedListener
 {
     public int $timeout = 30;
 
