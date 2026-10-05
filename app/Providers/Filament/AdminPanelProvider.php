@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard\Dashboard;
+use App\Filament\Pages\Platform\Messages;
 use App\Filament\Shared\PanelThemes;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
@@ -82,6 +83,7 @@ class AdminPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Messages')
                     ->url(fn (): string => route('filament.admin.pages.messages'))
+                    ->visible(fn (): bool => Messages::canAccess())
                     ->icon('heroicon-o-envelope'),
                 MenuItem::make()
                     ->label('Help')

@@ -149,3 +149,37 @@ test('the navigation badge counts only the current bakery unread admin messages'
 
     expect(Messages::getNavigationBadge())->toBe('2');
 });
+
+test('platform messages and bakery replies are labelled by their sender', function () {
+    test()->actingAs(User::factory()->owner()->create());
+    $parent = PlatformMessage::factory()->fromAdmin()->create(['tenant_id' => 'bakery-a', 'subject' => 'Welcome aboard']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 'bakery-a', 'parent_id' => $parent->id]);
+
+    livewire(Messages::class)
+        ->call('viewThread', $parent->id)
+        ->assertSeeInOrder(['KneadIt Team', 'You']);
+});
+
+test('a bakery message that starts a thread is labelled as coming from you', function () {
+    test()->actingAs(User::factory()->owner()->create());
+    $own = PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 'bakery-a']);
+
+    livewire(Messages::class)
+        ->call('viewThread', $own->id)
+        ->assertSee('You')
+        ->assertDontSee('KneadIt Team');
+});
+
+test('the user menu lists Messages only for roles that can open the page', function (string $role, bool $listed) {
+    test()->actingAs(User::factory()->{$role}()->create());
+
+    $labels = collect(filament()->getPanel('admin')->getUserMenuItems())
+        ->map(fn ($item): string => (string) $item->getLabel())
+        ->all();
+
+    expect(in_array('Messages', $labels, true))->toBe($listed);
+})->with([
+    'staff' => ['staff', false],
+    'manager' => ['manager', true],
+    'owner' => ['owner', true],
+]);
