@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\PlatformMailable;
+use App\Mail\PlatformMail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Config;
 
-class ScheduledCheckinMail extends PlatformMailable
+class ScheduledCheckinMail extends PlatformMail
 {
     public function __construct(
         public string $body,

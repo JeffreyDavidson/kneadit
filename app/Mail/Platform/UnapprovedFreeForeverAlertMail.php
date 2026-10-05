@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\PlatformMailable;
+use App\Mail\PlatformMail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class UnapprovedFreeForeverAlertMail extends PlatformMailable
+class UnapprovedFreeForeverAlertMail extends PlatformMail
 {
     /**
      * @param  array<int, array{id: string, name: string, email: string}>  $unapproved

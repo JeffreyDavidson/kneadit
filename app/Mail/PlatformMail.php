@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Config;
  * passes itself (such as the `storeName` of the bakery it is about) wins over
  * these defaults.
  */
-abstract class PlatformMailable extends BaseMailable
+abstract class PlatformMail extends BaseMailable
 {
     /**
      * @return array<string, mixed>

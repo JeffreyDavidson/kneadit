@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\PlatformMailable;
+use App\Mail\PlatformMail;
 use App\Models\Staff\User;
 use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class TrialReminderMail extends PlatformMailable
+class TrialReminderMail extends PlatformMail
 {
     public function __construct(
         public User $user,
