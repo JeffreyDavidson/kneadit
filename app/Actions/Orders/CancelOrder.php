@@ -8,6 +8,7 @@ use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The one way staff cancel an order. A paid Stripe order is refunded first and
@@ -30,15 +31,23 @@ class CancelOrder
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund
     {
-        throw_unless(
-            in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($order), true),
-            InvalidOrderTransitionException::class,
-            $order,
-            $order->status,
-            OrderStatus::Cancelled,
-        );
+        // Re-read under a lock and check on the fresh copy, so a second request
+        // holding a stale one (a double tap, or two tabs) is refused before it
+        // reaches Stripe. The status change below re-checks under its own lock.
+        $refund = DB::transaction(function () use ($order, $initiatedBy, $reason): ?Refund {
+            $locked = Order::query()->lockForUpdate()->findOrFail($order->id);
+            $order->setRawAttributes($locked->getAttributes(), true);
 
-        $refund = ($this->refundStripePayment)($order, $initiatedBy, $reason);
+            throw_unless(
+                in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($order), true),
+                InvalidOrderTransitionException::class,
+                $order,
+                $order->status,
+                OrderStatus::Cancelled,
+            );
+
+            return ($this->refundStripePayment)($order, $initiatedBy, $reason);
+        });
 
         ($this->transitionOrderStatus)($order, OrderStatus::Cancelled);
 

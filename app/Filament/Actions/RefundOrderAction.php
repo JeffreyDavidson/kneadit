@@ -66,9 +66,19 @@ class RefundOrderAction extends Action
                 return;
             }
 
+            if (! $refund) {
+                Notification::make()
+                    ->title('Nothing to refund')
+                    ->body('This order was already refunded, or has no Stripe payment to refund.')
+                    ->warning()
+                    ->send();
+
+                return;
+            }
+
             Notification::make()
                 ->title('Order refunded')
-                ->body($refund ? "Refunded {$refund->amount->formatted()} to the customer." : null)
+                ->body("Refunded {$refund->amount->formatted()} to the customer.")
                 ->success()
                 ->send();
         });

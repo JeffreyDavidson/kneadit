@@ -49,7 +49,10 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
 
     $refundService = Double::for(RefundService::class);
     $refundService->expects('create')
-        ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'))
+        ->with(
+            Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'),
+            Argument::satisfies(fn (mixed $options): bool => is_array($options)),
+        )
         ->returns($stripeRefundResource);
 
     app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
@@ -99,7 +102,7 @@ test('refunds connected payments through the tenant Stripe account', function ()
     $refundService->expects('create')
         ->with(
             Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_connect'),
-            ['stripe_account' => 'acct_test_connect'],
+            Argument::satisfies(fn (mixed $options): bool => is_array($options) && ($options['stripe_account'] ?? null) === 'acct_test_connect'),
         )
         ->returns($stripeRefundResource);
 
@@ -110,6 +113,42 @@ test('refunds connected payments through the tenant Stripe account', function ()
     $refund = resolve(RefundStripePayment::class)($order);
 
     expect($refund?->stripe_refund_id)->toBe('re_test_connect');
+});
+
+test('sends an idempotency key that is stable for the order and its payment intent', function () {
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')
+        ->with(
+            Argument::satisfies(fn (mixed $payload): bool => is_array($payload)),
+            Argument::satisfies(fn (mixed $options): bool => is_array($options) && ($options['idempotency_key'] ?? null) === 'refund-42-pi_test_key'),
+        )
+        ->returns((object) ['id' => 're_test_key']);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+
+    $order = Order::factory()->paid()->create(['id' => 42, 'stripe_payment_intent_id' => 'pi_test_key']);
+
+    resolve(RefundStripePayment::class)($order);
+
+    $refundService->verify();
+});
+
+test('a second refund from a stale copy of the order does not call Stripe again', function () {
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')->returns((object) ['id' => 're_test_stale']);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+
+    $order = Order::factory()->paid()->create(['stripe_payment_intent_id' => 'pi_test_stale']);
+    $stale = Order::query()->findOrFail($order->id);
+
+    $first = resolve(RefundStripePayment::class)($order);
+    $second = resolve(RefundStripePayment::class)($stale);
+
+    expect($first)->toBeInstanceOf(Refund::class)
+        ->and($second)->toBeNull()
+        ->and(Refund::query()->count())->toBe(1);
+    $refundService->verify();
 });
 
 function fakeStripeRefundSucceeding(): void

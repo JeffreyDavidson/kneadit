@@ -238,3 +238,14 @@ test('cancellation restores gift card balance and creates refund transaction', f
         ->and($refund->amount->dollars())->toBe(20.00)
         ->and($refund->gift_card_id)->toBe($giftCard->id);
 });
+
+test('a stale copy of an already cancelled order cannot be cancelled again', function () {
+    Event::fake([OrderCancelled::class]);
+    $order = Order::factory()->for(Customer::factory())->recycle(test()->user)->create(['status' => OrderStatus::Confirmed]);
+    $stale = Order::query()->findOrFail($order->id);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
+
+    expect(fn () => resolve(TransitionOrderStatus::class)($stale, OrderStatus::Cancelled))->toThrow(InvalidOrderTransitionException::class);
+    Event::assertDispatchedTimes(OrderCancelled::class, 1);
+});

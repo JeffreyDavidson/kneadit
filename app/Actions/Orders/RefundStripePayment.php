@@ -49,7 +49,16 @@ class RefundStripePayment
             return null;
         }
 
-        return DB::transaction(function () use ($order, $initiatedBy, $reason): Refund {
+        return DB::transaction(function () use ($order, $initiatedBy, $reason): ?Refund {
+            // Re-read under a lock and check again: a second request holding a
+            // stale copy of the order must not refund it twice.
+            $locked = Order::query()->lockForUpdate()->findOrFail($order->id);
+            $order->setRawAttributes($locked->getAttributes(), true);
+
+            if ($order->payment_status !== PaymentStatus::Paid || ! $order->stripe_payment_intent_id) {
+                return null;
+            }
+
             try {
                 $payload = [
                     'payment_intent' => $order->stripe_payment_intent_id,
@@ -61,9 +70,15 @@ class RefundStripePayment
                 ];
                 $connectId = $this->settings->connectId();
 
-                $stripeRefund = $connectId
-                    ? $this->stripe->refunds->create($payload, ['stripe_account' => $connectId])
-                    : $this->stripe->refunds->create($payload);
+                // Stable per order and payment intent, so a retried or
+                // concurrent call gets Stripe's original refund back instead
+                // of creating a second one.
+                $options = ['idempotency_key' => "refund-{$order->id}-{$order->stripe_payment_intent_id}"];
+
+                $stripeRefund = $this->stripe->refunds->create(
+                    $payload,
+                    $connectId ? [...$options, 'stripe_account' => $connectId] : $options,
+                );
             } catch (ApiErrorException $e) {
                 throw new StripeRefundFailedException(
                     order: $order,

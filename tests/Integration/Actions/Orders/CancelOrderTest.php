@@ -83,6 +83,18 @@ test('an order that cannot be cancelled is not refunded', function () {
     $stripe->unused();
 });
 
+test('cancelling the same paid order twice from a stale copy refunds it once', function () {
+    $stripe = FakeRefundStripeClient::succeeding('re_cancel_twice');
+    $order = Order::factory()->confirmed()->paid()->create(['stripe_payment_intent_id' => 'pi_cancel_twice']);
+    $stale = Order::query()->findOrFail($order->id);
+
+    resolve(CancelOrder::class)($order);
+
+    expect(fn () => resolve(CancelOrder::class)($stale))->toThrow(InvalidOrderTransitionException::class)
+        ->and(Refund::query()->count())->toBe(1);
+    $stripe->verify();
+});
+
 test('cancelling credits a gift card with what was redeemed even if the order amount was tampered with', function () {
     FakeRefundStripeClient::untouched();
     $giftCard = GiftCard::factory()->create(['initial_balance' => 10.00, 'current_balance' => 0.00]);

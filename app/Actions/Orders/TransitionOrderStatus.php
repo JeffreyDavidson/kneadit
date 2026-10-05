@@ -35,7 +35,16 @@ class TransitionOrderStatus
 
         throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
 
-        DB::transaction(function () use ($order, $from, $to): void {
+        DB::transaction(function () use ($order, $to, &$from): void {
+            // Re-read under a lock and check again: a second request holding a
+            // stale copy (a double tap, or two tabs) must not repeat the
+            // transition, which would reverse and restock twice.
+            $locked = Order::query()->lockForUpdate()->findOrFail($order->id);
+            $order->setRawAttributes($locked->getAttributes(), true);
+            $from = $order->status;
+
+            throw_unless(in_array($to->value, self::TRANSITIONS[$from->value] ?? []), InvalidOrderTransitionException::class, $order, $from, $to);
+
             $order->update(['status' => $to]);
 
             if ($to === OrderStatus::Baking) {
