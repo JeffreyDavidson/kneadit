@@ -87,6 +87,11 @@
             color: var(--green-700);
         }
 
+        .flash-error {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
         .pull-hint {
             text-align: center;
             padding: 12px;

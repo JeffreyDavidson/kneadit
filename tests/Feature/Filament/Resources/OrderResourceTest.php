@@ -10,6 +10,9 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Refund;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
@@ -498,6 +501,36 @@ test('the order page status change still moves an order forward', function () {
         ->assertHasNoFormErrors();
 
     expect($order->refresh()->status)->toBe(OrderStatus::Baking);
+});
+
+test('starting to bake with short stock still succeeds and warns the person who clicked', function (string $surface) {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Rye Flour', 'unit' => 'kg', 'current_stock' => 0.5]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.7, 'unit' => 'kg']);
+    $order = Order::factory()->recycle(test()->customer)->confirmed()->unpaid()->create(['order_number' => 'ORD-SHORT']);
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 1]);
+
+    $component = $surface === 'table'
+        ? livewire(ListOrders::class)->callAction(TestAction::make('start_baking')->table($order))
+        : livewire(ViewOrder::class, ['record' => $order->getRouteKey()])->callAction('changeStatus', data: ['status' => OrderStatus::Baking->value]);
+
+    $component->assertNotified('Order ORD-SHORT is baking without enough stock');
+    expect($order->refresh()->status)->toBe(OrderStatus::Baking)
+        ->and($flour->fresh()->current_stock)->toBe('-0.2000');
+})->with(['table', 'order page']);
+
+test('starting to bake with enough stock shows no stock warning', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 5]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.7, 'unit' => 'kg']);
+    $order = Order::factory()->recycle(test()->customer)->confirmed()->unpaid()->create(['order_number' => 'ORD-ENOUGH']);
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 1]);
+
+    livewire(ListOrders::class)
+        ->callAction(TestAction::make('start_baking')->table($order))
+        ->assertNotNotified('Order ORD-ENOUGH is baking without enough stock');
 });
 
 test('a manager can refund an order that was cancelled while still paid', function (string $surface) {

@@ -29,5 +29,9 @@
         @endforeach
     </div>
 
+    @if ($ingredients->contains(fn ($ingredient): bool => (float) $ingredient->current_stock < 0))
+        <p style="margin: 0 0 20px; font-size: 14px; color: #b91c1c;">A negative amount means orders were started without enough of that ingredient on hand. Count what you have and correct the stock level once you reorder.</p>
+    @endif
+
     <p style="margin: 0 0 20px; font-size: 14px; color: #555;">You can update stock levels from Inventory → Ingredients in your dashboard.</p>
 @endsection

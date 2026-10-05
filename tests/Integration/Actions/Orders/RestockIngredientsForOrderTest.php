@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Orders\DeductIngredientsForOrder;
 use App\Actions\Orders\RestockIngredientsForOrder;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
@@ -18,18 +19,18 @@ beforeEach(function () {
     Mail::fake();
 });
 
-test('restocks ingredient stock based on recipe quantities and order item quantities', function () {
+test('restocks the ingredient stock the order used', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create(['name' => 'Sourdough Recipe']);
     $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 50.00]);
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.5, 'unit' => 'kg']);
-
-    $order = Order::factory()->cancelled()->create();
+    $order = Order::factory()->baking()->create();
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 3, 'unit_price' => 10.00]);
+    resolve(DeductIngredientsForOrder::class)($order);
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($flour->fresh()->current_stock)->toBe('51.5000');
+    expect($flour->fresh()->current_stock)->toBe('50.0000');
 });
 
 test('writes a Restock stock-adjustment row tagged with the order number', function () {
@@ -37,9 +38,9 @@ test('writes a Restock stock-adjustment row tagged with the order number', funct
     $recipe = Recipe::factory()->for($product)->create();
     $sugar = Ingredient::factory()->create(['name' => 'Sugar', 'unit' => 'kg', 'current_stock' => 10.00]);
     $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 0.25, 'unit' => 'kg']);
-
-    $order = Order::factory()->cancelled()->create(['order_number' => 'TEST-RESTOCK-001']);
+    $order = Order::factory()->baking()->create(['order_number' => 'TEST-RESTOCK-001']);
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 4, 'unit_price' => 5.00]);
+    resolve(DeductIngredientsForOrder::class)($order);
 
     resolve(RestockIngredientsForOrder::class)($order);
 
@@ -51,14 +52,48 @@ test('writes a Restock stock-adjustment row tagged with the order number', funct
     ]);
 });
 
-test('skips order items whose product has been deleted', function () {
-    $order = Order::factory()->cancelled()->create();
-    $orphanItem = OrderItem::factory()->recycle($order)->create(['product_id' => null, 'quantity' => 5]);
-    $unrelatedIngredient = Ingredient::factory()->create(['current_stock' => 10.00]);
+test('restocks the amount deducted, not the amount the recipe now calls for', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 1.5, 'unit' => 'kg']);
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 1]);
+    resolve(DeductIngredientsForOrder::class)($order);
+    $recipe->inventoryIngredients()->updateExistingPivot($flour->id, ['quantity' => 0.3]);
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($unrelatedIngredient->fresh()->current_stock)->toBe('10.0000');
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
+});
+
+test('a second restock puts nothing back', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 1.5, 'unit' => 'kg']);
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 1]);
+    resolve(DeductIngredientsForOrder::class)($order);
+    $restock = resolve(RestockIngredientsForOrder::class);
+
+    $restock($order);
+    $restock($order);
+
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
+});
+
+test('does nothing for an order that never deducted stock', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 1.5, 'unit' => 'kg']);
+    $order = Order::factory()->cancelled()->create();
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 1]);
+
+    resolve(RestockIngredientsForOrder::class)($order);
+
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
 });
 
 test('handles multiple ingredients per recipe and multiple recipes per product', function () {
@@ -69,12 +104,12 @@ test('handles multiple ingredients per recipe and multiple recipes per product',
     $butter = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 5.00]);
     $recipeA->inventoryIngredients()->attach($flour->id, ['quantity' => 1.0, 'unit' => 'kg']);
     $recipeB->inventoryIngredients()->attach($butter->id, ['quantity' => 0.2, 'unit' => 'kg']);
-
-    $order = Order::factory()->cancelled()->create();
+    $order = Order::factory()->baking()->create();
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2, 'unit_price' => 8.00]);
+    resolve(DeductIngredientsForOrder::class)($order);
 
     resolve(RestockIngredientsForOrder::class)($order);
 
-    expect($flour->fresh()->current_stock)->toBe('22.0000')
-        ->and($butter->fresh()->current_stock)->toBe('5.4000');
+    expect($flour->fresh()->current_stock)->toBe('20.0000')
+        ->and($butter->fresh()->current_stock)->toBe('5.0000');
 });

@@ -162,17 +162,114 @@ test('cancellation from Baking restocks ingredients with positive Restock adjust
     $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
 
-    $order = Order::factory()->baking()->create();
+    $order = Order::factory()->confirmed()->create();
     OrderItem::factory()->for($order)->for($product)->create(['quantity' => 3]);
+    $transition = resolve(TransitionOrderStatus::class);
+    $transition($order, OrderStatus::Baking);
 
-    resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
+    $transition($order, OrderStatus::Cancelled);
 
-    expect($flour->fresh()->current_stock)->toBe('16.0000');
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
 
     $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->first();
     expect($restock)->not->toBeNull()
         ->and((float) $restock->quantity)->toBe(6.0)
         ->and($restock->notes)->toBe("Order #{$order->order_number} cancelled");
+});
+
+test('cancelling restocks what was deducted even when the recipe changed after baking started', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 1.5, 'unit' => 'kg']);
+    $order = Order::factory()->confirmed()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 1]);
+    $transition = resolve(TransitionOrderStatus::class);
+    $transition($order, OrderStatus::Baking);
+    $recipe->inventoryIngredients()->updateExistingPivot($flour->id, ['quantity' => 0.3]);
+
+    $transition($order, OrderStatus::Cancelled);
+
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
+});
+
+test('cancelling restocks what was deducted even when the recipe was deleted after baking started', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 1.5, 'unit' => 'kg']);
+    $order = Order::factory()->confirmed()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 1]);
+    $transition = resolve(TransitionOrderStatus::class);
+    $transition($order, OrderStatus::Baking);
+    $recipe->delete();
+
+    $transition($order, OrderStatus::Cancelled);
+
+    expect($flour->fresh()->current_stock)->toBe('10.0000');
+});
+
+test('two orders sharing scarce flour both reach Baking, leave stock negative and warn staff', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Bread Flour', 'unit' => 'kg', 'current_stock' => 1.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.6, 'unit' => 'kg']);
+    $first = Order::factory()->confirmed()->create();
+    $second = Order::factory()->confirmed()->create();
+    OrderItem::factory()->for($first)->for($product)->create(['quantity' => 1]);
+    OrderItem::factory()->for($second)->for($product)->create(['quantity' => 1]);
+    $transition = resolve(TransitionOrderStatus::class);
+
+    $transition($first, OrderStatus::Baking);
+    $transition($second, OrderStatus::Baking);
+
+    $notifications = test()->user->notifications()->get();
+    expect($first->fresh()->status)->toBe(OrderStatus::Baking)
+        ->and($second->fresh()->status)->toBe(OrderStatus::Baking)
+        ->and($flour->fresh()->current_stock)->toBe('-0.2000')
+        ->and($notifications)->toHaveCount(1)
+        ->and($notifications->first()->data['body'])->toContain('Bread Flour', '0.20 kg')
+        ->and($notifications->first()->data['title'])->toContain($second->order_number);
+});
+
+test('starting to bake with enough stock sends no warning', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['unit' => 'kg', 'current_stock' => 5.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.6, 'unit' => 'kg']);
+    $order = Order::factory()->confirmed()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 1]);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking);
+
+    expect(test()->user->notifications()->count())->toBe(0);
+});
+
+test('a second delivered submit from a stale copy is refused and side effects run once', function () {
+    Event::fake([OrderDelivered::class, OrderStatusChanged::class]);
+    $order = Order::factory()->ready()->create();
+    $stale = Order::query()->findOrFail($order->id);
+    $transition = resolve(TransitionOrderStatus::class);
+    $transition($order, OrderStatus::Delivered);
+
+    expect(fn () => $transition($stale, OrderStatus::Delivered))
+        ->toThrow(InvalidOrderTransitionException::class);
+
+    Event::assertDispatchedTimes(OrderDelivered::class, 1);
+    Event::assertDispatchedTimes(OrderStatusChanged::class, 1);
+});
+
+test('a second delivered submit from a stale copy sends one delivered email', function () {
+    $customer = Customer::factory()->create();
+    $order = Order::factory()->for($customer)->ready()->create();
+    $stale = Order::query()->findOrFail($order->id);
+    $transition = resolve(TransitionOrderStatus::class);
+    $transition($order, OrderStatus::Delivered);
+
+    expect(fn () => $transition($stale, OrderStatus::Delivered))
+        ->toThrow(InvalidOrderTransitionException::class);
+
+    Mail::assertQueued(OrderStatusMail::class, 1);
 });
 
 test('cancellation from Pending does not restock', function () {

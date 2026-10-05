@@ -133,14 +133,14 @@ class OrderQueryBuilder extends Builder
     }
 
     /**
-     * Filter orders for delivery on a specific date with active delivery statuses.
+     * Filter orders for delivery on a specific date that are ready to go out the door.
      */
     public function forDeliveryOnDate(Carbon $date): static
     {
         $this->with(['customer', 'orderItems.product'])
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
-            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
+            ->ready()
             ->whereDate('delivery_date', $date)
             ->orderBy('delivery_time');
 

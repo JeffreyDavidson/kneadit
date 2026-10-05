@@ -148,21 +148,30 @@ test('inDateRange returns orders within the date range regardless of payment sta
     expect($results)->toHaveCount(2);
 });
 
-test('forDeliveryOnDate returns orders with delivery address and active statuses on given date', function () {
+test('forDeliveryOnDate returns ready orders with a delivery address on the given date', function () {
     $date = now()->addDays(3);
 
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => '123 Main St',
         'delivery_time' => '10:00',
     ]);
-    // Excluded: no delivery address
+    // Excluded: not out for delivery yet
     Order::factory()->confirmed()->create([
+        'delivery_date' => $date,
+        'delivery_address' => '1 Early Rd',
+    ]);
+    Order::factory()->baking()->create([
+        'delivery_date' => $date,
+        'delivery_address' => '2 Early Rd',
+    ]);
+    // Excluded: no delivery address
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => null,
     ]);
     // Excluded: empty delivery address
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => $date,
         'delivery_address' => '',
     ]);
@@ -172,7 +181,7 @@ test('forDeliveryOnDate returns orders with delivery address and active statuses
         'delivery_address' => '456 Oak Ave',
     ]);
     // Excluded: different date
-    Order::factory()->confirmed()->create([
+    Order::factory()->ready()->create([
         'delivery_date' => now()->addDays(5),
         'delivery_address' => '789 Pine Rd',
     ]);

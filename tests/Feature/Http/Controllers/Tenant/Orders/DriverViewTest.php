@@ -4,6 +4,8 @@ use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
@@ -26,7 +28,7 @@ function createDeliveryOrder(array $attrs = []): Order
     return Order::factory()
         ->for($customer)
         ->recycle($user)
-        ->confirmed()
+        ->ready()
         ->create(array_merge([
             'delivery_address' => '123 Main St',
             'delivery_date' => today(),
@@ -117,3 +119,54 @@ test('mark delivered redirects back', function () {
 
     $response->assertRedirect(route('driver.index', [], false));
 });
+
+test('driver page lists only orders that are ready for delivery', function (OrderStatus $status, bool $listed) {
+    settings(['store_name' => 'Test Bakery']);
+    createDeliveryOrder(['order_number' => 'ORD-STATUS', 'status' => $status]);
+
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
+
+    $listed ? $response->assertSee('ORD-STATUS') : $response->assertDontSee('ORD-STATUS');
+})->with([
+    'confirmed' => [OrderStatus::Confirmed, false],
+    'baking' => [OrderStatus::Baking, false],
+    'ready' => [OrderStatus::Ready, true],
+    'delivered' => [OrderStatus::Delivered, false],
+    'cancelled' => [OrderStatus::Cancelled, false],
+]);
+
+test('driver page follows the bakery timezone for today', function () {
+    Date::setTestNow('2026-10-05 02:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/Los_Angeles'])));
+    createDeliveryOrder(['order_number' => 'ORD-LOCAL', 'delivery_date' => '2026-10-04']);
+    Order::factory()->ready()->create(['order_number' => 'ORD-UTC', 'delivery_date' => '2026-10-05', 'delivery_address' => '9 Other St']);
+
+    $response = withoutMiddleware(test()->driverMiddleware)
+        ->actingAs(User::factory()->staff()->create())
+        ->get(route('driver.index', [], false));
+
+    $response->assertSee('ORD-LOCAL')
+        ->assertDontSee('ORD-UTC')
+        ->assertSee('Sunday, Oct 4');
+});
+
+test('marking an order that is not ready as delivered redirects back with an error', function (OrderStatus $status) {
+    $order = createDeliveryOrder(['status' => $status]);
+    $user = User::query()->firstWhere('email', 'baker@test.com');
+
+    $response = actingAs($user)
+        ->withoutMiddleware(test()->driverMiddleware)
+        ->from(route('driver.index', [], false))
+        ->post(route('driver.delivered', $order->order_number, false));
+
+    $response->assertRedirect(route('driver.index', [], false))
+        ->assertSessionHas('error')
+        ->assertSessionMissing('success');
+    expect($order->fresh()->status)->toBe($status);
+})->with([
+    'confirmed' => OrderStatus::Confirmed,
+    'baking' => OrderStatus::Baking,
+    'already delivered' => OrderStatus::Delivered,
+]);

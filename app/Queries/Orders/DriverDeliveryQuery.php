@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 class DriverDeliveryQuery
 {
     /**
-     * Get orders ready for delivery on a specific date.
+     * Get ready orders to deliver on a specific date.
      *
      * @return Collection<int, Order>
      */
