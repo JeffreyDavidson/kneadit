@@ -20,10 +20,17 @@ class SendScheduledCampaignsCommand extends Command
     {
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings): void {
-                CustomerCampaign::query()
+                // A send that died partway is put back to Scheduled and resumes;
+                // the sender skips recipients that already have a log row. A "Send
+                // now" campaign has no scheduled_at, so give it one or it is never due.
+                $stale = CustomerCampaign::query()
                     ->where('status', CustomerCampaignStatus::Sending)
-                    ->where('updated_at', '<=', now()->subHour())
-                    ->update(['status' => CustomerCampaignStatus::Scheduled]);
+                    ->where('updated_at', '<=', now()->subHour());
+
+                $stale->clone()
+                    ->whereNull('scheduled_at')
+                    ->update(['status' => CustomerCampaignStatus::Scheduled, 'scheduled_at' => now()]);
+                $stale->update(['status' => CustomerCampaignStatus::Scheduled]);
 
                 $due = CustomerCampaign::query()
                     ->where('status', CustomerCampaignStatus::Scheduled)

@@ -49,6 +49,7 @@ test('every scheduled command is covered by the central-database guard', functio
         'carts:send-abandonment-emails',
         'webhooks:prune',
         'analytics:prune-page-views',
+        'campaigns:send-scheduled',
     ];
     $centralOnly = [
         'checkins:send',
@@ -59,6 +60,7 @@ test('every scheduled command is covered by the central-database guard', functio
         'platform:audit-free-forever',
         'tenants:verify-custom-domains',
         'tenants:sync-onboarding-metrics',
+        'platform:send-scheduled-campaigns',
     ];
 
     expect(array_diff(scheduledCommandSignatures(), $tenantAware, $centralOnly))->toBeEmpty();
@@ -112,4 +114,5 @@ test('a scheduled tenant command never reads tenant tables before entering a ten
     'carts:send-abandonment-emails',
     'webhooks:prune',
     'analytics:prune-page-views',
+    'campaigns:send-scheduled',
 ]);
