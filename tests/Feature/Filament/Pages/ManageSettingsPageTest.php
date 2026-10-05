@@ -581,3 +581,84 @@ describe('webhook settings are owner-only', function () {
         expect(WebhookDelivery::count())->toBe(0);
     });
 });
+
+describe('payment credentials are owner-only and write-only', function () {
+    beforeEach(function () {
+        settings([
+            'payment_methods' => json_encode([PaymentMethod::PayPal->value]),
+            'paypal_client_id' => 'stored-client-id',
+            'paypal_client_secret' => 'stored-paypal-secret',
+            'paypal_sandbox' => true,
+            'stripe_connect_id' => 'acct_stored',
+        ]);
+    });
+
+    test('a manager neither sees nor receives the PayPal credentials', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->assertDontSee('PayPal Client ID')
+            ->assertDontSee('PayPal Client Secret')
+            ->assertDontSee('PayPal Sandbox Mode')
+            ->assertDontSee('stored-client-id')
+            ->assertDontSee('stored-paypal-secret')
+            ->assertSet('paypal_client_id', '')
+            ->assertSet('paypal_client_secret', '');
+    });
+
+    test('a manager does not get the Stripe connection panel', function () {
+        settings(['payment_methods' => json_encode([PaymentMethod::Stripe->value])]);
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->assertDontSee('Connect with Stripe');
+    });
+
+    test('an owner sees the client id but never receives the stored secret', function () {
+        livewire(ManageSettings::class)
+            ->assertSee('PayPal Client Secret')
+            ->assertSee('Set — enter a new value to replace it')
+            ->assertDontSee('stored-paypal-secret')
+            ->assertSet('paypal_client_id', 'stored-client-id')
+            ->assertSet('paypal_client_secret', '');
+    });
+
+    test('a manager saving settings leaves the payment credentials untouched, even with tampered properties', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->set('store_name', 'Renamed Bakery')
+            ->set('paypal_client_id', 'attacker-client-id')
+            ->set('paypal_client_secret', 'attacker-secret')
+            ->set('paypal_sandbox', false)
+            ->call('save');
+
+        expect(settings('store_name'))->toBe('Renamed Bakery')
+            ->and(settings('paypal_client_id'))->toBe('stored-client-id')
+            ->and(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
+            ->and(settings('paypal_sandbox'))->toBe('1')
+            ->and(settings('stripe_connect_id'))->toBe('acct_stored');
+    });
+
+    test('an owner entering a new secret saves it encrypted', function () {
+        livewire(ManageSettings::class)
+            ->set('paypal_client_secret', 'replacement-secret')
+            ->call('save');
+
+        $raw = Setting::query()->where('key', 'paypal_client_secret')->value('value');
+
+        expect(settings('paypal_client_secret'))->toBe('replacement-secret')
+            ->and($raw)->not->toBe('replacement-secret');
+    });
+
+    test('an owner saving without a new secret keeps the stored one', function () {
+        livewire(ManageSettings::class)
+            ->set('paypal_client_id', 'new-client-id')
+            ->set('paypal_sandbox', false)
+            ->call('save');
+
+        expect(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
+            ->and(settings('paypal_client_id'))->toBe('new-client-id')
+            ->and(settings('paypal_sandbox'))->toBe('0');
+    });
+});

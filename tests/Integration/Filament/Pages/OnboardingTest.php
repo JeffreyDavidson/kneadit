@@ -11,6 +11,8 @@ use App\Filament\Pages\Platform\OnboardingSteps\ProductStep;
 use App\Filament\Pages\Platform\OnboardingSteps\WelcomeStep;
 use App\Models\Inventory\Category;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -259,6 +261,8 @@ test('free delivery threshold cleared when disabled', function () {
 });
 
 test('payment step saves paypal credentials', function () {
+    test()->actingAs(User::factory()->owner()->create());
+
     PaymentsStep::save([
         'payment_methods' => ['paypal', 'cash'],
         'paypal_client_id' => 'AaBbCcDdEeFf123456',
@@ -273,6 +277,8 @@ test('payment step saves paypal credentials', function () {
 });
 
 test('payment step with live mode', function () {
+    test()->actingAs(User::factory()->owner()->create());
+
     PaymentsStep::save([
         'payment_methods' => ['paypal'],
         'paypal_client_id' => 'LiveClientId',
@@ -284,6 +290,8 @@ test('payment step with live mode', function () {
 });
 
 test('payment step with cash only', function () {
+    test()->actingAs(User::factory()->owner()->create());
+
     PaymentsStep::save([
         'payment_methods' => ['cash'],
         'paypal_client_id' => '',
@@ -397,7 +405,9 @@ test('full onboarding flow saves all settings', function () {
         'pickup_instructions' => 'Text when you arrive.',
     ]);
 
-    // Step 8: Payment
+    // Step 8: Payment (credentials are owner-only)
+    test()->actingAs(User::factory()->owner()->create());
+
     PaymentsStep::save([
         'payment_methods' => ['paypal', 'cash'],
         'paypal_client_id' => 'test_client_id',
@@ -427,4 +437,81 @@ test('full onboarding flow saves all settings', function () {
 
     $hours = json_decode(settings('operating_hours'), true);
     expect($hours)->toHaveCount(5); // Mon-Fri
+});
+
+describe('payment credentials are owner-only and write-only', function () {
+    beforeEach(function () {
+        settings([
+            'payment_methods' => '["paypal","cash"]',
+            'paypal_client_id' => 'stored-client-id',
+            'paypal_client_secret' => 'stored-paypal-secret',
+            'paypal_sandbox' => '1',
+        ]);
+    });
+
+    test('the onboarding state never carries the stored secret', function (string $role) {
+        test()->actingAs(User::factory()->{$role}()->create());
+
+        $page = new Onboarding;
+        $page->mount();
+
+        expect($page->payments['paypal_client_secret'])->toBe('')
+            ->and(json_encode($page->payments))->not->toContain('stored-paypal-secret');
+    })->with([
+        'owner' => 'owner',
+        'manager' => 'manager',
+    ]);
+
+    test('a manager does not receive the client id, an owner does', function (string $role, string $expected) {
+        test()->actingAs(User::factory()->{$role}()->create());
+
+        expect(PaymentsStep::defaults(resolve(TenantSettings::class))['paypal_client_id'])->toBe($expected);
+    })->with([
+        'owner' => ['owner', 'stored-client-id'],
+        'manager' => ['manager', ''],
+    ]);
+
+    test('a manager saving the step changes the methods but never the credentials', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        PaymentsStep::save([
+            'payment_methods' => ['paypal', 'stripe'],
+            'paypal_client_id' => 'attacker-client-id',
+            'paypal_client_secret' => 'attacker-secret',
+            'paypal_sandbox' => false,
+        ]);
+
+        expect(settings('payment_methods'))->toBe('["paypal","stripe"]')
+            ->and(settings('paypal_client_id'))->toBe('stored-client-id')
+            ->and(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
+            ->and(settings('paypal_sandbox'))->toBe('1');
+    });
+
+    test('an owner entering a new secret replaces the stored one', function () {
+        test()->actingAs(User::factory()->owner()->create());
+
+        PaymentsStep::save([
+            'payment_methods' => ['paypal'],
+            'paypal_client_id' => 'stored-client-id',
+            'paypal_client_secret' => 'replacement-secret',
+            'paypal_sandbox' => true,
+        ]);
+
+        expect(settings('paypal_client_secret'))->toBe('replacement-secret');
+    });
+
+    test('an owner leaving the secret blank keeps the stored one', function () {
+        test()->actingAs(User::factory()->owner()->create());
+
+        PaymentsStep::save([
+            'payment_methods' => ['paypal'],
+            'paypal_client_id' => 'new-client-id',
+            'paypal_client_secret' => '',
+            'paypal_sandbox' => false,
+        ]);
+
+        expect(settings('paypal_client_secret'))->toBe('stored-paypal-secret')
+            ->and(settings('paypal_client_id'))->toBe('new-client-id')
+            ->and(settings('paypal_sandbox'))->toBe('0');
+    });
 });
