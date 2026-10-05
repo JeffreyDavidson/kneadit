@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\PaymentStatus;
 use App\Filament\Pages\Operations\ReorderReminders;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
@@ -94,4 +95,16 @@ test('the send reminder link is addressed from the bakery by name', function () 
         ->assertOk()
         ->assertSeeHtml('mailto:ada@example.test?subject=We%20miss%20you%20at%20Sunrise%20Bakery%21')
         ->assertSeeHtml('Warmly%2C%0ASunrise%20Bakery');
+});
+
+test('the total spent shown for a customer leaves out refunded orders', function () {
+    Date::setTestNow('2026-08-17 12:00:00');
+    $customer = Customer::factory()->create();
+    Order::factory()->for($customer)->delivered()->create(['delivery_date' => '2026-05-01', 'total' => 25]);
+    Order::factory()->for($customer)->delivered()->create(['delivery_date' => '2026-05-02', 'total' => 80, 'payment_status' => PaymentStatus::Refunded]);
+
+    $row = (new ReorderReminders)->getCustomers()->sole();
+
+    expect((int) $row->total_spent)->toBe(2500)
+        ->and($row->total_orders)->toBe(2);
 });

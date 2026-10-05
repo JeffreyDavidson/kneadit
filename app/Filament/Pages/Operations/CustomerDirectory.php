@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Actions\Customers\AddCustomerNote;
+use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -102,7 +103,7 @@ class CustomerDirectory extends Page
     {
         $query = Customer::query()
             ->withCount('orders')
-            ->withSum('orders', 'total')
+            ->withSum(['orders' => fn (OrderQueryBuilder $query): OrderQueryBuilder => $query->revenue()], 'total')
             ->with(['orders' => function (HasMany $query): void {
                 $query->latest()->take(1);
             }]);

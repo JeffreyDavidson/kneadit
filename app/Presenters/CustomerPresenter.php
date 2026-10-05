@@ -127,17 +127,12 @@ final class CustomerPresenter
     private function stats(): array
     {
         $orders = $this->customer->orders;
-        // ->sum('total') would call (float) on Money objects via __toString and parse
-        // "$X" as 0. Sum the dollar values explicitly via the cast.
-        $totalSpent = $orders->sum(fn (Order $order): float => $order->total->dollars());
-        $orderCount = $orders->count();
 
         return [
-            'total_orders' => $orderCount,
-            'total_spent' => $totalSpent,
-            'avg_order_value' => $orderCount > 0
-                ? $totalSpent / $orderCount
-                : 0,
+            'total_orders' => $orders->count(),
+            // Spend is revenue orders only (paid, not cancelled), like every other revenue figure.
+            'total_spent' => $this->lifetimeValue(),
+            'avg_order_value' => $this->averageOrderValue(),
             'last_order' => $orders->first()?->created_at?->format('M j, Y'),
             'last_order_at' => $orders->first()?->created_at,
             'days_since_last_order' => $this->metrics()->daysSinceLastOrder,

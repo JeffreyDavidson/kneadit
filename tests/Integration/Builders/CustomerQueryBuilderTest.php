@@ -107,7 +107,7 @@ test('withPaidOrderMetrics aggregates only active paid orders in the date range'
 
 test('withOrderMetrics excludes cancelled orders from last order date', function () {
     $customer = Customer::factory()->create();
-    $activeOrder = Order::factory()->for($customer)->create([
+    $activeOrder = Order::factory()->for($customer)->paid()->create([
         'created_at' => '2026-09-01 10:00:00',
         'total' => 25.00,
     ]);
@@ -140,7 +140,7 @@ test('withOrderMetrics returns no last order date when all orders are cancelled'
         ->and($result->last_order_date)->toBeNull();
 });
 
-test('withRfmMetrics projects lifetime paid order metrics', function () {
+test('withRfmMetrics projects lifetime revenue order metrics, leaving out paid-then-cancelled orders', function () {
     $customer = Customer::factory()->create();
     Order::factory()->for($customer)->paid()->create([
         'delivery_date' => '2020-01-01',
@@ -162,9 +162,9 @@ test('withRfmMetrics projects lifetime paid order metrics', function () {
     $result = $results->sole();
 
     expect($result->is($customer))->toBeTrue()
-        ->and(Arr::integer($result->getAttributes(), 'frequency'))->toBe(2)
-        ->and(Arr::integer($result->getAttributes(), 'monetary_cents'))->toBe(2_500)
-        ->and(Date::parse((string) $result->getAttribute('last_order_at'))->toDateString())->toBe('2026-09-01');
+        ->and(Arr::integer($result->getAttributes(), 'frequency'))->toBe(1)
+        ->and(Arr::integer($result->getAttributes(), 'monetary_cents'))->toBe(1_000)
+        ->and(Date::parse((string) $result->getAttribute('last_order_at'))->toDateString())->toBe('2020-01-01');
 });
 
 test('withOpenOrder keeps only customers with a pending, confirmed, baking or ready order', function (OrderStatus $status, bool $expected) {

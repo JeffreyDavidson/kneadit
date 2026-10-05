@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Operations;
 
+use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -87,7 +88,7 @@ class ReorderReminders extends Page
             ])
             ->withMax(['orders as last_order_date' => $eligibleOrders], 'delivery_date')
             ->withCount(['orders as total_orders' => $eligibleOrders])
-            ->withSum(['orders as total_spent' => $eligibleOrders], 'total')
+            ->withSum(['orders as total_spent' => fn (OrderQueryBuilder $query): OrderQueryBuilder => $query->revenue()], 'total')
             ->whereHas('orders', $eligibleOrders)
             ->whereDoesntHave('orders', fn (Builder $query): Builder => $eligibleOrders($query)
                 ->where('delivery_date', '>', $cutoff))

@@ -102,8 +102,8 @@ class CustomersTable
 
                 TextColumn::make('average_order_value')
                     ->label('Avg Order')
-                    ->getStateUsing(fn (Customer $record): int|float => $record->orders_count > 0
-                        ? ($record->orders_sum_total / $record->orders_count)
+                    ->getStateUsing(fn (Customer $record): int|float => $record->revenue_orders_count > 0
+                        ? ($record->orders_sum_total / $record->revenue_orders_count)
                         : 0)
                     ->money('USD')
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -17,10 +17,10 @@ class CustomerDirectoryStatsQuery
 
         // orders.total is bigint cents (migration 2026_04_22_201500); divide back
         // to dollars at the boundary.
-        $averageLifetimeValue = Order::query()->active()
+        $averageLifetimeValue = Order::query()
             ->selectRaw('AVG(customer_total) as avg_ltv')
             ->fromSub(
-                Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
+                Order::query()->revenue()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
                 'customer_totals',
             )
             ->value('avg_ltv');
@@ -32,7 +32,7 @@ class CustomerDirectoryStatsQuery
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);
 
         $topCustomer = Customer::query()
-            ->withSum(['orders' => fn (OrderQueryBuilder $q): OrderQueryBuilder => $q->active()], 'total')
+            ->withSum(['orders' => fn (OrderQueryBuilder $q): OrderQueryBuilder => $q->revenue()], 'total')
             ->orderByDesc('orders_sum_total')
             ->first();
 
