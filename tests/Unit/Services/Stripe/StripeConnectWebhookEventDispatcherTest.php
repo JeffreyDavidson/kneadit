@@ -23,11 +23,11 @@ test('dispatches completed checkout events to the checkout action', function () 
     $accountAction->shouldNotReceive('__invoke');
 
     $checkoutAction = Mockery::mock(HandleConnectCheckoutCompleted::class);
-    $checkoutAction->shouldReceive('__invoke')->once()->with($data);
+    $checkoutAction->shouldReceive('__invoke')->once()->with($data, 'acct_123');
 
     $dispatcher = new StripeConnectWebhookEventDispatcher($accountAction, $checkoutAction);
 
-    $dispatcher->dispatch('checkout.session.completed', $data);
+    $dispatcher->dispatch('checkout.session.completed', $data, 'acct_123');
 });
 
 test('ignores unsupported event types', function () {

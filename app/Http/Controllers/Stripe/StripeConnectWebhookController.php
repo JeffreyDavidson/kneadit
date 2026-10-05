@@ -48,6 +48,7 @@ class StripeConnectWebhookController extends Controller
 
         $type = $event->type;
         $data = $event->data->object ?? null;
+        $account = $event->account ?? null;
 
         if (! $idempotency->claim($event->id)) {
             return response('Already processed', 200);
@@ -58,7 +59,7 @@ class StripeConnectWebhookController extends Controller
         ]);
 
         try {
-            $dispatcher->dispatch($type, $data);
+            $dispatcher->dispatch($type, $data, is_string($account) ? $account : null);
 
             $idempotency->complete($event->id);
         } catch (\Throwable $e) {
