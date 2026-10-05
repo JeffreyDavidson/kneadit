@@ -63,6 +63,31 @@ test('manage settings page can reset form values to defaults', function () {
         ->assertSet('store_name', $defaultStoreName);
 });
 
+test('resetting to defaults and saving leaves the integration settings untouched', function () {
+    settings([
+        'webhook_url' => 'https://8.8.8.8/hook',
+        'webhook_secret' => 'existing-webhook-secret',
+        'paypal_client_id' => 'existing-paypal-client',
+        'paypal_client_secret' => 'existing-paypal-secret',
+        'paypal_sandbox' => false,
+    ]);
+
+    livewire(ManageSettings::class)
+        ->set('store_name', 'Temporary Name')
+        ->call('resetToDefaults')
+        ->assertSet('store_name', TenantSettingsDefaults::all()['store_name'])
+        ->assertSet('webhook_url', 'https://8.8.8.8/hook')
+        ->assertSet('webhook_secret', 'existing-webhook-secret')
+        ->set('payment_methods', [PaymentMethod::Cash->value])
+        ->call('save');
+
+    expect(settings('webhook_url'))->toBe('https://8.8.8.8/hook')
+        ->and(settings('webhook_secret'))->toBe('existing-webhook-secret')
+        ->and(settings('paypal_client_id'))->toBe('existing-paypal-client')
+        ->and(settings('paypal_client_secret'))->toBe('existing-paypal-secret')
+        ->and(settings('paypal_sandbox'))->toBe('0');
+});
+
 test('delivery fee tiers round-trip as structured rows through save and reload', function () {
     settings(['delivery_fee_tiers' => json_encode([
         ['min_distance' => 0, 'max_distance' => 5, 'fee' => 3, 'description' => 'Local'],
