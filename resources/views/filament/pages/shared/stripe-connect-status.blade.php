@@ -1,30 +1,27 @@
 @php
-    $status = \App\Http\Controllers\StripeConnectController::getAccountStatus();
-    $connected = $status && $status['charges_enabled'];
+    $status = resolve(\App\Services\Stripe\StripeSettingsReader::class)->connectStatus();
 @endphp
 
 <div class="p-4">
-    @if ($connected)
+    @if ($status === \App\Enums\Financial\StripeConnectStatus::ChargesEnabled)
         <div class="flex items-center gap-3 rounded-lg bg-emerald-800 p-4 text-white">
             <x-heroicon-o-check-circle class="h-6 w-6 flex-shrink-0" stroke-width="2" />
             <div>
                 <p class="m-0 font-semibold">Stripe Connected</p>
                 <p class="mt-1 mb-0 text-sm opacity-90">
                     Your Stripe account is connected and ready to accept payments.
-                    @if ($status['business_profile'])
-                        ({{ $status['business_profile'] }})
-                    @endif
                 </p>
             </div>
         </div>
-    @elseif ($status && $status['details_submitted'])
+    @elseif ($status === \App\Enums\Financial\StripeConnectStatus::ChargesPending)
         <div class="flex items-center gap-3 rounded-lg bg-amber-800 p-4 text-white">
             <x-heroicon-o-clock class="h-6 w-6 flex-shrink-0" stroke-width="2" />
             <div>
-                <p class="m-0 font-semibold">Verification Pending</p>
+                <p class="m-0 font-semibold">Stripe Connected, charges not enabled yet</p>
                 <p class="mt-1 mb-0 text-sm opacity-90">
-                    Your details have been submitted. Stripe is reviewing your account — this usually takes a few
-                    minutes.
+                    Your Stripe account is connected, but Stripe has not enabled charges yet. If Stripe is still
+                    reviewing your details this usually takes a few minutes; otherwise finish setup with Stripe.
+                    <a href="{{ route('stripe.connect') }}" class="underline">Resume setup →</a>
                 </p>
             </div>
         </div>
@@ -43,12 +40,6 @@
                 </svg>
                 Connect with Stripe
             </a>
-            @if ($status)
-                <p class="mt-4 mb-0 text-[0.8rem] text-gray-500">
-                    Account created but setup incomplete.
-                    <a href="{{ route('stripe.connect') }}" class="text-[#635bff] underline">Resume setup →</a>
-                </p>
-            @endif
         </div>
     @endif
 </div>

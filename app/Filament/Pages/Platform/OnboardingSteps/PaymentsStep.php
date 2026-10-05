@@ -28,10 +28,10 @@ final class PaymentsStep extends OnboardingStep
         $manager = resolve(SettingsManager::class);
         $methods = $manager->get('payment_methods');
         $decodedMethods = is_string($methods) ? json_decode($methods, true) : null;
-        $selectedMethods = collect(is_array($decodedMethods) ? $decodedMethods : [])
-            ->filter(is_string(...))
-            ->values()
-            ->all();
+        $selectedMethods = array_values(array_filter(
+            is_array($decodedMethods) ? $decodedMethods : [],
+            is_string(...),
+        ));
 
         return [
             'payment_methods' => $selectedMethods !== [] ? $selectedMethods : [PaymentMethod::Cash->value],

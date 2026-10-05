@@ -4,6 +4,7 @@ use App\Actions\Tenants\ImportLegacyBakeryAssets;
 use App\Actions\Tenants\ImportLegacyBakeryData;
 use App\DataTransferObjects\Tenants\LegacyBakeryImportData;
 use App\Services\Settings\TenantSettingCipher;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -417,6 +418,22 @@ it('rejects unsupported enum values before writing any records', function () {
 
     test()->assertDatabaseCount('customers', 0)
         ->assertDatabaseCount('orders', 0);
+});
+
+it('marks an imported bakery as already onboarded', function () {
+    Date::setTestNow('2026-10-05 12:00');
+
+    resolve(ImportLegacyBakeryData::class)(['settings' => [['key' => 'business_name', 'value' => 'Bakery on Biscotto']]]);
+
+    expect(settings('onboarding_completed_at'))->toBe(Date::now()->toISOString());
+});
+
+it('keeps the original onboarding completion time when the import runs again', function () {
+    settings(['onboarding_completed_at' => '2026-09-01T08:00:00.000000Z']);
+
+    resolve(ImportLegacyBakeryData::class)(['settings' => [['key' => 'business_name', 'value' => 'Bakery on Biscotto']]]);
+
+    expect(settings('onboarding_completed_at'))->toBe('2026-09-01T08:00:00.000000Z');
 });
 
 it('imports Bakery on Biscotto assets into tenant-specific public storage', function () {
