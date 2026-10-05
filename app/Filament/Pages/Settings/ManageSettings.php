@@ -15,6 +15,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 
 class ManageSettings extends Page
 {
@@ -220,7 +221,16 @@ class ManageSettings extends Page
             $values[$key] = settings($key, $default);
         }
 
-        $this->applySettings($formMapper->fromSettings($values, $defaults));
+        $state = $formMapper->fromSettings($values, $defaults);
+
+        // Livewire sends every public property to the browser, so a user who
+        // cannot manage webhooks never receives the URL or signing secret.
+        if (! $this->canManageWebhooks()) {
+            $state['webhook_url'] = '';
+            $state['webhook_secret'] = '';
+        }
+
+        $this->applySettings($state);
     }
 
     #[\Override]
@@ -253,6 +263,8 @@ class ManageSettings extends Page
 
     public function regenerateWebhookSecret(RegenerateWebhookSecret $regenerateWebhookSecret): void
     {
+        abort_unless($this->canManageWebhooks(), 403);
+
         $this->webhook_secret = $regenerateWebhookSecret();
 
         Notification::make()
@@ -264,6 +276,8 @@ class ManageSettings extends Page
 
     public function sendTestWebhook(SaveTenantSettings $saveSettings): void
     {
+        abort_unless($this->canManageWebhooks(), 403);
+
         // Same server-side validation as save(), since this persists the whole form.
         $this->validate();
 
@@ -291,6 +305,11 @@ class ManageSettings extends Page
             ->title('Settings reset to defaults')
             ->info()
             ->send();
+    }
+
+    private function canManageWebhooks(): bool
+    {
+        return Gate::allows('manage-webhooks');
     }
 
     /**
@@ -359,8 +378,10 @@ class ManageSettings extends Page
             'paypal_client_secret' => $this->paypal_client_secret,
             'paypal_invoice_terms' => $this->paypal_invoice_terms,
             'paypal_sandbox' => $this->paypal_sandbox,
-            'webhook_url' => $this->webhook_url,
-            'webhook_secret' => $this->webhook_secret,
+            // Users who cannot manage webhooks keep whatever is stored, whatever
+            // the (client-controlled) properties say.
+            'webhook_url' => $this->canManageWebhooks() ? $this->webhook_url : settings('webhook_url', ''),
+            'webhook_secret' => $this->canManageWebhooks() ? $this->webhook_secret : settings('webhook_secret', ''),
             'cancellation_policy' => $this->cancellation_policy,
             'deposit_policy' => $this->deposit_policy,
             'refund_policy' => $this->refund_policy,

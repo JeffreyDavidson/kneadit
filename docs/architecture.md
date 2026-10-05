@@ -64,7 +64,7 @@ The root URL is deliberately universal: the global middleware establishes centra
 - `routes/tenant/storefront.php` for public bakery content and storefront commerce.
 - `routes/tenant/account.php` for customer account authentication, profile, orders, and email verification.
 - `routes/tenant/orders.php` for checkout, order access, payment callbacks, cart, capacity, and order-related AJAX endpoints.
-- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups. The resources are JSON:API resources that load whatever `?include=` names, so each controller eager-loads the relations it exposes with the storefront's filter (active products, approved reviews); a relation loaded that way is not re-queried by the include, so an inactive product cannot leak. `/api/menu` always includes its products. `/api/capacity/{date}` validates the date as `Y-m-d` (422 otherwise).
+- `routes/tenant/api.php` for tenant JSON endpoints, split into read and write throttle groups. The resources are JSON:API resources that load whatever `?include=` names, so each controller eager-loads the relations it exposes with the storefront's filter (active products, approved reviews); a relation loaded that way is not re-queried by the include, so an inactive product cannot leak. `/api/menu` always includes its products. `/api/capacity/{date}` validates the date as `Y-m-d` (422 otherwise). There is no public review submission endpoint: `GET /api/reviews` lists approved reviews only, and reviews are written through the signed per-order review link.
 
 Routes that access tenant models belong under the tenant loader, even when their controllers are used by an admin-facing page. This keeps route middleware, model binding, and database tenancy context aligned.
 
@@ -211,6 +211,7 @@ Settings are database-backed key/value records with separate tenant and platform
 - `PlatformSettingsManager` reads central platform settings.
 - `AbstractSettingsManager` memoizes primitive values in memory for the current manager instance and provides transactional bulk writes.
 - `TenantSettingCipher` transparently encrypts PayPal credentials and webhook signing secrets before persistence; tenant migrations encrypt legacy plaintext values without changing settings consumers.
+- Webhook configuration is owner-only because payloads carry customer names and emails. The `manage-webhooks` Gate (Owner role and above) guards the Integrations section of `ManageSettings`, the Webhook Deliveries resource, the Webhook Docs page, and the Send Test, Regenerate Secret and Redeliver actions. For other roles `ManageSettings` never loads the webhook URL or secret into its public properties (Livewire would send them to the browser), refuses the test and regenerate methods with 403, and keeps the stored values on save.
 - `TenantSettings` is a read-only composite DTO of typed settings groups such as store, branding, orders, payments, catering, loyalty, policies, homepage, webhooks, gift cards, and inventory.
 - `TenantSettingsDefaults` supplies defaults used when provisioning or resolving unset values.
 

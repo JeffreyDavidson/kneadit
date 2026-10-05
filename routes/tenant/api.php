@@ -33,7 +33,6 @@ Route::name('api.')->group(function () {
     Route::middleware('throttle:form-write')->group(function () {
         Route::post('orders', ApiOrderController::class)->name('orders.store');
         Route::post('coupon/validate', CouponValidationController::class)->name('coupon.validate');
-        Route::post('reviews', [ApiReviewController::class, 'store'])->name('reviews.store');
         Route::post('contact', ApiContactController::class)->name('contact.store');
         Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('favorites.toggle')->middleware('customer.verified');
         Route::post('waitlist', ApiWaitlistController::class)->name('waitlist.store');
