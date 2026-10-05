@@ -9,7 +9,7 @@ final readonly class BrandingSettings
     public const string DEFAULT_BRAND_COLOR = '#d4920c';
 
     /** The only format a brand color may be saved in, and the only one safe to print into a style attribute. */
-    public const string HEX_COLOR_PATTERN = '/^#[0-9a-fA-F]{6}$/';
+    public const string HEX_COLOR_PATTERN = '/^#[0-9a-fA-F]{6}\z/';
 
     private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
@@ -34,7 +34,7 @@ final readonly class BrandingSettings
     public static function resolve(): self
     {
         return new self(
-            brandColorPrimary: SettingValue::string(tenant('brand_color_primary'), self::DEFAULT_BRAND_COLOR),
+            brandColorPrimary: self::safeColor(tenant('brand_color_primary')),
             storefrontTheme: SettingValue::string(settings('storefront_theme'), 'classic'),
             businessTagline: SettingValue::nullableString(settings('business_tagline')),
             aboutUsText: SettingValue::nullableString(settings('about_us_text')),
@@ -54,9 +54,9 @@ final readonly class BrandingSettings
      * A stored color that is safe to print into CSS: the color itself when it is a six digit hex
      * color, otherwise the default. Colors saved before validation existed can be anything.
      */
-    public static function safeColor(?string $color, string $default = self::DEFAULT_BRAND_COLOR): string
+    public static function safeColor(mixed $color, string $default = self::DEFAULT_BRAND_COLOR): string
     {
-        if ($color === null || preg_match(self::HEX_COLOR_PATTERN, $color) !== 1) {
+        if (! is_string($color) || preg_match(self::HEX_COLOR_PATTERN, $color) !== 1) {
             return $default;
         }
 

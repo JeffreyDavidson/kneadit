@@ -46,6 +46,24 @@ test('BrandingSettings stores all properties', function () {
         ->giftCardsHeroImage->toBeNull();
 });
 
+test('BrandingSettings safeColor keeps six digit hex colors and falls back otherwise', function (mixed $stored, string $expected) {
+    expect(BrandingSettings::safeColor($stored))->toBe($expected);
+})->with([
+    'lower case hex' => ['#336699', '#336699'],
+    'upper case hex' => ['#ABCDEF', '#ABCDEF'],
+    'null' => [null, '#d4920c'],
+    'empty' => ['', '#d4920c'],
+    'array' => [['#336699'], '#d4920c'],
+    'short hex' => ['#fff', '#d4920c'],
+    'named color' => ['red', '#d4920c'],
+    'css break-out' => ['red;}body{display:none', '#d4920c'],
+    'trailing newline' => ["#336699\n", '#d4920c'],
+]);
+
+test('BrandingSettings safeColor uses the given default', function () {
+    expect(BrandingSettings::safeColor('nope', '#1c1410'))->toBe('#1c1410');
+});
+
 test('BrandingSettings heroImageUrl returns Storage URL when image exists', function () {
     Storage::fake('public');
 

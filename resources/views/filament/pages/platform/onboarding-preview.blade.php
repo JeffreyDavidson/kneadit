@@ -1,7 +1,9 @@
 @php
+    use App\DataTransferObjects\Settings\BrandingSettings;
+
     $logoPath = is_array($page->branding['store_logo'] ?? null) ? collect($page->branding['store_logo'])->first() : ($page->branding['store_logo'] ?? null);
-    $primary = $page->branding['color_primary'] ?: '#d4920c';
-    $secondary = $page->branding['color_secondary'] ?: '#8b6844';
+    $primary = BrandingSettings::safeColor($page->branding['color_primary'] ?? null);
+    $secondary = BrandingSettings::safeColor($page->branding['color_secondary'] ?? null, '#8b6844');
     $days = ['monday' => 'Mon', 'tuesday' => 'Tue', 'wednesday' => 'Wed', 'thursday' => 'Thu', 'friday' => 'Fri', 'saturday' => 'Sat', 'sunday' => 'Sun'];
     $methods = is_array($page->payments['payment_methods'] ?? null) ? $page->payments['payment_methods'] : ['cash'];
 @endphp
