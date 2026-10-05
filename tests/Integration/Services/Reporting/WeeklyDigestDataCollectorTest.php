@@ -26,22 +26,37 @@ it('returns expected data keys', function () {
         ->and($data->stats['avg_order_value'])->toEqual(Money::zero());
 });
 
-it('aggregates weekly orders and revenue without filtering cancelled orders', function () {
+it('aggregates last week\'s revenue orders: paid, not cancelled, dated by delivery date', function () {
     $this->travelTo(now()->setDate(2026, 9, 16)->setTime(12, 0));
 
-    Order::factory()->create([
+    Order::factory()->paid()->create([
         'total' => 12.34,
-        'created_at' => '2026-09-09 11:00:00',
+        'delivery_date' => '2026-09-09',
+        'created_at' => '2026-08-01 11:00:00',
     ]);
 
-    Order::factory()->create([
+    Order::factory()->paid()->create([
         'total' => 20.00,
+        'delivery_date' => '2026-09-10',
         'created_at' => '2026-09-10 11:00:00',
     ]);
 
-    Order::factory()->cancelled()->create([
+    Order::factory()->paid()->cancelled()->create([
         'total' => 9.99,
+        'delivery_date' => '2026-09-11',
         'created_at' => '2026-09-11 11:00:00',
+    ]);
+
+    Order::factory()->unpaid()->create([
+        'total' => 7.00,
+        'delivery_date' => '2026-09-11',
+        'created_at' => '2026-09-11 11:00:00',
+    ]);
+
+    Order::factory()->paid()->create([
+        'total' => 99.00,
+        'delivery_date' => '2026-09-14',
+        'created_at' => '2026-09-10 11:00:00',
     ]);
 
     DB::connection()->flushQueryLog();
@@ -58,14 +73,14 @@ it('aggregates weekly orders and revenue without filtering cancelled orders', fu
             $sql = strtolower($query['query']);
 
             return str_contains($sql, 'orders')
-                && str_contains($sql, 'created_at')
+                && str_contains($sql, 'delivery_date')
                 && str_contains($sql, 'count(')
                 && str_contains($sql, 'sum(');
         });
 
-    expect($data->stats['total_orders'])->toBe(3)
-        ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(42.33))
-        ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(14.11))
+    expect($data->stats['total_orders'])->toBe(2)
+        ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(32.34))
+        ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(16.17))
         ->and($orderAggregateQueries)->toHaveCount(1);
 });
 
@@ -77,9 +92,9 @@ test('the digest weeks follow the bakery-local clock, not UTC', function () {
         orders: makeOrderSettings(['timezone' => 'Asia/Tokyo']),
     ));
     Date::setTestNow('2026-10-04 23:00');
-    Order::factory()->create(['total' => 10.00, 'created_at' => '2026-09-30 03:00:00', 'delivery_date' => null]);
-    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-09-23 03:00:00', 'delivery_date' => null]);
-    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-10-04 20:00:00', 'delivery_date' => null]);
+    Order::factory()->paid()->create(['total' => 10.00, 'delivery_date' => '2026-09-30']);
+    Order::factory()->paid()->create(['total' => 99.00, 'delivery_date' => '2026-09-23']);
+    Order::factory()->paid()->create(['total' => 99.00, 'delivery_date' => '2026-10-05']);
     Customer::factory()->create(['created_at' => '2026-09-29 03:00:00']);
     Customer::factory()->create(['created_at' => '2026-10-04 20:00:00']);
     Order::factory()->create(['delivery_date' => '2026-10-06']);
@@ -90,5 +105,5 @@ test('the digest weeks follow the bakery-local clock, not UTC', function () {
     expect($data->stats['total_orders'])->toBe(1)
         ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(10.00))
         ->and($data->stats['new_customers'])->toBe(1)
-        ->and($data->upcomingCount)->toBe(1);
+        ->and($data->upcomingCount)->toBe(2);
 });

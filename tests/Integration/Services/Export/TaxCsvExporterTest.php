@@ -2,11 +2,13 @@
 
 use App\Enums\Financial\ExpenseCategory;
 use App\Enums\Financial\IncomeSource;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Financial\TaxCsvExporter;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -29,7 +31,7 @@ function taxCsvMemoryStream()
 
 test('writeOrdersCsv includes header row and order data', function () {
     $order = Order::factory()->paid()->create([
-        'created_at' => '2025-06-15 10:00:00',
+        'delivery_date' => '2025-06-15',
         'total' => 50.00,
     ]);
 
@@ -47,14 +49,16 @@ test('writeOrdersCsv includes header row and order data', function () {
 
     expect($output)
         ->toContain('=== ORDERS ===')
-        ->toContain('Date,"Order Number",Customer')
+        ->toContain('"Delivery Date","Order Number",Customer')
+        ->toContain('2025-06-15')
         ->toContain($order->order_number)
         ->toContain('50.00');
 });
 
 test('writeOrdersCsv excludes orders outside date range', function () {
     Order::factory()->paid()->create([
-        'created_at' => '2024-06-15 10:00:00',
+        'created_at' => '2025-06-15 10:00:00',
+        'delivery_date' => '2024-06-15',
         'total' => 75.00,
     ]);
 
@@ -141,12 +145,12 @@ test('writeIncomeCsv excludes income outside date range', function () {
 
 test('writeSummaryCsv calculates correct totals', function () {
     Order::factory()->paid()->create([
-        'created_at' => '2025-06-15 10:00:00',
+        'delivery_date' => '2025-06-15',
         'total' => 100.00,
     ]);
 
     Order::factory()->paid()->create([
-        'created_at' => '2025-07-20 10:00:00',
+        'delivery_date' => '2025-07-20',
         'total' => 150.00,
     ]);
 
@@ -180,7 +184,7 @@ test('writeSummaryCsv calculates correct totals', function () {
 
 test('writeSummaryCsv includes net profit calculation', function () {
     Order::factory()->paid()->create([
-        'created_at' => '2025-06-15 10:00:00',
+        'delivery_date' => '2025-06-15',
         'total' => 200.00,
     ]);
 
@@ -199,4 +203,43 @@ test('writeSummaryCsv includes net profit calculation', function () {
 
     expect($output)
         ->toContain('Net Profit (Revenue - Deductible)');
+});
+
+test('the orders list and summary count only revenue orders: paid and not cancelled', function () {
+    Order::factory()->paid()->create(['delivery_date' => '2025-06-15', 'total' => 11.00]);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2025-06-15', 'total' => 22.00]);
+    Order::factory()->unpaid()->create(['delivery_date' => '2025-06-15', 'total' => 33.00]);
+    Order::factory()->paid()->create(['delivery_date' => '2025-06-15', 'payment_status' => PaymentStatus::Refunded, 'total' => 44.00]);
+
+    $orders = taxCsvMemoryStream();
+    $summary = taxCsvMemoryStream();
+    resolve(TaxCsvExporter::class)->writeOrdersCsv($orders, '2025-01-01', '2025-12-31');
+    resolve(TaxCsvExporter::class)->writeSummaryCsv($summary, '2025-01-01', '2025-12-31');
+    rewind($orders);
+    rewind($summary);
+    $ordersOutput = stream_get_contents($orders);
+    $summaryOutput = stream_get_contents($summary);
+
+    expect($ordersOutput)->toContain('11.00')->not->toContain('22.00')->not->toContain('33.00')->not->toContain('44.00')
+        ->and($summaryOutput)->toContain('"Total Revenue (Orders)",11.00');
+});
+
+test('a Los Angeles bakery order delivered on Dec 31 local time lands in that year', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/Los_Angeles'])));
+    // 2026-12-31 19:30 in Los Angeles is already 2027-01-01 03:30 UTC.
+    $decemberOrder = Order::factory()->paid()->create(['created_at' => '2027-01-01 03:30:00', 'delivery_date' => '2026-12-31', 'total' => 61.00]);
+    $januaryOrder = Order::factory()->paid()->create(['created_at' => '2026-12-30 20:00:00', 'delivery_date' => '2027-01-01', 'total' => 62.00]);
+
+    $orders = taxCsvMemoryStream();
+    $summary = taxCsvMemoryStream();
+    resolve(TaxCsvExporter::class)->writeOrdersCsv($orders, '2026-01-01', '2026-12-31');
+    resolve(TaxCsvExporter::class)->writeSummaryCsv($summary, '2026-01-01', '2026-12-31');
+    rewind($orders);
+    rewind($summary);
+    $ordersOutput = stream_get_contents($orders);
+    $summaryOutput = stream_get_contents($summary);
+
+    expect($ordersOutput)->toContain($decemberOrder->order_number)->toContain('2026-12-31')
+        ->not->toContain($januaryOrder->order_number)
+        ->and($summaryOutput)->toContain('"Total Revenue (Orders)",61.00');
 });

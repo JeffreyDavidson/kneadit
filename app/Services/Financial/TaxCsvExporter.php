@@ -2,12 +2,12 @@
 
 namespace App\Services\Financial;
 
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Export\CsvValueSanitizer;
+use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Collection;
 
 class TaxCsvExporter
@@ -16,15 +16,18 @@ class TaxCsvExporter
     public function writeOrdersCsv(mixed $handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== ORDERS ==='], escape: '\\');
-        fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method'], escape: '\\');
+        fputcsv($handle, ['Delivery Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method'], escape: '\\');
 
+        // Revenue orders only (paid, not cancelled), dated by delivery date, so the list adds up to the summary and every report.
         Order::with(['customer', 'orderItems.product'])
-            ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
+            ->revenueInDateRange(DateRange::fromStrings($from, $to))
+            ->orderBy('delivery_date')
+            ->orderBy('id')
             ->chunk(100, function (Collection $orders) use ($handle): void {
                 foreach ($orders as $order) {
                     $items = $order->orderItems->map(fn (OrderItem $i): string => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, CsvValueSanitizer::row([
-                        $order->created_at?->format('Y-m-d'),
+                        $order->delivery_date?->format('Y-m-d'),
                         $order->order_number,
                         $order->customer->name ?? 'N/A',
                         $items,
@@ -104,8 +107,7 @@ class TaxCsvExporter
     {
         // orders.total, incomes.amount, expenses.amount, expenses.deductible_amount
         // all bigint cents (migrations 2026_04_22_201500 + 2026_04_22_230000).
-        $totalOrderRevenue = (int) Order::query()->whereBetween('created_at', [$from, $to.' 23:59:59'])
-            ->where('payment_status', PaymentStatus::Paid)
+        $totalOrderRevenue = (int) Order::query()->revenueInDateRange(DateRange::fromStrings($from, $to))
             ->sum('total') / 100;
 
         $totalIncomeRevenue = (int) Income::query()->whereBetween('date', [$from, $to])->sum('amount') / 100;
