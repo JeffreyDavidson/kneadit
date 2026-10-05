@@ -148,6 +148,17 @@ test('successful onboarding completes the default KneadIt pipeline', function ()
         && str_ends_with($event->adminUrl, '/admin'));
 });
 
+test('a new owner is sent to the bakery on the tenant domain, not under the application host', function () {
+    Event::fake([TenantOnboarded::class]);
+    config(['app.url' => 'https://app.getkneadit.app', 'tenancy.tenant_domain' => 'getkneadit.app']);
+    $sub = uniqueSubdomain();
+
+    $response = submitOnboarding(createSignupUser(), ['subdomain' => $sub]);
+
+    $response->assertRedirect("https://{$sub}.getkneadit.app/admin");
+    Event::assertDispatched(TenantOnboarded::class, fn (TenantOnboarded $event): bool => $event->adminUrl === "https://{$sub}.getkneadit.app/admin");
+});
+
 test('a free-forever grant on a signed-up tenant keeps its storefront open after the trial ends', function () {
     $user = createSignupUser();
     $sub = uniqueSubdomain();

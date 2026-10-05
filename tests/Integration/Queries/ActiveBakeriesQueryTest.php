@@ -47,3 +47,26 @@ test('it returns only active tenants with storefronts enabled', function () {
     expect($bakeries)->toHaveCount(1)
         ->and($bakeries->first()['name'])->toBe('Sweet Treats');
 });
+
+test('it links each bakery by its subdomain, or its verified custom domain', function () {
+    config(['app.url' => 'https://app.getkneadit.app', 'tenancy.tenant_domain' => 'getkneadit.app']);
+    createTenant(['id' => 'bakery-on-biscotto', 'store_name' => 'Biscotto', 'subdomain' => 'bakeryonbiscotto']);
+    createTenant([
+        'id' => 'custom-bakery',
+        'email' => 'custom@example.com',
+        'store_name' => 'Custom',
+        'custom_domain' => 'shop.example.com',
+        'custom_domain_verified_at' => now(),
+    ]);
+    DB::table('domains')->insert([
+        'domain' => 'shop.example.com',
+        'tenant_id' => 'custom-bakery',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    expect(ActiveBakeriesQuery::get()->pluck('url', 'name')->all())->toBe([
+        'Biscotto' => 'https://bakeryonbiscotto.getkneadit.app',
+        'Custom' => 'https://shop.example.com',
+    ]);
+});

@@ -9,6 +9,7 @@ use App\Actions\Platform\PauseTenant;
 use App\Actions\Platform\RemoveCustomDomain;
 use App\Actions\Platform\ResumeTenant;
 use App\Actions\Platform\VerifyCustomDomain;
+use App\Actions\Tenants\ChangeTenantSubdomain;
 use App\Enums\Platform\DomainCheck;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
@@ -81,6 +82,36 @@ class EditTenant extends EditRecord
 
                     Notification::make()
                         ->title('Bakery resumed')
+                        ->success()
+                        ->send();
+                }),
+            Action::make('changeSubdomain')
+                ->label('Change subdomain')
+                ->icon(Heroicon::OutlinedLink)
+                ->color('gray')
+                ->authorize('platform-admin')
+                ->modalWidth('md')
+                ->modalDescription('The old subdomain keeps working and redirects visitors to the new one.')
+                ->fillForm(fn (): array => ['subdomain' => $this->record->subdomain])
+                ->schema([
+                    TextInput::make('subdomain')
+                        ->label('Subdomain')
+                        ->placeholder('sweetbakes')
+                        ->helperText('Lowercase letters, numbers and hyphens. The bakery id does not change.')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    try {
+                        resolve(ChangeTenantSubdomain::class)($this->record, Arr::string($data, 'subdomain'));
+                    } catch (ValidationException $exception) {
+                        // Show the message on the field inside the open modal.
+                        throw ValidationException::withMessages([
+                            'mountedActions.0.data.subdomain' => $exception->errors()['subdomain'],
+                        ]);
+                    }
+
+                    Notification::make()
+                        ->title('Subdomain changed')
                         ->success()
                         ->send();
                 }),

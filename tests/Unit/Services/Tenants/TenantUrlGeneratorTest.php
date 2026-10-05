@@ -97,3 +97,23 @@ test('rejects application URLs without a host', function () {
     expect(fn () => resolve(TenantUrlGenerator::class)->storefront(new Tenant(['id' => 'test-bakery'])))
         ->toThrow(UnexpectedValueException::class, 'The application URL must contain a host.');
 });
+
+test('builds bakery links from the subdomain, not the tenant id', function () {
+    Config::set('app.url', 'https://app.getkneadit.app');
+    Config::set('tenancy.tenant_domain', 'getkneadit.app');
+    $tenant = new Tenant(['id' => 'bakery-on-biscotto', 'subdomain' => 'bakeryonbiscotto']);
+    $generator = resolve(TenantUrlGenerator::class);
+
+    expect($generator->admin($tenant))->toBe('https://bakeryonbiscotto.getkneadit.app/admin')
+        ->and($generator->storefront($tenant))->toBe('https://bakeryonbiscotto.getkneadit.app')
+        ->and($generator->primaryStorefront($tenant))->toBe('https://bakeryonbiscotto.getkneadit.app')
+        ->and($generator->storefrontHost($tenant))->toBe('bakeryonbiscotto.getkneadit.app');
+});
+
+test('falls back to the tenant id when the subdomain is not set', function () {
+    Config::set('app.url', 'https://app.getkneadit.app');
+    Config::set('tenancy.tenant_domain', 'getkneadit.app');
+
+    expect(resolve(TenantUrlGenerator::class)->storefront(new Tenant(['id' => 'test-bakery'])))
+        ->toBe('https://test-bakery.getkneadit.app');
+});

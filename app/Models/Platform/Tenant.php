@@ -22,6 +22,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
 /**
  * @property string $id
+ * @property string|null $subdomain
  * @property int|null $user_id
  * @property string $name
  * @property string $email
@@ -85,6 +86,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'id',
+            'subdomain',
             'user_id',
             'name',
             'email',

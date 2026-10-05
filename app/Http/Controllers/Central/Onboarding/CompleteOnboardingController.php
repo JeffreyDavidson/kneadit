@@ -21,17 +21,14 @@ class CompleteOnboardingController extends Controller
         CompleteTenantOnboarding $completeOnboarding,
         TenantUrlGenerator $tenantUrls,
     ): RedirectResponse {
-        $adminUrl = $request->adminUrl();
-
         try {
-            $completeOnboarding(
+            $tenant = $completeOnboarding(
                 user: $user,
                 storeName: $request->string('store_name')->toString(),
                 subdomain: $request->subdomain(),
                 useKneadItStorefront: $request->usesKneadItStorefront(),
                 externalWebsite: $request->filled('external_website') ? $request->string('external_website')->toString() : null,
                 referralCode: $request->referralCode(),
-                adminUrl: $adminUrl,
             );
         } catch (UserAlreadyHasBakeryException $exception) {
             return redirect()
@@ -43,6 +40,6 @@ class CompleteOnboardingController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->away($adminUrl);
+        return redirect()->away($tenantUrls->admin($tenant));
     }
 }

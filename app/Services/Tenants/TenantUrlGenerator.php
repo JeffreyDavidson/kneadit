@@ -97,7 +97,9 @@ final class TenantUrlGenerator
             ? $configuredTenantDomain
             : $uri->host();
 
-        return $uri->withHost("{$tenant->id}.{$tenantDomain}");
+        $subdomain = filled($tenant->subdomain) ? $tenant->subdomain : $tenant->id;
+
+        return $uri->withHost("{$subdomain}.{$tenantDomain}");
     }
 
     private function centralUri(): Uri

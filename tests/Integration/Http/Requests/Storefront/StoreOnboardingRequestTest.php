@@ -88,26 +88,6 @@ test('valid input passes', function () {
     expect($validator->passes())->toBeTrue();
 });
 
-test('adminUrl preserves the request scheme', function () {
-    $secureRequest = StoreOnboardingRequest::create('https://kneadit.test/onboarding', 'POST', [
-        'store_name' => 'Sweet Bakes',
-        'subdomain' => 'sweet-bakes',
-        'storefront_choice' => 'kneadit',
-    ]);
-    $secureRequest->setValidator(validator($secureRequest->all(), $secureRequest->rules()));
-
-    expect($secureRequest->adminUrl())->toBe('https://sweet-bakes.kneadit.test/admin');
-
-    $plainRequest = StoreOnboardingRequest::create('http://kneadit.test/onboarding', 'POST', [
-        'store_name' => 'Sweet Bakes',
-        'subdomain' => 'sweet-bakes',
-        'storefront_choice' => 'kneadit',
-    ]);
-    $plainRequest->setValidator(validator($plainRequest->all(), $plainRequest->rules()));
-
-    expect($plainRequest->adminUrl())->toBe('http://sweet-bakes.kneadit.test/admin');
-});
-
 test('referralCode resolves session and cookie values', function () {
     $sessionRequest = StoreOnboardingRequest::create('/onboarding', 'POST', [], [], [], [
         'HTTP_COOKIE' => 'referral_code=COOKIEVAL',

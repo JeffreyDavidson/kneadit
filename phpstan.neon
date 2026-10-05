@@ -16,8 +16,6 @@ parameters:
         property: 100
     treatPhpDocTypesAsCertain: true
     ignoreErrors:
-        # Tenant domains relation from vendor trait (HasDomains)
-        - identifier: larastan.relationExistence
         # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
         -
             identifier: argument.type
