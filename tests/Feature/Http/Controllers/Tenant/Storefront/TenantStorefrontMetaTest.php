@@ -55,7 +55,7 @@ test('favicon uses store logo when available', function () {
 test('favicon falls back to svg with brand color', function () {
     $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain('image/svg+xml')->toContain('brand_color_primary');
+    expect($layout)->toContain('image/svg+xml')->toContain('brandColorPrimary');
 });
 
 // --- #23: Cookie consent ---
