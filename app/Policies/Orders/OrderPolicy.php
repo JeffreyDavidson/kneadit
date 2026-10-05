@@ -28,4 +28,24 @@ class OrderPolicy extends RolePolicy
 
         return $model instanceof Order && resolve(OrderDeletionGuard::class)->canDelete($model);
     }
+
+    /**
+     * Staff can cancel an order only while no customer money is held for it.
+     * Cancelling a paid or part-paid order (which refunds it) is for managers
+     * and above.
+     */
+    public function cancel(User $user, Order $order): bool
+    {
+        if ($user->role->meetsRequirement(UserRole::Manager)) {
+            return true;
+        }
+
+        return ! $order->payment_status->holdsPayment();
+    }
+
+    /** Refunding money back to a customer is for managers and above. */
+    public function refund(User $user, Order $order): bool
+    {
+        return $user->role->meetsRequirement(UserRole::Manager);
+    }
 }

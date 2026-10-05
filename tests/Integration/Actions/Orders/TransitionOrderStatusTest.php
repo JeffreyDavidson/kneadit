@@ -219,6 +219,11 @@ test('cancellation restores gift card balance and creates refund transaction', f
             'gift_card_id' => $giftCard->id,
             'gift_card_amount' => 20.00,
         ]);
+    GiftCardTransaction::factory()->redemption()->create([
+        'gift_card_id' => $giftCard->id,
+        'order_id' => $order->id,
+        'amount' => -20.00,
+    ]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 

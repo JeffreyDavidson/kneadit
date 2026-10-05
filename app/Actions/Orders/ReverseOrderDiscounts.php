@@ -67,7 +67,25 @@ class ReverseOrderDiscounts
 
     private function reverseGiftCard(Order $order, string $reason): void
     {
-        if (! $order->gift_card_id || ! $order->gift_card_amount->isPositive()) {
+        if (! $order->gift_card_id) {
+            return;
+        }
+
+        // Credit what the ledger says was drawn from the card (stored negative),
+        // never the order's own gift_card_amount, which is only a copy of it.
+        $redemption = GiftCardTransaction::query()
+            ->where('gift_card_id', $order->gift_card_id)
+            ->where('order_id', $order->id)
+            ->where('type', GiftCardTransactionType::Redemption)
+            ->first();
+
+        if (! $redemption) {
+            return;
+        }
+
+        $redeemed = $redemption->amount->multiply(-1);
+
+        if (! $redeemed->isPositive()) {
             return;
         }
 
@@ -75,7 +93,7 @@ class ReverseOrderDiscounts
             GiftCardTransaction::query()->create([
                 'gift_card_id' => $order->gift_card_id,
                 'order_id' => $order->id,
-                'amount' => $order->gift_card_amount->dollars(),
+                'amount' => $redeemed->dollars(),
                 'type' => GiftCardTransactionType::Refund,
                 'notes' => $reason,
                 'created_at' => now(),
@@ -87,7 +105,7 @@ class ReverseOrderDiscounts
         if ($order->giftCard) {
             // current_balance is bigint cents (migration 2026_04_22_223000); pass cents
             // straight from the Money VO instead of converting back through dollars.
-            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount->cents());
+            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $redeemed->cents());
         }
     }
 }

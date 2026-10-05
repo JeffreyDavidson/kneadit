@@ -8,6 +8,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Customers\Customer;
 use App\Models\Staff\User;
+use App\ValueObjects\Money;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -93,6 +94,10 @@ class OrderForm
             $set('total', max(0, round($total, 2)));
         };
 
+        // The amounts are editable only while creating an order. After that
+        // they are read-only (a disabled field is never saved) so the totals
+        // can't drift from the coupon and gift card ledgers; item changes
+        // re-price through ModifyOrder instead.
         return Section::make('Pricing')
             ->columnSpanFull()
             ->components([
@@ -102,18 +107,22 @@ class OrderForm
                     MoneyInput::make('subtotal')
                         ->required()
                         ->default(0)
+                        ->disabledOn('edit')
                         ->live(debounce: 300)
                         ->afterStateUpdated($recalculateTotal),
                     MoneyInput::make('delivery_fee')
                         ->default(0)
+                        ->disabledOn('edit')
                         ->live(debounce: 300)
                         ->afterStateUpdated($recalculateTotal),
                     MoneyInput::make('discount_amount')
                         ->default(0)
+                        ->disabledOn('edit')
                         ->live(debounce: 300)
                         ->afterStateUpdated($recalculateTotal),
                     MoneyInput::make('gift_card_amount')
                         ->default(0)
+                        ->disabledOn('edit')
                         ->live(debounce: 300)
                         ->afterStateUpdated($recalculateTotal),
                 ]),
@@ -122,19 +131,46 @@ class OrderForm
                 MoneyInput::make('tip_amount')
                     ->default(0)
                     ->columnSpanFull()
+                    ->disabledOn('edit')
                     ->live(debounce: 300)
                     ->afterStateUpdated($recalculateTotal),
 
-                // Computed result — disabled prevents user edits but
-                // dehydrated() still submits the value with the form.
+                // Display only: the form shows the running total, but it is
+                // never submitted. A new order's total is computed on the
+                // server by withComputedTotal().
                 MoneyInput::make('total')
                     ->label('Total')
-                    ->required()
                     ->default(0)
                     ->disabled()
-                    ->dehydrated()
                     ->columnSpanFull(),
             ]);
+    }
+
+    /**
+     * Adds the order total, worked out from the submitted amounts, to the data
+     * for a new order, so a tampered form can't set it.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function withComputedTotal(array $data): array
+    {
+        $total = self::moneyAmount($data, 'subtotal')
+            ->add(self::moneyAmount($data, 'delivery_fee'))
+            ->subtract(self::moneyAmount($data, 'discount_amount'))
+            ->subtract(self::moneyAmount($data, 'gift_card_amount'))
+            ->add(self::moneyAmount($data, 'tip_amount'))
+            ->max(Money::zero());
+
+        return [...$data, 'total' => $total];
+    }
+
+    /** @param array<string, mixed> $data */
+    private static function moneyAmount(array $data, string $key): Money
+    {
+        $value = $data[$key] ?? 0;
+
+        return Money::fromDollars(is_numeric($value) ? (float) $value : 0.0);
     }
 
     private static function deliverySection(): Section

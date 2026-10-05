@@ -27,6 +27,15 @@ enum PaymentStatus: string implements HasColor, HasLabel
         };
     }
 
+    /** Whether customer money is currently held for the order, in full or as a deposit. */
+    public function holdsPayment(): bool
+    {
+        return match ($this) {
+            self::Partial, self::Paid => true,
+            self::Unpaid, self::Cancelled, self::Refunded => false,
+        };
+    }
+
     /** Whether an order with this payment status may still earn loyalty points. */
     public function earnsLoyaltyPoints(): bool
     {
