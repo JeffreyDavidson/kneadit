@@ -29,6 +29,7 @@ class CreateTenantRecord
 
                 $tenant = Tenant::query()->create([
                     'id' => $subdomain,
+                    'subdomain' => $subdomain,
                     'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,

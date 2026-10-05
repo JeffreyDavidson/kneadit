@@ -5,12 +5,14 @@ namespace App\Actions\Tenants;
 use App\Events\Platform\TenantOnboarded;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Tenants\TenantUrlGenerator;
 
 class CompleteTenantOnboarding
 {
     public function __construct(
         private readonly CreateTenant $createTenant,
         private readonly CompleteReferral $completeReferral,
+        private readonly TenantUrlGenerator $tenantUrls,
     ) {}
 
     public function __invoke(
@@ -20,7 +22,6 @@ class CompleteTenantOnboarding
         bool $useKneadItStorefront,
         ?string $externalWebsite,
         ?string $referralCode,
-        string $adminUrl,
     ): Tenant {
         $tenant = ($this->createTenant)(
             $user,
@@ -32,7 +33,7 @@ class CompleteTenantOnboarding
 
         ($this->completeReferral)($referralCode, (string) $tenant->id, $user->email);
 
-        event(new TenantOnboarded($user, $tenant, $adminUrl));
+        event(new TenantOnboarded($user, $tenant, $this->tenantUrls->admin($tenant)));
 
         return $tenant;
     }

@@ -6,6 +6,7 @@ use App\Models\Staff\User;
 use App\Services\Platform\Contracts\ForgeClient;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Stancl\Tenancy\Database\Models\Domain;
 
 use function Pest\Livewire\livewire;
@@ -207,4 +208,33 @@ test('a valid hex brand color saves', function () {
         ->assertHasNoFormErrors();
 
     expect($tenant->refresh()->brand_color_primary)->toBe('#AbCdEf');
+});
+
+test('platform admins can change a bakery subdomain from its edit page', function () {
+    $tenant = createTenantWithDomain('bakery-on-biscotto', 'bakery-on-biscotto', ['subdomain' => 'bakery-on-biscotto']);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->callAction('changeSubdomain', ['subdomain' => 'bakeryonbiscotto']);
+
+    expect($tenant->refresh()->subdomain)->toBe('bakeryonbiscotto')
+        ->and(Domain::query()->where('domain', 'bakeryonbiscotto')->where('tenant_id', $tenant->id)->exists())->toBeTrue();
+});
+
+test('changing to a taken subdomain shows a validation error and saves nothing', function () {
+    createTenantWithDomain('taken-bakery', 'taken', ['email' => 'taken@example.com', 'subdomain' => 'taken']);
+    $tenant = createTenantWithDomain('bakery-on-biscotto', 'bakery-on-biscotto', ['subdomain' => 'bakery-on-biscotto']);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->callAction('changeSubdomain', ['subdomain' => 'taken'])
+        ->assertHasFormErrors(['subdomain']);
+
+    expect($tenant->refresh()->subdomain)->toBe('bakery-on-biscotto');
+});
+
+test('the change subdomain action is for platform admins only', function () {
+    $tenant = Tenant::factory()->create();
+    Gate::define('platform-admin', fn (): bool => false);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->assertActionHidden('changeSubdomain');
 });

@@ -7,6 +7,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Platform\Tenant;
 use App\Services\Content\QrCodeService;
+use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
@@ -170,13 +171,7 @@ class QrCodeGenerator extends Page
             throw new \LogicException('A tenant must be initialized to generate a QR code.');
         }
 
-        $domain = $tenant->domains->first();
-
-        if ($domain === null) {
-            throw new \LogicException('The tenant must have a domain to generate a QR code.');
-        }
-
-        $baseUrl = 'http://'.$domain->domain;
+        $baseUrl = resolve(TenantUrlGenerator::class)->primaryStorefront($tenant);
 
         return $baseUrl.($page ? "/{$page}" : '');
     }
