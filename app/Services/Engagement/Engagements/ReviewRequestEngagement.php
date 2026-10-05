@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class ReviewRequestEngagement implements CustomerEngagement
 {
-    /** Only orders delivered within this many days are asked for a review. */
+    /** Orders are asked for a review for this many days after the delay has passed. */
     private const int WINDOW_DAYS = 7;
 
     public function isEnabled(TenantSettings $settings): bool
@@ -65,16 +65,18 @@ class ReviewRequestEngagement implements CustomerEngagement
     }
 
     /**
-     * Delivered orders past the delay and no older than the window, so turning
+     * Delivered orders past the delay and no more than a week past it, so turning
      * the feature on does not email the whole order history.
      */
     private function eligibleOrders(TenantSettings $settings): OrderQueryBuilder
     {
+        $delayHours = $settings->engagement->reviewRequestDelayHours;
+
         return Order::query()
             ->delivered()
             ->whereNull('review_request_sent_at')
-            ->where('updated_at', '<=', now()->subHours($settings->engagement->reviewRequestDelayHours))
-            ->where('updated_at', '>=', now()->subDays(self::WINDOW_DAYS))
+            ->where('updated_at', '<=', now()->subHours($delayHours))
+            ->where('updated_at', '>=', now()->subHours($delayHours)->subDays(self::WINDOW_DAYS))
             ->whereIn('customer_id', Customer::query()->subscribedToMarketing()->whereNotNull('email')->select('id'));
     }
 }

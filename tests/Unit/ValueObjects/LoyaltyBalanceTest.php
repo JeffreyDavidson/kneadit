@@ -19,3 +19,9 @@ test('total can be negative when redeemed exceeds earned', function () {
 
     expect($balance->total)->toBe(-50);
 });
+
+test('net earned is earned minus reversed, ignoring redemptions and adjustments', function () {
+    $balance = new LoyaltyBalance(earned: 100, redeemed: 30, adjusted: 10, reversed: 40);
+
+    expect($balance->netEarned)->toBe(60);
+});

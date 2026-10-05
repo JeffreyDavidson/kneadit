@@ -3,6 +3,7 @@
 use App\Enums\Engagement\LoyaltyTier;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
 use App\Services\Loyalty\CustomerLoyalty;
 
 beforeEach(function () {
@@ -64,4 +65,25 @@ test('nextTierProgress returns null next when at the top tier', function () {
 
     expect($progress['next'])->toBeNull()
         ->and($progress['pointsToNext'])->toBe(0);
+});
+
+test('a customer whose only order was refunded stays at the base tier', function () {
+    $order = Order::factory()->for(test()->customer)->delivered()->create();
+    LoyaltyPoint::factory()->earned(600)->for(test()->customer)->create(['order_id' => $order->id]);
+    LoyaltyPoint::factory()->reversed(600)->for(test()->customer)->create(['order_id' => $order->id]);
+
+    $loyalty = resolve(CustomerLoyalty::class);
+
+    expect($loyalty->tier(test()->customer))->toBe(LoyaltyTier::Bronze)
+        ->and($loyalty->nextTierProgress(test()->customer))->toMatchArray(['next' => LoyaltyTier::Silver, 'pointsToNext' => 500]);
+});
+
+test('a partly reversed earning only counts what is left toward the tier', function () {
+    LoyaltyPoint::factory()->earned(700)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->reversed(300)->for(test()->customer)->create();
+
+    $loyalty = resolve(CustomerLoyalty::class);
+
+    expect($loyalty->tier(test()->customer))->toBe(LoyaltyTier::Bronze)
+        ->and($loyalty->nextTierProgress(test()->customer))->toMatchArray(['next' => LoyaltyTier::Silver, 'pointsToNext' => 100]);
 });

@@ -190,4 +190,16 @@ describe('when review requests are first switched on', function () {
 
         expect($recipients->pluck('email')->sort()->values()->all())->toBe(['buyer@example.com', 'other@example.com']);
     });
+
+    test('the window follows the delay, so a long delay still sends', function () {
+        settings(['review_request_delay_hours' => '200']);
+        $afterDelay = deliveredOrderFor(test()->customer, '2026-09-26 12:00');
+        $tooOld = deliveredOrderFor(Customer::factory()->create(['email' => 'old@example.com']), '2026-09-15 12:00');
+
+        $recipients = resolve(ReviewRequestEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+        expect($recipients)->toHaveCount(1)
+            ->and($recipients->first()->model->is($afterDelay))->toBeTrue()
+            ->and($tooOld->review_request_sent_at)->toBeNull();
+    });
 });

@@ -3,6 +3,7 @@
 namespace App\Services\Loyalty;
 
 use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
@@ -20,7 +21,9 @@ class LoyaltyLedger
      * Idempotent and race-safe: relies on the unique index on
      * loyalty_points(order_id, type) so concurrent calls resolve to
      * the same row. Returns the credit on first award, null if the
-     * order has already been credited.
+     * order has already been credited or was refunded or cancelled before
+     * the award ran (the stored status is read, since a queued award can
+     * run after the order object was loaded).
      */
     public function creditOrder(Order $order): ?LoyaltyPoint
     {
@@ -29,6 +32,10 @@ class LoyaltyLedger
         }
 
         if (! $order->customer_id) {
+            return null;
+        }
+
+        if (! $this->stillEarnsPoints($order)) {
             return null;
         }
 
@@ -85,6 +92,13 @@ class LoyaltyLedger
         );
 
         return $reversal->wasRecentlyCreated ? $reversal : null;
+    }
+
+    private function stillEarnsPoints(Order $order): bool
+    {
+        $paymentStatus = Order::query()->whereKey($order->id)->value('payment_status');
+
+        return ! $paymentStatus instanceof PaymentStatus || $paymentStatus->earnsLoyaltyPoints();
     }
 
     private function calculatePoints(Order $order): int

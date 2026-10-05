@@ -3,6 +3,7 @@
 use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
@@ -174,4 +175,31 @@ test('the balance goes negative when the reversed points were already redeemed',
     $ledger->reverseOrder($order);
 
     expect(resolve(CustomerLoyalty::class)->balance(test()->customer)->total)->toBe(-200);
+});
+
+test('does not credit an order that is already refunded or cancelled', function (PaymentStatus $status) {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create([
+        'total' => 25.00,
+        'subtotal' => 25.00,
+        'payment_status' => $status,
+    ]);
+
+    $credit = resolve(LoyaltyLedger::class)->creditOrder($order);
+
+    expect($credit)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
+})->with([
+    'refunded' => PaymentStatus::Refunded,
+    'cancelled' => PaymentStatus::Cancelled,
+]);
+
+test('checks the stored payment status, not a stale copy of the order', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->paid()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    Order::query()->whereKey($order->id)->update(['payment_status' => PaymentStatus::Refunded]);
+
+    $credit = resolve(LoyaltyLedger::class)->creditOrder($order);
+
+    expect($order->payment_status)->toBe(PaymentStatus::Paid)
+        ->and($credit)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
 });
