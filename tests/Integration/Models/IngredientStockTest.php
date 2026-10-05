@@ -35,6 +35,15 @@ test('StockStatus::resolve returns Out when stock is zero', function () {
     expect(StockStatus::resolve($ingredient))->toBe(StockStatus::Out);
 });
 
+test('StockStatus::resolve returns Negative when stock is below zero', function () {
+    $ingredient = Ingredient::factory()->create([
+        'current_stock' => -0.2,
+        'low_stock_threshold' => 10,
+    ]);
+
+    expect(StockStatus::resolve($ingredient))->toBe(StockStatus::Negative);
+});
+
 test('StockStatus::resolve handles factory states', function () {
     $normal = Ingredient::factory()->create(['current_stock' => 50, 'low_stock_threshold' => 10]);
     $low = Ingredient::factory()->lowStock()->create();

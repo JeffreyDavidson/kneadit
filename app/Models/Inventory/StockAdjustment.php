@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Enums\Inventory\StockAdjustmentType;
+use App\Models\Orders\Order;
 use Database\Factories\Inventory\StockAdjustmentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read Ingredient|null $ingredient
+ * @property-read Order|null $order
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newQuery()
@@ -21,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[WithoutTimestamps]
-#[Fillable('ingredient_id', 'quantity', 'type', 'notes')]
+#[Fillable('ingredient_id', 'order_id', 'quantity', 'type', 'notes')]
 #[UseFactory(StockAdjustmentFactory::class)]
 class StockAdjustment extends Model
 {
@@ -44,5 +46,15 @@ class StockAdjustment extends Model
     public function ingredient(): BelongsTo
     {
         return $this->belongsTo(Ingredient::class);
+    }
+
+    /**
+     * The order whose usage or restock this row records, when it came from one.
+     *
+     * @return BelongsTo<Order, $this>
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
     }
 }

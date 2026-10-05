@@ -11,9 +11,13 @@ enum StockStatus: string implements HasColor, HasLabel
     case Good = 'good';
     case Low = 'low';
     case Out = 'out';
+    case Negative = 'negative';
 
     public static function resolve(Ingredient $ingredient): self
     {
+        if ($ingredient->current_stock < 0) {
+            return self::Negative;
+        }
         if ($ingredient->current_stock <= 0) {
             return self::Out;
         }
@@ -28,6 +32,7 @@ enum StockStatus: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Out => 'Out of Stock',
+            self::Negative => 'Negative Stock',
             default => ucfirst($this->value),
         };
     }
@@ -37,7 +42,7 @@ enum StockStatus: string implements HasColor, HasLabel
         return match ($this) {
             self::Good => 'success',
             self::Low => 'warning',
-            self::Out => 'danger',
+            self::Out, self::Negative => 'danger',
         };
     }
 }

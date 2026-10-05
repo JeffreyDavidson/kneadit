@@ -39,20 +39,77 @@ test('usage subtracts recipe quantities times order quantity and tags the adjust
         'quantity' => -2.00,
         'type' => 'usage',
         'notes' => 'Order #ADJ-001',
+        'order_id' => test()->order->id,
     ]);
 });
 
-test('restock adds the same quantity back and tags the adjustment as a cancellation', function () {
-    resolve(AdjustOrderIngredients::class)(test()->order, StockAdjustmentType::Restock);
+test('restock adds back what the order used and tags the adjustment as a cancellation', function () {
+    $adjust = resolve(AdjustOrderIngredients::class);
+    $adjust(test()->order, StockAdjustmentType::Usage);
 
-    expect(test()->flour->fresh()->current_stock)->toBe('12.0000');
+    $adjust(test()->order, StockAdjustmentType::Restock);
+
+    expect(test()->flour->fresh()->current_stock)->toBe('10.0000');
 
     assertDatabaseHas('stock_adjustments', [
         'ingredient_id' => test()->flour->id,
         'quantity' => 2.00,
         'type' => 'restock',
         'notes' => 'Order #ADJ-001 cancelled',
+        'order_id' => test()->order->id,
     ]);
+});
+
+test('restock does nothing when the order has no recorded usage', function () {
+    resolve(AdjustOrderIngredients::class)(test()->order, StockAdjustmentType::Restock);
+
+    expect(test()->flour->fresh()->current_stock)->toBe('10.0000');
+    assertDatabaseCount('stock_adjustments', 0);
+});
+
+test('restocking twice puts the stock back only once', function () {
+    $adjust = resolve(AdjustOrderIngredients::class);
+    $adjust(test()->order, StockAdjustmentType::Usage);
+
+    $adjust(test()->order, StockAdjustmentType::Restock);
+    $adjust(test()->order, StockAdjustmentType::Restock);
+
+    expect(test()->flour->fresh()->current_stock)->toBe('10.0000');
+    assertDatabaseCount('stock_adjustments', 2);
+});
+
+test('restock ignores the usage of other orders', function () {
+    $other = Order::factory()->baking()->create(['order_number' => 'ADJ-002']);
+    OrderItem::factory()->recycle($other, test()->order->orderItems->first()->product)->create(['quantity' => 2]);
+    $adjust = resolve(AdjustOrderIngredients::class);
+    $adjust(test()->order, StockAdjustmentType::Usage);
+    $adjust($other, StockAdjustmentType::Usage);
+
+    $adjust(test()->order, StockAdjustmentType::Restock);
+
+    expect(test()->flour->fresh()->current_stock)->toBe('9.0000');
+});
+
+test('usage that is short of stock goes negative and reports the shortfall', function () {
+    test()->flour->update(['current_stock' => 1.50]);
+
+    $shortfalls = resolve(AdjustOrderIngredients::class)(test()->order, StockAdjustmentType::Usage);
+
+    expect(test()->flour->fresh()->current_stock)->toBe('-0.5000')
+        ->and($shortfalls)->toHaveCount(1)
+        ->and($shortfalls[0]->ingredient->is(test()->flour))->toBeTrue()
+        ->and($shortfalls[0]->shortfall)->toBe(0.5);
+    assertDatabaseHas('stock_adjustments', [
+        'ingredient_id' => test()->flour->id,
+        'quantity' => -2.00,
+        'type' => 'usage',
+    ]);
+});
+
+test('usage with enough stock reports no shortfall', function () {
+    $shortfalls = resolve(AdjustOrderIngredients::class)(test()->order, StockAdjustmentType::Usage);
+
+    expect($shortfalls)->toBeEmpty();
 });
 
 test('usage followed by restock returns stock to its original level', function () {
