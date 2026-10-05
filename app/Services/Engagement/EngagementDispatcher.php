@@ -6,6 +6,7 @@ use App\Models\Platform\Tenant;
 use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Notifications\ScheduledNotificationRunTracker;
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Scheduling\LocalSendSchedule;
 use App\Services\Scheduling\LocalSendWindow;
 use App\Services\Settings\TenantSettings;
@@ -123,7 +124,7 @@ class EngagementDispatcher
             $engagement::class,
             $recipient->model->getTable(),
             $recipientId,
-            now()->toDateString(),
+            resolve(BakeryClock::class)->today()->toDateString(),
         );
     }
 }
