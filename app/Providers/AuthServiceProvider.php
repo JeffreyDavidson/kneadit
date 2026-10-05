@@ -29,6 +29,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('manager-staff', fn (User $user): bool => $user->role->meetsRequirement(UserRole::Manager));
 
+        // Webhooks carry customer names and emails to an external URL, so only
+        // the bakery owner may configure, test or inspect them.
+        Gate::define('manage-webhooks', fn (User $user): bool => $user->role->meetsRequirement(UserRole::Owner));
+
         Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => SubscriptionTier::resolve($user)?->meetsRequirement($tier) ?? false);
 
         // Send unauthenticated storefront customers to their own login page instead of

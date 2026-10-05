@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages\Operations;
 
-use App\Filament\Concerns\RequiresManagerRole;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 /**
@@ -17,7 +17,11 @@ use UnitEnum;
  */
 class WebhooksDocs extends Page
 {
-    use RequiresManagerRole;
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return Gate::allows('manage-webhooks');
+    }
 
     #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;

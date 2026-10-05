@@ -59,7 +59,7 @@ test('reviews include exposes active products but hides inactive ones', function
         ->and($data[(string) $inactiveReview->id]['relationships']['product']['data'])->toBeNull();
 });
 
-test('store review creates review and returns a JSON:API resource', function () {
+test('reviews cannot be submitted through the API', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -71,49 +71,7 @@ test('store review creates review and returns a JSON:API resource', function () 
             'comment' => 'Absolutely delicious!',
         ]);
 
-    $response->assertCreated()
-        ->assertHeader('Content-Type', 'application/vnd.api+json')
-        ->assertJsonPath('data.type', 'reviews')
-        ->assertJsonPath('data.attributes.customer_name', 'Jane Doe')
-        ->assertJsonPath('data.attributes.rating', 5);
+    $response->assertStatus(405);
 
-    test()->assertDatabaseHas('reviews', [
-        'customer_name' => 'Jane Doe',
-        'customer_email' => 'jane@example.com',
-        'product_id' => $product->id,
-        'rating' => 5,
-        'is_approved' => false,
-    ]);
-});
-
-test('store review fails validation with missing fields', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson('/api/reviews', []);
-
-    $response->assertUnprocessable();
-
-    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
-    expect($pointers)->toContain(
-        '/data/attributes/customer_name',
-        '/data/attributes/customer_email',
-        '/data/attributes/product_id',
-        '/data/attributes/rating',
-        '/data/attributes/comment',
-    );
-});
-
-test('store review fails validation with invalid rating', function () {
-    $product = Product::factory()->create();
-
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson('/api/reviews', [
-            'customer_name' => 'Jane Doe',
-            'customer_email' => 'jane@example.com',
-            'product_id' => $product->id,
-            'rating' => 6,
-            'comment' => 'Great!',
-        ]);
-
-    $response->assertUnprocessable()
-        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/rating');
+    test()->assertDatabaseCount('reviews', 0);
 });
