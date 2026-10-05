@@ -158,3 +158,27 @@ test('the SSL certificate action is hidden while the bakery has no custom domain
     livewire(EditTenant::class, ['record' => $tenant->getKey()])
         ->assertActionHidden('requestSslCertificate');
 });
+
+test('platform admins can pause a bakery from its edit page', function () {
+    Date::setTestNow('2026-10-05 09:30');
+    $tenant = Tenant::factory()->create(['storefront_enabled' => false, 'external_website' => 'https://own-site.example.com']);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->assertActionHidden('resume')
+        ->callAction('pause')
+        ->assertNotified('Bakery paused');
+
+    expect($tenant->refresh()->paused_at?->toDateTimeString())->toBe('2026-10-05 09:30:00')
+        ->and($tenant->storefront_enabled)->toBeFalse();
+});
+
+test('platform admins can resume a paused bakery from its edit page', function () {
+    $tenant = Tenant::factory()->create(['paused_at' => now()->subDay()]);
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->assertActionHidden('pause')
+        ->callAction('resume')
+        ->assertNotified('Bakery resumed');
+
+    expect($tenant->refresh()->paused_at)->toBeNull();
+});

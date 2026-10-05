@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Actions\Platform\AddCustomDomain;
+use App\Actions\Platform\PauseTenant;
 use App\Actions\Platform\RemoveCustomDomain;
+use App\Actions\Platform\ResumeTenant;
 use App\Actions\Platform\VerifyCustomDomain;
 use App\Enums\Platform\DomainCheck;
 use App\Filament\Central\Resources\TenantResource;
@@ -51,6 +53,37 @@ class EditTenant extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('pause')
+                ->label('Pause bakery')
+                ->icon(Heroicon::OutlinedPauseCircle)
+                ->color('danger')
+                ->authorize('platform-admin')
+                ->visible(fn (): bool => ! $this->record->is_paused)
+                ->requiresConfirmation()
+                ->modalDescription('The bakery stops taking orders: its API and KneadIt storefront are closed and customers get no scheduled emails. The owner can still sign in to subscribe.')
+                ->action(function (PauseTenant $pauseTenant): void {
+                    $pauseTenant($this->record);
+
+                    Notification::make()
+                        ->title('Bakery paused')
+                        ->success()
+                        ->send();
+                }),
+            Action::make('resume')
+                ->label('Resume bakery')
+                ->icon(Heroicon::OutlinedPlayCircle)
+                ->color('success')
+                ->authorize('platform-admin')
+                ->visible(fn (): bool => $this->record->is_paused)
+                ->requiresConfirmation()
+                ->action(function (ResumeTenant $resumeTenant): void {
+                    $resumeTenant($this->record);
+
+                    Notification::make()
+                        ->title('Bakery resumed')
+                        ->success()
+                        ->send();
+                }),
             Action::make('setCustomDomain')
                 ->label('Set custom domain')
                 ->icon(Heroicon::OutlinedGlobeAlt)

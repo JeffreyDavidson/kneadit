@@ -79,3 +79,18 @@ test('tenant table displays the configured storefront host', function () {
     livewire(ListTenants::class)
         ->assertSee('sweet-bakes.kneadit.test');
 });
+
+test('platform admins can pause and resume bakeries in bulk', function () {
+    createTestTenant('sweet-bakes');
+    createTestTenant('rustic-loaf');
+    $records = ['sweet-bakes', 'rustic-loaf'];
+
+    livewire(ListTenants::class)->callTableBulkAction('pause', $records);
+
+    expect(DB::table('tenants')->whereIn('id', $records)->whereNotNull('paused_at')->count())->toBe(2)
+        ->and(DB::table('tenants')->whereIn('id', $records)->where('storefront_enabled', true)->count())->toBe(2);
+
+    livewire(ListTenants::class)->callTableBulkAction('resume', $records);
+
+    expect(DB::table('tenants')->whereIn('id', $records)->whereNull('paused_at')->count())->toBe(2);
+});

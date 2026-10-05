@@ -7,6 +7,7 @@ use App\Models\Customers\Referral;
 use App\Models\Staff\User;
 use Database\Factories\Platform\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,8 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property string $brand_color_primary
  * @property string $brand_color_secondary
  * @property bool $storefront_enabled
+ * @property Carbon|null $paused_at
+ * @property-read bool $is_paused
  * @property string|null $external_website
  * @property bool $is_active
  * @property bool $is_demo
@@ -92,6 +95,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'brand_color_primary',
             'brand_color_secondary',
             'storefront_enabled',
+            'paused_at',
             'external_website',
             'is_active',
             'is_demo',
@@ -113,6 +117,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'free_forever' => 'boolean',
             'trial_ends_at' => 'datetime',
             'storefront_enabled' => 'boolean',
+            'paused_at' => 'datetime',
             'is_active' => 'boolean',
             'is_demo' => 'boolean',
             'custom_domain_verified_at' => 'datetime',
@@ -134,6 +139,21 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * A paused bakery takes no new orders, shows a paused page on its KneadIt
+     * storefront and gets no customer-facing scheduled emails. It is separate
+     * from storefront_enabled, which only says whether the bakery uses a
+     * KneadIt storefront at all.
+     *
+     * @return Attribute<bool, never>
+     */
+    protected function isPaused(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): bool => $this->paused_at !== null,
+        );
     }
 
     /**

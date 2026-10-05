@@ -89,7 +89,7 @@ test('skips reminder when tenant has no matching user', function () {
     Event::assertNotDispatched(TrialReminding::class);
 });
 
-test('pauses expired storefronts and dispatches TrialExpired', function () {
+test('pauses an expired bakery without touching its storefront setting and dispatches TrialExpired', function (bool $storefrontEnabled, ?string $externalWebsite) {
     Event::fake([TrialExpired::class, TrialReminding::class]);
 
     $owner = User::factory()->create(['email' => 'expired@test.com']);
@@ -101,18 +101,23 @@ test('pauses expired storefronts and dispatches TrialExpired', function () {
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDays(1),
         'is_active' => true,
-        'storefront_enabled' => true,
+        'storefront_enabled' => $storefrontEnabled,
+        'external_website' => $externalWebsite,
     ]);
 
     resolve(ProcessTrialExpirations::class)();
 
     $tenant = DB::table('tenants')->where('id', 'expired-bakery')->first();
 
-    expect($tenant->storefront_enabled)->toBeFalsy();
+    expect($tenant->paused_at)->not->toBeNull()
+        ->and((bool) $tenant->storefront_enabled)->toBe($storefrontEnabled);
     Event::assertDispatched(fn (TrialExpired $event): bool => $event->tenantId === 'expired-bakery');
-});
+})->with([
+    'bakery with a KneadIt storefront' => [true, null],
+    'bakery that uses its own website' => [false, 'https://own-site.example.com'],
+]);
 
-test('does not re-pause an already-paused storefront', function () {
+test('does not re-pause an already-paused bakery', function () {
     Event::fake([TrialExpired::class]);
 
     $owner = User::factory()->create(['email' => 'already@test.com']);
@@ -124,7 +129,7 @@ test('does not re-pause an already-paused storefront', function () {
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDays(5),
         'is_active' => true,
-        'storefront_enabled' => false,
+        'paused_at' => now()->subDays(2),
     ]);
 
     resolve(ProcessTrialExpirations::class)();
@@ -132,7 +137,7 @@ test('does not re-pause an already-paused storefront', function () {
     Event::assertNotDispatched(TrialExpired::class);
 });
 
-test('pauses storefront even when tenant has no user, but skips TrialExpired event', function () {
+test('pauses the bakery even when tenant has no user, but skips TrialExpired event', function () {
     Event::fake([TrialExpired::class]);
 
     createTenant([
@@ -148,7 +153,7 @@ test('pauses storefront even when tenant has no user, but skips TrialExpired eve
 
     $tenant = DB::table('tenants')->where('id', 'expired-no-user')->first();
 
-    expect($tenant->storefront_enabled)->toBeFalsy();
+    expect($tenant->paused_at)->not->toBeNull();
     Event::assertNotDispatched(TrialExpired::class);
 });
 
@@ -186,7 +191,7 @@ test('returns summary counts', function () {
     ]);
 });
 
-test('does not pause a free-forever storefront after its trial ends', function () {
+test('does not pause a free-forever bakery after its trial ends', function () {
     Event::fake([TrialExpired::class]);
 
     $owner = User::factory()->create(['email' => 'comped@test.com']);
@@ -206,7 +211,7 @@ test('does not pause a free-forever storefront after its trial ends', function (
 
     $tenant = DB::table('tenants')->where('id', 'comped-bakery')->first();
 
-    expect($tenant->storefront_enabled)->toBeTruthy();
+    expect($tenant->paused_at)->toBeNull();
     Event::assertNotDispatched(TrialExpired::class);
 });
 
@@ -255,6 +260,6 @@ test('does not pause a subscribed owner whose email no longer matches the bakery
 
     $tenant = DB::table('tenants')->where('id', 'renamed-owner-bakery')->first();
 
-    expect($tenant->storefront_enabled)->toBeTruthy();
+    expect($tenant->paused_at)->toBeNull();
     Event::assertNotDispatched(TrialExpired::class);
 });

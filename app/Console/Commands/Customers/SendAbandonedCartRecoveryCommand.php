@@ -29,7 +29,7 @@ class SendAbandonedCartRecoveryCommand extends Command
             function (Tenant $tenant, TenantSettings $settings): void {
                 $engagement = $settings->engagement;
 
-                if (! $engagement->abandonedCartRecoveryEnabled) {
+                if ($tenant->is_paused || ! $engagement->abandonedCartRecoveryEnabled) {
                     return;
                 }
 

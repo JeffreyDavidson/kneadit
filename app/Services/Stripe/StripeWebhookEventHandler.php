@@ -2,26 +2,52 @@
 
 namespace App\Services\Stripe;
 
+use App\Actions\Platform\ResumeTenant;
+use App\Actions\Stripe\ClearSubscriptionPlan;
 use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Events\Platform\PaymentFailed;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use App\Queries\Platform\StripeCustomerLookupQuery;
 use Illuminate\Support\Facades\Log;
+use Laravel\Cashier\Subscription;
+use Stripe\Subscription as StripeSubscription;
 
 final readonly class StripeWebhookEventHandler
 {
+    /** Statuses that make the owner's subscription valid. */
+    private const array VALID_STATUSES = [StripeSubscription::STATUS_ACTIVE, StripeSubscription::STATUS_TRIALING];
+
+    /**
+     * Statuses a subscription never leaves. Others, such as past_due, are
+     * still being retried, so the plan stays while Stripe collects.
+     */
+    private const array ENDED_STATUSES = [
+        StripeSubscription::STATUS_CANCELED,
+        StripeSubscription::STATUS_INCOMPLETE_EXPIRED,
+        StripeSubscription::STATUS_UNPAID,
+    ];
+
     public function __construct(
         private StripeWebhookPayloadParser $payloadParser,
         private SyncSubscriptionPlan $syncSubscriptionPlan,
+        private ClearSubscriptionPlan $clearSubscriptionPlan,
+        private ResumeTenant $resumeTenant,
         private StripeCustomerLookupQuery $customerLookup,
     ) {}
 
-    /** @param array<string, mixed> $subscription */
+    /**
+     * A subscription was created or updated. An active or trialing one resumes
+     * the owner's bakery; one that has ended resets the plan, and any other
+     * syncs the plan from its price.
+     *
+     * @param  array<string, mixed>  $subscription
+     */
     public function handleSubscriptionUpdated(array $subscription): void
     {
         $stripeCustomerId = $this->payloadParser->stringValue($subscription['customer'] ?? null);
-        $stripePriceId = $this->payloadParser->stringValue(data_get($subscription, 'items.data.0.price.id'));
 
-        if ($stripeCustomerId === null || $stripePriceId === null) {
+        if ($stripeCustomerId === null) {
             return;
         }
 
@@ -34,6 +60,24 @@ final readonly class StripeWebhookEventHandler
         if ($lookup['tenant'] === null) {
             Log::warning('Tenant not found for subscription update', ['stripe_customer' => $stripeCustomerId]);
 
+            return;
+        }
+
+        $status = $this->payloadParser->stringValue($subscription['status'] ?? null);
+
+        if (in_array($status, self::ENDED_STATUSES, true)) {
+            $this->clearPlanUnlessSubscribed($lookup['user'], $lookup['tenant'], $this->payloadParser->stringValue($subscription['id'] ?? null));
+
+            return;
+        }
+
+        if (in_array($status, self::VALID_STATUSES, true)) {
+            ($this->resumeTenant)($lookup['tenant']);
+        }
+
+        $stripePriceId = $this->payloadParser->stringValue(data_get($subscription, 'items.data.0.price.id'));
+
+        if ($stripePriceId === null) {
             return;
         }
 
@@ -82,8 +126,33 @@ final readonly class StripeWebhookEventHandler
 
         $lookup = $this->customerLookup->find($stripeCustomerId);
 
-        if ($lookup['tenant']) {
-            Log::info("Tenant {$lookup['tenant']->id} subscription fully canceled");
+        if ($lookup['user'] === null || $lookup['tenant'] === null) {
+            return;
         }
+
+        Log::info("Tenant {$lookup['tenant']->id} subscription fully canceled");
+
+        $this->clearPlanUnlessSubscribed($lookup['user'], $lookup['tenant'], $this->payloadParser->stringValue($subscription['id'] ?? null));
+    }
+
+    /**
+     * The bakery goes back to its starting plan, but not pausing: the trial-expiry
+     * run decides that. An owner who already started another valid subscription
+     * keeps their plan when an older one ends.
+     */
+    private function clearPlanUnlessSubscribed(User $owner, Tenant $tenant, ?string $endedSubscriptionId): void
+    {
+        $hasOtherValidSubscription = Subscription::query()
+            ->where('user_id', $owner->id)
+            ->where('type', 'default')
+            ->when($endedSubscriptionId !== null, fn ($query) => $query->where('stripe_id', '!=', $endedSubscriptionId))
+            ->get()
+            ->contains(fn (Subscription $subscription): bool => $subscription->valid());
+
+        if ($hasOtherValidSubscription) {
+            return;
+        }
+
+        ($this->clearSubscriptionPlan)($tenant);
     }
 }

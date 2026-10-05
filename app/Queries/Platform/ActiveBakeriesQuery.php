@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 class ActiveBakeriesQuery
 {
     /**
-     * Get all active tenants with storefronts enabled.
+     * Get all active, unpaused tenants with storefronts enabled.
      *
      * @return Collection<int, array{name: string, url: non-falsy-string, color: string}>
      */
@@ -17,6 +17,7 @@ class ActiveBakeriesQuery
         return Tenant::query()
             ->where('is_active', true)
             ->where('storefront_enabled', true)
+            ->whereNull('paused_at')
             ->with('domains')
             ->get()
             ->map(fn (Tenant $t): array => [

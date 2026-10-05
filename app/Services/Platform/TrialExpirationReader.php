@@ -30,7 +30,8 @@ class TrialExpirationReader
     }
 
     /**
-     * Tenants whose trial has expired and storefront is still enabled.
+     * Tenants whose trial has expired and that are not paused yet, whether or
+     * not they use a KneadIt storefront.
      *
      * @return Generator<int, Tenant>
      */
@@ -39,7 +40,7 @@ class TrialExpirationReader
         yield from Tenant::query()
             ->where('trial_ends_at', '<', now())
             ->where('is_active', true)
-            ->where('storefront_enabled', true)
+            ->whereNull('paused_at')
             ->where('free_forever', false)
             ->cursor();
     }

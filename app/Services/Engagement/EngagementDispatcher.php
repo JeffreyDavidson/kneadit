@@ -35,6 +35,10 @@ class EngagementDispatcher
     ): int {
         return $this->tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings) use ($engagement, $output, $schedule, $force): void {
+                if ($tenant->is_paused) {
+                    return;
+                }
+
                 if (! $schedule instanceof LocalSendSchedule) {
                     $this->dispatchForTenant($engagement, $output, $tenant, $settings);
 

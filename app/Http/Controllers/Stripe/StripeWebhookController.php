@@ -20,6 +20,21 @@ class StripeWebhookController extends WebhookController
 
     /** @param array<string, mixed> $payload */
     #[\Override]
+    protected function handleCustomerSubscriptionCreated(array $payload): ?Response
+    {
+        $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;
+
+        return $this->idempotency->process($eventId, function () use ($payload) {
+            $response = parent::handleCustomerSubscriptionCreated($payload);
+
+            $this->eventHandler->handleSubscriptionUpdated($this->payloadParser->object($payload));
+
+            return $response;
+        });
+    }
+
+    /** @param array<string, mixed> $payload */
+    #[\Override]
     protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
         $eventId = is_string($payload['id'] ?? null) ? $payload['id'] : null;

@@ -75,6 +75,18 @@ class NeedsAttention extends Widget
             ];
         }
 
+        $paused = Tenant::query()->whereNotNull('paused_at')->count();
+        if ($paused > 0) {
+            $items[] = [
+                'severity' => 'info',
+                'icon' => Heroicon::OutlinedPauseCircle,
+                'title' => $paused.' paused '.str('bakery')->plural($paused),
+                'subtitle' => 'Trial ended without a subscription, so orders and customer emails are stopped',
+                'cta' => 'Review',
+                'url' => TenantResource::getUrl('index'),
+            ];
+        }
+
         $deactivated = Tenant::query()->where('is_active', false)->count();
         if ($deactivated > 0) {
             $items[] = [

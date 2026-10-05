@@ -34,7 +34,7 @@ test('tenantsRemindable skips inactive tenants', function () {
     expect(iterator_to_array(resolve(TrialExpirationReader::class)->tenantsRemindable(3)))->toBeEmpty();
 });
 
-test('tenantsExpired yields tenants whose trial passed and storefront still on', function () {
+test('tenantsExpired yields tenants whose trial passed and that are not paused yet, whatever their storefront setting', function () {
     createTenant([
         'id' => 'expired-active',
         'trial_ends_at' => now()->subDay(),
@@ -42,10 +42,16 @@ test('tenantsExpired yields tenants whose trial passed and storefront still on',
         'storefront_enabled' => true,
     ]);
     createTenant([
-        'id' => 'expired-storefront-off',
+        'id' => 'expired-external-site',
         'trial_ends_at' => now()->subDay(),
         'is_active' => true,
         'storefront_enabled' => false,
+    ]);
+    createTenant([
+        'id' => 'expired-paused',
+        'trial_ends_at' => now()->subDay(),
+        'is_active' => true,
+        'paused_at' => now()->subHour(),
     ]);
     createTenant([
         'id' => 'still-trialing',
@@ -54,10 +60,13 @@ test('tenantsExpired yields tenants whose trial passed and storefront still on',
         'storefront_enabled' => true,
     ]);
 
-    $tenants = iterator_to_array(resolve(TrialExpirationReader::class)->tenantsExpired());
+    $tenants = collect(iterator_to_array(resolve(TrialExpirationReader::class)->tenantsExpired(), false))
+        ->pluck('id')
+        ->sort()
+        ->values()
+        ->all();
 
-    expect($tenants)->toHaveCount(1)
-        ->and($tenants[0]->id)->toBe('expired-active');
+    expect($tenants)->toBe(['expired-active', 'expired-external-site']);
 });
 
 test('userFor returns the owner linked by user_id even when their email has changed', function () {

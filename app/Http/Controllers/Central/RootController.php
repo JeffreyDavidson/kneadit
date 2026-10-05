@@ -35,6 +35,12 @@ class RootController extends Controller
             ]);
         }
 
+        if ($tenant->is_paused) {
+            return response()->view('central.platform.bakery-paused', [
+                'storeName' => resolve(TenantSettings::class)->store->name,
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
         return $homeController(resolve(TenantSettings::class));
     }
 }
