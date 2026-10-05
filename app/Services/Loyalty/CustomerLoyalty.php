@@ -39,13 +39,14 @@ class CustomerLoyalty
     }
 
     /**
-     * Resolve the customer's current tier from lifetime earned points.
-     * Tiers are based on what was earned, not the redeemable balance —
-     * spending rewards shouldn't drop a customer down a tier.
+     * Resolve the customer's current tier from lifetime earned points, less
+     * any that a refund took back. Tiers are based on what was earned, not
+     * the redeemable balance — spending rewards shouldn't drop a customer
+     * down a tier, but a refunded order no longer counts.
      */
     public function tier(Customer $customer): LoyaltyTier
     {
-        $earned = $this->balance($customer)->earned;
+        $earned = $this->balance($customer)->netEarned;
         $loyalty = $this->settings->loyalty;
 
         return match (true) {
@@ -68,7 +69,7 @@ class CustomerLoyalty
             return ['next' => null, 'pointsToNext' => 0];
         }
 
-        $earned = $this->balance($customer)->earned;
+        $earned = $this->balance($customer)->netEarned;
         $loyalty = $this->settings->loyalty;
 
         $threshold = match ($next) {

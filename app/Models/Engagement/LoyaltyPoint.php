@@ -30,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint newQuery()
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint query()
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint redeemed()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint reversed()
  *
  * @property Carbon|null $created_at
  *

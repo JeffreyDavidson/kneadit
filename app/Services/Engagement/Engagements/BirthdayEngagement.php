@@ -9,6 +9,7 @@ use App\Services\Engagement\Contracts\CustomerEngagement;
 use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class BirthdayEngagement implements CustomerEngagement
@@ -23,7 +24,12 @@ class BirthdayEngagement implements CustomerEngagement
         return $settings->engagement->birthdayProgramEnabled;
     }
 
-    /** @return Collection<int, EngagementRecipient> */
+    /**
+     * Customers whose birthday is the bakery-local today. In a non-leap year
+     * a Feb 29 birthday is celebrated on Feb 28.
+     *
+     * @return Collection<int, EngagementRecipient>
+     */
     public function findRecipients(TenantSettings $settings): Collection
     {
         $today = $this->clock->today();
@@ -32,8 +38,13 @@ class BirthdayEngagement implements CustomerEngagement
             ->subscribedToMarketing()
             ->whereNotNull('birthday')
             ->where('email', '!=', '')
-            ->whereMonth('birthday', $today->month)
-            ->whereDay('birthday', $today->day)
+            ->where(function (Builder $query) use ($today): void {
+                $query->where(fn (Builder $day) => $day->whereMonth('birthday', $today->month)->whereDay('birthday', $today->day));
+
+                if ($today->month === 2 && $today->day === 28 && ! $today->isLeapYear()) {
+                    $query->orWhere(fn (Builder $leapDay) => $leapDay->whereMonth('birthday', 2)->whereDay('birthday', 29));
+                }
+            })
             ->get()
             ->map(fn (Customer $customer): EngagementRecipient => new EngagementRecipient(
                 email: $customer->email,

@@ -7,6 +7,7 @@ use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Loyalty\LoyaltyLedger;
 use App\Services\Stripe\StripeSettingsReader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +22,8 @@ use Stripe\StripeClient;
  * action (would need a $amount parameter and a separate status for partial
  * refunds, which is tracked as follow-up Option B).
  *
+ * A full refund also takes back the loyalty points the order earned.
+ *
  * Idempotency: refuses to re-refund an order that's already Refunded or
  * Cancelled (payment-wise).
  *
@@ -33,6 +36,7 @@ class RefundStripePayment
     public function __construct(
         private readonly StripeClient $stripe,
         private readonly StripeSettingsReader $settings,
+        private readonly LoyaltyLedger $loyaltyLedger,
     ) {}
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund
@@ -78,6 +82,8 @@ class RefundStripePayment
             ]);
 
             $order->forceFill(['payment_status' => PaymentStatus::Refunded])->save();
+
+            $this->loyaltyLedger->reverseOrder($order);
 
             Log::info('Stripe refund issued', [
                 'order_id' => $order->id,

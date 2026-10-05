@@ -8,6 +8,7 @@ use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Engagement\Engagements\ReviewRequestEngagement;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 
 pest()->use(RefreshDatabase::class);
@@ -127,4 +128,78 @@ test('dispatchForRecipient dispatches ReviewRequested event and marks order', fu
 
     Event::assertDispatched(ReviewRequested::class);
     expect($order->fresh()->review_request_sent_at)->not->toBeNull();
+});
+
+describe('when review requests are first switched on', function () {
+    beforeEach(function () {
+        Date::setTestNow('2026-10-05 12:00');
+        settings(['review_request_delay_hours' => '24']);
+        test()->customer = Customer::factory()->create(['email' => 'buyer@example.com']);
+    });
+
+    function deliveredOrderFor(Customer $customer, string $deliveredAt): Order
+    {
+        return Order::factory()->for($customer)->create([
+            'status' => OrderStatus::Delivered,
+            'review_request_sent_at' => null,
+            'created_at' => $deliveredAt,
+            'updated_at' => $deliveredAt,
+        ]);
+    }
+
+    test('an order delivered more than a week ago is never asked for a review', function () {
+        deliveredOrderFor(test()->customer, '2026-09-05 12:00');
+
+        $recipients = resolve(ReviewRequestEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+        expect($recipients)->toBeEmpty();
+    });
+
+    test('a customer with several recent orders is asked once, about the most recent', function () {
+        deliveredOrderFor(test()->customer, '2026-09-05 12:00');
+        $newest = deliveredOrderFor(test()->customer, '2026-10-03 12:00');
+        $older = deliveredOrderFor(test()->customer, '2026-10-02 12:00');
+
+        $recipients = resolve(ReviewRequestEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+        expect($recipients)->toHaveCount(1)
+            ->and($recipients->first()->model->is($newest))->toBeTrue()
+            ->and($older->review_request_sent_at)->toBeNull();
+    });
+
+    test('the other recent orders are marked handled so they are not asked about later', function () {
+        deliveredOrderFor(test()->customer, '2026-09-05 12:00');
+        $newest = deliveredOrderFor(test()->customer, '2026-10-03 12:00');
+        $older = deliveredOrderFor(test()->customer, '2026-10-02 12:00');
+        $engagement = resolve(ReviewRequestEngagement::class);
+        $settings = resolve(TenantSettings::class);
+
+        $engagement->dispatchForRecipient($engagement->findRecipients($settings)->first(), $settings);
+
+        expect($older->fresh()->review_request_sent_at)->not->toBeNull()
+            ->and($newest->fresh()->review_request_sent_at)->not->toBeNull()
+            ->and($engagement->findRecipients($settings))->toBeEmpty();
+    });
+
+    test('two customers are each asked once', function () {
+        $other = Customer::factory()->create(['email' => 'other@example.com']);
+        deliveredOrderFor(test()->customer, '2026-10-03 12:00');
+        deliveredOrderFor($other, '2026-10-02 12:00');
+
+        $recipients = resolve(ReviewRequestEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+        expect($recipients->pluck('email')->sort()->values()->all())->toBe(['buyer@example.com', 'other@example.com']);
+    });
+
+    test('the window follows the delay, so a long delay still sends', function () {
+        settings(['review_request_delay_hours' => '200']);
+        $afterDelay = deliveredOrderFor(test()->customer, '2026-09-26 12:00');
+        $tooOld = deliveredOrderFor(Customer::factory()->create(['email' => 'old@example.com']), '2026-09-15 12:00');
+
+        $recipients = resolve(ReviewRequestEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+        expect($recipients)->toHaveCount(1)
+            ->and($recipients->first()->model->is($afterDelay))->toBeTrue()
+            ->and($tooOld->review_request_sent_at)->toBeNull();
+    });
 });

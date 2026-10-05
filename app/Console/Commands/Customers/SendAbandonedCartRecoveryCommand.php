@@ -23,6 +23,9 @@ use Throwable;
 #[Description('Email customers who left items in their cart and did not check out')]
 class SendAbandonedCartRecoveryCommand extends Command
 {
+    /** Carts untouched for longer than this are too stale to recover. */
+    private const int MAX_CART_AGE_DAYS = 7;
+
     public function handle(TenancyManager $tenancyManager): int
     {
         $failures = $tenancyManager->forEachTenant(
@@ -47,6 +50,8 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->whereNull('recovery_claimed_at')
                     ->whereNull('converted_at')
                     ->where('last_activity_at', '<=', $cutoff)
+                    ->activeSince(now()->subDays(self::MAX_CART_AGE_DAYS))
+                    ->notExpired()
                     ->whereHas('items')
                     ->with('items.product')
                     ->get();

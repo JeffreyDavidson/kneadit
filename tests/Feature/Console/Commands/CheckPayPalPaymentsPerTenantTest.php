@@ -1,6 +1,9 @@
 <?php
 
+use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -97,4 +100,20 @@ test('a tenant whose PayPal call fails does not stop the next tenant', function 
     artisan('paypal:check-payments')->assertSuccessful();
 
     expect(test()->order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
+});
+
+test('a refunded invoice takes back the points the order earned', function () {
+    paypalTenants([
+        'with-paypal' => ['paypal_client_id' => 'client-a', 'paypal_client_secret' => 'secret-a'],
+    ], function (): void {
+        $customer = Customer::factory()->create();
+        test()->order = Order::factory()->for($customer)->create(['payment_status' => PaymentStatus::Unpaid, 'paypal_invoice_id' => 'INV-1']);
+        LoyaltyPoint::factory()->for($customer)->earned(120)->create(['order_id' => test()->order->id]);
+    });
+    fakePayPal('REFUNDED');
+
+    artisan('paypal:check-payments')->assertSuccessful();
+
+    expect(test()->order->refresh()->payment_status)->toBe(PaymentStatus::Refunded)
+        ->and(LoyaltyPoint::query()->forOrder(test()->order)->where('type', LoyaltyPointType::Reversed)->sole()->points)->toBe(120);
 });

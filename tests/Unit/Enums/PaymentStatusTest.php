@@ -15,3 +15,13 @@ test('PaymentStatus knows which cases can be marked paid', function (PaymentStat
     'cancelled' => [PaymentStatus::Cancelled, false],
     'refunded' => [PaymentStatus::Refunded, false],
 ]);
+
+test('PaymentStatus knows which cases can still earn loyalty points', function (PaymentStatus $case, bool $expected) {
+    expect($case->earnsLoyaltyPoints())->toBe($expected);
+})->with([
+    'unpaid' => [PaymentStatus::Unpaid, true],
+    'partial' => [PaymentStatus::Partial, true],
+    'paid' => [PaymentStatus::Paid, true],
+    'cancelled' => [PaymentStatus::Cancelled, false],
+    'refunded' => [PaymentStatus::Refunded, false],
+]);

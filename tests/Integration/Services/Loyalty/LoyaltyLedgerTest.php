@@ -3,10 +3,12 @@
 use App\Actions\Loyalty\AdjustLoyaltyPoints;
 use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Loyalty\CustomerLoyalty;
 use App\Services\Loyalty\LoyaltyLedger;
 use Illuminate\Support\Facades\Mail;
 
@@ -114,4 +116,90 @@ test('adjusts points for a customer', function () {
         ->type->toBe(LoyaltyPointType::Adjusted)
         ->customer_id->toBe(test()->customer->id)
         ->description->toBe('Admin correction');
+});
+
+test('reverses the points an order earned and takes them off the balance', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    $ledger = resolve(LoyaltyLedger::class);
+    $ledger->creditOrder($order);
+
+    $reversal = $ledger->reverseOrder($order);
+
+    expect($reversal)
+        ->not->toBeNull()
+        ->points->toBe(250)
+        ->type->toBe(LoyaltyPointType::Reversed)
+        ->customer_id->toBe(test()->customer->id)
+        ->order_id->toBe($order->id)
+        ->and(resolve(CustomerLoyalty::class)->balance(test()->customer)->total)->toBe(0);
+});
+
+test('reversing an order twice writes one row', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    $ledger = resolve(LoyaltyLedger::class);
+    $ledger->creditOrder($order);
+
+    $first = $ledger->reverseOrder($order);
+    $second = $ledger->reverseOrder($order);
+
+    expect($first)->not->toBeNull()
+        ->and($second)->toBeNull()
+        ->and(LoyaltyPoint::query()->forOrder($order)->where('type', LoyaltyPointType::Reversed)->count())->toBe(1);
+});
+
+test('reversing an order that earned nothing writes nothing', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create();
+
+    $reversal = resolve(LoyaltyLedger::class)->reverseOrder($order);
+
+    expect($reversal)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
+});
+
+test('a reversal still applies when loyalty has been switched off since the points were earned', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    resolve(LoyaltyLedger::class)->creditOrder($order);
+    settings(['loyalty_enabled' => '0']);
+
+    $reversal = resolve(LoyaltyLedger::class)->reverseOrder($order);
+
+    expect($reversal)->not->toBeNull();
+});
+
+test('the balance goes negative when the reversed points were already redeemed', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    $ledger = resolve(LoyaltyLedger::class);
+    $ledger->creditOrder($order);
+    resolve(RedeemLoyaltyPoints::class)(test()->customer, 200, 'Free cookie reward');
+
+    $ledger->reverseOrder($order);
+
+    expect(resolve(CustomerLoyalty::class)->balance(test()->customer)->total)->toBe(-200);
+});
+
+test('does not credit an order that is already refunded or cancelled', function (PaymentStatus $status) {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->create([
+        'total' => 25.00,
+        'subtotal' => 25.00,
+        'payment_status' => $status,
+    ]);
+
+    $credit = resolve(LoyaltyLedger::class)->creditOrder($order);
+
+    expect($credit)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
+})->with([
+    'refunded' => PaymentStatus::Refunded,
+    'cancelled' => PaymentStatus::Cancelled,
+]);
+
+test('checks the stored payment status, not a stale copy of the order', function () {
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->delivered()->paid()->create(['total' => 25.00, 'subtotal' => 25.00]);
+    Order::query()->whereKey($order->id)->update(['payment_status' => PaymentStatus::Refunded]);
+
+    $credit = resolve(LoyaltyLedger::class)->creditOrder($order);
+
+    expect($order->payment_status)->toBe(PaymentStatus::Paid)
+        ->and($credit)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
 });
