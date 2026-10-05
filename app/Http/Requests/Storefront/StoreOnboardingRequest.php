@@ -96,11 +96,4 @@ class StoreOnboardingRequest extends FormRequest
 
         return is_string($referralCode) ? $referralCode : null;
     }
-
-    public function adminUrl(): string
-    {
-        $scheme = $this->secure() ? 'https' : 'http';
-
-        return "{$scheme}://{$this->subdomain()}.{$this->getHost()}/admin";
-    }
 }
