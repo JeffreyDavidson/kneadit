@@ -2,11 +2,12 @@
 
 namespace App\Services\Stripe;
 
-use App\Actions\Customers\RecordCateringDeposit;
+use App\Actions\Customers\ApplyCateringDepositPayment;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
 
@@ -22,7 +23,7 @@ class CateringDepositCheckoutService
 {
     public function __construct(
         private readonly StripeSettingsReader $settings,
-        private readonly RecordCateringDeposit $recordCateringDeposit,
+        private readonly ApplyCateringDepositPayment $applyCateringDepositPayment,
         private readonly StripeClient $stripe,
     ) {}
 
@@ -32,14 +33,65 @@ class CateringDepositCheckoutService
             return null;
         }
 
+        $existingUrl = $this->resumeStoredSession($inquiry);
+
+        if ($existingUrl !== null) {
+            return $existingUrl;
+        }
+
+        // The success URL is signed without the session id; Stripe appends it afterwards and the
+        // route's signature check ignores that one parameter.
         $session = $this->createCheckoutSession(
             $inquiry,
             $depositDollars,
-            route('catering.stripe.success', $inquiry).'?session_id={CHECKOUT_SESSION_ID}',
-            route('catering.stripe.cancel', $inquiry),
+            URL::signedRoute('catering.stripe.success', $inquiry).'&session_id={CHECKOUT_SESSION_ID}',
+            URL::signedRoute('catering.stripe.cancel', $inquiry),
         );
 
         return $session?->url;
+    }
+
+    /**
+     * Where to send the customer when the inquiry already has a Checkout session: its own
+     * page while it is still open, or the success page once it was paid. Null when a new
+     * session is needed (none stored, expired, or it can't be read).
+     */
+    private function resumeStoredSession(CateringInquiry $inquiry): ?string
+    {
+        $sessionId = $inquiry->stripe_checkout_session_id;
+        $connectId = $this->settings->connectId();
+
+        if ($sessionId === null || ! $connectId) {
+            return null;
+        }
+
+        try {
+            $session = $this->stripe->checkout->sessions->retrieve(
+                $sessionId,
+                ['expand' => ['payment_intent']],
+                ['stripe_account' => $connectId],
+            );
+        } catch (\Exception $e) {
+            Log::warning('Could not read the stored catering deposit checkout session', [
+                'inquiry' => $inquiry->id,
+                'session_id' => $sessionId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+
+        if ($session->status === 'open' && is_string($session->url)) {
+            return $session->url;
+        }
+
+        if ($session->status === 'complete' && $session->payment_status === 'paid') {
+            $this->completeSession($session);
+
+            return URL::signedRoute('catering.stripe.success', $inquiry)."&session_id={$session->id}";
+        }
+
+        return null;
     }
 
     public function createCheckoutSession(
@@ -120,29 +172,7 @@ class CateringDepositCheckoutService
                 ['stripe_account' => $connectId],
             );
 
-            if ($session->payment_status !== 'paid') {
-                return null;
-            }
-
-            $inquiry = CateringInquiry::query()->where('stripe_checkout_session_id', $sessionId)->first();
-            if (! $inquiry) {
-                Log::warning('No catering inquiry for checkout session', ['session_id' => $sessionId]);
-
-                return null;
-            }
-
-            $paymentIntent = $session->payment_intent;
-            $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : (string) $paymentIntent;
-
-            $depositDollars = (int) ($session->amount_total ?? 0) / 100;
-
-            $inquiry->forceFill(['stripe_payment_intent_id' => $paymentIntentId !== '' ? $paymentIntentId : null])->save();
-
-            return ($this->recordCateringDeposit)(
-                $inquiry,
-                $depositDollars,
-                $paymentIntentId !== '' ? $paymentIntentId : null,
-            );
+            return $this->completeSession($session);
         } catch (\Exception $e) {
             Log::error('Failed to verify catering deposit checkout session', [
                 'session_id' => $sessionId,
@@ -151,6 +181,36 @@ class CateringDepositCheckoutService
 
             return null;
         }
+    }
+
+    /**
+     * Records a paid session on the inquiry named in its metadata. The inquiry's stored
+     * session id is not consulted: the customer may have paid an earlier session.
+     */
+    private function completeSession(Session $session): ?CateringInquiry
+    {
+        if ($session->payment_status !== 'paid') {
+            return null;
+        }
+
+        $inquiryId = data_get($session, 'metadata.catering_inquiry_id');
+        $inquiry = is_numeric($inquiryId) ? CateringInquiry::query()->find($inquiryId) : null;
+
+        if (! $inquiry) {
+            Log::warning('No catering inquiry for checkout session', ['session_id' => $session->id]);
+
+            return null;
+        }
+
+        $paymentIntent = $session->payment_intent;
+        $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : (string) $paymentIntent;
+
+        return ($this->applyCateringDepositPayment)(
+            $inquiry,
+            $session->id,
+            $paymentIntentId !== '' ? $paymentIntentId : null,
+            (int) ($session->amount_total ?? 0) / 100,
+        );
     }
 
     private function configString(string $key, string $default = ''): string

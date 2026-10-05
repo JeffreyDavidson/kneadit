@@ -8,7 +8,7 @@ use App\Services\Customers\CateringDepositCalculator;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\CateringDepositCheckoutService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Response;
 
 class PayCateringDepositController extends Controller
 {
@@ -17,10 +17,14 @@ class PayCateringDepositController extends Controller
         TenantSettings $settings,
         CateringDepositCheckoutService $checkout,
         CateringDepositCalculator $depositCalculator,
-    ): RedirectResponse {
+    ): RedirectResponse|Response {
         if ($inquiry->deposit_paid_at !== null) {
-            return redirect()->away(Config::string('app.url'))
+            return redirect()->route('storefront.catering')
                 ->with('success', 'Deposit already received — thank you!');
+        }
+
+        if (! $inquiry->status->acceptsDeposit()) {
+            return response()->view('tenant.storefront.catering.deposit-unavailable', [], 410);
         }
 
         $depositDollars = $depositCalculator->suggestedAmount(

@@ -24,6 +24,7 @@ use App\Http\Controllers\Tenant\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Tenant\Storefront\SurveyController;
 use App\Routing\Bindings\ActiveSurveyResolver;
 use App\Routing\Bindings\PublishedTenantBlogPostResolver;
+use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
 Route::bind('post', function (string $slug) {
@@ -59,11 +60,14 @@ Route::get('catering/{inquiry}/pay-deposit', PayCateringDepositController::class
     ->name('catering.payDeposit')
     ->middleware('signed');
 
-// Stripe redirect callbacks.
+// Stripe redirect callbacks. The URLs are signed when the Checkout session is created;
+// Stripe appends session_id to the success URL afterwards, so that parameter is not signed.
 Route::get('catering/stripe/success/{inquiry}', CateringStripeSuccessController::class)
-    ->name('catering.stripe.success');
+    ->name('catering.stripe.success')
+    ->middleware(ValidateSignature::absolute('session_id'));
 Route::get('catering/stripe/cancel/{inquiry}', CateringStripeCancelController::class)
-    ->name('catering.stripe.cancel');
+    ->name('catering.stripe.cancel')
+    ->middleware('signed');
 
 // Blog
 Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');

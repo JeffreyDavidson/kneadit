@@ -1,7 +1,9 @@
 <?php
 
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
+use App\Enums\Customers\CateringInquiryStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\CateringInquiry;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
@@ -156,3 +158,90 @@ test('it leaves the order unpaid and notifies the baker when the amount paid dif
     'lower than the order total' => 4000,
     'higher than the order total' => 6000,
 ]);
+
+/**
+ * @return array<string, mixed>
+ */
+function cateringConnectSession(CateringInquiry $inquiry, string $sessionId = 'cs_test_older', string $paymentIntentId = 'pi_test_older'): array
+{
+    return [
+        'id' => $sessionId,
+        'payment_status' => 'paid',
+        'payment_intent' => $paymentIntentId,
+        'amount_total' => 25000,
+        'metadata' => [
+            'catering_inquiry_id' => (string) $inquiry->id,
+            'tenant_id' => 'amount-tenant',
+        ],
+    ];
+}
+
+test('it records a catering deposit paid on a session that is not the latest one stored on the inquiry', function () {
+    runWebhookWithinTenant();
+    $inquiry = CateringInquiry::factory()->quoted()->create(['stripe_checkout_session_id' => 'cs_test_newer']);
+
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+
+    expect($inquiry->refresh()->deposit_paid_at)->not->toBeNull()
+        ->and($inquiry->deposit_amount?->dollars())->toBe(250.00)
+        ->and($inquiry->deposit_reference)->toBe('pi_test_older')
+        ->and($inquiry->status)->toBe(CateringInquiryStatus::Confirmed);
+});
+
+test('it does not record a catering deposit for an inquiry that no longer accepts deposits and notifies the baker', function (CateringInquiryStatus $status) {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context): bool => $context['session_id'] === 'cs_test_older'
+            && $context['payment_intent'] === 'pi_test_older');
+    runWebhookWithinTenant();
+    $owner = User::factory()->owner()->create();
+    $inquiry = CateringInquiry::factory()->create(['status' => $status, 'stripe_checkout_session_id' => 'cs_test_older']);
+
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+
+    expect($inquiry->refresh()->deposit_paid_at)->toBeNull()
+        ->and($inquiry->status)->toBe($status)
+        ->and($owner->notifications()->count())->toBe(1);
+})->with([
+    'cancelled' => CateringInquiryStatus::Cancelled,
+    'completed' => CateringInquiryStatus::Completed,
+]);
+
+test('it leaves a recorded catering deposit unchanged when another session is paid and notifies the baker', function () {
+    Log::shouldReceive('info')->andReturnNull();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context): bool => $context['payment_intent'] === 'pi_test_second');
+    runWebhookWithinTenant();
+    $owner = User::factory()->owner()->create();
+    $inquiry = CateringInquiry::factory()->confirmed()->create([
+        'deposit_amount' => 100,
+        'deposit_paid_at' => now()->subDay(),
+        'deposit_reference' => 'pi_test_first',
+        'stripe_payment_intent_id' => 'pi_test_first',
+    ]);
+
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry, 'cs_test_second', 'pi_test_second'));
+
+    expect($inquiry->refresh()->deposit_amount?->dollars())->toBe(100.00)
+        ->and($inquiry->deposit_reference)->toBe('pi_test_first')
+        ->and($inquiry->stripe_payment_intent_id)->toBe('pi_test_first')
+        ->and($owner->notifications()->count())->toBe(1);
+});
+
+test('it does not alert the baker when the same catering payment is delivered again', function () {
+    runWebhookWithinTenant();
+    $owner = User::factory()->owner()->create();
+    $inquiry = CateringInquiry::factory()->confirmed()->create([
+        'deposit_amount' => 250,
+        'deposit_paid_at' => now()->subMinute(),
+        'deposit_reference' => 'pi_test_older',
+        'stripe_payment_intent_id' => 'pi_test_older',
+    ]);
+
+    resolve(HandleConnectCheckoutCompleted::class)(cateringConnectSession($inquiry));
+
+    expect($inquiry->refresh()->deposit_reference)->toBe('pi_test_older')
+        ->and($owner->notifications()->count())->toBe(0);
+});
