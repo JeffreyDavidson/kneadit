@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 
 class IntegrationsSection
@@ -19,12 +20,14 @@ class IntegrationsSection
     public static function make(): Section
     {
         return Section::make('Integrations')
+            ->visible(fn (): bool => Gate::allows('manage-webhooks'))
             ->description('Push order events to Zapier, QuickBooks, your CRM — any HTTPS endpoint that can accept a signed POST.')
             ->afterHeader([
                 Action::make('webhookDocs')
                     ->label('Docs')
                     ->icon(Heroicon::OutlinedBookOpen)
                     ->color('gray')
+                    ->authorize('manage-webhooks')
                     ->url(fn (): string => WebhooksDocs::getUrl())
                     ->openUrlInNewTab(),
 
@@ -32,6 +35,7 @@ class IntegrationsSection
                     ->label('Send Test')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('gray')
+                    ->authorize('manage-webhooks')
                     ->visible(fn (Get $get): bool => filled($get('webhook_url')))
                     ->action(fn (ManageSettings $livewire, SaveTenantSettings $saveSettings) => $livewire->sendTestWebhook($saveSettings)),
             ])
@@ -61,6 +65,7 @@ class IntegrationsSection
                             ->icon(Heroicon::OutlinedArrowPath)
                             ->color('gray')
                             ->tooltip('Regenerate — existing integrations will need the new value.')
+                            ->authorize('manage-webhooks')
                             ->visible(fn (Get $get): bool => filled($get('webhook_secret')))
                             ->requiresConfirmation()
                             ->modalHeading('Regenerate signing secret?')

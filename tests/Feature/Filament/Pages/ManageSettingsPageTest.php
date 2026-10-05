@@ -493,3 +493,66 @@ test('sendTestWebhook validates the form first and neither saves nor sends when 
     expect(WebhookDelivery::count())->toBe(0)
         ->and(settings('webhook_url'))->not->toBe('https://8.8.8.8/test');
 });
+
+describe('webhook settings are owner-only', function () {
+    beforeEach(function () {
+        settings([
+            'webhook_url' => 'https://8.8.8.8/hook',
+            'webhook_secret' => 'stored-secret-value',
+        ]);
+    });
+
+    test('a manager neither sees nor receives the webhook URL and secret', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->assertDontSee('Webhook URL')
+            ->assertDontSee('Signing Secret')
+            ->assertSet('webhook_url', '')
+            ->assertSet('webhook_secret', '');
+    });
+
+    test('an owner sees the webhook URL and secret', function () {
+        livewire(ManageSettings::class)
+            ->assertSee('Webhook URL')
+            ->assertSet('webhook_url', 'https://8.8.8.8/hook')
+            ->assertSet('webhook_secret', 'stored-secret-value');
+    });
+
+    test('a manager saving settings leaves the webhook untouched, even with tampered properties', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->set('store_name', 'Renamed Bakery')
+            ->set('webhook_url', 'https://8.8.4.4/attacker')
+            ->set('webhook_secret', 'attacker-secret')
+            ->call('save');
+
+        expect(settings('store_name'))->toBe('Renamed Bakery')
+            ->and(settings('webhook_url'))->toBe('https://8.8.8.8/hook')
+            ->and(settings('webhook_secret'))->toBe('stored-secret-value');
+    });
+
+    test('a manager cannot regenerate the webhook secret', function () {
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->call('regenerateWebhookSecret')
+            ->assertForbidden();
+
+        expect(settings('webhook_secret'))->toBe('stored-secret-value');
+    });
+
+    test('a manager cannot send a test webhook', function () {
+        Http::fake();
+        test()->actingAs(User::factory()->manager()->create());
+
+        livewire(ManageSettings::class)
+            ->call('sendTestWebhook')
+            ->assertForbidden();
+
+        Http::assertNothingSent();
+
+        expect(WebhookDelivery::count())->toBe(0);
+    });
+});

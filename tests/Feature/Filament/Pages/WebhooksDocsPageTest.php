@@ -32,3 +32,10 @@ test('docs page shows signature verification snippets', function () {
         ->assertSee('createHmac')
         ->assertSee('hmac.new');
 });
+
+test('webhook docs page is closed to managers', function () {
+    test()->actingAs(User::factory()->manager()->create());
+
+    livewire(WebhooksDocs::class)
+        ->assertForbidden();
+});
