@@ -542,6 +542,7 @@ function createCentralTables(): void
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('opened_at')->nullable();
             $table->timestamps();
+            $table->unique(['campaign_id', 'email'], 'email_campaign_logs_campaign_email_unique');
         },
         'checkin_logs' => function ($table) {
             $table->id();
