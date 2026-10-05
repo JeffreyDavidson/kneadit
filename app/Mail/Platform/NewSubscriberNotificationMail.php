@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\BaseMailable;
+use App\Mail\PlatformMail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class NewSubscriberNotificationMail extends BaseMailable
+class NewSubscriberNotificationMail extends PlatformMail
 {
     public function __construct(
         public string $bakerName,

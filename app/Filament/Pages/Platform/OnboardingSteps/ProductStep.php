@@ -2,13 +2,12 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\Filament\Forms\Components\CategorySelect;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Pages\Platform\Onboarding;
-use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -70,35 +69,7 @@ final class ProductStep extends OnboardingStep
                                 ->label('Price')
                                 ->required()
                                 ->placeholder('12.00'),
-                            Select::make('product.category_id')
-                                ->label('Category')
-                                ->options(fn () => Category::query()->pluck('name', 'id')->toArray())
-                                ->required()
-                                ->createOptionForm([
-                                    TextInput::make('name')
-                                        ->label('Category Name')
-                                        ->required()
-                                        ->maxLength(255),
-                                    Textarea::make('description')
-                                        ->label('Description')
-                                        ->rows(2),
-                                ])
-                                ->createOptionUsing(function (array $data): int {
-                                    $name = $data['name'] ?? null;
-
-                                    if (! is_string($name)) {
-                                        throw new \InvalidArgumentException('A category name is required.');
-                                    }
-
-                                    $category = Category::query()->create([
-                                        'name' => $name,
-                                        'slug' => Str::slug($name),
-                                        'description' => $data['description'] ?? null,
-                                        'is_active' => true,
-                                    ]);
-
-                                    return $category->id;
-                                }),
+                            CategorySelect::make('product.category_id')->required(),
                         ]),
                     ]),
             ])
