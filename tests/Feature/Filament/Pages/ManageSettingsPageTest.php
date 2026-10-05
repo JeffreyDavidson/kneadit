@@ -54,6 +54,27 @@ test('minimum order amounts load from saved settings on mount', function () {
         ->assertSet('minimum_delivery_order_amount', '20');
 });
 
+test('manage settings page renders the stripe status when stripe is a payment method', function (array $stripeSettings, string $expected) {
+    settings([
+        'payment_methods' => json_encode([PaymentMethod::Stripe->value]),
+        ...$stripeSettings,
+    ]);
+
+    livewire(ManageSettings::class)
+        ->assertSuccessful()
+        ->assertSee($expected);
+})->with([
+    'not connected' => [[], 'Connect with Stripe'],
+    'connected, charges not enabled' => [
+        ['stripe_connect_id' => 'acct_test', 'stripe_connect_charges_enabled' => '0'],
+        'Stripe Connected, charges not enabled yet',
+    ],
+    'connected, charges enabled' => [
+        ['stripe_connect_id' => 'acct_test', 'stripe_connect_charges_enabled' => '1'],
+        'ready to accept payments',
+    ],
+]);
+
 test('manage settings page can reset form values to defaults', function () {
     $defaultStoreName = TenantSettingsDefaults::all()['store_name'];
 

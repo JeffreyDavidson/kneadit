@@ -32,7 +32,7 @@ class Onboarding extends Page
     protected static string|BackedEnum|null $navigationIcon = null;
 
     #[\Override]
-    protected string $view = 'filament.pages.central.platform.onboarding';
+    protected string $view = 'filament.pages.platform.onboarding';
 
     #[\Override]
     protected static ?string $title = 'Welcome to KneadIt';
