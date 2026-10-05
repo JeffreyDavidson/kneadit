@@ -10,11 +10,13 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Gate;
 
 final class PaymentsStep extends OnboardingStep
 {
@@ -33,11 +35,15 @@ final class PaymentsStep extends OnboardingStep
             is_string(...),
         ));
 
+        $canManagePayments = Gate::allows('manage-payments');
+
+        // The PayPal secret is write-only: it is never loaded into the page
+        // state, which Livewire sends to the browser.
         return [
             'payment_methods' => $selectedMethods !== [] ? $selectedMethods : [PaymentMethod::Cash->value],
-            'paypal_client_id' => $manager->get('paypal_client_id', ''),
-            'paypal_client_secret' => $manager->get('paypal_client_secret', ''),
-            'paypal_sandbox' => $manager->get('paypal_sandbox', '1') === '1',
+            'paypal_client_id' => $canManagePayments ? $manager->get('paypal_client_id', '') : '',
+            'paypal_client_secret' => '',
+            'paypal_sandbox' => $canManagePayments ? $manager->get('paypal_sandbox', '1') === '1' : true,
         ];
     }
 
@@ -47,7 +53,11 @@ final class PaymentsStep extends OnboardingStep
             ->icon(Heroicon::OutlinedCreditCard)
             ->description('How you get paid')
             ->schema([
+                Text::make('Only the bakery owner can set up payments. You can finish onboarding now and the owner can choose payment methods later in Settings.')
+                    ->visible(fn (): bool => ! Gate::allows('manage-payments')),
+
                 Section::make('Payment Collection')
+                    ->visible(fn (): bool => Gate::allows('manage-payments'))
                     ->description('Choose how you want to collect payments from customers.')
                     ->schema([
                         CheckboxList::make('payments.payment_methods')
@@ -86,9 +96,9 @@ final class PaymentsStep extends OnboardingStep
                                 TextInput::make('payments.paypal_client_secret')
                                     ->label('PayPal Client Secret')
                                     ->password()
-                                    ->placeholder('Your PayPal Client Secret')
+                                    ->placeholder(fn (): string => self::hasStoredSecret() ? 'Set — enter a new value to replace it' : 'Your PayPal Client Secret')
                                     ->maxLength(255)
-                                    ->required(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
+                                    ->required(fn (Get $get): bool => ! self::hasStoredSecret() && in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                                 Toggle::make('payments.paypal_sandbox')
                                     ->label('Sandbox Mode (Testing)')
                                     ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
@@ -104,6 +114,12 @@ final class PaymentsStep extends OnboardingStep
 
     public static function save(array $data): void
     {
+        // Payment methods and credentials are owner-only; for anyone else the
+        // step saves nothing, whatever the client sends.
+        if (! Gate::allows('manage-payments')) {
+            return;
+        }
+
         $methods = self::normalizePaymentMethods($data['payment_methods'] ?? []);
         $methods = $methods !== [] ? $methods : [PaymentMethod::Cash->value];
 
@@ -112,13 +128,22 @@ final class PaymentsStep extends OnboardingStep
             'payment_method' => $methods[0],
         ];
 
+        // The PayPal secret is only replaced when a new one is entered.
         if (in_array(PaymentMethod::PayPal->value, $methods, true)) {
             $settings['paypal_client_id'] = $data['paypal_client_id'];
-            $settings['paypal_client_secret'] = $data['paypal_client_secret'];
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
+
+            if (filled($data['paypal_client_secret'] ?? null)) {
+                $settings['paypal_client_secret'] = $data['paypal_client_secret'];
+            }
         }
 
         resolve(SettingsManager::class)->setMany($settings);
+    }
+
+    private static function hasStoredSecret(): bool
+    {
+        return filled(resolve(SettingsManager::class)->get('paypal_client_secret'));
     }
 
     /** @return list<string> */

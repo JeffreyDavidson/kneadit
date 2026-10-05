@@ -9,7 +9,15 @@ test('prefixes spreadsheet formula starters in text values', function (string $v
     'plus' => '+cmd',
     'minus' => '-cmd',
     'at' => '@cmd',
+    'hyperlink' => '=HYPERLINK("https://example.test","x")',
+    'leading tab' => "\t=cmd",
+    'leading carriage return' => "\r=cmd",
 ]);
+
+test('sanitizes every value in a nested report', function () {
+    expect(CsvValueSanitizer::deep(['name' => '=cmd', 'rows' => [['label' => "\tx", 'amount' => 3.5, 'flag' => true]], 'none' => null]))
+        ->toBe(['name' => "'=cmd", 'rows' => [['label' => "'\tx", 'amount' => 3.5, 'flag' => true]], 'none' => null]);
+});
 
 test('preserves numeric values and ordinary text', function (mixed $value) {
     expect(CsvValueSanitizer::sanitize($value))->toBe($value);

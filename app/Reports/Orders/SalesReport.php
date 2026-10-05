@@ -18,8 +18,7 @@ class SalesReport
     public function generate(DateRange $range): SalesReportResult
     {
         $orders = Order::query()
-            ->active()
-            ->paid()
+            ->revenue()
             ->whereBetween('delivery_date', $range->toArray());
 
         $totalOrders = $orders->count();

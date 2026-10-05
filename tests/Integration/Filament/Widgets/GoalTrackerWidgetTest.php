@@ -91,7 +91,7 @@ test('yearly data percentage is capped at 100', function () {
 test('monthly data covers the bakery-local month', function () {
     app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
     Date::setTestNow('2026-11-01 01:00');
-    Order::factory()->create(['total' => 120, 'created_at' => '2026-10-31 12:00:00']);
+    Order::factory()->paid()->create(['total' => 120, 'delivery_date' => '2026-10-31', 'created_at' => '2026-09-01 12:00:00']);
 
     $data = test()->widget->monthlyData;
 
@@ -102,7 +102,7 @@ test('monthly data covers the bakery-local month', function () {
 test('yearly data covers the bakery-local year', function () {
     app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
     Date::setTestNow('2027-01-01 01:00');
-    Order::factory()->create(['total' => 120, 'created_at' => '2026-12-31 12:00:00']);
+    Order::factory()->paid()->create(['total' => 120, 'delivery_date' => '2026-12-31', 'created_at' => '2026-01-01 12:00:00']);
 
     $data = test()->widget->yearlyData;
 

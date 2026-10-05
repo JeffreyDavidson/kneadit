@@ -4,6 +4,7 @@ namespace App\Actions\Orders;
 
 use App\Enums\Orders\OrderStatus;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
@@ -20,6 +21,7 @@ use App\Models\Staff\User;
  *
  * @throws InvalidOrderTransitionException when the order's status can't move to Cancelled
  * @throws StripeRefundFailedException when Stripe refuses the refund
+ * @throws OrderRefundInProgressException when another request is already refunding the order
  */
 class CancelOrder
 {
@@ -30,6 +32,13 @@ class CancelOrder
 
     public function __invoke(Order $order, ?User $initiatedBy = null, ?string $reason = null): ?Refund
     {
+        // Check on a fresh copy so a request holding a stale one (a double tap,
+        // or two tabs) is refused before it reaches Stripe. No transaction
+        // spans the refund, which calls Stripe: RefundStripePayment claims the
+        // refund atomically instead, and the status change re-checks under its
+        // own short lock.
+        $order->refresh();
+
         throw_unless(
             in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($order), true),
             InvalidOrderTransitionException::class,

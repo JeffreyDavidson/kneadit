@@ -55,7 +55,7 @@ class ProductSalesQuery
     public static function aggregates(DateRange|array $range): Builder
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
-        $orderIds = Order::query()->active()->paid()->whereBetween('delivery_date', $dates)->select('id');
+        $orderIds = Order::query()->revenue()->whereBetween('delivery_date', $dates)->select('id');
 
         // unit_price is bigint cents (migration 2026_04_22_201500), so the
         // SUM(quantity * unit_price) aggregate returns cents.

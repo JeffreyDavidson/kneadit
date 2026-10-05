@@ -26,7 +26,7 @@ Route::get('manifest.json', ManifestController::class)->name('manifest');
 Route::get('icons/icon-{size}.png', AppIconController::class)->name('app.icon');
 
 Route::get('impersonate/{token}', ConsumeImpersonationController::class)->name('impersonate.consume');
-Route::get('stripe/connect', StripeConnectController::class)->middleware('auth')->name('stripe.connect');
+Route::get('stripe/connect', StripeConnectController::class)->middleware(['auth', 'can:manage-payments'])->name('stripe.connect');
 Route::get('admin/campaigns/{campaign}/preview', PreviewCustomerCampaignController::class)
     ->middleware(['auth', 'can:manager-staff'])
     ->name('campaign.preview');

@@ -3,6 +3,7 @@
 use App\Actions\Orders\RefundStripePayment;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Orders\PaymentStatus;
+use App\Exceptions\Orders\OrderRefundInProgressException;
 use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
@@ -11,11 +12,13 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Loyalty\CustomerLoyalty;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 use Stripe\Exception\InvalidRequestException;
 use Stripe\Service\RefundService;
 use Stripe\StripeClient;
+use Tests\Support\Stripe\FakeRefundStripeClient;
 
 pest()->use(RefreshDatabase::class);
 
@@ -49,7 +52,10 @@ test('refunds via Stripe, records a Refund row, and flips payment_status to Refu
 
     $refundService = Double::for(RefundService::class);
     $refundService->expects('create')
-        ->with(Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'))
+        ->with(
+            Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_abc'),
+            Argument::satisfies(fn (mixed $options): bool => is_array($options)),
+        )
         ->returns($stripeRefundResource);
 
     app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
@@ -99,7 +105,7 @@ test('refunds connected payments through the tenant Stripe account', function ()
     $refundService->expects('create')
         ->with(
             Argument::satisfies(fn (mixed $payload): bool => is_array($payload) && ($payload['payment_intent'] ?? null) === 'pi_test_connect'),
-            ['stripe_account' => 'acct_test_connect'],
+            Argument::satisfies(fn (mixed $options): bool => is_array($options) && ($options['stripe_account'] ?? null) === 'acct_test_connect'),
         )
         ->returns($stripeRefundResource);
 
@@ -110,6 +116,24 @@ test('refunds connected payments through the tenant Stripe account', function ()
     $refund = resolve(RefundStripePayment::class)($order);
 
     expect($refund?->stripe_refund_id)->toBe('re_test_connect');
+});
+
+test('sends an idempotency key that is stable for the order and its payment intent', function () {
+    $refundService = Double::for(RefundService::class);
+    $refundService->expects('create')
+        ->with(
+            Argument::satisfies(fn (mixed $payload): bool => is_array($payload)),
+            Argument::satisfies(fn (mixed $options): bool => is_array($options) && ($options['idempotency_key'] ?? null) === 'refund-42-pi_test_key'),
+        )
+        ->returns((object) ['id' => 're_test_key']);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakeStripeRefundClient($refundService));
+
+    $order = Order::factory()->paid()->create(['id' => 42, 'stripe_payment_intent_id' => 'pi_test_key']);
+
+    resolve(RefundStripePayment::class)($order);
+
+    $refundService->verify();
 });
 
 function fakeStripeRefundSucceeding(): void
@@ -146,4 +170,74 @@ test('a failed Stripe refund leaves the order points alone', function () {
 
     expect(fn () => resolve(RefundStripePayment::class)($order))->toThrow(StripeRefundFailedException::class)
         ->and(resolve(CustomerLoyalty::class)->balance($customer)->total)->toBe(250);
+});
+
+test('a successful refund clears the claim', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    FakeRefundStripeClient::succeeding();
+    $order = Order::factory()->paid()->create(['stripe_payment_intent_id' => 'pi_claim_cleared']);
+
+    resolve(RefundStripePayment::class)($order);
+
+    expect($order->refresh()->refund_claimed_at)->toBeNull();
+});
+
+test('a Stripe refusal clears the claim so a retry can proceed', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    $refusing = FakeRefundStripeClient::refusing();
+    $order = Order::factory()->paid()->create(['stripe_payment_intent_id' => 'pi_claim_refused']);
+
+    expect(fn () => resolve(RefundStripePayment::class)($order))->toThrow(StripeRefundFailedException::class)
+        ->and($order->refresh()->refund_claimed_at)->toBeNull();
+    $refusing->verify();
+
+    $retry = FakeRefundStripeClient::succeeding('re_claim_retry');
+
+    expect(resolve(RefundStripePayment::class)($order)?->stripe_refund_id)->toBe('re_claim_retry')
+        ->and($order->refresh()->payment_status)->toBe(PaymentStatus::Refunded);
+    $retry->verify();
+});
+
+test('a stale copy loses the claim, makes no Stripe call and finds the order already refunded', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    $stripe = FakeRefundStripeClient::succeeding();
+    $order = Order::factory()->paid()->create(['stripe_payment_intent_id' => 'pi_claim_stale']);
+    $stale = Order::query()->findOrFail($order->id);
+
+    resolve(RefundStripePayment::class)($order);
+
+    expect(resolve(RefundStripePayment::class)($stale))->toBeNull()
+        ->and($stale->payment_status)->toBe(PaymentStatus::Refunded)
+        ->and(Refund::query()->count())->toBe(1);
+    $stripe->verify();
+});
+
+test('a refund another request is still making is refused without a Stripe call', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    $stripe = FakeRefundStripeClient::untouched();
+    $order = Order::factory()->paid()->create([
+        'stripe_payment_intent_id' => 'pi_claim_held',
+        'refund_claimed_at' => '2026-10-05 11:55:00',
+    ]);
+
+    expect(fn () => resolve(RefundStripePayment::class)($order))->toThrow(OrderRefundInProgressException::class)
+        ->and($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->refund_claimed_at->not->toBeNull();
+    $stripe->unused();
+});
+
+test('an abandoned claim can be claimed again', function () {
+    Date::setTestNow('2026-10-05 12:00');
+    $stripe = FakeRefundStripeClient::succeeding('re_claim_abandoned');
+    $order = Order::factory()->paid()->create([
+        'stripe_payment_intent_id' => 'pi_claim_abandoned',
+        'refund_claimed_at' => '2026-10-05 11:40:00',
+    ]);
+
+    $refund = resolve(RefundStripePayment::class)($order);
+
+    expect($refund?->stripe_refund_id)->toBe('re_claim_abandoned')
+        ->and($order->refresh()->refund_claimed_at)->toBeNull();
+    $stripe->verify();
 });

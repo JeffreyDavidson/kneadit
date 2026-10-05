@@ -102,12 +102,37 @@ test('byStatus filters orders by given status', function () {
         ->and($results->first()->status)->toBe(OrderStatus::Baking);
 });
 
-test('paidInYear returns paid orders within the given year', function () {
+test('revenue returns only paid orders that are not cancelled', function () {
+    $counted = Order::factory()->paid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->create(['payment_status' => PaymentStatus::Refunded, 'delivery_date' => '2026-06-15']);
+    Order::factory()->partiallyPaid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->unpaid()->create(['delivery_date' => '2026-06-15']);
+
+    $results = Order::query()->revenue()->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is($counted))->toBeTrue();
+});
+
+test('revenueInYear returns revenue orders delivered within the given year', function () {
     Order::factory()->paid()->create(['delivery_date' => '2026-06-15']);
     Order::factory()->paid()->create(['delivery_date' => '2025-06-15']);
     Order::factory()->unpaid()->create(['delivery_date' => '2026-06-15']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-06-15']);
 
-    $results = Order::query()->paidInYear(2026)->get();
+    $results = Order::query()->revenueInYear(2026)->get();
+
+    expect($results)->toHaveCount(1);
+});
+
+test('revenueInDateRange returns revenue orders delivered within the date range', function () {
+    Order::factory()->paid()->create(['delivery_date' => '2026-03-31']);
+    Order::factory()->paid()->create(['delivery_date' => '2026-05-01']);
+    Order::factory()->paid()->cancelled()->create(['delivery_date' => '2026-03-15']);
+    Order::factory()->unpaid()->create(['delivery_date' => '2026-03-15']);
+
+    $results = Order::query()->revenueInDateRange(DateRange::fromStrings('2026-03-01', '2026-03-31'))->get();
 
     expect($results)->toHaveCount(1);
 });

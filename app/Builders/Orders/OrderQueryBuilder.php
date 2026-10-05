@@ -99,10 +99,28 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
-    public function paidInYear(int $year): static
+    /**
+     * The single definition of revenue: paid (not part-paid, refunded or
+     * unpaid) and not cancelled. Every revenue figure starts from this, and is
+     * dated by delivery_date, the bakery-local date the order is fulfilled.
+     */
+    public function revenue(): static
     {
-        $this->whereYear('delivery_date', $year)
-            ->where('payment_status', PaymentStatus::Paid);
+        $this->active()->paid();
+
+        return $this;
+    }
+
+    public function revenueInYear(int $year): static
+    {
+        $this->revenue()->whereYear('delivery_date', $year);
+
+        return $this;
+    }
+
+    public function revenueInDateRange(DateRange $range): static
+    {
+        $this->revenue()->inDateRange($range);
 
         return $this;
     }

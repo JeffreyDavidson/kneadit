@@ -21,7 +21,7 @@ class RevenueQuery
         $dates = self::bounds($range);
 
         return Money::fromCents((int) Order::query()
-            ->active()->paid()
+            ->revenue()
             ->whereBetween('delivery_date', $dates)
             ->sum('total'));
     }
@@ -37,7 +37,7 @@ class RevenueQuery
         $dates = self::bounds($range);
 
         return Order::query()
-            ->active()->paid()
+            ->revenue()
             ->whereBetween('delivery_date', $dates)
             ->toBase()
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue_cents')
