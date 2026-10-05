@@ -68,7 +68,7 @@ class ViewCustomer extends ViewRecord
                 ->authorize('anonymise')
                 ->requiresConfirmation()
                 ->modalHeading('Anonymise this customer?')
-                ->modalDescription('Their name, email, phone, address, birthday and notes are replaced for good, they are signed out and unsubscribed, and their favorites, carts, waitlists, photos and survey responses are deleted. Their orders stay for your records. This cannot be undone.')
+                ->modalDescription('Their name, email, phone, address, birthday and notes are replaced for good, they are signed out and unsubscribed, your notes about them are deleted, and their favorites, carts, waitlists, photos and survey responses are deleted. Their orders stay for your records. This cannot be undone.')
                 ->modalSubmitActionLabel('Anonymise customer')
                 ->action(function (AnonymiseCustomer $anonymiseCustomer): void {
                     $anonymiseCustomer($this->record);

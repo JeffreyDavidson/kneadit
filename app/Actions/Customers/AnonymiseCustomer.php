@@ -3,16 +3,20 @@
 namespace App\Actions\Customers;
 
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerNote;
 use App\Models\Customers\CustomerProfile;
+use App\Models\Customers\CustomerReminder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
  * Erases a customer's personal data while keeping the customer row and their
  * orders, which the bakery needs for its accounting. The name, email, phone,
- * address, birthday and notes are replaced, the customer is unsubscribed from
- * marketing and signed out everywhere, and the records held under their email
- * are removed (see EraseCustomerPersonalRecords). Running it again does nothing.
+ * address, birthday and notes are replaced, staff notes and reminders about them
+ * are deleted (loyalty points and referrals stay for accounting), the customer is
+ * unsubscribed from marketing and signed out everywhere, and the records held
+ * under their email are removed (see EraseCustomerPersonalRecords). Running it
+ * again does nothing.
  */
 class AnonymiseCustomer
 {
@@ -60,7 +64,11 @@ class AnonymiseCustomer
                 'marketing_opted_out_at' => $customer->marketing_opted_out_at ?? now(),
             ])->save();
 
+            // Staff free text about the person and their reorder reminders go;
+            // loyalty points and referrals stay tied to the id for accounting.
             CustomerProfile::query()->where('customer_id', $customer->id)->delete();
+            CustomerNote::query()->where('customer_id', $customer->id)->delete();
+            CustomerReminder::query()->where('customer_id', $customer->id)->delete();
 
             ($this->erase)($customer->id, $email);
         });

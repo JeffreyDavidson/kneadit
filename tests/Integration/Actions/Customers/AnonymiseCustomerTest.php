@@ -4,10 +4,14 @@ use App\Actions\Customers\AnonymiseCustomer;
 use App\Models\Customers\CateringInquiry;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
+use App\Models\Customers\CustomerNote;
 use App\Models\Customers\CustomerPhoto;
 use App\Models\Customers\CustomerProfile;
+use App\Models\Customers\CustomerReferral;
+use App\Models\Customers\CustomerReminder;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Engagement\CustomerCampaignLog;
+use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\Review;
 use App\Models\Engagement\SurveyResponse;
 use App\Models\Inventory\ProductWaitlist;
@@ -132,18 +136,60 @@ test('keeps an approved review without the reviewer and deletes one that is not 
         ->and($others->fresh()->customer_name)->toBe('Grace');
 });
 
-test('anonymises the contact fields of catering inquiries but keeps the inquiry', function () {
+test('anonymises the contact fields and removes the free text of catering inquiries but keeps the inquiry', function () {
     $inquiry = CateringInquiry::factory()->create([
         'customer_name' => 'Ada Lovelace',
         'customer_email' => 'ada@example.com',
         'customer_phone' => '555-010-0100',
+        'details' => 'Wedding for Ada and Bob at the lake house',
+        'dietary_requirements' => 'Ada is coeliac',
+        'venue_address' => '1 Lake Road',
+        'notes' => 'Ada prefers morning calls',
     ]);
 
     $customer = anonymise(test()->customer);
 
-    expect($inquiry->fresh()->customer_name)->toBe("Deleted customer #{$customer->id}")
+    expect($inquiry->fresh()->details)->toBe('[removed]')
+        ->and($inquiry->fresh()->dietary_requirements)->toBeNull()
+        ->and($inquiry->fresh()->venue_address)->toBeNull()
+        ->and($inquiry->fresh()->notes)->toBeNull()
+        ->and($inquiry->fresh()->customer_name)->toBe("Deleted customer #{$customer->id}")
         ->and($inquiry->fresh()->customer_email)->toBe("deleted+{$customer->id}@invalid")
         ->and($inquiry->fresh()->customer_phone)->toBeNull();
+});
+
+test('deletes staff notes and reminders about the customer but keeps loyalty points and referrals', function () {
+    $notes = CustomerNote::factory()->for(test()->customer)->count(2)->create();
+    $reminder = CustomerReminder::factory()->for(test()->customer)->create();
+    $points = LoyaltyPoint::factory()->for(test()->customer)->create();
+    $referral = CustomerReferral::factory()->create(['referrer_customer_id' => test()->customer->id]);
+    $otherNote = CustomerNote::factory()->for(test()->other)->create();
+
+    anonymise(test()->customer);
+
+    expect(CustomerNote::query()->whereKey($notes->modelKeys())->exists())->toBeFalse()
+        ->and($reminder->fresh())->toBeNull()
+        ->and($points->fresh())->not->toBeNull()
+        ->and($referral->fresh())->not->toBeNull()
+        ->and($otherNote->fresh())->not->toBeNull();
+});
+
+test('blanks a survey response filed against the customer order but not under their email', function () {
+    $order = Order::factory()->for(test()->customer)->create();
+    $response = SurveyResponse::factory()->create([
+        'customer_name' => 'Someone',
+        'customer_email' => 'other-address@example.com',
+        'answers' => ['feedback' => 'Ada was great'],
+        'order_id' => $order->id,
+    ]);
+    $unrelated = SurveyResponse::factory()->create(['customer_email' => 'grace@example.com', 'answers' => ['a' => 'b']]);
+
+    anonymise(test()->customer);
+
+    expect($response->fresh()->customer_name)->toBeNull()
+        ->and($response->fresh()->customer_email)->toBeNull()
+        ->and($response->fresh()->answers)->toBeEmpty()
+        ->and($unrelated->fresh()->answers)->toBe(['a' => 'b']);
 });
 
 test('redacts the customer values in the activity log', function () {

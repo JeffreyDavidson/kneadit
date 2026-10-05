@@ -13,6 +13,7 @@ use App\Models\Engagement\SurveyResponse;
 use App\Models\Inventory\ProductWaitlist;
 use App\Models\Operations\ActivityLog;
 use App\Models\Orders\Cart;
+use App\Models\Orders\Order;
 use App\Services\Audit\ActivityLogRedactor;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -25,18 +26,23 @@ use Illuminate\Support\Facades\Storage;
  * customer), their saved carts, and their values in the activity log.
  *
  * Favorites, campaign logs, waitlists, photos, survey responses and carts are
- * deleted. A review is kept, without the reviewer's name, email or photo, only
- * if it was approved; otherwise it is deleted. A catering inquiry is kept with
- * its contact fields anonymised. Safe to run again.
+ * deleted, and a survey response filed against one of their orders keeps its row
+ * without the name, email and answers. A review is kept, without the reviewer's
+ * name, email or photo, only if it was approved; otherwise it is deleted. A
+ * catering inquiry is kept with its contact fields anonymised and its free text
+ * (details, dietary requirements, venue address, notes) removed. Safe to run again.
  */
 class EraseCustomerPersonalRecords
 {
     /** The columns of the customer row that identify a person. */
     private const array CUSTOMER_KEYS = ['name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday'];
 
+    /** Stands in for a required text column that has to be emptied. */
+    private const string REMOVED = '[removed]';
+
     private const array REVIEW_KEYS = ['customer_name', 'customer_email', 'photo_path'];
 
-    private const array INQUIRY_KEYS = ['customer_name', 'customer_email', 'customer_phone'];
+    private const array INQUIRY_KEYS = ['customer_name', 'customer_email', 'customer_phone', 'details', 'dietary_requirements', 'venue_address', 'notes'];
 
     public function __construct(private readonly ActivityLogRedactor $redactor) {}
 
@@ -44,6 +50,7 @@ class EraseCustomerPersonalRecords
     {
         DB::transaction(function () use ($customerId, $email): void {
             $this->deleteEmailKeyedRecords($email);
+            $this->blankSurveyResponsesOnTheirOrders($customerId);
             $this->deleteCarts($customerId, $email);
             $this->eraseReviews($customerId, $email);
             $this->anonymiseInquiries($customerId, $email);
@@ -62,6 +69,21 @@ class EraseCustomerPersonalRecords
         $photos = CustomerPhoto::query()->where('customer_email', $email);
         Storage::disk('public')->delete($photos->pluck('photo_path')->all());
         $photos->delete();
+    }
+
+    /**
+     * A survey response filed against one of the customer's orders but not under
+     * their email survives the delete above; keep the row, drop who and what.
+     */
+    private function blankSurveyResponsesOnTheirOrders(int $customerId): void
+    {
+        SurveyResponse::query()
+            ->whereIn('order_id', Order::query()->where('customer_id', $customerId)->select('id'))
+            ->update([
+                'customer_name' => null,
+                'customer_email' => null,
+                'answers' => '[]',
+            ]);
     }
 
     private function deleteCarts(int $customerId, string $email): void
@@ -105,6 +127,10 @@ class EraseCustomerPersonalRecords
             'customer_name' => AnonymiseCustomer::placeholderName($customerId),
             'customer_email' => AnonymiseCustomer::placeholderEmail($customerId),
             'customer_phone' => null,
+            'details' => self::REMOVED,
+            'dietary_requirements' => null,
+            'venue_address' => null,
+            'notes' => null,
         ]);
 
         $this->redactActivityLog(CateringInquiry::class, $ids, self::INQUIRY_KEYS);
