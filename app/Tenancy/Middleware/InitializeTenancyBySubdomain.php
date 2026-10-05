@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tenancy\Middleware;
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
-use Stancl\Tenancy\Exceptions\NotASubdomainException;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain as StanclInitializeTenancyBySubdomain;
 
 /**
@@ -36,8 +34,7 @@ class InitializeTenancyBySubdomain extends StanclInitializeTenancyBySubdomain
         return $label === '' || str_contains($label, '.') ? null : $label;
     }
 
-    /** @return string|Response|NotASubdomainException|mixed */
-    protected function makeSubdomain(string $hostname)
+    protected function makeSubdomain(string $hostname): mixed
     {
         return self::tenantDomainLabel($hostname) ?? parent::makeSubdomain($hostname);
     }

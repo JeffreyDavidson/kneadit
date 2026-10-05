@@ -15,7 +15,7 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain as StanclInit
  */
 class InitializeTenancyByDomainOrSubdomain extends StanclInitializeTenancyByDomainOrSubdomain
 {
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next): mixed
     {
         if ($this->isSubdomain($request->getHost())) {
             return resolve(InitializeTenancyBySubdomain::class)->handle($request, $next);
