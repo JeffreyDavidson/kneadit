@@ -87,6 +87,14 @@ class CustomerQueryBuilder extends Builder
         return $this;
     }
 
+    /** Customers who have verified their email address. */
+    public function emailVerified(): static
+    {
+        $this->whereNotNull('email_verified_at');
+
+        return $this;
+    }
+
     public function unsubscribedFromMarketing(): static
     {
         $this->whereNotNull('marketing_opted_out_at');

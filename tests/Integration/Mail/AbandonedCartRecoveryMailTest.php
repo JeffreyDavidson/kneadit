@@ -16,14 +16,15 @@ beforeEach(fn () => setUpTenantTest());
 
 test('renders items + recovery link when no coupon', function () {
     $product = Product::factory()->create(['name' => 'Croissant']);
-    $cart = Cart::factory()->withEmail('alice@example.com')->create(['customer_name' => 'Alice']);
+    $cart = Cart::factory()->withEmail('alice@example.com')->create(['customer_name' => 'Mallory']);
     CartItem::factory()->for($cart)->create(['product_id' => $product->id, 'quantity' => 3]);
 
     $cart->load('items.product');
-    $rendered = new AbandonedCartRecoveryMail($cart, Customer::factory()->create(), null)->render();
+    $rendered = new AbandonedCartRecoveryMail($cart, Customer::factory()->create(['name' => 'Alice']), null)->render();
 
     expect($rendered)
-        ->toContain('Alice')
+        ->toContain('Hi Alice,')
+        ->not->toContain('Mallory')
         ->toContain('Croissant')
         ->toContain('3 ×')
         ->toContain('Finish my order');

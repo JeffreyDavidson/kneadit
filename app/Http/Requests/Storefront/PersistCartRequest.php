@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Storefront;
 
+use App\Models\Customers\Customer;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,5 +27,13 @@ class PersistCartRequest extends FormRequest
             'customer_email' => ['nullable', 'email', 'max:255'],
             'customer_name' => ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    /** The customer signed in on this browser, if any. */
+    public function customer(): ?Customer
+    {
+        $customer = $this->user('customer');
+
+        return $customer instanceof Customer ? $customer : null;
     }
 }

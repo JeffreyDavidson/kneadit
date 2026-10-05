@@ -83,7 +83,7 @@ dataset('marketing senders', [
     'abandoned cart recovery' => [function (Customer $customer): bool {
         runCommandsAsOneTenant();
         settings(['abandoned_cart_recovery_enabled' => '1', 'abandoned_cart_recovery_hours' => '24']);
-        $cart = Cart::factory()->withEmail($customer->email)->abandoned(48)->create();
+        $cart = Cart::factory()->signedInAs($customer)->abandoned(48)->create();
         CartItem::factory()->for($cart)->create();
 
         artisan('carts:send-abandonment-emails')->assertSuccessful();

@@ -25,6 +25,8 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  *
  * @property ActivityAction $action
+ * @property string $model_type
+ * @property array<array-key, mixed>|null $properties
  * @property Carbon $created_at
  */
 #[WithoutTimestamps]

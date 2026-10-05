@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Orders;
 
+use App\Models\Customers\Customer;
 use App\Models\Orders\Cart;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,6 +21,7 @@ class CartFactory extends Factory
     {
         return [
             'cart_token' => (string) Str::ulid(),
+            'customer_id' => null,
             'customer_email' => null,
             'customer_name' => null,
             'last_activity_at' => now(),
@@ -32,6 +34,16 @@ class CartFactory extends Factory
     public function withEmail(string $email = 'customer@example.com'): static
     {
         return $this->state(fn (array $attributes) => ['customer_email' => $email]);
+    }
+
+    /** A cart saved from this customer's signed-in session. */
+    public function signedInAs(Customer $customer): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'customer_id' => $customer->id,
+            'customer_email' => $customer->email,
+            'customer_name' => $customer->name,
+        ]);
     }
 
     public function abandoned(int $hoursAgo = 24): static

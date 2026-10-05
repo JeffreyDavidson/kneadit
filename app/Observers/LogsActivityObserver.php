@@ -4,12 +4,15 @@ namespace App\Observers;
 
 use App\Enums\Operations\ActivityAction;
 use App\Models\Operations\ActivityLog;
+use App\Services\Audit\ActivityLogRedactor;
 use App\Services\Audit\ActorContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class LogsActivityObserver
 {
+    public function __construct(private readonly ActivityLogRedactor $redactor) {}
+
     public function created(Model $model): void
     {
         $this->log($model, ActivityAction::Created);
@@ -45,7 +48,7 @@ class LogsActivityObserver
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
                 'description' => class_basename($model)." #{$modelKey} was {$action->value}",
-                'properties' => $changes === [] ? null : ['changes' => $changes],
+                'properties' => $changes === [] ? null : ['changes' => $this->redactor->redactChanges($model, $changes)],
                 'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable $e) {

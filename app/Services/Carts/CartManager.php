@@ -2,6 +2,7 @@
 
 namespace App\Services\Carts;
 
+use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Cart;
 use App\Support\EmailAddress;
@@ -103,16 +104,29 @@ class CartManager
         $this->touch($cart);
     }
 
-    public function updateContact(Cart $cart, ?string $email, ?string $name): void
+    /**
+     * Save who the cart belongs to. A signed-in customer's cart takes their
+     * stored email and name and is tied to them; anything the browser sent is
+     * ignored. A guest cart keeps what was typed but is tied to nobody, so the
+     * address is never trusted for recovery email on its own.
+     */
+    public function updateContact(Cart $cart, ?string $email, ?string $name, ?Customer $customer = null): void
     {
+        if ($customer instanceof Customer) {
+            $email = $customer->email;
+            $name = $customer->name;
+        }
+
         $email = $email !== null && trim($email) !== '' ? EmailAddress::normalize($email) : null;
         $name = $name !== null && trim($name) !== '' ? trim($name) : null;
+        $customerId = $customer?->id;
 
-        if ($cart->customer_email === $email && $cart->customer_name === $name) {
+        if ($cart->customer_id === $customerId && $cart->customer_email === $email && $cart->customer_name === $name) {
             return;
         }
 
         $cart->forceFill([
+            'customer_id' => $customerId,
             'customer_email' => $email,
             'customer_name' => $name,
         ])->save();
