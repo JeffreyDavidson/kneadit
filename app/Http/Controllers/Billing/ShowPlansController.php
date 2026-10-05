@@ -25,6 +25,7 @@ class ShowPlansController extends Controller
             'currentPlan' => $user instanceof User ? SubscriptionTier::resolve($user)?->value : null,
             'bakeryName' => $hasTenant ? ($tenant->store_name ?: $tenant->name) : session('bakery_name'),
             'bakeryAdminUrl' => $hasTenant ? $tenantUrls->admin($tenant) : null,
+            'trialEndsAt' => $hasTenant && $tenant->trial_ends_at?->isFuture() ? $tenant->trial_ends_at : null,
             'isFreeForever' => $hasTenant && $tenant->free_forever,
         ]);
     }

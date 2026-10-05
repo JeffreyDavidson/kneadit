@@ -38,8 +38,12 @@
             <div class="header">
                 <h1>Choose Your Plan</h1>
                 <p>
-                    All plans include a {{ config('kneadit.trial_days') }}-day free trial. No credit card required to
-                    start.
+                    @if ($trialEndsAt)
+                        Your free trial ends on {{ $trialEndsAt->format('F j, Y') }}. Pick a plan whenever you are
+                        ready; you will not be charged until then.
+                    @else
+                        Pick the plan that fits your bakery. You only need a card when you choose one.
+                    @endif
                 </p>
             </div>
 
@@ -89,7 +93,7 @@
                                     type="submit"
                                     @class(['plan-btn', 'plan-btn-primary' => $key === 'growth', 'plan-btn-outline' => $key !== 'growth'])
                                 >
-                                    Start Free Trial
+                                    {{ $trialEndsAt ? 'Choose plan' : 'Subscribe' }}
                                 </button>
                             </form>
                         @endif
@@ -98,8 +102,8 @@
             </div>
 
             <div class="trial-note">
-                <strong>{{ config('kneadit.trial_days') }}-day free trial</strong> on all plans. Cancel anytime. No
-                questions asked.
+                Your {{ config('kneadit.trial_days') }}-day free trial starts when your bakery is created. Cancel
+                anytime. No questions asked.
             </div>
 
             @if ($currentPlan)

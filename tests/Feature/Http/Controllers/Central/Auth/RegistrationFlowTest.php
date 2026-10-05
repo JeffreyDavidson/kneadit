@@ -6,6 +6,7 @@ use App\Models\Staff\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
+use function Pest\Laravel\withSession;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -29,10 +30,26 @@ test('user can register with valid data', function () {
         'terms' => true,
     ]);
 
-    $response->assertRedirect(route('billing.plans'));
+    $response->assertRedirect(route('onboarding.show'));
     test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
     test()->assertAuthenticated();
     expect(session('bakery_name'))->toBe('Sunshine Bakery');
+});
+
+test('a referred registration also goes straight to onboarding', function () {
+    $response = withSession(['referral_code' => 'REF123'])
+        ->post(route('register'), [
+            'name' => 'Jane Baker',
+            'email' => 'jane@example.com',
+            'password' => 'SecurePass123!',
+            'password_confirmation' => 'SecurePass123!',
+            'bakery_name' => 'Sunshine Bakery',
+            'terms' => true,
+        ]);
+
+    $response->assertRedirect(route('onboarding.show'));
+    expect(session('referral_code'))->toBe('REF123')
+        ->and(session('bakery_name'))->toBe('Sunshine Bakery');
 });
 
 test('registration requires all fields', function () {
