@@ -14,6 +14,7 @@ use App\Models\Inventory\ProductWaitlist;
 use App\Models\Operations\ActivityLog;
 use App\Models\Orders\Cart;
 use App\Services\Audit\ActivityLogRedactor;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -120,7 +121,7 @@ class EraseCustomerPersonalRecords
             ->where('model_type', $modelType)
             ->whereIn('model_id', $modelIds)
             ->whereNotNull('properties')
-            ->chunkById(200, function ($logs) use ($keys): void {
+            ->chunkById(200, function (EloquentCollection $logs) use ($keys): void {
                 foreach ($logs as $log) {
                     if ($log->properties === null) {
                         continue;

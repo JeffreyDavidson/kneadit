@@ -9,6 +9,7 @@ use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -29,7 +30,7 @@ class RedactActivityLogSecretsCommand extends Command
 
             ActivityLog::query()
                 ->whereNotNull('properties')
-                ->chunkById(500, function ($logs) use ($redactor, &$redacted): void {
+                ->chunkById(500, function (EloquentCollection $logs) use ($redactor, &$redacted): void {
                     foreach ($logs as $log) {
                         $properties = $log->properties;
 
