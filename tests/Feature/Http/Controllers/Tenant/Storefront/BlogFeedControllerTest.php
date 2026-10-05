@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Content\TenantBlogPost;
+use App\Services\Settings\TenantSettings;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -46,4 +47,19 @@ test('blog feed is well-formed XML with titles escaped once', function () {
         ->and((string) $feed->channel->item[0]->title)->toBe('Bread & Butter')
         ->and((string) $feed->channel->item[0]->description)->toBe('Salt & "pepper" <3')
         ->and((string) $feed->channel->item[0]->link)->toBe(route('storefront.blog.show', 'bread-and-butter'));
+});
+
+test('blog feed names the bakery in dc:creator instead of author', function () {
+    TenantBlogPost::factory()->published()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.blog.feed', [], false));
+
+    $feed = simplexml_load_string($response->getContent());
+    $item = $feed->channel->item[0];
+
+    expect($feed)->not->toBeFalse()
+        ->and(isset($item->author))->toBeFalse()
+        ->and((string) $item->children('http://purl.org/dc/elements/1.1/')->creator)
+        ->toBe(resolve(TenantSettings::class)->store->name);
 });

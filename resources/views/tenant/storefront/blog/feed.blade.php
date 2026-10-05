@@ -1,5 +1,5 @@
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title>{{ $settings->store->name }} Blog</title>
         <link>{{ url('/blog') }}</link>
@@ -16,7 +16,7 @@
                     <description>{{ $post->excerpt }}</description>
                 @endif
                 @if ($settings->store->name)
-                    <author>{{ $settings->store->name }}</author>
+                    <dc:creator>{{ $settings->store->name }}</dc:creator>
                 @endif
             </item>
         @endforeach

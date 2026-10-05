@@ -3,6 +3,7 @@
 use App\Models\Financial\Expense;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Pennant\Feature;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\withoutMiddleware;
@@ -11,6 +12,7 @@ beforeEach(function () {
     setUpTenantTest();
     Storage::fake('receipts');
     Storage::fake('public');
+    Feature::define('growth-features', fn () => true);
     test()->png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
 });
 
@@ -55,6 +57,17 @@ test('staff below manager cannot open a receipt', function () {
     Storage::disk('receipts')->put('private.png', test()->png);
     $expense = Expense::factory()->create(['receipt_image' => 'private.png']);
     actingAs(User::factory()->staff()->create());
+
+    withoutMiddleware(tenantMiddleware())
+        ->get(route('admin.expenses.receipt', $expense, false))
+        ->assertForbidden();
+});
+
+test('a bakery without the growth plan feature cannot open a receipt', function () {
+    Feature::define('growth-features', fn () => false);
+    Storage::disk('receipts')->put('private.png', test()->png);
+    $expense = Expense::factory()->create(['receipt_image' => 'private.png']);
+    actingAs(User::factory()->owner()->create());
 
     withoutMiddleware(tenantMiddleware())
         ->get(route('admin.expenses.receipt', $expense, false))
