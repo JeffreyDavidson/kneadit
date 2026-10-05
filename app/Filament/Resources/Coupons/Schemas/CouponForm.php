@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Coupons\Schemas;
 use App\Enums\Financial\CouponType;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Forms\Components\PercentageInput;
+use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -77,9 +78,11 @@ class CouponForm
                         Grid::make(2)
                             ->components([
                                 DateTimePicker::make('starts_at')
+                                    ->timezone(fn (): string => resolve(TenantSettings::class)->orders->timezone)
                                     ->placeholder('Effective immediately'),
 
                                 DateTimePicker::make('expires_at')
+                                    ->timezone(fn (): string => resolve(TenantSettings::class)->orders->timezone)
                                     ->placeholder('Never expires'),
                             ]),
                     ]),
