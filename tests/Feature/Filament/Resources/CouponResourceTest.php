@@ -5,6 +5,7 @@ use App\Filament\Resources\Coupons\CouponResource;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Models\Financial\Coupon;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -65,6 +66,30 @@ test('create coupon requires the discount that matches its type', function (Coup
     'fixed' => [CouponType::Fixed, 'fixed_amount'],
     'percentage' => [CouponType::Percentage, 'percentage'],
 ]);
+
+test('coupon validity dates are entered and shown in the bakery timezone', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+
+    livewire(ListCoupons::class)
+        ->callAction(CreateAction::class, data: [
+            'code' => 'SPRING20',
+            'type' => CouponType::Percentage->value,
+            'percentage' => 20,
+            'starts_at' => '2026-10-15 00:00:00',
+            'expires_at' => '2026-10-15 23:59:00',
+            'is_active' => true,
+        ])
+        ->assertHasNoFormErrors();
+    $coupon = Coupon::query()->where('code', 'SPRING20')->firstOrFail();
+
+    expect($coupon->starts_at->format('Y-m-d H:i'))->toBe('2026-10-15 04:00')
+        ->and($coupon->expires_at->format('Y-m-d H:i'))->toBe('2026-10-16 03:59');
+
+    livewire(ListCoupons::class)
+        ->mountAction(TestAction::make('edit')->table($coupon))
+        ->assertSet('mountedActions.0.data.starts_at', '2026-10-15 00:00:00')
+        ->assertSet('mountedActions.0.data.expires_at', '2026-10-15 23:59:00');
+});
 
 test('can edit a coupon via table action', function () {
     $coupon = Coupon::factory()->percentage()->create();

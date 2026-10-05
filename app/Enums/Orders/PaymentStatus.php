@@ -27,6 +27,15 @@ enum PaymentStatus: string implements HasColor, HasLabel
         };
     }
 
+    /** Whether an order with this payment status may still earn loyalty points. */
+    public function earnsLoyaltyPoints(): bool
+    {
+        return match ($this) {
+            self::Unpaid, self::Partial, self::Paid => true,
+            self::Cancelled, self::Refunded => false,
+        };
+    }
+
     public function getColor(): string
     {
         return match ($this) {

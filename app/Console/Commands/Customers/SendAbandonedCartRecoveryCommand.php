@@ -7,6 +7,7 @@ use App\Mail\Customers\AbandonedCartRecoveryMail;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
 use App\Models\Orders\Cart;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
@@ -22,13 +23,16 @@ use Throwable;
 #[Description('Email customers who left items in their cart and did not check out')]
 class SendAbandonedCartRecoveryCommand extends Command
 {
+    /** Carts untouched for longer than this are too stale to recover. */
+    private const int MAX_CART_AGE_DAYS = 7;
+
     public function handle(TenancyManager $tenancyManager): int
     {
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant, TenantSettings $settings): void {
                 $engagement = $settings->engagement;
 
-                if (! $engagement->abandonedCartRecoveryEnabled) {
+                if ($tenant->is_paused || ! $engagement->abandonedCartRecoveryEnabled) {
                     return;
                 }
 
@@ -46,6 +50,8 @@ class SendAbandonedCartRecoveryCommand extends Command
                     ->whereNull('recovery_claimed_at')
                     ->whereNull('converted_at')
                     ->where('last_activity_at', '<=', $cutoff)
+                    ->activeSince(now()->subDays(self::MAX_CART_AGE_DAYS))
+                    ->notExpired()
                     ->whereHas('items')
                     ->with('items.product')
                     ->get();
@@ -59,6 +65,12 @@ class SendAbandonedCartRecoveryCommand extends Command
                     $customer = $customers->get($cart->customer_email);
 
                     if (! $customer instanceof Customer) {
+                        continue;
+                    }
+
+                    if ($this->orderedSinceLastActivity($cart)) {
+                        $cart->forceFill(['converted_at' => now()])->save();
+
                         continue;
                     }
 
@@ -97,6 +109,24 @@ class SendAbandonedCartRecoveryCommand extends Command
         );
 
         return $failures > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    /**
+     * The cart is only marked converted from the cookie on the device that
+     * placed the order, so a customer who ordered elsewhere (or whose order the
+     * bakery entered) still has an open cart. An order for the same email placed
+     * after the cart was last touched means there is nothing to recover.
+     */
+    private function orderedSinceLastActivity(Cart $cart): bool
+    {
+        if ($cart->customer_email === null) {
+            return false;
+        }
+
+        return Order::query()
+            ->placedByEmail($cart->customer_email)
+            ->where('created_at', '>', $cart->last_activity_at ?? $cart->created_at)
+            ->exists();
     }
 
     private function mintCoupon(int $dollars): Coupon

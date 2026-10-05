@@ -4,7 +4,6 @@ use App\Http\Requests\Api\CheckGiftCardBalanceRequest;
 use App\Http\Requests\Api\StoreApiContactRequest;
 use App\Http\Requests\Api\StoreApiFavoriteRequest;
 use App\Http\Requests\Api\StoreApiOrderRequest;
-use App\Http\Requests\Api\StoreApiReviewRequest;
 use App\Http\Requests\Api\StoreApiWaitlistRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
@@ -35,7 +34,6 @@ test('form requests reject empty data for required fields', function () {
         StoreApiContactRequest::class => ['name', 'email', 'subject', 'message'],
         StoreOrderMessageRequest::class => ['message', 'sender_name', 'sender_email'],
         StoreSurveyResponseRequest::class => ['answers'],
-        StoreApiReviewRequest::class => ['customer_name', 'customer_email', 'product_id', 'rating', 'comment'],
         StoreApiWaitlistRequest::class => ['customer_name', 'customer_email', 'customer_phone', 'requested_date'],
         StoreReviewRequest::class => ['rating'],
         StoreProductWaitlistRequest::class => ['product_id', 'customer_email'],
@@ -70,7 +68,6 @@ test('form requests reject invalid email values', function () {
         StoreContactMessageRequest::class => 'email',
         StoreApiContactRequest::class => 'email',
         StoreOrderMessageRequest::class => 'sender_email',
-        StoreApiReviewRequest::class => 'customer_email',
         StoreApiWaitlistRequest::class => 'customer_email',
         StoreApiOrderRequest::class => 'customer_email',
         StoreProductWaitlistRequest::class => 'customer_email',

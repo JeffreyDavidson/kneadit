@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 
 beforeEach(function () {
@@ -13,6 +14,30 @@ test('checkout success redirects authenticated user to onboarding', function () 
     $this->actingAs($user)
         ->get(route('billing.success'))
         ->assertRedirect(route('onboarding.show'));
+});
+
+test('checkout success resumes the paused bakery of an owner whose subscription is valid', function () {
+    $user = User::factory()->owner()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_checkout_success',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_starter_test',
+    ]);
+    $tenant = Tenant::factory()->for($user, 'owner')->create(['paused_at' => now()->subDay()]);
+
+    $this->actingAs($user)->get(route('billing.success'));
+
+    expect($tenant->refresh()->paused_at)->toBeNull();
+});
+
+test('checkout success leaves a paused bakery paused while the owner has no valid subscription', function () {
+    $user = User::factory()->owner()->create();
+    $tenant = Tenant::factory()->for($user, 'owner')->create(['paused_at' => now()->subDay()]);
+
+    $this->actingAs($user)->get(route('billing.success'));
+
+    expect($tenant->refresh()->paused_at)->not->toBeNull();
 });
 
 test('checkout success skips stripe check for authenticated user with session_id', function () {

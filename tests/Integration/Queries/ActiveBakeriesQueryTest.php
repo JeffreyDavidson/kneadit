@@ -12,6 +12,13 @@ beforeEach(function () {
     DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
 });
 
+test('it leaves out paused bakeries', function () {
+    createTenant(['id' => 'running-bakery', 'store_name' => 'Running']);
+    createTenant(['id' => 'paused-bakery', 'store_name' => 'Paused', 'paused_at' => now()]);
+
+    expect(ActiveBakeriesQuery::get()->pluck('name')->all())->toBe(['Running']);
+});
+
 test('it returns only active tenants with storefronts enabled', function () {
     createTenant([
         'id' => 'active-bakery',

@@ -2,6 +2,7 @@
 
 namespace App\Services\Engagement\Engagements;
 
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customers\Customer;
@@ -11,6 +12,7 @@ use App\Services\Engagement\Contracts\EngagementRecipient;
 use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 class RepeatOrderReminderEngagement implements CustomerEngagement
@@ -36,7 +38,8 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ->where('email', '!=', '')
             ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with([
-                'orders' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)
+                'orders' => fn (HasMany $q) => $q->where('status', '!=', OrderStatus::Cancelled)
+                    ->whereNotIn('payment_status', [PaymentStatus::Cancelled, PaymentStatus::Refunded])
                     ->latest('delivery_date')
                     ->limit(1),
                 'customerReminders',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Mail\Customers\RepeatOrderReminderMail;
@@ -55,6 +56,7 @@ test('findRecipients returns customers whose last paid order exceeds reminder da
         ]);
     Order::factory()
         ->for($customer)
+        ->cancelled()
         ->create([
             'payment_status' => PaymentStatus::Unpaid,
             'delivery_date' => now()->subDay(),
@@ -101,6 +103,40 @@ test('findRecipients excludes customers with recent orders', function () {
 
     expect($recipients)->toBeEmpty();
 });
+
+test('findRecipients skips customers with a recent order that is not paid yet', function (PaymentStatus $paymentStatus, string $deliveryDate) {
+    settings(['repeat_reminder_days' => '14']);
+    $customer = Customer::factory()->create(['email' => 'open@example.com']);
+    Order::factory()->for($customer)->paid()->create(['delivery_date' => now()->subDays(40)->toDateString()]);
+    Order::factory()->for($customer)->create([
+        'payment_status' => $paymentStatus,
+        'delivery_date' => $deliveryDate,
+    ]);
+
+    $recipients = resolve(RepeatOrderReminderEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients)->toBeEmpty();
+})->with([
+    'unpaid, delivered today' => [PaymentStatus::Unpaid, fn () => now()->toDateString()],
+    'unpaid, delivering next week' => [PaymentStatus::Unpaid, fn () => now()->addWeek()->toDateString()],
+    'partially paid, delivered yesterday' => [PaymentStatus::Partial, fn () => now()->subDay()->toDateString()],
+]);
+
+test('findRecipients ignores a recent order that was cancelled or refunded', function (array $recentOrder) {
+    settings(['repeat_reminder_days' => '14']);
+    $customer = Customer::factory()->create(['email' => 'lapsed@example.com']);
+    Order::factory()->for($customer)->paid()->create(['delivery_date' => now()->subDays(40)->toDateString()]);
+    Order::factory()->for($customer)->create([...$recentOrder, 'delivery_date' => now()->toDateString()]);
+
+    $recipients = resolve(RepeatOrderReminderEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients)->toHaveCount(1)
+        ->and($recipients->first()->context['last_order_date']->toDateString())->toBe(now()->subDays(40)->toDateString());
+})->with([
+    'cancelled order' => [['status' => OrderStatus::Cancelled]],
+    'cancelled payment' => [['payment_status' => PaymentStatus::Cancelled]],
+    'refunded payment' => [['payment_status' => PaymentStatus::Refunded]],
+]);
 
 test('findRecipients excludes customers with no email', function () {
     settings(['repeat_reminder_days' => '14']);

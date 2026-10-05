@@ -174,24 +174,25 @@ class PromoCode extends Page implements HasForms
 
         try {
             $isPercent = ($state['discount_type'] ?? 'percent') === 'percent';
-            $value = Arr::has($state, 'discount_value') ? Arr::integer($state, 'discount_value') : null;
+            $value = $this->optionalInteger($state, 'discount_value');
             $duration = Arr::string($state, 'duration', 'once');
-            $durationInMonths = Arr::has($state, 'duration_in_months') ? Arr::integer($state, 'duration_in_months') : null;
-            $maxRedemptions = Arr::integer($state, 'max_redemptions', 1);
-            $expiresInDays = isset($state['expires_in_days']) && $state['expires_in_days'] !== ''
-                ? Arr::integer($state, 'expires_in_days')
-                : null;
+            $durationInMonths = $this->optionalInteger($state, 'duration_in_months');
+            $maxRedemptions = $this->optionalInteger($state, 'max_redemptions') ?? 1;
+            $expiresInDays = $this->optionalInteger($state, 'expires_in_days');
+            $code = $this->optionalString($state, 'code');
+            $tenantId = $this->optionalString($state, 'tenant_id');
+            $name = $this->optionalString($state, 'name');
 
             $this->result = $action(
                 percentOff: $isPercent ? $value : null,
                 amountOffCents: ! $isPercent && $value !== null ? $value * 100 : null,
                 duration: $duration,
                 durationInMonths: $durationInMonths,
-                code: Arr::has($state, 'code') ? Arr::string($state, 'code') : null,
+                code: $code,
                 maxRedemptions: $maxRedemptions,
                 expiresInDays: $expiresInDays,
-                tenantId: Arr::has($state, 'tenant_id') ? Arr::string($state, 'tenant_id') : null,
-                name: Arr::has($state, 'name') ? Arr::string($state, 'name') : null,
+                tenantId: $tenantId,
+                name: $name,
             );
 
             PlatformPromoCode::query()->create([
@@ -204,8 +205,8 @@ class PromoCode extends Page implements HasForms
                 'duration_in_months' => $duration === 'repeating' ? $durationInMonths : null,
                 'max_redemptions' => $maxRedemptions,
                 'expires_at' => $expiresInDays !== null ? now()->addDays($expiresInDays) : null,
-                'tenant_id' => $state['tenant_id'] ?: null,
-                'name' => $state['name'] ?: null,
+                'tenant_id' => $tenantId,
+                'name' => $name,
                 'created_by_user_id' => auth()->id(),
             ]);
 
@@ -227,6 +228,21 @@ class PromoCode extends Page implements HasForms
                 ->danger()
                 ->send();
         }
+    }
+
+    /** @param array<string, mixed> $state */
+    private function optionalString(array $state, string $key): ?string
+    {
+        return filled($state[$key] ?? null) ? Arr::string($state, $key) : null;
+    }
+
+    /** @param array<string, mixed> $state */
+    private function optionalInteger(array $state, string $key): ?int
+    {
+        $value = $state[$key] ?? null;
+
+        // Numeric inputs arrive as ints, floats or numeric strings; blanks are null or ''.
+        return is_numeric($value) ? (int) $value : null;
     }
 
     /** @return Collection<int, PlatformPromoCode> */

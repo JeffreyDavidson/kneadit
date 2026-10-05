@@ -33,7 +33,7 @@ use App\Models\Staff\User;
 use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Collection;
 
-beforeEach(fn () => setUpTenantTest());
+beforeEach(fn () => setUpCentralTest());
 
 test('order mail classes render without errors', function () {
     $order = Order::factory()

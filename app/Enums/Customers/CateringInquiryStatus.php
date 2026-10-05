@@ -28,6 +28,17 @@ enum CateringInquiryStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
+    /**
+     * Only a quoted or confirmed inquiry can take a deposit.
+     */
+    public function acceptsDeposit(): bool
+    {
+        return match ($this) {
+            self::Quoted, self::Confirmed => true,
+            self::Inquiry, self::Completed, self::Cancelled => false,
+        };
+    }
+
     public function getIcon(): Heroicon
     {
         return match ($this) {

@@ -98,6 +98,33 @@ test('reset requires password confirmation', function () {
     $response->assertSessionHasErrors('password');
 });
 
+test('reset link is sent when the email differs from a legacy mixed-case account only by case', function (string $submitted) {
+    Notification::fake();
+    $user = User::factory()->create(['email' => 'Baker@Example.com']);
+
+    post('/forgot-password', ['email' => $submitted]);
+
+    Notification::assertSentTo($user, ResetPassword::class);
+})->with([
+    'lower case' => 'baker@example.com',
+    'padded' => ' baker@example.com ',
+]);
+
+test('password can be reset for a legacy mixed-case account using any casing of the email', function () {
+    $user = User::factory()->create(['email' => 'Baker@Example.com', 'password' => Hash::make('old-password')]);
+    $token = Password::createToken($user);
+
+    $response = post('/reset-password', [
+        'token' => $token,
+        'email' => 'baker@example.com',
+        'password' => 'newPassword1',
+        'password_confirmation' => 'newPassword1',
+    ]);
+
+    $response->assertRedirect('/login');
+    expect(Hash::check('newPassword1', $user->fresh()->password))->toBeTrue();
+});
+
 test('register page has forgot password link', function () {
     $response = get('/register');
 

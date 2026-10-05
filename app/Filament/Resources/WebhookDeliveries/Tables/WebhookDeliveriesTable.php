@@ -161,6 +161,7 @@ class WebhookDeliveriesTable
                     ->label('Redeliver')
                     ->icon(Heroicon::OutlinedArrowPath)
                     ->color('gray')
+                    ->authorize('manage-webhooks')
                     ->requiresConfirmation()
                     ->modalHeading('Redeliver this webhook?')
                     ->modalDescription(fn (WebhookDelivery $record): string => "Re-sends the original {$record->event} payload to the currently configured webhook URL. A new delivery row will be recorded.")

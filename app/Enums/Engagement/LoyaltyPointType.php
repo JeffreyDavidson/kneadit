@@ -10,6 +10,7 @@ enum LoyaltyPointType: string implements HasColor, HasLabel
     case Earned = 'earned';
     case Redeemed = 'redeemed';
     case Adjusted = 'adjusted';
+    case Reversed = 'reversed';
 
     public function getLabel(): string
     {
@@ -22,6 +23,7 @@ enum LoyaltyPointType: string implements HasColor, HasLabel
             self::Earned => 'success',
             self::Redeemed => 'warning',
             self::Adjusted => 'info',
+            self::Reversed => 'danger',
         };
     }
 
@@ -31,21 +33,22 @@ enum LoyaltyPointType: string implements HasColor, HasLabel
             self::Earned => 'text-green-600',
             self::Redeemed => 'text-red-600',
             self::Adjusted => 'text-yellow-600',
+            self::Reversed => 'text-red-600',
         };
     }
 
     /**
      * Format a stored points value for display, with its sign.
      *
-     * Earned and redeemed rows store a positive magnitude, so the sign comes
-     * from the type. Adjusted rows are stored signed, so the sign comes from
+     * Earned, redeemed and reversed rows store a positive magnitude, so the
+     * sign comes from the type. Adjusted rows are stored signed, so the sign comes from
      * the value.
      */
     public function formatPoints(int $points): string
     {
         $sign = match ($this) {
             self::Earned => '+',
-            self::Redeemed => '-',
+            self::Redeemed, self::Reversed => '-',
             self::Adjusted => $points < 0 ? '-' : '+',
         };
 

@@ -13,6 +13,8 @@ Schedule::withoutOverlapping()
     ->environments(['production'])
     ->runInBackground()
     ->group(function () {
+        Schedule::command('campaigns:send-scheduled')->everyFifteenMinutes()->name('campaigns:send-scheduled');
+        Schedule::command('platform:send-scheduled-campaigns')->everyFifteenMinutes()->name('platform:send-scheduled-campaigns');
         Schedule::command('paypal:check-payments')->hourly()->name('paypal:check-payments');
         Schedule::command('birthday:send-emails')->hourly()->name('birthday:send-emails');
         Schedule::command('orders:send-repeat-reminders')->hourly()->name('orders:send-repeat-reminders');

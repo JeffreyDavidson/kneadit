@@ -7,12 +7,14 @@ use App\Mail\Customers\CustomerCampaignMail;
 use App\Models\Engagement\CustomerCampaign;
 use App\Models\Engagement\CustomerCampaignLog;
 use App\Services\Customers\ResolveCampaignRecipients;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 /**
  * Sends a customer campaign to all recipients matching its target segment.
- * Idempotent guard: refuses to re-send a campaign that's already Sent.
+ * Idempotent guard: refuses to re-send a campaign that's already Sent, and
+ * emails each recipient at most once even when a partial send is retried.
  *
  * Creates one CustomerCampaignLog per recipient with a unique tracking
  * token, which the mailable embeds as a 1×1 open-tracking pixel. The
@@ -53,11 +55,19 @@ class SendCustomerCampaign
                 continue;
             }
 
-            $log = CustomerCampaignLog::query()->create([
-                'customer_campaign_id' => $campaign->id,
-                'customer_email' => $customer->email,
-                'tracking_token' => $this->mintToken(),
-            ]);
+            // The log row is the once-per-recipient record: it is written before the
+            // mail is queued, and the unique index on (campaign, email) refuses a
+            // second row. So a send that died partway and is retried skips everyone
+            // already logged. A crash between the row and the queue push loses that
+            // one email, which is preferred over emailing a customer twice.
+            try {
+                $log = $campaign->logs()->create([
+                    'customer_email' => $customer->email,
+                    'tracking_token' => $this->mintToken(),
+                ]);
+            } catch (UniqueConstraintViolationException) {
+                continue;
+            }
 
             Mail::to($customer->email)->queue(new CustomerCampaignMail($campaign, $customer, $log->tracking_token));
             $sent++;
@@ -66,7 +76,7 @@ class SendCustomerCampaign
         $campaign->forceFill([
             'status' => CustomerCampaignStatus::Sent,
             'sent_at' => now(),
-            'recipient_count' => $sent,
+            'recipient_count' => $campaign->logs()->count(),
         ])->save();
 
         return $sent;

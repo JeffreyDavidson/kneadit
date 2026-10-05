@@ -10,7 +10,9 @@ use App\Exceptions\Platform\PlatformCampaignContextException;
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Platform\Tenant;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Sends a platform email campaign to the owner address of each bakery in the
@@ -27,28 +29,44 @@ class SendEmailCampaign
 
         $campaign->update(['status' => EmailCampaignStatus::Sending]);
 
-        $emails = $this->ownerEmails($campaign->target_segment);
+        foreach ($this->ownerEmails($campaign->target_segment) as $email => $tenantId) {
+            // The log row is the once-per-recipient record: it is written before the
+            // mail goes out, and the unique index on (campaign, email) refuses a
+            // second row, so a send that died partway and is retried skips every
+            // owner already logged. A crash between the row and the mail loses
+            // that one email, which is preferred over emailing an owner twice.
+            try {
+                $campaign->logs()->create([
+                    'tenant_id' => $tenantId,
+                    'email' => $email,
+                    'sent_at' => now(),
+                ]);
+            } catch (UniqueConstraintViolationException) {
+                continue;
+            }
 
-        foreach ($emails as $email) {
             event(new CampaignEmailQueued($email, $campaign->subject, $campaign->body));
         }
 
         $campaign->update([
             'status' => EmailCampaignStatus::Sent,
             'sent_at' => now(),
-            'recipient_count' => $emails->count(),
+            'recipient_count' => $campaign->logs()->count(),
         ]);
     }
 
-    /** @return Collection<int, non-empty-string> */
+    /**
+     * Owner address (lowercased and trimmed, so case variants count as one) mapped to a tenant id.
+     *
+     * @return Collection<lowercase-string, string>
+     */
     private function ownerEmails(EmailCampaignSegment $segment): Collection
     {
         return $this->segmentTenants($segment)
             ->whereNotNull('email')
-            ->pluck('email')
-            ->filter(fn (mixed $email): bool => is_string($email) && $email !== '')
-            ->unique()
-            ->values();
+            ->get(['id', 'email'])
+            ->mapWithKeys(fn (Tenant $tenant): array => [Str::lower(trim($tenant->email)) => $tenant->id])
+            ->forget('');
     }
 
     /** @return Builder<Tenant> */

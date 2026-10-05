@@ -324,12 +324,13 @@
                             <tbody class="divide-brand-700/40 divide-y">
                                 @foreach ($entries as $entry)
                                     @php
-                                        $isRedeemed = $entry->type === \App\Enums\Engagement\LoyaltyPointType::Redeemed;
-                                        $signed = $isRedeemed ? -abs($entry->points) : (int) $entry->points;
+                                        $isDeduction = in_array($entry->type, [\App\Enums\Engagement\LoyaltyPointType::Redeemed, \App\Enums\Engagement\LoyaltyPointType::Reversed], true);
+                                        $signed = $isDeduction ? -abs($entry->points) : (int) $entry->points;
                                         $typePill = match ($entry->type->value) {
                                             'earned' => 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400',
                                             'redeemed' => 'bg-amber-500/15 border-amber-500/25 text-amber-400',
                                             'adjusted' => 'bg-sky-500/15 border-sky-500/25 text-sky-400',
+                                            'reversed' => 'bg-rose-500/15 border-rose-500/25 text-rose-400',
                                             default => 'bg-brand-800 border-brand-700 text-brand-200',
                                         };
                                     @endphp

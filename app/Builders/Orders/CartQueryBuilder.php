@@ -7,6 +7,7 @@ namespace App\Builders\Orders;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Cart;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 /** @extends Builder<Cart> */
 class CartQueryBuilder extends Builder
@@ -26,6 +27,24 @@ class CartQueryBuilder extends Builder
     public function forSubscribedCustomers(): static
     {
         $this->whereIn('customer_email', Customer::query()->subscribedToMarketing()->select('email'));
+
+        return $this;
+    }
+
+    /** Carts touched at or after the given moment. */
+    public function activeSince(Carbon $since): static
+    {
+        $this->where('last_activity_at', '>=', $since);
+
+        return $this;
+    }
+
+    /** Carts that have not passed their expiry (a cart with no expiry never does). */
+    public function notExpired(): static
+    {
+        $this->where(function (self $query): void {
+            $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+        });
 
         return $this;
     }

@@ -30,6 +30,12 @@ class EnsureStorefrontEnabled
             ]);
         }
 
+        if ($tenant instanceof Tenant && $tenant->is_paused) {
+            return response()->view('central.platform.bakery-paused', [
+                'storeName' => resolve(TenantSettings::class)->store->name,
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
         return $next($request);
     }
 }

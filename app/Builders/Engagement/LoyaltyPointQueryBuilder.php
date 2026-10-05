@@ -39,6 +39,13 @@ class LoyaltyPointQueryBuilder extends Builder
         return $this;
     }
 
+    public function reversed(): static
+    {
+        $this->where('type', LoyaltyPointType::Reversed);
+
+        return $this;
+    }
+
     public function forOrder(Order $order): static
     {
         $this->where('order_id', $order->id);
@@ -47,7 +54,7 @@ class LoyaltyPointQueryBuilder extends Builder
     }
 
     /**
-     * Sum the matching rows into a balance: earned plus adjusted minus redeemed.
+     * Sum the matching rows into a balance: earned plus adjusted minus redeemed and reversed.
      */
     public function balance(): LoyaltyBalance
     {
@@ -57,11 +64,12 @@ class LoyaltyPointQueryBuilder extends Builder
             earned: Arr::integer(['value' => $stats->earned ?? 0], 'value', 0),
             redeemed: Arr::integer(['value' => $stats->redeemed ?? 0], 'value', 0),
             adjusted: Arr::integer(['value' => $stats->adjusted ?? 0], 'value', 0),
+            reversed: Arr::integer(['value' => $stats->reversed ?? 0], 'value', 0),
         );
     }
 
     /**
-     * One row per customer with their earned and adjusted points and their balance (earned plus adjusted minus redeemed).
+     * One row per customer with their earned and adjusted points and their balance (earned plus adjusted minus redeemed and reversed).
      */
     public function balancesByCustomer(): static
     {
@@ -70,8 +78,9 @@ class LoyaltyPointQueryBuilder extends Builder
             ->selectRaw(
                 'coalesce(sum(case when type = ? then points else 0 end), 0)'
                 .' + coalesce(sum(case when type = ? then points else 0 end), 0)'
+                .' - coalesce(sum(case when type = ? then points else 0 end), 0)'
                 .' - coalesce(sum(case when type = ? then points else 0 end), 0) as balance',
-                [LoyaltyPointType::Earned->value, LoyaltyPointType::Adjusted->value, LoyaltyPointType::Redeemed->value],
+                [LoyaltyPointType::Earned->value, LoyaltyPointType::Adjusted->value, LoyaltyPointType::Redeemed->value, LoyaltyPointType::Reversed->value],
             )
             ->groupBy('customer_id');
 
@@ -83,7 +92,8 @@ class LoyaltyPointQueryBuilder extends Builder
         $this
             ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as earned', [LoyaltyPointType::Earned->value])
             ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as adjusted', [LoyaltyPointType::Adjusted->value])
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as redeemed', [LoyaltyPointType::Redeemed->value]);
+            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as redeemed', [LoyaltyPointType::Redeemed->value])
+            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as reversed', [LoyaltyPointType::Reversed->value]);
 
         return $this;
     }

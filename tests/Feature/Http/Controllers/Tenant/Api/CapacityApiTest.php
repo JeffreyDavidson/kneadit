@@ -18,3 +18,14 @@ test('capacity endpoint returns availability for a date as JSON:API', function (
             'data' => ['id', 'type', 'attributes' => ['available', 'remaining', 'max']],
         ]);
 });
+
+test('capacity endpoint rejects a date that is not a real Y-m-d date with 422', function (string $date) {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson("/api/capacity/{$date}");
+
+    $response->assertUnprocessable();
+})->with([
+    'garbage' => 'garbage',
+    'wrong format' => '10-05-2026',
+    'impossible date' => '2026-02-31',
+]);

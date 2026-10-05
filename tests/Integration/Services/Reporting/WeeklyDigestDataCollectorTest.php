@@ -1,11 +1,13 @@
 <?php
 
 use App\DataTransferObjects\Platform\WeeklyDigestData;
+use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
@@ -14,7 +16,7 @@ beforeEach(function () {
 });
 
 it('returns expected data keys', function () {
-    $collector = new WeeklyDigestDataCollector(TenantSettings::resolve());
+    $collector = resolve(WeeklyDigestDataCollector::class);
     $data = $collector->collect();
 
     expect($data)->toBeInstanceOf(WeeklyDigestData::class)
@@ -46,7 +48,7 @@ it('aggregates weekly orders and revenue without filtering cancelled orders', fu
     DB::connection()->enableQueryLog();
 
     try {
-        $data = new WeeklyDigestDataCollector(TenantSettings::resolve())->collect();
+        $data = resolve(WeeklyDigestDataCollector::class)->collect();
     } finally {
         DB::connection()->disableQueryLog();
     }
@@ -65,4 +67,28 @@ it('aggregates weekly orders and revenue without filtering cancelled orders', fu
         ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(42.33))
         ->and($data->stats['avg_order_value'])->toEqual(Money::fromDollars(14.11))
         ->and($orderAggregateQueries)->toHaveCount(1);
+});
+
+// 2026-10-04 23:00 UTC is Monday 2026-10-05 08:00 in Tokyo, when the digest goes
+// out: "last week" is the bakery-local Monday 2026-09-28 to Sunday 2026-10-04
+// (2026-09-27 15:00 to 2026-10-04 14:59 UTC), and "upcoming" is 2026-10-05 to 2026-10-11.
+test('the digest weeks follow the bakery-local clock, not UTC', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings(['timezone' => 'Asia/Tokyo']),
+    ));
+    Date::setTestNow('2026-10-04 23:00');
+    Order::factory()->create(['total' => 10.00, 'created_at' => '2026-09-30 03:00:00', 'delivery_date' => null]);
+    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-09-23 03:00:00', 'delivery_date' => null]);
+    Order::factory()->create(['total' => 99.00, 'created_at' => '2026-10-04 20:00:00', 'delivery_date' => null]);
+    Customer::factory()->create(['created_at' => '2026-09-29 03:00:00']);
+    Customer::factory()->create(['created_at' => '2026-10-04 20:00:00']);
+    Order::factory()->create(['delivery_date' => '2026-10-06']);
+    Order::factory()->create(['delivery_date' => '2026-10-02']);
+
+    $data = resolve(WeeklyDigestDataCollector::class)->collect();
+
+    expect($data->stats['total_orders'])->toBe(1)
+        ->and($data->stats['total_revenue'])->toEqual(Money::fromDollars(10.00))
+        ->and($data->stats['new_customers'])->toBe(1)
+        ->and($data->upcomingCount)->toBe(1);
 });

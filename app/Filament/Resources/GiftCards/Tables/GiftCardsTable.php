@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\GiftCards\Tables;
 
+use App\Builders\Financial\GiftCardQueryBuilder;
 use App\Enums\Financial\GiftCardStatus;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
@@ -13,7 +14,6 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class GiftCardsTable
 {
@@ -51,13 +51,11 @@ class GiftCardsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(GiftCardStatus::class)
-                    ->query(fn (Builder $query, array $state) => match ($state['value'] ?? null) {
-                        GiftCardStatus::Active->value => $query->where('is_active', true)
-                            ->where('current_balance', '>', 0)
-                            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),
+                    ->query(fn (GiftCardQueryBuilder $query, array $state) => match ($state['value'] ?? null) {
+                        GiftCardStatus::Active->value => $query->usable(),
                         GiftCardStatus::Inactive->value => $query->where('is_active', false),
                         GiftCardStatus::Depleted->value => $query->where('current_balance', '<=', 0),
-                        GiftCardStatus::Expired->value => $query->whereNotNull('expires_at')->where('expires_at', '<', now()),
+                        GiftCardStatus::Expired->value => $query->expired(),
                         default => $query,
                     }),
             ])

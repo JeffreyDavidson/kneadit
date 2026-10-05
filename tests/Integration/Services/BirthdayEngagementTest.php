@@ -92,6 +92,37 @@ test('findRecipients selects birthdays on the bakery-local day', function () {
     expect($recipients->pluck('email')->all())->toBe(['local-day@example.com']);
 });
 
+test('a Feb 29 birthday is matched on Feb 28 in a non-leap year', function () {
+    Date::setTestNow('2027-02-28 09:00');
+    Customer::factory()->create(['birthday' => '2000-02-29', 'email' => 'leap@example.com']);
+    Customer::factory()->create(['birthday' => '1990-02-28', 'email' => 'feb28@example.com']);
+
+    $recipients = resolve(BirthdayEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients->pluck('email')->sort()->values()->all())->toBe(['feb28@example.com', 'leap@example.com']);
+});
+
+test('a Feb 29 birthday is matched on Feb 29 and not on Feb 28 in a leap year', function (string $today, array $expected) {
+    Date::setTestNow("{$today} 09:00");
+    Customer::factory()->create(['birthday' => '2000-02-29', 'email' => 'leap@example.com']);
+
+    $recipients = resolve(BirthdayEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients->pluck('email')->all())->toBe($expected);
+})->with([
+    'the day itself' => ['2028-02-29', ['leap@example.com']],
+    'the day before' => ['2028-02-28', []],
+]);
+
+test('a Feb 29 birthday is not matched on Mar 1 in a non-leap year', function () {
+    Date::setTestNow('2027-03-01 09:00');
+    Customer::factory()->create(['birthday' => '2000-02-29', 'email' => 'leap@example.com']);
+
+    $recipients = resolve(BirthdayEngagement::class)->findRecipients(resolve(TenantSettings::class));
+
+    expect($recipients)->toBeEmpty();
+});
+
 test('dispatchForRecipient creates coupon and dispatches event when coupon enabled', function () {
     Event::fake([CustomerBirthday::class]);
     settings([

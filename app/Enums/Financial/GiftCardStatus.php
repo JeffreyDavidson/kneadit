@@ -3,6 +3,7 @@
 namespace App\Enums\Financial;
 
 use App\Models\Financial\GiftCard;
+use App\Services\Scheduling\BakeryClock;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -18,7 +19,7 @@ enum GiftCardStatus: string implements HasColor, HasLabel
         if (! $card->is_active) {
             return self::Inactive;
         }
-        if ($card->expires_at && $card->expires_at->isPast()) {
+        if ($card->expires_at && $card->expires_at->lt(resolve(BakeryClock::class)->today())) {
             return self::Expired;
         }
         if (! $card->current_balance->isPositive()) {

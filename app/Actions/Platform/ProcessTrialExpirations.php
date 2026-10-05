@@ -15,6 +15,7 @@ class ProcessTrialExpirations
     public function __construct(
         private readonly TrialExpirationReader $reader,
         private readonly TrialExpirationNotifier $notifier,
+        private readonly PauseTenant $pauseTenant,
     ) {}
 
     /** @return array{reminders: int, pausings: int, failures: int} */
@@ -81,14 +82,14 @@ class ProcessTrialExpirations
                 continue;
             }
 
-            $tenant->update(['storefront_enabled' => false]);
+            ($this->pauseTenant)($tenant);
             $pausings++;
 
             if ($user instanceof User) {
                 $this->notifier->notifyExpired($user, $tenant);
             }
 
-            Log::info('Trial expired — storefront paused', ['tenant' => $tenant->id]);
+            Log::info('Trial expired — bakery paused', ['tenant' => $tenant->id]);
         }
 
         return $pausings;

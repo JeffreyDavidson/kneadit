@@ -4,6 +4,7 @@ use App\Actions\Platform\ProcessScheduledCheckins;
 use App\Events\Platform\ScheduledCheckinDue;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -245,4 +246,56 @@ test('catches dispatch exceptions and counts them as failures', function () {
     expect($summary['sent'])->toBe(0)
         ->and($summary['failures'])->toBe(1)
         ->and(DB::table('checkin_logs')->count())->toBe(0);
+});
+
+describe('a missed run', function () {
+    beforeEach(function () {
+        Event::fake([ScheduledCheckinDue::class]);
+        Date::setTestNow('2026-10-05 09:00');
+        DB::table('scheduled_checkins')->insert([
+            'id' => 20,
+            'name' => 'Day 3 Checkin',
+            'days_after_signup' => 3,
+            'subject' => 'Day 3 subject',
+            'body' => 'Day 3 body',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    });
+
+    test('is made up by the next run, once', function () {
+        createTenant([
+            'id' => 'missed-bakery',
+            'email' => 'missed@test.com',
+            'created_at' => '2026-10-01 10:00:00',
+            'updated_at' => '2026-10-01 10:00:00',
+        ]);
+
+        $first = resolve(ProcessScheduledCheckins::class)();
+        $second = resolve(ProcessScheduledCheckins::class)();
+
+        expect($first['sent'])->toBe(1)
+            ->and($second['sent'])->toBe(0)
+            ->and(DB::table('checkin_logs')->where('tenant_id', 'missed-bakery')->count())->toBe(1);
+        Event::assertDispatchedTimes(ScheduledCheckinDue::class, 1);
+    });
+
+    test('is made up only within a week', function (string $signedUpAt, int $sent) {
+        createTenant([
+            'id' => 'window-bakery',
+            'email' => 'window@test.com',
+            'created_at' => $signedUpAt,
+            'updated_at' => $signedUpAt,
+        ]);
+
+        $summary = resolve(ProcessScheduledCheckins::class)();
+
+        expect($summary['sent'])->toBe($sent);
+    })->with([
+        'due today' => ['2026-10-02 10:00:00', 1],
+        'a week late' => ['2026-09-25 10:00:00', 1],
+        'more than a week late' => ['2026-09-24 10:00:00', 0],
+        'not due yet' => ['2026-10-03 10:00:00', 0],
+    ]);
 });

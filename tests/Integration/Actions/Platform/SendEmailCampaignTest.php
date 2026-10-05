@@ -7,6 +7,7 @@ use App\Exceptions\Platform\PlatformCampaignContextException;
 use App\Mail\Platform\PlatformCampaignMail;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\EmailCampaign;
+use App\Models\Engagement\EmailCampaignLog;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Mail;
 
@@ -102,6 +103,40 @@ test('targets the bakery owners of each campaign segment', function (EmailCampai
     'trial' => [EmailCampaignSegment::Trial, ['trial@example.com']],
     'inactive' => [EmailCampaignSegment::Inactive, ['inactive@example.com']],
 ]);
+
+test('records a log row for each owner it emails', function () {
+    Mail::fake();
+
+    $one = Tenant::factory()->create(['email' => 'owner-one@example.com']);
+    $two = Tenant::factory()->create(['email' => 'owner-two@example.com']);
+    $campaign = EmailCampaign::factory()->create();
+
+    resolve(SendEmailCampaign::class)($campaign);
+
+    expect($campaign->logs()->pluck('tenant_id', 'email')->all())->toBe([
+        'owner-one@example.com' => $one->id,
+        'owner-two@example.com' => $two->id,
+    ]);
+});
+
+test('skips owners that already have a log row, ignoring case', function () {
+    Mail::fake();
+
+    $one = Tenant::factory()->create(['email' => 'Owner-One@Example.com']);
+    Tenant::factory()->create(['email' => 'owner-two@example.com']);
+    $campaign = EmailCampaign::factory()->sending()->create();
+    EmailCampaignLog::factory()->for($campaign, 'campaign')->create([
+        'tenant_id' => $one->id,
+        'email' => 'owner-one@example.com',
+    ]);
+
+    resolve(SendEmailCampaign::class)($campaign);
+
+    Mail::assertQueued(PlatformCampaignMail::class, 1);
+    Mail::assertQueued(PlatformCampaignMail::class, fn (PlatformCampaignMail $mail): bool => $mail->hasTo('owner-two@example.com'));
+    expect($campaign->fresh()->recipient_count)->toBe(2)
+        ->and($campaign->logs()->count())->toBe(2);
+});
 
 test('refuses to send a campaign inside a tenant context', function () {
     Mail::fake();

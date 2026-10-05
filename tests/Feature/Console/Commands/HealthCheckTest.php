@@ -1,10 +1,17 @@
 <?php
 
-use App\Events\Platform\HealthCheckFailed;
+use App\Mail\Platform\HealthAlertMail;
+use App\Services\Platform\HealthChecks\HomepageRespondsCheck;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+
+use function Pest\Laravel\artisan;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -79,17 +86,96 @@ test('health check detects homepage failure', function () {
         ->assertFailed();
 });
 
-test('health check dispatches event on failure', function () {
-    Event::fake([HealthCheckFailed::class]);
+describe('alerting', function () {
+    beforeEach(function () {
+        Mail::fake();
+        Queue::fake();
+        Http::preventStrayRequests();
+    });
 
-    Http::preventStrayRequests();
-    Http::fake(['*' => Http::response('Server Error', 500)]);
+    test('a failing check sends one alert mail straight away, without the queue', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
 
-    $this->artisan('health:check')
-        ->expectsOutputToContain('alert dispatched')
-        ->assertFailed();
+        artisan('health:check')->assertFailed();
 
-    Event::assertDispatched(fn (HealthCheckFailed $event) => str_contains($event->message, 'Health Check Alert'));
+        Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => $mail->hasTo('test@example.com')
+            && str_contains($mail->alertMessage, 'Health Check Alert'));
+        Mail::assertSentCount(1);
+        Mail::assertNothingQueued();
+        Queue::assertNothingPushed();
+    });
+
+    test('the same failing check does not alert again inside the cooldown', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
+        Date::setTestNow('2026-10-05 12:00');
+
+        artisan('health:check')->assertFailed();
+        Date::setTestNow('2026-10-05 17:59');
+        artisan('health:check')->assertFailed();
+
+        Mail::assertSentCount(1);
+    });
+
+    test('the same failing check alerts again once the cooldown has passed', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
+        Date::setTestNow('2026-10-05 12:00');
+
+        artisan('health:check')->assertFailed();
+        Date::setTestNow('2026-10-05 18:01');
+        artisan('health:check')->assertFailed();
+
+        Mail::assertSentCount(2);
+    });
+
+    test('a check inside its cooldown does not hold back another failing check', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
+        Cache::put('health-check-alert:'.HomepageRespondsCheck::class, true, now()->addHours(6));
+        app()->useStoragePath(sys_get_temp_dir().'/kneadit_nonexistent_'.getmypid().'_'.Str::random());
+
+        artisan('health:check')->assertFailed();
+
+        Mail::assertSentCount(1);
+        Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => str_contains($mail->alertMessage, 'Storage/logs')
+            && ! str_contains($mail->alertMessage, 'Homepage'));
+    });
+
+    test('a check that passes again sends one recovered mail', function () {
+        $homepageUp = false;
+        Http::fake(['*' => function () use (&$homepageUp) {
+            return Http::response('body', $homepageUp ? 200 : 500);
+        }]);
+
+        artisan('health:check')->assertFailed();
+        $homepageUp = true;
+        artisan('health:check')->assertSuccessful();
+        artisan('health:check')->assertSuccessful();
+
+        Mail::assertSentCount(2);
+        Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => str_contains($mail->alertMessage, 'Recovered'));
+    });
+
+    test('a mail failure is logged and does not hide the failing check', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
+        Mail::shouldReceive('sendNow')->andThrow(new RuntimeException('SMTP down'));
+        Log::shouldReceive('critical')->once();
+        Log::shouldReceive('error')->once()->withArgs(fn (string $message): bool => str_contains($message, 'Health alert'));
+
+        artisan('health:check')
+            ->expectsOutputToContain('Homepage')
+            ->assertFailed();
+
+    });
+
+    test('a failing cache does not stop the alert', function () {
+        Http::fake(['*' => Http::response('Server Error', 500)]);
+        Cache::shouldReceive('has')->andThrow(new RuntimeException('cache down'));
+        Cache::shouldReceive('put')->andThrow(new RuntimeException('cache down'));
+        Cache::shouldReceive('pull')->andThrow(new RuntimeException('cache down'));
+
+        artisan('health:check')->assertFailed();
+
+        Mail::assertSentCount(1);
+    });
 });
 
 test('health check detects homepage connection failure', function () {
@@ -111,7 +197,7 @@ test('health check reports all passing checks', function () {
 });
 
 test('health check detects non-writable storage logs', function () {
-    Event::fake([HealthCheckFailed::class]);
+    Mail::fake();
     Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 

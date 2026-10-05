@@ -66,6 +66,23 @@ test('uses the named route for impersonation without base path query or fragment
     expect($url)->toBe('https://test-bakery.getkneadit.app/impersonate/secret-token');
 });
 
+test('uses the named Filament route for the bakery admin billing page', function () {
+    Config::set('app.url', 'http://kneadit.test:8000/base?source=test#section');
+
+    $url = resolve(TenantUrlGenerator::class)->billing(new Tenant(['id' => 'test-bakery']));
+
+    expect($url)->toBe('http://test-bakery.kneadit.test:8000/admin/upgrade-plan');
+});
+
+test('builds the central billing handoff URL from the application URL, not the bakery host', function () {
+    Config::set('app.url', 'https://app.getkneadit.app/base?source=test#section');
+    Config::set('tenancy.tenant_domain', 'getkneadit.app');
+
+    $url = resolve(TenantUrlGenerator::class)->billingHandoff('secret-token');
+
+    expect($url)->toBe('https://app.getkneadit.app/billing/handoff/secret-token');
+});
+
 test('defaults protocol-relative application URLs to https', function () {
     Config::set('app.url', '//getkneadit.app');
 
