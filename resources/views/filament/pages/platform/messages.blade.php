@@ -81,7 +81,7 @@
         </div>
     @else
         <div class="space-y-3">
-            @forelse ($this->getMessages() as $msg)
+            @forelse ($this->inboxMessages() as $msg)
                 <div
                     wire:click="viewThread({{ $msg->id }})"
                     @class([

@@ -7,8 +7,9 @@ beforeEach(function () {
     test()->widget = new InboxWidget;
 });
 
-// InboxWidget methods depend on Filament::getTenant() which returns null
-// in Integration context. We test what we can without that context.
+// InboxWidget methods depend on the initialized bakery (tenant()), which is
+// absent in Integration context. The scoped behaviour is covered in
+// tests/Feature/Filament/Widgets/InboxWidgetTenantScopeTest.php.
 
 test('get unread count returns zero when no tenant context', function () {
     expect(test()->widget->getUnreadCount())->toBe(0);

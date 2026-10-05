@@ -3,16 +3,18 @@
 namespace App\Filament\Pages\Platform;
 
 use App\Enums\Platform\PlatformSenderType;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Platform\PlatformMessage;
-use App\Models\Platform\Tenant;
 use BackedEnum;
-use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Locked;
 
 class Messages extends Page
 {
+    use RequiresManagerRole;
+
     #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
@@ -28,6 +30,7 @@ class Messages extends Page
     #[\Override]
     protected string $view = 'filament.pages.platform.messages';
 
+    #[Locked]
     public ?int $viewingMessage = null;
 
     public string $replyBody = '';
@@ -39,13 +42,16 @@ class Messages extends Page
     }
 
     /** @return Collection<int, PlatformMessage> */
-    #[\Override]
-    public function getMessages(): Collection
+    public function inboxMessages(): Collection
     {
-        /** @var Tenant|null $tenant */
-        $tenant = Filament::getTenant();
+        $tenantId = tenant('id');
 
-        return PlatformMessage::query()->where('tenant_id', $tenant?->id)
+        if (! is_string($tenantId)) {
+            return new Collection;
+        }
+
+        return PlatformMessage::query()
+            ->forTenant($tenantId)
             ->topLevel()
             ->orderByRaw('is_read ASC')
             ->orderBy('created_at', 'desc')
@@ -54,11 +60,17 @@ class Messages extends Page
 
     public function viewThread(int $messageId): void
     {
-        $this->viewingMessage = $messageId;
+        $message = $this->findOwnMessage($messageId);
 
-        // Mark as read
-        $message = PlatformMessage::query()->find($messageId);
-        if ($message && ! $message->is_read && $message->sender_type === PlatformSenderType::Admin) {
+        if (! $message instanceof PlatformMessage) {
+            $this->viewingMessage = null;
+
+            return;
+        }
+
+        $this->viewingMessage = $message->id;
+
+        if (! $message->is_read && $message->sender_type === PlatformSenderType::Admin) {
             $message->update(['is_read' => true, 'read_at' => now()]);
         }
     }
@@ -66,31 +78,38 @@ class Messages extends Page
     /** @return Collection<int, PlatformMessage>|null */
     public function getThread(): ?Collection
     {
-        if (! $this->viewingMessage) {
+        $parent = $this->getViewingRecord();
+
+        if (! $parent instanceof PlatformMessage) {
             return null;
         }
 
-        return PlatformMessage::query()->where('parent_id', $this->viewingMessage)->oldest()
-            ->get();
+        return $parent->replies()->oldest()->get();
     }
 
     public function getViewingRecord(): ?PlatformMessage
     {
-        return $this->viewingMessage ? PlatformMessage::query()->find($this->viewingMessage) : null;
+        if ($this->viewingMessage === null) {
+            return null;
+        }
+
+        return $this->findOwnMessage($this->viewingMessage);
     }
 
     public function sendReply(): void
     {
         $this->validate(['replyBody' => ['required', 'string', 'min:1']]);
 
-        $parent = PlatformMessage::query()->findOrFail($this->viewingMessage);
-        /** @var Tenant|null $tenant */
-        $tenant = Filament::getTenant();
+        $parent = $this->getViewingRecord();
+
+        if (! $parent instanceof PlatformMessage) {
+            return;
+        }
 
         PlatformMessage::query()->create([
-            'tenant_id' => $tenant?->id,
+            'tenant_id' => $parent->tenant_id,
             'sender_type' => PlatformSenderType::Tenant,
-            'subject' => 'Re: '.$parent->subject,
+            'subject' => "Re: {$parent->subject}",
             'body' => $this->replyBody,
             'parent_id' => $parent->id,
         ]);
@@ -106,13 +125,14 @@ class Messages extends Page
 
     public static function getNavigationBadge(): ?string
     {
-        /** @var Tenant|null $tenant */
-        $tenant = Filament::getTenant();
-        if (! $tenant) {
+        $tenantId = tenant('id');
+
+        if (! is_string($tenantId)) {
             return null;
         }
 
-        $count = cache()->remember("navigation-badge:platform-messages:{$tenant->id}:unread-admin", 60, fn (): int => PlatformMessage::query()->where('tenant_id', $tenant->id)
+        $count = cache()->remember("navigation-badge:platform-messages:{$tenantId}:unread-admin", 60, fn (): int => PlatformMessage::query()
+            ->forTenant($tenantId)
             ->fromAdmin()
             ->topLevel()
             ->unread()
@@ -124,5 +144,23 @@ class Messages extends Page
     public static function getNavigationBadgeColor(): string|array|null
     {
         return 'warning';
+    }
+
+    /**
+     * Looks a top-level message up inside the current bakery only, so another
+     * bakery's message id behaves as if it did not exist.
+     */
+    private function findOwnMessage(int $messageId): ?PlatformMessage
+    {
+        $tenantId = tenant('id');
+
+        if (! is_string($tenantId)) {
+            return null;
+        }
+
+        return PlatformMessage::query()
+            ->forTenant($tenantId)
+            ->topLevel()
+            ->find($messageId);
     }
 }
