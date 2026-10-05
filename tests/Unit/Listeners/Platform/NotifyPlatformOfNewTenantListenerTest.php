@@ -41,6 +41,25 @@ test('it sends notification email to the platform admin', function () {
     );
 });
 
+test('it builds the central admin link from the application URL, not from the panel domain, and renders without bakery settings', function () {
+    Mail::fake();
+    Config::set('app.url', 'https://kneadit.test');
+    Config::set('mail.platform_notify', 'admin@kneadit.com');
+
+    $user = User::factory()->create(['name' => 'Jane Baker', 'email' => 'jane@example.com']);
+    createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
+    $tenant = Tenant::query()->findOrFail('janes-bakery');
+    $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
+
+    resolve(NotifyPlatformOfNewTenantListener::class)->handle($event);
+
+    Mail::assertQueued(
+        NewSubscriberNotificationMail::class,
+        fn (NewSubscriberNotificationMail $mail) => $mail->centralAdminUrl === 'https://kneadit.test/admin'
+            && str_contains($mail->render(), 'https://kneadit.test/admin'),
+    );
+});
+
 test('failed method logs a warning with tenant id and error message', function () {
     Log::shouldReceive('warning')
         ->once()

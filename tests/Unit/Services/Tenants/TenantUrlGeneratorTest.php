@@ -117,3 +117,9 @@ test('falls back to the tenant id when the subdomain is not set', function () {
     expect(resolve(TenantUrlGenerator::class)->storefront(new Tenant(['id' => 'test-bakery'])))
         ->toBe('https://test-bakery.getkneadit.app');
 });
+
+test('generates the platform admin URL from the application URL', function () {
+    Config::set('app.url', 'https://app.getkneadit.app');
+
+    expect(resolve(TenantUrlGenerator::class)->centralAdmin())->toBe('https://app.getkneadit.app/admin');
+});

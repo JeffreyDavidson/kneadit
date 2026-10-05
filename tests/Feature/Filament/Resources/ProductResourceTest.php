@@ -73,6 +73,41 @@ test('can create a product via slide-over', function () {
     ]);
 });
 
+test('a bakery with no categories can create one from the product form and save the product', function () {
+    Category::query()->delete();
+
+    livewire(ListProducts::class)
+        ->mountAction(CreateAction::class)
+        ->callAction(
+            TestAction::make('createOption')->schemaComponent('category_id'),
+            data: ['name' => 'Breads', 'description' => 'Fresh loaves'],
+        )
+        ->fillForm(['name' => 'Ciabatta Roll', 'slug' => 'ciabatta-roll', 'price' => 4.50])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $category = Category::query()->where('name', 'Breads')->sole();
+
+    test()->assertDatabaseHas(Product::class, [
+        'name' => 'Ciabatta Roll',
+        'category_id' => $category->id,
+    ]);
+});
+
+test('the category select explains when there are no categories yet', function () {
+    Category::query()->delete();
+
+    livewire(ListProducts::class)
+        ->mountAction(CreateAction::class)
+        ->assertMountedActionModalSee('You have no categories yet');
+});
+
+test('the category select has no helper text once a category exists', function () {
+    livewire(ListProducts::class)
+        ->mountAction(CreateAction::class)
+        ->assertMountedActionModalDontSee('You have no categories yet');
+});
+
 test('create product validates required fields', function () {
     $cases = [
         [['name' => null], ['name' => 'required']],

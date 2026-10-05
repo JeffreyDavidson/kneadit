@@ -33,9 +33,13 @@ class CheckoutController extends Controller
 
         $builder = $user->newSubscription('default', $priceId);
 
-        // The trial is for first-time subscribers only.
-        if (! $user->subscriptions()->where('type', 'default')->exists()) {
-            $builder->trialDays(Config::integer('kneadit.trial_days', 30));
+        // The trial starts when the bakery is created, so the first charge
+        // waits for the bakery trial to end. Once it has ended (or there is no
+        // bakery), billing starts now.
+        $trialEndsAt = $user->tenants()->first()?->trial_ends_at;
+
+        if ($trialEndsAt?->isFuture()) {
+            $builder->trialUntil($trialEndsAt);
         }
 
         return $builder

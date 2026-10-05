@@ -23,7 +23,7 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return to_route('billing.plans');
+        return to_route('onboarding.show');
     }
 
     public function show(): View

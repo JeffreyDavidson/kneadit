@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\BaseMailable;
+use App\Mail\PlatformMail;
 use App\Models\Staff\User;
 use App\Services\Tenants\TenantUrlGenerator;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class PaymentFailedMail extends BaseMailable
+class PaymentFailedMail extends PlatformMail
 {
     public function __construct(
         public User $user,

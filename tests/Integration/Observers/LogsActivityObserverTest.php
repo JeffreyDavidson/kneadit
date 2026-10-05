@@ -176,3 +176,30 @@ test('still records ordinary changes in the clear', function () {
 
     expect($log->properties['changes']['name'])->toBe('After');
 });
+
+test('an actor who is not a user of this bakery database is logged by name with no user id', function () {
+    $centralOwner = User::factory()->make(['id' => 987654, 'name' => 'Central Owner']);
+    ActorContext::set($centralOwner);
+    Log::shouldReceive('warning')->never();
+
+    $customer = Customer::factory()->create();
+
+    $log = ActivityLog::query()
+        ->where('model_type', Customer::class)
+        ->where('model_id', $customer->id)
+        ->sole();
+
+    expect($log->user_id)->toBeNull()
+        ->and($log->user_name)->toBe('Central Owner');
+});
+
+test('an actor who is a user of this bakery database keeps their user id', function () {
+    $user = User::factory()->create(['name' => 'Ada Lovelace']);
+    ActorContext::set($user);
+
+    $customer = Customer::factory()->create();
+
+    $log = ActivityLog::query()->where('model_id', $customer->id)->sole();
+
+    expect($log->user_id)->toBe($user->id);
+});
