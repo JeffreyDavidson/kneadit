@@ -49,6 +49,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | 03:00 and 15:00 | `backup:databases --keep=7` | Back up central and tenant databases |
 | Daily 04:00 | `webhooks:prune` | Prune webhook delivery history |
 | Daily 04:15 | `analytics:prune-page-views` | Prune page-view analytics after the configured retention window |
+| Daily 04:30 | `platform:prune-expired-tokens` | Delete impersonation and billing handoff tokens that expired more than 7 days ago, consumed or not |
 | Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS and HTTPS (`https://{domain}/up` must answer 2xx with a valid certificate) for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
