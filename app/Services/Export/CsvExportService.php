@@ -2,15 +2,16 @@
 
 namespace App\Services\Export;
 
+use App\ValueObjects\Money;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CsvExportService
 {
     /**
-     * Export type configurations: table, headers, columns, joins.
+     * Export type configurations: table, headers, columns, money columns (stored as cents, written as dollars), joins.
      *
-     * @return array<string, array{table: string, headers: array<int, string>, columns: array<int, string|array<int, string>>, join?: array{table: string, first: string, second: string, select: array<int, string>}}>
+     * @return array<string, array{table: string, headers: array<int, string>, columns: array<int, string|array<int, string>>, money?: array<int, string>, join?: array{table: string, first: string, second: string, select: array<int, string>}}>
      */
     private function configs(): array
     {
@@ -19,6 +20,7 @@ class CsvExportService
                 'table' => 'products',
                 'headers' => ['ID', 'Name', 'Slug', 'Description', 'Price', 'Status', 'Created At', 'Updated At'],
                 'columns' => ['id', 'name', 'slug', 'description', 'price', 'status', 'created_at', 'updated_at'],
+                'money' => ['price'],
             ],
             'categories' => [
                 'table' => 'categories',
@@ -29,6 +31,7 @@ class CsvExportService
                 'table' => 'orders',
                 'headers' => ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Qty', 'Item Unit Price', 'Order Created At'],
                 'columns' => ['id', 'customer_id', 'status', 'total', 'item_product_id', 'item_qty', 'item_price', 'created_at'],
+                'money' => ['total', 'item_price'],
                 'join' => [
                     'table' => 'order_items',
                     'first' => 'orders.id',
@@ -90,6 +93,8 @@ class CsvExportService
                         if (is_array($column)) {
                             // Fallback columns: try first, then second
                             $csvRow[] = $row->{$column[0]} ?? $row->{$column[1]} ?? '';
+                        } elseif (in_array($column, $config['money'] ?? [], true)) {
+                            $csvRow[] = $this->dollars($row->{$column} ?? null);
                         } else {
                             $csvRow[] = $row->{$column} ?? '';
                         }
@@ -114,5 +119,13 @@ class CsvExportService
         fclose($handle);
 
         return $content;
+    }
+
+    /** Money columns hold cents; the export shows dollars, like every other CSV the app writes. */
+    private function dollars(mixed $cents): string
+    {
+        return is_numeric($cents)
+            ? number_format(Money::fromCents((int) $cents)->dollars(), 2, '.', '')
+            : '';
     }
 }

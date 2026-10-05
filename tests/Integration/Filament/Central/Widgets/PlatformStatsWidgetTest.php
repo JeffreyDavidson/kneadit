@@ -1,22 +1,41 @@
 <?php
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Central\Widgets\PlatformStats;
+use App\Filament\Central\Widgets\RevenueOverview;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
+use Filament\Facades\Filament;
+use Laravel\Cashier\Subscription;
 
-beforeEach(fn () => setUpCentralTest());
+use function Pest\Livewire\livewire;
 
-test('mrr calculation with different plans', function () {
-    createTenant(['id' => 'bakery1', 'name' => 'B1', 'email' => 'b1@test.com', 'plan' => SubscriptionTier::Starter, 'is_active' => true]);
-    createTenant(['id' => 'bakery2', 'name' => 'B2', 'email' => 'b2@test.com', 'plan' => SubscriptionTier::Growth, 'is_active' => true]);
-    createTenant(['id' => 'bakery3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Pro, 'is_active' => true]);
-    createTenant(['id' => 'bakery4', 'name' => 'B4', 'email' => 'b4@test.com', 'plan' => SubscriptionTier::Starter, 'is_active' => false]);
+beforeEach(function () {
+    setUpCentralTest();
+    test()->actingAs(User::factory()->platformAdmin()->create());
+    Filament::setCurrentPanel(Filament::getPanel('central'));
+});
 
-    $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
-    $activeTenants = Tenant::query()->where('is_active', true)->get();
-    $mrr = $activeTenants->sum(fn ($t) => $planPrices[$t->plan->value] ?? 0);
+test('the MRR stat sums valid paid subscriptions, not every active bakery', function () {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test', 'growth' => 'price_growth_test', 'pro' => 'price_pro_test']]);
 
-    expect($mrr)->toBe(57)->and($activeTenants)->toHaveCount(3);
+    foreach (['bakery1' => 'price_starter_test', 'bakery2' => 'price_growth_test'] as $id => $price) {
+        $owner = User::factory()->owner()->create();
+        createTenant(['id' => $id, 'name' => $id, 'email' => "{$id}@test.com", 'user_id' => $owner->id]);
+        Subscription::factory()->for($owner, 'owner')->withPrice($price)->create();
+    }
+
+    // Active, but on the free trial: no MRR.
+    createTenant(['id' => 'bakery3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Pro, 'is_active' => true, 'trial_ends_at' => now()->addDays(7)]);
+
+    livewire(PlatformStats::class)
+        ->assertSee('$28.00')
+        ->assertSee('2 paying');
+
+    livewire(RevenueOverview::class)
+        ->assertSee('$14.00')
+        ->assertSee('$336.00');
 });
 
 test('trial count', function () {
@@ -44,13 +63,4 @@ test('total tenants count', function () {
     createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Growth, 'is_active' => false]);
 
     expect(Tenant::query()->count())->toBe(2);
-});
-
-test('mrr excludes inactive tenants', function () {
-    createTenant(['id' => 'i1', 'name' => 'I1', 'email' => 'i1@test.com', 'plan' => SubscriptionTier::Pro, 'is_active' => false]);
-
-    $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
-    $mrr = Tenant::query()->where('is_active', true)->get()->sum(fn ($t) => $planPrices[$t->plan->value] ?? 0);
-
-    expect($mrr)->toBe(0);
 });
