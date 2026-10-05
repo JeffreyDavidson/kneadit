@@ -3,12 +3,12 @@
 namespace App\Providers;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 use Stancl\Tenancy\Contracts\Tenant;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 class AppServiceProvider extends ServiceProvider
 {

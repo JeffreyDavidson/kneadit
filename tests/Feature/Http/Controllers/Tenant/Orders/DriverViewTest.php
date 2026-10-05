@@ -5,8 +5,8 @@ use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
+use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Illuminate\Support\Facades\Date;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 use function Pest\Laravel\actingAs;
