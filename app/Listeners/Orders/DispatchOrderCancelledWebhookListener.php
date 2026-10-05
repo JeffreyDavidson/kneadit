@@ -5,11 +5,10 @@ namespace App\Listeners\Orders;
 use App\Events\Orders\OrderCancelled;
 use App\Listeners\QueuedListener;
 use App\Services\Platform\WebhookService;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;
 
-class DispatchOrderCancelledWebhookListener extends QueuedListener implements ShouldBeUnique
+class DispatchOrderCancelledWebhookListener extends QueuedListener
 {
     public int $timeout = 30;
 

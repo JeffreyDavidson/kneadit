@@ -6,11 +6,10 @@ use App\Events\Orders\OrderCreated;
 use App\Listeners\QueuedListener;
 use App\Models\Orders\OrderItem;
 use App\Services\Platform\WebhookService;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;
 
-class DispatchOrderCreatedWebhookListener extends QueuedListener implements ShouldBeUnique
+class DispatchOrderCreatedWebhookListener extends QueuedListener
 {
     public int $timeout = 30;
 
