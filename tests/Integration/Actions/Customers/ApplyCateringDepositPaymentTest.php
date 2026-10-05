@@ -38,3 +38,20 @@ test('checks the stored inquiry, not the copy it was handed, so a deposit record
         ->and($staleCopy->deposit_amount?->dollars())->toBe(100.00)
         ->and($owner->notifications()->count())->toBe(1);
 });
+
+test('the review notification escapes the customer name', function () {
+    $owner = User::factory()->owner()->create();
+    $inquiry = CateringInquiry::factory()->quoted()->create(['customer_name' => '<a href="https://evil.example" style="position:fixed">Sign in</a>']);
+    CateringInquiry::query()->whereKey($inquiry->id)->update([
+        'deposit_amount' => 10000,
+        'deposit_paid_at' => now(),
+    ]);
+
+    resolve(ApplyCateringDepositPayment::class)($inquiry, 'cs_test_3', 'pi_test_3', 125.00);
+
+    $notification = $owner->notifications()->sole();
+    expect($notification->data['title'])->not->toContain('<a')
+        ->and($notification->data['title'])->toContain('&lt;a href=')
+        ->and($notification->data['body'])->not->toContain('<a')
+        ->and($notification->data['body'])->toContain('&lt;a href=');
+});

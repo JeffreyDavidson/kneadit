@@ -8,6 +8,7 @@ use App\Models\Customers\ContactMessage;
 use App\Models\Customers\ContactMessageReply;
 use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -97,6 +98,25 @@ test('reply action sends the email, persists the reply, and marks the message as
         ->body->toContain('Thanks for reaching out')
         ->user_id->toBe(test()->user->id)
         ->and($reply->sent_at)->not->toBeNull();
+});
+
+test('reply notification escapes the customer email address', function () {
+    Mail::fake();
+
+    $email = '"<a href=https://evil.example>Sign in</a>"@example.com';
+    $message = ContactMessage::factory()->create(['email' => $email]);
+
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->callAction('reply', data: [
+            'subject' => 'Re: Hello',
+            'body' => 'Thanks for reaching out.',
+        ])
+        ->assertNotified(
+            Notification::make()
+                ->title('Reply sent')
+                ->body('Email sent to '.e($email))
+                ->success(),
+        );
 });
 
 test('view page renders prior replies as a thread', function () {

@@ -2,6 +2,7 @@
 
 namespace App\Queries\Platform;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 
@@ -23,7 +24,7 @@ class ActiveBakeriesQuery
             ->map(fn (Tenant $t): array => [
                 'name' => (string) ($t->store_name ?? $t->name),
                 'url' => 'http://'.$t->domains->first()?->domain,
-                'color' => $t->brand_color_primary ?? '#d4920c',
+                'color' => BrandingSettings::safeColor($t->brand_color_primary),
             ])
             ->values();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Filament\Forms\Components\DateTimePicker;
@@ -97,10 +98,12 @@ class TenantForm
                             TextInput::make('brand_color_primary')
                                 ->label('Primary Color')
                                 ->type('color')
+                                ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->placeholder('#d4920c'),
                             TextInput::make('brand_color_secondary')
                                 ->label('Secondary Color')
                                 ->type('color')
+                                ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->placeholder('#1c1410'),
                         ]),
                     ]),

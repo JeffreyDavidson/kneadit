@@ -25,7 +25,7 @@
                             <div
                                 class="font-mono text-[1rem] font-bold text-emerald-400"
                                 x-data
-                                x-init="$el.addEventListener('click', () => navigator.clipboard.writeText('{{ $result->code }}'))"
+                                x-init="$el.addEventListener('click', () => navigator.clipboard.writeText({{ Js::from($result->code) }}))"
                                 title="Click to copy"
                             >
                                 {{ $result->code }}

@@ -96,3 +96,18 @@ test('generate creates a code when the optional fields are left blank', function
         ->and($row->name)->toBeNull()
         ->and($row->expires_at)->toBeNull();
 });
+
+test('the copy-to-clipboard handler encodes the generated code instead of quoting it', function () {
+    $coupons = Double::for(CouponService::class);
+    $coupons->expects('create')->returns((object) ['id' => 'coupon_quote']);
+
+    $promotionCodes = Double::for(PromotionCodeService::class);
+    $promotionCodes->expects('create')->returns((object) ['id' => 'promo_quote', 'code' => "X');alert(1);('"]);
+
+    app()->bind(StripeClient::class, fn (): StripeClient => new FakePromoPageStripeClient($coupons, $promotionCodes));
+
+    livewire(PromoCode::class)
+        ->fillForm(['discount_type' => 'percent', 'discount_value' => 20, 'duration' => 'once', 'max_redemptions' => 1])
+        ->call('generate')
+        ->assertSeeHtml("writeText('X\\u0027);alert(1);(\\u0027')");
+});

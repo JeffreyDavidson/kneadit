@@ -80,7 +80,7 @@ class FreeForeverGrantsTable
 
                         Notification::make()
                             ->title('Grant revoked')
-                            ->body('Tenant '.($record->tenant->store_name ?: $record->tenant_id).' is no longer free forever.')
+                            ->body('Tenant '.e($record->tenant->store_name ?: $record->tenant_id).' is no longer free forever.')
                             ->success()
                             ->send();
                     }),
