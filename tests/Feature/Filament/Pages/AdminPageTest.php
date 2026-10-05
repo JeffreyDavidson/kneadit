@@ -37,6 +37,7 @@ use App\Filament\Pages\Tools\SmartShoppingList;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -45,6 +46,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
+
+    // The inbox widget reads platform_messages from the central connection for the initialized bakery.
+    createCentralTables();
+    DB::purge('central');
+    $pdo = DB::connection('sqlite')->getPdo();
+    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+
     test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
     Feature::define('growth-features', fn () => true);

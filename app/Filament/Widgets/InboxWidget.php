@@ -5,8 +5,6 @@ namespace App\Filament\Widgets;
 use App\Filament\Pages\Platform\Messages;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Platform\PlatformMessage;
-use App\Models\Platform\Tenant;
-use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 
 class InboxWidget extends Widget
@@ -27,11 +25,12 @@ class InboxWidget extends Widget
     #[\Override]
     public static function canView(): bool
     {
-        $tenant = Filament::getTenant();
+        $tenantId = tenant('id');
 
-        return $tenant instanceof Tenant
+        return is_string($tenantId)
+            && Messages::canAccess()
             && PlatformMessage::query()
-                ->where('tenant_id', $tenant->id)
+                ->forTenant($tenantId)
                 ->fromAdmin()
                 ->topLevel()
                 ->unread()
@@ -40,14 +39,14 @@ class InboxWidget extends Widget
 
     public function getUnreadCount(): int
     {
-        /** @var Tenant|null $tenant */
-        $tenant = Filament::getTenant();
+        $tenantId = tenant('id');
 
-        if (! $tenant) {
+        if (! is_string($tenantId)) {
             return 0;
         }
 
-        return PlatformMessage::query()->where('tenant_id', $tenant->id)
+        return PlatformMessage::query()
+            ->forTenant($tenantId)
             ->fromAdmin()
             ->topLevel()
             ->unread()

@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Builder;
 /** @extends Builder<PlatformMessage> */
 class PlatformMessageQueryBuilder extends Builder
 {
+    public function forTenant(string $tenantId): static
+    {
+        $this->where('tenant_id', $tenantId);
+
+        return $this;
+    }
+
     public function unread(): static
     {
         $this->where('is_read', false);
