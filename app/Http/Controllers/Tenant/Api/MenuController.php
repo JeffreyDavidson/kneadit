@@ -21,7 +21,9 @@ class MenuController extends Controller
             ->get();
 
         // The menu always lists its products, so ask the JSON:API resource to include them.
-        $request->merge(['include' => 'products']);
+        $request->merge([
+            'include' => 'products',
+        ]);
 
         return CategoryResource::collection($categories);
     }
