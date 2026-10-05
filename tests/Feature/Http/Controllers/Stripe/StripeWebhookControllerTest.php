@@ -248,3 +248,24 @@ test('handleInvoicePaymentFailed skips when user not found for customer', functi
 
     Event::assertNotDispatched(PaymentFailed::class);
 });
+
+test('webhook is refused outside local and testing when no secret is configured', function () {
+    Event::fake([PaymentFailed::class]);
+    config(['cashier.webhook.secret' => '']);
+    app()->detectEnvironment(fn (): string => 'production');
+
+    $user = User::factory()->owner()->create(['stripe_id' => 'cus_unsigned']);
+    Tenant::factory()->create(['email' => $user->email]);
+
+    $payload = json_encode([
+        'id' => 'evt_unsigned_'.uniqid(),
+        'type' => 'invoice.payment_failed',
+        'data' => ['object' => ['customer' => 'cus_unsigned', 'amount_due' => 2900]],
+    ]);
+
+    $response = test()->call('POST', '/stripe/webhook', [], [], [], ['CONTENT_TYPE' => 'application/json'], $payload);
+
+    $response->assertStatus(500);
+    $response->assertSee('Webhook secret not configured');
+    Event::assertNotDispatched(PaymentFailed::class);
+});

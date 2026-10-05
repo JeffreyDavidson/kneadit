@@ -6,6 +6,7 @@ use App\Models\Staff\User;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Facades\Config;
+use Laravel\Cashier\Subscription;
 
 enum SubscriptionTier: string implements HasColor, HasLabel
 {
@@ -81,7 +82,15 @@ enum SubscriptionTier: string implements HasColor, HasLabel
             return self::Pro;
         }
 
-        $priceId = $user->subscription('default')?->stripe_price;
+        // Cashier returns the latest subscription whatever its status, so an
+        // ended one must not count as the current plan.
+        $subscription = $user->subscription('default');
+
+        if (! $subscription instanceof Subscription || ! $subscription->valid()) {
+            return null;
+        }
+
+        $priceId = $subscription->stripe_price;
 
         return $priceId ? self::fromPriceId($priceId) : null;
     }
