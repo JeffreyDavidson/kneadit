@@ -155,19 +155,20 @@ The full suite may be lengthy. Use bounded targeted tests during development, bu
 
 ### Forge PHP runtime
 
-The production site on `cold-moon` uses PHP 8.5. Keep the deployment script on Forge's version-aware `$FORGE_COMPOSER` and `$FORGE_PHP` variables so Composer and Artisan follow the PHP version configured for the site. Do not replace them with the server-wide `php` command, because other sites may intentionally use a different PHP version.
+The production application site on `cold-moon` is `app.getkneadit.app` (`/home/forge/app.getkneadit.app`) and uses PHP 8.5. The `getkneadit.app` site on the same server is the marketing site, not the application. Keep the deployment script on Forge's version-aware `$FORGE_COMPOSER` and `$FORGE_PHP` variables so Composer and Artisan follow the PHP version configured for the site. Do not replace them with the server-wide `php` command, because other sites may intentionally use a different PHP version.
 
-Forge-managed processes do not automatically follow a later site PHP change. After changing the site's PHP version, update and restart the KneadIt queue worker so its command begins with `php8.5`, and ensure the KneadIt scheduler invokes `php8.5 artisan schedule:run` once per minute. Verify the deployed release and runtime with bounded, read-only checks:
+Forge-managed processes do not automatically follow a later site PHP change. After changing the site's PHP version, update and restart the KneadIt queue worker so its command begins with `php8.5`, and ensure the KneadIt scheduler invokes `php8.5 artisan schedule:run` once per minute. Forge writes scheduler jobs to the system `/etc/crontab` (logging to `/home/forge/.forge/scheduled-<id>.log`), not to the `forge` user's crontab. Verify the deployed release and runtime with bounded, read-only checks:
 
 ```bash
-cd /home/forge/getkneadit.app/current
+cd /home/forge/app.getkneadit.app/current
 git rev-parse HEAD
+cat VERSION
 php8.5 artisan --version
 php8.5 /usr/local/bin/composer check-platform-reqs --no-dev
 systemctl is-active php8.5-fpm
-ps -eo args | grep '[p]hp8.5 .*getkneadit.app/current/artisan queue:work'
-crontab -l | grep '/home/forge/getkneadit.app/current.*php8.5 artisan schedule:run'
-curl --fail --silent --show-error --output /dev/null https://getkneadit.app/up
+ps -eo args | grep '[p]hp8.5 /home/forge/app.getkneadit.app/current/artisan queue:work'
+grep 'php8.5 /home/forge/app.getkneadit.app/current/artisan schedule:run' /etc/crontab
+curl --fail --silent --show-error --output /dev/null https://app.getkneadit.app/up
 ```
 
 The retired Ondrej Nginx Launchpad source is disabled on `cold-moon` at `/etc/apt/sources.list.d/ondrej-ubuntu-nginx-jammy.list.disabled`. Do not re-enable it. Establish and validate a supported Nginx package source separately before attempting an Nginx package upgrade; changing the PHP repository does not replace the Nginx update channel.
