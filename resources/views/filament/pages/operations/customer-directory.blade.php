@@ -16,7 +16,7 @@
             </div>
             <div class="rounded-lg bg-(--kn-surface) p-4 shadow">
                 <dt class="text-sm font-medium text-(--kn-muted)">Avg Lifetime Value</dt>
-                <dd class="mt-1 text-2xl font-semibold text-(--kn-ink)">${{ $stats['avg_lifetime_value'] }}</dd>
+                <dd class="mt-1 text-2xl font-semibold text-(--kn-ink)">{{ $stats['avg_lifetime_value'] }}</dd>
             </div>
             <div class="rounded-lg bg-(--kn-surface) p-4 shadow">
                 <dt class="text-sm font-medium text-(--kn-muted)">At-Risk Customers</dt>
@@ -27,7 +27,7 @@
             <div class="rounded-lg bg-(--kn-surface) p-4 shadow">
                 <dt class="text-sm font-medium text-(--kn-muted)">Top Customer</dt>
                 <dd class="mt-1 text-lg font-semibold text-(--kn-ink)">{{ $stats['top_customer_name'] }}</dd>
-                <dd class="text-sm text-(--kn-muted)">${{ $stats['top_customer_value'] }}</dd>
+                <dd class="text-sm text-(--kn-muted)">{{ $stats['top_customer_value'] }}</dd>
             </div>
         </div>
 
@@ -85,7 +85,7 @@
                                     <div class="text-sm text-(--kn-ink)">{{ $customer['total_orders'] }}</div>
                                 </div>
                                 <div class="col-span-2">
-                                    <div class="text-sm text-(--kn-ink)">${{ $customer['total_spent'] }}</div>
+                                    <div class="text-sm text-(--kn-ink)">{{ $customer['total_spent'] }}</div>
                                 </div>
                                 <div class="col-span-2">
                                     <div class="text-sm text-(--kn-muted)">{{ $customer['last_order_date'] }}</div>
@@ -253,7 +253,7 @@
                                                         <div class="text-right">
                                                             <div
                                                                 class="font-medium text-(--kn-ink)"
-                                                                x-text="'$' + order.total"
+                                                                x-text="order.total"
                                                             ></div>
                                                             <div
                                                                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"

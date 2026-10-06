@@ -20,7 +20,7 @@
                     @else
                         <span style="color: var(--pw-card-text)">{{ $order['customer'] }}</span>
                     @endif
-                    <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $order['items'] }} item{{ $order['items'] === 1 ? '' : 's' }} · ${{ $order['total'] }}</span>
+                    <span style="color: var(--pw-card-text-muted); margin-left: 6px">{{ $order['items'] }} item{{ $order['items'] === 1 ? '' : 's' }} · {{ $order['total'] }}</span>
                 </x-tenant-admin.dashboard.list-row>
             @endforeach
         </div>

@@ -57,3 +57,13 @@ test('the row, the detail panel and the stats card count only revenue orders', f
         ->and($detail['stats']['total_spent'])->toBe(100.0)
         ->and($detail['stats']['avg_order_value'])->toBe(100.0);
 });
+
+test('the directory shows money that is already formatted without a second dollar sign', function () {
+    $customer = Customer::factory()->create(['name' => 'Alice']);
+    Order::factory()->for($customer)->paid()->create(['total' => 100]);
+
+    livewire(CustomerDirectory::class)
+        ->assertSee('$100.00')
+        ->assertDontSee('$$')
+        ->assertDontSee("'$' + order.total", false);
+});
