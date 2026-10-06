@@ -52,7 +52,10 @@ final class DesignSystem
                 'info' => Color::hex(self::INFO),
                 'gray' => self::warmGray(),
             ])
-            ->darkMode()
+            // Forced dark: the admin partials hard-code dark surfaces and white text, so a
+            // light theme (and the user-menu switch) would be unreadable. Un-force this and
+            // default to light once the partials are rebuilt on the --kn-* tokens.
+            ->darkMode(true, isForced: true)
             ->defaultThemeMode(ThemeMode::Dark);
     }
 

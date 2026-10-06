@@ -36,12 +36,11 @@ test('the panel uses Instrument Sans for body text and Young Serif as its displa
         ->and($panel->getSerifFontFamily())->toBe('Young Serif');
 })->with('designSystemPanels');
 
-test('the panel offers the light, dark and system switch and defaults to dark', function (string $panel) {
+test('the panel keeps dark mode forced until the admin partials are rebuilt', function (string $panel) {
     $panel = Filament::getPanel($panel);
 
     expect($panel->hasDarkMode())->toBeTrue()
-        ->and($panel->hasDarkModeForced())->toBeFalse()
-        ->and($panel->hasThemeSwitcher())->toBeTrue()
+        ->and($panel->hasDarkModeForced())->toBeTrue()
         ->and($panel->getDefaultThemeMode())->toBe(ThemeMode::Dark);
 })->with('designSystemPanels');
 
