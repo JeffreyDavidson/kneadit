@@ -34,7 +34,6 @@ class CreateOneTenantCommand extends Command
             'store_name' => $this->argument('store_name'),
             'brand_color_primary' => $this->argument('brand_primary'),
             'brand_color_secondary' => $this->argument('brand_secondary'),
-            'is_active' => true,
         ]);
 
         Domain::query()->create(['domain' => $domain, 'tenant_id' => $tenant->id]);

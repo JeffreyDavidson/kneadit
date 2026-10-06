@@ -65,7 +65,6 @@ it('creates an active starter tenant with a trial, contact details and a matchin
         ->and($tenant->email)->toBe('baker@test.com')
         ->and($tenant->plan)->toBe(SubscriptionTier::Starter)
         ->and($tenant->store_name)->toBe('Record Bakery')
-        ->and($tenant->is_active)->toBeTrue()
         ->and($tenant->trial_ends_at->toDateString())->toBe(now()->addDays(config('kneadit.trial_days', 30))->toDateString())
         ->and($tenant->domains->pluck('domain')->all())->toBe(['recordbakery']);
 });

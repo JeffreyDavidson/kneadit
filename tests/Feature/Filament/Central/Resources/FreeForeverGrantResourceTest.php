@@ -35,7 +35,6 @@ test('list shows active and revoked grants', function () {
         'name' => 'Comped Owner',
         'email' => 'comp@example.com',
         'plan' => 'pro',
-        'is_active' => true,
     ]);
     $tenant->domains()->create(['domain' => 'comped-bakery']);
 

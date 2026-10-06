@@ -66,18 +66,6 @@
 
         {{-- Status pills --}}
         <div class="flex flex-wrap items-center gap-2">
-            @if ($tenant->is_active)
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-success)/25 bg-(--kn-success-tint) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-(--kn-success) uppercase">
-                    <span class="h-1.5 w-1.5 rounded-full bg-(--kn-success)"></span>
-                    Active
-                </span>
-            @else
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-danger)/25 bg-(--kn-danger-tint) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-(--kn-danger) uppercase">
-                    <span class="h-1.5 w-1.5 rounded-full bg-(--kn-danger)"></span>
-                    Inactive
-                </span>
-            @endif
-
             @if ($planValue)
                 <span class="inline-flex items-center gap-1 rounded-full border border-(--kn-honey)/25 bg-(--kn-warning-tint) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-(--kn-honey-text) capitalize uppercase">
                     {{ $planValue }}

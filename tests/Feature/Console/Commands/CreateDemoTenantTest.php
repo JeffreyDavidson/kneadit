@@ -68,6 +68,5 @@ test('demo tenant command creates pro plan tenant', function () {
     $source = file_get_contents(app_path('Console/Commands/Tenants/CreateDemoTenantCommand.php'));
 
     expect($source)
-        ->toContain("'plan' => SubscriptionTier::Pro")
-        ->toContain("'is_active' => true");
+        ->toContain("'plan' => SubscriptionTier::Pro");
 });

@@ -16,9 +16,9 @@ class TenantAnalyticsSummaryQuery
         $total = $signupCounts['total'];
         $thisMonth = $signupCounts['this_month'];
         $conversion = $this->subscriptions->trialConversion();
-        $active = $conversion['converted'];
-        $completedTrials = $active + $conversion['expired'];
-        $conversionRate = $completedTrials > 0 ? round($active / $completedTrials * 100, 1) : 0.0;
+        $active = $conversion['paying'];
+        $completedTrials = $conversion['converted'] + $conversion['expired'];
+        $conversionRate = $completedTrials > 0 ? round($conversion['converted'] / $completedTrials * 100, 1) : 0.0;
         $lastMonth = $signupCounts['last_month'];
 
         return [
@@ -27,7 +27,7 @@ class TenantAnalyticsSummaryQuery
                 $thisMonth > $lastMonth => 'up', $thisMonth < $lastMonth => 'down', default => 'flat',
             }],
             ['label' => 'Active Subscriptions', 'value' => (string) $active, 'hint' => $conversion['on_trial'] === 0 && $conversion['expired'] === 0 ? 'No trial activity' : "{$conversion['on_trial']} on trial • {$conversion['expired']} churned", 'trend' => 'neutral'],
-            ['label' => 'Trial → Paid', 'value' => $completedTrials > 0 ? $conversionRate.'%' : '—', 'hint' => $completedTrials > 0 ? "{$active} of {$completedTrials} completed trials converted" : 'No trials completed yet', 'trend' => match (true) {
+            ['label' => 'Trial → Paid', 'value' => $completedTrials > 0 ? $conversionRate.'%' : '—', 'hint' => $completedTrials > 0 ? "{$conversion['converted']} of {$completedTrials} completed trials converted" : 'No trials completed yet', 'trend' => match (true) {
                 $completedTrials === 0 => 'neutral', $conversionRate >= 50 => 'up', $conversionRate >= 25 => 'neutral', default => 'down',
             }],
         ];
@@ -38,7 +38,7 @@ class TenantAnalyticsSummaryQuery
     {
         $conversion = $this->subscriptions->trialConversion();
 
-        return ['Active' => $conversion['converted'], 'On trial' => $conversion['on_trial'], 'Trial expired' => $conversion['expired']];
+        return ['Active' => $conversion['paying'], 'On trial' => $conversion['on_trial'], 'Trial expired' => $conversion['expired']];
     }
 
     private function monthDelta(int $current, int $previous): string

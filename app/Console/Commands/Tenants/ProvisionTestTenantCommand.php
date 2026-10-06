@@ -68,7 +68,6 @@ class ProvisionTestTenantCommand extends Command
             'store_name' => self::STORE_NAME,
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
-            'is_active' => true,
             'storefront_enabled' => true,
         ]);
 
