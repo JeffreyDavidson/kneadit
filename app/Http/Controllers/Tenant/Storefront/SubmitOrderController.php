@@ -68,7 +68,9 @@ class SubmitOrderController extends Controller
             }
 
             return response()->json([
-                'data' => ['redirect_url' => $checkoutUrl ?? route('order.confirmation', $order)],
+                'data' => [
+                    'redirect_url' => $checkoutUrl ?? route('order.confirmation', $order),
+                ],
             ]);
         }
 
