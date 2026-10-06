@@ -67,3 +67,12 @@ test('platform stats widget renders when daily ticket counts are integers', func
     livewire(PlatformStats::class)
         ->assertOk();
 });
+
+test('revenue overview widget renders again when its figures come back from a serializing cache', function () {
+    useSerializingCache();
+
+    livewire(RevenueOverview::class)->assertOk();
+    livewire(RevenueOverview::class)
+        ->assertOk()
+        ->assertSee('ARPU');
+});

@@ -7,6 +7,7 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Queries\Analytics\CustomerInsightsQuery;
 use App\Services\Scheduling\BakeryClock;
+use App\ValueObjects\Money;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Config;
 
@@ -48,14 +49,20 @@ class CustomerInsightsWidget extends Widget
     {
         $monthKey = resolve(BakeryClock::class)->now()->format('Y-m');
 
-        return $this->cached("aov_{$monthKey}", [900, 1800], function (): array {
+        // Cache cents, not Money: a Money object can't be read back from the cache.
+        $cached = $this->cached("aov_{$monthKey}", [900, 1800], function (): array {
             $averages = resolve(CustomerInsightsQuery::class)->averageOrderValues();
 
             return [
-                'value' => $averages['this_month'],
+                'cents' => $averages['this_month']->cents(),
                 'trend' => $averages['this_month']->cents() >= $averages['last_month']->cents() ? 'up' : 'down',
             ];
         });
+
+        return [
+            'value' => Money::fromCents($cached['cents']),
+            'trend' => $cached['trend'],
+        ];
     }
 
     protected function cachePrefix(): string

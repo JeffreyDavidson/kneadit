@@ -38,7 +38,14 @@ class AnnouncementBanner extends Widget
 
                 return empty($targets) || in_array($plan, $targets);
             })
-            ->values()
+            // Plain arrays: models can't be read back from the cache (cache.serializable_classes is false).
+            ->map(fn (PlatformAnnouncement $announcement): array => [
+                'id' => $announcement->id,
+                'type' => $announcement->type->value,
+                'title' => $announcement->title,
+                'body' => $announcement->body,
+                'is_dismissable' => $announcement->is_dismissable,
+            ])
             ->values()
             ->all());
 

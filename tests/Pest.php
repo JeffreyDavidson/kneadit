@@ -120,6 +120,16 @@ function setUpTenantTest(): void
     }
 }
 
+/**
+ * Make the array cache serialize values like production stores do, so a cache hit
+ * returns what `cache.serializable_classes` allows rather than the original objects.
+ */
+function useSerializingCache(): void
+{
+    config(['cache.stores.array.serialize' => true]);
+    resolve('cache')->purge('array');
+}
+
 /** @return list<class-string> */
 function tenantMiddleware(): array
 {
@@ -476,6 +486,9 @@ function createCentralTables(): void
             $table->string('type')->default('info');
             $table->json('target_plans')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+            $table->boolean('is_dismissable')->default(true);
             $table->timestamps();
         },
         'impersonation_tokens' => function ($table) {
