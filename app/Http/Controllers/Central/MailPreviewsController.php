@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Previews\PlatformMailPreviews;
+use App\Support\PlatformMailPreviews;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -16,7 +16,9 @@ class MailPreviewsController extends Controller
 {
     public function index(): View
     {
-        return view('central.mail-previews.index', ['titles' => PlatformMailPreviews::titles()]);
+        return view('central.mail-previews.index', [
+            'titles' => PlatformMailPreviews::titles(),
+        ]);
     }
 
     public function show(Request $request, string $mail): Response

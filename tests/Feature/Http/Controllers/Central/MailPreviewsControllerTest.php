@@ -1,7 +1,7 @@
 <?php
 
-use App\Mail\Previews\PlatformMailPreviews;
 use App\Models\Staff\User;
+use App\Support\PlatformMailPreviews;
 use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\get;
