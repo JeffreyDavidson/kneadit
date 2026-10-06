@@ -27,7 +27,7 @@ class MailPreviewsController extends Controller
 
         abort_unless($preview instanceof Renderable, 404);
 
-        if ($request->query('format') !== 'text' && PlatformMailPreviews::hasHtml($preview)) {
+        if ($request->query('format') !== 'text') {
             return response($preview->render());
         }
 

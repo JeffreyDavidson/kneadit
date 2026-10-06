@@ -79,20 +79,6 @@ final class PlatformMailPreviews
     }
 
     /**
-     * Some emails are plain text only. They are shown as text, not as a page.
-     */
-    public static function hasHtml(Renderable $preview): bool
-    {
-        if (! $preview instanceof PlatformMail) {
-            return true;
-        }
-
-        $content = $preview->content();
-
-        return $content->view !== null || $content->html !== null || $content->markdown !== null || $content->htmlString !== null;
-    }
-
-    /**
      * The plain-text version of a preview, rendered from the same template the
      * mailer uses for the email's text part.
      */

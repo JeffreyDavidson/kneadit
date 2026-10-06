@@ -36,12 +36,6 @@ test('each email renders its plain-text version', function (string $slug) {
     $response->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8')->assertDontSeeHtml('<html');
 })->with('previewable emails');
 
-test('an email with no HTML version is shown as plain text', function () {
-    $response = get(route('mailPreviews.show', ['mail' => 'trial-reminder']));
-
-    $response->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
-});
-
 test('previewing sends no mail and saves no rows', function (string $slug) {
     Mail::fake();
     $users = User::count();
