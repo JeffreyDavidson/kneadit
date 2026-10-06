@@ -13,5 +13,5 @@
 
 <div class="border-brand-300/20 rounded-xl border bg-(--kn-surface-sunken) p-4 text-center">
     <div class="text-[1.5rem] font-bold {{ $valueClass }}">{{ $value }}</div>
-    <div class="text-cinnamon mt-1 text-[0.75rem] tracking-wide uppercase">{{ $label }}</div>
+    <div class="mt-1 text-[0.75rem] tracking-wide text-(--kn-muted) uppercase">{{ $label }}</div>
 </div>

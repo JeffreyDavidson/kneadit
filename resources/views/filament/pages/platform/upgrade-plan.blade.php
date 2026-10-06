@@ -23,7 +23,7 @@
                 @endphp
                 <div @class([
                     'rounded-2xl bg-(--kn-surface) flex flex-col overflow-hidden',
-                    'border-2 border-honey shadow-lg scale-[1.02]' => $isCurrent,
+                    'border-2 border-(--kn-honey) shadow-lg scale-[1.02]' => $isCurrent,
                     'border border-brand-300/25 shadow-sm' => ! $isCurrent,
                 ])>
                     {{-- Card Header --}}

@@ -6,15 +6,15 @@
 
 @php
     $colors = [
-        'honey' => 'bg-honey text-warm-black',
-        'honey-soft' => 'bg-honey/10 text-honey',
-        'honey-soft-light' => 'bg-honey/10 text-parchment',
-        'golden' => 'bg-golden text-warm-black',
-        'butter' => 'bg-butter text-warm-black',
-        'success' => 'bg-emerald-500/15 text-emerald-500',
-        'warning' => 'bg-amber-500/15 text-amber-500',
-        'danger' => 'bg-red-500/15 text-red-500',
-        'neutral' => 'bg-espresso text-honey',
+        'honey' => 'bg-(--kn-honey) text-(--kn-on-honey)',
+        'honey-soft' => 'bg-(--kn-warning-tint) text-(--kn-honey-text)',
+        'honey-soft-light' => 'bg-(--kn-warning-tint) text-(--kn-ink)',
+        'golden' => 'bg-(--kn-honey-hover) text-(--kn-on-honey)',
+        'butter' => 'bg-(--kn-surface-hover) text-(--kn-on-honey)',
+        'success' => 'bg-(--kn-success-tint) text-(--kn-success)',
+        'warning' => 'bg-(--kn-warning-tint) text-(--kn-warning)',
+        'danger' => 'bg-(--kn-danger-tint) text-(--kn-danger)',
+        'neutral' => 'bg-(--kn-surface-sunken) text-(--kn-honey-text)',
     ];
     $sizes = [
         'sm' => 'text-[0.6rem] px-2 py-0.5',

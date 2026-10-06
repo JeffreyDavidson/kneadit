@@ -7,10 +7,10 @@
 @php
     $aligns = ['left' => 'text-left', 'center' => 'text-center', 'right' => 'text-right'];
     $tones = [
-        'white' => 'text-white',
-        'parchment' => 'text-parchment',
-        'honey' => 'text-honey',
-        'cinnamon' => 'text-cinnamon',
+        'white' => 'text-(--kn-ink)',
+        'parchment' => 'text-(--kn-ink)',
+        'honey' => 'text-(--kn-honey-text)',
+        'cinnamon' => 'text-(--kn-muted)',
     ];
 @endphp
 

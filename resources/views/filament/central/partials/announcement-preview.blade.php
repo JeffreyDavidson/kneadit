@@ -16,8 +16,8 @@
 
 <div>
     <div class="mb-2 flex items-center justify-between">
-        <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Live preview</span>
-        <span class="text-cinnamon text-[0.7rem]">How bakers will see it</span>
+        <span class="text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">Live preview</span>
+        <span class="text-[0.7rem] text-(--kn-muted)">How bakers will see it</span>
     </div>
 
     <div style="background-color: {{ $palette['bg'] }}; border-left: 4px solid {{ $palette['border'] }}; border-radius: 8px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;">

@@ -30,7 +30,7 @@ class CentralPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return DesignSystem::forcedDark(DesignSystem::configure($panel))
+        return DesignSystem::lightByDefault(DesignSystem::configure($panel))
             ->id('central')
             ->path('admin')
             ->domains($this->centralDomains())
@@ -47,9 +47,6 @@ class CentralPanelProvider extends PanelProvider
                 NavigationGroup::make('Insights'),
                 NavigationGroup::make('Settings'),
             ])
-            ->renderHook('panels::head.end', fn (): HtmlString => new HtmlString(
-                '<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.filemtime(public_path('css/central-admin.css')).'">',
-            ))
             ->renderHook('panels::body.end', fn (): HtmlString => new HtmlString('
                 <script>
                     document.addEventListener("livewire:navigating", () => {

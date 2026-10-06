@@ -42,22 +42,22 @@ enum PlatformEventType: string implements HasColor, HasIcon, HasLabel
     public function getIconColorClass(): string
     {
         return match ($this) {
-            self::TenantCreated => 'text-honey',
-            self::TenantDeactivated => 'text-red-500',
-            self::PlanChanged => 'text-golden',
-            self::StorefrontToggled => 'text-cinnamon',
-            self::TrialExpired => 'text-butter',
+            self::TenantCreated => 'text-(--kn-honey-text)',
+            self::TenantDeactivated => 'text-(--kn-danger)',
+            self::PlanChanged => 'text-(--kn-honey-text)',
+            self::StorefrontToggled => 'text-(--kn-muted)',
+            self::TrialExpired => 'text-(--kn-ink-2)',
         };
     }
 
     public function getBorderColorClass(): string
     {
         return match ($this) {
-            self::TenantCreated => 'border-honey',
-            self::TenantDeactivated => 'border-red-500',
-            self::PlanChanged => 'border-golden',
-            self::StorefrontToggled => 'border-cinnamon',
-            self::TrialExpired => 'border-butter',
+            self::TenantCreated => 'border-(--kn-honey)',
+            self::TenantDeactivated => 'border-(--kn-danger)',
+            self::PlanChanged => 'border-(--kn-honey-hover)',
+            self::StorefrontToggled => 'border-(--kn-muted)',
+            self::TrialExpired => 'border-(--kn-border-control)',
         };
     }
 

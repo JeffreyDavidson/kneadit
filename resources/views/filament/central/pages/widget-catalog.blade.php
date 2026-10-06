@@ -1,9 +1,8 @@
 <x-filament-panels::page>
     <style @cspnonce>
         /* Card primitives (.preview-widget, .pw-*) live in
-           public/css/widget-cards.css and are loaded panel-wide. The
-           rules below are catalog-specific layout + the inline-style
-           recolor overrides for hardcoded thumbnail colors. */
+           resources/css/filament/shared/widget-cards.css. The rules below are
+           catalog-specific layout, on the design system tokens. */
 
         .catalog-grid {
             display: grid;
@@ -11,32 +10,14 @@
             gap: 12px;
         }
 
-        /* Force-recolor inline-style hex colors in thumbnails to land
-           on central panel tokens. Thumbnails were originally written
-           against tenant brand colors; this layer maps them. */
-        .preview-widget-body [style*='color: #3d2314'] {
-            color: var(--platform-100) !important;
-        }
-        .preview-widget-body [style*='color: #6b4c3b'] {
-            color: var(--platform-200) !important;
-        }
-        .preview-widget-body [style*='color: #a08060'] {
-            color: var(--platform-400) !important;
-        }
-        .preview-widget-body [style*='color: #8b6844'] {
-            color: var(--accent) !important;
-        }
-        .preview-widget-body [style*='background: #fdf8f2'] {
-            background: var(--platform-800) !important;
-        }
-
-        /* All-sizes mode — one row per widget, tiles inside (sm/md/lg/xl
+        /* All-sizes mode: one row per widget, tiles inside (sm/md/lg/xl
            where allowed). Each row is its own mini grid so the tiles
            inside lay out at their natural span. */
         .catalog-row {
-            background: var(--platform-900);
-            border: 1px solid var(--border-medium);
-            border-radius: 12px;
+            background: var(--kn-surface);
+            border: 1px solid var(--kn-border);
+            border-radius: var(--kn-radius-lg);
+            box-shadow: var(--kn-shadow-card);
             padding: 14px;
             margin-bottom: 14px;
         }
@@ -46,23 +27,23 @@
             align-items: baseline;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--kn-border);
         }
         .catalog-row-name {
-            color: var(--platform-100);
+            color: var(--kn-ink);
             font-weight: 600;
             font-size: 0.95rem;
         }
         .catalog-row-key {
-            color: var(--platform-400);
+            color: var(--kn-muted);
             font-size: 0.7rem;
-            font-family: monospace;
+            font-family: var(--kn-font-mono);
         }
         .catalog-row-grid {
             display: grid;
             gap: 8px;
             /* grid-template-columns is set inline based on the number of
-               allowed sizes — each variant gets equal width so SM/MD/LG
+               allowed sizes: each variant gets equal width so SM/MD/LG
                can be compared directly. */
         }
         .catalog-row-cell {
@@ -74,10 +55,10 @@
             right: 6px;
             font-size: 0.55rem;
             font-weight: 700;
-            background: rgba(0, 0, 0, 0.5);
-            color: var(--accent);
+            background: var(--kn-espresso);
+            color: var(--kn-on-espresso);
             padding: 2px 5px;
-            border-radius: 4px;
+            border-radius: var(--kn-radius-sm);
             text-transform: uppercase;
             letter-spacing: 0.05em;
             z-index: 1;
@@ -85,7 +66,7 @@
     </style>
 
     <div class="mb-6 flex items-start justify-between gap-4">
-        <p class="text-cinnamon flex-1 text-sm">
+        <p class="flex-1 text-sm text-(--kn-muted)">
             Representative thumbnails of every tenant widget at its default size. Use this page to review new widgets
             and their layouts before bakery owners see them. Each tile uses the same partial that powers the bakery
             dashboard configurator.

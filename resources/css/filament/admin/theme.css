@@ -12,9 +12,7 @@
 /*
  * Tailwind brand utilities (e.g. bg-brand-700) expand to
  * background-color: var(--color-brand-700). The --brand-* scale they read is
- * aliased to the design system tokens in kneadit/admin-aliases.css, which
- * also points the platform palette utilities (bg-honey, text-parchment, ...)
- * at tokens.
+ * aliased to the design system tokens in kneadit/admin-aliases.css.
  */
 @theme {
     --color-brand-50: var(--brand-50);

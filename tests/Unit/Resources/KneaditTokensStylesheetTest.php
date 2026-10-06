@@ -33,8 +33,7 @@ dataset('kneaditStaticTokens', [
 dataset('legacyAdminVariables', [
     '--brand-50', '--brand-100', '--brand-150', '--brand-200', '--brand-300', '--brand-400',
     '--brand-500', '--brand-600', '--brand-700', '--brand-800', '--brand-900',
-    '--border-subtle', '--border-medium', '--hover-bg', '--active-bg', '--scrollbar-thumb',
-    '--focus-ring', '--thead-bg',
+    '--border-subtle',
 ]);
 
 test('every colour and shadow token is defined for light on :root and for dark under .dark', function (string $token) {
@@ -68,23 +67,22 @@ test('the legacy admin variables are aliased to design system tokens', function 
     expect($css)->toMatch('/'.preg_quote($variable, '/').':\s*[^;]*var\(--kn-/');
 })->with('legacyAdminVariables');
 
-dataset('centralOnlyVariables', [
-    '--platform-50', '--platform-100', '--platform-200', '--platform-300', '--platform-400',
-    '--platform-500', '--platform-600', '--platform-700', '--platform-800', '--platform-900', '--platform-950',
-    '--accent', '--accent-light',
-]);
-
-test('the platform admin variables are aliased to design system tokens in the central theme', function (string $variable) {
+test('the platform admin theme defines no variable aliases of its own', function () {
     $css = (string) file_get_contents(resource_path('css/filament/central/theme.css'));
 
-    expect($css)->toMatch('/'.preg_quote($variable, '/').':\s*[^;]*var\(--kn-/');
-})->with('centralOnlyVariables');
+    expect($css)->not->toMatch('/^\s*--[a-z0-9-]+:/m');
+});
 
-test('both panel themes import the tokens and the legacy aliases', function (string $theme) {
+test('both panel themes import the legacy aliases the widget preview reads', function (string $theme) {
+    $css = (string) file_get_contents(resource_path("css/filament/{$theme}/theme.css"));
+
+    expect($css)->toContain("@import '../../kneadit/admin-aliases.css';");
+})->with(['admin', 'central']);
+
+test('both panel themes import the tokens and the design system overrides', function (string $theme) {
     $css = (string) file_get_contents(resource_path("css/filament/{$theme}/theme.css"));
 
     expect($css)->toContain("@import '../../kneadit/tokens.css';")
-        ->and($css)->toContain("@import '../../kneadit/admin-aliases.css';")
         ->and($css)->toContain("@import '../../kneadit/filament.css';");
 })->with(['admin', 'central']);
 
@@ -96,3 +94,12 @@ test('primary buttons use the on-honey text colour and headings use the display 
         ->and($css)->toContain('.fi-header-heading')
         ->and($css)->toContain('var(--kn-font-display)');
 });
+
+test('the aliases nothing reads any more are gone', function (string $variable) {
+    $css = (string) file_get_contents(resource_path('css/kneadit/admin-aliases.css'));
+
+    expect($css)->not->toContain($variable);
+})->with([
+    '--border-medium', '--hover-bg', '--active-bg', '--scrollbar-thumb', '--focus-ring', '--thead-bg',
+    '--color-warm-black', '--color-espresso', '--color-cinnamon', '--color-honey', '--color-golden', '--color-butter', '--color-parchment',
+]);

@@ -1,0 +1,50 @@
+/*
+ * Platform admin chrome that the bakery admin does not have: the profile block
+ * at the top of the user menu. Tokens from kneadit/tokens.css only; Filament's
+ * styles are layered, so no !important is needed.
+ */
+
+.fi-central-user-menu-header {
+    align-items: center;
+    border-bottom: 1px solid var(--kn-border);
+    display: flex;
+    gap: var(--kn-space-3);
+    padding: var(--kn-space-4);
+}
+
+.fi-central-user-menu-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.fi-central-user-menu-header-name,
+.fi-central-user-menu-header-email {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fi-central-user-menu-header-name {
+    color: var(--kn-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+}
+
+.fi-central-user-menu-header-email {
+    color: var(--kn-muted);
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+/* The role: the `eyebrow` style in `honey-text`. */
+.fi-central-user-menu-header-role {
+    color: var(--kn-honey-text);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1rem;
+    text-transform: uppercase;
+}

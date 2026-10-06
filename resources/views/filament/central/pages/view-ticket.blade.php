@@ -6,18 +6,18 @@
     $priorityValue = $record->priority instanceof \BackedEnum ? $record->priority->value : $record->priority;
 
     $statusTone = match ($statusValue) {
-        'open' => ['bg' => 'bg-red-500/15', 'border' => 'border-red-500/25', 'text' => 'text-red-400', 'dot' => 'bg-red-500'],
-        'in_progress' => ['bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400', 'dot' => 'bg-amber-500'],
-        'resolved' => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400', 'dot' => 'bg-emerald-500'],
-        'closed' => ['bg' => 'bg-cinnamon/15', 'border' => 'border-cinnamon/25', 'text' => 'text-cinnamon', 'dot' => 'bg-cinnamon'],
-        default => ['bg' => 'bg-cinnamon/15', 'border' => 'border-cinnamon/25', 'text' => 'text-cinnamon', 'dot' => 'bg-cinnamon'],
+        'open' => ['bg' => 'bg-(--kn-danger-tint)', 'border' => 'border-(--kn-danger)/25', 'text' => 'text-(--kn-danger)', 'dot' => 'bg-(--kn-danger)'],
+        'in_progress' => ['bg' => 'bg-(--kn-warning-tint)', 'border' => 'border-(--kn-warning)/25', 'text' => 'text-(--kn-warning)', 'dot' => 'bg-(--kn-warning)'],
+        'resolved' => ['bg' => 'bg-(--kn-success-tint)', 'border' => 'border-(--kn-success)/25', 'text' => 'text-(--kn-success)', 'dot' => 'bg-(--kn-success)'],
+        'closed' => ['bg' => 'bg-(--kn-surface-hover)', 'border' => 'border-(--kn-border)', 'text' => 'text-(--kn-muted)', 'dot' => 'bg-(--kn-muted)'],
+        default => ['bg' => 'bg-(--kn-surface-hover)', 'border' => 'border-(--kn-border)', 'text' => 'text-(--kn-muted)', 'dot' => 'bg-(--kn-muted)'],
     };
 
     $priorityTone = match ($priorityValue) {
-        'high' => 'text-red-400',
-        'normal' => 'text-sky-400',
-        'low' => 'text-cinnamon',
-        default => 'text-cinnamon',
+        'high' => 'text-(--kn-danger)',
+        'normal' => 'text-(--kn-info)',
+        'low' => 'text-(--kn-muted)',
+        default => 'text-(--kn-muted)',
     };
 
     $initials = function (string $name): string {
@@ -34,14 +34,14 @@
             {{-- Ticket Meta Strip (subject is handled by Filament's page heading) --}}
             <x-central.card padding="px-5 py-4">
                 <div class="flex flex-wrap items-center gap-3">
-                    <div class="bg-honey/15 border-honey/25 text-honey flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-[0.85rem] font-bold">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-(--kn-honey)/25 bg-(--kn-warning-tint) text-[0.85rem] font-bold text-(--kn-honey-text)">
                         {{ $initials($record->tenant?->name ?? 'T') }}
                     </div>
-                    <div class="text-cinnamon flex items-center gap-2 text-[0.8rem]">
-                        <span class="font-semibold text-white">{{ $record->tenant?->name ?? $record->tenant_id }}</span>
-                        <span class="text-cinnamon/50">•</span>
+                    <div class="flex items-center gap-2 text-[0.8rem] text-(--kn-muted)">
+                        <span class="font-semibold text-(--kn-ink)">{{ $record->tenant?->name ?? $record->tenant_id }}</span>
+                        <span class="text-(--kn-muted)">•</span>
                         <span>Ticket #{{ $record->id }}</span>
-                        <span class="text-cinnamon/50">•</span>
+                        <span class="text-(--kn-muted)">•</span>
                         <span>{{ $record->created_at->diffForHumans() }}</span>
                     </div>
                 </div>
@@ -51,22 +51,22 @@
             <div class="space-y-6">
                 <div class="mb-1 flex items-center justify-between">
                     <x-central.eyebrow>Conversation</x-central.eyebrow>
-                    <span class="text-cinnamon text-[0.75rem]">{{ $record->replies->count() + 1 }} {{ \Illuminate\Support\Str::plural('message', $record->replies->count() + 1) }}</span>
+                    <span class="text-[0.75rem] text-(--kn-muted)">{{ $record->replies->count() + 1 }} {{ \Illuminate\Support\Str::plural('message', $record->replies->count() + 1) }}</span>
                 </div>
 
                 {{-- Original Message (always from tenant) --}}
                 <div class="flex gap-3">
-                    <div class="bg-cinnamon/20 border-cinnamon/25 text-parchment flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[0.75rem] font-bold">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-(--kn-border) bg-(--kn-surface-hover) text-[0.75rem] font-bold text-(--kn-ink)">
                         {{ $initials($record->tenant?->name ?? 'T') }}
                     </div>
                     <div class="min-w-0 flex-1">
                         <div class="mb-2 flex flex-wrap items-center gap-2">
-                            <span class="text-[0.85rem] font-semibold text-white">{{ $record->tenant?->name ?? 'Customer' }}</span>
-                            <span class="text-cinnamon bg-espresso rounded px-1.5 py-0.5 text-[0.6rem] font-bold tracking-[0.1em] uppercase">Customer</span>
-                            <span class="text-cinnamon text-[0.75rem]">{{ $record->created_at->format('M j, Y · g:i A') }}</span>
+                            <span class="text-[0.85rem] font-semibold text-(--kn-ink)">{{ $record->tenant?->name ?? 'Customer' }}</span>
+                            <span class="rounded bg-(--kn-surface-sunken) px-1.5 py-0.5 text-[0.6rem] font-bold tracking-[0.1em] text-(--kn-muted) uppercase">Customer</span>
+                            <span class="text-[0.75rem] text-(--kn-muted)">{{ $record->created_at->format('M j, Y · g:i A') }}</span>
                         </div>
-                        <div class="border-honey/12 bg-warm-black rounded-xl border p-5">
-                            <div class="text-parchment text-[0.9rem] leading-relaxed whitespace-pre-wrap">
+                        <div class="rounded-xl border border-(--kn-border) bg-(--kn-surface) p-5">
+                            <div class="text-[0.9rem] leading-relaxed whitespace-pre-wrap text-(--kn-ink)">
                                 {{ $record->body }}
                             </div>
                         </div>
@@ -81,29 +81,29 @@
                     <div class="flex gap-3">
                         <div @class([
                             'shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-[0.75rem] border',
-                            'bg-honey/15 border-honey/30 text-honey' => $isAdmin,
-                            'bg-cinnamon/20 border-cinnamon/25 text-parchment' => ! $isAdmin,
+                            'bg-(--kn-warning-tint) border-(--kn-honey)/30 text-(--kn-honey-text)' => $isAdmin,
+                            'bg-(--kn-surface-hover) border-(--kn-border) text-(--kn-ink)' => ! $isAdmin,
                         ])>
                             {{ $initials($reply->author_name) }}
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="mb-2 flex flex-wrap items-center gap-2">
-                                <span class="text-[0.85rem] font-semibold text-white">{{ $reply->author_name }}</span>
+                                <span class="text-[0.85rem] font-semibold text-(--kn-ink)">{{ $reply->author_name }}</span>
                                 <span @class([
                                     'text-[0.6rem] uppercase tracking-[0.1em] font-bold px-1.5 py-0.5 rounded',
-                                    'bg-honey text-warm-black' => $isAdmin,
-                                    'bg-espresso text-cinnamon' => ! $isAdmin,
+                                    'bg-(--kn-honey) text-(--kn-on-honey)' => $isAdmin,
+                                    'bg-(--kn-surface-sunken) text-(--kn-muted)' => ! $isAdmin,
                                 ])>
                                     {{ $isAdmin ? 'Staff' : 'Customer' }}
                                 </span>
-                                <span class="text-cinnamon text-[0.75rem]">{{ $reply->created_at->format('M j, Y · g:i A') }}</span>
+                                <span class="text-[0.75rem] text-(--kn-muted)">{{ $reply->created_at->format('M j, Y · g:i A') }}</span>
                             </div>
                             <div @class([
                                 'rounded-xl border p-5',
-                                'border-honey/25 bg-honey/5' => $isAdmin,
-                                'border-honey/12 bg-warm-black' => ! $isAdmin,
+                                'border-(--kn-honey)/25 bg-(--kn-surface-hover)' => $isAdmin,
+                                'border-(--kn-border) bg-(--kn-surface)' => ! $isAdmin,
                             ])>
-                                <div class="text-parchment text-[0.9rem] leading-relaxed whitespace-pre-wrap">
+                                <div class="text-[0.9rem] leading-relaxed whitespace-pre-wrap text-(--kn-ink)">
                                     {{ $reply->body }}
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
                 <x-central.card>
                     <div class="mb-3 flex items-center justify-between">
                         <x-central.eyebrow>Reply to customer</x-central.eyebrow>
-                        <span class="text-cinnamon inline-flex items-center gap-1.5 text-[0.7rem]">
+                        <span class="inline-flex items-center gap-1.5 text-[0.7rem] text-(--kn-muted)">
                             <x-heroicon-o-envelope class="h-3.5 w-3.5" />
                             Visible to {{ $record->tenant?->name ?? 'customer' }}
                         </span>
@@ -125,7 +125,7 @@
                     <form wire:submit="addReply">
                         <x-central.textarea wire:model="replyBody" rows="4" placeholder="Write your reply…" />
                         @error('replyBody')
-                            <p class="mt-1.5 text-[0.8rem] text-red-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-[0.8rem] text-(--kn-danger)">{{ $message }}</p>
                         @enderror
                         <div class="mt-3 flex items-center justify-end gap-2">
                             <x-central.button type="submit" class="gap-1.5">
@@ -136,7 +136,7 @@
                     </form>
                 </x-central.card>
             @else
-                <div class="text-cinnamon inline-flex items-center gap-2 text-[0.8rem]">
+                <div class="inline-flex items-center gap-2 text-[0.8rem] text-(--kn-muted)">
                     <x-heroicon-o-lock-closed class="h-4 w-4" />
                     Replies disabled — reopen this ticket from the Status panel to continue the conversation.
                 </div>
@@ -155,7 +155,7 @@
                 </div>
 
                 <div class="mb-4 text-[0.8rem]">
-                    <span class="text-cinnamon">Priority:</span>
+                    <span class="text-(--kn-muted)">Priority:</span>
                     <span class="{{ $priorityTone }} font-semibold capitalize">{{ $priorityValue }}</span>
                 </div>
 
@@ -164,7 +164,7 @@
                         <button
                             type="button"
                             wire:click="updateStatus('in_progress')"
-                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-[0.8rem] font-semibold text-amber-400 transition-colors hover:bg-amber-500/20"
+                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-(--kn-warning)/25 bg-(--kn-warning-tint) px-3 py-2 text-[0.8rem] font-semibold text-(--kn-warning) transition-colors hover:bg-(--kn-warning)/20"
                         >
                             <x-heroicon-o-bolt class="h-3.5 w-3.5" />
                             Mark In Progress
@@ -175,7 +175,7 @@
                         <button
                             type="button"
                             wire:click="updateStatus('resolved')"
-                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 text-[0.8rem] font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20"
+                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-(--kn-success)/25 bg-(--kn-success-tint) px-3 py-2 text-[0.8rem] font-semibold text-(--kn-success) transition-colors hover:bg-(--kn-success)/20"
                         >
                             <x-heroicon-o-check-circle class="h-3.5 w-3.5" />
                             Mark Resolved
@@ -186,7 +186,7 @@
                         <button
                             type="button"
                             wire:click="updateStatus('closed')"
-                            class="bg-cinnamon/10 text-cinnamon border-cinnamon/25 hover:bg-cinnamon/20 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2 text-[0.8rem] font-semibold transition-colors"
+                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-(--kn-border) bg-(--kn-surface-hover) px-3 py-2 text-[0.8rem] font-semibold text-(--kn-muted) transition-colors hover:bg-(--kn-surface-hover)"
                         >
                             <x-heroicon-o-archive-box class="h-3.5 w-3.5" />
                             Close Ticket
@@ -195,7 +195,7 @@
                         <button
                             type="button"
                             wire:click="updateStatus('open')"
-                            class="bg-honey/10 text-honey border-honey/25 hover:bg-honey/20 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2 text-[0.8rem] font-semibold transition-colors"
+                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-(--kn-honey)/25 bg-(--kn-warning-tint) px-3 py-2 text-[0.8rem] font-semibold text-(--kn-honey-text) transition-colors hover:bg-(--kn-warning-tint)"
                         >
                             <x-heroicon-o-arrow-uturn-left class="h-3.5 w-3.5" />
                             Reopen Ticket
@@ -204,7 +204,7 @@
                 </div>
 
                 @if ($record->resolved_at)
-                    <div class="border-honey/8 text-cinnamon mt-4 border-t pt-4 text-[0.75rem]">
+                    <div class="mt-4 border-t border-(--kn-border) pt-4 text-[0.75rem] text-(--kn-muted)">
                         Resolved {{ $record->resolved_at->diffForHumans() }}
                     </div>
                 @endif
@@ -216,43 +216,45 @@
                     <x-central.eyebrow class="mb-3">Customer</x-central.eyebrow>
 
                     <div class="mb-4 flex items-start gap-3">
-                        <div class="bg-honey/15 border-honey/25 text-honey flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-[0.85rem] font-bold">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--kn-honey)/25 bg-(--kn-warning-tint) text-[0.85rem] font-bold text-(--kn-honey-text)">
                             {{ $initials($record->tenant->name) }}
                         </div>
                         <div class="min-w-0 flex-1">
-                            <div class="truncate text-[0.9rem] font-semibold text-white">
+                            <div class="truncate text-[0.9rem] font-semibold text-(--kn-ink)">
                                 {{ $record->tenant->name }}
                             </div>
-                            <div class="text-cinnamon truncate text-[0.75rem]">{{ $record->tenant->email ?? '—' }}</div>
+                            <div class="truncate text-[0.75rem] text-(--kn-muted)">
+                                {{ $record->tenant->email ?? '—' }}
+                            </div>
                         </div>
                     </div>
 
                     <dl class="space-y-2 text-[0.8rem]">
                         <div class="flex items-center justify-between">
-                            <dt class="text-cinnamon">Plan</dt>
-                            <dd class="font-semibold text-white capitalize">
+                            <dt class="text-(--kn-muted)">Plan</dt>
+                            <dd class="font-semibold text-(--kn-ink) capitalize">
                                 {{ $record->tenant->plan?->value ?? $record->tenant->plan ?? '—' }}
                             </dd>
                         </div>
                         <div class="flex items-center justify-between">
-                            <dt class="text-cinnamon">Tenant ID</dt>
-                            <dd class="text-parchment font-mono text-[0.7rem]">{{ $record->tenant->id }}</dd>
+                            <dt class="text-(--kn-muted)">Tenant ID</dt>
+                            <dd class="font-mono text-[0.7rem] text-(--kn-ink)">{{ $record->tenant->id }}</dd>
                         </div>
                         <div class="flex items-center justify-between">
-                            <dt class="text-cinnamon">Signed up</dt>
-                            <dd class="text-parchment">{{ $record->tenant->created_at?->format('M j, Y') ?? '—' }}</dd>
+                            <dt class="text-(--kn-muted)">Signed up</dt>
+                            <dd class="text-(--kn-ink)">{{ $record->tenant->created_at?->format('M j, Y') ?? '—' }}</dd>
                         </div>
                         @if ($record->tenant->trial_ends_at)
                             <div class="flex items-center justify-between">
-                                <dt class="text-cinnamon">Trial ends</dt>
-                                <dd class="text-parchment">{{ $record->tenant->trial_ends_at->format('M j, Y') }}</dd>
+                                <dt class="text-(--kn-muted)">Trial ends</dt>
+                                <dd class="text-(--kn-ink)">{{ $record->tenant->trial_ends_at->format('M j, Y') }}</dd>
                             </div>
                         @endif
                     </dl>
 
                     <a
                         href="{{ \App\Filament\Central\Resources\TenantResource::getUrl('view', ['record' => $record->tenant->id]) }}"
-                        class="bg-espresso text-honey border-honey/20 hover:border-honey mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-[0.8rem] font-semibold no-underline transition-colors"
+                        class="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-(--kn-border) bg-(--kn-surface-sunken) px-3 py-2 text-[0.8rem] font-semibold text-(--kn-honey-text) no-underline transition-colors hover:border-(--kn-honey)"
                     >
                         <x-heroicon-o-arrow-top-right-on-square class="h-3.5 w-3.5" />
                         View Tenant
@@ -264,7 +266,7 @@
             <x-central.card>
                 <div class="mb-3 flex items-center justify-between">
                     <x-central.eyebrow>Internal Notes</x-central.eyebrow>
-                    <span class="inline-flex items-center gap-1 rounded border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 text-[0.65rem] font-bold tracking-[0.1em] text-amber-400 uppercase">
+                    <span class="inline-flex items-center gap-1 rounded border border-(--kn-warning)/25 bg-(--kn-warning-tint) px-1.5 py-0.5 text-[0.65rem] font-bold tracking-[0.1em] text-(--kn-warning) uppercase">
                         <x-heroicon-o-lock-closed class="h-2.5 w-2.5" />
                         Staff only
                     </span>
@@ -279,7 +281,7 @@
                     <button
                         type="button"
                         wire:click="saveAdminNotes"
-                        class="bg-honey/10 text-honey border-honey/25 hover:bg-honey/20 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[0.75rem] font-semibold transition-colors"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-(--kn-honey)/25 bg-(--kn-warning-tint) px-3 py-1.5 text-[0.75rem] font-semibold text-(--kn-honey-text) transition-colors hover:bg-(--kn-warning-tint)"
                     >
                         <x-heroicon-o-bookmark class="h-3 w-3" />
                         Save Notes
