@@ -131,13 +131,13 @@ class Activity extends Page
     public static function getEventIconColorClass(string $event): string
     {
         return PlatformEventType::tryFrom($event)?->getIconColorClass()
-            ?? 'text-honey';
+            ?? 'text-(--kn-honey-text)';
     }
 
     public static function getEventBorderColorClass(string $event): string
     {
         return PlatformEventType::tryFrom($event)?->getBorderColorClass()
-            ?? 'border-honey';
+            ?? 'border-(--kn-honey)';
     }
 
     // ── Admin Actions (Audit Trail) Methods ──
@@ -223,15 +223,31 @@ class Activity extends Page
         };
     }
 
+    /**
+     * The solid colour of an action's timeline dot.
+     */
     public static function getActionColorClass(string $action): string
     {
         return match ($action) {
-            'created_tenant', 'updated_tenant', 'deleted_tenant', 'activated', 'deactivated' => 'bg-blue-500',
-            'changed_plan', 'extended_trial' => 'bg-green-500',
-            'sent_announcement', 'sent_campaign', 'sent_message' => 'bg-purple-500',
-            'impersonated' => 'bg-amber-500',
-            'exported_data', 'toggled_maintenance' => 'bg-gray-500',
-            default => 'bg-gray-500',
+            'created_tenant', 'updated_tenant', 'deleted_tenant', 'activated', 'deactivated' => 'bg-(--kn-info)',
+            'changed_plan', 'extended_trial' => 'bg-(--kn-success)',
+            'sent_announcement', 'sent_campaign', 'sent_message' => 'bg-(--kn-honey)',
+            'impersonated' => 'bg-(--kn-warning)',
+            default => 'bg-(--kn-muted)',
+        };
+    }
+
+    /**
+     * An action's label pill: the status colour on its tint.
+     */
+    public static function getActionPillClass(string $action): string
+    {
+        return match ($action) {
+            'created_tenant', 'updated_tenant', 'deleted_tenant', 'activated', 'deactivated' => 'bg-(--kn-info-tint) text-(--kn-info)',
+            'changed_plan', 'extended_trial' => 'bg-(--kn-success-tint) text-(--kn-success)',
+            'sent_announcement', 'sent_campaign', 'sent_message' => 'bg-(--kn-warning-tint) text-(--kn-honey-text)',
+            'impersonated' => 'bg-(--kn-warning-tint) text-(--kn-warning)',
+            default => 'bg-(--kn-surface) text-(--kn-ink-2) border border-(--kn-border)',
         };
     }
 

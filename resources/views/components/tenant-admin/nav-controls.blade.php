@@ -4,18 +4,18 @@
     @if ($prevClick)
         <button
             wire:click="{{ $prevClick }}"
-            class="text-brand-700 bg-brand-50 border-brand-300/30 cursor-pointer rounded-lg border px-3 py-1.5 text-[0.8rem]"
+            class="cursor-pointer rounded-lg border border-(--kn-border-control) bg-(--kn-surface-hover) px-3 py-1.5 text-[0.8rem] font-semibold text-(--kn-ink)"
         >
             {{ $prevLabel }}
         </button>
     @else
         <div></div>
     @endif
-    <span class="text-brand-900 text-[0.95rem] font-semibold">{{ $label }}</span>
+    <span class="text-brand-50 text-[0.95rem] font-semibold">{{ $label }}</span>
     @if ($nextClick)
         <button
             wire:click="{{ $nextClick }}"
-            class="text-brand-700 bg-brand-50 border-brand-300/30 cursor-pointer rounded-lg border px-3 py-1.5 text-[0.8rem]"
+            class="cursor-pointer rounded-lg border border-(--kn-border-control) bg-(--kn-surface-hover) px-3 py-1.5 text-[0.8rem] font-semibold text-(--kn-ink)"
         >
             {{ $nextLabel }}
         </button>

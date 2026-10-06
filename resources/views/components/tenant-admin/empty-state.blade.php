@@ -10,7 +10,7 @@
             @endif
         </div>
     @endif
-    <h3 class="text-brand-700 mb-1.5 text-[1.1rem] font-semibold">{{ $title }}</h3>
+    <h3 class="text-brand-50 mb-1.5 text-[1.1rem] font-semibold">{{ $title }}</h3>
     @if ($subtitle)
         <p class="text-[0.9rem]">{{ $subtitle }}</p>
     @endif

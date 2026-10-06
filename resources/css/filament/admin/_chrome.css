@@ -1,67 +1,231 @@
-/* ===================================================================
-   PAGE HEADINGS & BREADCRUMBS
-   =================================================================== */
+/*
+ * Admin chrome: page header, breadcrumbs, dropdown and user menus, buttons.
+ * Tokens from kneadit/tokens.css only; Filament's styles are layered, so no
+ * !important is needed. The page title (heading-1) and primary buttons are in
+ * kneadit/filament.css.
+ */
 
-.fi-header-heading {
-    color: white !important;
+/* Page header. */
+.fi-header-subheading {
+    color: var(--kn-ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.4375rem;
 }
-.fi-breadcrumbs-item span,
-.fi-breadcrumbs-item a {
-    color: var(--brand-300) !important;
+
+/* Breadcrumbs: `muted` trail, the current page in `ink-2`. */
+.fi-breadcrumbs li {
+    color: var(--kn-muted);
 }
 
+.fi-breadcrumbs li:last-child {
+    color: var(--kn-ink-2);
+    font-weight: 600;
+}
 
-/* ===================================================================
-   SHARED: Dark gradient header bar
-   Used by: Filament tables, x-tenant-admin.card, goal-tracker, etc.
-   =================================================================== */
+.fi-breadcrumbs li a:hover,
+.fi-breadcrumbs li a:focus-visible {
+    color: var(--kn-honey-text);
+}
 
+.fi-breadcrumbs li .fi-icon {
+    color: var(--kn-muted);
+}
+
+/* Card (x-tenant-admin.card): a `surface` card with a hairline, like every other card. */
+.tenant-admin-card {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+    color: var(--kn-ink);
+    overflow: hidden;
+}
+
+/* Card header strip (x-tenant-admin.card): a `surface-sunken` well with a hairline. */
 [data-admin-gradient-header] {
-    background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-subtle);
-    display: flex;
     align-items: center;
+    background: var(--kn-surface-sunken);
+    border-bottom: 1px solid var(--kn-border);
+    display: flex;
     justify-content: space-between;
+    padding: var(--kn-space-4) var(--kn-space-6);
 }
-[data-admin-gradient-header] > [data-header-title] {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: white;
+
+[data-admin-gradient-header] > div > [data-header-title] {
+    color: var(--kn-ink);
+    font-size: 1.0625rem;
+    font-weight: 600;
     margin: 0;
 }
 
-
-/* ===================================================================
-   GLOBAL ACTION BUTTONS
-   =================================================================== */
-
-.fi-btn.fi-color-primary {
-    background: var(--brand-800) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    box-shadow: none !important;
-}
-.fi-btn.fi-color-primary:hover {
-    background: var(--brand-700) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-}
-.fi-btn.fi-color-gray {
-    border: 1px solid var(--border-medium) !important;
-    color: var(--brand-100) !important;
-    background: var(--brand-800) !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    box-shadow: none !important;
-}
-.fi-btn.fi-color-gray:hover {
-    background: var(--brand-700) !important;
-    box-shadow: none !important;
-}
-.fi-btn-primary {
-    background: var(--brand-600) !important;
-}
-.fi-btn-primary:hover {
-    background: var(--brand-700) !important;
+[data-admin-gradient-header] p {
+    color: var(--kn-muted);
 }
 
+/* Dashboard settings gear beside the global search: `muted` until hovered. */
+.dashboard-settings-link {
+    align-items: center;
+    border-radius: var(--kn-radius-md);
+    color: var(--kn-muted);
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    transition: background-color 0.15s;
+    width: 2.25rem;
+}
+
+.dashboard-settings-link:hover,
+.dashboard-settings-link:focus-visible {
+    background: var(--kn-surface-hover);
+    color: var(--kn-ink);
+}
+
+.dashboard-settings-link:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
+}
+
+.dashboard-settings-link-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+/* Dropdown panels, including the user menu: `surface` with a hairline and the pop shadow. */
+.fi-dropdown-panel {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-pop);
+}
+
+.fi-dropdown-header,
+.fi-dropdown-header .fi-icon {
+    color: var(--kn-muted);
+}
+
+.fi-dropdown-list-item:hover,
+.fi-dropdown-list-item:focus-visible {
+    background: var(--kn-surface-hover);
+}
+
+.fi-dropdown-list-item-label {
+    color: var(--kn-ink-2);
+}
+
+.fi-dropdown-list-item .fi-icon {
+    color: var(--kn-muted);
+}
+
+.fi-dropdown-list-item.fi-color-danger .fi-dropdown-list-item-label,
+.fi-dropdown-list-item.fi-color-danger .fi-icon {
+    color: var(--kn-danger);
+}
+
+.fi-user-menu-trigger,
+.fi-user-menu-trigger .fi-tenant-menu-trigger-text {
+    color: var(--kn-ink);
+}
+
+/* Icon buttons (bell, close, row actions): `muted` until hovered. */
+.fi-icon-btn {
+    color: var(--kn-muted);
+}
+
+.fi-icon-btn:hover,
+.fi-icon-btn:focus-visible {
+    background: var(--kn-surface-hover);
+    color: var(--kn-ink);
+}
+
+.fi-icon-btn:focus-visible,
+.fi-btn:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+}
+
+/* Buttons: one control radius. Secondary buttons use the hover fill with a control border. */
+.fi-btn {
+    border-radius: var(--kn-radius-md);
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined),
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label) {
+    --tw-ring-shadow: 0 0 0 0 transparent;
+    background: var(--kn-surface-hover);
+    border: 1px solid var(--kn-border-control);
+    color: var(--kn-ink);
+    font-weight: 600;
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined):hover,
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-surface-hover) 80%, var(--kn-border-control));
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined) > .fi-icon,
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label) > .fi-icon {
+    color: var(--kn-ink-2);
+}
+
+.fi-btn.fi-outlined.fi-color-gray,
+.fi-btn.fi-outlined:not(.fi-color) {
+    --tw-ring-color: var(--kn-border-control);
+    color: var(--kn-ink);
+}
+
+/*
+ * Solid status buttons (destructive, success, warning, info): the token status
+ * colour with `on-danger` text. That token is white on the dark light-theme
+ * fills and warm black on the pale dark-theme fills, which is the right pairing
+ * for every status colour, and it replaces the saturated shades Filament
+ * generates (which were bright green with white text, 3.7:1, in dark).
+ */
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label),
+.fi-btn.fi-color-success:not(.fi-outlined):not(label),
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label),
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
+    color: var(--kn-on-danger);
+    font-weight: 600;
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
+    background: var(--kn-danger);
+}
+
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) {
+    background: var(--kn-success);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) {
+    background: var(--kn-warning);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
+    background: var(--kn-info);
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-danger) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-success:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-success) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-warning) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-info) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) > .fi-icon {
+    color: inherit;
+}

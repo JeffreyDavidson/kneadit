@@ -4,15 +4,15 @@
         @foreach ($this->getKpis() as $kpi)
             @php
                 $trendClass = match ($kpi['trend']) {
-                    'up' => 'text-emerald-400',
-                    'down' => 'text-red-400',
-                    'neutral' => 'text-cinnamon',
-                    default => 'text-cinnamon',
+                    'up' => 'text-(--kn-success)',
+                    'down' => 'text-(--kn-danger)',
+                    'neutral' => 'text-(--kn-muted)',
+                    default => 'text-(--kn-muted)',
                 };
             @endphp
             <x-central.card padding="p-5">
                 <x-central.eyebrow>{{ $kpi['label'] }}</x-central.eyebrow>
-                <div class="mt-2 mb-2 text-[2rem] leading-none font-bold text-white">{{ $kpi['value'] }}</div>
+                <div class="mt-2 mb-2 text-[2rem] leading-none font-bold text-(--kn-ink)">{{ $kpi['value'] }}</div>
                 <div class="text-[0.75rem] font-medium {{ $trendClass }}">{{ $kpi['hint'] }}</div>
             </x-central.card>
         @endforeach
@@ -33,18 +33,18 @@
                 @foreach ($this->getTenantStatus() as $label => $count)
                     @php
                         $color = match ($label) {
-                            'Active' => 'bg-emerald-500',
-                            'On trial' => 'bg-honey',
-                            'Trial expired' => 'bg-red-500',
-                            default => 'bg-cinnamon',
+                            'Active' => 'bg-(--kn-success)',
+                            'On trial' => 'bg-(--kn-honey)',
+                            'Trial expired' => 'bg-(--kn-danger)',
+                            default => 'bg-(--kn-muted)',
                         };
                     @endphp
                     <div class="flex items-center justify-between text-[0.8rem]">
                         <div class="flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full {{ $color }}"></span>
-                            <span class="text-parchment">{{ $label }}</span>
+                            <span class="text-(--kn-ink)">{{ $label }}</span>
                         </div>
-                        <span class="font-bold text-white">{{ $count }}</span>
+                        <span class="font-bold text-(--kn-ink)">{{ $count }}</span>
                     </div>
                 @endforeach
             </div>
@@ -62,29 +62,29 @@
                     $plans = $this->getPlanDistribution();
                     $total = array_sum($plans) ?: 1;
                     $planColors = [
-                        'free' => 'bg-cinnamon',
-                        'starter' => 'bg-sky-400',
-                        'growth' => 'bg-emerald-400',
-                        'pro' => 'bg-honey',
+                        'free' => 'bg-(--kn-muted)',
+                        'starter' => 'bg-(--kn-info)',
+                        'growth' => 'bg-(--kn-success)',
+                        'pro' => 'bg-(--kn-honey)',
                     ];
                 @endphp
                 @foreach ($plans as $plan => $count)
                     @php
                         $pct = round($count / $total * 100, 1);
-                        $color = $planColors[strtolower((string) $plan)] ?? 'bg-cinnamon';
+                        $color = $planColors[strtolower((string) $plan)] ?? 'bg-(--kn-muted)';
                     @endphp
                     <div>
                         <div class="mb-1.5 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full {{ $color }}"></span>
-                                <span class="text-[0.85rem] font-semibold text-white capitalize">{{ $plan }}</span>
+                                <span class="text-[0.85rem] font-semibold text-(--kn-ink) capitalize">{{ $plan }}</span>
                             </div>
-                            <div class="text-cinnamon text-[0.8rem]">
-                                <span class="font-bold text-white">{{ $count }}</span>
-                                <span class="text-cinnamon">({{ $pct }}%)</span>
+                            <div class="text-[0.8rem] text-(--kn-muted)">
+                                <span class="font-bold text-(--kn-ink)">{{ $count }}</span>
+                                <span class="text-(--kn-muted)">({{ $pct }}%)</span>
                             </div>
                         </div>
-                        <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
+                        <div class="h-1.5 overflow-hidden rounded-full bg-(--kn-surface-sunken)">
                             <div class="{{ $color }} h-full rounded-full" style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
@@ -95,16 +95,33 @@
 
     <script @cspnonce>
         function initAnalyticsCharts() {
-            const honey = '#d4920c';
-            const golden = '#e8b04a';
-            const emerald = '#10b981';
-            const sky = '#38bdf8';
-            const red = '#ef4444';
-            const cinnamon = '#8b6844';
+            // Chart.js draws on a canvas and can't read CSS variables, so the design
+            // system tokens are read once here, for the theme that is showing.
+            const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            const withAlpha = (hex, alpha) =>
+                hex +
+                Math.round(alpha * 255)
+                    .toString(16)
+                    .padStart(2, '0');
+            const honey = token('--kn-honey');
+            const emerald = token('--kn-success');
+            const sky = token('--kn-info');
+            const red = token('--kn-danger');
+            const cinnamon = token('--kn-muted');
+            const surface = token('--kn-surface');
+            const grid = token('--kn-border');
+            const tooltip = {
+                backgroundColor: token('--kn-espresso'),
+                borderColor: token('--kn-border-control'),
+                borderWidth: 1,
+                padding: 10,
+                titleColor: token('--kn-on-espresso'),
+                bodyColor: token('--kn-on-espresso'),
+            };
 
-            Chart.defaults.color = '#faf0d6';
-            Chart.defaults.borderColor = 'rgba(212,146,12,0.08)';
-            Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, sans-serif';
+            Chart.defaults.color = token('--kn-muted');
+            Chart.defaults.borderColor = grid;
+            Chart.defaults.font.family = '"Instrument Sans", ui-sans-serif, system-ui, sans-serif';
 
             // Chart.js v4 dropped Chart.helpers.each; iterate the instances map directly.
             Object.values(Chart.instances).forEach((instance) => instance.destroy());
@@ -125,7 +142,7 @@
                         {
                             label: 'Signups',
                             data: signups.map((s) => s.count),
-                            backgroundColor: signups.map((_, i) => (i === currentMonthIdx ? honey : 'rgba(212,146,12,0.35)')),
+                            backgroundColor: signups.map((_, i) => (i === currentMonthIdx ? honey : withAlpha(honey, 0.35))),
                             hoverBackgroundColor: honey,
                             borderRadius: 6,
                             borderSkipped: false,
@@ -137,24 +154,16 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1c1410',
-                            borderColor: 'rgba(212,146,12,0.25)',
-                            borderWidth: 1,
-                            padding: 10,
-                            titleColor: '#faf0d6',
-                            bodyColor: '#ffffff',
-                            displayColors: false,
-                        },
+                        tooltip: { ...tooltip, displayColors: false },
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { precision: 0, color: '#8b6844' },
-                            grid: { color: 'rgba(212,146,12,0.06)' },
+                            ticks: { precision: 0, color: cinnamon },
+                            grid: { color: grid },
                         },
                         x: {
-                            ticks: { color: '#8b6844' },
+                            ticks: { color: cinnamon },
                             grid: { display: false },
                         },
                     },
@@ -172,7 +181,7 @@
                         {
                             data: Object.values(plans),
                             backgroundColor: planLabels.map((l) => planColorMap[l.toLowerCase()] ?? cinnamon),
-                            borderColor: '#1c1410',
+                            borderColor: surface,
                             borderWidth: 3,
                             hoverOffset: 8,
                         },
@@ -185,10 +194,7 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: '#1c1410',
-                            borderColor: 'rgba(212,146,12,0.25)',
-                            borderWidth: 1,
-                            padding: 10,
+                            ...tooltip,
                             callbacks: {
                                 label: (ctx) => {
                                     const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
@@ -212,7 +218,7 @@
                         {
                             data: Object.values(status),
                             backgroundColor: statusLabels.map((l) => statusColorMap[l] ?? cinnamon),
-                            borderColor: '#1c1410',
+                            borderColor: surface,
                             borderWidth: 3,
                             hoverOffset: 6,
                         },
@@ -224,13 +230,7 @@
                     cutout: '72%',
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1c1410',
-                            borderColor: 'rgba(212,146,12,0.25)',
-                            borderWidth: 1,
-                            padding: 10,
-                            displayColors: false,
-                        },
+                        tooltip: { ...tooltip, displayColors: false },
                     },
                 },
             });
@@ -283,5 +283,11 @@
             document.addEventListener('DOMContentLoaded', tryInitCharts);
         }
         document.addEventListener('livewire:navigated', () => requestAnimationFrame(tryInitCharts));
+
+        // Redraw when the Light / Dark switch changes, so the chart colours follow it.
+        if (!window.__analyticsThemeListener) {
+            window.__analyticsThemeListener = true;
+            window.addEventListener('theme-changed', () => requestAnimationFrame(tryInitCharts));
+        }
     </script>
 </x-filament-panels::page>

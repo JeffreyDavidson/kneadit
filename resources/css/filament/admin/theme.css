@@ -1,15 +1,18 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../shared/widget-cards.css';
+@import '../../kneadit/tokens.css';
+@import '../../kneadit/admin-aliases.css';
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../app/Enums/Engagement/LoyaltyPointType.php';
+@source '../../../../app/Enums/Operations/ActivityAction.php';
+@source '../../../../app/ViewModels/Filament';
 
 /*
- * Brand tokens map to runtime CSS vars set per-tenant in
- * AdminPanelProvider's render hook. Tailwind utilities (e.g. bg-brand-700)
- * expand to background-color: var(--color-brand-700) which resolves to
- * the tenant-overridden value at runtime.
+ * Tailwind brand utilities (e.g. bg-brand-700) expand to
+ * background-color: var(--color-brand-700). The --brand-* scale they read is
+ * aliased to the design system tokens in kneadit/admin-aliases.css.
  */
 @theme {
     --color-brand-50: var(--brand-50);
@@ -23,45 +26,6 @@
     --color-brand-700: var(--brand-700);
     --color-brand-800: var(--brand-800);
     --color-brand-900: var(--brand-900);
-
-    /*
-     * Static central-platform palette (used by the platform messages /
-     * inbox UI shown inside the per-tenant admin panel).
-     */
-    --color-warm-black: #1c1410;
-    --color-espresso: #2a1f18;
-    --color-cinnamon: #8b6844;
-    --color-honey: #d4920c;
-    --color-golden: #e8b04a;
-    --color-butter: #f5d88e;
-    --color-parchment: #faf0d6;
-}
-
-/*
- * Brand color defaults — overridden per-tenant via the
- * AdminPanelProvider renderHook <style>:root{}</style> block. Provides
- * sensible defaults when a tenant hasn't customised their palette.
- */
-:root {
-    --brand-900: #3d2314;
-    --brand-800: #4a3225;
-    --brand-700: #6b4c3b;
-    --brand-600: #8b5e3c;
-    --brand-500: #a08060;
-    --brand-400: #c4a882;
-    --brand-300: #d4a574;
-    --brand-200: #e8d0b0;
-    --brand-150: #f3ebe0;
-    --brand-100: #f5e6d0;
-    --brand-50: #fdf8f2;
-    --brand-white: #FFFFFF;
-    --accent-gold: #d4a574;
-    --accent-gold-light: #f5e6d0;
-    --status-success: #16a34a;
-    --status-danger: #dc2626;
-    --status-warning: #d97706;
-    --status-warning-dark: #92400e;
-    --status-danger-dark: #991b1b;
 }
 
 /*
@@ -76,3 +40,6 @@
 @import './_forms.css';
 @import './_widgets.css';
 @import './_modals.css';
+
+/* Design system overrides for Filament components; last so they win over the partials. */
+@import '../../kneadit/filament.css';

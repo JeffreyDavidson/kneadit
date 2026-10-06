@@ -1,6 +1,6 @@
 @php
     $data = $this->getCardData();
-    $trendColor = $data['trend'] >= 0 ? '#6b9e3a' : '#d4574a';
+    $trendColor = $data['trend'] >= 0 ? 'var(--kn-success)' : 'var(--kn-danger)';
     $trendIcon = $data['trend'] >= 0 ? '↑' : '↓';
 @endphp
 

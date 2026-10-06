@@ -35,14 +35,14 @@
 
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border p-6 md:flex-row md:items-center">
+    <div class="border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border bg-(--kn-surface) p-6 md:flex-row md:items-center">
         <div class="flex min-w-0 flex-1 items-center gap-4">
             <div class="bg-brand-300/15 border-brand-300/25 text-brand-300 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border text-[1.15rem] font-bold">
                 {{ $initials($customer->name ?: $detail['email'] ?? '?') }}
             </div>
             <div class="min-w-0 flex-1">
                 <div class="mb-1 flex items-center gap-2">
-                    <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">{{ $customer->name }}</h2>
+                    <h2 class="text-brand-50 truncate text-[1.35rem] leading-tight font-bold">{{ $customer->name }}</h2>
                 </div>
                 @if ($detail['email'])
                     <a
@@ -58,12 +58,12 @@
         {{-- Status pills --}}
         <div class="flex flex-wrap items-center gap-2">
             @if ($isAtRisk)
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/15 px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-red-400 uppercase">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-danger) bg-(--kn-danger-tint) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-(--kn-danger) uppercase">
                     <x-heroicon-o-exclamation-triangle class="h-3 w-3" />
                     At Risk
                 </span>
             @else
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/15 px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-emerald-400 uppercase">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-success) bg-(--kn-success-tint) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] text-(--kn-success) uppercase">
                     <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                     Active
                 </span>
@@ -77,7 +77,7 @@
             @endif
 
             @if ($createdAt)
-                <span class="bg-brand-800 border-brand-300/15 text-brand-200 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+                <span class="border-brand-300/15 text-brand-200 inline-flex items-center gap-1 rounded-full border bg-(--kn-surface-sunken) px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
                     <x-heroicon-o-calendar class="h-3 w-3" />
                     Since {{ $createdAt->format('M Y') }}
                 </span>
@@ -101,7 +101,7 @@
                     type="button"
                     @click="tab = '{{ $key }}'"
                     :class="tab === '{{ $key }}'
-                        ? 'text-white border-brand-300'
+                        ? 'text-brand-50 border-brand-300'
                         : 'text-brand-400 border-transparent hover:text-brand-200'"
                     class="-mb-px inline-flex cursor-pointer items-center gap-2 border-b-2 px-4 py-2.5 text-[0.85rem] font-semibold whitespace-nowrap transition-colors"
                 >
@@ -122,7 +122,7 @@
                     {{ $t['label'] }}
                     @isset($t['count'])
                         <span
-                            :class="tab === '{{ $key }}' ? 'bg-brand-300/15 text-brand-300' : 'bg-brand-800 text-brand-400'"
+                            :class="tab === '{{ $key }}' ? 'bg-brand-300/15 text-brand-300' : 'bg-(--kn-surface-sunken) text-brand-400'"
                             class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[0.7rem] font-bold transition-colors"
                         >
                             {{ $t['count'] }}
@@ -136,47 +136,49 @@
         <div x-show="tab === 'overview'" x-cloak class="space-y-6">
             {{-- Stats --}}
             <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Value
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">@money($stats['total_spent'])</div>
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">@money($stats['total_spent'])</div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Orders
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['total_orders']) }}
                     </div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Avg Order
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">@money($stats['avg_order_value'])</div>
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
+                        @money($stats['avg_order_value'])
+                    </div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Points
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['total_points'] ?? 0) }}
                     </div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Points
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['lifetime_points'] ?? 0) }}
                     </div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Last Order
                     </div>
-                    <div class="mt-0.5 text-[0.95rem] leading-tight font-semibold text-white">
+                    <div class="text-brand-50 mt-0.5 text-[0.95rem] leading-tight font-semibold">
                         {{ ($stats['last_order_at'] ?? null) ? Carbon::parse($stats['last_order_at'])->diffForHumans() : 'Never' }}
                     </div>
                 </div>
@@ -184,7 +186,7 @@
 
             {{-- Details --}}
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Contact
                     </div>
@@ -192,7 +194,7 @@
                         @foreach ($contactRows as $r)
                             <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">{{ $r['label'] }}</dt>
-                                <dd class="text-white text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
+                                <dd class="text-brand-50 text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
                                     {{ $r['value'] }}
                                 </dd>
                             </div>
@@ -200,7 +202,7 @@
                     </dl>
                 </div>
 
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Account
                     </div>
@@ -208,7 +210,7 @@
                         @foreach ($accountRows as $r)
                             <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">{{ $r['label'] }}</dt>
-                                <dd class="text-white text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
+                                <dd class="text-brand-50 text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
                                     {{ $r['value'] }}
                                 </dd>
                             </div>
@@ -220,7 +222,7 @@
 
         {{-- ============== TAB: ORDERS ============== --}}
         <div x-show="tab === 'orders'" x-cloak>
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Order History
@@ -255,9 +257,9 @@
                                             {{ $order['order_number'] }}
                                         </td>
                                         <td class="text-brand-400 py-2.5 pr-4">{{ $order['date'] ?? '—' }}</td>
-                                        <td class="py-2.5 pr-4 text-white">{{ $order['status'] }}</td>
+                                        <td class="text-brand-50 py-2.5 pr-4">{{ $order['status'] }}</td>
                                         <td class="text-brand-400 py-2.5 pr-4">{{ $order['payment_status'] }}</td>
-                                        <td class="py-2.5 pr-4 text-right font-semibold text-white">
+                                        <td class="text-brand-50 py-2.5 pr-4 text-right font-semibold">
                                             {{ $order['total'] }}
                                         </td>
                                     </tr>
@@ -273,20 +275,20 @@
         <div x-show="tab === 'loyalty'" x-cloak class="space-y-6">
             {{-- Balance summary --}}
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Current Balance
                     </div>
-                    <div class="text-[1.75rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.75rem] leading-none font-bold">
                         {{ number_format($stats['total_points'] ?? 0) }}
                     </div>
                     <div class="text-brand-400 mt-1 text-[0.75rem]">Points available to redeem</div>
                 </div>
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Earned
                     </div>
-                    <div class="text-[1.75rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.75rem] leading-none font-bold">
                         {{ number_format($stats['lifetime_points'] ?? 0) }}
                     </div>
                     <div class="text-brand-400 mt-1 text-[0.75rem]">Total points credited over time</div>
@@ -294,7 +296,7 @@
             </div>
 
             {{-- Ledger --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Ledger</div>
                     <span class="text-brand-400 text-[0.75rem]">{{ $customer->loyaltyPoints->count() }} {{ Str::plural('entry', $customer->loyaltyPoints->count()) }}</span>
@@ -327,11 +329,11 @@
                                         $isDeduction = in_array($entry->type, [\App\Enums\Engagement\LoyaltyPointType::Redeemed, \App\Enums\Engagement\LoyaltyPointType::Reversed], true);
                                         $signed = $isDeduction ? -abs($entry->points) : (int) $entry->points;
                                         $typePill = match ($entry->type->value) {
-                                            'earned' => 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400',
-                                            'redeemed' => 'bg-amber-500/15 border-amber-500/25 text-amber-400',
-                                            'adjusted' => 'bg-sky-500/15 border-sky-500/25 text-sky-400',
-                                            'reversed' => 'bg-rose-500/15 border-rose-500/25 text-rose-400',
-                                            default => 'bg-brand-800 border-brand-700 text-brand-200',
+                                            'earned' => 'bg-(--kn-success-tint) border-(--kn-success) text-(--kn-success)',
+                                            'redeemed' => 'bg-(--kn-warning-tint) border-(--kn-warning) text-(--kn-warning)',
+                                            'adjusted' => 'bg-(--kn-info-tint) border-(--kn-info) text-(--kn-info)',
+                                            'reversed' => 'bg-(--kn-danger-tint) border-(--kn-danger) text-(--kn-danger)',
+                                            default => 'bg-(--kn-surface-sunken) border-brand-700 text-brand-200',
                                         };
                                     @endphp
                                     <tr>
@@ -344,7 +346,7 @@
                                             </span>
                                         </td>
                                         <td class="text-brand-200 py-3 pr-4">{{ $entry->description ?: '—' }}</td>
-                                        <td class="py-3 text-right font-semibold tabular-nums whitespace-nowrap {{ $signed >= 0 ? 'text-emerald-400' : 'text-amber-400' }}">
+                                        <td class="py-3 text-right font-semibold tabular-nums whitespace-nowrap {{ $signed >= 0 ? 'text-(--kn-success)' : 'text-(--kn-warning)' }}">
                                             {{ $signed >= 0 ? '+' : '' }}{{ number_format($signed) }}
                                         </td>
                                     </tr>
@@ -359,23 +361,23 @@
         {{-- ============== TAB: NOTES ============== --}}
         <div x-show="tab === 'notes'" x-cloak class="space-y-6">
             {{-- Add note form --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="text-brand-300 mb-3 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Add Note</div>
                 <form wire:submit="addNote">
                     <textarea
                         wire:model="noteBody"
                         rows="3"
                         placeholder="What happened? What's worth remembering about this customer?"
-                        class="bg-brand-800 border-brand-700 focus:border-brand-300 focus:ring-brand-300/15 w-full rounded-lg border px-3 py-2 text-[0.875rem] text-white focus:ring-2 focus:outline-none"
+                        class="border-brand-700 focus:border-brand-300 focus:ring-brand-300/15 text-brand-50 w-full rounded-lg border bg-(--kn-surface-sunken) px-3 py-2 text-[0.875rem] focus:ring-2 focus:outline-none"
                     ></textarea>
                     @error('noteBody')
-                        <p class="mt-1.5 text-[0.8rem] text-red-400">{{ $message }}</p>
+                        <p class="mt-1.5 text-[0.8rem] text-(--kn-danger)">{{ $message }}</p>
                     @enderror
                     <div class="mt-3 flex items-center justify-between">
                         <span class="text-brand-400 text-[0.75rem]">Notes are visible to all staff with customer access.</span>
                         <button
                             type="submit"
-                            class="bg-brand-300 text-brand-900 inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-[0.85rem] font-bold no-underline hover:opacity-90"
+                            class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-(--kn-honey) px-4 py-2 text-[0.85rem] font-bold text-(--kn-on-honey) no-underline hover:opacity-90"
                         >
                             <x-heroicon-o-plus class="h-3.5 w-3.5" stroke-width="2.5" />
                             Save Note
@@ -385,7 +387,7 @@
             </div>
 
             {{-- List of notes --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Notes</div>
                     <span class="text-brand-400 text-[0.75rem]">{{ $customer->customerNotes->count() }} total</span>
@@ -414,7 +416,7 @@
                                         <div class="bg-brand-300/15 border-brand-300/25 text-brand-300 flex h-7 w-7 items-center justify-center rounded-full border text-[0.7rem] font-bold">
                                             {{ strtoupper(substr($authorName, 0, 2)) }}
                                         </div>
-                                        <span class="text-[0.85rem] font-semibold text-white">{{ $authorName }}</span>
+                                        <span class="text-brand-50 text-[0.85rem] font-semibold">{{ $authorName }}</span>
                                         <span class="text-brand-400 text-[0.75rem]">{{ $note->created_at?->diffForHumans() }}</span>
                                     </div>
                                     <button

@@ -50,7 +50,7 @@ test('tenant table supports listing columns searching and filters', function () 
     livewire(ListTenants::class)
         ->assertOk();
 
-    foreach (['id', 'store_name', 'name', 'email', 'plan', 'is_active'] as $column) {
+    foreach (['id', 'store_name', 'name', 'plan', 'is_active', 'trial_ends_at'] as $column) {
         livewire(ListTenants::class)
             ->assertCanRenderTableColumn($column);
     }
@@ -72,6 +72,14 @@ test('tenant table supports listing columns searching and filters', function () 
         ->filterTable('is_active', true)
         ->assertOk();
 });
+
+test('tenant table keeps the less important columns hidden until toggled so it fits a 1440px screen', function (string $column) {
+    createTestTenant('sweet-bakes');
+
+    $table = livewire(ListTenants::class)->instance()->getTable();
+
+    expect($table->getColumn($column)->isToggledHiddenByDefault())->toBeTrue();
+})->with(['email', 'storefront_enabled']);
 
 test('tenant table displays the configured storefront host', function () {
     Config::set('app.url', 'https://kneadit.test');

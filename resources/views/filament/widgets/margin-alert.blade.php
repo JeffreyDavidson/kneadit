@@ -9,7 +9,7 @@
     </div>
 
     @forelse ($rows as $row)
-        @php $marginColor = $row['margin'] < 15 ? '#dc2626' : '#e8b04a'; @endphp
+        @php $marginColor = $row['margin'] < 15 ? 'var(--kn-danger)' : 'var(--kn-warning)'; @endphp
         <x-tenant-admin.dashboard.list-row :value="$row['margin_formatted']" :dot-color="$marginColor">
             <span style="color: var(--pw-card-text); font-weight: 600">{{ $row['name'] }}</span>
             @if ($isMedium)

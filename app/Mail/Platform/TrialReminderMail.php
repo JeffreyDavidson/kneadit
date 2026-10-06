@@ -34,6 +34,7 @@ class TrialReminderMail extends PlatformMail
     public function content(): Content
     {
         return new Content(
+            view: 'emails.platform.trial-reminder',
             text: 'emails.platform.trial-reminder-text',
             with: [
                 'billingUrl' => resolve(TenantUrlGenerator::class)->billingForOwner($this->user),

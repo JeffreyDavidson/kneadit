@@ -1,16 +1,28 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../shared/widget-cards.css';
+@import '../../kneadit/tokens.css';
+@import '../../kneadit/admin-aliases.css';
 
 @source '../../../../app/Filament/Central/**/*';
 @source '../../../../resources/views/filament/central/**/*';
 @source '../../../../resources/views/components/central/**/*';
+@source '../../../../app/Enums/Platform/PlatformEventType.php';
 
-@theme {
-    --color-warm-black: #1c1410;
-    --color-espresso: #2a1f18;
-    --color-cinnamon: #8b6844;
-    --color-honey: #d4920c;
-    --color-golden: #e8b04a;
-    --color-butter: #f5d88e;
-    --color-parchment: #faf0d6;
-}
+/*
+ * The platform admin looks like the bakery admin: the same shell, navigation,
+ * forms, tables, modals, notifications and widgets, all on the --kn-* tokens
+ * and so readable in light and dark. Those partials are shared from the admin
+ * theme; what only the platform admin needs is in ./_chrome.css. The aliases
+ * are only for the widget preview component the widget catalog renders.
+ */
+@import '../admin/_layout.css';
+@import '../admin/_chrome.css';
+@import '../admin/_notifications.css';
+@import '../admin/_tables.css';
+@import '../admin/_forms.css';
+@import '../admin/_widgets.css';
+@import '../admin/_modals.css';
+@import './_chrome.css';
+
+/* Design system overrides for Filament components; last so they win over the partials. */
+@import '../../kneadit/filament.css';

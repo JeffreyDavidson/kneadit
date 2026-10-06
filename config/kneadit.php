@@ -15,21 +15,6 @@ return [
         ? trim((string) file_get_contents(base_path('VERSION')))
         : 'dev',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Central Panel Theme
-    |--------------------------------------------------------------------------
-    |
-    | Picks the palette injected into central-admin.css. Supported:
-    |   - 'honey' — warm browns + gold accent (default)
-    |   - 'slate' — cool slate gray + gold accent
-    |   - 'nord'  — Nord palette (Polar Night + Frost cyan accent)
-    | Set CENTRAL_THEME=nord (or slate) in .env to switch.
-    |
-    */
-
-    'central_theme' => env('CENTRAL_THEME', 'honey'),
-
     'marketing_url' => env('MARKETING_URL', 'https://getkneadit.test'),
 
     /*

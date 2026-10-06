@@ -69,12 +69,12 @@
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         @foreach ($themes as $key => $theme)
             <div
-                class="relative rounded-xl border-2 overflow-hidden transition-all duration-200 cursor-pointer hover:shadow-lg {{ $currentTheme === $key ? 'border-amber-500 ring-2 ring-amber-300 shadow-lg' : 'border-gray-200 dark:border-gray-700' }}"
+                class="relative rounded-xl border-2 overflow-hidden transition-all duration-200 cursor-pointer hover:shadow-lg {{ $currentTheme === $key ? 'border-amber-500 ring-2 ring-amber-300 shadow-lg' : 'border-(--kn-border)' }}"
                 wire:click="selectTheme('{{ $key }}')"
             >
                 {{-- Active badge --}}
                 @if ($currentTheme === $key)
-                    <div class="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-xs font-bold text-white">
+                    <div class="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full bg-(--kn-honey) px-2 py-1 text-xs font-bold text-(--kn-on-honey)">
                         <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                         Active
                     </div>
@@ -116,9 +116,9 @@
                 </div>
 
                 {{-- Info --}}
-                <div class="border-t border-gray-100 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
-                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ $theme['name'] }}</h4>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $theme['desc'] }}</p>
+                <div class="border-t border-(--kn-border) bg-(--kn-surface) px-6 py-4">
+                    <h4 class="font-semibold text-(--kn-ink)">{{ $theme['name'] }}</h4>
+                    <p class="text-sm text-(--kn-muted)">{{ $theme['desc'] }}</p>
                 </div>
             </div>
         @endforeach

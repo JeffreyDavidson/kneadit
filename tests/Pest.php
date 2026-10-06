@@ -120,6 +120,16 @@ function setUpTenantTest(): void
     }
 }
 
+/**
+ * Make the array cache serialize values like production stores do, so a cache hit
+ * returns what `cache.serializable_classes` allows rather than the original objects.
+ */
+function useSerializingCache(): void
+{
+    config(['cache.stores.array.serialize' => true]);
+    resolve('cache')->purge('array');
+}
+
 /** @return list<class-string> */
 function tenantMiddleware(): array
 {
@@ -413,7 +423,7 @@ function createCentralTables(): void
             $table->string('tenant_id')->nullable();
             $table->text('description');
             $table->json('metadata')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         },
         'admin_audit_logs' => function ($table) {
             $table->id();
@@ -422,10 +432,9 @@ function createCentralTables(): void
             $table->text('description');
             $table->string('target_type')->nullable();
             $table->string('target_id')->nullable();
-            $table->string('user_name')->nullable();
             $table->string('ip_address')->nullable();
             $table->json('metadata')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         },
         'support_tickets' => function ($table) {
             $table->id();
@@ -476,6 +485,9 @@ function createCentralTables(): void
             $table->string('type')->default('info');
             $table->json('target_plans')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+            $table->boolean('is_dismissable')->default(true);
             $table->timestamps();
         },
         'impersonation_tokens' => function ($table) {

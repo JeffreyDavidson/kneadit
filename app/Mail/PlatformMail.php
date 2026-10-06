@@ -7,6 +7,7 @@ namespace App\Mail;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\SettingValue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
 use Illuminate\Support\Facades\Config;
 
 /**
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Config;
  */
 abstract class PlatformMail extends BaseMailable
 {
+    abstract public function content(): Content;
+
     /**
      * @return array<string, mixed>
      */

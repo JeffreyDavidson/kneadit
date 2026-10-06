@@ -1,29 +1,29 @@
 <x-filament-panels::page>
     <div class="mb-6">
-        <p class="text-cinnamon m-0 text-sm">
+        <p class="m-0 text-sm text-(--kn-muted)">
             Create a Stripe coupon + promotion code in one shot. Hand the code to a baker for them to redeem at
             checkout.
         </p>
     </div>
 
     @if ($result)
-        <x-central.card class="mb-6 border-emerald-500/25 bg-emerald-500/5">
+        <x-central.card class="mb-6 border-(--kn-success)/25 bg-(--kn-success-tint)">
             <div class="flex flex-wrap items-start gap-4">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/15">
-                    <x-heroicon-o-check-circle class="h-5 w-5 text-emerald-400" />
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-(--kn-success)/25 bg-(--kn-success-tint)">
+                    <x-heroicon-o-check-circle class="h-5 w-5 text-(--kn-success)" />
                 </div>
                 <div class="min-w-[260px] flex-1">
                     <x-central.eyebrow class="mb-1">Promo code created</x-central.eyebrow>
-                    <div class="mb-2 text-[1rem] font-bold text-white">
+                    <div class="mb-2 text-[1rem] font-bold text-(--kn-ink)">
                         Hand this code to the baker — they type it at Stripe Checkout.
                     </div>
                     <div class="grid grid-cols-1 gap-3 text-[0.8rem] md:grid-cols-3">
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+                            <div class="mb-1 text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">
                                 Code
                             </div>
                             <div
-                                class="font-mono text-[1rem] font-bold text-emerald-400"
+                                class="font-mono text-[1rem] font-bold text-(--kn-success)"
                                 x-data
                                 x-init="$el.addEventListener('click', () => navigator.clipboard.writeText({{ Js::from($result->code) }}))"
                                 title="Click to copy"
@@ -32,16 +32,18 @@
                             </div>
                         </div>
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+                            <div class="mb-1 text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">
                                 Coupon ID
                             </div>
-                            <div class="text-parchment font-mono text-[0.75rem] break-all">{{ $result->couponId }}</div>
+                            <div class="font-mono text-[0.75rem] break-all text-(--kn-ink)">
+                                {{ $result->couponId }}
+                            </div>
                         </div>
                         <div>
-                            <div class="text-cinnamon mb-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+                            <div class="mb-1 text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">
                                 Promotion Code ID
                             </div>
-                            <div class="text-parchment font-mono text-[0.75rem] break-all">
+                            <div class="font-mono text-[0.75rem] break-all text-(--kn-ink)">
                                 {{ $result->promotionCodeId }}
                             </div>
                         </div>
@@ -68,15 +70,15 @@
         <div class="mb-3 flex items-center justify-between">
             <x-central.eyebrow>Recent Promo Codes</x-central.eyebrow>
             @if ($codes->isNotEmpty())
-                <span class="text-cinnamon text-[0.7rem]">Last {{ $codes->count() }} created</span>
+                <span class="text-[0.7rem] text-(--kn-muted)">Last {{ $codes->count() }} created</span>
             @endif
         </div>
 
         @if ($codes->isEmpty())
             <x-central.card padding="py-12 px-6" class="text-center">
-                <x-heroicon-o-ticket class="text-cinnamon/40 mx-auto mb-3 block h-10 w-10" />
-                <div class="font-semibold text-white">No promo codes yet</div>
-                <div class="text-cinnamon mt-1 text-[0.85rem]">Generated codes will appear here for reference.</div>
+                <x-heroicon-o-ticket class="mx-auto mb-3 block h-10 w-10 text-(--kn-muted)" />
+                <div class="font-semibold text-(--kn-ink)">No promo codes yet</div>
+                <div class="mt-1 text-[0.85rem] text-(--kn-muted)">Generated codes will appear here for reference.</div>
             </x-central.card>
         @else
             <x-central.card padding="p-0" class="overflow-hidden">
@@ -108,15 +110,15 @@
                             @endphp
                             <x-central.tr>
                                 <x-central.td>
-                                    <span class="text-honey font-mono font-bold">{{ $code->code }}</span>
+                                    <span class="font-mono font-bold text-(--kn-honey-text)">{{ $code->code }}</span>
                                 </x-central.td>
                                 <x-central.td tone="white">{{ $discountText }}</x-central.td>
                                 <x-central.td>{{ $durationText }}</x-central.td>
                                 <x-central.td>
                                     @if ($code->tenant_id)
-                                        <span class="text-parchment font-mono text-[0.8rem]">{{ $code->tenant_id }}</span>
+                                        <span class="font-mono text-[0.8rem] text-(--kn-ink)">{{ $code->tenant_id }}</span>
                                     @else
-                                        <span class="text-cinnamon/60">—</span>
+                                        <span class="text-(--kn-muted)">—</span>
                                     @endif
                                 </x-central.td>
                                 <x-central.td align="right" tone="white">{{ $code->max_redemptions }}</x-central.td>
@@ -124,8 +126,8 @@
                                     @if ($code->expires_at)
                                         <span @class([
                                             'text-[0.8rem]',
-                                            'text-red-400' => $isExpired,
-                                            'text-parchment' => ! $isExpired,
+                                            'text-(--kn-danger)' => $isExpired,
+                                            'text-(--kn-ink)' => ! $isExpired,
                                         ])>
                                             {{ $code->expires_at->format('M j, Y') }}
                                             @if ($isExpired)
@@ -133,15 +135,17 @@
                                             @endif
                                         </span>
                                     @else
-                                        <span class="text-cinnamon/60">No expiry</span>
+                                        <span class="text-(--kn-muted)">No expiry</span>
                                     @endif
                                 </x-central.td>
                                 <x-central.td>
-                                    <div class="text-parchment text-[0.8rem]">
+                                    <div class="text-[0.8rem] text-(--kn-ink)">
                                         {{ $code->created_at?->format('M j, Y') ?? '—' }}
                                     </div>
                                     @if ($code->createdBy)
-                                        <div class="text-cinnamon text-[0.7rem]">by {{ $code->createdBy->name }}</div>
+                                        <div class="text-[0.7rem] text-(--kn-muted)">
+                                            by {{ $code->createdBy->name }}
+                                        </div>
                                     @endif
                                 </x-central.td>
                             </x-central.tr>

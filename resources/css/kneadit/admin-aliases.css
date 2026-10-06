@@ -1,0 +1,36 @@
+/*
+ * Admin aliases: the older variable names still in use, pointed at the design
+ * system tokens in tokens.css. Everything resolves through --kn-*, so it
+ * follows the light/dark switch with no per-theme copies. Nothing in either
+ * admin panel's stylesheets reads them; what is left is read by:
+ *   - the Tailwind brand utilities (bg-brand-800, text-brand-300, ...) in the
+ *     tenant admin Blade views, through the @theme block in
+ *     filament/admin/theme.css;
+ *   - the dashboard-config page and the widget preview component
+ *     (--brand-*, --border-subtle).
+ *
+ * Temporary: it goes when those views are rebuilt on --kn-* directly. Pick
+ * tokens here, not hex. The bakery admin theme imports it; the platform admin
+ * theme does not.
+ */
+
+:root {
+    /*
+     * Bakery admin "brand" scale, surface (900) to lightest text (50).
+     * Mapped by role, not by lightness, so the ladder inverts in light mode.
+     */
+    --brand-900: var(--kn-surface);
+    --brand-800: var(--kn-surface-hover);
+    --brand-700: color-mix(in srgb, var(--kn-surface-hover) 60%, var(--kn-border-control));
+    --brand-600: var(--kn-border-control);
+    --brand-500: var(--kn-muted);
+    --brand-400: var(--kn-muted);
+    --brand-300: var(--kn-honey-text);
+    --brand-200: var(--kn-ink-2);
+    --brand-150: var(--kn-surface-hover);
+    --brand-100: var(--kn-ink);
+    --brand-50: var(--kn-ink);
+
+    /* Hairline borders. */
+    --border-subtle: var(--kn-border);
+}

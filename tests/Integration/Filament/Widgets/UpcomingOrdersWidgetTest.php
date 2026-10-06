@@ -3,8 +3,11 @@
 use App\Filament\Widgets\UpcomingOrdersWidget;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\Money;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+
+use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -88,4 +91,12 @@ test('get upcoming orders starts at the bakery-local day', function () {
         ->and(array_keys($orders))->toBe(['2026-10-05', '2026-10-06'])
         ->and($orders['2026-10-05']['label'])->toBe('Today')
         ->and($orders['2026-10-06']['label'])->toBe('Tomorrow');
+});
+
+test('upcoming orders widget shows each order total with a single dollar sign', function () {
+    Order::factory()->withDeliveryDate(now())->create(['total' => Money::fromDollars(12)]);
+
+    livewire(UpcomingOrdersWidget::class)
+        ->assertSee('$12.00')
+        ->assertDontSee('$$12.00');
 });

@@ -22,8 +22,8 @@ class AdminAuditLogFactory extends Factory
             'description' => fake()->sentence(),
             'target_type' => null,
             'target_id' => null,
-            'user_name' => fake()->name(),
             'ip_address' => fake()->ipv4(),
+            'created_at' => now(),
         ];
     }
 }

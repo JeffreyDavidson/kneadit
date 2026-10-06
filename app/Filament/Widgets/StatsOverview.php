@@ -102,15 +102,15 @@ class StatsOverview extends Widget
 
     private function trendTone(int $delta): string
     {
-        return $delta >= 0 ? '#6b9e3a' : '#e8b04a';
+        return $delta >= 0 ? 'var(--kn-success)' : 'var(--kn-warning)';
     }
 
     private function backlogTone(int $count): string
     {
         return match (true) {
-            $count > 10 => '#d4574a',
-            $count > 5 => '#e8b04a',
-            default => '#6b9e3a',
+            $count > 10 => 'var(--kn-danger)',
+            $count > 5 => 'var(--kn-warning)',
+            default => 'var(--kn-success)',
         };
     }
 

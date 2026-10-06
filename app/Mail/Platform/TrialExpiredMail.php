@@ -27,6 +27,7 @@ class TrialExpiredMail extends PlatformMail
     public function content(): Content
     {
         return new Content(
+            view: 'emails.platform.trial-expired',
             text: 'emails.platform.trial-expired-text',
             with: [
                 'billingUrl' => resolve(TenantUrlGenerator::class)->billingForOwner($this->user),

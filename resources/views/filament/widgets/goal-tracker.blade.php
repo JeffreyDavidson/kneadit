@@ -5,9 +5,9 @@
     // Tone maps progress percentage to a hex color (semantic: green = on track,
     // amber = building, red = falling behind).
     $toneColor = fn (float $pct): string => match (true) {
-        $pct >= 75 => '#6b9e3a',
-        $pct >= 30 => '#e8b04a',
-        default => '#d4574a',
+        $pct >= 75 => 'var(--kn-success)',
+        $pct >= 30 => 'var(--kn-warning)',
+        default => 'var(--kn-danger)',
     };
 
     $toneLabel = fn (float $pct): string => match (true) {
@@ -97,7 +97,7 @@
     {{-- Edit modal --}}
     @if ($showEditModal)
         <x-tenant-admin.modal>
-            <div class="text-brand-900 mb-4 text-base font-bold">Edit {{ ucfirst($editingType) }} Goal</div>
+            <div class="mb-4 text-base font-bold text-(--kn-ink)">Edit {{ ucfirst($editingType) }} Goal</div>
             <x-tenant-admin.eyebrow as="label" class="mb-1 block">Goal Amount ($)</x-tenant-admin.eyebrow>
             <x-tenant-admin.input type="number" wire:model="editingGoal" step="100" min="0" class="mb-4" />
             <div class="flex justify-end gap-2">
@@ -106,7 +106,7 @@
                 <button
                     wire:click="saveGoal"
                     type="button"
-                    class="bg-brand-900 cursor-pointer rounded-lg border-0 px-4 py-2 text-[0.8rem] font-semibold text-white"
+                    class="cursor-pointer rounded-lg border-0 bg-(--kn-honey) px-4 py-2 text-[0.8rem] font-semibold text-(--kn-on-honey)"
                 >
                     Save
                 </button>

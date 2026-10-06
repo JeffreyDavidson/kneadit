@@ -5,13 +5,13 @@
 
 <x-filament-panels::page>
     {{-- ============== HEADER ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 rounded-xl border p-6">
+    <div class="border-brand-800/60 mb-6 rounded-xl border bg-(--kn-surface) p-6">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div class="min-w-0 flex-1">
                 <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                     Contact Message
                 </div>
-                <h2 class="text-[1.35rem] leading-tight font-bold text-white">{{ $message->subject }}</h2>
+                <h2 class="text-brand-50 text-[1.35rem] leading-tight font-bold">{{ $message->subject }}</h2>
                 <div class="text-brand-400 mt-1 text-[0.85rem]">
                     From <span class="text-brand-200 font-semibold">{{ $message->name }}</span> ·
                     <a
@@ -23,8 +23,8 @@
 
             <span @class([
                 'inline-flex items-center gap-1.5 text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1 border',
-                'bg-emerald-500/15 border-emerald-500/25 text-emerald-400' => $message->is_read,
-                'bg-amber-500/15 border-amber-500/25 text-amber-400' => ! $message->is_read,
+                'bg-(--kn-success-tint) border-(--kn-success) text-(--kn-success)' => $message->is_read,
+                'bg-(--kn-warning-tint) border-(--kn-warning) text-(--kn-warning)' => ! $message->is_read,
             ])>
                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                 {{ $message->is_read ? 'Read' : 'Unread' }}
@@ -35,14 +35,14 @@
     {{-- ============== THREAD ============== --}}
     <div class="space-y-4">
         {{-- Original customer message --}}
-        <div class="bg-brand-800 border-brand-700/60 overflow-hidden rounded-xl border">
-            <div class="bg-brand-900/40 border-brand-700/40 flex items-center justify-between gap-2 border-b px-5 py-3">
+        <div class="border-brand-700/60 overflow-hidden rounded-xl border bg-(--kn-surface-sunken)">
+            <div class="border-brand-700/40 flex items-center justify-between gap-2 border-b bg-(--kn-surface-sunken) px-5 py-3">
                 <div class="flex min-w-0 items-center gap-2">
                     <div class="bg-brand-700 text-brand-200 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold">
                         {{ \Illuminate\Support\Str::of($message->name)->substr(0, 1)->upper() }}
                     </div>
                     <div class="min-w-0">
-                        <div class="truncate text-sm font-semibold text-white">{{ $message->name }}</div>
+                        <div class="text-brand-50 truncate text-sm font-semibold">{{ $message->name }}</div>
                         <div class="text-brand-400 truncate text-xs">{{ $message->email }}</div>
                     </div>
                 </div>
@@ -55,14 +55,14 @@
 
         {{-- Replies --}}
         @foreach ($replies as $reply)
-            <div class="bg-brand-800 border-brand-700/60 ml-6 overflow-hidden rounded-xl border">
-                <div class="bg-brand-900/40 border-brand-700/40 flex items-center justify-between gap-2 border-b px-5 py-3">
+            <div class="border-brand-700/60 ml-6 overflow-hidden rounded-xl border bg-(--kn-surface-sunken)">
+                <div class="border-brand-700/40 flex items-center justify-between gap-2 border-b bg-(--kn-surface-sunken) px-5 py-3">
                     <div class="flex min-w-0 items-center gap-2">
                         <div class="bg-brand-300/20 text-brand-300 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold">
                             {{ \Illuminate\Support\Str::of($reply->sentBy?->name ?? 'You')->substr(0, 1)->upper() }}
                         </div>
                         <div class="min-w-0">
-                            <div class="truncate text-sm font-semibold text-white">
+                            <div class="text-brand-50 truncate text-sm font-semibold">
                                 {{ $reply->sentBy?->name ?? 'Staff' }}
                                 <span class="text-brand-300 font-normal">replied</span>
                             </div>

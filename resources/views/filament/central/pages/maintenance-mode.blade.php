@@ -1,35 +1,35 @@
 <x-filament-panels::page>
     {{-- Hero Status Card --}}
-    <x-central.card class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5 {{ $maintenance_mode ? 'border-red-500/30' : '' }}">
+    <x-central.card class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5 {{ $maintenance_mode ? 'border-(--kn-danger)/30' : '' }}">
         <div class="flex items-center gap-4">
             @if ($maintenance_mode)
-                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-red-500/15">
-                    <x-heroicon-o-exclamation-triangle class="h-7 w-7 text-red-500" />
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-(--kn-danger-tint)">
+                    <x-heroicon-o-exclamation-triangle class="h-7 w-7 text-(--kn-danger)" />
                 </div>
                 <div>
-                    <div class="mb-0.5 text-[0.65rem] font-bold tracking-[0.12em] text-red-400 uppercase">
+                    <div class="mb-0.5 text-[0.65rem] font-bold tracking-[0.12em] text-(--kn-danger) uppercase">
                         System Status
                     </div>
-                    <div class="text-[1.5rem] leading-tight font-bold text-white">In Maintenance</div>
-                    <div class="text-cinnamon mt-1 text-[0.85rem]">
+                    <div class="text-[1.5rem] leading-tight font-bold text-(--kn-ink)">In Maintenance</div>
+                    <div class="mt-1 text-[0.85rem] text-(--kn-muted)">
                         @if (! empty($affected_services))
                             {{ count($affected_services) }} {{ \Illuminate\Support\Str::plural('service', count($affected_services)) }} affected:
-                            <span class="text-parchment">{{ collect($affected_services)->map(fn ($s) => \Illuminate\Support\Str::headline($s))->join(', ') }}</span>
+                            <span class="text-(--kn-ink)">{{ collect($affected_services)->map(fn ($s) => \Illuminate\Support\Str::headline($s))->join(', ') }}</span>
                         @else
                             No services selected — configure below
                         @endif
                     </div>
                 </div>
             @else
-                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15">
-                    <x-heroicon-o-check-circle class="h-7 w-7 text-emerald-500" />
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-(--kn-success-tint)">
+                    <x-heroicon-o-check-circle class="h-7 w-7 text-(--kn-success)" />
                 </div>
                 <div>
-                    <div class="mb-0.5 text-[0.65rem] font-bold tracking-[0.12em] text-emerald-400 uppercase">
+                    <div class="mb-0.5 text-[0.65rem] font-bold tracking-[0.12em] text-(--kn-success) uppercase">
                         System Status
                     </div>
-                    <div class="text-[1.5rem] leading-tight font-bold text-white">All Systems Online</div>
-                    <div class="text-cinnamon mt-1 text-[0.85rem]">Platform and all services running normally.</div>
+                    <div class="text-[1.5rem] leading-tight font-bold text-(--kn-ink)">All Systems Online</div>
+                    <div class="mt-1 text-[0.85rem] text-(--kn-muted)">Platform and all services running normally.</div>
                 </div>
             @endif
         </div>
@@ -40,8 +40,8 @@
             class="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-bold text-[0.85rem] border cursor-pointer transition-colors
                 {{
                     $maintenance_mode
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 hover:bg-emerald-500/20'
-                    : 'bg-red-500/10 text-red-400 border-red-500/25 hover:bg-red-500/20'
+                    ? 'bg-(--kn-success-tint) text-(--kn-success) border-(--kn-success)/25 hover:bg-(--kn-success)/20'
+                    : 'bg-(--kn-danger-tint) text-(--kn-danger) border-(--kn-danger)/25 hover:bg-(--kn-danger)/20'
                 }}"
         >
             @if ($maintenance_mode)
@@ -63,7 +63,7 @@
             <div class="space-y-5">
                 {{-- Public Message --}}
                 <div>
-                    <label for="maintenance-message" class="mb-2 block text-[0.85rem] font-semibold text-white"
+                    <label for="maintenance-message" class="mb-2 block text-[0.85rem] font-semibold text-(--kn-ink)"
                         >Public message</label>
                     <x-central.textarea
                         wire:model.live="maintenance_message"
@@ -71,7 +71,7 @@
                         rows="3"
                         placeholder="We are currently performing scheduled maintenance. We'll be back shortly!"
                     />
-                    <p class="text-cinnamon mt-1.5 text-[0.75rem]">
+                    <p class="mt-1.5 text-[0.75rem] text-(--kn-muted)">
                         Shown on the maintenance page to anyone hitting an affected service.
                     </p>
                 </div>
@@ -79,30 +79,30 @@
                 {{-- Schedule --}}
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <label for="scheduled-start" class="mb-2 block text-[0.85rem] font-semibold text-white"
+                        <label for="scheduled-start" class="mb-2 block text-[0.85rem] font-semibold text-(--kn-ink)"
                             >Scheduled start</label>
                         <x-central.input
                             type="datetime-local"
                             wire:model.live="maintenance_scheduled_start"
                             id="scheduled-start"
                         />
-                        <p class="text-cinnamon mt-1.5 text-[0.75rem]">Optional.</p>
+                        <p class="mt-1.5 text-[0.75rem] text-(--kn-muted)">Optional.</p>
                     </div>
                     <div>
-                        <label for="scheduled-end" class="mb-2 block text-[0.85rem] font-semibold text-white"
+                        <label for="scheduled-end" class="mb-2 block text-[0.85rem] font-semibold text-(--kn-ink)"
                             >Scheduled end</label>
                         <x-central.input
                             type="datetime-local"
                             wire:model.live="maintenance_scheduled_end"
                             id="scheduled-end"
                         />
-                        <p class="text-cinnamon mt-1.5 text-[0.75rem]">Shown in the preview as "expected back".</p>
+                        <p class="mt-1.5 text-[0.75rem] text-(--kn-muted)">Shown in the preview as "expected back".</p>
                     </div>
                 </div>
 
                 {{-- Affected Services --}}
                 <div>
-                    <div class="mb-2 block text-[0.85rem] font-semibold text-white">Affected services</div>
+                    <div class="mb-2 block text-[0.85rem] font-semibold text-(--kn-ink)">Affected services</div>
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                         @foreach ([
                             'storefront' => ['label' => 'Storefront', 'desc' => 'Customer-facing bakery sites'],
@@ -113,7 +113,7 @@
                             <label
                                 for="svc-{{ $key }}"
                                 class="cursor-pointer rounded-lg border p-3.5 transition-colors
-                                    {{ $checked ? 'border-honey bg-honey/8' : 'border-honey/12 bg-warm-black hover:border-honey/30' }}"
+                                    {{ $checked ? 'border-(--kn-honey) bg-(--kn-surface-hover)' : 'border-(--kn-border) bg-(--kn-surface) hover:border-(--kn-honey)/30' }}"
                             >
                                 <input
                                     type="checkbox"
@@ -124,13 +124,13 @@
                                 />
                                 <div class="mb-1 flex items-center gap-2">
                                     @if ($checked)
-                                        <x-heroicon-s-check-circle class="text-honey h-4 w-4" />
+                                        <x-heroicon-s-check-circle class="h-4 w-4 text-(--kn-honey-text)" />
                                     @else
-                                        <div class="border-cinnamon/40 h-4 w-4 rounded-full border-2"></div>
+                                        <div class="h-4 w-4 rounded-full border-2 border-(--kn-border)"></div>
                                     @endif
-                                    <div class="text-[0.85rem] font-bold text-white">{{ $service['label'] }}</div>
+                                    <div class="text-[0.85rem] font-bold text-(--kn-ink)">{{ $service['label'] }}</div>
                                 </div>
-                                <div class="text-cinnamon text-[0.7rem] leading-snug">{{ $service['desc'] }}</div>
+                                <div class="text-[0.7rem] leading-snug text-(--kn-muted)">{{ $service['desc'] }}</div>
                             </label>
                         @endforeach
                     </div>
@@ -143,24 +143,24 @@
             <div class="mb-5 flex items-center justify-between">
                 <x-central.eyebrow>Preview</x-central.eyebrow>
                 @if ($maintenance_mode)
-                    <div class="inline-flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/15 px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] text-red-400 uppercase">
-                        <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500"></span>
+                    <div class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-danger)/25 bg-(--kn-danger-tint) px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] text-(--kn-danger) uppercase">
+                        <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-(--kn-danger)"></span>
                         In Maintenance
                     </div>
                 @else
-                    <div class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/15 px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] text-emerald-400 uppercase">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                    <div class="inline-flex items-center gap-1.5 rounded-full border border-(--kn-success)/25 bg-(--kn-success-tint) px-2.5 py-1 text-[0.65rem] font-bold tracking-[0.1em] text-(--kn-success) uppercase">
+                        <span class="h-1.5 w-1.5 rounded-full bg-(--kn-success)"></span>
                         Live
                     </div>
                 @endif
             </div>
 
-            <p class="text-cinnamon mb-3 text-[0.75rem] leading-relaxed">
-                This is what visitors are seeing at <span class="text-parchment font-mono">getkneadit.app</span> right
+            <p class="mb-3 text-[0.75rem] leading-relaxed text-(--kn-muted)">
+                This is what visitors are seeing at <span class="font-mono text-(--kn-ink)">getkneadit.app</span> right
                 now.
             </p>
 
-            <div class="relative rounded-xl border {{ $maintenance_mode ? 'border-red-500/25' : 'border-emerald-500/25' }} overflow-hidden bg-warm-black">
+            <div class="relative rounded-xl border {{ $maintenance_mode ? 'border-(--kn-danger)/25' : 'border-(--kn-success)/25' }} overflow-hidden bg-(--kn-surface)">
                 @if ($maintenance_mode)
                     <iframe
                         src="{{ route('central.maintenance-mode.preview') }}?{{
@@ -187,7 +187,7 @@
 
     {{-- Save Bar --}}
     <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-        <div class="text-cinnamon text-[0.8rem]">Message, schedule, and affected services save together.</div>
+        <div class="text-[0.8rem] text-(--kn-muted)">Message, schedule, and affected services save together.</div>
         <x-central.button wire:click="save" class="gap-1.5 whitespace-nowrap">
             <x-heroicon-o-check class="h-4 w-4" stroke-width="2.5" />
             Save Settings
@@ -199,32 +199,32 @@
         <div class="p-6">
             <div class="flex items-start gap-4">
                 @if ($maintenance_mode)
-                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15">
-                        <x-heroicon-o-arrow-uturn-up class="h-6 w-6 text-emerald-500" stroke-width="2" />
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-(--kn-success-tint)">
+                        <x-heroicon-o-arrow-uturn-up class="h-6 w-6 text-(--kn-success)" stroke-width="2" />
                     </div>
                     <div class="flex-1">
-                        <div class="mb-1.5 text-[1.05rem] font-bold text-white">Bring platform online?</div>
-                        <div class="text-parchment text-[0.85rem] leading-relaxed">
+                        <div class="mb-1.5 text-[1.05rem] font-bold text-(--kn-ink)">Bring platform online?</div>
+                        <div class="text-[0.85rem] leading-relaxed text-(--kn-ink)">
                             All affected services will become reachable again immediately. Customers, tenants, and API
                             callers will resume normal access.
                         </div>
                     </div>
                 @else
-                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500/15">
-                        <x-heroicon-o-exclamation-triangle class="h-6 w-6 text-red-500" stroke-width="2" />
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-(--kn-danger-tint)">
+                        <x-heroicon-o-exclamation-triangle class="h-6 w-6 text-(--kn-danger)" stroke-width="2" />
                     </div>
                     <div class="flex-1">
-                        <div class="mb-1.5 text-[1.05rem] font-bold text-white">Enter maintenance mode?</div>
-                        <div class="text-parchment text-[0.85rem] leading-relaxed">
+                        <div class="mb-1.5 text-[1.05rem] font-bold text-(--kn-ink)">Enter maintenance mode?</div>
+                        <div class="text-[0.85rem] leading-relaxed text-(--kn-ink)">
                             @if (! empty($affected_services))
-                                <span class="font-semibold text-white">{{ count($affected_services) }} {{ \Illuminate\Support\Str::plural('service', count($affected_services)) }}</span>
+                                <span class="font-semibold text-(--kn-ink)">{{ count($affected_services) }} {{ \Illuminate\Support\Str::plural('service', count($affected_services)) }}</span>
                                 will show a maintenance page:
                                 <span
-                                    class="text-honey"
+                                    class="text-(--kn-honey-text)"
                                     >{{ collect($affected_services)->map(fn ($s) => \Illuminate\Support\Str::headline($s))->join(', ') }}</span
                                 >. Active users will be disconnected.
                             @else
-                                <span class="text-red-400">No services are selected</span>
+                                <span class="text-(--kn-danger)">No services are selected</span>
                                 — toggling now won't actually take anything offline. Check at least one service under
                                 "Affected services" first.
                             @endif
@@ -234,11 +234,11 @@
             </div>
         </div>
 
-        <div class="bg-espresso/50 border-honey/8 flex items-center justify-end gap-2 border-t px-6 py-4">
+        <div class="flex items-center justify-end gap-2 border-t border-(--kn-border) bg-(--kn-surface-sunken) px-6 py-4">
             <button
                 type="button"
                 @click="open = false"
-                class="text-parchment cursor-pointer rounded-lg px-4 py-2 text-[0.85rem] font-semibold transition-colors hover:text-white"
+                class="cursor-pointer rounded-lg px-4 py-2 text-[0.85rem] font-semibold text-(--kn-ink) transition-colors hover:text-(--kn-ink)"
             >
                 Cancel
             </button>
@@ -251,8 +251,8 @@
                 class="px-4 py-2 rounded-lg text-[0.85rem] font-bold border cursor-pointer transition-colors
                     {{
                         $maintenance_mode
-                        ? 'bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-400'
-                        : 'bg-red-500 text-white border-red-500 hover:bg-red-400'
+                        ? 'bg-(--kn-success) text-(--kn-on-danger) border-(--kn-success) hover:opacity-90'
+                        : 'bg-(--kn-danger) text-(--kn-on-danger) border-(--kn-danger) hover:opacity-90'
                     }}"
             >
                 {{ $maintenance_mode ? 'Bring Online' : 'Enter Maintenance' }}

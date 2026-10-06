@@ -2,10 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Central\Pages\Appearance;
 use App\Filament\Central\Pages\Dashboard;
 use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;
-use App\Filament\Shared\PanelThemes;
+use App\Filament\Shared\DesignSystem;
 use App\Http\Middleware\SecurityHeaders;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
@@ -15,7 +14,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\Factory;
@@ -32,27 +30,16 @@ class CentralPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        return DesignSystem::lightByDefault(DesignSystem::configure($panel))
             ->id('central')
             ->path('admin')
             ->domains($this->centralDomains())
             ->login()
             ->spa()
             ->maxContentWidth('full')
-            ->colors([
-                'primary' => Color::Amber,
-                'danger' => Color::Rose,
-                'info' => Color::Sky,
-                'success' => Color::Emerald,
-                'warning' => Color::Orange,
-            ])
             ->brandName('KneadIt')
             ->brandLogo(view('filament.central.brand-logo'))
             ->brandLogoHeight('36px')
-            // Force dark mode and hide the user-menu toggle — central-admin.css
-            // hard-codes dark surfaces everywhere, so the light/system options
-            // were inert. Theme variants are picked under Settings → Appearance.
-            ->darkMode(true, isForced: true)
             ->viteTheme('resources/css/filament/central/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Platform'),
@@ -60,13 +47,6 @@ class CentralPanelProvider extends PanelProvider
                 NavigationGroup::make('Insights'),
                 NavigationGroup::make('Settings'),
             ])
-            ->font('Inter')
-            ->renderHook('panels::head.end', fn (): HtmlString => new HtmlString(
-                // Inject the theme palette BEFORE the stylesheet so the CSS variables
-                // are defined when central-admin.css references them.
-                '<style>'.PanelThemes::rootCss().'</style>'
-                .'<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.filemtime(public_path('css/central-admin.css')).'">',
-            ))
             ->renderHook('panels::body.end', fn (): HtmlString => new HtmlString('
                 <script>
                     document.addEventListener("livewire:navigating", () => {
@@ -89,10 +69,6 @@ class CentralPanelProvider extends PanelProvider
                 fn (): Factory|\Illuminate\Contracts\View\View => view('filament.central.user-menu-header'),
             )
             ->userMenuItems([
-                Action::make('appearance')
-                    ->label('Appearance')
-                    ->url(fn (): string => Appearance::getUrl())
-                    ->icon(Heroicon::Swatch),
                 Action::make('platformSettings')
                     ->label('Platform Settings')
                     ->url(fn (): string => PlatformSettingResource::getUrl('index'))

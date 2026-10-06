@@ -36,18 +36,18 @@ final readonly class OrderViewModel
     public function __construct(public Order $order)
     {
         $this->statusColor = match ($order->status) {
-            OrderStatus::Pending => ['bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-            OrderStatus::Confirmed => ['bg' => 'bg-sky-500/15', 'border' => 'border-sky-500/25', 'text' => 'text-sky-400'],
-            OrderStatus::Baking => ['bg' => 'bg-orange-500/15', 'border' => 'border-orange-500/25', 'text' => 'text-orange-400'],
-            OrderStatus::Ready, OrderStatus::Delivered => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-            OrderStatus::Cancelled => ['bg' => 'bg-red-500/15', 'border' => 'border-red-500/25', 'text' => 'text-red-400'],
+            OrderStatus::Pending => ['bg' => 'bg-(--kn-warning-tint)', 'border' => 'border-(--kn-warning)', 'text' => 'text-(--kn-warning)'],
+            OrderStatus::Confirmed => ['bg' => 'bg-(--kn-info-tint)', 'border' => 'border-(--kn-info)', 'text' => 'text-(--kn-info)'],
+            OrderStatus::Baking => ['bg' => 'bg-(--kn-warning-tint)', 'border' => 'border-(--kn-honey)', 'text' => 'text-(--kn-honey-text)'],
+            OrderStatus::Ready, OrderStatus::Delivered => ['bg' => 'bg-(--kn-success-tint)', 'border' => 'border-(--kn-success)', 'text' => 'text-(--kn-success)'],
+            OrderStatus::Cancelled => ['bg' => 'bg-(--kn-danger-tint)', 'border' => 'border-(--kn-danger)', 'text' => 'text-(--kn-danger)'],
         };
 
         $this->paymentColor = match ($order->payment_status) {
-            PaymentStatus::Paid => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-            PaymentStatus::Unpaid => ['bg' => 'bg-red-500/15', 'border' => 'border-red-500/25', 'text' => 'text-red-400'],
-            PaymentStatus::Refunded => ['bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
-            default => ['bg' => 'bg-brand-800', 'border' => 'border-brand-700', 'text' => 'text-brand-200'],
+            PaymentStatus::Paid => ['bg' => 'bg-(--kn-success-tint)', 'border' => 'border-(--kn-success)', 'text' => 'text-(--kn-success)'],
+            PaymentStatus::Unpaid => ['bg' => 'bg-(--kn-danger-tint)', 'border' => 'border-(--kn-danger)', 'text' => 'text-(--kn-danger)'],
+            PaymentStatus::Refunded => ['bg' => 'bg-(--kn-warning-tint)', 'border' => 'border-(--kn-warning)', 'text' => 'text-(--kn-warning)'],
+            default => ['bg' => 'bg-(--kn-surface-hover)', 'border' => 'border-(--kn-border)', 'text' => 'text-(--kn-ink-2)'],
         };
 
         $this->isDelivery = $order->delivery_type === DeliveryType::Delivery;

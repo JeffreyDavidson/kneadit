@@ -106,8 +106,8 @@ test('can render the view order page', function () {
         ->assertSee('Thank you, see you soon.')
         ->assertSee('Custom bread')
         ->assertSee('$25.00')
-        ->assertSeeHtml('bg-amber-500/15')
-        ->assertSeeHtml('bg-red-500/15')
+        ->assertSeeHtml('bg-(--kn-warning-tint)')
+        ->assertSeeHtml('bg-(--kn-danger-tint)')
         ->assertSeeHtml('flex justify-end')
         ->assertSeeHtml('flex justify-start');
 });
@@ -144,6 +144,17 @@ test('can search orders by order number', function () {
         ->searchTable($target->order_number)
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
+});
+
+test('the filters button shows no badge while no filter is set', function () {
+    livewire(ListOrders::class)
+        ->assertDontSeeHtml('fi-icon-btn-badge-ctn');
+});
+
+test('the filters button badge counts the filters that are set', function () {
+    livewire(ListOrders::class)
+        ->filterTable('status', OrderStatus::Delivered->value)
+        ->assertSeeHtml('fi-icon-btn-badge-ctn');
 });
 
 test('can filter orders by status', function () {

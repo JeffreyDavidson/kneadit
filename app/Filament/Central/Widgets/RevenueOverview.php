@@ -23,7 +23,7 @@ class RevenueOverview extends StatsOverviewWidget
     #[\Override]
     protected function getStats(): array
     {
-        $data = $this->cached('main', [900, 1800], fn (): PlatformRevenueMetrics => resolve(PlatformRevenueMetricsQuery::class)->get());
+        $data = PlatformRevenueMetrics::fromArray($this->cached('main', [900, 1800], fn (): array => resolve(PlatformRevenueMetricsQuery::class)->get()->toArray()));
 
         return [
             Stat::make('ARPU', Number::currency($data->arpu))

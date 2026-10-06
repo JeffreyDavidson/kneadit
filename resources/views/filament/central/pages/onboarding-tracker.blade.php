@@ -20,11 +20,11 @@
 
     {{-- Summary Stats --}}
     <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <x-central.stat-card label="Total Tenants" value-class="text-[1.75rem] text-white">
+        <x-central.stat-card label="Total Tenants" value-class="text-[1.75rem] text-(--kn-ink)">
             {{ $stats['total'] }}</x-central.stat-card>
-        <x-central.stat-card label="Fully Onboarded" value-class="text-[1.75rem] text-emerald-500">
+        <x-central.stat-card label="Fully Onboarded" value-class="text-[1.75rem] text-(--kn-success)">
             {{ $stats['fully_onboarded'] }}</x-central.stat-card>
-        <x-central.stat-card label="Needs Attention" value-class="text-[1.75rem] text-red-500">
+        <x-central.stat-card label="Needs Attention" value-class="text-[1.75rem] text-(--kn-danger)">
             {{ $stats['needs_attention'] }}</x-central.stat-card>
     </div>
 
@@ -34,7 +34,7 @@
             <div class="min-w-[180px] flex-1">
                 <label
                     for="filter-status"
-                    class="text-cinnamon mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] uppercase"
+                    class="mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase"
                 >Status</label>
                 <x-central.select id="filter-status" wire:model.live="filterStatus">
                     <option value="all">All</option>
@@ -46,7 +46,7 @@
             <div class="min-w-[160px] flex-1">
                 <label
                     for="filter-plan"
-                    class="text-cinnamon mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] uppercase"
+                    class="mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase"
                 >Plan</label>
                 <x-central.select id="filter-plan" wire:model.live="filterPlan">
                     <option value="all">All plans</option>
@@ -59,7 +59,7 @@
             <div class="min-w-[180px] flex-1">
                 <label
                     for="filter-sort"
-                    class="text-cinnamon mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] uppercase"
+                    class="mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase"
                 >Sort</label>
                 <x-central.select id="filter-sort" wire:model.live="sort">
                     <option value="progress_asc">Least progress first</option>
@@ -71,7 +71,7 @@
             <button
                 type="button"
                 wire:click="resetFilters"
-                class="text-cinnamon hover:text-honey inline-flex cursor-pointer items-center gap-1 pb-2 text-[0.75rem] whitespace-nowrap transition-colors"
+                class="inline-flex cursor-pointer items-center gap-1 pb-2 text-[0.75rem] whitespace-nowrap text-(--kn-muted) transition-colors hover:text-(--kn-honey-text)"
             >
                 <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
                 Reset
@@ -82,23 +82,23 @@
     {{-- Tenant Cards --}}
     @if ($tenants->isEmpty())
         <x-central.card padding="py-16 px-8" class="text-center">
-            <x-heroicon-o-clipboard-document-check class="text-cinnamon mx-auto mb-4 block h-12 w-12" />
-            <div class="mb-2 text-lg font-semibold text-white">No tenants match your filters</div>
-            <div class="text-cinnamon text-sm">Try clearing your filters to see everyone.</div>
+            <x-heroicon-o-clipboard-document-check class="mx-auto mb-4 block h-12 w-12 text-(--kn-muted)" />
+            <div class="mb-2 text-lg font-semibold text-(--kn-ink)">No tenants match your filters</div>
+            <div class="text-sm text-(--kn-muted)">Try clearing your filters to see everyone.</div>
         </x-central.card>
     @else
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach ($tenants as $tenant)
                 @php
                     $pct = round(($tenant['completed'] / $tenant['total']) * 100);
-                    $statusTextClass = $tenant['completed'] <= 2 ? 'text-red-400' : ($tenant['completed'] <= 5 ? 'text-amber-400' : 'text-emerald-400');
-                    $statusBgClass = $tenant['completed'] <= 2 ? 'bg-red-500' : ($tenant['completed'] <= 5 ? 'bg-amber-500' : 'bg-emerald-500');
-                    $cardTintClass = $tenant['completed'] <= 2 ? 'bg-red-500/5 border-red-500/20' : ($tenant['completed'] <= 5 ? 'bg-amber-500/5 border-amber-500/15' : '');
+                    $statusTextClass = $tenant['completed'] <= 2 ? 'text-(--kn-danger)' : ($tenant['completed'] <= 5 ? 'text-(--kn-warning)' : 'text-(--kn-success)');
+                    $statusBgClass = $tenant['completed'] <= 2 ? 'bg-(--kn-danger)' : ($tenant['completed'] <= 5 ? 'bg-(--kn-warning)' : 'bg-(--kn-success)');
+                    $cardTintClass = $tenant['completed'] <= 2 ? 'bg-(--kn-danger-tint) border-(--kn-danger)/20' : ($tenant['completed'] <= 5 ? 'bg-(--kn-warning-tint) border-(--kn-warning)/15' : '');
                     $planClass = match ($tenant['plan']) {
-                        'pro' => 'bg-honey text-warm-black',
-                        'growth' => 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
-                        'starter' => 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
-                        default => 'bg-honey/15 text-butter border border-honey/25',
+                        'pro' => 'bg-(--kn-honey) text-(--kn-on-honey)',
+                        'growth' => 'bg-(--kn-success)/20 text-(--kn-success) border border-(--kn-success)/30',
+                        'starter' => 'bg-(--kn-info)/20 text-(--kn-info) border border-(--kn-info)/30',
+                        default => 'bg-(--kn-warning-tint) text-(--kn-ink-2) border border-(--kn-honey)/25',
                     };
                     $tenantUrl = \App\Filament\Central\Resources\TenantResource::getUrl('view', ['record' => $tenant['id']]);
                 @endphp
@@ -108,7 +108,7 @@
                         <div class="min-w-0 flex-1">
                             <a
                                 href="{{ $tenantUrl }}"
-                                class="hover:text-honey block truncate text-base font-bold text-white no-underline transition-colors"
+                                class="block truncate text-base font-bold text-(--kn-ink) no-underline transition-colors hover:text-(--kn-honey-text)"
                             >{{ $tenant['name'] }}</a>
                             <x-central.eyebrow>{{ $tenant['subdomain'] }}.getkneadit.app</x-central.eyebrow>
                         </div>
@@ -118,11 +118,14 @@
                     </div>
 
                     {{-- Owner + signup date --}}
-                    <div class="text-parchment mb-3 text-[0.8rem]">
+                    <div class="mb-3 text-[0.8rem] text-(--kn-ink)">
                         {{ $tenant['owner'] }}
                         @if ($tenant['created_at'])
                             ·
-                            <span class="text-cinnamon" title="{{ $tenant['created_at']->format('M j, Y · g:i A') }}">
+                            <span
+                                class="text-(--kn-muted)"
+                                title="{{ $tenant['created_at']->format('M j, Y · g:i A') }}"
+                            >
                                 Signed up {{ $tenant['created_at']->format('M j, Y') }} ({{ $tenant['days_since_signup'] }}d
                                 ago)
                             </span>
@@ -137,7 +140,7 @@
                                 {{ $tenant['completed'] }} / {{ $tenant['total'] }} · {{ $pct }}%
                             </span>
                         </div>
-                        <div class="bg-espresso h-2 overflow-hidden rounded-full">
+                        <div class="h-2 overflow-hidden rounded-full bg-(--kn-surface-sunken)">
                             <div
                                 class="h-full rounded-full transition-all {{ $statusBgClass }}"
                                 style="width: {{ $pct }}%;"
@@ -150,13 +153,13 @@
                         @foreach ($tenant['checks'] as $key => $passed)
                             <div class="flex items-center gap-2 text-[0.8rem]">
                                 @if ($passed)
-                                    <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/15">
-                                        <x-heroicon-o-check class="h-3 w-3 text-emerald-400" stroke-width="3" />
+                                    <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-(--kn-success)/30 bg-(--kn-success-tint)">
+                                        <x-heroicon-o-check class="h-3 w-3 text-(--kn-success)" stroke-width="3" />
                                     </span>
-                                    <span class="text-parchment">{{ $checkLabels[$key] }}</span>
+                                    <span class="text-(--kn-ink)">{{ $checkLabels[$key] }}</span>
                                 @else
-                                    <span class="border-cinnamon/30 h-5 w-5 flex-shrink-0 rounded-full border"></span>
-                                    <span class="text-cinnamon/70">{{ $checkLabels[$key] }}</span>
+                                    <span class="h-5 w-5 flex-shrink-0 rounded-full border border-(--kn-border)"></span>
+                                    <span class="text-(--kn-muted)">{{ $checkLabels[$key] }}</span>
                                 @endif
                             </div>
                         @endforeach
@@ -165,7 +168,7 @@
                     {{-- Action --}}
                     <a
                         href="{{ $tenantUrl }}"
-                        class="bg-espresso text-honey border-honey/25 hover:border-honey hover:bg-honey/5 inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-[0.75rem] font-semibold no-underline transition-colors"
+                        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-(--kn-honey)/25 bg-(--kn-surface-sunken) px-3 py-2 text-[0.75rem] font-semibold text-(--kn-honey-text) no-underline transition-colors hover:border-(--kn-honey) hover:bg-(--kn-surface-hover)"
                     >
                         <x-heroicon-o-arrow-top-right-on-square class="h-3.5 w-3.5" />
                         View Tenant

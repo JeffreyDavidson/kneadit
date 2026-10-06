@@ -2,8 +2,8 @@
 
 <tr {{
     $attributes->class([
-        'border-b border-honey/8' => $border,
-        'bg-honey/5' => $highlight,
+        'border-b border-(--kn-border)' => $border,
+        'bg-(--kn-surface-hover)' => $highlight,
     ])
 }}>
     {{ $slot }}

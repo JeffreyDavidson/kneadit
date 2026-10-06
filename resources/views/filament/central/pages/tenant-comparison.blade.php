@@ -8,9 +8,9 @@
             <button
                 wire:click="$set('activeTab', '{{ $key }}')"
                 @class([
-                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-honey/25 cursor-pointer',
-                    'bg-honey text-warm-black' => $activeTab === $key,
-                    'bg-transparent text-honey' => $activeTab !== $key,
+                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-(--kn-honey)/25 cursor-pointer',
+                    'bg-(--kn-honey) text-(--kn-on-honey)' => $activeTab === $key,
+                    'bg-transparent text-(--kn-honey-text)' => $activeTab !== $key,
                 ])
             >
                 {{ $label }}
@@ -58,14 +58,17 @@
             <x-central.card class="mb-6">
                 <div class="mb-4 flex items-center justify-between">
                     <x-central.eyebrow>Select Bakeries to Compare</x-central.eyebrow>
-                    <span class="text-cinnamon text-[0.75rem]" x-text="selectedCount + ' of 3 selected · min 2'"></span>
+                    <span
+                        class="text-[0.75rem] text-(--kn-muted)"
+                        x-text="selectedCount + ' of 3 selected · min 2'"
+                    ></span>
                 </div>
                 <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
                     @for ($i = 1; $i <= 3; $i++)
                         <div>
                             <label
                                 for="bakery-{{ $i }}"
-                                class="text-cinnamon mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] uppercase"
+                                class="mb-1 block text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase"
                             >Bakery {{ $i }}</label>
                             <div class="flex items-stretch gap-1.5">
                                 <x-central.select id="bakery-{{ $i }}" x-model="bakery{{ $i }}" class="min-w-0 flex-1">
@@ -79,7 +82,7 @@
                                     @click="clear({{ $i }})"
                                     x-show="bakery{{ $i }}"
                                     x-cloak
-                                    class="bg-espresso border-honey/12 text-cinnamon hover:text-honey hover:border-honey/40 inline-flex w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition-colors"
+                                    class="inline-flex w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-(--kn-border) bg-(--kn-surface-sunken) text-(--kn-muted) transition-colors hover:border-(--kn-honey)/40 hover:text-(--kn-honey-text)"
                                     title="Clear selection"
                                 >
                                     <x-heroicon-o-x-mark class="h-4 w-4" />
@@ -93,7 +96,7 @@
                         @if ($hasTopPresetEnough)
                             <a
                                 href="?{{ $topPresetQuery }}"
-                                class="bg-espresso text-honey border-honey/25 hover:border-honey inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[0.75rem] font-semibold no-underline transition-colors"
+                                class="inline-flex items-center gap-1.5 rounded-lg border border-(--kn-honey)/25 bg-(--kn-surface-sunken) px-3 py-1.5 text-[0.75rem] font-semibold text-(--kn-honey-text) no-underline transition-colors hover:border-(--kn-honey)"
                             >
                                 <x-heroicon-o-trophy class="h-3.5 w-3.5" />
                                 Top {{ count($topPerformerIds) }} performers
@@ -105,8 +108,8 @@
                         @click="compare()"
                         :disabled="selectedCount < 2"
                         :class="selectedCount >= 2
-                            ? 'bg-honey text-warm-black hover:bg-golden cursor-pointer'
-                            : 'bg-espresso text-cinnamon cursor-not-allowed'"
+                            ? 'bg-(--kn-honey) text-(--kn-on-honey) hover:bg-(--kn-honey-hover) cursor-pointer'
+                            : 'bg-(--kn-surface-sunken) text-(--kn-muted) cursor-not-allowed'"
                         class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-[0.8rem] font-bold transition-colors"
                     >
                         <x-heroicon-o-chart-bar-square class="h-4 w-4" />
@@ -134,8 +137,8 @@
                         };
                     @endphp
                     <x-central.card class="flex flex-col">
-                        <div class="border-honey/8 mb-4 border-b pb-4 text-center">
-                            <div class="mb-2 text-base font-bold text-white">{{ $tenant['name'] }}</div>
+                        <div class="mb-4 border-b border-(--kn-border) pb-4 text-center">
+                            <div class="mb-2 text-base font-bold text-(--kn-ink)">{{ $tenant['name'] }}</div>
                             <x-central.badge :color="$planColor">{{ $tenant['plan'] }}</x-central.badge>
                         </div>
 
@@ -155,7 +158,7 @@
                                 <x-central.metric-row :label="$row['label']">{{ $row['value'] }}</x-central.metric-row>
                             @endforeach
                             @php
-                                $healthColor = $tenant['health_score'] > 70 ? 'text-emerald-500' : ($tenant['health_score'] >= 40 ? 'text-amber-500' : 'text-red-500');
+                                $healthColor = $tenant['health_score'] > 70 ? 'text-(--kn-success)' : ($tenant['health_score'] >= 40 ? 'text-(--kn-warning)' : 'text-(--kn-danger)');
                             @endphp
                             <x-central.metric-row label="Health Score" :value-class="$healthColor.' font-bold'">
                                 {{ $tenant['health_score'] }}/100</x-central.metric-row>
@@ -168,7 +171,7 @@
                 @php
                     $chartMetrics = ['total_orders', 'total_products', 'health_score'];
                     $chartLabels = ['Total Orders', 'Total Products', 'Health Score'];
-                    $barClasses = ['bg-honey', 'bg-golden', 'bg-butter'];
+                    $barClasses = ['bg-(--kn-honey)', 'bg-(--kn-honey-hover)', 'bg-(--kn-surface-hover)'];
                 @endphp
                 @foreach ($chartMetrics as $idx => $metric)
                     @php $maxVal = max(array_column($comparisonData, $metric)) ?: 1; @endphp
@@ -177,14 +180,14 @@
                         @foreach ($comparisonData as $tIdx => $tenant)
                             @php $pct = round(($tenant[$metric] / $maxVal) * 100); @endphp
                             <div class="mb-1.5 flex items-center gap-3">
-                                <span class="text-parchment w-[120px] truncate text-right text-xs">{{ $tenant['name'] }}</span>
-                                <div class="bg-espresso h-2 flex-1 overflow-hidden rounded">
+                                <span class="w-[120px] truncate text-right text-xs text-(--kn-ink)">{{ $tenant['name'] }}</span>
+                                <div class="h-2 flex-1 overflow-hidden rounded bg-(--kn-surface-sunken)">
                                     <div
                                         class="h-full rounded transition-all duration-300 {{ $barClasses[$tIdx % 3] }}"
                                         style="width: {{ $pct }}%;"
                                     ></div>
                                 </div>
-                                <span class="text-parchment w-[50px] text-[0.8rem] font-bold">{{ $tenant[$metric] }}</span>
+                                <span class="w-[50px] text-[0.8rem] font-bold text-(--kn-ink)">{{ $tenant[$metric] }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -193,10 +196,10 @@
         @else
             <x-central.card padding="py-12 px-8" class="text-center">
                 <div class="mb-4">
-                    <x-heroicon-o-chart-bar class="text-honey inline-block h-12 w-12" />
+                    <x-heroicon-o-chart-bar class="inline-block h-12 w-12 text-(--kn-honey-text)" />
                 </div>
-                <div class="text-[1.05rem] font-semibold text-white">Pick 2–3 bakeries to compare</div>
-                <div class="text-cinnamon mx-auto mt-2 max-w-[520px] text-[0.85rem]">
+                <div class="text-[1.05rem] font-semibold text-(--kn-ink)">Pick 2–3 bakeries to compare</div>
+                <div class="mx-auto mt-2 max-w-[520px] text-[0.85rem] text-(--kn-muted)">
                     See their orders, products, reviews, and health side by side. Handy for spotting what healthy
                     bakeries do differently from struggling ones.
                 </div>
@@ -204,7 +207,7 @@
                     <div class="mt-6">
                         <a
                             href="?{{ $topPresetQuery }}"
-                            class="bg-honey text-warm-black hover:bg-golden inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-[0.8rem] font-bold no-underline transition-colors"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-(--kn-honey) px-4 py-2 text-[0.8rem] font-bold text-(--kn-on-honey) no-underline transition-colors hover:bg-(--kn-honey-hover)"
                         >
                             <x-heroicon-o-trophy class="h-4 w-4" />
                             Start with top {{ count($topPerformerIds) }} performers
@@ -226,28 +229,28 @@
         @endphp
 
         <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <x-central.stat-card label="Total Platform Orders" value-class="text-[1.75rem] text-white">
+            <x-central.stat-card label="Total Platform Orders" value-class="text-[1.75rem] text-(--kn-ink)">
                 {{ number_format($summary['total_orders']) }}</x-central.stat-card>
-            <x-central.stat-card label="Active Bakeries" value-class="text-[1.75rem] text-white">
+            <x-central.stat-card label="Active Bakeries" value-class="text-[1.75rem] text-(--kn-ink)">
                 {{ $summary['active_bakeries'] }}
-                <span class="text-cinnamon text-[0.9rem] font-semibold">of {{ $summary['total_bakeries'] }}</span>
+                <span class="text-[0.9rem] font-semibold text-(--kn-muted)">of {{ $summary['total_bakeries'] }}</span>
             </x-central.stat-card>
-            <x-central.stat-card label="Avg Orders / Active Bakery" value-class="text-[1.75rem] text-white">
+            <x-central.stat-card label="Avg Orders / Active Bakery" value-class="text-[1.75rem] text-(--kn-ink)">
                 {{ $summary['avg_orders_active'] }}</x-central.stat-card>
         </div>
 
         @if ($hasRealPodium)
             <x-central.card class="mb-6">
-                <div class="mb-6 text-center text-base font-bold text-white">
-                    <x-heroicon-s-star class="text-honey mr-1 inline-block h-5 w-5 align-middle" />
+                <div class="mb-6 text-center text-base font-bold text-(--kn-ink)">
+                    <x-heroicon-s-star class="mr-1 inline-block h-5 w-5 align-middle text-(--kn-honey-text)" />
                     Top 3 Bakeries
                 </div>
                 @php
                     $podiumHeights = [140, 110, 90];
                     $podium = [
-                        ['rank' => 2, 'tenant' => $activeEntries[1], 'width' => 'w-40', 'gradient' => 'from-slate-400 to-slate-500', 'nameColor' => 'text-parchment', 'ordersColor' => 'text-cinnamon', 'fontSize' => 'text-[0.875rem]'],
-                        ['rank' => 1, 'tenant' => $activeEntries[0], 'width' => 'w-[180px]', 'gradient' => 'from-golden to-honey', 'nameColor' => 'text-white', 'ordersColor' => 'text-honey', 'fontSize' => 'text-base'],
-                        ['rank' => 3, 'tenant' => $activeEntries[2], 'width' => 'w-40', 'gradient' => 'from-amber-700 to-amber-800', 'nameColor' => 'text-parchment', 'ordersColor' => 'text-cinnamon', 'fontSize' => 'text-[0.875rem]'],
+                        ['rank' => 2, 'tenant' => $activeEntries[1], 'width' => 'w-40', 'fill' => 'bg-(--kn-muted) text-(--kn-on-danger)', 'nameColor' => 'text-(--kn-ink)', 'ordersColor' => 'text-(--kn-muted)', 'fontSize' => 'text-[0.875rem]'],
+                        ['rank' => 1, 'tenant' => $activeEntries[0], 'width' => 'w-[180px]', 'fill' => 'bg-(--kn-honey) text-(--kn-on-honey)', 'nameColor' => 'text-(--kn-ink)', 'ordersColor' => 'text-(--kn-honey-text)', 'fontSize' => 'text-base'],
+                        ['rank' => 3, 'tenant' => $activeEntries[2], 'width' => 'w-40', 'fill' => 'bg-(--kn-warning) text-(--kn-on-danger)', 'nameColor' => 'text-(--kn-ink)', 'ordersColor' => 'text-(--kn-muted)', 'fontSize' => 'text-[0.875rem]'],
                     ];
                 @endphp
                 <div class="flex items-end justify-center gap-4 pt-4">
@@ -260,27 +263,27 @@
                                 {{ $entry['tenant']['total_orders'] }} orders
                             </div>
                             <div
-                                class="rounded-t-lg flex items-center justify-center bg-gradient-to-b {{ $entry['gradient'] }}"
+                                class="rounded-t-lg flex items-center justify-center {{ $entry['fill'] }}"
                                 style="height: {{ $podiumHeights[match($entry['rank']) { 1 => 0, 2 => 1, 3 => 2 }] }}px;"
                             >
-                                <span class="text-[1.75rem] font-bold text-white">#{{ $entry['rank'] }}</span>
+                                <span class="text-[1.75rem] font-bold">#{{ $entry['rank'] }}</span>
                             </div>
                         </div>
                     @endforeach
                 </div>
             </x-central.card>
         @elseif ($topPerformer)
-            <x-central.card class="bg-honey/5 border-honey/25 mb-6">
+            <x-central.card class="mb-6 border-(--kn-honey)/25 bg-(--kn-surface-hover)">
                 <div class="flex items-center gap-4">
-                    <div class="bg-honey/15 border-honey/25 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border">
-                        <x-heroicon-s-trophy class="text-honey h-6 w-6" />
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-(--kn-honey)/25 bg-(--kn-warning-tint)">
+                        <x-heroicon-s-trophy class="h-6 w-6 text-(--kn-honey-text)" />
                     </div>
                     <div class="min-w-0 flex-1">
                         <x-central.eyebrow>Top Performer</x-central.eyebrow>
-                        <div class="mt-0.5 truncate text-[1.05rem] font-bold text-white">
+                        <div class="mt-0.5 truncate text-[1.05rem] font-bold text-(--kn-ink)">
                             {{ $topPerformer['name'] }}
                         </div>
-                        <div class="text-cinnamon text-[0.8rem]">
+                        <div class="text-[0.8rem] text-(--kn-muted)">
                             {{ $topPerformer['total_orders'] }} {{ Illuminate\Support\Str::plural('order', $topPerformer['total_orders']) }} · {{ $summary['active_bakeries'] }} of {{ $summary['total_bakeries'] }} bakeries
                             have made a sale
                         </div>
@@ -290,8 +293,8 @@
         @endif
 
         <x-central.card padding="p-0" class="overflow-hidden">
-            <div class="border-honey/8 border-b px-6 py-6">
-                <div class="text-base font-bold text-white">Full Rankings</div>
+            <div class="border-b border-(--kn-border) px-6 py-6">
+                <div class="text-base font-bold text-(--kn-ink)">Full Rankings</div>
             </div>
             <x-central.table>
                 <thead>
@@ -312,10 +315,10 @@
                             $rank = $idx + 1;
                             $isTop3 = $rank <= 3;
                             $rankClass = match ($rank) {
-                                1 => 'text-honey',
-                                2 => 'text-slate-400',
-                                3 => 'text-amber-700',
-                                default => 'text-parchment',
+                                1 => 'text-(--kn-honey-text)',
+                                2 => 'text-(--kn-muted)',
+                                3 => 'text-(--kn-warning)',
+                                default => 'text-(--kn-ink)',
                             };
                             $planColor = match ($tenant['plan']) {
                                 'premium' => 'honey',

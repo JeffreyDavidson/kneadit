@@ -1,49 +1,51 @@
+@use(App\Enums\Engagement\LoyaltyPointType)
+
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Toggle --}}
-        <div class="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+        <div class="flex items-center justify-between rounded-xl bg-(--kn-surface) p-4 shadow-sm">
             <div>
                 <h3 class="text-lg font-semibold">{{ $this->programName }} Program</h3>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-(--kn-muted)">
                     {{ $this->loyaltyEnabled ? 'Customers earn points on every delivered order' : 'Program is currently disabled' }}
                 </p>
             </div>
             <button
                 wire:click="toggleLoyalty"
-                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $this->loyaltyEnabled ? 'bg-primary-600' : 'bg-gray-300' }}"
+                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $this->loyaltyEnabled ? 'bg-(--kn-honey)' : 'bg-gray-300' }}"
             >
-                <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ $this->loyaltyEnabled ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                <span class="inline-block h-4 w-4 transform rounded-full bg-(--kn-surface) transition-transform {{ $this->loyaltyEnabled ? 'translate-x-6' : 'translate-x-1' }}"></span>
             </button>
         </div>
 
         {{-- Stats --}}
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-                <p class="text-sm text-gray-500">Total Points Issued</p>
+            <div class="rounded-xl bg-(--kn-surface) p-4 shadow-sm">
+                <p class="text-sm text-(--kn-muted)">Total Points Issued</p>
                 <p class="text-2xl font-bold">{{ number_format($this->totalPointsIssued) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-                <p class="text-sm text-gray-500">Total Points Redeemed</p>
+            <div class="rounded-xl bg-(--kn-surface) p-4 shadow-sm">
+                <p class="text-sm text-(--kn-muted)">Total Points Redeemed</p>
                 <p class="text-2xl font-bold">{{ number_format($this->totalPointsRedeemed) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-                <p class="text-sm text-gray-500">Active Members</p>
+            <div class="rounded-xl bg-(--kn-surface) p-4 shadow-sm">
+                <p class="text-sm text-(--kn-muted)">Active Members</p>
                 <p class="text-2xl font-bold">{{ number_format($this->activeMembers) }}</p>
             </div>
-            <div class="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-                <p class="text-sm text-gray-500">Available Rewards</p>
+            <div class="rounded-xl bg-(--kn-surface) p-4 shadow-sm">
+                <p class="text-sm text-(--kn-muted)">Available Rewards</p>
                 <p class="text-2xl font-bold">{{ $this->availableRewardsCount }}</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {{-- Top Customers --}}
-            <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-gray-800">
+            <div class="overflow-hidden rounded-xl bg-(--kn-surface) shadow-sm">
                 <div class="border-b p-4 dark:border-gray-700">
                     <h3 class="text-lg font-semibold">Top Customers by Points</h3>
                 </div>
                 <table class="w-full text-sm">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                    <thead class="bg-(--kn-surface-sunken)">
                         <tr>
                             <th class="p-3 text-left">Customer</th>
                             <th class="p-3 text-right">Earned</th>
@@ -59,7 +61,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="p-4 text-center text-gray-500">No loyalty activity yet</td>
+                                <td colspan="3" class="p-4 text-center text-(--kn-muted)">No loyalty activity yet</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -67,7 +69,7 @@
             </div>
 
             {{-- Recent Activity --}}
-            <div class="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-gray-800">
+            <div class="overflow-hidden rounded-xl bg-(--kn-surface) shadow-sm">
                 <div class="border-b p-4 dark:border-gray-700">
                     <h3 class="text-lg font-semibold">Recent Activity</h3>
                 </div>
@@ -76,17 +78,25 @@
                         <div class="flex items-center justify-between p-3">
                             <div>
                                 <p class="font-medium">{{ $activity->customer?->name ?? 'Unknown' }}</p>
-                                <p class="text-sm text-gray-500">{{ $activity->description }}</p>
+                                <p class="text-sm text-(--kn-muted)">{{ $activity->description }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="font-semibold {{ $activity->type->textClass() }}">
+                                <span
+                                    class="font-semibold {{
+                                        match ($activity->type) {
+                                            LoyaltyPointType::Earned => 'text-(--kn-success)',
+                                            LoyaltyPointType::Redeemed, LoyaltyPointType::Reversed => 'text-(--kn-danger)',
+                                            LoyaltyPointType::Adjusted => 'text-(--kn-warning)',
+                                        }
+                                    }}"
+                                >
                                     {{ $activity->type->formatPoints($activity->points) }}
                                 </span>
-                                <p class="text-xs text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
+                                <p class="text-xs text-(--kn-muted)">{{ $activity->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
                     @empty
-                        <div class="p-4 text-center text-gray-500">No activity yet</div>
+                        <div class="p-4 text-center text-(--kn-muted)">No activity yet</div>
                     @endforelse
                 </div>
             </div>

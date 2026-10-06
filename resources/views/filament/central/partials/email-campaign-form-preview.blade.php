@@ -8,22 +8,22 @@
 
 <div>
     <div class="mb-2 flex items-center justify-between">
-        <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Live preview</span>
-        <span class="text-cinnamon text-[0.7rem]">Sends to <span class="text-honey font-semibold">{{ $segmentLabel }}</span> segment</span>
+        <span class="text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">Live preview</span>
+        <span class="text-[0.7rem] text-(--kn-muted)">Sends to <span class="font-semibold text-(--kn-honey-text)">{{ $segmentLabel }}</span> segment</span>
     </div>
 
     {{-- Email client header --}}
-    <div class="border-honey/15 flex items-center gap-2.5 rounded-t-lg border border-b-0 bg-white px-4 py-2.5">
-        <span class="bg-warm-black text-honey inline-flex h-7 w-7 items-center justify-center rounded-full text-[0.7rem] font-bold">K</span>
+    <div class="flex items-center gap-2.5 rounded-t-lg border border-b-0 border-[#dadce0] bg-white px-4 py-2.5">
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-(--kn-espresso) text-[0.7rem] font-bold text-(--kn-on-espresso)">K</span>
         <div class="min-w-0 flex-1">
-            <div class="truncate text-[0.8rem] font-semibold text-gray-900">KneadIt Platform</div>
-            <div class="text-[0.7rem] text-gray-500">noreply@getkneadit.app</div>
+            <div class="truncate text-[0.8rem] font-semibold text-[#202124]">KneadIt Platform</div>
+            <div class="text-[0.7rem] text-[#5f6368]">noreply@getkneadit.app</div>
         </div>
     </div>
 
     {{-- Subject strip --}}
-    <div class="border-honey/15 border-x border-b border-gray-100 bg-white px-4 py-2">
-        <div class="text-[0.9rem] font-semibold text-gray-900">{{ $subject }}</div>
+    <div class="border-x border-b border-[#dadce0] border-[#e8eaed] bg-white px-4 py-2">
+        <div class="text-[0.9rem] font-semibold text-[#202124]">{{ $subject }}</div>
     </div>
 
     {{-- Branded body --}}
