@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Operations;
 
 use App\DataTransferObjects\Production\PrepTimelineItem;
 use App\DataTransferObjects\Production\ProductPreparationSummary;
+use App\DataTransferObjects\Production\WeeklyPrepData;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -11,13 +12,12 @@ use App\Services\Production\PrepScheduleService;
 use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
+use Livewire\Attributes\Computed;
 
 /**
- * @phpstan-import-type WeeklyOrders from PrepScheduleService
- * @phpstan-import-type PrepSchedule from PrepScheduleService
+ * @property-read WeeklyPrepData $weekData
  */
 class WeeklyPrepPlanner extends Page
 {
@@ -52,46 +52,29 @@ class WeeklyPrepPlanner extends Page
 
     public ?string $selectedWeekStart = null;
 
-    /** @var WeeklyOrders */
-    public Collection $weeklyOrders;
-
-    /** @var PrepSchedule */
-    public Collection $prepSchedule;
-
-    /** @var list<Carbon> */
-    public array $weekDays = [];
-
     public function mount(): void
     {
         $this->selectedWeekStart = resolve(BakeryClock::class)->today()->startOfWeek()->toDateString();
-        $this->loadWeeklyData();
     }
 
-    public function updatedSelectedWeekStart(): void
-    {
-        $this->loadWeeklyData();
-    }
-
-    public function loadWeeklyData(): void
+    /**
+     * Derived from the selected week on every request: the prep tasks and Carbon days are not
+     * Livewire-hydratable, so they are never kept as public component state.
+     */
+    #[Computed]
+    public function weekData(): WeeklyPrepData
     {
         if (! $this->selectedWeekStart) {
-            $this->weeklyOrders = new Collection;
-            $this->prepSchedule = new Collection;
-
-            return;
+            return new WeeklyPrepData(new Collection, [], new Collection);
         }
 
-        $data = resolve(PrepScheduleService::class)->loadWeeklyData($this->selectedWeekStart);
-
-        $this->weeklyOrders = $data->weeklyOrders;
-        $this->weekDays = $data->weekDays;
-        $this->prepSchedule = $data->prepSchedule;
+        return resolve(PrepScheduleService::class)->loadWeeklyData($this->selectedWeekStart);
     }
 
     /** @return Collection<string, array{product_name: string, total_quantity: int, orders_count: int}> */
     public function getProductSummary(): Collection
     {
-        return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders)->map(
+        return resolve(PrepScheduleService::class)->getProductSummary($this->weekData->weeklyOrders)->map(
             static fn (ProductPreparationSummary $summary): array => $summary->toArray(),
         );
     }
@@ -99,7 +82,7 @@ class WeeklyPrepPlanner extends Page
     /** @return Collection<string, Collection<int, array{time: string, task: string, duration: int, order: string, delivery_time: string}>> */
     public function getTimelineView(): Collection
     {
-        return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule)->map(
+        return resolve(PrepScheduleService::class)->getTimelineView($this->weekData->prepSchedule)->map(
             static fn (Collection $items): Collection => $items->map(
                 static fn (PrepTimelineItem $item): array => $item->toArray(),
             ),
@@ -108,12 +91,12 @@ class WeeklyPrepPlanner extends Page
 
     public function getTotalPrepHours(): float
     {
-        return resolve(PrepScheduleService::class)->getTotalPrepHours($this->prepSchedule);
+        return resolve(PrepScheduleService::class)->getTotalPrepHours($this->weekData->prepSchedule);
     }
 
     /** @return array{total_orders: int, total_items: int, total_revenue: float, total_prep_hours: float} */
     public function getWeekSummary(): array
     {
-        return resolve(PrepScheduleService::class)->getWeekSummary($this->weeklyOrders, $this->prepSchedule)->toArray();
+        return resolve(PrepScheduleService::class)->getWeekSummary($this->weekData->weeklyOrders, $this->weekData->prepSchedule)->toArray();
     }
 }
