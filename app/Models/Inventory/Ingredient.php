@@ -89,11 +89,12 @@ class Ingredient extends Model
     }
 
     /**
-     * @return BelongsToMany<Supplier, $this, Pivot>
+     * @return BelongsToMany<Supplier, $this, IngredientSupplier>
      */
     public function suppliers(): BelongsToMany
     {
         return $this->belongsToMany(Supplier::class, 'ingredient_supplier')
+            ->using(IngredientSupplier::class)
             ->withPivot('unit_price', 'minimum_order', 'lead_time_days', 'sku')
             ->withTimestamps();
     }
