@@ -13,7 +13,7 @@ class SettingSeeder extends Seeder
         $settings = [
             [
                 'key' => 'store_name',
-                'value' => 'KneadIt Demo Bakery',
+                'value' => 'Sweet Dreams Bakery',
             ],
             [
                 'key' => 'store_email',
@@ -21,7 +21,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'store_phone',
-                'value' => '(863) 555-BAKE',
+                'value' => '(863) 555-0123',
             ],
             [
                 'key' => 'store_address',

@@ -22,7 +22,7 @@ class PlatformAnnouncementFactory extends Factory
             'title' => fake()->sentence(),
             'body' => fake()->paragraph(),
             'type' => fake()->randomElement(AnnouncementType::cases()),
-            'target_plans' => null,
+            'target_plans' => ['all'],
             'is_active' => true,
         ];
     }

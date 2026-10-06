@@ -29,3 +29,9 @@ test('is active defaults to true', function () {
 
     expect($ann->fresh()->is_active)->toBeTrue();
 });
+
+test('the factory gives announcements a valid target plans list', function () {
+    $ann = PlatformAnnouncement::factory()->create();
+
+    expect($ann->fresh()->target_plans)->toBeArray()->not->toBeEmpty();
+});
