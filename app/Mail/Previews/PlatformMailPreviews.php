@@ -15,13 +15,13 @@ use App\Mail\Platform\TrialExpiredMail;
 use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\UnapprovedFreeForeverAlertMail;
 use App\Mail\Platform\WelcomeBakerMail;
+use App\Mail\PlatformMail;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Notifications\Platform\OwnerVerifyEmailNotification;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailer;
-use Illuminate\Mail\Markdown;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
@@ -83,33 +83,45 @@ final class PlatformMailPreviews
      */
     public static function hasHtml(Renderable $preview): bool
     {
-        if (! $preview instanceof Mailable) {
+        if (! $preview instanceof PlatformMail) {
             return true;
         }
 
-        $preview->render();
+        $content = $preview->content();
 
-        return $preview->view !== null || $preview->markdown !== null;
+        return $content->view !== null || $content->html !== null || $content->markdown !== null || $content->htmlString !== null;
     }
 
     /**
-     * The plain-text version of a preview. render() already returns the text
-     * when an email has no HTML version, so only emails with both need the
-     * text template rendered on its own.
+     * The plain-text version of a preview, rendered from the same template the
+     * mailer uses for the email's text part.
      */
     public static function text(Renderable $preview): string
     {
-        if ($preview instanceof MailMessage && $preview->markdown !== null) {
-            return resolve(Markdown::class)->renderText($preview->markdown, $preview->data())->toHtml();
+        [$textView, $data] = match (true) {
+            $preview instanceof MailMessage => [is_array($preview->view) ? ($preview->view['text'] ?? $preview->view[1] ?? null) : null, $preview->data()],
+            $preview instanceof PlatformMail => [$preview->content()->text, self::viewData($preview)],
+            default => [null, []],
+        };
+
+        if ($textView === null) {
+            return 'This email has no plain-text version.';
         }
 
-        $rendered = (string) $preview->render();
+        return resolve(Mailer::class)->render(['text' => $textView], $data);
+    }
 
-        if (! $preview instanceof Mailable || $preview->view === null || $preview->textView === null) {
-            return $rendered;
-        }
+    /**
+     * The data a mailable passes to its templates, including what content()
+     * adds with `with:`, which Laravel only merges in while rendering.
+     *
+     * @return array<mixed>
+     */
+    private static function viewData(Mailable $mail): array
+    {
+        $mail->render();
 
-        return resolve(Mailer::class)->render(['text' => $preview->textView], $preview->buildViewData());
+        return $mail->buildViewData();
     }
 
     private static function owner(): User

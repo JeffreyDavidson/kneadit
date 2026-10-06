@@ -33,7 +33,7 @@ test('each email renders in the browser', function (string $slug) {
 test('each email renders its plain-text version', function (string $slug) {
     $response = get(route('mailPreviews.show', ['mail' => $slug, 'format' => 'text']));
 
-    $response->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
+    $response->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8')->assertDontSeeHtml('<html');
 })->with('previewable emails');
 
 test('an email with no HTML version is shown as plain text', function () {
