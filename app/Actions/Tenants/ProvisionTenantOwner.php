@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Tenants;
 
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
@@ -30,6 +31,7 @@ class ProvisionTenantOwner
                 'email' => $user->email,
                 'password' => $user->password,
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner->value,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

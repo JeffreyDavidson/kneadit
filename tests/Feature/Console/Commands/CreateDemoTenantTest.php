@@ -71,3 +71,9 @@ test('demo tenant command creates pro plan tenant', function () {
         ->toContain("'plan' => SubscriptionTier::Pro")
         ->toContain("'is_active' => true");
 });
+
+test('demo tenant command source gives the demo baker the Owner role', function () {
+    $source = file_get_contents(app_path('Console/Commands/Tenants/CreateDemoTenantCommand.php'));
+
+    expect($source)->toContain('UserRole::Owner');
+});

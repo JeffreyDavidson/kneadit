@@ -9,18 +9,21 @@ use App\Http\Controllers\Central\Onboarding\ShowOnboardingController;
 use App\Http\Middleware\PreventAccessFromTenantDomains;
 use Illuminate\Support\Facades\Route;
 
-Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
-Route::get('admin/maintenance-mode/preview', MaintenancePreviewController::class)
-    ->name('central.maintenance-mode.preview')
-    ->middleware(['web', 'auth']);
-Route::get('admin/backups/{name}/download', BackupDownloadController::class)
-    ->name('central.backups.download')
-    ->middleware(['web', 'auth']);
+// Platform admin tools read the central database, so a bakery host must not answer them.
+Route::middleware(PreventAccessFromTenantDomains::class)->group(function () {
+    Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
+    Route::get('admin/maintenance-mode/preview', MaintenancePreviewController::class)
+        ->name('central.maintenance-mode.preview')
+        ->middleware(['web', 'auth']);
+    Route::get('admin/backups/{name}/download', BackupDownloadController::class)
+        ->name('central.backups.download')
+        ->middleware(['web', 'auth']);
 
-// Keep the central impersonation URL distinct from the tenant token consumer.
-Route::get('admin/impersonate/{tenant}', ImpersonateController::class)
-    ->name('tenant.impersonate')
-    ->middleware(['auth', 'signed']);
+    // Keep the central impersonation URL distinct from the tenant token consumer.
+    Route::get('admin/impersonate/{tenant}', ImpersonateController::class)
+        ->name('tenant.impersonate')
+        ->middleware(['auth', 'signed']);
+});
 
 Route::middleware(['web', PreventAccessFromTenantDomains::class, 'auth', 'verified'])->prefix('onboarding')->name('onboarding.')->group(function () {
     Route::get('/', ShowOnboardingController::class)->name('show');
