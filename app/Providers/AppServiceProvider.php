@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Actions\FiltersTriggerAction;
 use App\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Filament\Actions\Action;
 use Filament\Support\Facades\FilamentView;
+use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -21,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
             'panels::body.end',
             fn (): string => view('filament.render-hooks.sidebar-and-autofill')->render(),
         );
+
+        Table::configureUsing(fn (Table $table): Table => $table->filtersTriggerAction(
+            fn (Action $action): Action => FiltersTriggerAction::forTable($table),
+        ));
 
         // Add tenancy middleware to Livewire's update endpoint
         // Without this, Livewire POSTs (login, forms) hit the central DB
