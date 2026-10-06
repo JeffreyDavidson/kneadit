@@ -74,3 +74,25 @@ test('register stores the email lowercased and trimmed', function () {
 
     test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
 });
+
+test('the terms checkbox keeps its state after a validation error', function (array $terms, bool $checked) {
+    User::factory()->create(['email' => 'taken@example.com']);
+
+    $response = $this->from(route('register'))
+        ->followingRedirects()
+        ->post(route('register'), [
+            'name' => 'Jane Baker',
+            'email' => 'taken@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'bakery_name' => 'Jane\'s Bakery',
+            ...$terms,
+        ]);
+
+    preg_match('/<input[^>]*name="terms"[^>]*>/', $response->getContent(), $match);
+
+    expect(str_contains($match[0], 'checked'))->toBe($checked);
+})->with([
+    'ticked' => [['terms' => '1'], true],
+    'not ticked' => [[], false],
+]);

@@ -119,6 +119,7 @@
                             name="terms"
                             value="1"
                             required
+                            @checked(old('terms'))
                             style="accent-color: var(--honey); margin-top: 3px"
                         />
                         <span>{!! __('auth.register.terms_agreement', ['terms_url' => '/terms', 'privacy_url' => '/privacy']) !!}</span>
