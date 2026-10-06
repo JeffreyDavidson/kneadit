@@ -12,6 +12,7 @@ dataset('rebuiltAdminPartials', [
     'widgets' => 'css/filament/admin/_widgets.css',
     'widget cards' => 'css/filament/shared/widget-cards.css',
     'design system overrides' => 'css/kneadit/filament.css',
+    'central chrome' => 'css/filament/central/_chrome.css',
 ]);
 
 /**
@@ -52,7 +53,6 @@ test('every alias variable left in admin-aliases.css is still used by a styleshe
     $sources = collect(Finder::create()->files()->in([resource_path(), app_path()])->name(['*.css', '*.php']))
         ->reject(fn ($file): bool => $file->getFilename() === 'admin-aliases.css')
         ->map(fn ($file): string => $file->getContents())
-        ->push((string) file_get_contents(public_path('css/central-admin.css')))
         ->implode("\n");
 
     // The --color-* entries are Tailwind theme colours, used as utility classes rather than var().
@@ -62,4 +62,18 @@ test('every alias variable left in admin-aliases.css is still used by a styleshe
         ->all();
 
     expect($unused)->toBeEmpty();
+});
+
+test('the central theme is built on the shared admin partials and the design system tokens', function () {
+    $css = (string) file_get_contents(resource_path('css/filament/central/theme.css'));
+
+    expect($css)
+        ->toContain("@import '../../kneadit/tokens.css';")
+        ->toContain("@import '../../kneadit/filament.css';")
+        ->toContain("@import '../admin/_layout.css';")
+        ->toContain("@import '../admin/_tables.css';")
+        ->toContain("@import './_chrome.css';")
+        ->not->toContain('--platform-')
+        ->not->toContain('--accent')
+        ->not->toContain('!important');
 });

@@ -5,66 +5,66 @@
         @php $record = $this->getViewingRecord(); @endphp
 
         <div class="mb-4">
-            <button wire:click="backToList" class="text-golden flex items-center gap-1 text-sm">
+            <button wire:click="backToList" class="flex items-center gap-1 text-sm text-(--kn-honey-text)">
                 <x-heroicon-o-arrow-left class="h-4 w-4" />
                 Back to messages
             </button>
         </div>
 
-        <h2 class="text-golden mb-4 text-lg font-bold">{{ $record->subject }}</h2>
+        <h2 class="mb-4 text-lg font-bold text-(--kn-honey-text)">{{ $record->subject }}</h2>
 
         <div class="space-y-4">
             {{-- Original --}}
             <div @class([
-                'rounded-xl border border-honey p-4',
-                'bg-espresso' => $record->sender_type === PlatformSenderType::Admin,
-                'bg-warm-black' => $record->sender_type !== PlatformSenderType::Admin,
+                'rounded-xl border border-(--kn-honey) p-4',
+                'bg-(--kn-surface-sunken)' => $record->sender_type === PlatformSenderType::Admin,
+                'bg-(--kn-surface)' => $record->sender_type !== PlatformSenderType::Admin,
             ])>
                 <div class="mb-2 flex items-center justify-between">
                     <span @class([
-                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-warm-black',
-                        'bg-honey' => $record->sender_type === PlatformSenderType::Admin,
-                        'bg-golden' => $record->sender_type !== PlatformSenderType::Admin,
+                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-(--kn-on-honey)',
+                        'bg-(--kn-honey)' => $record->sender_type === PlatformSenderType::Admin,
+                        'bg-(--kn-honey-hover)' => $record->sender_type !== PlatformSenderType::Admin,
                     ])>
                         <x-filament::icon :icon="$record->sender_type->inboxIcon()" class="h-3.5 w-3.5" />
                         {{ $record->sender_type->inboxLabel() }}
                     </span>
-                    <span class="text-butter text-xs">{{ $record->created_at->diffForHumans() }}</span>
+                    <span class="text-xs text-(--kn-ink-2)">{{ $record->created_at->diffForHumans() }}</span>
                 </div>
-                <div class="prose prose-sm text-butter max-w-none">{!! nl2br(e($record->body)) !!}</div>
+                <div class="prose prose-sm max-w-none text-(--kn-ink-2)">{!! nl2br(e($record->body)) !!}</div>
             </div>
 
             {{-- Replies --}}
             @foreach ($this->getThread() as $reply)
                 <div @class([
                     'rounded-xl border p-4 ml-6',
-                    'bg-espresso border-honey' => $reply->sender_type === PlatformSenderType::Admin,
-                    'bg-warm-black border-golden' => $reply->sender_type !== PlatformSenderType::Admin,
+                    'bg-(--kn-surface-sunken) border-(--kn-honey)' => $reply->sender_type === PlatformSenderType::Admin,
+                    'bg-(--kn-surface) border-(--kn-honey-hover)' => $reply->sender_type !== PlatformSenderType::Admin,
                 ])>
                     <div class="mb-2 flex items-center justify-between">
                         <span @class([
-                            'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-warm-black',
-                            'bg-honey' => $reply->sender_type === PlatformSenderType::Admin,
-                            'bg-golden' => $reply->sender_type !== PlatformSenderType::Admin,
+                            'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-(--kn-on-honey)',
+                            'bg-(--kn-honey)' => $reply->sender_type === PlatformSenderType::Admin,
+                            'bg-(--kn-honey-hover)' => $reply->sender_type !== PlatformSenderType::Admin,
                         ])>
                             <x-filament::icon :icon="$reply->sender_type->inboxIcon()" class="h-3.5 w-3.5" />
                             {{ $reply->sender_type->inboxLabel() }}
                         </span>
-                        <span class="text-butter text-xs">{{ $reply->created_at->diffForHumans() }}</span>
+                        <span class="text-xs text-(--kn-ink-2)">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
-                    <div class="prose prose-sm text-butter max-w-none">{!! nl2br(e($reply->body)) !!}</div>
+                    <div class="prose prose-sm max-w-none text-(--kn-ink-2)">{!! nl2br(e($reply->body)) !!}</div>
                 </div>
             @endforeach
 
             {{-- Reply form --}}
-            <div class="border-honey bg-espresso rounded-xl border p-4">
-                <h3 class="text-golden mb-2 text-sm font-semibold">Reply</h3>
+            <div class="rounded-xl border border-(--kn-honey) bg-(--kn-surface-sunken) p-4">
+                <h3 class="mb-2 text-sm font-semibold text-(--kn-honey-text)">Reply</h3>
                 <form wire:submit="sendReply">
                     <textarea
                         wire:model="replyBody"
                         rows="4"
                         placeholder="Type your reply..."
-                        class="border-honey bg-warm-black text-butter w-full rounded-lg border p-3 text-sm"
+                        class="w-full rounded-lg border border-(--kn-honey) bg-(--kn-surface) p-3 text-sm text-(--kn-ink-2)"
                     ></textarea>
                     @error('replyBody')
                         <p class="mt-1 text-xs text-(--kn-danger)">{{ $message }}</p>
@@ -82,27 +82,27 @@
                     wire:click="viewThread({{ $msg->id }})"
                     @class([
                         'cursor-pointer rounded-xl border p-4 transition hover:opacity-90',
-                        'bg-warm-black border-golden/20' => $msg->is_read,
-                        'bg-espresso border-honey' => ! $msg->is_read,
+                        'bg-(--kn-surface) border-(--kn-border)' => $msg->is_read,
+                        'bg-(--kn-surface-sunken) border-(--kn-honey)' => ! $msg->is_read,
                     ])
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             @unless ($msg->is_read)
-                                <span class="bg-honey h-2 w-2 rounded-full"></span>
+                                <span class="h-2 w-2 rounded-full bg-(--kn-honey)"></span>
                             @endunless
                             <div>
-                                <p class="text-sm text-golden {{ $msg->is_read ? '' : 'font-bold' }}">
+                                <p class="text-sm text-(--kn-honey-text) {{ $msg->is_read ? '' : 'font-bold' }}">
                                     {{ $msg->subject }}
                                 </p>
-                                <p class="text-butter mt-0.5 text-xs">{{ Str::limit($msg->body, 80) }}</p>
+                                <p class="mt-0.5 text-xs text-(--kn-ink-2)">{{ Str::limit($msg->body, 80) }}</p>
                             </div>
                         </div>
-                        <span class="text-butter text-xs whitespace-nowrap">{{ $msg->created_at->diffForHumans() }}</span>
+                        <span class="text-xs whitespace-nowrap text-(--kn-ink-2)">{{ $msg->created_at->diffForHumans() }}</span>
                     </div>
                 </div>
             @empty
-                <div class="text-butter py-8 text-center">
+                <div class="py-8 text-center text-(--kn-ink-2)">
                     <x-heroicon-o-envelope class="mx-auto mb-2 h-12 w-12 text-(--kn-honey-text)" />
                     <p>No messages yet</p>
                 </div>

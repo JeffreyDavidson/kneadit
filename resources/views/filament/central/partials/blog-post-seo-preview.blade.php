@@ -9,11 +9,11 @@
 
     $titleLen = mb_strlen($title);
     $titleTone = match (true) {
-        $titleLen === 0 => 'text-cinnamon',
-        $titleLen < 40 => 'text-amber-400',
-        $titleLen <= 60 => 'text-emerald-400',
-        $titleLen <= 70 => 'text-amber-400',
-        default => 'text-red-400',
+        $titleLen === 0 => 'text-(--kn-muted)',
+        $titleLen < 40 => 'text-(--kn-warning)',
+        $titleLen <= 60 => 'text-(--kn-success)',
+        $titleLen <= 70 => 'text-(--kn-warning)',
+        default => 'text-(--kn-danger)',
     };
     $titleHint = match (true) {
         $titleLen === 0 => 'Start typing…',
@@ -25,10 +25,10 @@
 
     $descLen = mb_strlen($description);
     $descTone = match (true) {
-        $descLen === 0 => 'text-cinnamon',
-        $descLen < 120 => 'text-amber-400',
-        $descLen <= 160 => 'text-emerald-400',
-        default => 'text-red-400',
+        $descLen === 0 => 'text-(--kn-muted)',
+        $descLen < 120 => 'text-(--kn-warning)',
+        $descLen <= 160 => 'text-(--kn-success)',
+        default => 'text-(--kn-danger)',
     };
     $descHint = match (true) {
         $descLen === 0 => 'Start typing…',
@@ -41,18 +41,18 @@
 <div class="mb-2 space-y-6">
     {{-- Google search result preview --}}
     <div>
-        <div class="text-cinnamon mb-3 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+        <div class="mb-3 text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">
             Google search preview
         </div>
-        <div class="border-honey/10 rounded-lg border bg-white p-5">
-            <div class="mb-1 flex items-center gap-2 text-[0.75rem] text-gray-500">
-                <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-[0.6rem] font-bold text-gray-700">K</span>
+        <div class="rounded-lg border border-[#dadce0] bg-white p-5">
+            <div class="mb-1 flex items-center gap-2 text-[0.75rem] text-[#5f6368]">
+                <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#f1f3f4] text-[0.6rem] font-bold text-[#3c4043]">K</span>
                 <span>KneadIt</span>
-                <span class="text-gray-400">·</span>
+                <span class="text-[#5f6368]">·</span>
                 <span class="truncate">{{ $fullUrl }}</span>
             </div>
             <div class="mb-2 text-[1.15rem] leading-tight font-normal text-[#1a0dab]">{{ $displayTitle }}</div>
-            <div class="text-[0.82rem] leading-snug text-gray-700">
+            <div class="text-[0.82rem] leading-snug text-[#3c4043]">
                 {{ \Illuminate\Support\Str::limit($description, 160, '…') }}
             </div>
         </div>
@@ -62,17 +62,17 @@
     <div class="space-y-5">
         <div>
             <div class="mb-2 flex items-baseline justify-between">
-                <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Meta title</span>
+                <span class="text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">Meta title</span>
                 <span class="{{ $titleTone }} text-[0.75rem] font-semibold tabular-nums">{{ $titleLen }} / 60</span>
             </div>
-            <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
+            <div class="h-1.5 overflow-hidden rounded-full bg-(--kn-surface-sunken)">
                 <div
                     class="h-full rounded-full transition-all
-                    @if ($titleLen === 0) bg-cinnamon
-                    @elseif ($titleLen < 40) bg-amber-500
-                    @elseif ($titleLen <= 60) bg-emerald-500
-                    @elseif ($titleLen <= 70) bg-amber-500
-                    @else bg-red-500
+                    @if ($titleLen === 0) bg-(--kn-muted)
+                    @elseif ($titleLen < 40) bg-(--kn-warning)
+                    @elseif ($titleLen <= 60) bg-(--kn-success)
+                    @elseif ($titleLen <= 70) bg-(--kn-warning)
+                    @else bg-(--kn-danger)
                     @endif"
                     style="width: {{ min(100, ($titleLen / 60) * 100) }}%;"
                 ></div>
@@ -82,16 +82,16 @@
 
         <div>
             <div class="mb-2 flex items-baseline justify-between">
-                <span class="text-cinnamon text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Meta description</span>
+                <span class="text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">Meta description</span>
                 <span class="{{ $descTone }} text-[0.75rem] font-semibold tabular-nums">{{ $descLen }} / 160</span>
             </div>
-            <div class="bg-espresso h-1.5 overflow-hidden rounded-full">
+            <div class="h-1.5 overflow-hidden rounded-full bg-(--kn-surface-sunken)">
                 <div
                     class="h-full rounded-full transition-all
-                    @if ($descLen === 0) bg-cinnamon
-                    @elseif ($descLen < 120) bg-amber-500
-                    @elseif ($descLen <= 160) bg-emerald-500
-                    @else bg-red-500
+                    @if ($descLen === 0) bg-(--kn-muted)
+                    @elseif ($descLen < 120) bg-(--kn-warning)
+                    @elseif ($descLen <= 160) bg-(--kn-success)
+                    @else bg-(--kn-danger)
                     @endif"
                     style="width: {{ min(100, ($descLen / 160) * 100) }}%;"
                 ></div>
@@ -102,8 +102,8 @@
 
     {{-- URL preview --}}
     <div>
-        <div class="text-cinnamon mb-2 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">Post URL</div>
-        <div class="bg-espresso border-honey/10 text-parchment rounded-lg border px-3 py-2.5 font-mono text-[0.8rem] break-all">
+        <div class="mb-2 text-[0.7rem] font-semibold tracking-[0.08em] text-(--kn-muted) uppercase">Post URL</div>
+        <div class="rounded-lg border border-(--kn-border) bg-(--kn-surface-sunken) px-3 py-2.5 font-mono text-[0.8rem] break-all text-(--kn-ink)">
             {{ $fullUrl }}
         </div>
     </div>

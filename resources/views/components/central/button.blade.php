@@ -2,12 +2,12 @@
 
 @php
     $variantClass = match ($variant) {
-        'primary' => 'bg-honey text-warm-black border-0 hover:bg-golden',
-        'secondary' => 'bg-espresso text-honey border border-honey/12 hover:border-honey',
-        'warning' => 'bg-amber-800 text-amber-200 border-0',
-        'success' => 'bg-emerald-800 text-emerald-300 border-0',
-        'neutral' => 'bg-gray-700 text-gray-300 border-0',
-        default => 'bg-honey text-warm-black border-0 hover:bg-golden',
+        'primary' => 'bg-(--kn-honey) text-(--kn-on-honey) border-0 hover:bg-(--kn-honey-hover)',
+        'secondary' => 'bg-(--kn-surface-hover) text-(--kn-ink) border border-(--kn-border-control)',
+        'warning' => 'bg-(--kn-warning) text-(--kn-on-danger) border-0',
+        'success' => 'bg-(--kn-success) text-(--kn-on-danger) border-0',
+        'neutral' => 'bg-(--kn-surface-hover) text-(--kn-ink) border border-(--kn-border-control)',
+        default => 'bg-(--kn-honey) text-(--kn-on-honey) border-0 hover:bg-(--kn-honey-hover)',
     };
 
     $sizeClass = match ($size) {

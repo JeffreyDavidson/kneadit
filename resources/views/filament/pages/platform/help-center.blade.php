@@ -116,7 +116,7 @@
                         x-text="topic.title"
                     ></p>
                     <template x-for="(article, ai) in topic.articles" :key="ai">
-                        <div class="border-brand-200/40 hover:border-honey mb-2 rounded-lg border bg-(--kn-surface) px-5 py-4 transition-colors">
+                        <div class="border-brand-200/40 mb-2 rounded-lg border bg-(--kn-surface) px-5 py-4 transition-colors hover:border-(--kn-honey)">
                             <h4
                                 class="m-0 mb-1.5 text-[0.9rem] font-semibold text-(--kn-ink)"
                                 x-text="article.title"

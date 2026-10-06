@@ -64,17 +64,6 @@ final class DesignSystem
     }
 
     /**
-     * Dark only, with no switch. For a panel whose stylesheet is not yet
-     * readable in light.
-     */
-    public static function forcedDark(Panel $panel): Panel
-    {
-        return $panel
-            ->darkMode(true, isForced: true)
-            ->defaultThemeMode(ThemeMode::Dark);
-    }
-
-    /**
      * The gray palette Filament uses for text, borders and surfaces. Color::hex()
      * gives every colour the same chroma curve, which at its brown hue turns
      * "gray" text bright orange. This keeps the hue and lightness steps of

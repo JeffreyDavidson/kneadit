@@ -2,31 +2,27 @@
 @import '../shared/widget-cards.css';
 @import '../../kneadit/tokens.css';
 @import '../../kneadit/admin-aliases.css';
-@import '../../kneadit/filament.css';
 
 @source '../../../../app/Filament/Central/**/*';
 @source '../../../../resources/views/filament/central/**/*';
 @source '../../../../resources/views/components/central/**/*';
+@source '../../../../app/Enums/Platform/PlatformEventType.php';
 
 /*
- * Platform admin aliases: the --platform-* scale, --accent and --accent-light
- * that public/css/central-admin.css (and the widget cards) read, pointed at
- * design system tokens. Mapped by role so the scale follows the light/dark
- * switch. Temporary, until that stylesheet is rewritten onto --kn-* directly.
+ * The platform admin looks like the bakery admin: the same shell, navigation,
+ * forms, tables, modals, notifications and widgets, all on the --kn-* tokens
+ * and so readable in light and dark. Those partials are shared from the admin
+ * theme; what only the platform admin needs is in ./_chrome.css. The aliases
+ * are only for the widget preview component the widget catalog renders.
  */
-:root {
-    --platform-950: var(--kn-surface-sunken);
-    --platform-900: var(--kn-bg);
-    --platform-800: var(--kn-surface);
-    --platform-700: var(--kn-surface-hover);
-    --platform-600: var(--kn-border-control);
-    --platform-500: var(--kn-honey);
-    --platform-400: var(--kn-honey-text);
-    --platform-300: var(--kn-ink-2);
-    --platform-200: var(--kn-ink);
-    --platform-100: var(--kn-ink);
-    --platform-50: var(--kn-ink);
+@import '../admin/_layout.css';
+@import '../admin/_chrome.css';
+@import '../admin/_notifications.css';
+@import '../admin/_tables.css';
+@import '../admin/_forms.css';
+@import '../admin/_widgets.css';
+@import '../admin/_modals.css';
+@import './_chrome.css';
 
-    --accent: var(--kn-honey-text);
-    --accent-light: var(--kn-honey-hover);
-}
+/* Design system overrides for Filament components; last so they win over the partials. */
+@import '../../kneadit/filament.css';

@@ -136,7 +136,8 @@
     color: var(--kn-honey-text);
 }
 
-.fi-badge.fi-color-gray {
+.fi-badge.fi-color-gray,
+.fi-badge:not(.fi-color) {
     background: var(--kn-surface-hover);
     color: var(--kn-ink-2);
 }
