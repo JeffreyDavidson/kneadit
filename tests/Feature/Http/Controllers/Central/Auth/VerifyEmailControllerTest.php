@@ -28,7 +28,7 @@ test('verifies email with valid signed url', function () {
  */
 function verificationUrlFor(User $user): string
 {
-    return (new OwnerVerifyEmailNotification)->toMail($user)->actionUrl;
+    return (new OwnerVerifyEmailNotification)->toMail($user)->viewData['verificationUrl'];
 }
 
 test('an owner without a bakery goes to bakery setup after verifying and keeps the bakery name', function () {
