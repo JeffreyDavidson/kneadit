@@ -146,6 +146,17 @@ test('can search orders by order number', function () {
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
 
+test('the filters button shows no badge while no filter is set', function () {
+    livewire(ListOrders::class)
+        ->assertDontSeeHtml('fi-icon-btn-badge-ctn');
+});
+
+test('the filters button badge counts the filters that are set', function () {
+    livewire(ListOrders::class)
+        ->filterTable('status', OrderStatus::Delivered->value)
+        ->assertSeeHtml('fi-icon-btn-badge-ctn');
+});
+
 test('can filter orders by status', function () {
     $pending = Order::factory()->recycle(test()->customer)->create();
     $delivered = Order::factory()->recycle(test()->customer)->delivered()->create();

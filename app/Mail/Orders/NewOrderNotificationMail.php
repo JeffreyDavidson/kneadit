@@ -18,7 +18,7 @@ class NewOrderNotificationMail extends BaseMailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "New Order #{$this->order->order_number} — \${$this->order->total}",
+            subject: "New Order #{$this->order->order_number} — {$this->order->total}",
         );
     }
 

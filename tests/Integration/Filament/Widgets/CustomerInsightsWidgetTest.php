@@ -38,3 +38,14 @@ test('average order value of a single 25.50 order is 25.50, not 100 times that',
         ->assertSee('$25.50')
         ->assertDontSee('2,550');
 });
+
+test('average order value renders again when it comes back from a serializing cache', function () {
+    useSerializingCache();
+    Date::setTestNow('2026-10-25 12:00');
+    Order::factory()->create(['total' => 25.50, 'created_at' => '2026-10-20 12:00:00']);
+
+    livewire(CustomerInsightsWidget::class)->assertOk();
+    livewire(CustomerInsightsWidget::class)
+        ->assertOk()
+        ->assertSee('$25.50');
+});
