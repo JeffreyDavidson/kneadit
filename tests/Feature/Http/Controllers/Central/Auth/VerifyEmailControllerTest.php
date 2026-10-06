@@ -2,10 +2,11 @@
 
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Notifications\Platform\OwnerVerifyEmailNotification;
 use App\Services\Tenants\TenantUrlGenerator;
-use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\travel;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -15,26 +16,19 @@ beforeEach(function () {
 test('verifies email with valid signed url', function () {
     $user = User::factory()->owner()->unverified()->create();
 
-    $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1($user->email)],
-    );
-
     actingAs($user)
-        ->get($verificationUrl)
+        ->get(verificationUrlFor($user))
         ->assertRedirect(route('onboarding.show'));
 
     expect($user->refresh()->hasVerifiedEmail())->toBeTrue();
 });
 
+/**
+ * The link from the email the owner actually receives.
+ */
 function verificationUrlFor(User $user): string
 {
-    return URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1($user->email)],
-    );
+    return (new OwnerVerifyEmailNotification)->toMail($user)->actionUrl;
 }
 
 test('an owner without a bakery goes to bakery setup after verifying and keeps the bakery name', function () {
@@ -84,13 +78,13 @@ test('someone else\'s link is refused and verifies nothing', function () {
 
 test('an expired link is refused', function () {
     $user = User::factory()->owner()->unverified()->create();
-    $url = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->subMinute(),
-        ['id' => $user->id, 'hash' => sha1($user->email)],
-    );
+    $url = verificationUrlFor($user);
 
-    actingAs($user)->get($url)->assertForbidden();
+    travel(config('auth.verification.expire') + 1)->minutes();
+
+    actingAs($user)
+        ->get($url)
+        ->assertForbidden();
 
     expect($user->refresh()->hasVerifiedEmail())->toBeFalse();
 });
