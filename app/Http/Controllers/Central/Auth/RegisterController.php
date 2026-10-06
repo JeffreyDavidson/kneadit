@@ -23,7 +23,7 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return to_route('onboarding.show');
+        return to_route('verification.notice');
     }
 
     public function show(): View

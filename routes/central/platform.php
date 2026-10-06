@@ -21,7 +21,7 @@ Route::get('admin/impersonate/{tenant}', ImpersonateController::class)
     ->name('tenant.impersonate')
     ->middleware(['auth', 'signed']);
 
-Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
+Route::middleware(['web', 'auth', 'verified'])->prefix('onboarding')->name('onboarding.')->group(function () {
     Route::get('/', ShowOnboardingController::class)->name('show');
     Route::post('/', CompleteOnboardingController::class)->name('store');
 });

@@ -88,6 +88,13 @@
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--honey);
+            cursor: pointer;
+            font: inherit;
+        }
         a {
             color: var(--honey);
             text-decoration: none;
@@ -118,9 +125,10 @@
                 <button type="submit" class="auth-btn">{{ __('auth.verify_email.resend') }}</button>
             </form>
 
-            <p style="margin-top: 1.5rem; font-size: 0.875rem">
-                <a href="/">{{ __('auth.verify_email.continue', ['app' => config('app.name')]) }}</a>
-            </p>
+            <form method="POST" action="{{ route('logout') }}" style="margin-top: 1.5rem; font-size: 0.875rem">
+                @csrf
+                <button type="submit" class="link-btn">{{ __('auth.verify_email.different_email') }}</button>
+            </form>
         </div>
     </div>
 </body>

@@ -21,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -223,6 +224,8 @@ class TenantsTable
                     ->icon(Heroicon::OutlinedBolt)
                     ->button(),
             ])
+            // The delete policy and the subscription-cancelling listener both read the owner.
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('owner'))
             ->defaultSort('created_at', 'desc');
     }
 

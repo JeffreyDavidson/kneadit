@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Staff\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Notifications\Platform\OwnerVerifyEmailNotification;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
@@ -21,7 +21,7 @@ test('sends verification notification', function () {
         ->assertRedirect()
         ->assertSessionHas('message', 'Verification link sent!');
 
-    Notification::assertSentTo($user, VerifyEmail::class);
+    Notification::assertSentTo($user, OwnerVerifyEmailNotification::class);
 });
 
 test('redirects guests to login (route auth middleware)', function () {
