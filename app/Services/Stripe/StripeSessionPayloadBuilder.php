@@ -15,7 +15,7 @@ class StripeSessionPayloadBuilder
      * Build the full Stripe Checkout Session params for an order.
      *
      * @param  list<array{coupon: string}>  $discounts
-     * @return array{mode: string, line_items: list<StripeLineItem>, success_url: string, cancel_url: string, customer_email?: string, metadata: array<string, string>, payment_intent_data: array{metadata: array<string, string>}, discounts?: list<array{coupon: string}>}
+     * @return array{mode: string, payment_method_types: list<string>, line_items: list<StripeLineItem>, success_url: string, cancel_url: string, customer_email?: string, metadata: array<string, string>, payment_intent_data: array{metadata: array<string, string>}, discounts?: list<array{coupon: string}>}
      */
     public function build(Order $order, string $tenantId, string $successUrl, string $cancelUrl, array $discounts = []): array
     {
@@ -23,6 +23,7 @@ class StripeSessionPayloadBuilder
 
         $params = [
             'mode' => 'payment',
+            'payment_method_types' => ['card'],
             'line_items' => $this->lineItems($order),
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,

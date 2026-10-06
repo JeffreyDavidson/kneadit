@@ -61,6 +61,14 @@
                 this.$watch('tipPercent', () => this.clearFieldError('tip_amount'));
                 this.$watch('cartItems', () => this.clearFieldError('items'));
 
+                // Coming back from Stripe with the browser's back button restores this page
+                // as it was left, with the Place Order button still disabled.
+                window.addEventListener('pageshow', (event) => {
+                    if (event.persisted) {
+                        this.isSubmitting = false;
+                    }
+                });
+
                 this.loadAvailability();
                 if (this.form.customer_email) {
                     this.loadFavorites();
@@ -485,6 +493,8 @@
                 }
                 formData.append('_token', '{{ csrf_token() }}');
 
+                let redirecting = false;
+
                 try {
                     const response = await fetch('{{ route('order.store') }}', {
                         method: 'POST',
@@ -492,7 +502,11 @@
                         body: formData,
                     });
                     if (response.ok) {
-                        window.location.href = response.url;
+                        // The server answers with where to go next (Stripe or the confirmation page).
+                        // A redirect can't be followed here: Stripe is another origin.
+                        const payload = await response.json();
+                        redirecting = true;
+                        window.location.assign(payload.data.redirect_url);
                     } else if (response.status === 422) {
                         const payload = await response.json();
                         this.showFieldErrors(payload.errors || {});
@@ -504,7 +518,9 @@
                     this.submitError = 'There was an error submitting your order. Please try again.';
                     console.error('Error submitting order:', error);
                 } finally {
-                    this.isSubmitting = false;
+                    // Stay disabled while the browser leaves for the next page, so a second
+                    // tap can't place a duplicate order.
+                    this.isSubmitting = redirecting;
                 }
             },
         };

@@ -33,7 +33,7 @@ class StripeSuccessController extends Controller
 
         if ($completedOrder->payment_status !== PaymentStatus::Paid) {
             return to_route('order.confirmation', $order)
-                ->with('warning', 'We received your payment, but the amount does not match your order total. Your order has been placed and the baker will review the payment and contact you.');
+                ->with('warning', 'We received your payment, but we could not apply it to your order automatically. The baker will review the payment and contact you.');
         }
 
         return to_route('order.confirmation', $order)

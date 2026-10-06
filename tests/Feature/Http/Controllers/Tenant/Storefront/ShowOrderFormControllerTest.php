@@ -66,3 +66,10 @@ test('the coupon apply button closes its opening tag before its label', function
 
     expect($response->getContent())->toMatch('/data-test="order-form-coupon-apply"[^>]*>\s*<span x-text="isApplyingCoupon/');
 });
+
+test('the order form script follows the redirect url the server returns instead of the fetch response url', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()->assertSeeHtml('payload.data.redirect_url')->assertDontSeeHtml('window.location.href = response.url');
+});
