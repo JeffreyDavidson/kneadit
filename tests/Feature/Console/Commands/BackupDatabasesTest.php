@@ -4,6 +4,7 @@ use App\Console\Commands\Operations\BackupDatabasesCommand;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -35,22 +36,36 @@ afterEach(function () {
 function createBackupSourceDatabase(string $path, array $notes): void
 {
     File::delete([$path, "{$path}-wal", "{$path}-shm"]);
+    File::put($path, '');
 
-    $pdo = new PDO("sqlite:{$path}");
-    $pdo->exec('PRAGMA journal_mode = WAL');
-    $pdo->exec('CREATE TABLE notes (id INTEGER PRIMARY KEY, body TEXT)');
+    $connection = openBackupTestConnection($path);
+    $connection->statement('CREATE TABLE notes (id INTEGER PRIMARY KEY, body TEXT)');
 
     foreach ($notes as $note) {
-        $pdo->prepare('INSERT INTO notes (body) VALUES (?)')->execute([$note]);
+        $connection->table('notes')->insert(['body' => $note]);
     }
+
+    $connection->disconnect();
+}
+
+/** A connection to a real SQLite file with the app's SQLite settings (WAL mode). */
+function openBackupTestConnection(string $path): Connection
+{
+    return resolve('db.factory')->make([
+        ...config('database.connections.sqlite'),
+        'url' => null,
+        'database' => $path,
+    ], 'backup-test');
 }
 
 /** @return array<int, string> */
 function readBackupNotes(string $path): array
 {
-    $pdo = new PDO("sqlite:{$path}");
+    $connection = openBackupTestConnection($path);
+    $notes = $connection->table('notes')->orderBy('id')->pluck('body')->all();
+    $connection->disconnect();
 
-    return $pdo->query('SELECT body FROM notes ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
+    return $notes;
 }
 
 test('backup command exists', function () {
@@ -139,13 +154,13 @@ test('backup includes rows that are only in the write-ahead log and leaves out u
     // A live app: the writer keeps the database open, so committed rows stay in
     // the -wal file (never checkpointed into the main file), and a second
     // transaction is still in flight when the backup runs.
-    $writer = new PDO("sqlite:{$centralDatabase}");
-    $writer->exec('PRAGMA wal_autocheckpoint = 0');
-    $writer->exec("INSERT INTO notes (body) VALUES ('committed in wal')");
+    $writer = openBackupTestConnection($centralDatabase);
+    $writer->statement('PRAGMA wal_autocheckpoint = 0');
+    $writer->table('notes')->insert(['body' => 'committed in wal']);
 
-    $inFlight = new PDO("sqlite:{$centralDatabase}");
-    $inFlight->exec('BEGIN IMMEDIATE');
-    $inFlight->exec("INSERT INTO notes (body) VALUES ('not committed')");
+    $inFlight = openBackupTestConnection($centralDatabase);
+    $inFlight->beginTransaction();
+    $inFlight->table('notes')->insert(['body' => 'not committed']);
 
     try {
         $this->artisan('backup:databases')->assertSuccessful();
@@ -153,7 +168,9 @@ test('backup includes rows that are only in the write-ahead log and leaves out u
         expect(glob("{$backupDirectory}/*"))->toBe(["{$backupDirectory}/central.sqlite"])
             ->and(readBackupNotes("{$backupDirectory}/central.sqlite"))->toBe(['central note', 'committed in wal']);
     } finally {
-        $inFlight->exec('ROLLBACK');
+        $inFlight->rollBack();
+        $writer->disconnect();
+        $inFlight->disconnect();
         Carbon::setTestNow();
         File::deleteDirectory($backupDirectory);
     }

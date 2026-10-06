@@ -7,12 +7,11 @@ use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use PDO;
-use PDOStatement;
 use RuntimeException;
 use Throwable;
 
@@ -169,12 +168,12 @@ class BackupDatabasesCommand extends Command
     {
         $previousUmask = umask(0077);
 
+        $connection = $this->openSqliteConnection($source, busyTimeoutMilliseconds: 30000);
+
         try {
-            $pdo = new PDO("sqlite:{$source}", options: [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-            $pdo->exec('PRAGMA busy_timeout = 30000');
-            $pdo->prepare('VACUUM INTO ?')->execute([$destination]);
-            $pdo = null;
+            $connection->statement('VACUUM INTO ?', [$destination]);
         } finally {
+            $connection->disconnect();
             umask($previousUmask);
         }
 
@@ -196,18 +195,33 @@ class BackupDatabasesCommand extends Command
     /** Returns "ok", or the first problem SQLite reports for the database file. */
     protected function integrityCheck(string $path): string
     {
-        $pdo = new PDO("sqlite:{$path}", options: [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        $statement = $pdo->query('PRAGMA integrity_check');
+        $connection = $this->openSqliteConnection($path, busyTimeoutMilliseconds: 5000);
 
-        throw_unless(
-            $statement instanceof PDOStatement,
-            RuntimeException::class,
-            "Could not run an integrity check on database backup {$path}.",
-        );
-
-        $result = $statement->fetchColumn();
+        try {
+            $result = $connection->scalar('PRAGMA integrity_check');
+        } finally {
+            $connection->disconnect();
+        }
 
         return is_string($result) ? $result : 'no result';
+    }
+
+    /**
+     * A throwaway connection to one SQLite file, built from the app's SQLite
+     * settings but leaving the file's journal mode alone (a backup copy must stay
+     * a single file). It is not registered with the database manager, so it
+     * never becomes a configured connection.
+     */
+    private function openSqliteConnection(string $path, int $busyTimeoutMilliseconds): Connection
+    {
+        return resolve('db.factory')->make([
+            ...Config::array('database.connections.sqlite'),
+            'url' => null,
+            'database' => $path,
+            'busy_timeout' => $busyTimeoutMilliseconds,
+            'journal_mode' => null,
+            'synchronous' => null,
+        ], 'backup-snapshot');
     }
 
     protected function dirSize(string $dir): int

@@ -3,7 +3,6 @@
 use App\Models\Platform\Tenant;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Process\Process;
 
 beforeEach(function () {
     test()->directory = storage_path('framework/testing/sqlite-transaction-mode');
@@ -20,13 +19,14 @@ afterEach(function () {
 /**
  * Opens a connection to a real SQLite file using the options of a configured connection.
  */
-function openProbeConnection(string $connectionName, string $databasePath): Connection
+function openProbeConnection(string $connectionName, string $databasePath, int $busyTimeout): Connection
 {
-    return app('db.factory')->make([
+    return resolve('db.factory')->make([
         ...config("database.connections.{$connectionName}"),
         'database' => $databasePath,
+        'busy_timeout' => $busyTimeout,
         'url' => null,
-    ], "probe-{$connectionName}");
+    ], "probe-{$connectionName}-{$busyTimeout}");
 }
 
 test('the central and tenant template connections begin SQLite transactions as immediate', function (string $connectionName) {
@@ -41,45 +41,41 @@ test('a tenant database connection inherits the immediate transaction mode', fun
         ->toHaveKey('transaction_mode', 'IMMEDIATE');
 });
 
-test('a read then write transaction waits for a concurrent writer instead of failing with database is locked', function (string $connectionName) {
-    // Arrange
-    $connection = openProbeConnection($connectionName, test()->databasePath);
-    $connection->statement('create table probe (id integer primary key autoincrement, note text)');
-    $connection->table('probe')->insert(['note' => 'seed']);
+test('a read then write transaction keeps its write lock so a concurrent writer cannot invalidate its read', function (string $connectionName) {
+    // Arrange: a transaction (as checkout runs) and a second writer that gives up at once instead of waiting.
+    $transaction = openProbeConnection($connectionName, test()->databasePath, 5000);
+    $transaction->statement('create table probe (id integer primary key autoincrement, note text)');
+    $transaction->table('probe')->insert(['note' => 'seed']);
+    $otherWriter = openProbeConnection($connectionName, test()->databasePath, 0);
 
-    $writer = new Process([
-        PHP_BINARY,
-        '-r',
-        <<<'PHP'
-        $pdo = new PDO('sqlite:'.$argv[1]);
-        $pdo->exec('PRAGMA busy_timeout = 5000');
-        $pdo->exec("INSERT INTO probe (note) VALUES ('concurrent writer')");
-        PHP,
-        test()->databasePath,
-    ]);
+    // Act: read first, let the other writer try to commit in between, then write.
+    $transaction->beginTransaction();
+    $transaction->table('probe')->count();
 
-    // Act: read first (as checkout does), let another process try to write, then write.
-    $connection->beginTransaction();
-    $connection->table('probe')->count();
-
-    $writer->start();
-    usleep(500_000);
-
-    $error = null;
+    $otherWriterError = null;
 
     try {
-        $connection->table('probe')->insert(['note' => 'transaction write']);
-        $connection->commit();
+        $otherWriter->table('probe')->insert(['note' => 'other writer']);
     } catch (Throwable $exception) {
-        $error = $exception->getMessage();
-        $connection->rollBack();
+        $otherWriterError = $exception->getMessage();
     }
 
-    $writer->wait();
+    $transactionError = null;
 
-    // Assert
-    expect($error)->toBeNull()
-        ->and($writer->isSuccessful())->toBeTrue($writer->getErrorOutput())
-        ->and($connection->table('probe')->pluck('note')->all())
-        ->toEqualCanonicalizing(['seed', 'transaction write', 'concurrent writer']);
+    try {
+        $transaction->table('probe')->insert(['note' => 'transaction write']);
+        $transaction->commit();
+    } catch (Throwable $exception) {
+        $transactionError = $exception->getMessage();
+        $transaction->rollBack();
+    }
+
+    $otherWriter->table('probe')->insert(['note' => 'other writer retry']);
+
+    // Assert: the other writer was held off (it would have waited for busy_timeout), so the transaction was not
+    // failed with "database is locked", and the other writer succeeds once the transaction commits.
+    expect($otherWriterError)->toContain('database is locked')
+        ->and($transactionError)->toBeNull()
+        ->and($transaction->table('probe')->pluck('note')->all())
+        ->toBe(['seed', 'transaction write', 'other writer retry']);
 })->with(['central', 'sqlite']);
