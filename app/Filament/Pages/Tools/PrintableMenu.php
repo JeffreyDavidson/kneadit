@@ -11,7 +11,7 @@ use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Laravel\Pennant\Feature;
@@ -56,7 +56,7 @@ class PrintableMenu extends Page
     public function getCategories(): Collection
     {
         return Category::query()->active()
-            ->with(['products' => function (Builder $q): void {
+            ->with(['products' => function (HasMany $q): void {
                 $q->where('is_active', true)->orderBy('name');
             }])
             ->orderBy('sort_order')

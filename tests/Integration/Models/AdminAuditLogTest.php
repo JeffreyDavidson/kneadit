@@ -38,3 +38,11 @@ test('scope recent', function () {
     $results = AdminAuditLog::recent()->get();
     expect($results->contains($log))->toBeTrue();
 });
+
+test('factory creates a valid row that matches the real schema', function () {
+    $log = AdminAuditLog::factory()->create();
+
+    expect($log->exists)->toBeTrue()
+        ->and($log->created_at)->not->toBeNull()
+        ->and($log->description)->not->toBeEmpty();
+});

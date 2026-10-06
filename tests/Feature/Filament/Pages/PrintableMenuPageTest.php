@@ -1,6 +1,8 @@
 <?php
 
 use App\Filament\Pages\Tools\PrintableMenu;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,6 +38,33 @@ beforeEach(function () {
 test('printable menu page can render', function () {
     livewire(PrintableMenu::class)
         ->assertOk();
+});
+
+test('printable menu lists active categories with their active products only', function () {
+    $breads = Category::factory()->create(['name' => 'Artisan Breads', 'sort_order' => 1]);
+    $pastries = Category::factory()->create(['name' => 'Morning Pastries', 'sort_order' => 2]);
+    Category::factory()->create(['name' => 'Empty Shelf', 'sort_order' => 3]);
+    Category::factory()->inactive()->has(Product::factory(['name' => 'Hidden Category Loaf']), 'products')->create();
+    Product::factory()->for($breads)->create(['name' => 'Country Sourdough']);
+    Product::factory()->for($breads)->inactive()->create(['name' => 'Retired Rye']);
+    Product::factory()->for($pastries)->create(['name' => 'Almond Croissant']);
+
+    livewire(PrintableMenu::class)
+        ->assertOk()
+        ->assertSeeInOrder(['Artisan Breads', 'Country Sourdough', 'Morning Pastries', 'Almond Croissant'])
+        ->assertDontSee(['Retired Rye', 'Empty Shelf', 'Hidden Category Loaf']);
+});
+
+test('printable menu can switch to the price list and modern layout', function () {
+    $category = Category::factory()->create(['name' => 'Artisan Breads']);
+    Product::factory()->for($category)->create(['name' => 'Country Sourdough']);
+
+    livewire(PrintableMenu::class)
+        ->call('setView', 'pricelist')
+        ->call('setLayout', 'modern')
+        ->assertSet('activeView', 'pricelist')
+        ->assertSet('menuLayout', 'modern')
+        ->assertSee('Country Sourdough');
 });
 
 test('the storefront link uses the subdomain, or the verified custom domain', function (bool $hasVerifiedDomain, string $expected) {

@@ -413,7 +413,7 @@ function createCentralTables(): void
             $table->string('tenant_id')->nullable();
             $table->text('description');
             $table->json('metadata')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         },
         'admin_audit_logs' => function ($table) {
             $table->id();
@@ -422,10 +422,9 @@ function createCentralTables(): void
             $table->text('description');
             $table->string('target_type')->nullable();
             $table->string('target_id')->nullable();
-            $table->string('user_name')->nullable();
             $table->string('ip_address')->nullable();
             $table->json('metadata')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         },
         'support_tickets' => function ($table) {
             $table->id();

@@ -21,6 +21,7 @@ class PlatformActivityFactory extends Factory
             'tenant_id' => null,
             'description' => fake()->sentence(),
             'metadata' => null,
+            'created_at' => now(),
         ];
     }
 }

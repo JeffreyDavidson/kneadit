@@ -1,4 +1,9 @@
 <x-filament-panels::page>
+    @php
+        $weeklyOrders = $this->weekData->weeklyOrders;
+        $weekDays = $this->weekData->weekDays;
+    @endphp
+
     <div class="space-y-6">
         <!-- Week Selection -->
         <div class="rounded-lg bg-(--kn-surface) p-6 shadow">

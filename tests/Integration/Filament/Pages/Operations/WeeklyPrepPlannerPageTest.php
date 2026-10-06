@@ -16,29 +16,20 @@ test('mount sets selected week start to start of current week', function () {
     expect(test()->page->selectedWeekStart)->toBe(now()->startOfWeek()->format('Y-m-d'));
 });
 
-test('mount loads weekly data', function () {
+test('week data loads the selected week', function () {
     test()->page->mount();
 
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Collection::class)
-        ->and(test()->page->prepSchedule)->toBeInstanceOf(Collection::class)
-        ->and(test()->page->weekDays)->toBeArray();
+    expect(test()->page->weekData->weeklyOrders)->toBeInstanceOf(Collection::class)
+        ->and(test()->page->weekData->prepSchedule)->toBeInstanceOf(Collection::class)
+        ->and(test()->page->weekData->weekDays)->toHaveCount(7);
 });
 
-test('load weekly data with null date sets empty collections', function () {
+test('week data without a selected week is empty', function () {
     test()->page->selectedWeekStart = null;
 
-    test()->page->loadWeeklyData();
-
-    expect(test()->page->weeklyOrders)->toBeEmpty()
-        ->and(test()->page->prepSchedule)->toBeEmpty();
-});
-
-test('load weekly data with valid date populates data', function () {
-    test()->page->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
-
-    test()->page->loadWeeklyData();
-
-    expect(test()->page->weeklyOrders)->toBeInstanceOf(Collection::class);
+    expect(test()->page->weekData->weeklyOrders)->toBeEmpty()
+        ->and(test()->page->weekData->prepSchedule)->toBeEmpty()
+        ->and(test()->page->weekData->weekDays)->toBeEmpty();
 });
 
 test('get product summary returns collection', function () {

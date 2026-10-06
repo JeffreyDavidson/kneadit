@@ -31,6 +31,25 @@ test('quick order page can render', function () {
         ->assertOk();
 });
 
+test('quick order page shows its form and a create order button wired to the page', function () {
+    livewire(QuickOrder::class)
+        ->assertSee(['Customer Information', 'Order Items', 'Order Details', 'Payment & Notes', 'Create Order'])
+        ->assertSeeHtml('wire:click="createOrder"');
+});
+
+test('quick order page shows validation errors for an empty submission', function () {
+    livewire(QuickOrder::class)
+        ->call('createOrder')
+        ->assertHasFormErrors([
+            'customer_name' => 'required',
+            'customer_email' => 'required',
+            'delivery_date' => 'required',
+            'delivery_time' => 'required',
+        ]);
+
+    expect(Order::query()->count())->toBe(0);
+});
+
 test('quick order delivery tier is only shown for delivery', function () {
     app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
         'deliveryFeeTiers' => [['description' => 'Local', 'fee' => 5.00]],
