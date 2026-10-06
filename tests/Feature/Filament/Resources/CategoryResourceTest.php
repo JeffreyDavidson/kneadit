@@ -2,9 +2,11 @@
 
 use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -87,6 +89,35 @@ test('can sort categories by name', function () {
         ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
+
+test('bulk delete keeps categories that still have products, and their products', function () {
+    $stocked = Category::factory()->create(['name' => 'Breads']);
+    $product = Product::factory()->for($stocked)->create();
+    $empty = Category::factory()->create();
+
+    livewire(ListCategories::class)
+        ->selectTableRecords([$stocked, $empty])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified('Deleted 1 of 2');
+
+    expect(Category::query()->find($stocked->id))->not->toBeNull()
+        ->and(Product::query()->find($product->id))->not->toBeNull()
+        ->and(Category::query()->find($empty->id))->toBeNull();
+});
+
+test('bulk delete names the categories it skipped and says to deactivate them instead', function () {
+    $stocked = Category::factory()->create(['name' => 'Breads']);
+    Product::factory()->for($stocked)->create();
+
+    livewire(ListCategories::class)
+        ->selectTableRecords([$stocked])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->persistent()
+            ->title('Failed to delete')
+            ->body("<p>Breads still has products, so it can't be deleted. Deactivate it instead, or move its products to another category first.</p>"));
 });
 
 test('can filter categories by active status', function () {

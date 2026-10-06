@@ -6,9 +6,11 @@ use App\Mail\Customers\ProductAvailableMail;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;
+use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -203,6 +205,35 @@ test('owner can bulk-delete selected products via the AuthorizedDeleteBulkAction
     expect(Product::query()->count())->toBe(1)
         ->and(Product::query()->find($kept->id))->not->toBeNull()
         ->and(Product::query()->find($doomed->first()->id))->toBeNull();
+});
+
+test('bulk delete keeps products that have past orders, and their order lines', function () {
+    $sold = Product::factory()->recycle(test()->category)->create(['name' => 'Sourdough Loaf']);
+    $line = OrderItem::factory()->for($sold)->create();
+    $unsold = Product::factory()->recycle(test()->category)->create();
+
+    livewire(ListProducts::class)
+        ->selectTableRecords([$sold, $unsold])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified('Deleted 1 of 2');
+
+    expect(Product::query()->find($sold->id))->not->toBeNull()
+        ->and(OrderItem::query()->find($line->id)?->product_id)->toBe($sold->id)
+        ->and(Product::query()->find($unsold->id))->toBeNull();
+});
+
+test('bulk delete names the products it skipped and says to deactivate them instead', function () {
+    $sold = Product::factory()->recycle(test()->category)->create(['name' => 'Sourdough Loaf']);
+    OrderItem::factory()->for($sold)->create();
+
+    livewire(ListProducts::class)
+        ->selectTableRecords([$sold])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->persistent()
+            ->title('Failed to delete')
+            ->body("<p>Sourdough Loaf is on past orders, so it can't be deleted. Deactivate it instead to take it off the storefront.</p>"));
 });
 
 test('notify waitlist action is hidden for an inactive product', function () {
