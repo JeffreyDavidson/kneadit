@@ -1,0 +1,64 @@
+/*
+ * Admin aliases: the older variable names the admin partials, the platform
+ * stylesheet and the Tailwind brand utilities still use, pointed at the
+ * design system tokens in tokens.css. Everything resolves through --kn-*, so
+ * it follows the light/dark switch with no per-theme copies.
+ *
+ * Temporary: later PRs rewrite those partials onto --kn-* directly, and this
+ * file goes with them. Pick tokens here, not hex.
+ *
+ * The central-only --platform-*, --accent and --accent-light aliases are in
+ * resources/css/filament/central/theme.css.
+ */
+
+:root {
+    /*
+     * Bakery admin "brand" scale, deepest surface (950) to lightest text (50).
+     * Mapped by role, not by lightness, so the ladder inverts in light mode.
+     */
+    --brand-950: var(--kn-bg);
+    --brand-900: var(--kn-surface);
+    --brand-800: var(--kn-surface-hover);
+    --brand-700: color-mix(in srgb, var(--kn-surface-hover) 60%, var(--kn-border-control));
+    --brand-600: var(--kn-border-control);
+    --brand-500: var(--kn-muted);
+    --brand-400: var(--kn-muted);
+    --brand-300: var(--kn-honey-text);
+    --brand-200: var(--kn-ink-2);
+    --brand-150: var(--kn-surface-hover);
+    --brand-100: var(--kn-ink);
+    --brand-50: var(--kn-ink);
+
+    --accent-gold: var(--kn-honey-text);
+    --accent-gold-light: var(--kn-surface-hover);
+
+    /* Chrome helpers (borders, hover, focus, table heads, scrollbars). */
+    --border-subtle: var(--kn-border);
+    --border-medium: color-mix(in srgb, var(--kn-border-control) 50%, transparent);
+    --hover-bg: color-mix(in srgb, var(--kn-honey) 8%, transparent);
+    --active-bg: color-mix(in srgb, var(--kn-honey) 14%, transparent);
+    --scrollbar-thumb: color-mix(in srgb, var(--kn-border-control) 50%, transparent);
+    --focus-ring: var(--kn-honey-text);
+    --thead-bg: var(--kn-surface-sunken);
+
+    --status-success: var(--kn-success);
+    --status-danger: var(--kn-danger);
+    --status-warning: var(--kn-warning);
+    --status-warning-dark: var(--kn-warning);
+    --status-danger-dark: var(--kn-danger);
+}
+
+/*
+ * Tailwind colour utilities (bg-honey, text-parchment, bg-warm-black, ...)
+ * used by the platform and inbox views. Pointed at tokens so they follow the
+ * theme too.
+ */
+@theme {
+    --color-warm-black: var(--kn-bg);
+    --color-espresso: var(--kn-surface);
+    --color-cinnamon: var(--kn-honey-text);
+    --color-honey: var(--kn-honey);
+    --color-golden: var(--kn-honey-hover);
+    --color-butter: var(--kn-ink-2);
+    --color-parchment: var(--kn-ink);
+}

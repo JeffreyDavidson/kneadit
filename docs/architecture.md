@@ -279,6 +279,12 @@ Erasing a customer. `AnonymiseCustomer` (the Anonymise action on the Customer pa
 
 Blade, Livewire, Alpine.js, Filament, and Tailwind CSS make up the UI. Vite builds separate central/application, storefront, tenant Filament, and central Filament entry points defined in `vite.config.js`. Inline scripts and styles use the request-scoped CSP nonce directive.
 
+### Admin theming
+
+Both Filament panels (bakery admin `AdminPanelProvider`, platform `CentralPanelProvider`) take their look from the KneadIt design system through `App\Filament\Shared\DesignSystem::configure()`: Instrument Sans as the panel font, Young Serif as the display face (both from Google Fonts), the honey, danger, success, warning, info and warm gray palettes, and dark mode, which stays forced (so there is no Light / Dark / System switch in the user menu) until the admin partials are rebuilt on the tokens, because they hard-code dark surfaces and white text and are unreadable in light. A later change un-forces it and defaults to light. There is no per-bakery or per-platform theme picker; the old Honey / Slate / Nord presets, `PanelThemes` and the `admin_theme` / `central_theme` readers are gone (stored `admin_theme` setting rows are left in place and ignored).
+
+`resources/css/kneadit/tokens.css` defines every design token as a `--kn-*` CSS variable: light values on `:root`, dark values under `.dark` (the class Filament puts on `<html>`). Use `--kn-*` variables in new CSS, never raw hex. Both panel themes import it, plus `kneadit/filament.css` (page headings in the display face, primary buttons in honey with the `--kn-on-honey` warm-black text, because Filament's own button text would be white on honey) and `kneadit/admin-aliases.css`. The aliases keep the older variable names (`--brand-*`, `--accent-gold`, `--border-subtle`, the Tailwind `bg-honey` / `text-parchment` colours and so on) that the admin partials in `resources/css/filament/admin/` still use, as role-based mappings onto the tokens so they follow the light/dark switch. The central theme adds the `--platform-*`, `--accent` and `--accent-light` aliases that `public/css/central-admin.css` reads. The partials and `central-admin.css` still hard-code some colours and are being moved onto `--kn-*` directly; the aliases go away with them.
+
 ### View organization
 
 Blade views are organized by the application surface they serve:

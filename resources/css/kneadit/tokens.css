@@ -1,0 +1,90 @@
+/*
+ * KneadIt design system tokens (source: the design system's tokens.json).
+ *
+ * Light values live on :root and dark values under .dark, which is the class
+ * Filament toggles on <html>. Use these variables, never raw hex. Admin-only
+ * aliases for the older variable names are in admin-aliases.css.
+ */
+
+:root {
+    /* Type */
+    --kn-font-display: "Young Serif", Georgia, "Times New Roman", serif;
+    --kn-font-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --kn-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* Colour and shadow (light) */
+    --kn-bg: #fef9ef;
+    --kn-surface: #ffffff;
+    --kn-surface-sunken: #faf4e8;
+    --kn-surface-hover: #f3e6cf;
+    --kn-ink: #1c1410;
+    --kn-ink-2: #4a3728;
+    --kn-muted: #7a5a3a;
+    --kn-border: #e8d0b0;
+    --kn-border-control: #9a7a58;
+    --kn-honey: #d4920c;
+    --kn-honey-hover: #b97f0a;
+    --kn-on-honey: #1c1410;
+    --kn-honey-text: #8a5a0a;
+    --kn-espresso: #2a1f18;
+    --kn-on-espresso: #fef9ef;
+    --kn-danger: #a83248;
+    --kn-on-danger: #ffffff;
+    --kn-danger-tint: #fbe9ec;
+    --kn-success: #4f6e4f;
+    --kn-success-tint: #eaf1ea;
+    --kn-warning: #8a5a0a;
+    --kn-warning-tint: #fdf1d6;
+    --kn-info: #2f5f7a;
+    --kn-info-tint: #e6f0f5;
+    --kn-shadow-card: 0 1px 2px rgba(28,20,16,0.06), 0 4px 16px rgba(28,20,16,0.06);
+    --kn-shadow-pop: 0 12px 32px rgba(28,20,16,0.16);
+    --kn-shadow-focus: 0 0 0 3px #8a5a0a;
+
+    /* Spacing */
+    --kn-space-1: 4px;
+    --kn-space-2: 8px;
+    --kn-space-3: 12px;
+    --kn-space-4: 16px;
+    --kn-space-6: 24px;
+    --kn-space-8: 32px;
+    --kn-space-12: 48px;
+
+    /* Radius */
+    --kn-radius-sm: 6px;
+    --kn-radius-md: 10px;
+    --kn-radius-lg: 16px;
+    --kn-radius-xl: 24px;
+    --kn-radius-pill: 999px;
+}
+
+.dark {
+    /* Colour and shadow (dark) */
+    --kn-bg: #1c1410;
+    --kn-surface: #2a1f18;
+    --kn-surface-sunken: #140e0b;
+    --kn-surface-hover: #3d2e24;
+    --kn-ink: #fef9ef;
+    --kn-ink-2: #e8dcc8;
+    --kn-muted: #c4a98a;
+    --kn-border: #3d2e24;
+    --kn-border-control: #8f735a;
+    --kn-honey: #e8b04a;
+    --kn-honey-hover: #f0c46c;
+    --kn-on-honey: #1c1410;
+    --kn-honey-text: #e8b04a;
+    --kn-espresso: #2a1f18;
+    --kn-on-espresso: #fef9ef;
+    --kn-danger: #ef8a98;
+    --kn-on-danger: #1c1410;
+    --kn-danger-tint: #3a1d22;
+    --kn-success: #9cc29c;
+    --kn-success-tint: #1f2b1f;
+    --kn-warning: #e8b04a;
+    --kn-warning-tint: #3a2a10;
+    --kn-info: #8cc0de;
+    --kn-info-tint: #15283a;
+    --kn-shadow-card: 0 1px 2px rgba(0,0,0,0.4);
+    --kn-shadow-pop: 0 12px 32px rgba(0,0,0,0.5);
+    --kn-shadow-focus: 0 0 0 3px #e8b04a;
+}

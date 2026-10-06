@@ -2,12 +2,10 @@
    KneadIt – Central Platform Admin Theme
    ===================================================================
    Palette variables (--platform-*, --accent, --border-*, --hover-bg,
-   --active-bg, --scrollbar-thumb, --focus-ring, --thead-bg) are
-   injected by CentralPanelProvider based on config('kneadit.central_theme').
+   --active-bg, --scrollbar-thumb, --focus-ring, --thead-bg) are aliases of
+   the design system tokens: see resources/css/filament/central/theme.css and
+   resources/css/kneadit/admin-aliases.css.
    =================================================================== */
-
-/* ===== FONTS ===== */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 /* Login page */
 .fi-simple-layout {
@@ -29,7 +27,7 @@
 }
 .fi-simple-main h2,
 .fi-simple-main .fi-header-heading {
-    color: white !important;
+    color: var(--kn-ink) !important;
 }
 
 /* ===== SIDEBAR ===== */
@@ -107,7 +105,7 @@
     background: var(--active-bg) !important;
 }
 .fi-sidebar-item-active .fi-sidebar-item-label {
-    color: white !important;
+    color: var(--kn-ink) !important;
     font-weight: 600 !important;
 }
 .fi-sidebar-item-active .fi-sidebar-item-icon {
@@ -161,8 +159,7 @@
     padding-bottom: 1rem !important;
 }
 .fi-header-heading {
-    color: white !important;
-    font-weight: 700 !important;
+    color: var(--kn-ink) !important;
 }
 .fi-header-subheading {
     color: var(--platform-400) !important;
@@ -176,7 +173,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
 }
 .fi-section-header-heading {
-    color: white !important;
+    color: var(--kn-ink) !important;
 }
 .fi-section-header-description {
     color: var(--platform-400) !important;
@@ -227,7 +224,7 @@
     color: var(--platform-400) !important;
 }
 .fi-wi-stats-overview-stat-value {
-    color: white !important;
+    color: var(--kn-ink) !important;
     font-weight: 700 !important;
 }
 .fi-wi-stats-overview-stat-description {
@@ -304,7 +301,7 @@
     background-color: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
-    color: white !important;
+    color: var(--kn-ink) !important;
     --tw-ring-shadow: none !important;
     --tw-ring-color: transparent !important;
 }
@@ -332,7 +329,7 @@
 .fi-input {
     background: var(--platform-800) !important;
     border-color: var(--border-medium) !important;
-    color: white !important;
+    color: var(--kn-ink) !important;
 }
 .fi-input:focus {
     border-color: var(--accent) !important;
@@ -340,7 +337,7 @@
 }
 .fi-select-input {
     background: var(--platform-800) !important;
-    color: white !important;
+    color: var(--kn-ink) !important;
 }
 
 /* ===== TABS ===== */
@@ -348,33 +345,16 @@
     color: var(--platform-400) !important;
 }
 .fi-tabs-tab-active {
-    color: white !important;
+    color: var(--kn-ink) !important;
     border-color: var(--accent) !important;
 }
 
 /* ===== BUTTONS =====
-   Filament v5 renders primary buttons as `.fi-btn.fi-color-primary`. Force a
-   darker --primary-700 background + white text so contrast stays AA across
-   every theme (medium accent + medium-dark text yields ~3:1, fails WCAG).
-   The legacy .fi-btn-primary selector is kept for any custom Blade buttons. */
+   Primary button colours (honey fill, on-honey text) are set from the design
+   system tokens in resources/css/kneadit/filament.css. */
 .fi-btn.fi-color-primary,
 .fi-btn-primary {
-    background-color: var(--primary-700) !important;
-    color: white !important;
     font-weight: 600 !important;
-}
-.fi-btn.fi-color-primary:hover,
-.fi-btn-primary:hover {
-    background-color: var(--primary-800) !important;
-    color: white !important;
-}
-/* Force any leading/trailing icons inside primary buttons to match the
-   white label text — Filament's `--icon-color` overrides currentColor. */
-.fi-btn.fi-color-primary .fi-btn-icon,
-.fi-btn.fi-color-primary svg,
-.fi-btn-primary .fi-btn-icon,
-.fi-btn-primary svg {
-    color: white !important;
 }
 
 /* ===== BADGES ===== */
@@ -408,7 +388,7 @@
     border: 1px solid var(--border-medium) !important;
 }
 .fi-modal-heading {
-    color: white !important;
+    color: var(--kn-ink) !important;
 }
 .fi-modal-description {
     color: var(--platform-400) !important;

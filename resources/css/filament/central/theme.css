@@ -1,16 +1,32 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../shared/widget-cards.css';
+@import '../../kneadit/tokens.css';
+@import '../../kneadit/admin-aliases.css';
+@import '../../kneadit/filament.css';
 
 @source '../../../../app/Filament/Central/**/*';
 @source '../../../../resources/views/filament/central/**/*';
 @source '../../../../resources/views/components/central/**/*';
 
-@theme {
-    --color-warm-black: #1c1410;
-    --color-espresso: #2a1f18;
-    --color-cinnamon: #8b6844;
-    --color-honey: #d4920c;
-    --color-golden: #e8b04a;
-    --color-butter: #f5d88e;
-    --color-parchment: #faf0d6;
+/*
+ * Platform admin aliases: the --platform-* scale, --accent and --accent-light
+ * that public/css/central-admin.css (and the widget cards) read, pointed at
+ * design system tokens. Mapped by role so the scale follows the light/dark
+ * switch. Temporary, until that stylesheet is rewritten onto --kn-* directly.
+ */
+:root {
+    --platform-950: var(--kn-surface-sunken);
+    --platform-900: var(--kn-bg);
+    --platform-800: var(--kn-surface);
+    --platform-700: var(--kn-surface-hover);
+    --platform-600: var(--kn-border-control);
+    --platform-500: var(--kn-honey);
+    --platform-400: var(--kn-honey-text);
+    --platform-300: var(--kn-ink-2);
+    --platform-200: var(--kn-ink);
+    --platform-100: var(--kn-ink);
+    --platform-50: var(--kn-ink);
+
+    --accent: var(--kn-honey-text);
+    --accent-light: var(--kn-honey-hover);
 }
