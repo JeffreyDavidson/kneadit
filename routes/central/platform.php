@@ -6,6 +6,7 @@ use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Central\MaintenancePreviewController;
 use App\Http\Controllers\Central\Onboarding\CompleteOnboardingController;
 use App\Http\Controllers\Central\Onboarding\ShowOnboardingController;
+use App\Http\Middleware\PreventAccessFromTenantDomains;
 use Illuminate\Support\Facades\Route;
 
 Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
@@ -21,7 +22,7 @@ Route::get('admin/impersonate/{tenant}', ImpersonateController::class)
     ->name('tenant.impersonate')
     ->middleware(['auth', 'signed']);
 
-Route::middleware(['web', 'auth', 'verified'])->prefix('onboarding')->name('onboarding.')->group(function () {
+Route::middleware(['web', PreventAccessFromTenantDomains::class, 'auth', 'verified'])->prefix('onboarding')->name('onboarding.')->group(function () {
     Route::get('/', ShowOnboardingController::class)->name('show');
     Route::post('/', CompleteOnboardingController::class)->name('store');
 });
