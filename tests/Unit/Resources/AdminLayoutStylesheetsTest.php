@@ -77,3 +77,11 @@ test('the central theme is built on the shared admin partials and the design sys
         ->not->toContain('--accent')
         ->not->toContain('!important');
 });
+
+test('the header avatar has a visible ring in dark mode', function () {
+    $css = adminPartialDeclarations('css/filament/admin/_layout.css');
+
+    preg_match('/\.dark\s+\.fi-topbar\s+\.fi-avatar\s*\{([^}]*)\}/', $css, $match);
+
+    expect($match[1] ?? '')->toContain('var(--kn-border-control)');
+});
