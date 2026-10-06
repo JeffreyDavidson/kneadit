@@ -26,6 +26,7 @@ class PaymentFailedMail extends PlatformMail
     public function content(): Content
     {
         return new Content(
+            view: 'emails.platform.payment-failed',
             text: 'emails.platform.payment-failed-text',
             with: [
                 'billingUrl' => resolve(TenantUrlGenerator::class)->billingForOwner($this->user),
