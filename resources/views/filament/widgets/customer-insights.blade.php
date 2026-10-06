@@ -22,7 +22,7 @@
             <span class="pw-stat-label">Avg Order Value</span>
             <span style="font-size: 1.4rem; font-weight: 700; color: var(--pw-card-text)">
                 @money($avg['value'])
-                <span style="font-size: 0.85rem; color: {{ $avg['trend'] === 'up' ? '#6b9e3a' : '#d4574a' }}; margin-left: 4px;">
+                <span style="font-size: 0.85rem; color: {{ $avg['trend'] === 'up' ? 'var(--kn-success)' : 'var(--kn-danger)' }}; margin-left: 4px;">
                     {{ $avg['trend'] === 'up' ? '↑' : '↓' }}
                 </span>
             </span>

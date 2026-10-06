@@ -40,9 +40,9 @@
                             <td class="text-brand-400 px-4 py-3 whitespace-nowrap">
                                 {{ $activity->created_at?->format('M d, Y H:i') }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-white">{{ $activity->user_name }}</td>
+                            <td class="text-brand-50 px-4 py-3 font-medium">{{ $activity->user_name }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white whitespace-nowrap {{ $activity->action->pillClass() }}">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap {{ $activity->action->pillClass() }}">
                                     {{ $activity->action->getLabel() }}
                                 </span>
                             </td>

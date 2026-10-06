@@ -24,27 +24,27 @@
  */
 .fi-btn.fi-color-primary:not(.fi-outlined),
 .fi-btn-primary {
-    background: var(--kn-honey) !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: var(--kn-on-honey) !important;
+    background: var(--kn-honey);
+    border: none;
+    box-shadow: none;
+    color: var(--kn-on-honey);
     font-weight: 600;
 }
 
 .fi-btn.fi-color-primary:not(.fi-outlined):hover,
 .fi-btn-primary:hover {
-    background: var(--kn-honey-hover) !important;
-    color: var(--kn-on-honey) !important;
+    background: var(--kn-honey-hover);
+    color: var(--kn-on-honey);
 }
 
 .fi-btn.fi-color-primary:not(.fi-outlined):focus-visible,
 .fi-btn-primary:focus-visible {
-    box-shadow: var(--kn-shadow-focus) !important;
+    box-shadow: var(--kn-shadow-focus);
 }
 
 .fi-btn.fi-color-primary:not(.fi-outlined) .fi-icon,
 .fi-btn.fi-color-primary:not(.fi-outlined) svg,
 .fi-btn-primary .fi-icon,
 .fi-btn-primary svg {
-    color: var(--kn-on-honey) !important;
+    color: var(--kn-on-honey);
 }

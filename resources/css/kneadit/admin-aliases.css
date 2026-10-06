@@ -1,11 +1,18 @@
 /*
- * Admin aliases: the older variable names the admin partials, the platform
- * stylesheet and the Tailwind brand utilities still use, pointed at the
- * design system tokens in tokens.css. Everything resolves through --kn-*, so
- * it follows the light/dark switch with no per-theme copies.
+ * Admin aliases: the older variable names still in use, pointed at the design
+ * system tokens in tokens.css. Everything resolves through --kn-*, so it
+ * follows the light/dark switch with no per-theme copies. The bakery admin
+ * partials no longer read them; what is left is read by:
+ *   - the Tailwind brand utilities (bg-brand-800, text-brand-300, ...) in the
+ *     tenant admin Blade views, through the @theme block in
+ *     filament/admin/theme.css;
+ *   - the dashboard-config page and the widget preview component;
+ *   - public/css/central-admin.css and the central widget catalog
+ *     (--border-*, --hover-bg, --active-bg, --scrollbar-thumb, --focus-ring,
+ *     --thead-bg).
  *
- * Temporary: later PRs rewrite those partials onto --kn-* directly, and this
- * file goes with them. Pick tokens here, not hex.
+ * Temporary: it goes when those views and central-admin.css are rebuilt on
+ * --kn-* directly. Pick tokens here, not hex.
  *
  * The central-only --platform-*, --accent and --accent-light aliases are in
  * resources/css/filament/central/theme.css.
@@ -27,8 +34,6 @@
     --brand-150: var(--kn-surface-hover);
     --brand-100: var(--kn-ink);
     --brand-50: var(--kn-ink);
-
-    --accent-gold: var(--kn-honey-text);
 
     /* Chrome helpers (borders, hover, focus, table heads, scrollbars). */
     --border-subtle: var(--kn-border);

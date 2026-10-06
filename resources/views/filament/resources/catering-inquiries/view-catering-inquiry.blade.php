@@ -9,7 +9,7 @@
             <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                 Catering Inquiry
             </div>
-            <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">
+            <h2 class="text-brand-50 truncate text-[1.35rem] leading-tight font-bold">
                 {{ $viewModel->inquiry->customer_name }}
             </h2>
             <div class="text-brand-400 mt-1 text-[0.85rem]">
@@ -40,7 +40,7 @@
 
         <div class="shrink-0 text-right">
             <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Quoted</div>
-            <div class="text-[1.5rem] leading-none font-bold text-white tabular-nums">
+            <div class="text-brand-50 text-[1.5rem] leading-none font-bold tabular-nums">
                 {{ $viewModel->inquiry->quoted_amount?->formatted() ?? '—' }}
             </div>
         </div>
@@ -152,7 +152,7 @@
                         <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                             Linked order
                         </div>
-                        <div class="font-mono text-[0.95rem] font-bold text-white">
+                        <div class="text-brand-50 font-mono text-[0.95rem] font-bold">
                             {{ $viewModel->order->order_number }}
                         </div>
                         <div class="text-brand-400 mt-0.5 text-[0.8rem]">
@@ -210,7 +210,7 @@
                     Not received.
                     @if ($viewModel->suggestedDeposit !== null)
                         Suggested deposit:
-                        <span class="font-semibold text-white tabular-nums">${{ number_format($viewModel->suggestedDeposit, 2) }}</span>
+                        <span class="text-brand-50 font-semibold tabular-nums">${{ number_format($viewModel->suggestedDeposit, 2) }}</span>
                         <span class="text-brand-400">({{ $viewModel->depositPercent }}% of quote)</span>
                     @endif
                 </div>

@@ -36,8 +36,8 @@
                 style="
                     margin-top: 8px;
                     padding: 6px 10px;
-                    background: rgba(232, 176, 74, 0.15);
-                    border: 1px solid rgba(232, 176, 74, 0.3);
+                    background: var(--kn-warning-tint);
+                    border: 1px solid var(--kn-warning);
                     border-radius: 6px;
                     font-size: 0.7rem;
                     color: var(--pw-card-text);

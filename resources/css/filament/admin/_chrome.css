@@ -31,6 +31,16 @@
     color: var(--kn-muted);
 }
 
+/* Card (x-tenant-admin.card): a `surface` card with a hairline, like every other card. */
+.tenant-admin-card {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+    color: var(--kn-ink);
+    overflow: hidden;
+}
+
 /* Card header strip (x-tenant-admin.card): a `surface-sunken` well with a hairline. */
 [data-admin-gradient-header] {
     align-items: center;
@@ -50,6 +60,34 @@
 
 [data-admin-gradient-header] p {
     color: var(--kn-muted);
+}
+
+/* Dashboard settings gear beside the global search: `muted` until hovered. */
+.dashboard-settings-link {
+    align-items: center;
+    border-radius: var(--kn-radius-md);
+    color: var(--kn-muted);
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    transition: background-color 0.15s;
+    width: 2.25rem;
+}
+
+.dashboard-settings-link:hover,
+.dashboard-settings-link:focus-visible {
+    background: var(--kn-surface-hover);
+    color: var(--kn-ink);
+}
+
+.dashboard-settings-link:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
+}
+
+.dashboard-settings-link-icon {
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 /* Dropdown panels, including the user menu: `surface` with a hairline and the pop shadow. */

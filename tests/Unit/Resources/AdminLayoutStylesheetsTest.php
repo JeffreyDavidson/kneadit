@@ -6,6 +6,12 @@ dataset('rebuiltAdminPartials', [
     'layout' => 'css/filament/admin/_layout.css',
     'chrome' => 'css/filament/admin/_chrome.css',
     'forms' => 'css/filament/admin/_forms.css',
+    'tables' => 'css/filament/admin/_tables.css',
+    'modals' => 'css/filament/admin/_modals.css',
+    'notifications' => 'css/filament/admin/_notifications.css',
+    'widgets' => 'css/filament/admin/_widgets.css',
+    'widget cards' => 'css/filament/shared/widget-cards.css',
+    'design system overrides' => 'css/kneadit/filament.css',
 ]);
 
 /**
@@ -36,7 +42,7 @@ test('the rebuilt admin partials read the design system tokens directly', functi
     $css = adminPartialDeclarations($path);
 
     expect($css)->toContain('var(--kn-')
-        ->and($css)->not->toMatch('/var\(--(brand|accent-gold|border-subtle|border-medium|hover-bg|active-bg|focus-ring|scrollbar-thumb|thead-bg|status)/');
+        ->and($css)->not->toMatch('/var\(--(brand|accent-gold|border-subtle|border-medium|hover-bg|active-bg|focus-ring|scrollbar-thumb|thead-bg|status|platform|accent)/');
 })->with('rebuiltAdminPartials');
 
 test('every alias variable left in admin-aliases.css is still used by a stylesheet or view', function () {

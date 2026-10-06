@@ -33,7 +33,6 @@ dataset('kneaditStaticTokens', [
 dataset('legacyAdminVariables', [
     '--brand-50', '--brand-100', '--brand-150', '--brand-200', '--brand-300', '--brand-400',
     '--brand-500', '--brand-600', '--brand-700', '--brand-800', '--brand-900',
-    '--accent-gold',
     '--border-subtle', '--border-medium', '--hover-bg', '--active-bg', '--scrollbar-thumb',
     '--focus-ring', '--thead-bg',
 ]);

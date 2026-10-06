@@ -10,19 +10,19 @@
     {{-- Page banner --}}
     <x-tenant-admin.page-banner title="Customer Reorder Reminders">
         <div class="flex items-center gap-2.5">
-            <span class="text-[0.8rem] text-white/60">Inactive for</span>
+            <span class="text-brand-400 text-[0.8rem]">Inactive for</span>
             <select
                 wire:model.live="threshold"
-                class="min-w-[7rem] cursor-pointer appearance-none rounded-full border border-white/25 bg-white/15 py-1.5 pr-8 pl-3.5 text-[0.8rem] font-semibold text-white"
+                class="text-brand-50 min-w-[7rem] cursor-pointer appearance-none rounded-full border border-(--kn-border-control) bg-(--kn-surface) py-1.5 pr-8 pl-3.5 text-[0.8rem] font-semibold"
                 style="
-                    background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>');
+                    background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a07a55%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>');
                     background-repeat: no-repeat;
                     background-position: right 0.625rem center;
                     background-size: 0.75rem;
                 "
             >
                 @foreach ([30, 60, 90, 120] as $days)
-                <option value="{{ $days }}" class="text-brand-900 bg-white">{{ $days }}+ days</option>
+                <option value="{{ $days }}" class="text-brand-50 bg-(--kn-surface)">{{ $days }}+ days</option>
                 @endforeach
             </select>
         </div>

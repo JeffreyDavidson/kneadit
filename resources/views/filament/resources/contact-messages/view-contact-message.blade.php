@@ -11,7 +11,7 @@
                 <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                     Contact Message
                 </div>
-                <h2 class="text-[1.35rem] leading-tight font-bold text-white">{{ $message->subject }}</h2>
+                <h2 class="text-brand-50 text-[1.35rem] leading-tight font-bold">{{ $message->subject }}</h2>
                 <div class="text-brand-400 mt-1 text-[0.85rem]">
                     From <span class="text-brand-200 font-semibold">{{ $message->name }}</span> ·
                     <a
@@ -42,7 +42,7 @@
                         {{ \Illuminate\Support\Str::of($message->name)->substr(0, 1)->upper() }}
                     </div>
                     <div class="min-w-0">
-                        <div class="truncate text-sm font-semibold text-white">{{ $message->name }}</div>
+                        <div class="text-brand-50 truncate text-sm font-semibold">{{ $message->name }}</div>
                         <div class="text-brand-400 truncate text-xs">{{ $message->email }}</div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                             {{ \Illuminate\Support\Str::of($reply->sentBy?->name ?? 'You')->substr(0, 1)->upper() }}
                         </div>
                         <div class="min-w-0">
-                            <div class="truncate text-sm font-semibold text-white">
+                            <div class="text-brand-50 truncate text-sm font-semibold">
                                 {{ $reply->sentBy?->name ?? 'Staff' }}
                                 <span class="text-brand-300 font-normal">replied</span>
                             </div>

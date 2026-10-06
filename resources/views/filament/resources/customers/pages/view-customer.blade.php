@@ -42,7 +42,7 @@
             </div>
             <div class="min-w-0 flex-1">
                 <div class="mb-1 flex items-center gap-2">
-                    <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">{{ $customer->name }}</h2>
+                    <h2 class="text-brand-50 truncate text-[1.35rem] leading-tight font-bold">{{ $customer->name }}</h2>
                 </div>
                 @if ($detail['email'])
                     <a
@@ -101,7 +101,7 @@
                     type="button"
                     @click="tab = '{{ $key }}'"
                     :class="tab === '{{ $key }}'
-                        ? 'text-white border-brand-300'
+                        ? 'text-brand-50 border-brand-300'
                         : 'text-brand-400 border-transparent hover:text-brand-200'"
                     class="-mb-px inline-flex cursor-pointer items-center gap-2 border-b-2 px-4 py-2.5 text-[0.85rem] font-semibold whitespace-nowrap transition-colors"
                 >
@@ -140,13 +140,13 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Value
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">@money($stats['total_spent'])</div>
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">@money($stats['total_spent'])</div>
                 </div>
                 <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Orders
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['total_orders']) }}
                     </div>
                 </div>
@@ -154,13 +154,15 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Avg Order
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">@money($stats['avg_order_value'])</div>
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
+                        @money($stats['avg_order_value'])
+                    </div>
                 </div>
                 <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-4">
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Points
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['total_points'] ?? 0) }}
                     </div>
                 </div>
@@ -168,7 +170,7 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Points
                     </div>
-                    <div class="text-[1.5rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.5rem] leading-none font-bold">
                         {{ number_format($stats['lifetime_points'] ?? 0) }}
                     </div>
                 </div>
@@ -176,7 +178,7 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Last Order
                     </div>
-                    <div class="mt-0.5 text-[0.95rem] leading-tight font-semibold text-white">
+                    <div class="text-brand-50 mt-0.5 text-[0.95rem] leading-tight font-semibold">
                         {{ ($stats['last_order_at'] ?? null) ? Carbon::parse($stats['last_order_at'])->diffForHumans() : 'Never' }}
                     </div>
                 </div>
@@ -192,7 +194,7 @@
                         @foreach ($contactRows as $r)
                             <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">{{ $r['label'] }}</dt>
-                                <dd class="text-white text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
+                                <dd class="text-brand-50 text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
                                     {{ $r['value'] }}
                                 </dd>
                             </div>
@@ -208,7 +210,7 @@
                         @foreach ($accountRows as $r)
                             <div class="flex items-start justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                 <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">{{ $r['label'] }}</dt>
-                                <dd class="text-white text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
+                                <dd class="text-brand-50 text-[0.85rem] font-semibold text-right truncate {{ $r['mono'] ? 'font-mono text-brand-200' : '' }}">
                                     {{ $r['value'] }}
                                 </dd>
                             </div>
@@ -255,9 +257,9 @@
                                             {{ $order['order_number'] }}
                                         </td>
                                         <td class="text-brand-400 py-2.5 pr-4">{{ $order['date'] ?? '—' }}</td>
-                                        <td class="py-2.5 pr-4 text-white">{{ $order['status'] }}</td>
+                                        <td class="text-brand-50 py-2.5 pr-4">{{ $order['status'] }}</td>
                                         <td class="text-brand-400 py-2.5 pr-4">{{ $order['payment_status'] }}</td>
-                                        <td class="py-2.5 pr-4 text-right font-semibold text-white">
+                                        <td class="text-brand-50 py-2.5 pr-4 text-right font-semibold">
                                             {{ $order['total'] }}
                                         </td>
                                     </tr>
@@ -277,7 +279,7 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Current Balance
                     </div>
-                    <div class="text-[1.75rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.75rem] leading-none font-bold">
                         {{ number_format($stats['total_points'] ?? 0) }}
                     </div>
                     <div class="text-brand-400 mt-1 text-[0.75rem]">Points available to redeem</div>
@@ -286,7 +288,7 @@
                     <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Lifetime Earned
                     </div>
-                    <div class="text-[1.75rem] leading-none font-bold text-white">
+                    <div class="text-brand-50 text-[1.75rem] leading-none font-bold">
                         {{ number_format($stats['lifetime_points'] ?? 0) }}
                     </div>
                     <div class="text-brand-400 mt-1 text-[0.75rem]">Total points credited over time</div>
@@ -366,7 +368,7 @@
                         wire:model="noteBody"
                         rows="3"
                         placeholder="What happened? What's worth remembering about this customer?"
-                        class="bg-brand-800 border-brand-700 focus:border-brand-300 focus:ring-brand-300/15 w-full rounded-lg border px-3 py-2 text-[0.875rem] text-white focus:ring-2 focus:outline-none"
+                        class="bg-brand-800 border-brand-700 focus:border-brand-300 focus:ring-brand-300/15 text-brand-50 w-full rounded-lg border px-3 py-2 text-[0.875rem] focus:ring-2 focus:outline-none"
                     ></textarea>
                     @error('noteBody')
                         <p class="mt-1.5 text-[0.8rem] text-red-400">{{ $message }}</p>
@@ -414,7 +416,7 @@
                                         <div class="bg-brand-300/15 border-brand-300/25 text-brand-300 flex h-7 w-7 items-center justify-center rounded-full border text-[0.7rem] font-bold">
                                             {{ strtoupper(substr($authorName, 0, 2)) }}
                                         </div>
-                                        <span class="text-[0.85rem] font-semibold text-white">{{ $authorName }}</span>
+                                        <span class="text-brand-50 text-[0.85rem] font-semibold">{{ $authorName }}</span>
                                         <span class="text-brand-400 text-[0.75rem]">{{ $note->created_at?->diffForHumans() }}</span>
                                     </div>
                                     <button
