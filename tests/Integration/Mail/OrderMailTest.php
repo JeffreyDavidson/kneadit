@@ -1,10 +1,13 @@
 <?php
 
+use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\NewOrderNotificationMail;
 use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
+use App\Models\Marketing\EmailTemplate;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -33,3 +36,28 @@ test('order mailables have correct envelope subjects', function (string $mailCla
     'OrderStatusMail (Cancelled)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Cancelled], 'Cancelled'],
     'NewOrderNotificationMail' => [NewOrderNotificationMail::class, fn () => [test()->order], 'New Order #'],
 ]);
+
+test('order mail custom templates render the order total once with a single dollar sign', function (EmailTemplateType $type, callable $mail) {
+    $order = Order::factory()->create(['total' => Money::fromDollars(12)]);
+    EmailTemplate::factory()->create([
+        'email_type' => $type,
+        'subject' => 'Total {order_total}',
+        'body' => '<p>Total {order_total}</p>',
+    ]);
+
+    $rendered = $mail($order);
+
+    expect($rendered->envelope()->subject)->toBe('Total $12.00')
+        ->and($rendered->content()->with['customBody'])->toBe('<p>Total $12.00</p>');
+})->with([
+    'placed' => [EmailTemplateType::OrderPlaced, fn (Order $order) => new OrderPlacedMail($order)],
+    'status' => [EmailTemplateType::OrderConfirmed, fn (Order $order) => new OrderStatusMail($order, OrderStatus::Confirmed)],
+]);
+
+test('the new order notification subject shows the total once with a single dollar sign', function () {
+    $order = Order::factory()->create(['total' => Money::fromDollars(12)]);
+
+    $subject = new NewOrderNotificationMail($order)->envelope()->subject;
+
+    expect($subject)->toBe("New Order #{$order->order_number} — \$12.00");
+});
