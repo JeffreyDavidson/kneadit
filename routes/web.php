@@ -12,3 +12,4 @@ require __DIR__.'/central/auth.php';
 require __DIR__.'/central/platform.php';
 require __DIR__.'/central/marketing.php';
 require __DIR__.'/central/seo.php';
+require __DIR__.'/central/mail-previews.php';
