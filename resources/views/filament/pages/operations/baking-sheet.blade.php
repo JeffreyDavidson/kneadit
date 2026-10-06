@@ -5,12 +5,12 @@
 
         <!-- Baking Items List -->
         <div
-            class="bg-brand-800 border-brand-700/60 rounded-xl border print:rounded-none print:border-gray-300 print:bg-white"
+            class="border-brand-700/60 rounded-xl border bg-(--kn-surface-sunken) print:rounded-none print:border-gray-300 print:bg-white"
             id="baking-sheet"
         >
             <div class="p-6 print:p-4">
                 <div class="mb-6 flex items-center justify-between print:mb-4">
-                    <h3 class="text-xl font-bold text-white print:text-gray-900">
+                    <h3 class="text-xl font-bold text-(--kn-ink) print:text-gray-900">
                         Baking Sheet - {{ \Carbon\Carbon::parse($selectedDate)->format('F j, Y') }}
                     </h3>
                     <div class="text-brand-400 text-sm print:hidden print:text-gray-500">
@@ -31,7 +31,7 @@
                         @foreach ($this->bakingItems as $item)
                             <div class="border-brand-700/60 rounded-lg border p-4 print:border-gray-400">
                                 <div class="mb-2 flex items-start justify-between">
-                                    <h4 class="text-lg font-semibold text-white print:text-gray-900">
+                                    <h4 class="text-lg font-semibold text-(--kn-ink) print:text-gray-900">
                                         {{ $item->product_name }}
                                     </h4>
                                     <span class="bg-brand-300/15 text-brand-300 border-brand-300/30 rounded-full border px-3 py-1 text-sm font-medium print:border-gray-300 print:bg-gray-100 print:text-gray-800">

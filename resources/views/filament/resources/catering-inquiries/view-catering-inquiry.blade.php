@@ -4,12 +4,12 @@
 
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border p-6 md:flex-row md:items-center">
+    <div class="border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border bg-(--kn-surface) p-6 md:flex-row md:items-center">
         <div class="min-w-0 flex-1">
             <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                 Catering Inquiry
             </div>
-            <h2 class="truncate text-[1.35rem] leading-tight font-bold text-white">
+            <h2 class="text-brand-50 truncate text-[1.35rem] leading-tight font-bold">
                 {{ $viewModel->inquiry->customer_name }}
             </h2>
             <div class="text-brand-400 mt-1 text-[0.85rem]">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-            <span class="bg-brand-800 border-brand-700 text-brand-200 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] uppercase">
+            <span class="border-brand-700 text-brand-200 inline-flex items-center gap-1.5 rounded-full border bg-(--kn-surface-sunken) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] uppercase">
                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                 {{ $viewModel->status->getLabel() }}
             </span>
@@ -40,7 +40,7 @@
 
         <div class="shrink-0 text-right">
             <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Quoted</div>
-            <div class="text-[1.5rem] leading-none font-bold text-white tabular-nums">
+            <div class="text-brand-50 text-[1.5rem] leading-none font-bold tabular-nums">
                 {{ $viewModel->inquiry->quoted_amount?->formatted() ?? '—' }}
             </div>
         </div>
@@ -146,13 +146,13 @@
             @if ($viewModel->order)
                 <a
                     href="{{ \App\Filament\Resources\Orders\OrderResource::getUrl('view', ['record' => $viewModel->order]) }}"
-                    class="bg-brand-800 border-brand-700/60 hover:border-brand-300/40 group -mx-2 flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors"
+                    class="border-brand-700/60 hover:border-brand-300/40 group -mx-2 flex items-center justify-between gap-4 rounded-lg border bg-(--kn-surface-sunken) px-4 py-3 transition-colors"
                 >
                     <div class="min-w-0">
                         <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                             Linked order
                         </div>
-                        <div class="font-mono text-[0.95rem] font-bold text-white">
+                        <div class="text-brand-50 font-mono text-[0.95rem] font-bold">
                             {{ $viewModel->order->order_number }}
                         </div>
                         <div class="text-brand-400 mt-0.5 text-[0.8rem]">
@@ -167,7 +167,7 @@
                         Awaiting confirmation. Confirming creates an order so the rest of fulfillment (payment,
                         messages, status) is tracked there.
                     @elseif ($viewModel->status === CateringInquiryStatus::Cancelled)
-                        <span class="font-semibold text-red-400">Cancelled.</span>
+                        <span class="font-semibold text-(--kn-danger)">Cancelled.</span>
                     @else
                         Send a quote first; confirmation becomes available once the customer has been quoted.
                     @endif
@@ -210,7 +210,7 @@
                     Not received.
                     @if ($viewModel->suggestedDeposit !== null)
                         Suggested deposit:
-                        <span class="font-semibold text-white tabular-nums">${{ number_format($viewModel->suggestedDeposit, 2) }}</span>
+                        <span class="text-brand-50 font-semibold tabular-nums">${{ number_format($viewModel->suggestedDeposit, 2) }}</span>
                         <span class="text-brand-400">({{ $viewModel->depositPercent }}% of quote)</span>
                     @endif
                 </div>

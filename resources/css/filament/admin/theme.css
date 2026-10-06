@@ -6,6 +6,8 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../app/Enums/Engagement/LoyaltyPointType.php';
+@source '../../../../app/Enums/Operations/ActivityAction.php';
+@source '../../../../app/ViewModels/Filament';
 
 /*
  * Tailwind brand utilities (e.g. bg-brand-700) expand to

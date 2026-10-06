@@ -1,7 +1,10 @@
 @props(['width' => 'w-[360px]', 'closeAction' => 'closeEditModal'])
 
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" wire:click.self="{{ $closeAction }}">
-    <div {{ $attributes->class(['bg-white rounded-xl border border-brand-200 p-6 max-w-[90vw]', $width]) }}>
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-(--kn-espresso)/55"
+    wire:click.self="{{ $closeAction }}"
+>
+    <div {{ $attributes->class(['bg-(--kn-surface) rounded-xl border border-(--kn-border) shadow-(--kn-shadow-pop) p-6 max-w-[90vw]', $width]) }}>
         {{ $slot }}
     </div>
 </div>

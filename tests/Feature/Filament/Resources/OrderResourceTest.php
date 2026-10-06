@@ -106,8 +106,8 @@ test('can render the view order page', function () {
         ->assertSee('Thank you, see you soon.')
         ->assertSee('Custom bread')
         ->assertSee('$25.00')
-        ->assertSeeHtml('bg-amber-500/15')
-        ->assertSeeHtml('bg-red-500/15')
+        ->assertSeeHtml('bg-(--kn-warning-tint)')
+        ->assertSeeHtml('bg-(--kn-danger-tint)')
         ->assertSeeHtml('flex justify-end')
         ->assertSeeHtml('flex justify-start');
 });

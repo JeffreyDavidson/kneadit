@@ -10,9 +10,9 @@
         </div>
 
         {{-- Activity Table --}}
-        <div class="bg-brand-800 border-brand-700/60 overflow-hidden rounded-xl border">
+        <div class="border-brand-700/60 overflow-hidden rounded-xl border bg-(--kn-surface-sunken)">
             <table class="w-full text-sm">
-                <thead class="bg-brand-900/50 border-brand-700/60 border-b">
+                <thead class="border-brand-700/60 border-b bg-(--kn-surface-sunken)">
                     <tr>
                         <th class="text-brand-300 px-4 py-3 text-left text-xs font-semibold tracking-wider uppercase">
                             Time
@@ -40,9 +40,9 @@
                             <td class="text-brand-400 px-4 py-3 whitespace-nowrap">
                                 {{ $activity->created_at?->format('M d, Y H:i') }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-white">{{ $activity->user_name }}</td>
+                            <td class="text-brand-50 px-4 py-3 font-medium">{{ $activity->user_name }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white whitespace-nowrap {{ $activity->action->pillClass() }}">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap {{ $activity->action->pillClass() }}">
                                     {{ $activity->action->getLabel() }}
                                 </span>
                             </td>
@@ -65,7 +65,7 @@
                         </tr>
                         @if ($expandedId === $activity->id && $activity->properties)
                             <tr>
-                                <td colspan="6" class="bg-brand-900/40 px-4 py-3">
+                                <td colspan="6" class="bg-(--kn-surface-sunken) px-4 py-3">
                                     <div class="space-y-1 font-mono text-xs">
                                         <p class="text-brand-300 mb-2 font-semibold">Changes:</p>
                                         @php $props = is_array($activity->properties) ? $activity->properties : json_decode($activity->properties, true); @endphp

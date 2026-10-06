@@ -1,46 +1,34 @@
 /* ===================================================================
-   KneadIt — Dashboard widget card primitives
+   KneadIt: dashboard widget card primitives
    ===================================================================
-   Shared classes used by both the central WidgetCatalog page and the
-   tenant dashboard widgets via <x-tenant-admin.dashboard.*> components.
-
-   Tokens default to brand colors that work on either panel; central
-   theme overrides are applied via --platform-* tokens when available.
+   Shared classes used by the central WidgetCatalog page and the tenant
+   dashboard widgets (<x-tenant-admin.dashboard.*>). Built on the design
+   system tokens (kneadit/tokens.css), so they read in light and dark:
+   cards are `surface` with a `border` hairline and `shadow-card`, titles
+   `ink`, secondary copy `ink-2`, captions `muted`, links and small gold
+   text `honey-text`.
    =================================================================== */
 
 :root {
-    /* Card surface — one shade lighter than the page bg so cards
-       read as elevated. Matches the topbar bg in tenant; central
-       cascades through --platform-* tokens. */
-    --pw-card-bg: var(--platform-900, var(--brand-800, #4a3225));
-    --pw-card-grad-start: var(--platform-800, var(--brand-800, #2a1f18));
-    --pw-card-grad-end: var(--platform-700, var(--brand-700, #4a3225));
-    /* Subtle gold-on-dark outline matches central's <x-central.card>
-       (`border border-honey/12`) — keeps the card the same background
-       as the page, but distinguished from it by a 12%-alpha accent
-       outline. Cards "lift" off the page via this border, not a
-       background difference. */
-    --pw-card-border: rgba(212, 165, 116, 0.12);
-    --pw-card-border-subtle: var(--border-subtle, rgba(212, 165, 116, 0.15));
-    --pw-card-accent: var(--accent, var(--brand-300, #d4a574));
-    --pw-card-accent-light: var(--accent-light, #e8b04a);
-    --pw-card-text: var(--platform-100, var(--brand-50, #fdf8f2));
-    --pw-card-text-soft: var(--platform-200, var(--brand-100, #f5e6d0));
-    --pw-card-text-row: var(--platform-300, var(--brand-200, #e8d0b0));
-    /* On the dark brown tenant card, --brand-500 (#a08060) is mid-brown
-       and renders as low-contrast mush. Bump the muted fallback to
-       --brand-300 (honey) so muted-text-on-dark stays legible. Central
-       still uses --platform-400 which is correctly tuned for that theme. */
-    --pw-card-text-muted: var(--platform-400, var(--brand-300, #d4a574));
+    --pw-card-bg: var(--kn-surface);
+    --pw-card-grad-start: var(--kn-surface-sunken);
+    --pw-card-border: var(--kn-border);
+    --pw-card-border-subtle: var(--kn-border);
+    --pw-card-accent: var(--kn-honey-text);
+    --pw-card-accent-light: var(--kn-honey);
+    --pw-card-text: var(--kn-ink);
+    --pw-card-text-soft: var(--kn-ink-2);
+    --pw-card-text-row: var(--kn-ink-2);
+    --pw-card-text-muted: var(--kn-muted);
 }
 
 /* ===== Card shell ===== */
 .preview-widget {
-    border-radius: 10px;
+    border-radius: var(--kn-radius-lg);
     overflow: hidden;
     background: var(--pw-card-bg);
     border: 1px solid var(--pw-card-border);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--kn-shadow-card);
 }
 
 /* Header sits on the card's own bg (matches central's `<x-central.card>`
@@ -67,8 +55,8 @@
     line-height: 1;
 }
 .preview-widget-header span:not(.pw-icon) {
-    color: var(--pw-card-accent);
-    font-size: 0.75rem;
+    color: var(--pw-card-text);
+    font-size: 0.8125rem;
     font-weight: 600;
     line-height: 1.2;
 }
@@ -77,7 +65,7 @@
     align-items: center;
     justify-content: center;
     min-height: 28px;
-    border-radius: 7px;
+    border-radius: var(--kn-radius-md);
     padding: 0 9px;
     color: var(--pw-card-accent);
     border: 1px solid var(--pw-card-border-subtle);
@@ -158,8 +146,8 @@
     text-align: center;
     color: var(--pw-card-text-muted);
     border: 1px dashed var(--pw-card-border-subtle);
-    border-radius: 9px;
-    background: color-mix(in srgb, var(--pw-card-accent) 7%, transparent);
+    border-radius: var(--kn-radius-md);
+    background: var(--kn-surface-sunken);
 }
 .pw-empty-state svg {
     width: 1.4rem;
@@ -189,7 +177,7 @@
 .pw-bar-fill {
     height: 100%;
     border-radius: 3px;
-    background: linear-gradient(90deg, var(--pw-card-accent), var(--pw-card-accent-light));
+    background: var(--kn-honey);
 }
 
 /* ===== Stat card (Filament-style stat tile: header-less card with
@@ -199,11 +187,11 @@
 .stat-card {
     background: var(--pw-card-bg);
     border: 1px solid var(--pw-card-border);
-    border-radius: 10px;
+    border-radius: var(--kn-radius-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--kn-shadow-card);
 }
 .stat-card-content {
     padding: 18px 18px 14px;
@@ -245,7 +233,7 @@
 }
 .pw-line-bar {
     flex: 1;
-    background: var(--pw-card-border);
+    background: var(--kn-border-control);
     border-radius: 2px 2px 0 0;
     min-height: 4px;
 }
@@ -263,16 +251,14 @@
     align-items: center;
     min-height: 108px;
     padding: 18px;
-    border-radius: 10px;
-    background:
-        linear-gradient(135deg, color-mix(in srgb, var(--pw-card-accent) 12%, transparent), transparent 42%),
-        var(--pw-card-bg);
+    border-radius: var(--kn-radius-lg);
+    background: var(--pw-card-bg);
     border: 1px solid var(--pw-card-border);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--kn-shadow-card);
 }
 .dashboard-action-panel__eyebrow {
     margin-bottom: 5px;
-    color: var(--pw-card-accent);
+    color: var(--pw-card-text-muted);
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -302,11 +288,11 @@
     justify-content: center;
     gap: 7px;
     min-height: 38px;
-    border-radius: 8px;
+    border-radius: var(--kn-radius-md);
     padding: 0 14px;
-    border: 1px solid var(--pw-card-border-subtle);
-    color: var(--pw-card-accent);
-    background: color-mix(in srgb, var(--pw-card-accent) 8%, transparent);
+    border: 1px solid var(--kn-border-control);
+    color: var(--pw-card-text);
+    background: var(--kn-surface-hover);
     font-size: 0.78rem;
     font-weight: 750;
     text-decoration: none;
@@ -314,18 +300,21 @@
 }
 .dashboard-action-button:hover {
     transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--pw-card-accent) 55%, transparent);
-    background: color-mix(in srgb, var(--pw-card-accent) 14%, transparent);
-    color: var(--pw-card-text);
+    background: color-mix(in srgb, var(--kn-surface-hover) 80%, var(--kn-border-control));
+}
+.dashboard-action-button:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
 }
 .dashboard-action-button--primary {
-    color: var(--pw-card-bg);
-    border-color: var(--pw-card-accent);
-    background: var(--pw-card-accent);
+    color: var(--kn-on-honey);
+    border-color: var(--kn-honey);
+    background: var(--kn-honey);
 }
 .dashboard-action-button--primary:hover {
-    color: var(--pw-card-bg);
-    background: var(--pw-card-accent-light);
+    color: var(--kn-on-honey);
+    border-color: var(--kn-honey-hover);
+    background: var(--kn-honey-hover);
 }
 
 @media (min-width: 768px) {

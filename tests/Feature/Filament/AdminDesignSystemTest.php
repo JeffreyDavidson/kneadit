@@ -36,13 +36,21 @@ test('the panel uses Instrument Sans for body text and Young Serif as its displa
         ->and($panel->getSerifFontFamily())->toBe('Young Serif');
 })->with('designSystemPanels');
 
-test('the panel keeps dark mode forced until the admin partials are rebuilt', function (string $panel) {
-    $panel = Filament::getPanel($panel);
+test('the bakery admin lets people switch theme and starts in light mode', function () {
+    $panel = Filament::getPanel('admin');
+
+    expect($panel->hasDarkMode())->toBeTrue()
+        ->and($panel->hasDarkModeForced())->toBeFalse()
+        ->and($panel->getDefaultThemeMode())->toBe(ThemeMode::Light);
+});
+
+test('the platform admin keeps dark mode forced until its stylesheet is rebuilt', function () {
+    $panel = Filament::getPanel('central');
 
     expect($panel->hasDarkMode())->toBeTrue()
         ->and($panel->hasDarkModeForced())->toBeTrue()
         ->and($panel->getDefaultThemeMode())->toBe(ThemeMode::Dark);
-})->with('designSystemPanels');
+});
 
 test('the panel colour palettes are generated from the design system tokens', function (string $panel, string $name, string $hex) {
     expect(Filament::getPanel($panel)->getColors()[$name])->toBe(Color::hex($hex));

@@ -14,7 +14,7 @@
     @foreach ($days as $day)
         @php
             $pct = $day['data']['percentage'];
-            $barColor = $pct >= 90 ? '#dc2626' : ($pct >= 70 ? '#e8b04a' : 'var(--pw-card-accent)');
+            $barColor = $pct >= 90 ? 'var(--kn-danger)' : ($pct >= 70 ? 'var(--kn-warning)' : 'var(--pw-card-accent)');
         @endphp
         <div style="margin-bottom: 8px">
             <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px">
@@ -32,15 +32,15 @@
             style="
                 margin-top: 10px;
                 padding: 6px 10px;
-                background: rgba(220, 38, 38, 0.1);
-                border: 1px solid rgba(220, 38, 38, 0.3);
+                background: var(--kn-danger-tint);
+                border: 1px solid var(--kn-danger);
                 border-radius: 6px;
             "
         >
             <div
                 style="
                     font-size: 0.55rem;
-                    color: #d4574a;
+                    color: var(--kn-danger);
                     text-transform: uppercase;
                     font-weight: 600;
                     margin-bottom: 4px;

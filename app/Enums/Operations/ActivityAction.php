@@ -33,9 +33,9 @@ enum ActivityAction: string implements HasColor, HasLabel
     public function pillClass(): string
     {
         return match ($this) {
-            self::Created => 'bg-green-500',
-            self::Updated => 'bg-blue-500',
-            self::Deleted => 'bg-red-500',
+            self::Created => 'bg-(--kn-success-tint) text-(--kn-success)',
+            self::Updated => 'bg-(--kn-info-tint) text-(--kn-info)',
+            self::Deleted => 'bg-(--kn-danger-tint) text-(--kn-danger)',
         };
     }
 }

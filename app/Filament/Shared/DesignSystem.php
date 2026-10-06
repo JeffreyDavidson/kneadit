@@ -11,9 +11,9 @@ use Filament\Support\Colors\Color;
 use InvalidArgumentException;
 
 /**
- * The KneadIt design system settings both admin panels share: fonts, colour
- * palettes and the light/dark switch. The colours and fonts mirror
- * resources/css/kneadit/tokens.css.
+ * The KneadIt design system settings both admin panels share: fonts and colour
+ * palettes, plus the light/dark mode each panel starts with. The colours and
+ * fonts mirror resources/css/kneadit/tokens.css.
  */
 final class DesignSystem
 {
@@ -52,9 +52,24 @@ final class DesignSystem
                 'info' => Color::hex(self::INFO),
                 'gray' => self::warmGray(),
             ])
-            // Forced dark: the admin partials hard-code dark surfaces and white text, so a
-            // light theme (and the user-menu switch) would be unreadable. Un-force this and
-            // default to light once the partials are rebuilt on the --kn-* tokens.
+            ->darkMode(true);
+    }
+
+    /**
+     * Light by default, with the Light / Dark / System switch in the user menu.
+     */
+    public static function lightByDefault(Panel $panel): Panel
+    {
+        return $panel->defaultThemeMode(ThemeMode::Light);
+    }
+
+    /**
+     * Dark only, with no switch. For a panel whose stylesheet is not yet
+     * readable in light.
+     */
+    public static function forcedDark(Panel $panel): Panel
+    {
+        return $panel
             ->darkMode(true, isForced: true)
             ->defaultThemeMode(ThemeMode::Dark);
     }

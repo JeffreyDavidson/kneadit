@@ -48,10 +48,12 @@
                         >
                             {{ $stat['label'] }}
                         </div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.1">
+                        <div style="font-size: 0.95rem; font-weight: 700; color: var(--pw-card-text); line-height: 1.1">
                             {{ $stat['value'] }}
                         </div>
-                        <div style="font-size: 0.55rem; color: #6b9e3a; margin-top: 2px">{{ $stat['delta'] }}</div>
+                        <div style="font-size: 0.55rem; color: var(--kn-success); margin-top: 2px">
+                            {{ $stat['delta'] }}
+                        </div>
                         <div class="pw-line" style="height: {{ $sparklineHeight }}px; margin-top: 4px;">
                             @foreach ($stat['spark'] as $h)
                                 <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
@@ -75,25 +77,25 @@
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Avg vs 7-day
                         </div>
-                        <div style="font-size: 0.7rem; color: #fff; font-weight: 600">↑ 12%</div>
+                        <div style="font-size: 0.7rem; color: var(--pw-card-text); font-weight: 600">↑ 12%</div>
                     </div>
                     <div>
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Hours saved
                         </div>
-                        <div style="font-size: 0.7rem; color: #fff; font-weight: 600">2.4h</div>
+                        <div style="font-size: 0.7rem; color: var(--pw-card-text); font-weight: 600">2.4h</div>
                     </div>
                     <div>
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Conversion
                         </div>
-                        <div style="font-size: 0.7rem; color: #fff; font-weight: 600">11%</div>
+                        <div style="font-size: 0.7rem; color: var(--pw-card-text); font-weight: 600">11%</div>
                     </div>
                     <div>
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             New / Returning
                         </div>
-                        <div style="font-size: 0.7rem; color: #fff; font-weight: 600">3 / 2</div>
+                        <div style="font-size: 0.7rem; color: var(--pw-card-text); font-weight: 600">3 / 2</div>
                     </div>
                 </div>
             @endif
@@ -154,21 +156,21 @@
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Top Day
                         </div>
-                        <div style="font-size: 0.85rem; font-weight: 700; color: #fff">$480</div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: var(--pw-card-text)">$480</div>
                         <div style="font-size: 0.55rem; color: var(--brand-400)">Mar 12</div>
                     </div>
                     <div>
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Avg / Day
                         </div>
-                        <div style="font-size: 0.85rem; font-weight: 700; color: #fff">$54</div>
-                        <div style="font-size: 0.55rem; color: #6b9e3a">↑ vs prev 90d</div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: var(--pw-card-text)">$54</div>
+                        <div style="font-size: 0.55rem; color: var(--kn-success)">↑ vs prev 90d</div>
                     </div>
                     <div>
                         <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                             Best Weekday
                         </div>
-                        <div style="font-size: 0.85rem; font-weight: 700; color: #fff">Saturday</div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: var(--pw-card-text)">Saturday</div>
                         <div style="font-size: 0.55rem; color: var(--brand-400)">$98 avg</div>
                     </div>
                 </div>
@@ -181,7 +183,7 @@
                     'lg', 'md' => 5,
                     default => 3,
                 };
-                $colors = ['#d4a574', '#e8b04a', '#8b6844', '#6b9e3a', '#d4574a'];
+                $colors = ['var(--kn-honey)', 'var(--kn-warning)', 'var(--kn-muted)', 'var(--kn-success)', 'var(--kn-danger)'];
                 $amounts = [28, 45, 32, 56, 19];
             @endphp
             @for ($i = 0; $i < $rowCount; $i++)
@@ -332,8 +334,8 @@
         @case ('order_funnel')
             @php
                 $funnel = ($widget['size'] ?? 'sm') === 'md'
-                    ? ['Pending' => ['#e8b04a', 3], 'Confirmed' => ['#d4a574', 5], 'In Prep' => ['#6b9e3a', 4], 'Out for Delivery' => ['#3a8bd4', 2], 'Delivered' => ['#8b6844', 12]]
-                    : ['Pending' => ['#e8b04a', 3], 'Confirmed' => ['#d4a574', 5], 'Delivered' => ['#8b6844', 12]];
+                    ? ['Pending' => ['var(--kn-warning)', 3], 'Confirmed' => ['var(--kn-honey)', 5], 'In Prep' => ['var(--kn-success)', 4], 'Out for Delivery' => ['var(--kn-info)', 2], 'Delivered' => ['var(--kn-muted)', 12]]
+                    : ['Pending' => ['var(--kn-warning)', 3], 'Confirmed' => ['var(--kn-honey)', 5], 'Delivered' => ['var(--kn-muted)', 12]];
             @endphp
             @if (($widget['size'] ?? 'sm') === 'md')
                 <div class="pw-stat" style="margin-bottom: 6px">
@@ -372,7 +374,7 @@
                 @foreach ($slots as $time => $amt)
                     <div style="background: var(--brand-900); border-radius: 6px; padding: 6px 8px">
                         <div style="font-size: 0.6rem; color: var(--brand-400)">{{ $time }}</div>
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #fff">{{ $amt }}</div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--pw-card-text)">{{ $amt }}</div>
                     </div>
                 @endforeach
             </div>
@@ -395,7 +397,7 @@
                     <span
                         @if ($isDone) style="color: var(--brand-400); text-decoration: line-through" @endif
                     >{{ $item }}</span>
-                    <span style="color: {{ $isDone ? '#6b9e3a' : '#d4a574' }};">{{ $isDone ? '●' : '○' }}</span>
+                    <span style="color: {{ $isDone ? 'var(--kn-success)' : 'var(--kn-honey)' }};">{{ $isDone ? '●' : '○' }}</span>
                 </div>
             @endforeach
             @break
@@ -420,14 +422,14 @@
             @php
                 $items = ($widget['size'] ?? 'sm') === 'md'
                     ? [
-                        ['label' => 'Cookies', 'value' => '12%', 'color' => '#d4574a'],
-                        ['label' => 'Sugar Cookies', 'value' => '15%', 'color' => '#d4574a'],
-                        ['label' => 'Brownies', 'value' => '28%', 'color' => '#e8b04a'],
-                        ['label' => 'Banana Bread', 'value' => '31%', 'color' => '#e8b04a'],
+                        ['label' => 'Cookies', 'value' => '12%', 'color' => 'var(--kn-danger)'],
+                        ['label' => 'Sugar Cookies', 'value' => '15%', 'color' => 'var(--kn-danger)'],
+                        ['label' => 'Brownies', 'value' => '28%', 'color' => 'var(--kn-warning)'],
+                        ['label' => 'Banana Bread', 'value' => '31%', 'color' => 'var(--kn-warning)'],
                     ]
                     : [
-                        ['label' => 'Cookies', 'value' => '12%', 'color' => '#d4574a'],
-                        ['label' => 'Brownies', 'value' => '28%', 'color' => '#e8b04a'],
+                        ['label' => 'Cookies', 'value' => '12%', 'color' => 'var(--kn-danger)'],
+                        ['label' => 'Brownies', 'value' => '28%', 'color' => 'var(--kn-warning)'],
                     ];
             @endphp
             @if (($widget['size'] ?? 'sm') === 'md')
@@ -476,13 +478,13 @@
         @case ('upcoming_holiday')
             <div style="text-align: center">
                 <x-filament::icon icon="heroicon-o-calendar" class="mx-auto h-5 w-5" />
-                <div style="font-size: 0.75rem; font-weight: 600; color: #fff">Easter</div>
+                <div style="font-size: 0.75rem; font-weight: 600; color: var(--pw-card-text)">Easter</div>
                 <div style="font-size: 0.6rem; color: var(--brand-400)">in 12 days</div>
             </div>
             @break
         @case ('storefront_views')
             <div class="pw-stat"><span class="pw-stat-label">Today</span><span class="pw-stat-value">47</span></div>
-            <div style="font-size: 0.6rem; color: #6b9e3a; margin-top: 2px">↑ 12% vs yesterday</div>
+            <div style="font-size: 0.6rem; color: var(--kn-success); margin-top: 2px">↑ 12% vs yesterday</div>
             @break
         @case ('coupon_usage')
             @php
@@ -543,15 +545,15 @@
                     <div style="font-size: 0.55rem; color: var(--brand-400); text-transform: uppercase">
                         Latest Inquiry
                     </div>
-                    <div style="font-size: 0.7rem; font-weight: 600; color: #fff">Henderson Wedding</div>
+                    <div style="font-size: 0.7rem; font-weight: 600; color: var(--pw-card-text)">Henderson Wedding</div>
                     <div style="font-size: 0.6rem; color: var(--brand-100)">Wedding — Jun 12 — 80 guests</div>
                 </div>
             @endif
             @break
         @case ('seasonal_items')
-            <div class="pw-row"><span style="color: #6b9e3a">● Coming Soon</span><span>2</span></div>
-            <div class="pw-row"><span style="color: #d4574a">● Ending Soon</span><span>1</span></div>
-            <div class="pw-row"><span style="color: #d4a574">● In Season</span><span>5</span></div>
+            <div class="pw-row"><span style="color: var(--kn-success)">● Coming Soon</span><span>2</span></div>
+            <div class="pw-row"><span style="color: var(--kn-danger)">● Ending Soon</span><span>1</span></div>
+            <div class="pw-row"><span style="color: var(--kn-honey-text)">● In Season</span><span>5</span></div>
             @if (($widget['size'] ?? 'sm') === 'md')
                 <div
                     style="
@@ -563,15 +565,15 @@
                         line-height: 1.4;
                     "
                 >
-                    <div><span style="color: #d4574a">↓</span> Easter Eggs ends in 3 days</div>
-                    <div><span style="color: #6b9e3a">↑</span> Pumpkin Bread starts Sep 1</div>
+                    <div><span style="color: var(--kn-danger)">↓</span> Easter Eggs ends in 3 days</div>
+                    <div><span style="color: var(--kn-success)">↑</span> Pumpkin Bread starts Sep 1</div>
                 </div>
             @endif
             @break
         @case ('review_summary')
             <div style="display: flex; align-items: baseline; gap: 6px">
-                <span style="font-size: 1.2rem; font-weight: 700; color: #fff">4.8</span>
-                <span style="font-size: 0.75rem; color: #e8b04a">4.8/5</span>
+                <span style="font-size: 1.2rem; font-weight: 700; color: var(--pw-card-text)">4.8</span>
+                <span style="font-size: 0.75rem; color: var(--kn-warning)">4.8/5</span>
             </div>
             <div style="font-size: 0.6rem; color: var(--brand-400); margin-top: 2px">28 reviews</div>
             @if (($widget['size'] ?? 'sm') === 'md')
@@ -604,7 +606,9 @@
                 </div>
             @endif
             @foreach ($items as $item => $remaining)
-                <div class="pw-row"><span>{{ $item }}</span><span style="color: #d4574a">{{ $remaining }}</span></div>
+                <div class="pw-row">
+                    <span>{{ $item }}</span><span style="color: var(--kn-danger)">{{ $remaining }}</span>
+                </div>
             @endforeach
             @break
         @case ('at_risk_customers')
@@ -646,7 +650,7 @@
         @default
             <div style="display: flex; flex-direction: column; gap: 4px">
                 @for ($i = 0; $i < 2; $i++)
-                    <div style="height: 8px; border-radius: 4px; background: rgba(212,165,116,0.12); width: {{ [100, 70][$i] }}%;"></div>
+                    <div style="height: 8px; border-radius: 4px; background: var(--kn-surface-hover); width: {{ [100, 70][$i] }}%;"></div>
                 @endfor
             </div>
     @endswitch

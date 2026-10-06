@@ -6,10 +6,10 @@
 
 <div class="space-y-6">
     @if ($responses->isEmpty())
-        <p class="text-gray-500 italic">No responses yet.</p>
+        <p class="text-(--kn-muted) italic">No responses yet.</p>
     @else
         @foreach ($questions as $index => $question)
-            <div class="rounded-lg border bg-white p-4 dark:bg-gray-800">
+            <div class="rounded-lg border bg-(--kn-surface) p-4">
                 <h4 class="mb-3 text-lg font-semibold">{{ $index + 1 }}. {{ $question['question'] }}</h4>
 
                 @if ($question['type'] === 'rating')
@@ -20,7 +20,7 @@
                         $maxCount = max($distribution->max(), 1);
                     @endphp
                     <p class="mb-2 text-2xl font-bold">
-                        {{ $avg }} / 5 <span class="text-sm text-gray-500">({{ $ratings->count() }} ratings)</span>
+                        {{ $avg }} / 5 <span class="text-sm text-(--kn-muted)">({{ $ratings->count() }} ratings)</span>
                     </p>
                     <div class="space-y-1">
                         @foreach ($distribution->reverse() as $star => $count)
@@ -60,7 +60,7 @@
                     @endphp
                     <div class="max-h-48 space-y-2 overflow-y-auto">
                         @foreach ($texts as $text)
-                            <div class="rounded bg-gray-50 p-2 text-sm dark:bg-gray-900">{{ $text }}</div>
+                            <div class="rounded bg-(--kn-surface-sunken) p-2 text-sm">{{ $text }}</div>
                         @endforeach
                     </div>
                 @endif

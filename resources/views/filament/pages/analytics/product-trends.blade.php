@@ -1,9 +1,9 @@
 <x-filament-panels::page>
     @php
         $trendClass = fn (string $trend) => match ($trend) {
-            'up' => 'text-emerald-600 font-bold',
-            'down' => 'text-red-600 font-bold',
-            default => 'text-brand-600 font-semibold',
+            'up' => 'text-(--kn-success) font-bold',
+            'down' => 'text-(--kn-danger) font-bold',
+            default => 'text-(--kn-muted) font-semibold',
         };
         $trendArrow = fn (string $trend) => match ($trend) {
             'up' => '↑',

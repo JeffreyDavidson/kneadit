@@ -2,11 +2,11 @@
 
 @php
     $variantClass = match ($type) {
-        'danger' => 'bg-red-100 text-red-700',
-        'warning' => 'bg-amber-100 text-amber-700',
-        'success' => 'bg-emerald-100 text-emerald-700',
-        'info' => 'bg-blue-100 text-blue-700',
-        default => 'bg-blue-100 text-blue-700',
+        'danger' => 'bg-(--kn-danger-tint) text-(--kn-danger)',
+        'warning' => 'bg-(--kn-warning-tint) text-(--kn-warning)',
+        'success' => 'bg-(--kn-success-tint) text-(--kn-success)',
+        'info' => 'bg-(--kn-info-tint) text-(--kn-info)',
+        default => 'bg-(--kn-info-tint) text-(--kn-info)',
     };
 @endphp
 

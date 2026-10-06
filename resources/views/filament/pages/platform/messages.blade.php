@@ -67,7 +67,7 @@
                         class="border-honey bg-warm-black text-butter w-full rounded-lg border p-3 text-sm"
                     ></textarea>
                     @error('replyBody')
-                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-(--kn-danger)">{{ $message }}</p>
                     @enderror
                     <div class="mt-2 flex justify-end">
                         <x-central.button type="submit" size="sm"> Send Reply </x-central.button>
@@ -103,7 +103,7 @@
                 </div>
             @empty
                 <div class="text-butter py-8 text-center">
-                    <x-heroicon-o-envelope class="text-honey mx-auto mb-2 h-12 w-12" />
+                    <x-heroicon-o-envelope class="mx-auto mb-2 h-12 w-12 text-(--kn-honey-text)" />
                     <p>No messages yet</p>
                 </div>
             @endforelse

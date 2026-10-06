@@ -30,7 +30,7 @@ class CentralPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return DesignSystem::configure($panel)
+        return DesignSystem::forcedDark(DesignSystem::configure($panel))
             ->id('central')
             ->path('admin')
             ->domains($this->centralDomains())

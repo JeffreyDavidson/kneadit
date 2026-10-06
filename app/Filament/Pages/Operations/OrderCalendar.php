@@ -140,16 +140,16 @@ class OrderCalendar extends Page
     private function getColorClass(int $count): string
     {
         if ($count === 0) {
-            return 'bg-gray-100 hover:bg-gray-200';
+            return 'bg-(--kn-surface-sunken) text-(--kn-ink) hover:brightness-95';
         }
         if ($count <= 5) {
-            return 'bg-green-100 hover:bg-green-200 text-green-800';
+            return 'bg-(--kn-success-tint) text-(--kn-success) hover:brightness-95';
         }
         if ($count <= 10) {
-            return 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800';
+            return 'bg-(--kn-warning-tint) text-(--kn-warning) hover:brightness-95';
         }
 
-        return 'bg-red-100 hover:bg-red-200 text-red-800';
+        return 'bg-(--kn-danger-tint) text-(--kn-danger) hover:brightness-95';
     }
 
     public function getCurrentMonthName(): string

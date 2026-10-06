@@ -39,11 +39,11 @@
                     @endphp
                     <li class="flex items-center justify-between gap-4 py-3">
                         <div class="flex min-w-0 items-center gap-4">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-400">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--kn-warning-tint) text-(--kn-warning)">
                                 <x-heroicon-o-clock class="h-5 w-5" />
                             </div>
                             <div class="min-w-0">
-                                <p class="truncate font-medium text-white">{{ $invitation->email }}</p>
+                                <p class="truncate font-medium text-(--kn-ink)">{{ $invitation->email }}</p>
                                 <p class="text-brand-400 mt-1 truncate text-sm">
                                     Expires {{ $invitation->expires_at->diffForHumans() }}
                                 </p>
@@ -76,7 +76,7 @@
                             {{ $initials($member->name) }}
                         </div>
                         <div class="min-w-0">
-                            <p class="truncate font-medium text-white">{{ $member->name }}</p>
+                            <p class="truncate font-medium text-(--kn-ink)">{{ $member->name }}</p>
                             <p class="text-brand-400 mt-1 truncate text-sm">
                                 {{ $member->email }} · Joined {{ $member->created_at->format('M j, Y') }}
                             </p>

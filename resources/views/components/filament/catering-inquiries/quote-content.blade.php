@@ -19,18 +19,18 @@
                 @foreach ($items as $item)
                     <tr>
                         <td class="py-3 pr-4">
-                            <div class="font-semibold text-white">{{ $item->name }}</div>
+                            <div class="font-semibold text-(--kn-ink)">{{ $item->name }}</div>
                             @if ($item->special_instructions)
                                 <div class="text-brand-400 mt-0.5 text-[0.75rem] italic">
                                     "{{ $item->special_instructions }}"
                                 </div>
                             @endif
                         </td>
-                        <td class="py-3 pr-4 text-right text-white tabular-nums">{{ $item->quantity }}</td>
+                        <td class="py-3 pr-4 text-right text-(--kn-ink) tabular-nums">{{ $item->quantity }}</td>
                         <td class="text-brand-200 py-3 pr-4 text-right tabular-nums">
                             {{ $item->unit_price->formatted() }}
                         </td>
-                        <td class="py-3 text-right font-semibold text-white tabular-nums">
+                        <td class="py-3 text-right font-semibold text-(--kn-ink) tabular-nums">
                             {{ $item->line_total->formatted() }}
                         </td>
                     </tr>
@@ -44,7 +44,7 @@
                     >
                         Total
                     </td>
-                    <td class="pt-3 text-right text-[1.25rem] font-bold text-white tabular-nums">
+                    <td class="pt-3 text-right text-[1.25rem] font-bold text-(--kn-ink) tabular-nums">
                         {{ $quotedAmount?->formatted() ?? '—' }}
                     </td>
                 </tr>
@@ -62,7 +62,7 @@
     </div>
 @elseif ($quotedAmount)
     <div class="flex items-baseline gap-3">
-        <div class="text-[1.75rem] font-bold text-white tabular-nums">{{ $quotedAmount->formatted() }}</div>
+        <div class="text-[1.75rem] font-bold text-(--kn-ink) tabular-nums">{{ $quotedAmount->formatted() }}</div>
         <div class="text-brand-400 text-[0.85rem]">
             @if ($status === CateringInquiryStatus::Inquiry)
                 Not yet sent

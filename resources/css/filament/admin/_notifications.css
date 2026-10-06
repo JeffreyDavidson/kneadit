@@ -1,128 +1,135 @@
-/* ===================================================================
-   NOTIFICATION BELL & PANEL
-   =================================================================== */
+/*
+ * Admin notifications: the topbar bell, the database notifications panel and
+ * toast notifications, on the KneadIt design system tokens
+ * (kneadit/tokens.css) so they read in light and dark.
+ *
+ * Filament's component styles are in @layer components, so unlayered rules
+ * here win without !important.
+ */
 
-.fi-topbar-database-notifications-btn {
-    position: relative !important;
-}
+/* Bell: `muted` until hovered; the unread count is a honey badge with warm-black text. */
 .fi-topbar-database-notifications-btn .fi-icon {
-    width: 1.75rem !important;
-    height: 1.75rem !important;
-    color: var(--brand-300) !important;
-}
-.fi-topbar-database-notifications-btn:hover .fi-icon {
-    color: white !important;
-}
-.fi-topbar-database-notifications-btn .fi-badge {
-    position: absolute !important;
-    top: 0px !important;
-    right: -4px !important;
-    min-width: 1.1rem !important;
-    height: 1.1rem !important;
-    padding: 0 0.3rem !important;
-    font-size: 0.6rem !important;
-    font-weight: 700 !important;
-    line-height: 1.1rem !important;
-    text-align: center !important;
-    border-radius: 9999px !important;
-    background: var(--accent-gold) !important;
-    color: var(--brand-900) !important;
-    border: 1.5px solid var(--brand-900) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
-    --tw-ring-shadow: none !important;
+    color: var(--kn-muted);
 }
 
-/* Panel background */
-.fi-no-database-notifications-modal .fi-modal-window,
-.fi-modal[id*="database-notifications"] .fi-modal-window {
-    background: var(--brand-900) !important;
+.fi-topbar-database-notifications-btn:hover .fi-icon {
+    color: var(--kn-ink);
 }
-/* Panel header */
+
+.fi-topbar-database-notifications-btn .fi-badge {
+    background: var(--kn-honey);
+    border: 2px solid var(--kn-surface);
+    color: var(--kn-on-honey);
+    font-size: 0.6875rem;
+    font-weight: 700;
+}
+
+/* Panel: the shared modal window and header (see _modals.css); links in `honey-text`. */
 .fi-no-database-notifications-modal .fi-modal-header,
 .fi-modal[id*="database-notifications"] .fi-modal-header {
-    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
-    border-bottom: none !important;
-    padding: 1rem 1.25rem !important;
+    background: var(--kn-surface-sunken);
+    border-bottom: 1px solid var(--kn-border);
 }
-.fi-no-database-notifications-modal .fi-modal-heading,
-.fi-modal[id*="database-notifications"] .fi-modal-heading {
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-}
-.fi-no-database-notifications-modal .fi-modal-close-btn,
-.fi-modal[id*="database-notifications"] .fi-modal-close-btn {
-    color: rgba(255,255,255,0.7) !important;
-}
-.fi-no-database-notifications-modal .fi-modal-close-btn:hover,
-.fi-modal[id*="database-notifications"] .fi-modal-close-btn:hover {
-    color: #FFFFFF !important;
-}
-/* Mark all as read / Clear links */
+
 .fi-no-database-notifications-modal .fi-link,
 .fi-modal[id*="database-notifications"] .fi-link {
-    color: var(--accent-gold) !important;
-    font-weight: 600 !important;
-    font-size: 0.8rem !important;
+    color: var(--kn-honey-text);
+    font-weight: 600;
 }
+
 .fi-no-database-notifications-modal .fi-link:hover,
 .fi-modal[id*="database-notifications"] .fi-link:hover {
-    color: white !important;
+    color: var(--kn-ink);
 }
-/* Notification list dividers */
-.fi-no-database .fi-modal-content {
-    --tw-divide-color: var(--border-subtle) !important;
-    border-color: var(--border-subtle) !important;
-}
-/* Notification rows — uniform dark surface, slightly lighter than panel */
-.fi-no-database .fi-modal-content > *,
-.fi-no-notification-unread-ctn,
-.fi-no-notification-read-ctn,
-.fi-no-database .fi-modal-content > div {
-    background: var(--brand-900) !important;
-}
-.fi-no-database .fi-modal-content > * {
-    padding: 0.875rem 1.5rem !important;
-}
-.fi-no-notification.fi-color {
-    background: var(--brand-900) !important;
-    background-color: var(--brand-900) !important;
-    --tw-ring-color: var(--border-subtle) !important;
-}
-/* Unread indicator */
-.fi-no-notification-unread-ctn::before {
-    background: var(--accent-gold) !important;
-    width: 3px !important;
-}
-/* Notification icon/text */
-.fi-no-database .fi-no-notification-icon {
-    color: var(--brand-300) !important;
-}
-.fi-no-database .fi-no-notification-title {
-    color: var(--brand-100) !important;
-    font-weight: 600 !important;
-    font-size: 0.875rem !important;
-}
-.fi-no-database .fi-no-notification-body {
-    color: var(--brand-300) !important;
-    font-size: 0.8125rem !important;
-}
-.fi-no-database .fi-no-notification-date {
-    color: var(--brand-400) !important;
-    font-size: 0.75rem !important;
-}
-.fi-no-database .fi-icon-btn {
-    color: var(--brand-400) !important;
-}
-.fi-no-database .fi-icon-btn:hover {
-    color: white !important;
-}
-/* Badge in notification header */
+
 .fi-no-database-notifications-modal .fi-badge,
 .fi-modal[id*="database-notifications"] .fi-modal-header .fi-badge {
-    background: var(--accent-gold) !important;
-    color: var(--brand-900) !important;
-    font-weight: 700 !important;
-    --tw-ring-shadow: none !important;
+    background: var(--kn-honey);
+    color: var(--kn-on-honey);
+    font-weight: 700;
 }
 
+/* Rows: `surface` with `border` dividers; unread rows get a honey edge. */
+.fi-no-database .fi-modal-content {
+    --tw-divide-color: var(--kn-border);
+    border-color: var(--kn-border);
+}
 
+.fi-no-notification-unread-ctn,
+.fi-no-notification-read-ctn {
+    background: var(--kn-surface);
+}
+
+.fi-no-notification-unread-ctn::before {
+    background: var(--kn-honey);
+    width: 3px;
+}
+
+.fi-no-database .fi-no-notification-title,
+.fi-no-notification-title {
+    color: var(--kn-ink);
+    font-weight: 600;
+}
+
+.fi-no-database .fi-no-notification-body,
+.fi-no-notification-body {
+    color: var(--kn-ink-2);
+}
+
+.fi-no-database .fi-no-notification-date,
+.fi-no-notification-date {
+    color: var(--kn-muted);
+}
+
+.fi-no-database .fi-icon-btn {
+    color: var(--kn-muted);
+}
+
+.fi-no-database .fi-icon-btn:hover {
+    color: var(--kn-ink);
+}
+
+/*
+ * Toasts: a `surface` card with the pop shadow. A status toast (success,
+ * danger, warning, info) gets a 4px edge and icon in that status colour; its
+ * title and body stay `ink` and `ink-2` so they read on `surface` in both themes.
+ */
+.fi-no-notification {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-pop);
+    --tw-ring-shadow: 0 0 0 0 transparent;
+}
+
+.fi-no-notification.fi-status-success {
+    border-inline-start: 4px solid var(--kn-success);
+}
+
+.fi-no-notification.fi-status-danger {
+    border-inline-start: 4px solid var(--kn-danger);
+}
+
+.fi-no-notification.fi-status-warning {
+    border-inline-start: 4px solid var(--kn-warning);
+}
+
+.fi-no-notification.fi-status-info {
+    border-inline-start: 4px solid var(--kn-info);
+}
+
+.fi-no-notification-icon.fi-color-success {
+    color: var(--kn-success);
+}
+
+.fi-no-notification-icon.fi-color-danger {
+    color: var(--kn-danger);
+}
+
+.fi-no-notification-icon.fi-color-warning {
+    color: var(--kn-warning);
+}
+
+.fi-no-notification-icon.fi-color-info {
+    color: var(--kn-info);
+}

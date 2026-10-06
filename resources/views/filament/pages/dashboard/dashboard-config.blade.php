@@ -83,7 +83,7 @@
             opacity: 0.15;
         }
         .config-tile.sortable-drag {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--kn-shadow-pop);
             z-index: 20;
             opacity: 1;
         }
@@ -136,9 +136,9 @@
             color: var(--brand-300);
         }
         .config-toggle.is-off {
-            color: #f87171;
-            background: rgba(248, 113, 113, 0.1);
-            border-color: rgba(248, 113, 113, 0.25);
+            color: var(--kn-danger);
+            background: var(--kn-danger-tint);
+            border-color: var(--kn-danger);
         }
 
         .config-size-group {
@@ -200,7 +200,7 @@
         .pw-stat-value {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--kn-ink);
         }
         .pw-stat-label {
             font-size: 0.65rem;

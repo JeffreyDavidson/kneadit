@@ -31,6 +31,16 @@
     color: var(--kn-muted);
 }
 
+/* Card (x-tenant-admin.card): a `surface` card with a hairline, like every other card. */
+.tenant-admin-card {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+    color: var(--kn-ink);
+    overflow: hidden;
+}
+
 /* Card header strip (x-tenant-admin.card): a `surface-sunken` well with a hairline. */
 [data-admin-gradient-header] {
     align-items: center;
@@ -50,6 +60,34 @@
 
 [data-admin-gradient-header] p {
     color: var(--kn-muted);
+}
+
+/* Dashboard settings gear beside the global search: `muted` until hovered. */
+.dashboard-settings-link {
+    align-items: center;
+    border-radius: var(--kn-radius-md);
+    color: var(--kn-muted);
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    transition: background-color 0.15s;
+    width: 2.25rem;
+}
+
+.dashboard-settings-link:hover,
+.dashboard-settings-link:focus-visible {
+    background: var(--kn-surface-hover);
+    color: var(--kn-ink);
+}
+
+.dashboard-settings-link:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
+}
+
+.dashboard-settings-link-icon {
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 /* Dropdown panels, including the user menu: `surface` with a hairline and the pop shadow. */
@@ -134,11 +172,35 @@
     color: var(--kn-ink);
 }
 
-/* Destructive buttons: solid `danger` with `on-danger` text. */
-.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
-    background: var(--kn-danger);
+/*
+ * Solid status buttons (destructive, success, warning, info): the token status
+ * colour with `on-danger` text. That token is white on the dark light-theme
+ * fills and warm black on the pale dark-theme fills, which is the right pairing
+ * for every status colour, and it replaces the saturated shades Filament
+ * generates (which were bright green with white text, 3.7:1, in dark).
+ */
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label),
+.fi-btn.fi-color-success:not(.fi-outlined):not(label),
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label),
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
     color: var(--kn-on-danger);
     font-weight: 600;
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
+    background: var(--kn-danger);
+}
+
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) {
+    background: var(--kn-success);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) {
+    background: var(--kn-warning);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
+    background: var(--kn-info);
 }
 
 .fi-btn.fi-color-danger:not(.fi-outlined):not(label):hover {
@@ -146,6 +208,24 @@
     color: var(--kn-on-danger);
 }
 
-.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon {
+.fi-btn.fi-color-success:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-success) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-warning) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-info) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) > .fi-icon {
     color: inherit;
 }

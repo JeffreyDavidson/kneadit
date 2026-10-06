@@ -19,8 +19,8 @@
             "
         >
             @foreach ([
-                ['title' => 'Coming Soon', 'items' => $comingSoon, 'color' => '#6b9e3a', 'empty' => 'None upcoming'],
-                ['title' => 'Ending Soon', 'items' => $endingSoon, 'color' => '#d4574a', 'empty' => 'None ending soon'],
+                ['title' => 'Coming Soon', 'items' => $comingSoon, 'color' => 'var(--kn-success)', 'empty' => 'None upcoming'],
+                ['title' => 'Ending Soon', 'items' => $endingSoon, 'color' => 'var(--kn-danger)', 'empty' => 'None ending soon'],
             ] as $group)
                 <div>
                     <div

@@ -1,61 +1,86 @@
-/* ===================================================================
-   STAT WIDGETS
-   =================================================================== */
+/*
+ * Dashboard widgets: Filament's stats overview tiles, on the KneadIt design
+ * system tokens (kneadit/tokens.css). The widget card primitives
+ * (.preview-widget, .stat-card, .dashboard-action-panel) are in
+ * ../shared/widget-cards.css.
+ *
+ * Filament's component styles are in @layer components, so unlayered rules
+ * here win without !important.
+ */
 
-/* Remove outer wrapper background */
-.fi-wi-stats-overview,
-.fi-wi-stats-overview > div,
-section:has(.fi-wi-stats-overview-stat),
-.fi-section:has(.fi-wi-stats-overview-stat),
-.fi-widget:has(.fi-wi-stats-overview-stat) {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    --tw-ring-shadow: none !important;
-    --tw-shadow: none !important;
-}
-.fi-wi-stats-overview-stat-ctn {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
+/* A stat tile is a `surface` card: `border` hairline, card shadow, one card radius. */
 .fi-wi-stats-overview-stat {
-    border: none !important;
-    border-radius: 12px !important;
-    background: linear-gradient(135deg, var(--brand-900, #3d2314), var(--brand-700, #6b4c3b)) !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-    overflow: hidden !important;
-    padding: 1.25rem !important;
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+    overflow: hidden;
+    --tw-ring-shadow: 0 0 0 0 transparent;
 }
-.fi-wi-stats-overview-stat:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
-}
+
+.fi-wi-stats-overview-stat-label-ctn .fi-icon,
 .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-icon {
-    color: var(--accent-gold, #d4a574) !important;
-    opacity: 1 !important;
+    color: var(--kn-honey-text);
 }
+
+/* Label: the `eyebrow` style in `muted`. */
 .fi-wi-stats-overview-stat-label {
-    color: rgba(255,255,255,0.7) !important;
-    text-transform: uppercase !important;
-    font-size: 0.7rem !important;
-    letter-spacing: 0.1em !important;
-    font-weight: 600 !important;
+    color: var(--kn-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
+
+/* Value: `ink`, tabular so figures line up. */
 .fi-wi-stats-overview-stat-value {
-    color: #FFFFFF !important;
-    font-size: 1.75rem !important;
-    font-weight: 700 !important;
-}
-.fi-wi-stats-overview-stat-description {
-    color: var(--accent-gold, #d4a574) !important;
-    font-size: 0.8rem !important;
-}
-.fi-wi-stats-overview-stat-chart {
-    opacity: 0.3 !important;
+    color: var(--kn-ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
 }
 
+/* Description: `ink-2` unless the stat gives it a status colour. */
+.fi-wi-stats-overview-stat-description.fi-color-gray {
+    color: var(--kn-ink-2);
+}
 
+/* Dashboard sections that only group widgets have no frame of their own. */
+.fi-section.fi-section-not-contained {
+    border: none;
+    box-shadow: none;
+}
+
+/*
+ * Charts. Chart.js paints onto a canvas, so the chart reads its colours from
+ * these empty elements. The dashboard chart card has no `.fi-wi-chart`
+ * ancestor, so Filament's own rules for them don't apply and the chart would
+ * fall back to black. Plain token values only: Chart.js can't parse a
+ * color-mix() result.
+ */
+.fi-wi-chart-grid-color {
+    color: var(--kn-border);
+}
+
+.fi-wi-chart-text-color {
+    color: var(--kn-muted);
+}
+
+.fi-wi-chart-border-color {
+    color: var(--kn-honey-text);
+}
+
+.fi-wi-chart-bg-color {
+    color: var(--kn-surface-hover);
+}
+
+.fi-wi-chart-tooltip-bg-color {
+    color: var(--kn-espresso);
+}
+
+.fi-wi-chart-tooltip-text-color {
+    color: var(--kn-on-espresso);
+}
+
+.fi-wi-chart-tooltip-border-color {
+    color: var(--kn-border-control);
+}
