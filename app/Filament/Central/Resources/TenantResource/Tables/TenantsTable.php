@@ -53,7 +53,7 @@ class TenantsTable
 
                 TextColumn::make('email')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('plan')
                     ->badge()
@@ -74,7 +74,7 @@ class TenantsTable
                 IconColumn::make('storefront_enabled')
                     ->label('Storefront')
                     ->boolean()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('is_paused')
                     ->label('Paused')
