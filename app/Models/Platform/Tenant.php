@@ -5,8 +5,10 @@ namespace App\Models\Platform;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Customers\Referral;
 use App\Models\Staff\User;
+use App\Policies\Platform\TenantPolicy;
 use Database\Factories\Platform\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,6 +71,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @mixin \Eloquent
  */
 #[UseFactory(TenantFactory::class)]
+#[UsePolicy(TenantPolicy::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     public const string DEMO_ID = 'demo';
