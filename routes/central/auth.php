@@ -6,13 +6,20 @@ use App\Http\Controllers\Central\Auth\RegisterController;
 use App\Http\Controllers\Central\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Auth\SendVerificationNotificationController;
 use App\Http\Controllers\Central\Auth\VerifyEmailController;
+use App\Http\Middleware\PreventAccessFromTenantDomains;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
-    Route::get('register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
-    Route::post('register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:sensitive-write']);
     Route::redirect('login', '/')->name('login')->middleware('guest');
     Route::post('logout', LogoutController::class)->name('logout')->middleware('auth');
+});
+
+// Platform accounts live in the central database. The web group has already put
+// a bakery in context on its own host, so these must not answer there: a sign-up
+// on a bakery host would otherwise create a user in that bakery's database.
+Route::middleware(['web', PreventAccessFromTenantDomains::class])->group(function () {
+    Route::get('register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
+    Route::post('register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:sensitive-write']);
 
     Route::view('email/verify', 'central.auth.verify-email')->middleware('auth')->name('verification.notice');
     Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)->middleware(['auth', 'signed'])->name('verification.verify');

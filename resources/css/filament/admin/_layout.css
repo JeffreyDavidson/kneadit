@@ -140,3 +140,8 @@
     height: 2.25rem;
     width: 2.25rem;
 }
+
+/* The initials avatar is a dark circle; on the dark topbar it needs a ring to show (3.6:1). */
+.dark .fi-topbar .fi-avatar {
+    box-shadow: 0 0 0 2px var(--kn-border-control);
+}
