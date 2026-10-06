@@ -32,11 +32,10 @@ dataset('kneaditStaticTokens', [
 
 dataset('legacyAdminVariables', [
     '--brand-50', '--brand-100', '--brand-150', '--brand-200', '--brand-300', '--brand-400',
-    '--brand-500', '--brand-600', '--brand-700', '--brand-800', '--brand-900', '--brand-950',
-    '--accent-gold', '--accent-gold-light',
+    '--brand-500', '--brand-600', '--brand-700', '--brand-800', '--brand-900',
+    '--accent-gold',
     '--border-subtle', '--border-medium', '--hover-bg', '--active-bg', '--scrollbar-thumb',
     '--focus-ring', '--thead-bg',
-    '--status-success', '--status-danger', '--status-warning', '--status-warning-dark', '--status-danger-dark',
 ]);
 
 test('every colour and shadow token is defined for light on :root and for dark under .dark', function (string $token) {

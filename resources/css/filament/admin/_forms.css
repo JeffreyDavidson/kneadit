@@ -1,330 +1,371 @@
-/* ===================================================================
-   FORMS
-   =================================================================== */
+/*
+ * Admin forms: field wrappers, inputs, selects, checkboxes, toggles, section
+ * cards, repeaters, tabs and wizard steps, on the KneadIt design system
+ * tokens (kneadit/tokens.css) so they read in light and dark.
+ *
+ * Filament's component styles are in @layer components, so unlayered rules
+ * here win without !important.
+ */
 
-.fi-fo-field-wrp label {
-    color: var(--brand-100) !important;
-    font-weight: 600 !important;
-}
-.fi-fo-field-wrp .fi-fo-field-wrp-helper-text {
-    color: var(--brand-400) !important;
+/* Labels, helper text and errors. */
+.fi-fo-field-label-content {
+    color: var(--kn-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
 }
 
-/* Input wrapper — explicit dark surface + visible border (mirrors central) */
+.fi-fo-field-label-required-mark,
+.fi-fo-field-wrp-error-message {
+    color: var(--kn-danger);
+}
+
+.fi-fo-field-content-col .fi-sc-text:not(.fi-badge):not(.fi-color) {
+    color: var(--kn-muted);
+    font-size: 0.8125rem;
+    line-height: 1.1875rem;
+}
+
+/* Control wrapper: `surface` fill, `border-control` outline, one control radius. */
 .fi-input-wrp {
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    --tw-ring-color: transparent !important;
-    --tw-shadow: 0 0 #0000 !important;
-    background: var(--brand-800) !important;
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 8px !important;
-    outline: none !important;
-    transition: border-color 0.15s, box-shadow 0.15s !important;
-}
-.fi-input-wrp:focus-within {
-    border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px var(--focus-ring) !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    --tw-ring-color: transparent !important;
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border-control);
+    border-radius: var(--kn-radius-md);
+    box-shadow: none;
+    color: var(--kn-ink);
 }
 
-/* Inner input fields — transparent so the wrapper surface shows through */
-.fi-input-wrp input,
-.fi-input-wrp select,
-.fi-input-wrp textarea,
-.fi-input-wrp .fi-input,
-.fi-input-wrp .fi-select-input {
-    background-color: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    color: white !important;
-}
-.fi-input-wrp-icon,
-.fi-input-wrp-prefix,
-.fi-input-wrp-suffix {
-    color: var(--brand-400) !important;
+.fi-input-wrp:not(.fi-disabled):not(:has(.fi-ac-action:focus)):focus-within {
+    border-color: var(--kn-honey-text);
+    box-shadow: var(--kn-shadow-focus);
 }
 
-/* Prefix/suffix dividers — subtle, not brand-colored */
-.fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
-    border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
-    border-right: 1px solid rgba(0,0,0,0.1) !important;
-    padding-inline-end: 0.75rem !important;
-}
-/* Search fields (shared) — no divider, consistent icon-to-text spacing */
-.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content,
-.fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
-    border-inline-end: none !important;
-    border-right: none !important;
-    padding-inline-end: 2px !important;
-}
-.fi-ta-search-field input,
-.fi-global-search-field input {
-    padding-inline-start: 6px !important;
-}
-.fi-input-wrp .fi-input-wrp-suffix {
-    border-inline-start: 1px solid rgba(0,0,0,0.1) !important;
-    border-left: 1px solid rgba(0,0,0,0.1) !important;
+.fi-input-wrp.fi-invalid {
+    border-color: var(--kn-danger);
 }
 
-/* Input field inside wrapper */
-.fi-input-wrp .fi-input {
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    outline: none !important;
+.fi-input-wrp.fi-disabled {
+    background: var(--kn-surface-sunken);
 }
 
-/* Standalone input (not inside wrp) */
-.fi-input {
-    background: var(--brand-800) !important;
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 8px !important;
-    color: white !important;
-}
-.fi-input:focus-within {
-    border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+/* The control inside the wrapper: transparent so the wrapper shows through. */
+input.fi-input,
+select.fi-select-input,
+.fi-fo-textarea textarea,
+.fi-select-input .fi-select-input-btn {
+    color: var(--kn-ink);
 }
 
-/* Placeholder text */
-.fi-input input::placeholder,
-.fi-input textarea::placeholder {
-    color: var(--brand-400) !important;
+input.fi-input::placeholder,
+.fi-fo-textarea textarea::placeholder,
+.fi-select-input .fi-select-input-placeholder {
+    color: var(--kn-muted);
 }
 
-/* Select */
-.fi-select-input {
-    background: var(--brand-800) !important;
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 8px !important;
-    color: white !important;
+input.fi-input:disabled,
+select.fi-select-input:disabled,
+.fi-fo-textarea textarea:disabled {
+    -webkit-text-fill-color: var(--kn-muted);
+    color: var(--kn-muted);
 }
 
-/* Textarea */
-textarea.fi-textarea-input {
-    background: var(--brand-800) !important;
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 8px !important;
-    color: white !important;
-}
-textarea.fi-textarea-input:focus {
-    border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+select.fi-select-input option,
+select.fi-select-input optgroup {
+    background: var(--kn-surface);
+    color: var(--kn-ink);
 }
 
-/* Toggle */
-.fi-toggle-input:checked {
-    background-color: var(--brand-600) !important;
-    border-color: var(--brand-600) !important;
-}
-.fi-toggle-input:checked:hover {
-    background-color: var(--brand-700) !important;
-}
-.fi-toggle-input:focus {
-    box-shadow: 0 0 0 3px var(--focus-ring) !important;
-}
-.fi-toggle-input {
-    border-color: var(--brand-200) !important;
+/* Prefix, suffix and icons inside a control. */
+.fi-input-wrp .fi-input-wrp-label,
+.fi-input-wrp .fi-input-wrp-prefix > .fi-icon,
+.fi-input-wrp .fi-input-wrp-suffix > .fi-icon {
+    color: var(--kn-muted);
 }
 
-/* Date picker */
-.fi-date-time-picker-btn {
-    background: var(--brand-800) !important;
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 8px !important;
-    color: white !important;
-}
-.fi-date-time-picker-btn:focus {
-    border-color: var(--accent-gold) !important;
-    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+.fi-input-wrp .fi-input-wrp-prefix:not(.fi-inline),
+.fi-input-wrp .fi-input-wrp-suffix:not(.fi-inline) {
+    border-color: var(--kn-border);
 }
 
-/* File upload */
-.fi-fo-file-upload .filepond--panel-root {
-    background: var(--brand-800) !important;
-    border: 2px dashed var(--border-medium) !important;
-    border-radius: 12px !important;
-}
-.fi-fo-file-upload .filepond--drop-label label {
-    color: var(--brand-200) !important;
-    font-weight: 500 !important;
-}
-.fi-fo-file-upload .filepond--label-action {
-    color: var(--accent-gold) !important;
-    font-weight: 600 !important;
-    text-decoration-color: var(--accent-gold) !important;
+/* Search fields: no divider after the magnifier. */
+.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix,
+.fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix {
+    border-inline-end: none;
 }
 
-/* Form actions footer */
-.fi-form-actions {
-    background: var(--brand-900) !important;
-    border-top: 1px solid var(--border-subtle) !important;
-    padding: 1rem 1.5rem !important;
-    border-radius: 0 0 12px 12px !important;
-}
-
-/* Hide select clear/X button */
+/* The select clear button is not used in this panel. */
 .fi-select-input-value-remove-btn {
-    display: none !important;
+    display: none;
 }
 
-
-/* ===================================================================
-   SECTIONS (Form Panels)
-   =================================================================== */
-
-.fi-section {
-    background: var(--brand-900) !important;
-    overflow: hidden !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-    --tw-ring-color: transparent !important;
-    --tw-ring-shadow: 0 0 #0000 !important;
-    --tw-shadow: none !important;
-}
-.fi-section-content {
-    border-top: none !important;
-}
-.fi-section-content-ctn {
-    border-top: none !important;
-    border-color: transparent !important;
+/*
+ * Checkboxes and radios: `surface` box with a control outline; checked is
+ * honey with a warm-black mark, because white on honey fails contrast. The
+ * mark is an image, which CSS variables don't reach, so it is the on-honey
+ * colour written as a URL-encoded value (the same warm black in both themes).
+ */
+input[type='checkbox'].fi-checkbox-input,
+input[type='radio'].fi-radio-input {
+    --tw-ring-color: var(--kn-border-control);
+    background-color: var(--kn-surface);
 }
 
-/* Section header — solid brand-800 surface (matches table header bar). */
-.fi-section-header {
-    background: var(--brand-800) !important;
-    border-bottom: none !important;
-    padding: 0.875rem 1.25rem !important;
+input[type='checkbox'].fi-checkbox-input:checked,
+input[type='radio'].fi-radio-input:checked {
+    background-color: var(--kn-honey);
 }
+
+input[type='checkbox'].fi-checkbox-input:checked {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%231c1410' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+}
+
+input[type='radio'].fi-radio-input:checked {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%231c1410' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='3'/%3E%3C/svg%3E");
+}
+
+input[type='checkbox'].fi-checkbox-input:focus-visible,
+input[type='radio'].fi-radio-input:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+}
+
+/* Toggles: a control-coloured track that turns honey, with a `surface` knob and a warm-black knob when on. */
+.fi-toggle {
+    background: var(--kn-border-control);
+}
+
+.fi-toggle > :first-child {
+    background: var(--kn-surface);
+}
+
+.fi-toggle.fi-toggle-on,
+.fi-toggle.fi-color.fi-toggle-on {
+    background: var(--kn-honey);
+}
+
+.fi-toggle.fi-toggle-on > :first-child {
+    background: var(--kn-on-honey);
+}
+
+.fi-toggle .fi-icon {
+    color: var(--kn-ink-2);
+}
+
+.fi-toggle.fi-toggle-on .fi-icon {
+    color: var(--kn-honey-text);
+}
+
+.fi-toggle:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+}
+
+/* File upload (FilePond). */
+.fi-fo-file-upload .filepond--panel-root {
+    background: var(--kn-surface-sunken);
+    border: 2px dashed var(--kn-border-control);
+    border-radius: var(--kn-radius-lg);
+}
+
+.fi-fo-file-upload .filepond--drop-label label {
+    color: var(--kn-ink-2);
+    font-weight: 500;
+}
+
+.fi-fo-file-upload .filepond--label-action {
+    color: var(--kn-honey-text);
+    font-weight: 600;
+    text-decoration-color: var(--kn-honey-text);
+}
+
+/* Form actions footer. */
+.fi-form-actions {
+    background: var(--kn-surface);
+    border-top: 1px solid var(--kn-border);
+    border-radius: 0 0 var(--kn-radius-lg) var(--kn-radius-lg);
+    padding: var(--kn-space-4) var(--kn-space-6);
+}
+
+/* Section cards: `surface` on the page ground with a hairline and the card shadow. */
+.fi-section:not(.fi-section-not-contained):not(.fi-aside),
+.fi-section:not(.fi-section-not-contained).fi-aside > .fi-section-content-ctn {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+}
+
+.fi-section:not(.fi-section-not-contained):not(.fi-aside) > .fi-section-header {
+    padding: var(--kn-space-4) var(--kn-space-6);
+}
+
+.fi-section:not(.fi-section-not-contained).fi-section-has-header:not(.fi-collapsed) > .fi-section-content-ctn {
+    border-color: var(--kn-border);
+}
+
 .fi-section-header-heading {
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
+    color: var(--kn-ink);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.5rem;
 }
+
 .fi-section-header-description {
-    color: rgba(255,255,255,0.6) !important;
-}
-.fi-section-header .fi-icon {
-    color: rgba(255,255,255,0.7) !important;
-}
-.fi-section-header button {
-    color: rgba(255,255,255,0.7) !important;
-}
-.fi-section-header button:hover {
-    color: #FFFFFF !important;
+    color: var(--kn-ink-2);
+    font-size: 0.8125rem;
+    line-height: 1.1875rem;
 }
 
+.fi-section > .fi-section-header > .fi-icon,
+.fi-section-header .fi-section-collapse-btn {
+    color: var(--kn-muted);
+}
 
-/* ===================================================================
-   REPEATER
-   =================================================================== */
-
+/* Repeaters: one bordered list with hairline dividers; the item headers are hidden. */
 .fi-fo-repeater {
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    gap: 0;
 }
+
 .fi-fo-repeater-items {
-    gap: 0 !important;
+    gap: 0;
 }
-.fi-fo-repeater-item,
-.fi-fo-repeater .fi-fo-repeater-item,
-li.fi-fo-repeater-item {
-    background: transparent !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    border: none !important;
-    border-bottom: 1px solid var(--border-subtle) !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    --tw-ring-offset-shadow: 0 0 0 0 transparent !important;
-    --tw-shadow: 0 0 0 0 transparent !important;
-    --tw-inset-shadow: 0 0 0 0 transparent !important;
-    --tw-inset-ring-shadow: 0 0 0 0 transparent !important;
-    --tw-ring-color: transparent !important;
+
+.fi-fo-repeater-item {
+    background: transparent;
+    border-bottom: 1px solid var(--kn-border);
+    border-radius: 0;
+    box-shadow: none;
 }
+
 .fi-fo-repeater-item:last-child {
-    border-bottom: none !important;
+    border-bottom: none;
 }
 
-/* Match native date/select placeholder color */
-input[type="date"]:not(:valid),
-input[type="date"][value=""] {
-    color: #9ca3af;
-}
-.fi-fo-repeater select option[value=""] {
-    color: #9ca3af;
-}
-.fi-fo-repeater select:has(option[value=""]:checked) {
-    color: #9ca3af;
-}
-.fi-fo-repeater select:not(:has(option[value=""]:checked)) {
-    color: white;
-}
-
-/* Hide default repeater item header */
 .fi-fo-repeater-item-header {
-    display: none !important;
+    display: none;
 }
+
 .fi-fo-repeater-item-has-header > .fi-fo-repeater-item-content {
-    border-top: none !important;
+    border-top: none;
 }
 
-/* Repeater item actions */
-.fi-fo-repeater-item-header .fi-icon-btn {
-    color: var(--brand-400) !important;
-}
-.fi-fo-repeater-item-header .fi-icon-btn:hover {
-    color: #fff !important;
-    background: #c0392b !important;
-    border-radius: 6px !important;
+/* Empty date and select placeholders read as `muted`, like text placeholders. */
+input[type='date']:not(:valid),
+input[type='date'][value=''],
+.fi-fo-repeater select option[value=''],
+.fi-fo-repeater select:has(option[value='']:checked) {
+    color: var(--kn-muted);
 }
 
-/* Repeater add button */
+.fi-fo-repeater select:not(:has(option[value='']:checked)) {
+    color: var(--kn-ink);
+}
+
 .fi-fo-repeater-add {
-    padding: 0.75rem 1rem !important;
-    background: var(--brand-900) !important;
-    border-top: 1px solid var(--border-subtle) !important;
-    justify-content: flex-start !important;
-}
-.fi-fo-repeater-add .fi-btn {
-    color: #FFFFFF !important;
-    background: var(--brand-700) !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1.25rem !important;
-    font-size: 0.85rem !important;
-    box-shadow: none !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    --tw-shadow: 0 0 0 0 transparent !important;
-    border: none !important;
-}
-.fi-fo-repeater-add .fi-btn:hover {
-    background: var(--brand-800) !important;
+    background: var(--kn-surface-sunken);
+    border-radius: 0 0 var(--kn-radius-lg) var(--kn-radius-lg);
+    border-top: 1px solid var(--kn-border);
+    justify-content: flex-start;
+    padding: var(--kn-space-3) var(--kn-space-4);
 }
 
-/* Custom repeater grid: trash column */
+/* Order-line columns: item, quantity, price, total and the delete button. */
 .fi-fo-repeater-item-content > .fi-sc {
-    grid-template-columns: 3fr 1fr 1fr 1fr 3rem !important;
-    align-items: start !important;
+    align-items: start;
+    grid-template-columns: 3fr 1fr 1fr 1fr 3rem;
 }
 
-
-/* ===================================================================
-   TABS
-   =================================================================== */
-
-.fi-tabs-tab {
-    color: var(--brand-400) !important;
-    font-weight: 600 !important;
-}
-.fi-tabs-tab[aria-selected="true"],
-.fi-tabs-tab.fi-active {
-    color: white !important;
-    border-color: var(--accent-gold) !important;
+/* Tabs: a `surface` bar; the active tab is a honey tint with a `honey-text` label. */
+.fi-tabs:not(.fi-contained) {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
 }
 
+.fi-tabs.fi-contained {
+    border-color: var(--kn-border);
+}
 
+.fi-tabs-item {
+    border-radius: var(--kn-radius-md);
+}
+
+.fi-tabs-item:hover,
+.fi-tabs-item:focus-visible {
+    background: var(--kn-surface-hover);
+}
+
+.fi-tabs-item:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+}
+
+.fi-tabs-item .fi-tabs-item-label,
+.fi-tabs-item > .fi-icon {
+    color: var(--kn-ink-2);
+}
+
+.fi-tabs-item.fi-active {
+    background: color-mix(in srgb, var(--kn-honey) 16%, transparent);
+}
+
+.fi-tabs-item.fi-active .fi-tabs-item-label,
+.fi-tabs-item.fi-active > .fi-icon {
+    color: var(--kn-honey-text);
+}
+
+/* Wizard: the header is a `surface` card; steps are numbered circles (done = honey with a warm-black tick). */
+.fi-sc-wizard:not(.fi-contained) .fi-sc-wizard-header,
+.fi-sc-wizard.fi-contained {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+}
+
+.fi-sc-wizard.fi-contained .fi-sc-wizard-header {
+    border-bottom: 1px solid var(--kn-border);
+}
+
+.fi-sc-wizard-header-step-separator {
+    color: var(--kn-border);
+}
+
+.fi-sc-wizard-header-step .fi-sc-wizard-header-step-label {
+    color: var(--kn-muted);
+}
+
+.fi-sc-wizard-header-step .fi-sc-wizard-header-step-description {
+    color: var(--kn-muted);
+}
+
+.fi-sc-wizard-header-step:not(.fi-active) .fi-sc-wizard-header-step-icon-ctn {
+    border-color: var(--kn-border-control);
+}
+
+.fi-sc-wizard-header-step:not(.fi-active) .fi-sc-wizard-header-step-number,
+.fi-sc-wizard-header-step:not(.fi-active):not(.fi-completed) .fi-icon {
+    color: var(--kn-muted);
+}
+
+.fi-sc-wizard-header-step.fi-active .fi-sc-wizard-header-step-icon-ctn {
+    border-color: var(--kn-honey-text);
+}
+
+.fi-sc-wizard-header-step.fi-active .fi-sc-wizard-header-step-label,
+.fi-sc-wizard-header-step.fi-active .fi-sc-wizard-header-step-number,
+.fi-sc-wizard-header-step.fi-active:not(.fi-completed) .fi-icon {
+    color: var(--kn-honey-text);
+}
+
+.fi-sc-wizard-header-step.fi-completed .fi-sc-wizard-header-step-icon-ctn {
+    background: var(--kn-honey);
+}
+
+.fi-sc-wizard-header-step.fi-completed .fi-sc-wizard-header-step-icon-ctn .fi-icon {
+    color: var(--kn-on-honey);
+}
+
+.fi-sc-wizard-header-step.fi-completed .fi-sc-wizard-header-step-label {
+    color: var(--kn-ink);
+}

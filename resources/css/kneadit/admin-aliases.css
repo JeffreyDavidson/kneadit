@@ -13,10 +13,9 @@
 
 :root {
     /*
-     * Bakery admin "brand" scale, deepest surface (950) to lightest text (50).
+     * Bakery admin "brand" scale, surface (900) to lightest text (50).
      * Mapped by role, not by lightness, so the ladder inverts in light mode.
      */
-    --brand-950: var(--kn-bg);
     --brand-900: var(--kn-surface);
     --brand-800: var(--kn-surface-hover);
     --brand-700: color-mix(in srgb, var(--kn-surface-hover) 60%, var(--kn-border-control));
@@ -30,7 +29,6 @@
     --brand-50: var(--kn-ink);
 
     --accent-gold: var(--kn-honey-text);
-    --accent-gold-light: var(--kn-surface-hover);
 
     /* Chrome helpers (borders, hover, focus, table heads, scrollbars). */
     --border-subtle: var(--kn-border);
@@ -40,12 +38,6 @@
     --scrollbar-thumb: color-mix(in srgb, var(--kn-border-control) 50%, transparent);
     --focus-ring: var(--kn-honey-text);
     --thead-bg: var(--kn-surface-sunken);
-
-    --status-success: var(--kn-success);
-    --status-danger: var(--kn-danger);
-    --status-warning: var(--kn-warning);
-    --status-warning-dark: var(--kn-warning);
-    --status-danger-dark: var(--kn-danger);
 }
 
 /*
