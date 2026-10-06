@@ -28,6 +28,7 @@ class PaymentFailedAlertMail extends PlatformMail
     public function content(): Content
     {
         return new Content(
+            view: 'emails.platform.payment-failed-alert',
             text: 'emails.platform.payment-failed-alert-text',
         );
     }

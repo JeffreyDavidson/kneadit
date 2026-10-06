@@ -25,6 +25,7 @@ class HealthAlertMail extends PlatformMail
     public function content(): Content
     {
         return new Content(
+            view: 'emails.platform.health-alert',
             text: 'emails.platform.health-alert-text',
         );
     }
