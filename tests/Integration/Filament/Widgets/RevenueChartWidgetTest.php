@@ -30,3 +30,11 @@ test('ends the window on the bakery-local day', function () {
     expect(last($chart['labels']))->toBe('Oct 5')
         ->and(last($chart['datasets'][0]['data']))->toBe(40.0);
 });
+
+test('names a design-system colour token for each dataset so the chart follows the theme', function () {
+    $widget = new RevenueChartWidget;
+
+    $chart = new ReflectionMethod($widget, 'getData')->invoke($widget);
+
+    expect(array_column($chart['datasets'], 'colorToken'))->toBe(['--kn-honey', '--kn-muted']);
+});

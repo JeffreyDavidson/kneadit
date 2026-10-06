@@ -55,8 +55,8 @@ class WeeklyRevenueChartWidget extends ChartWidget
             }
 
             $datasets = [
-                ['label' => 'Revenue ($)', 'data' => $revenue, 'backgroundColor' => '#8b5e3c'],
-                ['label' => 'Expenses ($)', 'data' => $expenses, 'backgroundColor' => '#dc2626'],
+                ['label' => 'Revenue ($)', 'data' => $revenue, 'backgroundColor' => '#8b5e3c', 'colorToken' => '--kn-honey'],
+                ['label' => 'Expenses ($)', 'data' => $expenses, 'backgroundColor' => '#dc2626', 'colorToken' => '--kn-danger'],
             ];
 
             // lg widens the lens with last week's comparison overlay so the
@@ -75,6 +75,7 @@ class WeeklyRevenueChartWidget extends ChartWidget
                     'label' => 'Last Week Revenue ($)',
                     'data' => $lastRevenue,
                     'backgroundColor' => '#d4a574',
+                    'colorToken' => '--kn-info',
                 ];
             }
 

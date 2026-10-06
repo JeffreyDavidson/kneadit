@@ -52,3 +52,7 @@ test('charts each expense as dollars at its business percentage on the right day
 
     expect($chart['datasets'][1]['data'])->toBe([0.0, 12.5, 0.0, 5.0, 0.0, 0.0, 0.0]);
 });
+
+test('names a design-system colour token for each dataset so the chart follows the theme', function () {
+    expect(array_column(weeklyChartData()['datasets'], 'colorToken'))->toContain('--kn-honey', '--kn-danger');
+});

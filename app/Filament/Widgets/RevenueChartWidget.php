@@ -97,6 +97,7 @@ class RevenueChartWidget extends ChartWidget
                     [
                         'label' => 'This Period',
                         'data' => $current,
+                        'colorToken' => '--kn-honey',
                         'borderColor' => '#8B5E3C',
                         'backgroundColor' => 'rgba(139, 94, 60, 0.1)',
                         'fill' => true,
@@ -105,6 +106,7 @@ class RevenueChartWidget extends ChartWidget
                     [
                         'label' => 'Previous Period',
                         'data' => $previous,
+                        'colorToken' => '--kn-muted',
                         'borderColor' => '#D4A574',
                         'backgroundColor' => 'transparent',
                         'borderDash' => [5, 5],
