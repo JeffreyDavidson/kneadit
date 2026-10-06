@@ -1,47 +1,151 @@
-/* ===================================================================
-   BREADCRUMBS (page heading: kneadit/filament.css)
-   =================================================================== */
+/*
+ * Admin chrome: page header, breadcrumbs, dropdown and user menus, buttons.
+ * Tokens from kneadit/tokens.css only; Filament's styles are layered, so no
+ * !important is needed. The page title (heading-1) and primary buttons are in
+ * kneadit/filament.css.
+ */
 
-.fi-breadcrumbs-item span,
-.fi-breadcrumbs-item a {
-    color: var(--brand-300) !important;
+/* Page header. */
+.fi-header-subheading {
+    color: var(--kn-ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.4375rem;
 }
 
+/* Breadcrumbs: `muted` trail, the current page in `ink-2`. */
+.fi-breadcrumbs li {
+    color: var(--kn-muted);
+}
 
-/* ===================================================================
-   SHARED: Dark gradient header bar
-   Used by: Filament tables, x-tenant-admin.card, goal-tracker, etc.
-   =================================================================== */
+.fi-breadcrumbs li:last-child {
+    color: var(--kn-ink-2);
+    font-weight: 600;
+}
 
+.fi-breadcrumbs li a:hover,
+.fi-breadcrumbs li a:focus-visible {
+    color: var(--kn-honey-text);
+}
+
+.fi-breadcrumbs li .fi-icon {
+    color: var(--kn-muted);
+}
+
+/* Card header strip (x-tenant-admin.card): a `surface-sunken` well with a hairline. */
 [data-admin-gradient-header] {
-    background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-subtle);
-    display: flex;
     align-items: center;
+    background: var(--kn-surface-sunken);
+    border-bottom: 1px solid var(--kn-border);
+    display: flex;
     justify-content: space-between;
+    padding: var(--kn-space-4) var(--kn-space-6);
 }
-[data-admin-gradient-header] > [data-header-title] {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: white;
+
+[data-admin-gradient-header] > div > [data-header-title] {
+    color: var(--kn-ink);
+    font-size: 1.0625rem;
+    font-weight: 600;
     margin: 0;
 }
 
-
-/* ===================================================================
-   GLOBAL ACTION BUTTONS
-   =================================================================== */
-
-/* Primary buttons: kneadit/filament.css */
-.fi-btn.fi-color-gray {
-    border: 1px solid var(--border-medium) !important;
-    color: var(--brand-100) !important;
-    background: var(--brand-800) !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    box-shadow: none !important;
+[data-admin-gradient-header] p {
+    color: var(--kn-muted);
 }
-.fi-btn.fi-color-gray:hover {
-    background: var(--brand-700) !important;
-    box-shadow: none !important;
+
+/* Dropdown panels, including the user menu: `surface` with a hairline and the pop shadow. */
+.fi-dropdown-panel {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-pop);
+}
+
+.fi-dropdown-header,
+.fi-dropdown-header .fi-icon {
+    color: var(--kn-muted);
+}
+
+.fi-dropdown-list-item:hover,
+.fi-dropdown-list-item:focus-visible {
+    background: var(--kn-surface-hover);
+}
+
+.fi-dropdown-list-item-label {
+    color: var(--kn-ink-2);
+}
+
+.fi-dropdown-list-item .fi-icon {
+    color: var(--kn-muted);
+}
+
+.fi-dropdown-list-item.fi-color-danger .fi-dropdown-list-item-label,
+.fi-dropdown-list-item.fi-color-danger .fi-icon {
+    color: var(--kn-danger);
+}
+
+.fi-user-menu-trigger,
+.fi-user-menu-trigger .fi-tenant-menu-trigger-text {
+    color: var(--kn-ink);
+}
+
+/* Icon buttons (bell, close, row actions): `muted` until hovered. */
+.fi-icon-btn {
+    color: var(--kn-muted);
+}
+
+.fi-icon-btn:hover,
+.fi-icon-btn:focus-visible {
+    background: var(--kn-surface-hover);
+    color: var(--kn-ink);
+}
+
+.fi-icon-btn:focus-visible,
+.fi-btn:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+}
+
+/* Buttons: one control radius. Secondary buttons use the hover fill with a control border. */
+.fi-btn {
+    border-radius: var(--kn-radius-md);
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined),
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label) {
+    --tw-ring-shadow: 0 0 0 0 transparent;
+    background: var(--kn-surface-hover);
+    border: 1px solid var(--kn-border-control);
+    color: var(--kn-ink);
+    font-weight: 600;
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined):hover,
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-surface-hover) 80%, var(--kn-border-control));
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined) > .fi-icon,
+.fi-btn:not(.fi-color):not(.fi-outlined):not(label) > .fi-icon {
+    color: var(--kn-ink-2);
+}
+
+.fi-btn.fi-outlined.fi-color-gray,
+.fi-btn.fi-outlined:not(.fi-color) {
+    --tw-ring-color: var(--kn-border-control);
+    color: var(--kn-ink);
+}
+
+/* Destructive buttons: solid `danger` with `on-danger` text. */
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
+    background: var(--kn-danger);
+    color: var(--kn-on-danger);
+    font-weight: 600;
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-danger) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon {
+    color: inherit;
 }
