@@ -88,6 +88,10 @@ Tenant provisioning runs tenant migrations automatically. Existing tenant migrat
 
 `backup:databases --keep=7` is the application-owned backup entry point. Confirm its output after deployments and periodically test restoration of both the central database and at least one tenant database. A complete recovery requires the central tenant/domain records and matching tenant SQLite files.
 
+Each database is snapshotted with SQLite's `VACUUM INTO` while the app keeps running, which reads one consistent view (including rows still in the `-wal` file) and writes a single standalone `.sqlite` file. The command then runs `PRAGMA integrity_check` on every copy; anything other than `ok`, or any database that cannot be read, fails the whole run (nothing is published and the previous backups stay). A backup directory therefore holds only the database files, with no `-wal` or `-shm` files, so restoring is copying the file into place. The `Database backup` health check (see "Health checks") alerts when the newest backup is over 13 hours old or the last run failed.
+
+SQLite transactions begin as `BEGIN IMMEDIATE` (`transaction_mode` on the `central` and `sqlite` connections in `config/database.php`; tenant connections copy the `sqlite` template). A read-then-write transaction such as checkout therefore takes the write lock up front and waits up to `busy_timeout` (5 seconds) for another writer. With the default `DEFERRED` mode the transaction would fail at once with `database is locked` if another connection committed between its read and its first write, because `busy_timeout` does not apply to that case. The cost is that every `DB::transaction()` serialises with other writers, so keep transactions short and do not do slow work (HTTP calls, mail) inside them.
+
 Use `php artisan tenants:doctor` to inspect mismatches between central tenant records and database files; production request handling directs operators to `tenants:doctor --fix` when a database is missing.
 
 ## Deployment and release
@@ -275,6 +279,7 @@ For an incident, determine the active layer before changing data:
 | Disk space | Free space on the application volume is under 20% of the disk or under 5 GB |
 | Redis | A Redis connection used by the cache (including its lock connection), the queue or the session does not answer `PING`. Passes without connecting when none of them uses Redis |
 | Scheduler heartbeat | No scheduled task has started within 70 minutes (read from the `scheduled_task_status:*` platform settings, which `RecordScheduledTaskStatusListener` writes). Something is scheduled at least every 15 minutes, so this means the scheduler stopped |
+| Database backup | The newest completed backup directory (named by its start time under `BACKUP_PATH`) is older than 13 hours (backups run at 03:00 and 15:00), no backup exists, or the last `backup:databases` scheduled run failed (read from the same `scheduled_task_status:*` settings). In-progress and stray entries are ignored |
 | Nightwatch agent | Nightwatch is enabled (`NIGHTWATCH_ENABLED`) and nothing accepts a TCP connection on `nightwatch.ingest.uri` (default `127.0.0.1:2407`). Nothing is sent. Without the agent the app reports nothing to Nightwatch |
 
 The Platform Operations page shows each scheduled task's last status. Scheduled tasks run in the background, so `RecordScheduledTaskStatusListener` records `running` when a task starts, ignores the `ScheduledTaskFinished` event Laravel fires right after launching it (no exit code yet), and records the real outcome from `ScheduledBackgroundTaskFinished`: exit code 0 is `succeeded`, anything else is `failed` with the exit code.
@@ -284,6 +289,8 @@ The Platform Operations page shows each scheduled task's last status. Scheduled 
 When the server reboots, Redis stops before the queue worker does, so the worker keeps running for a moment and logs `Connection refused` against Redis (and cache writes in that window fail). A burst of these around a reboot or restart that stops on its own is expected. What to look for otherwise: the `Redis` health check failing after the server is back up, a `Connection refused` that continues, or a full disk (a full disk blocks Redis writes too, so check disk space first).
 
 ### Central database "database is locked"
+
+Transactions begin as `IMMEDIATE` (see "Database operations and backups"), which removes the lock failure for a transaction that reads and then writes. The case below still applies outside a transaction.
 
 Scheduled commands that loop over central rows (tenants, check-ins) load the rows first (`->get()`, or `lazyById()` for a table that can grow large) and then write. Do not iterate them with `->cursor()`: a cursor keeps a WAL read snapshot open, and when another process commits meanwhile (a dozen scheduled tasks write status rows at :00 and :30), SQLite rejects this connection's next write immediately with `database is locked`, without waiting for `busy_timeout`.
 

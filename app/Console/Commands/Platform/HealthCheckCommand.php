@@ -4,6 +4,7 @@ namespace App\Console\Commands\Platform;
 
 use App\Mail\Platform\HealthAlertMail;
 use App\Services\Platform\HealthChecks\Contracts\HealthCheck;
+use App\Services\Platform\HealthChecks\DatabaseBackupCheck;
 use App\Services\Platform\HealthChecks\DatabaseConnectionCheck;
 use App\Services\Platform\HealthChecks\DiskSpaceCheck;
 use App\Services\Platform\HealthChecks\HomepageRespondsCheck;
@@ -34,6 +35,7 @@ class HealthCheckCommand extends Command
         DiskSpaceCheck::class,
         RedisConnectionCheck::class,
         SchedulerHeartbeatCheck::class,
+        DatabaseBackupCheck::class,
         NightwatchAgentCheck::class,
         StorageLogsCheck::class,
         HomepageRespondsCheck::class,

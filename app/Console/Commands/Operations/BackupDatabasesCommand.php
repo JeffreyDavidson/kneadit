@@ -7,11 +7,12 @@ use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use PDO;
+use PDOStatement;
 use RuntimeException;
 use Throwable;
 
@@ -36,7 +37,7 @@ class BackupDatabasesCommand extends Command
             $centralDb = Config::string('database.connections.sqlite.database');
             if ($centralDb !== '' && file_exists($centralDb)) {
                 $dest = "{$stagingPath}/central.sqlite";
-                $this->copyDatabase($centralDb, $dest);
+                $this->snapshotDatabase($centralDb, $dest);
                 $this->info('  ✓ Central DB ('.$this->formatSize((int) filesize($centralDb)).')');
             } else {
                 $this->warn("  ⚠ Central DB not found at: {$centralDb}");
@@ -62,7 +63,7 @@ class BackupDatabasesCommand extends Command
 
                     $filename = basename($tenantDb);
                     $destination = "{$stagingPath}/{$filename}";
-                    $this->copyDatabase($tenantDb, $destination);
+                    $this->snapshotDatabase($tenantDb, $destination);
                     $count++;
                 }
 
@@ -157,13 +158,25 @@ class BackupDatabasesCommand extends Command
         );
     }
 
-    protected function copyDatabase(string $source, string $destination): void
+    /**
+     * Writes a consistent, standalone snapshot of a live SQLite database. VACUUM INTO
+     * reads one transaction's view of the database (including rows that are still
+     * only in the -wal file) and writes a single file, so a checkpoint or write
+     * while the backup runs cannot produce a torn copy. The copy is then checked
+     * with PRAGMA integrity_check; anything but "ok" fails the backup.
+     */
+    protected function snapshotDatabase(string $source, string $destination): void
     {
-        throw_unless(
-            File::copy($source, $destination),
-            RuntimeException::class,
-            "Failed to copy database backup to {$destination}.",
-        );
+        $previousUmask = umask(0077);
+
+        try {
+            $pdo = new PDO("sqlite:{$source}", options: [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            $pdo->exec('PRAGMA busy_timeout = 30000');
+            $pdo->prepare('VACUUM INTO ?')->execute([$destination]);
+            $pdo = null;
+        } finally {
+            umask($previousUmask);
+        }
 
         throw_unless(
             File::chmod($destination, 0600),
@@ -171,27 +184,30 @@ class BackupDatabasesCommand extends Command
             "Failed to secure database backup at {$destination}.",
         );
 
-        $sidecars = Arr::reject(
-            ['-wal', '-shm'],
-            fn (string $suffix): bool => is_link($source.$suffix) || ! File::isFile($source.$suffix),
+        $result = $this->integrityCheck($destination);
+
+        throw_unless(
+            $result === 'ok',
+            RuntimeException::class,
+            "Database backup {$destination} failed its integrity check: {$result}",
+        );
+    }
+
+    /** Returns "ok", or the first problem SQLite reports for the database file. */
+    protected function integrityCheck(string $path): string
+    {
+        $pdo = new PDO("sqlite:{$path}", options: [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $statement = $pdo->query('PRAGMA integrity_check');
+
+        throw_unless(
+            $statement instanceof PDOStatement,
+            RuntimeException::class,
+            "Could not run an integrity check on database backup {$path}.",
         );
 
-        foreach ($sidecars as $suffix) {
-            $sidecarSource = $source.$suffix;
+        $result = $statement->fetchColumn();
 
-            $sidecarDestination = $destination.$suffix;
-            throw_unless(
-                File::copy($sidecarSource, $sidecarDestination),
-                RuntimeException::class,
-                "Failed to copy database sidecar backup to {$sidecarDestination}.",
-            );
-
-            throw_unless(
-                File::chmod($sidecarDestination, 0600),
-                RuntimeException::class,
-                "Failed to secure database sidecar backup at {$sidecarDestination}.",
-            );
-        }
+        return is_string($result) ? $result : 'no result';
     }
 
     protected function dirSize(string $dir): int
