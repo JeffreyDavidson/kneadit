@@ -1,0 +1,50 @@
+/*
+ * Filament components on the KneadIt design system, for both admin panels.
+ * Uses tokens.css variables only.
+ */
+
+/*
+ * Page titles: Young Serif at one weight (heading-1). The serif is only for
+ * page titles and headings of 22px or more; card and section titles stay in
+ * the sans face.
+ */
+.fi-header-heading {
+    color: var(--kn-ink);
+    font-family: var(--kn-font-display);
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 2.125rem;
+}
+
+/*
+ * Primary buttons: honey fill with the warm-black on-honey text. Filament
+ * would pick white in dark mode, which is 2.65:1 on honey, so the colours are
+ * set from the tokens instead of Filament's generated palette shades.
+ */
+.fi-btn.fi-color-primary:not(.fi-outlined),
+.fi-btn-primary {
+    background: var(--kn-honey) !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--kn-on-honey) !important;
+    font-weight: 600;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):hover,
+.fi-btn-primary:hover {
+    background: var(--kn-honey-hover) !important;
+    color: var(--kn-on-honey) !important;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):focus-visible,
+.fi-btn-primary:focus-visible {
+    box-shadow: var(--kn-shadow-focus) !important;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined) .fi-icon,
+.fi-btn.fi-color-primary:not(.fi-outlined) svg,
+.fi-btn-primary .fi-icon,
+.fi-btn-primary svg {
+    color: var(--kn-on-honey) !important;
+}

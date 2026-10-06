@@ -1,10 +1,7 @@
 /* ===================================================================
-   PAGE HEADINGS & BREADCRUMBS
+   BREADCRUMBS (page heading: kneadit/filament.css)
    =================================================================== */
 
-.fi-header-heading {
-    color: white !important;
-}
 .fi-breadcrumbs-item span,
 .fi-breadcrumbs-item a {
     color: var(--brand-300) !important;
@@ -36,17 +33,7 @@
    GLOBAL ACTION BUTTONS
    =================================================================== */
 
-.fi-btn.fi-color-primary {
-    background: var(--brand-800) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    --tw-ring-shadow: 0 0 0 0 transparent !important;
-    box-shadow: none !important;
-}
-.fi-btn.fi-color-primary:hover {
-    background: var(--brand-700) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-}
+/* Primary buttons: kneadit/filament.css */
 .fi-btn.fi-color-gray {
     border: 1px solid var(--border-medium) !important;
     color: var(--brand-100) !important;
@@ -58,10 +45,3 @@
     background: var(--brand-700) !important;
     box-shadow: none !important;
 }
-.fi-btn-primary {
-    background: var(--brand-600) !important;
-}
-.fi-btn-primary:hover {
-    background: var(--brand-700) !important;
-}
-

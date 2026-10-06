@@ -395,13 +395,13 @@ body .fi-dropdown-list-item-button:hover {
 }
 /* Modal confirm/submit button */
 .fi-modal-footer .fi-btn:not(.fi-color-gray) {
-    background: var(--brand-700) !important;
-    color: #FFFFFF !important;
+    background: var(--kn-honey) !important;
+    color: var(--kn-on-honey) !important;
     border: none !important;
     font-weight: 600 !important;
 }
 .fi-modal-footer .fi-btn:not(.fi-color-gray):hover {
-    background: var(--brand-800) !important;
+    background: var(--kn-honey-hover) !important;
 }
 /* Modal danger button (delete) */
 .fi-modal-footer .fi-color-danger .fi-btn,
