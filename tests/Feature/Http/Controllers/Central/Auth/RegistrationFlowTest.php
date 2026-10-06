@@ -2,6 +2,8 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Staff\User;
+use App\Notifications\Platform\OwnerVerifyEmailNotification;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -30,13 +32,40 @@ test('user can register with valid data', function () {
         'terms' => true,
     ]);
 
-    $response->assertRedirect(route('onboarding.show'));
+    $response->assertRedirect(route('verification.notice'));
     test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
     test()->assertAuthenticated();
     expect(session('bakery_name'))->toBe('Sunshine Bakery');
 });
 
-test('a referred registration also goes straight to onboarding', function () {
+test('registration sends the verification email to the new owner', function () {
+    Notification::fake();
+
+    post(route('register'), [
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => 'SecurePass123!',
+        'password_confirmation' => 'SecurePass123!',
+        'bakery_name' => 'Sunshine Bakery',
+        'terms' => true,
+    ]);
+
+    Notification::assertSentTo(User::query()->where('email', 'jane@example.com')->firstOrFail(), OwnerVerifyEmailNotification::class);
+});
+
+test('the check your email page names the address, offers a resend and a way to use a different email', function () {
+    $user = User::factory()->owner()->unverified()->create(['email' => 'jane@example.com']);
+
+    actingAs($user)
+        ->get(route('verification.notice'))
+        ->assertOk()
+        ->assertSee('jane@example.com')
+        ->assertSeeHtml(route('verification.send'))
+        ->assertSeeHtml(route('logout'))
+        ->assertSee('Use a different email');
+});
+
+test('a referred registration also goes to the check your email page and keeps its session values', function () {
     $response = withSession(['referral_code' => 'REF123'])
         ->post(route('register'), [
             'name' => 'Jane Baker',
@@ -47,7 +76,7 @@ test('a referred registration also goes straight to onboarding', function () {
             'terms' => true,
         ]);
 
-    $response->assertRedirect(route('onboarding.show'));
+    $response->assertRedirect(route('verification.notice'));
     expect(session('referral_code'))->toBe('REF123')
         ->and(session('bakery_name'))->toBe('Sunshine Bakery');
 });

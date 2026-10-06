@@ -121,3 +121,12 @@ test('billing plans page does not show a trial end date once the trial has ended
         ->assertDontSee('Your free trial ends on')
         ->assertDontSee('No credit card required');
 });
+
+test('an unverified owner with a bakery can still open billing', function () {
+    $user = User::factory()->owner()->unverified()->create();
+    Tenant::factory()->create(['user_id' => $user->id]);
+
+    actingAs($user)
+        ->get(route('billing.plans'))
+        ->assertOk();
+});
