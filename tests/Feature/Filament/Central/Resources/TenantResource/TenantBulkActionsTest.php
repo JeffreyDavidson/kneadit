@@ -48,10 +48,10 @@ test('Pause is the only on/off switch: there are no account activate or deactiva
     $page = livewire(ListTenants::class);
 
     $page
-        ->assertTableBulkActionDoesNotExist('activate')
-        ->assertTableBulkActionDoesNotExist('deactivate')
-        ->assertTableBulkActionExists('pause')
-        ->assertTableBulkActionExists('resume')
+        ->assertActionDoesNotExist(TestAction::make('activate')->table()->bulk())
+        ->assertActionDoesNotExist(TestAction::make('deactivate')->table()->bulk())
+        ->assertActionExists(TestAction::make('pause')->table()->bulk())
+        ->assertActionExists(TestAction::make('resume')->table()->bulk())
         ->assertTableColumnDoesNotExist('is_active')
         ->assertTableColumnExists('is_paused');
 
