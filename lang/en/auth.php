@@ -45,6 +45,6 @@ return [
         'heading' => 'Check your email',
         'description' => 'We sent a verification link to <strong>:email</strong>. Click the link to verify your account.',
         'resend' => 'Resend Verification Email',
-        'continue' => 'Continue to :app →',
+        'different_email' => 'Use a different email',
     ],
 ];

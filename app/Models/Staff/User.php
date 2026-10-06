@@ -5,6 +5,7 @@ namespace App\Models\Staff;
 use App\Builders\Staff\UserQueryBuilder;
 use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
+use App\Notifications\Platform\OwnerVerifyEmailNotification;
 use Database\Factories\Staff\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -87,5 +88,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function tenants(): HasMany
     {
         return $this->hasMany(Tenant::class);
+    }
+
+    #[\Override]
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new OwnerVerifyEmailNotification);
     }
 }

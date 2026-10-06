@@ -45,6 +45,25 @@ function expectNoTenantToBeCreated(): void
     app()->instance(CompleteTenantOnboarding::class, $completeOnboarding);
 }
 
+test('an unverified owner is sent to verify their email instead of seeing onboarding', function () {
+    $user = User::factory()->owner()->unverified()->create();
+
+    actingAs($user)
+        ->get(route('onboarding.show'))
+        ->assertRedirect(route('verification.notice'));
+});
+
+test('an unverified owner cannot create a bakery', function () {
+    expectNoTenantToBeCreated();
+    $user = User::factory()->owner()->unverified()->create();
+
+    actingAs($user)
+        ->post(route('onboarding.store'), onboardingPayload('sweet-treats'))
+        ->assertRedirect(route('verification.notice'));
+
+    expect(Tenant::query()->count())->toBe(0);
+});
+
 test('onboarding page renders for authenticated user', function () {
     $user = User::factory()->owner()->create();
 
