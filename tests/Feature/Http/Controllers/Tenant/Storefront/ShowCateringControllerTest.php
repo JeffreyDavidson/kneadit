@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Customers\CateringInquiry;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -89,4 +91,17 @@ test('inquiry is saved with default status', function () {
     $inquiry = CateringInquiry::query()->first();
 
     expect($inquiry)->not->toBeNull();
+});
+
+test('the event date picker minimum follows the bakery calendar day, not UTC', function () {
+    Date::setTestNow('2026-10-07 03:00:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings(['timezone' => 'America/Los_Angeles']),
+        catering: makeCateringSettings(['enabled' => true, 'leadTimeDays' => '2']),
+    ));
+
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.catering', [], false));
+
+    $response->assertOk()
+        ->assertSee('min="2026-10-08"', false);
 });
