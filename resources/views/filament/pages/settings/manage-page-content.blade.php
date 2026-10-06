@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 rounded-xl border p-6">
+    <div class="border-brand-800/60 mb-6 rounded-xl border bg-(--kn-surface) p-6">
         <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
             Storefront Page Content
         </div>

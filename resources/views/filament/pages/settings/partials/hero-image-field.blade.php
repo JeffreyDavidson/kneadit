@@ -4,7 +4,7 @@
 @endphp
 
 <div>
-    <label for="{{ $inputId }}" class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
+    <label for="{{ $inputId }}" class="mb-1 block text-xs font-medium text-(--kn-ink-2)">
         {{ $image->getLabel() }}
     </label>
     <div class="flex items-center gap-4">
@@ -22,13 +22,9 @@
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 wire:model="heroUploads.{{ $image->value }}"
-                class="block w-full text-sm text-gray-700 dark:text-gray-300"
+                class="block w-full text-sm text-(--kn-ink-2)"
             />
-            <p
-                wire:loading
-                wire:target="heroUploads.{{ $image->value }}"
-                class="mt-1 text-xs text-gray-500 dark:text-gray-400"
-            >
+            <p wire:loading wire:target="heroUploads.{{ $image->value }}" class="mt-1 text-xs text-(--kn-muted)">
                 Uploading...
             </p>
             @error("heroUploads.{$image->value}")

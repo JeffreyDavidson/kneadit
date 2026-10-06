@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border p-6 md:flex-row md:items-center">
+    <div class="border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border bg-(--kn-surface) p-6 md:flex-row md:items-center">
         <div class="min-w-0 flex-1">
             <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Order</div>
             <h2 class="text-brand-50 font-mono text-[1.35rem] leading-tight font-bold">{{ $order->order_number }}</h2>
@@ -23,7 +23,7 @@
             <span class="inline-flex items-center gap-1.5 {{ $viewModel->paymentColor['bg'] }} border {{ $viewModel->paymentColor['border'] }} {{ $viewModel->paymentColor['text'] }} text-[0.7rem] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1">
                 {{ $order->payment_status->getLabel() }}
             </span>
-            <span class="bg-brand-800 border-brand-300/15 text-brand-200 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
+            <span class="border-brand-300/15 text-brand-200 inline-flex items-center gap-1 rounded-full border bg-(--kn-surface-sunken) px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase">
                 @if ($viewModel->isDelivery)
                     <x-heroicon-o-truck class="h-3 w-3" />
                 @else
@@ -65,7 +65,7 @@
                     {{ $t['label'] }}
                     @isset($t['count'])
                         <span
-                            :class="tab === '{{ $key }}' ? 'bg-brand-300/15 text-brand-300' : 'bg-brand-800 text-brand-400'"
+                            :class="tab === '{{ $key }}' ? 'bg-brand-300/15 text-brand-300' : 'bg-(--kn-surface-sunken) text-brand-400'"
                             class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[0.7rem] font-bold transition-colors"
                         >
                             {{ $t['count'] }}
@@ -79,7 +79,7 @@
         <div x-show="tab === 'overview'" x-cloak class="space-y-6">
             @if ($order->cateringInquiry)
                 @php $inq = $order->cateringInquiry; @endphp
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="mb-4 flex items-center justify-between">
                         <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                             Catering
@@ -142,7 +142,7 @@
             {{-- Customer + Delivery --}}
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {{-- Customer --}}
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         Customer
                     </div>
@@ -177,7 +177,7 @@
                 </div>
 
                 {{-- Delivery / Pickup --}}
-                <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+                <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                     <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                         {{ $viewModel->isDelivery ? 'Delivery' : 'Pickup' }}
                     </div>
@@ -220,7 +220,7 @@
             </div>
 
             {{-- Pricing breakdown --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Pricing</div>
                 <dl class="space-y-2.5">
                     <div class="flex items-center justify-between text-[0.875rem]">
@@ -238,7 +238,7 @@
                     @if ($order->discount_amount->dollars() > 0)
                         <div class="flex items-center justify-between text-[0.875rem]">
                             <dt class="text-brand-400">Discount</dt>
-                            <dd class="font-semibold text-emerald-400 tabular-nums">
+                            <dd class="font-semibold text-(--kn-success) tabular-nums">
                                 −{{ $order->discount_amount->formatted() }}
                             </dd>
                         </div>
@@ -246,7 +246,7 @@
                     @if ($order->gift_card_amount->dollars() > 0)
                         <div class="flex items-center justify-between text-[0.875rem]">
                             <dt class="text-brand-400">Gift Card</dt>
-                            <dd class="font-semibold text-emerald-400 tabular-nums">
+                            <dd class="font-semibold text-(--kn-success) tabular-nums">
                                 −{{ $order->gift_card_amount->formatted() }}
                             </dd>
                         </div>
@@ -275,7 +275,7 @@
 
         {{-- ============== TAB: ITEMS ============== --}}
         <div x-show="tab === 'items'" x-cloak>
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Line Items</div>
                     <span class="text-brand-400 text-[0.75rem]">{{ $order->orderItems->count() }} {{ Str::plural('item', $order->orderItems->count()) }}</span>
@@ -309,7 +309,7 @@
                                                         class="h-10 w-10 shrink-0 rounded-lg object-cover"
                                                     />
                                                 @else
-                                                    <div class="bg-brand-800 border-brand-700 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border">
+                                                    <div class="border-brand-700 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-(--kn-surface-sunken)">
                                                         <x-heroicon-o-photo class="text-brand-400 h-5 w-5" />
                                                     </div>
                                                 @endif
@@ -346,7 +346,7 @@
         {{-- ============== TAB: ACTIVITY ============== --}}
         <div x-show="tab === 'activity'" x-cloak class="space-y-6">
             {{-- Messages thread --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="text-brand-300 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Messages</div>
                     <span class="text-brand-400 text-[0.75rem]">{{ $order->messages->count() }} total</span>
@@ -365,7 +365,7 @@
                         @foreach ($viewModel->messages as $msg)
                             @php $isBaker = $msg->sender_type->isBaker(); @endphp
                             <div @class(['flex', 'justify-end' => $isBaker, 'justify-start' => ! $isBaker])>
-                                <div @class(['max-w-md rounded-lg border px-4 py-3', 'bg-brand-700 border-brand-600' => $isBaker, 'bg-brand-800 border-brand-700' => ! $isBaker])>
+                                <div @class(['max-w-md rounded-lg border px-4 py-3', 'bg-brand-700 border-brand-600' => $isBaker, 'bg-(--kn-surface-sunken) border-brand-700' => ! $isBaker])>
                                     <div class="mb-1.5 flex items-center gap-2">
                                         <span class="text-brand-200 text-[0.75rem] font-semibold">{{ $msg->sender_name }}</span>
                                         @if ($isBaker)
@@ -390,7 +390,7 @@
             </div>
 
             {{-- Notes (timestamped, appended) --}}
-            <div class="bg-brand-900 border-brand-800/60 rounded-xl border p-6">
+            <div class="border-brand-800/60 rounded-xl border bg-(--kn-surface) p-6">
                 <div class="text-brand-300 mb-4 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Notes</div>
                 @if (filled($order->notes))
                     <pre class="text-brand-200 m-0 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap">{{ $order->notes }}</pre>

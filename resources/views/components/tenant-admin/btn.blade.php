@@ -2,10 +2,10 @@
 
 @php
     $variants = [
-        'primary' => 'bg-brand-300 text-white border-0',
-        'secondary' => 'bg-brand-50 text-brand-900 border border-brand-300/30',
-        'danger' => 'bg-red-700 text-white border-0',
-        'ghost' => 'bg-white/20 text-white border-0 hover:bg-white/30',
+        'primary' => 'bg-(--kn-honey) text-(--kn-on-honey) hover:bg-(--kn-honey-hover) border-0',
+        'secondary' => 'bg-(--kn-surface-hover) text-(--kn-ink) border border-(--kn-border-control)',
+        'danger' => 'bg-(--kn-danger) text-(--kn-on-danger) border-0',
+        'ghost' => 'text-(--kn-ink) border-0 hover:bg-(--kn-surface-hover)',
     ];
     $paddings = [
         'sm' => 'px-2.5 py-1 text-xs',

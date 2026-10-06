@@ -35,10 +35,10 @@ test('toggleLoyalty flips the setting', function () {
 });
 
 dataset('recent activity rows', [
-    'earned' => [LoyaltyPointType::Earned, 250, 'text-green-600', '+250'],
-    'redeemed is stored positive and shown negative' => [LoyaltyPointType::Redeemed, 100, 'text-red-600', '-100'],
-    'positive adjustment' => [LoyaltyPointType::Adjusted, 50, 'text-yellow-600', '+50'],
-    'negative adjustment is not double negated' => [LoyaltyPointType::Adjusted, -25, 'text-yellow-600', '-25'],
+    'earned' => [LoyaltyPointType::Earned, 250, 'text-(--kn-success)', '+250'],
+    'redeemed is stored positive and shown negative' => [LoyaltyPointType::Redeemed, 100, 'text-(--kn-danger)', '-100'],
+    'positive adjustment' => [LoyaltyPointType::Adjusted, 50, 'text-(--kn-warning)', '+50'],
+    'negative adjustment is not double negated' => [LoyaltyPointType::Adjusted, -25, 'text-(--kn-warning)', '-25'],
 ]);
 
 test('recent activity shows the color and sign for each point type', function (LoyaltyPointType $type, int $points, string $colorClass, string $display) {

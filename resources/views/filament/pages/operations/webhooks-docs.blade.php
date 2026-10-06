@@ -34,7 +34,7 @@
                 <li><code>X-KneadIt-Signature</code> — HMAC-SHA256 of the request body, signed with your secret</li>
             </ul>
             <p>The body always wraps event data in this envelope:</p>
-            <pre class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"><code>{
+            <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>{
   "event": "order.created",
   "timestamp": "2026-05-01T14:00:00+00:00",
   "data": { ... event-specific payload ... }
@@ -48,7 +48,7 @@
             <div class="space-y-2">
                 <h3 class="font-semibold"><code>order.created</code></h3>
                 <p class="text-sm">Fires when a new order is placed.</p>
-                <pre class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"><code>{
+                <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>{
   "order_number": "ORD-1042",
   "customer_name": "Maya Reyes",
   "customer_email": "maya@example.com",
@@ -65,7 +65,7 @@
             <div class="space-y-2">
                 <h3 class="font-semibold"><code>order.updated</code></h3>
                 <p class="text-sm">Fires on every status transition. Includes the previous status.</p>
-                <pre class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"><code>{
+                <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>{
   "order_number": "ORD-1042",
   "status": "confirmed",
   "previous_status": "pending",
@@ -80,7 +80,7 @@
                     Fires once when an order moves to <code>cancelled</code>. <code>order.updated</code> also fires for
                     the same transition — subscribe to whichever fits your handler.
                 </p>
-                <pre class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"><code>{
+                <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>{
   "order_number": "ORD-1042",
   "previous_status": "baking",
   "customer_name": "Maya Reyes",
@@ -93,7 +93,7 @@
             <div class="space-y-2">
                 <h3 class="font-semibold"><code>order.delivered</code></h3>
                 <p class="text-sm">Fires once when an order moves to <code>delivered</code>.</p>
-                <pre class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"><code>{
+                <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>{
   "order_number": "ORD-1042",
   "previous_status": "ready",
   "customer_name": "Maya Reyes",
@@ -115,7 +115,7 @@
             <div class="space-y-2">
                 <h3 class="text-sm font-semibold">PHP</h3>
                 <pre
-                    class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"
+                    class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"
                 ><code>$body = file_get_contents('php://input');
 $expected = hash_hmac('sha256', $body, $_ENV['KNEADIT_WEBHOOK_SECRET']);
 $received = $_SERVER['HTTP_X_KNEADIT_SIGNATURE'] ?? '';
@@ -129,7 +129,7 @@ if (! hash_equals($expected, $received)) {
             <div class="space-y-2">
                 <h3 class="text-sm font-semibold">Node.js</h3>
                 <pre
-                    class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"
+                    class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"
                 ><code>import crypto from 'node:crypto';
 
 const expected = crypto
@@ -146,9 +146,7 @@ if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received))) {
 
             <div class="space-y-2">
                 <h3 class="text-sm font-semibold">Python</h3>
-                <pre
-                    class="overflow-x-auto rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"
-                ><code>import hmac, hashlib, os
+                <pre class="overflow-x-auto rounded bg-(--kn-surface-sunken) p-4 text-sm"><code>import hmac, hashlib, os
 
 expected = hmac.new(
     os.environ['KNEADIT_WEBHOOK_SECRET'].encode(),

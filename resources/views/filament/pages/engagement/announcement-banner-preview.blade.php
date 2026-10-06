@@ -6,7 +6,7 @@
 @endphp
 
 @if (! $enabled)
-    <div class="py-4 text-center text-gray-400 italic dark:text-gray-500">Banner is currently disabled</div>
+    <div class="py-4 text-center text-(--kn-muted) italic">Banner is currently disabled</div>
 @else
     <div class="relative px-4 py-3 text-center text-sm font-medium rounded-lg border-2 {{ $variant->bgClass() }} {{ $variant->textClass() }} {{ $variant->borderClass() }}">
         <span>{{ $text }}</span>

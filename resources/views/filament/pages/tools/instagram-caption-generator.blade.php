@@ -2,14 +2,14 @@
     <div class="space-y-6">
         <!-- Header -->
         <div class="text-center">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Instagram Caption Generator</h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
+            <h1 class="text-2xl font-bold text-(--kn-ink)">Instagram Caption Generator</h1>
+            <p class="mt-2 text-(--kn-muted)">
                 Generate engaging Instagram captions for your bakery products with custom hooks and hashtags.
             </p>
         </div>
 
         <!-- Form -->
-        <div class="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+        <div class="rounded-lg bg-(--kn-surface) p-6 shadow">
             <form wire:submit="generateCaptions">
                 {{ $this->form }}
 
@@ -23,18 +23,18 @@
         <!-- Generated Captions -->
         @if (! empty($captions))
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Generated Captions</h3>
+                <h3 class="text-lg font-semibold text-(--kn-ink)">Generated Captions</h3>
 
                 @foreach ($captions as $index => $caption)
-                    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
+                    <div class="rounded-lg border border-(--kn-border) bg-(--kn-surface) p-6 shadow">
                         <div class="mb-3 flex items-start justify-between">
-                            <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+                            <h4 class="text-md font-medium text-(--kn-ink-2)">
                                 Caption Variation {{ $caption['variation'] }}
                             </h4>
                             <button
                                 type="button"
                                 onclick="copyToClipboard('caption-{{ $index }}')"
-                                class="bg-primary-600 hover:bg-primary-700 inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors"
+                                class="inline-flex items-center gap-2 rounded-md bg-(--kn-honey) px-3 py-1.5 text-sm font-medium text-(--kn-on-honey) transition-colors hover:bg-(--kn-honey-hover)"
                             >
                                 <x-heroicon-o-document-duplicate class="h-4 w-4" stroke-width="2" />
                                 Copy
@@ -43,24 +43,24 @@
 
                         <div
                             id="caption-{{ $index }}"
-                            class="rounded-md border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-900"
+                            class="rounded-md border border-(--kn-border) bg-(--kn-surface-sunken) p-4"
                         >
-                            <pre class="font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ $caption['text'] }}</pre>
+                            <pre class="font-mono text-sm leading-relaxed whitespace-pre-wrap text-(--kn-ink-2)">{{ $caption['text'] }}</pre>
                         </div>
 
-                        <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div class="mt-3 text-xs text-(--kn-muted)">
                             Character count: {{ strlen($caption['text']) }}
                         </div>
                     </div>
                 @endforeach
 
                 <!-- Tips -->
-                <div class="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/30">
+                <div class="mt-6 rounded-lg border border-(--kn-info) bg-(--kn-info-tint) p-4 dark:border-blue-800 dark:bg-blue-900/30">
                     <div class="flex items-start">
-                        <x-heroicon-s-information-circle class="mt-0.5 mr-3 h-5 w-5 flex-shrink-0 text-blue-500" />
+                        <x-heroicon-s-information-circle class="mt-0.5 mr-3 h-5 w-5 flex-shrink-0 text-(--kn-info)" />
                         <div>
-                            <h4 class="text-sm font-medium text-blue-800 dark:text-blue-200">Instagram Tips</h4>
-                            <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                            <h4 class="text-sm font-medium text-(--kn-info) dark:text-blue-200">Instagram Tips</h4>
+                            <div class="mt-2 text-sm text-(--kn-info) dark:text-blue-300">
                                 <ul class="list-inside list-disc space-y-1">
                                     <li>Instagram captions can be up to 2,200 characters</li>
                                     <li>The first 125 characters are shown before "more" link</li>
@@ -95,13 +95,21 @@
                             </svg>
                             Copied!
                         `;
-                        button.classList.remove('bg-primary-600', 'hover:bg-primary-700');
-                        button.classList.add('bg-green-600', 'hover:bg-green-700');
+                        button.classList.remove(
+                            'bg-(--kn-honey)',
+                            'hover:bg-(--kn-honey-hover)',
+                            'text-(--kn-on-honey)',
+                        );
+                        button.classList.add('bg-(--kn-success)', 'text-(--kn-on-danger)');
 
                         setTimeout(function () {
                             button.innerHTML = originalText;
-                            button.classList.remove('bg-green-600', 'hover:bg-green-700');
-                            button.classList.add('bg-primary-600', 'hover:bg-primary-700');
+                            button.classList.remove('bg-(--kn-success)', 'text-(--kn-on-danger)');
+                            button.classList.add(
+                                'bg-(--kn-honey)',
+                                'hover:bg-(--kn-honey-hover)',
+                                'text-(--kn-on-honey)',
+                            );
                         }, 2000);
                     }
                 });

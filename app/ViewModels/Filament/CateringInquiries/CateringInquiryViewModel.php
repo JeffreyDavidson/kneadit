@@ -46,8 +46,8 @@ final readonly class CateringInquiryViewModel
             ? $depositCalculator->suggestedAmount($inquiry, $this->depositPercent)
             : null;
         $this->depositChip = match (true) {
-            $this->depositPaid => ['label' => 'Deposit received', 'bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-400'],
-            in_array($this->status, [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed], true) => ['label' => 'Deposit pending', 'bg' => 'bg-amber-500/15', 'border' => 'border-amber-500/25', 'text' => 'text-amber-400'],
+            $this->depositPaid => ['label' => 'Deposit received', 'bg' => 'bg-(--kn-success-tint)', 'border' => 'border-(--kn-success)', 'text' => 'text-(--kn-success)'],
+            in_array($this->status, [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed], true) => ['label' => 'Deposit pending', 'bg' => 'bg-(--kn-warning-tint)', 'border' => 'border-(--kn-warning)', 'text' => 'text-(--kn-warning)'],
             default => null,
         };
     }

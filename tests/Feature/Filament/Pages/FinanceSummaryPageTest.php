@@ -40,12 +40,12 @@ test('profit colors distinguish losses from nonnegative results', function (floa
         ['month_name' => 'January', 'revenue' => 100.0, 'expenses' => 100.0 - $net, 'net' => $net],
     ]));
 
-    $component->assertSee("text-3xl font-bold text-{$color}-900", false);
-    $component->assertSee("px-4 py-3 text-right font-medium text-{$color}-600", false);
+    $component->assertSee("text-3xl font-bold text-(--kn-{$color})", false);
+    $component->assertSee("px-4 py-3 text-right font-medium text-(--kn-{$color})", false);
 })->with([
-    'profit' => [25.0, 'green'],
-    'break even' => [0.0, 'green'],
-    'loss' => [-25.0, 'red'],
+    'profit' => [25.0, 'success'],
+    'break even' => [0.0, 'success'],
+    'loss' => [-25.0, 'danger'],
 ]);
 
 test('finance summary defaults to the bakery-local year', function () {

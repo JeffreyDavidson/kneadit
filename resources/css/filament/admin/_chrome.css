@@ -172,11 +172,35 @@
     color: var(--kn-ink);
 }
 
-/* Destructive buttons: solid `danger` with `on-danger` text. */
-.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
-    background: var(--kn-danger);
+/*
+ * Solid status buttons (destructive, success, warning, info): the token status
+ * colour with `on-danger` text. That token is white on the dark light-theme
+ * fills and warm black on the pale dark-theme fills, which is the right pairing
+ * for every status colour, and it replaces the saturated shades Filament
+ * generates (which were bright green with white text, 3.7:1, in dark).
+ */
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label),
+.fi-btn.fi-color-success:not(.fi-outlined):not(label),
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label),
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
     color: var(--kn-on-danger);
     font-weight: 600;
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) {
+    background: var(--kn-danger);
+}
+
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) {
+    background: var(--kn-success);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) {
+    background: var(--kn-warning);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) {
+    background: var(--kn-info);
 }
 
 .fi-btn.fi-color-danger:not(.fi-outlined):not(label):hover {
@@ -184,6 +208,24 @@
     color: var(--kn-on-danger);
 }
 
-.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon {
+.fi-btn.fi-color-success:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-success) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-warning) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-info:not(.fi-outlined):not(label):hover {
+    background: color-mix(in srgb, var(--kn-info) 85%, var(--kn-ink));
+    color: var(--kn-on-danger);
+}
+
+.fi-btn.fi-color-danger:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-success:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-warning:not(.fi-outlined):not(label) > .fi-icon,
+.fi-btn.fi-color-info:not(.fi-outlined):not(label) > .fi-icon {
     color: inherit;
 }

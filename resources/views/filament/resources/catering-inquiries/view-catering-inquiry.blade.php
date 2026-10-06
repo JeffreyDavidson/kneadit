@@ -4,7 +4,7 @@
 
 <x-filament-panels::page>
     {{-- ============== HERO STRIP ============== --}}
-    <div class="bg-brand-900 border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border p-6 md:flex-row md:items-center">
+    <div class="border-brand-800/60 mb-6 flex flex-col gap-5 rounded-xl border bg-(--kn-surface) p-6 md:flex-row md:items-center">
         <div class="min-w-0 flex-1">
             <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                 Catering Inquiry
@@ -27,7 +27,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-            <span class="bg-brand-800 border-brand-700 text-brand-200 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] uppercase">
+            <span class="border-brand-700 text-brand-200 inline-flex items-center gap-1.5 rounded-full border bg-(--kn-surface-sunken) px-2.5 py-1 text-[0.7rem] font-bold tracking-[0.08em] uppercase">
                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                 {{ $viewModel->status->getLabel() }}
             </span>
@@ -146,7 +146,7 @@
             @if ($viewModel->order)
                 <a
                     href="{{ \App\Filament\Resources\Orders\OrderResource::getUrl('view', ['record' => $viewModel->order]) }}"
-                    class="bg-brand-800 border-brand-700/60 hover:border-brand-300/40 group -mx-2 flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors"
+                    class="border-brand-700/60 hover:border-brand-300/40 group -mx-2 flex items-center justify-between gap-4 rounded-lg border bg-(--kn-surface-sunken) px-4 py-3 transition-colors"
                 >
                     <div class="min-w-0">
                         <div class="text-brand-300 mb-0.5 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
@@ -167,7 +167,7 @@
                         Awaiting confirmation. Confirming creates an order so the rest of fulfillment (payment,
                         messages, status) is tracked there.
                     @elseif ($viewModel->status === CateringInquiryStatus::Cancelled)
-                        <span class="font-semibold text-red-400">Cancelled.</span>
+                        <span class="font-semibold text-(--kn-danger)">Cancelled.</span>
                     @else
                         Send a quote first; confirmation becomes available once the customer has been quoted.
                     @endif

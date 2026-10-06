@@ -97,7 +97,7 @@
     {{-- Edit modal --}}
     @if ($showEditModal)
         <x-tenant-admin.modal>
-            <div class="text-brand-900 mb-4 text-base font-bold">Edit {{ ucfirst($editingType) }} Goal</div>
+            <div class="mb-4 text-base font-bold text-(--kn-ink)">Edit {{ ucfirst($editingType) }} Goal</div>
             <x-tenant-admin.eyebrow as="label" class="mb-1 block">Goal Amount ($)</x-tenant-admin.eyebrow>
             <x-tenant-admin.input type="number" wire:model="editingGoal" step="100" min="0" class="mb-4" />
             <div class="flex justify-end gap-2">
