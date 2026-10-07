@@ -87,7 +87,7 @@ class Onboarding extends Page
         return $schema->components([
             Wizard::make(OnboardingStepRegistry::steps($this))
                 ->submitAction(view('filament.pages.platform.onboarding-submit'))
-                ->contained(false),
+                ->hiddenHeader(),
         ]);
     }
 

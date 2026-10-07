@@ -229,3 +229,50 @@
 .fi-btn.fi-color-info:not(.fi-outlined):not(label) > .fi-icon {
     color: inherit;
 }
+
+/*
+ * Brand logo (views/filament/brand-logo.blade.php): the bakery's logo is sized
+ * by height with a width cap, so a wide logo fits without shrinking to a
+ * sliver. The bakery name sits next to it in the topbar only.
+ */
+.kn-brand {
+    align-items: center;
+    display: flex;
+    gap: var(--kn-space-3);
+    min-width: 0;
+}
+
+.kn-brand-logo {
+    height: 2.25rem;
+    max-width: 11rem;
+    object-fit: contain;
+    width: auto;
+}
+
+.kn-brand-wordmark {
+    height: 2.25rem;
+    width: auto;
+}
+
+.kn-brand-name {
+    color: var(--kn-ink);
+    font-size: 1rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fi-sidebar .kn-brand-name,
+.fi-simple-layout .kn-brand-name {
+    display: none;
+}
+
+.fi-simple-layout .kn-brand-logo {
+    height: 3.5rem;
+    max-width: 100%;
+}
+
+.fi-simple-layout .kn-brand-wordmark {
+    height: 3.5rem;
+}
