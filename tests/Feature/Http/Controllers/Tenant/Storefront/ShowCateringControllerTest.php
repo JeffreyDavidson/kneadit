@@ -102,6 +102,5 @@ test('the event date picker minimum follows the bakery calendar day, not UTC', f
 
     $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.catering', [], false));
 
-    $response->assertOk()
-        ->assertSee('min="2026-10-08"', false);
+    $response->assertOk()->assertSeeHtml('min="2026-10-08"');
 });
