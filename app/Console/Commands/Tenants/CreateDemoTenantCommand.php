@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
@@ -88,6 +89,7 @@ class CreateDemoTenantCommand extends Command
                 'email' => 'demo@getkneadit.app',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner,
             ]);
 
             // Seed settings

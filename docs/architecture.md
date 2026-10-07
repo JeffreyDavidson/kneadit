@@ -59,6 +59,8 @@ The root URL is deliberately universal: the global middleware establishes centra
 - `routes/central/seo.php` for the sitemap and robots response.
 - `routes/billing.php` for subscription billing and Stripe webhooks.
 
+Central-only routes carry `PreventAccessFromTenantDomains`, which answers 404 on any host outside `tenancy.central_domains`, because the web group has already put a bakery in context on its own host and these routes read the central database. That covers platform accounts and onboarding (`auth.php`, `platform.php`), the marketing site, blog, directory, referral and contact routes, the sitemap and robots response, the admin export, backup, maintenance-preview and impersonation URLs, and `/billing`. Three routes deliberately answer on bakery hosts: `/` (`RootController` serves the bakery storefront), `login` (the redirect that signed-out visitors are sent to) and `logout`; `csp.report` also stays open because every page's CSP reports to its own host. `tests/Feature/Routing/CentralRoutesHostTest.php` walks every route served by a Central or Billing controller and fails if one answers on a bakery host without being on its allowlist. A tenant `users.role` created without an explicit role is `staff` (tenant migration `2026_10_06_120000`); code that creates a bakery's first user sets `UserRole::Owner` itself (`ProvisionTenantOwner`, the demo and test tenant commands, `DatabaseSeeder`, and `CreateUser` for the platform account).
+
 `routes/tenant.php` is the tenant route composition entry point. Its outer group owns tenant initialization and central-domain protection before loading:
 
 - `routes/tenant/access.php` for PWA metadata, invitations, tenant impersonation consumption, driver links, campaign previews, and Stripe Connect.
