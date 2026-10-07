@@ -64,7 +64,9 @@ class ShowOrderFormController extends Controller
             'hydratedCartItems' => $hydratedItems,
             'removedItemNames' => $removedItemNames,
             'maxQuantity' => OrderItem::MAX_QUANTITY,
-            'quantityLimitMessage' => __('orders.max_quantity', ['max' => OrderItem::MAX_QUANTITY]),
+            'quantityLimitMessage' => __('orders.max_quantity', [
+                'max' => OrderItem::MAX_QUANTITY,
+            ]),
             'hydratedCartEmail' => $cart?->customer_email,
             'hydratedCartName' => $cart?->customer_name,
             'earliestDeliveryDate' => $earliestDeliveryDate->get(),
