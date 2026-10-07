@@ -517,6 +517,7 @@ test('manage settings page rejects out-of-range numbers and saves nothing', func
     'negative abandoned cart coupon' => ['abandoned_cart_recovery_coupon_dollars', -1, 'min'],
     'negative referral discount' => ['customer_referral_discount_dollars', -1, 'min'],
     'negative modification window' => ['order_modification_window_minutes', -1, 'min'],
+    'negative minimum order lead hours' => ['minimum_order_lead_hours', -1, 'min'],
     'pickup slot interval below five' => ['pickup_slot_interval_minutes', 4, 'min'],
     'pickup slot interval above a day' => ['pickup_slot_interval_minutes', 1441, 'max'],
     'zero pickup slots per window' => ['pickup_slot_max_per_window', 0, 'min'],
