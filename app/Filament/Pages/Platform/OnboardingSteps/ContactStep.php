@@ -20,6 +20,11 @@ final class ContactStep extends OnboardingStep
         return 'contact';
     }
 
+    public static function label(): string
+    {
+        return 'Contact info';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = self::tenant();
@@ -34,21 +39,22 @@ final class ContactStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Contact Info')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedEnvelope)
             ->description('How customers can reach you')
             ->schema([
-                Section::make('Contact Information')
+                Section::make('Contact information')
+                    ->contained(false)
                     ->description('This information will be displayed on your storefront.')
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('contact.email')
-                                ->label('Email Address')
+                                ->label('Email address')
                                 ->email()
                                 ->required()
                                 ->placeholder('hello@yourbakery.com'),
                             TextInput::make('contact.phone')
-                                ->label('Phone Number')
+                                ->label('Phone number')
                                 ->tel()
                                 ->placeholder('+1 (555) 123-4567'),
                         ]),

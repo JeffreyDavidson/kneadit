@@ -26,9 +26,9 @@ test('an owner sees the payment section and never receives the stored secret', f
 
     $component = livewire(Onboarding::class)
         ->assertSuccessful()
-        ->assertSee('Payment Collection')
+        ->assertSee('Payment collection')
         ->assertSee('Connect with Stripe')
-        ->assertSee('PayPal Client Secret')
+        ->assertSee('PayPal client secret')
         ->assertSee('Set — enter a new value to replace it')
         ->assertSet('payments.paypal_client_secret', '');
 
@@ -42,9 +42,9 @@ test('a manager gets no payment section and no credentials', function () {
     $component = livewire(Onboarding::class)
         ->assertSuccessful()
         ->assertSee('Only the bakery owner can set up payments')
-        ->assertDontSee('Payment Collection')
+        ->assertDontSee('Payment collection')
         ->assertDontSee('Connect with Stripe')
-        ->assertDontSee('PayPal Client Secret')
+        ->assertDontSee('PayPal client secret')
         ->assertSet('payments.paypal_client_id', '')
         ->assertSet('payments.paypal_client_secret', '');
 

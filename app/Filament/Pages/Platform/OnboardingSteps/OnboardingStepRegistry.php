@@ -47,23 +47,35 @@ final class OnboardingStepRegistry
     public static function steps(Onboarding $page): array
     {
         return array_map(
-            fn (string $step, int $index): Step => self::withProgress($step::make($page), $index),
+            fn (string $step, int $index): Step => self::withStepCount($step::make($page), $index),
             self::STEPS,
             array_keys(self::STEPS),
         );
     }
 
-    /** Put the "Step N of M" indicator at the top of the step, in place of Filament's overflowing header. */
-    private static function withProgress(Step $step, int $index): Step
+    /**
+     * The step labels, in order, for the step list beside the wizard.
+     *
+     * @return array<int, string>
+     */
+    public static function labels(): array
+    {
+        return array_map(
+            fn (string $step): string => $step::label(),
+            self::STEPS,
+        );
+    }
+
+    /** Put the small "Step N of M" line at the top of the step, above its heading. */
+    private static function withStepCount(Step $step, int $index): Step
     {
         $children = $step->getDefaultChildComponents();
 
         return $step->schema([
-            View::make('filament.pages.platform.onboarding-progress')
+            View::make('filament.pages.platform.onboarding-step-count')
                 ->viewData([
                     'number' => $index + 1,
                     'total' => count(self::STEPS),
-                    'name' => $step->getLabel(),
                 ]),
             ...(is_array($children) ? $children : [$children]),
         ]);

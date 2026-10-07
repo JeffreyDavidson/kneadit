@@ -24,6 +24,11 @@ final class ComplianceStep extends OnboardingStep
         return 'compliance';
     }
 
+    public static function label(): string
+    {
+        return 'Compliance';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $manager = resolve(SettingsManager::class);
@@ -39,11 +44,12 @@ final class ComplianceStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Compliance')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedShieldCheck)
             ->description('Cottage food compliance')
             ->schema([
-                Section::make('Cottage Food Compliance')
+                Section::make('Cottage food compliance')
+                    ->contained(false)
                     ->description('Enter your state and compliance details. This helps ensure your bakery meets local regulations.')
                     ->schema([
                         Grid::make(2)->schema([
@@ -53,16 +59,16 @@ final class ComplianceStep extends OnboardingStep
                                 ->searchable()
                                 ->options(self::usStates()),
                             MoneyInput::make('compliance.revenue_cap')
-                                ->label('Annual Revenue Cap')
+                                ->label('Annual revenue cap')
                                 ->required()
                                 ->helperText('Maximum annual revenue allowed under your state\'s cottage food law.'),
                         ]),
                         TextInput::make('compliance.license_number')
-                            ->label('License / Permit Number')
+                            ->label('License / permit number')
                             ->placeholder('Optional')
                             ->maxLength(255),
                         Textarea::make('compliance.allergy_disclaimer')
-                            ->label('Allergy Disclaimer')
+                            ->label('Allergy disclaimer')
                             ->required()
                             ->rows(4)
                             ->helperText('This disclaimer will be shown to customers on your storefront.'),

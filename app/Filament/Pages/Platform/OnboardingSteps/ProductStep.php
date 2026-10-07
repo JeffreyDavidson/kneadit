@@ -23,6 +23,11 @@ final class ProductStep extends OnboardingStep
         return 'product';
     }
 
+    public static function label(): string
+    {
+        return 'First product';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $productId = resolve(SettingsManager::class)->get('onboarding_product_id');
@@ -48,15 +53,16 @@ final class ProductStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('First Product')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedCake)
             ->description('Add something delicious')
             ->schema([
-                Section::make('Create Your First Product')
+                Section::make('Create your first product')
+                    ->contained(false)
                     ->description('Add your first product to get your shop started. You can always add more later.')
                     ->schema([
                         TextInput::make('product.name')
-                            ->label('Product Name')
+                            ->label('Product name')
                             ->required()
                             ->placeholder('e.g. Classic Sourdough Loaf')
                             ->maxLength(255),

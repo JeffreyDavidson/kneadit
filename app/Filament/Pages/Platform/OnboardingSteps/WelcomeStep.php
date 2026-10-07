@@ -17,6 +17,11 @@ final class WelcomeStep extends OnboardingStep
         return 'welcome';
     }
 
+    public static function label(): string
+    {
+        return 'Welcome';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = self::tenant();
@@ -30,20 +35,21 @@ final class WelcomeStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Welcome')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedHandRaised)
             ->description('Tell us about your bakery')
             ->schema([
                 Section::make(self::greeting($page->welcome['bakery_name'] ?? null))
+                    ->contained(false)
                     ->description('Setup takes about 5 minutes. You can change everything later.')
                     ->schema([
                         TextInput::make('welcome.bakery_name')
-                            ->label('Bakery Name')
+                            ->label('Bakery name')
                             ->required()
                             ->placeholder('e.g. Sweet Sunrise Bakery')
                             ->maxLength(255),
                         TextInput::make('welcome.owner_name')
-                            ->label('Your Name')
+                            ->label('Your name')
                             ->required()
                             ->placeholder('e.g. Jane Baker')
                             ->maxLength(255),
