@@ -51,8 +51,11 @@
     </div>
     <div x-show="couponError" class="mt-2 text-sm text-red-400" x-text="couponError"></div>
     <x-storefront.order-field-error field="coupon_code" />
-    <div x-show="appliedCoupon" class="mt-2 text-sm text-green-400">
+    <div x-show="appliedCoupon && ! couponBeatenBySale" class="mt-2 text-sm text-green-400">
         ✓ <span x-text="appliedCoupon?.label"></span> applied!
+    </div>
+    <div x-show="couponBeatenBySale" x-cloak class="text-warm-400 mt-2 text-sm" data-test="order-form-coupon-beaten">
+        Your sale price already beats this coupon.
     </div>
 </div>
 
@@ -175,7 +178,7 @@
         <span x-text="sitewideSaleLabel + ' (' + sitewideSalePercent + '% off)'"></span>
         <span x-text="'-$' + saleDiscount.toFixed(2)"></span>
     </div>
-    <div x-show="appliedCoupon" class="flex justify-between text-green-400">
+    <div x-show="appliedCoupon && ! couponBeatenBySale" class="flex justify-between text-green-400">
         <span>Coupon</span>
         <span x-text="'-$' + discountAmount.toFixed(2)"></span>
     </div>

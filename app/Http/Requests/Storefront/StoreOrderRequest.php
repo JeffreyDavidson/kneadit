@@ -65,10 +65,7 @@ class StoreOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'items.*.quantity.max' => sprintf(
-                'You can order up to %d of one item. Contact us for larger orders.',
-                OrderItem::MAX_QUANTITY,
-            ),
+            'items.*.quantity.max' => __('orders.max_quantity', ['max' => OrderItem::MAX_QUANTITY]),
         ];
     }
 

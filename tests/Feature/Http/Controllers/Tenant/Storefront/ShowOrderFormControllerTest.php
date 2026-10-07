@@ -103,7 +103,7 @@ test('the order form shows no removed items notice when every cart item is still
 
     $response->assertOk()
         ->assertViewHas('removedItemNames', [])
-        ->assertDontSeeHtml('data-test="order-form-removed-items"');
+        ->assertSeeHtml('removedItems: []');
 });
 
 test('a reorder link tells the customer which items from the earlier order were removed', function () {
@@ -138,4 +138,45 @@ test('the order form script follows the redirect url the server returns instead 
         ->get(route('order.create', [], false));
 
     $response->assertOk()->assertSeeHtml('payload.data.redirect_url')->assertDontSeeHtml('window.location.href = response.url');
+});
+
+test('the order form receives the per-item limit and its message instead of hardcoding them', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('maxQuantity', OrderItem::MAX_QUANTITY)
+        ->assertViewHas('quantityLimitMessage', 'You can order up to 100 of one item. Contact us for larger orders.')
+        ->assertSeeHtml('maxQuantity: '.OrderItem::MAX_QUANTITY)
+        ->assertSee('You can order up to 100 of one item. Contact us for larger orders.');
+});
+
+test('the plus button stops at the limit and explains why', function () {
+    Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertSeeHtml('data-test="order-form-product-increment"')
+        ->assertSeeHtml(':disabled="atMaxQuantity(')
+        ->assertSeeHtml('data-test="order-form-quantity-limit"');
+});
+
+test('the order form script re-checks the coupon whenever the cart changes and does not stack it with the sale', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertSeeHtml('scheduleCouponRevalidation()')
+        ->assertSeeHtml('revalidateCoupon()')
+        ->assertSee('Your sale price already beats this coupon')
+        ->assertSeeHtml('data-test="order-form-coupon-beaten"');
+});
+
+test('the order form script shows the items the reorder endpoint says were removed', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()->assertSeeHtml('payload.data.removed_items');
 });
