@@ -130,3 +130,25 @@ test('an unverified owner with a bakery can still open billing', function () {
         ->get(route('billing.plans'))
         ->assertOk();
 });
+
+test('billing plans page links to the billing portal for an owner with a Stripe account but no valid plan', function () {
+    $user = User::factory()->owner()->create(['stripe_id' => 'cus_past_due']);
+    Subscription::factory()
+        ->for($user, 'owner')
+        ->state(['stripe_status' => 'past_due'])
+        ->create();
+
+    actingAs($user)
+        ->get(route('billing.plans'))
+        ->assertOk()
+        ->assertSee(route('billing.portal'));
+});
+
+test('billing plans page hides the billing portal link from an owner without a Stripe account', function () {
+    $user = User::factory()->owner()->create(['stripe_id' => null]);
+
+    actingAs($user)
+        ->get(route('billing.plans'))
+        ->assertOk()
+        ->assertDontSee(route('billing.portal'));
+});

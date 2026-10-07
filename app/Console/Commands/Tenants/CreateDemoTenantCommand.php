@@ -55,7 +55,6 @@ class CreateDemoTenantCommand extends Command
             'store_name' => 'Sweet Dreams Bakery',
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
-            'is_active' => true,
             'is_demo' => true,
         ]);
 

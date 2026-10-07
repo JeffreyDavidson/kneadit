@@ -2,12 +2,15 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
+use App\Actions\Platform\CancelOwnerSubscriptions;
 use App\Actions\Platform\PauseTenant;
 use App\Actions\Platform\ResumeTenant;
+use App\Actions\Tenants\ExtendTenantTrial;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use App\Services\Tenants\TenantUrlGenerator;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
@@ -66,11 +69,6 @@ class TenantsTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
-                IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean()
-                    ->sortable(),
-
                 IconColumn::make('storefront_enabled')
                     ->label('Storefront')
                     ->boolean()
@@ -100,8 +98,6 @@ class TenantsTable
             ->filters([
                 SelectFilter::make('plan')
                     ->options(SubscriptionTier::class),
-                TernaryFilter::make('is_active')
-                    ->label('Active'),
                 TernaryFilter::make('storefront_enabled')
                     ->label('Storefront'),
                 TernaryFilter::make('paused')
@@ -129,21 +125,6 @@ class TenantsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    BulkAction::make('activate')
-                        ->label('Activate accounts')
-                        ->icon(Heroicon::OutlinedCheckCircle)
-                        ->authorize('platform-admin')
-                        ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))
-                        ->deselectRecordsAfterCompletion(),
-                    BulkAction::make('deactivate')
-                        ->label('Deactivate accounts')
-                        ->icon(Heroicon::OutlinedXCircle)
-                        ->color('danger')
-                        ->authorize('platform-admin')
-                        ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))
-                        ->deselectRecordsAfterCompletion(),
                     BulkAction::make('resume')
                         ->label('Resume bakeries')
                         ->icon(Heroicon::OutlinedPlayCircle)
@@ -164,7 +145,11 @@ class TenantsTable
                         ->icon(Heroicon::OutlinedClock)
                         ->authorize('platform-admin')
                         ->requiresConfirmation()
-                        ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(self::trialDays())]))
+                        ->action(function (Collection $records, ExtendTenantTrial $extendTrial): void {
+                            $records->each(function (Tenant $tenant) use ($extendTrial): void {
+                                $extendTrial($tenant, self::trialDays());
+                            });
+                        })
                         ->deselectRecordsAfterCompletion(),
                     BulkAction::make('change_plan')
                         ->label('Change plan')
@@ -187,10 +172,14 @@ class TenantsTable
                         ->authorize('platform-admin')
                         ->requiresConfirmation()
                         ->modalHeading('Grant free-forever access')
-                        ->modalDescription('The selected tenants will bypass billing entirely and get full Pro-tier features. No card required, no trial expiry.')
-                        ->action(function (Collection $records): void {
+                        ->modalDescription('The selected tenants will bypass billing entirely and get full Pro-tier features. No card required, no trial expiry. Any subscription their owner has is cancelled at the end of the period already paid for (one that is past due ends immediately).')
+                        ->action(function (Collection $records, CancelOwnerSubscriptions $cancelSubscriptions): void {
                             $actorId = Auth::id();
-                            $records->each(function (Tenant $tenant) use ($actorId): void {
+                            $records->each(function (Tenant $tenant) use ($actorId, $cancelSubscriptions): void {
+                                if ($tenant->owner instanceof User) {
+                                    $cancelSubscriptions($tenant->owner);
+                                }
+
                                 $tenant->update(['free_forever' => true]);
                                 FreeForeverGrant::query()->create([
                                     'tenant_id' => $tenant->id,

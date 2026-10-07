@@ -71,10 +71,9 @@ test('churned counts subscriptions that ended and bakeries paused after their tr
     // Churned: paused three days ago, after a trial that ended 40 days ago.
     bakeryWithSubscription('paused-after-trial', ['trial_ends_at' => now()->subDays(40), 'paused_at' => now()->subDays(3)]);
 
-    // Not churned: ended long ago, paused before the trial finished, deactivated without ever paying, comped.
+    // Not churned: ended long ago, paused before the trial finished, comped.
     bakeryWithSubscription('ended-long-ago', price: 'price_starter_test', subscription: ['stripe_status' => 'canceled', 'ends_at' => now()->subDays(90)]);
     bakeryWithSubscription('paused-in-trial', ['trial_ends_at' => now()->addDays(5), 'paused_at' => now()->subDays(3)]);
-    bakeryWithSubscription('deactivated', ['is_active' => false]);
     bakeryWithSubscription('free-bakery', ['free_forever' => true, 'trial_ends_at' => now()->subDays(40), 'paused_at' => now()->subDays(3)]);
 
     $metrics = resolve(PlatformRevenueMetricsQuery::class)->get();

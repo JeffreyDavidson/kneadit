@@ -48,3 +48,40 @@ test('a platform admin cannot delete a bakery whose owner has a valid subscripti
         ->and($response->denied())->toBeTrue()
         ->and($response->message())->toBe("Cancel this bakery's subscription first.");
 });
+
+test('a platform admin cannot delete a bakery whose owner still has any subscription that has not ended', function (string $status) {
+    $owner = User::factory()->owner()->create();
+    $owner->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_unsettled',
+        'stripe_status' => $status,
+        'stripe_price' => 'price_starter_test',
+    ]);
+    $tenant = createTenantWithDomain('unsettled', attributes: ['user_id' => $owner->id]);
+    $admin = User::factory()->platformAdmin()->create();
+
+    expect(Gate::forUser($admin)->inspect('delete', $tenant)->denied())->toBeTrue();
+})->with(['past_due', 'incomplete', 'unpaid']);
+
+test('an older live subscription still blocks the delete when a newer one has ended', function () {
+    $owner = User::factory()->owner()->create();
+    $owner->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_old_live',
+        'stripe_status' => 'past_due',
+        'stripe_price' => 'price_starter_test',
+        'created_at' => now()->subMonths(2),
+    ]);
+    $owner->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_new_ended',
+        'stripe_status' => 'canceled',
+        'stripe_price' => 'price_starter_test',
+        'ends_at' => now()->subDay(),
+        'created_at' => now()->subWeek(),
+    ]);
+    $tenant = createTenantWithDomain('two-subs', attributes: ['user_id' => $owner->id]);
+    $admin = User::factory()->platformAdmin()->create();
+
+    expect(Gate::forUser($admin)->inspect('delete', $tenant)->denied())->toBeTrue();
+});

@@ -106,7 +106,7 @@
                 anytime. No questions asked.
             </div>
 
-            @if ($currentPlan)
+            @if ($hasBillingAccount)
                 <div class="portal-link">
                     <a href="{{ route('billing.portal') }}">Manage billing & invoices →</a>
                 </div>

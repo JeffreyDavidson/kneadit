@@ -87,7 +87,7 @@ class CustomDomain extends Page
     {
         $domainService = resolve(CustomDomainService::class);
         $tenant = $this->currentTenant();
-        $plan = $tenant->plan;
+        $plan = $tenant->effective_plan;
 
         if (! $plan->meetsRequirement(SubscriptionTier::Growth)) {
             Notification::make()

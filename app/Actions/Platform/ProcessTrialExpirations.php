@@ -3,6 +3,7 @@
 namespace App\Actions\Platform;
 
 use App\Models\Staff\User;
+use App\Queries\Platform\OwnerSubscriptionsQuery;
 use App\Services\Platform\TrialExpirationNotifier;
 use App\Services\Platform\TrialExpirationReader;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,7 @@ class ProcessTrialExpirations
         private readonly TrialExpirationReader $reader,
         private readonly TrialExpirationNotifier $notifier,
         private readonly PauseTenant $pauseTenant,
+        private readonly OwnerSubscriptionsQuery $subscriptions,
     ) {}
 
     /** @return array{reminders: int, pausings: int, failures: int} */
@@ -78,14 +80,15 @@ class ProcessTrialExpirations
         foreach ($this->reader->tenantsExpired() as $tenant) {
             $user = $this->reader->userFor($tenant);
 
-            if ($user instanceof User && $user->subscribed('default')) {
+            if ($user instanceof User && ($user->subscribed('default') || $this->subscriptions->inPastDueGrace($user))) {
                 continue;
             }
 
             ($this->pauseTenant)($tenant);
             $pausings++;
 
-            if ($user instanceof User) {
+            // Someone who paid before is not told their trial expired: Stripe's own emails cover a failed payment.
+            if ($user instanceof User && ! $this->subscriptions->hasEverSubscribed($user)) {
                 $this->notifier->notifyExpired($user, $tenant);
             }
 
