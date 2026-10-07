@@ -134,7 +134,11 @@ Before merging a release:
 3. Run targeted browser smoke tests against a realistic seeded tenant.
 4. Verify Stripe webhook endpoints/secrets and other environment changes before traffic reaches new code.
 5. Deploy central migrations, tenant migrations, cached configuration/routes/views as appropriate, and built frontend assets. Tenant migrations encrypt credentials and pseudonymize analytics identifiers, so the production `APP_KEY` must remain stable and available.
-6. Restart queue workers so they load the new release.
+6. Restart queue workers and the Nightwatch agent so they load the new release. The Forge deploy script ends with the line below; Supervisor runs the agent with `autorestart=true` from `current`, so stopping it starts it again on the new release (the `forge` user can't run `supervisorctl`). Until it restarts, the agent logs "Incoming token hash mismatch" and drops data from the new release.
+
+   ```bash
+   pkill -f 'nightwatch:agent --listen-on=127.0.0.1:2407' || true
+   ```
 7. Confirm `/up`, the central landing page, a tenant storefront, both Filament login pages, queue processing, scheduler execution, and recent error logs.
 8. Verify database backups before any migration that is difficult to reverse.
 
