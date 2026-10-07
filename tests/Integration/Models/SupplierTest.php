@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\IngredientSupplier;
 use App\Models\Inventory\Supplier;
 use App\Models\Staff\User;
 use App\ValueObjects\Money;
@@ -68,4 +69,12 @@ test('supplier can be deactivated', function () {
     $supplier->update(['is_active' => false]);
 
     expect($supplier->fresh()->is_active)->toBeFalse();
+});
+
+test('the ingredient supplier factory builds a priced row stored as cents', function () {
+    $offer = IngredientSupplier::factory()->create(['unit_price' => 3.25, 'minimum_order' => 40]);
+
+    expect(DB::table('ingredient_supplier')->where('id', $offer->id)->first())
+        ->unit_price->toBe(325)
+        ->minimum_order->toBe(4000);
 });

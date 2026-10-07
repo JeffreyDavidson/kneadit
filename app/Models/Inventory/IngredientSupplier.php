@@ -6,6 +6,10 @@ namespace App\Models\Inventory;
 
 use App\Casts\MoneyCentsCast;
 use App\ValueObjects\Money;
+use Database\Factories\Inventory\IngredientSupplierFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -21,8 +25,16 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property int|null $lead_time_days
  * @property string|null $sku
  */
+#[Table('ingredient_supplier')]
+#[UseFactory(IngredientSupplierFactory::class)]
 class IngredientSupplier extends Pivot
 {
+    /** @use HasFactory<IngredientSupplierFactory> */
+    use HasFactory;
+
+    #[\Override]
+    public $incrementing = true;
+
     #[\Override]
     protected function casts(): array
     {
