@@ -6,7 +6,6 @@ namespace App\Filament\Pages\Settings\Schemas;
 
 use App\Filament\Pages\Settings\Schemas\ManageSettings\CateringSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\ComplianceSection;
-use App\Filament\Pages\Settings\Schemas\ManageSettings\GiftCardsSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\IntegrationsSection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\LoyaltySection;
 use App\Filament\Pages\Settings\Schemas\ManageSettings\NotificationSettingsSection;
@@ -33,7 +32,9 @@ class ManageSettingsForm
             OrderEmailsSection::make(),
             PaymentMethodsSection::make(),
             ComplianceSection::make(),
-            GiftCardsSection::make(),
+            // GiftCardsSection is parked: the amounts it edits are saved but the
+            // storefront never reads them (audit 2026-10-06, E15). Add it back
+            // here once the gift card page uses them.
             IntegrationsSection::make(),
 
             // Actions block stays inline because the callbacks ('save',

@@ -722,3 +722,26 @@ describe('payment credentials are owner-only and write-only', function () {
             ->and(settings('paypal_sandbox'))->toBe('0');
     });
 });
+
+test('manage settings page hides the gift card amount settings until they are used', function (string $label) {
+    livewire(ManageSettings::class)
+        ->assertSuccessful()
+        ->assertDontSee($label);
+})->with([
+    'section description' => 'Configure gift card purchase options on your storefront',
+    'preset amounts' => 'Preset Amounts',
+    'default amount' => 'Default Selected Amount',
+]);
+
+test('saving the settings page keeps the stored gift card amounts', function () {
+    settings([
+        'gift_card_preset_amounts' => '5,15,45',
+        'gift_card_default_amount' => 15,
+    ]);
+
+    livewire(ManageSettings::class)
+        ->call('save');
+
+    expect(settings('gift_card_preset_amounts'))->toBe('5,15,45')
+        ->and((int) settings('gift_card_default_amount'))->toBe(15);
+});

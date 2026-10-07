@@ -8,7 +8,6 @@ use App\Http\Requests\Api\StoreApiWaitlistRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Order\ApplyDiscountRequest;
-use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
 use App\Http\Requests\Storefront\StoreContactMessageRequest;
 use App\Http\Requests\Storefront\StoreGalleryPhotoRequest;
 use App\Http\Requests\Storefront\StoreOnboardingRequest;
@@ -28,7 +27,6 @@ test('form requests reject empty data for required fields', function () {
         ResetPasswordRequest::class => ['token', 'email', 'password'],
         ApplyDiscountRequest::class => ['code', 'subtotal'],
         CheckGiftCardBalanceRequest::class => ['code'],
-        RedeemLoyaltyRewardRequest::class => ['email'],
         TrackOrderRequest::class => ['email'],
         StoreContactMessageRequest::class => ['name', 'email', 'subject', 'message'],
         StoreApiContactRequest::class => ['name', 'email', 'subject', 'message'],
@@ -63,7 +61,6 @@ test('form requests reject invalid email values', function () {
     $requests = [
         ForgotPasswordRequest::class => 'email',
         ResetPasswordRequest::class => 'email',
-        RedeemLoyaltyRewardRequest::class => 'email',
         TrackOrderRequest::class => 'email',
         StoreContactMessageRequest::class => 'email',
         StoreApiContactRequest::class => 'email',

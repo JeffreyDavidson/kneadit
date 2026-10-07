@@ -6,6 +6,7 @@ use App\Models\Engagement\LoyaltyReward;
 use App\Presenters\LoyaltyRewardPresenter;
 use App\Services\Customers\CustomerIntelligence;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
@@ -33,27 +34,18 @@ test('rewards page shows active rewards', function () {
     $response->assertSee('Free Cookie');
 });
 
-test('points balance check works with valid email', function () {
-    $customer = Customer::factory()->create();
+test('a signed-in customer sees their points on the rewards page', function () {
+    $customer = Customer::factory()->verified()->withPassword()->create();
 
     LoyaltyPoint::factory()->for($customer)->earned(150)->create();
 
+    actingAs($customer, 'customer');
+
     $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('rewards.check', [], false), [
-            'email' => $customer->email,
-        ]);
+        ->get(route('storefront.rewards', [], false));
 
     $response->assertOk();
     $response->assertSee('150');
-});
-
-test('points balance check for unknown email shows zero', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('rewards.check', [], false), [
-            'email' => 'unknown@example.com',
-        ]);
-
-    $response->assertOk();
 });
 
 test('points are calculated correctly with earned and redeemed', function () {
@@ -73,13 +65,6 @@ test('loyalty program name is configurable', function () {
 
     $response->assertOk();
     $response->assertSee('Baker Bucks');
-});
-
-test('rewards check requires email', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('rewards.check', [], false), []);
-
-    $response->assertSessionHasErrors('email');
 });
 
 test('lifetime points earned only counts earned type', function () {

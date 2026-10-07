@@ -17,7 +17,7 @@ function makeLoyaltyTenantSettings(): TenantSettings
 }
 
 /**
- * @param  array{settings?: TenantSettings, customer?: ?Customer, balance?: LoyaltyBalance, history?: Collection<int, LoyaltyPoint>, rewards?: Collection<int, LoyaltyReward>, content?: array<string, string>, howSteps?: array<int, array<string, string>>, customerNotFound?: bool}  $overrides
+ * @param  array{settings?: TenantSettings, customer?: ?Customer, balance?: LoyaltyBalance, history?: Collection<int, LoyaltyPoint>, rewards?: Collection<int, LoyaltyReward>, content?: array<string, string>, howSteps?: array<int, array<string, string>>}  $overrides
  */
 function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
 {
@@ -27,7 +27,6 @@ function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
         'balance' => new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
         'history' => collect(),
         'rewards' => collect(),
-        'customerNotFound' => false,
     ];
 
     $args = array_merge($defaults, $overrides);
@@ -191,12 +190,4 @@ test('hasCustomer is false when customer is null', function () {
     $vm = makeLoyaltyVm();
 
     expect($vm->hasCustomer)->toBeFalse();
-});
-
-test('customerNotFound reflects constructor value', function () {
-    $vmFound = makeLoyaltyVm(['customerNotFound' => false]);
-    $vmNotFound = makeLoyaltyVm(['customerNotFound' => true]);
-
-    expect($vmFound->customerNotFound)->toBeFalse()
-        ->and($vmNotFound->customerNotFound)->toBeTrue();
 });
