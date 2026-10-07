@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Date;
  * Slots are derived from the BusinessSchedule's open/close times for the
  * day-of-week (or, on a date with a partial-day BlockedDate, that date's
  * special open/close times), stepped by the configured interval, and
- * filtered down to those still under the per-slot booking cap.
+ * filtered down to those still ahead of bakery-local now (on today's date)
+ * and under the per-slot booking cap.
  */
 class PickupSlotResolver
 {
     public function __construct(
         private readonly TenantSettings $settings,
+        private readonly BakeryClock $clock,
     ) {}
 
     /**
@@ -53,6 +55,8 @@ class PickupSlotResolver
             $cursor->addMinutes($interval);
         }
 
+        $slots = $this->withoutPassedSlots($slots, $date->toDateString());
+
         if ($slots === []) {
             return [];
         }
@@ -63,6 +67,26 @@ class PickupSlotResolver
         return array_values(array_filter(
             $slots,
             fn (string $slot): bool => ($bookedCounts[$slot] ?? 0) < $maxPerSlot,
+        ));
+    }
+
+    /**
+     * On the bakery's current day, slots that start before bakery-local now can no longer be picked up.
+     *
+     * @param  array<int, string>  $slots
+     * @return array<int, string>
+     */
+    private function withoutPassedSlots(array $slots, string $date): array
+    {
+        $now = $this->clock->now();
+
+        if ($date !== $now->toDateString()) {
+            return $slots;
+        }
+
+        return array_values(array_filter(
+            $slots,
+            fn (string $slot): bool => $slot >= $now->format('H:i'),
         ));
     }
 

@@ -73,6 +73,30 @@ test('create customer photo validates required fields', function () {
     }
 });
 
+test('create customer photo requires an image', function () {
+    livewire(ListCustomerPhotos::class)
+        ->callAction('create', data: [
+            'customer_name' => 'Alice',
+            'customer_email' => 'alice@example.com',
+            'photo_path' => null,
+        ])
+        ->assertHasFormErrors(['photo_path' => 'required']);
+
+    expect(CustomerPhoto::query()->count())->toBe(0);
+});
+
+test('edit customer photo requires an image', function () {
+    $photo = CustomerPhoto::factory()->create();
+
+    livewire(ListCustomerPhotos::class)
+        ->callAction(TestAction::make('edit')->table($photo), data: [
+            'customer_name' => $photo->customer_name,
+            'customer_email' => $photo->customer_email,
+            'photo_path' => null,
+        ])
+        ->assertHasFormErrors(['photo_path' => 'required']);
+});
+
 test('can edit a customer photo via table action', function () {
     $photo = CustomerPhoto::factory()->create();
 

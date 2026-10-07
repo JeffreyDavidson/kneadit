@@ -8,20 +8,26 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+$isPickup = $order->delivery_type === \App\Enums\Orders\DeliveryType::Pickup;
+$completedAt = resolve(\App\Services\Scheduling\BakeryClock::class)->now()->format('M j, Y \a\t g:i A');
 @endphp
 
 
-@section('title', "Order Delivered! - {$storeName}")
+@section('title', ($isPickup ? 'Order Picked Up!' : 'Order Delivered!')." - {$storeName}")
 
 @section('badge-color', '#28a745')
 
 @section('content')
 <p>Hello {{ $customer->name }},</p>
 
-<p><strong>🚚 Delivery Complete!</strong> Your order has been successfully delivered. We hope you love every delicious bite!</p>
+@if ($isPickup)
+    <p><strong>🎉 Pickup Complete!</strong> Your order has been picked up. We hope you love every delicious bite!</p>
+@else
+    <p><strong>🚚 Delivery Complete!</strong> Your order has been successfully delivered. We hope you love every delicious bite!</p>
+@endif
 
 <div class="status-badge" style="background-color: #28a745;">
-    ✅ Delivered
+    ✅ {{ $isPickup ? 'Picked up' : 'Delivered' }}
 </div>
 
 <div class="order-details">
@@ -29,7 +35,7 @@
 
     <x-mail.order-items
         :order-items="$orderItems"
-        heading="Delivered Items:"
+        :heading="$isPickup ? 'Picked Up Items:' : 'Delivered Items:'"
         item-prefix="✅ "
     />
 
@@ -42,10 +48,16 @@
 </div>
 
 <div class="delivery-info" style="background-color: #d4edda; border-left: 4px solid #28a745;">
-    <div class="info-label">📍 Delivery Confirmed</div>
-    <p style="margin: 5px 0;"><strong>Delivered to:</strong> {{ $order->delivery_address }}</p>
-    <p style="margin: 5px 0;"><strong>Delivery Time:</strong> {{ now()->format('M j, Y \a\t g:i A') }}</p>
-    <p style="margin: 10px 0 5px; color: #155724;"><em>Your fresh baked goods have been safely delivered and are ready to enjoy!</em></p>
+    @if ($isPickup)
+        <div class="info-label">📍 Pickup Confirmed</div>
+        <p style="margin: 5px 0;"><strong>Pickup Time:</strong> {{ $completedAt }}</p>
+        <p style="margin: 10px 0 5px; color: #155724;"><em>Your fresh baked goods are all yours. Enjoy!</em></p>
+    @else
+        <div class="info-label">📍 Delivery Confirmed</div>
+        <p style="margin: 5px 0;"><strong>Delivered to:</strong> {{ $order->delivery_address }}</p>
+        <p style="margin: 5px 0;"><strong>Delivery Time:</strong> {{ $completedAt }}</p>
+        <p style="margin: 10px 0 5px; color: #155724;"><em>Your fresh baked goods have been safely delivered and are ready to enjoy!</em></p>
+    @endif
 </div>
 
 <div style="background-color: #fff3cd; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #ffc107;">
@@ -69,7 +81,7 @@
     </p>
 </div>
 
-<p>Thank you for choosing {{ $storeName }}! It was our pleasure to create and deliver these fresh treats for you.</p>
+<p>Thank you for choosing {{ $storeName }}! It was our pleasure to bake these fresh treats for you.</p>
 
 <p><strong>Come back soon!</strong> We're always baking up something new and delicious. Check out our website for daily specials and seasonal items.</p>
 
@@ -81,6 +93,6 @@
 @endif
 
 <p style="color: #666; font-size: 14px;">
-    <em>Questions or concerns about your delivery? Contact us at {{ $storePhone ?? '' }} or reply to this email.</em>
+    <em>Questions or concerns about your order? Contact us at {{ $storePhone ?? '' }} or reply to this email.</em>
 </p>
 @endsection

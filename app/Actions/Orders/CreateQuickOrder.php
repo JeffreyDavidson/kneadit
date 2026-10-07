@@ -8,6 +8,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Events\Orders\OrderCreated;
 use App\Models\Customers\Customer;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Services\Settings\TenantSettings;
@@ -46,10 +47,15 @@ class CreateQuickOrder
                 'user_id' => auth()->id(),
             ]);
 
+            $productNames = Product::query()
+                ->whereIn('id', array_column($data->orderItems, 'product_id'))
+                ->pluck('name', 'id');
+
             foreach ($data->orderItems as $item) {
                 OrderItem::query()->create([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
+                    'name' => $productNames->get($item['product_id']),
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
                     'special_instructions' => $item['special_instructions'] ?? null,

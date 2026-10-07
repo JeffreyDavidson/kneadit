@@ -44,8 +44,8 @@ test('audit trail filter properties exist', function () {
     expect(test()->page->filterAction)->toBeEmpty()->and(test()->page->filterSearch)->toBeEmpty()->and(test()->page->filterDateFrom)->toBeEmpty()->and(test()->page->filterDateTo)->toBeEmpty()->and(test()->page->page)->toBe(1)->and(test()->page->perPage)->toBe(20);
 });
 
-test('active tab defaults to platform', function () {
-    expect(test()->page->activeTab)->toBe('platform');
+test('active tab defaults to admin actions', function () {
+    expect(test()->page->activeTab)->toBe('audit');
 });
 
 test('reset filters', function () {

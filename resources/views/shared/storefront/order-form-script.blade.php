@@ -50,6 +50,12 @@
             sitewideSalePercent: {{ $settings->orders->sitewideSaleEnabled ? $settings->orders->sitewideSalePercent : 0 }},
             sitewideSaleLabel: @json($settings->orders->sitewideSaleLabel),
             saleDiscount: 0,
+            couponBeatenBySale: false,
+            couponTimer: null,
+            couponRequestId: 0,
+            maxQuantity: @json($maxQuantity),
+            quantityLimitMessage: @json($quantityLimitMessage),
+            removedItems: @json($removedItemNames ?? []),
 
             init() {
                 Object.keys(this.form).forEach((field) => {
@@ -60,6 +66,14 @@
                 this.$watch('customTip', () => this.clearFieldError('tip_amount'));
                 this.$watch('tipPercent', () => this.clearFieldError('tip_amount'));
                 this.$watch('cartItems', () => this.clearFieldError('items'));
+
+                // Coming back from Stripe with the browser's back button restores this page
+                // as it was left, with the Place Order button still disabled.
+                window.addEventListener('pageshow', (event) => {
+                    if (event.persisted) {
+                        this.isSubmitting = false;
+                    }
+                });
 
                 this.loadAvailability();
                 if (this.form.customer_email) {
@@ -82,7 +96,9 @@
                                 price: parseFloat(item.price),
                                 quantity: item.quantity,
                             }));
+                            this.removedItems = payload.data.removed_items ?? [];
                             this.calculateTotals();
+                            this.scheduleCouponRevalidation();
                         })
                         .catch((error) => console.error('Failed to load the previous order', error));
                 }
@@ -147,7 +163,15 @@
                 );
             },
 
+            atMaxQuantity(productId) {
+                return this.getQuantity(productId) >= this.maxQuantity;
+            },
+
             incrementItem(productId, price) {
+                if (this.atMaxQuantity(productId)) {
+                    return;
+                }
+
                 const existingItem = this.cartItems.find((item) => item.id === productId);
                 const productElement = document.querySelector(`[data-product-id="${productId}"]`);
                 const productName = productElement ? productElement.dataset.productName : `Product ${productId}`;
@@ -163,6 +187,7 @@
                     });
                 }
                 this.calculateTotals();
+                this.scheduleCouponRevalidation();
                 this.scheduleCartSync();
             },
 
@@ -175,6 +200,7 @@
                     }
                 }
                 this.calculateTotals();
+                this.scheduleCouponRevalidation();
                 this.scheduleCartSync();
             },
 
@@ -220,6 +246,7 @@
                 this.calculateSale();
                 this.calculateDiscount();
                 this.calculateTip();
+                // The gift card pays items and delivery less discounts, never the tip (like the server).
                 let afterDiscount = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount - this.saleDiscount);
                 if (this.appliedGiftCard) {
                     this.giftCardAmount = Math.min(this.appliedGiftCard.available_balance, afterDiscount);
@@ -273,11 +300,67 @@
                 }
             },
 
+            // A coupon and the sitewide sale don't stack: the larger one wins, and a tie goes to
+            // the sale (the server only applies a coupon that is worth strictly more).
             calculateDiscount() {
-                if (this.appliedCoupon) {
-                    this.discountAmount = this.appliedCoupon.discount_amount || 0;
-                } else {
-                    this.discountAmount = 0;
+                const couponDiscount = this.appliedCoupon?.discount_amount || 0;
+                const couponWins = couponDiscount > this.saleDiscount;
+
+                this.couponBeatenBySale = this.appliedCoupon !== null && !couponWins;
+                this.discountAmount = couponWins ? couponDiscount : 0;
+
+                if (couponWins) {
+                    this.saleDiscount = 0;
+                }
+            },
+
+            // The coupon's discount depends on the subtotal (a percentage re-prices, a minimum can
+            // stop being met), so ask the server again once the cart settles.
+            scheduleCouponRevalidation() {
+                if (!this.appliedCoupon) {
+                    return;
+                }
+
+                clearTimeout(this.couponTimer);
+                this.couponTimer = setTimeout(() => this.revalidateCoupon(), 300);
+            },
+
+            async revalidateCoupon() {
+                if (!this.appliedCoupon) {
+                    return;
+                }
+
+                const requestId = ++this.couponRequestId;
+
+                try {
+                    const response = await fetch('{{ route('coupon.apply') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            code: this.appliedCoupon.code || this.couponCode,
+                            subtotal: this.subtotal,
+                        }),
+                    });
+                    const payload = await response.json();
+
+                    // The cart changed again while this was in flight; a newer check owns the answer.
+                    if (requestId !== this.couponRequestId) {
+                        return;
+                    }
+
+                    if (response.ok) {
+                        this.appliedCoupon = payload.data;
+                    } else {
+                        this.couponError = `Coupon removed. ${payload.message || 'It no longer applies to this order.'}`;
+                        this.appliedCoupon = null;
+                    }
+                    this.calculateTotals();
+                } catch (error) {
+                    console.error('Error re-checking the coupon:', error);
                 }
             },
 
@@ -485,6 +568,8 @@
                 }
                 formData.append('_token', '{{ csrf_token() }}');
 
+                let redirecting = false;
+
                 try {
                     const response = await fetch('{{ route('order.store') }}', {
                         method: 'POST',
@@ -492,7 +577,11 @@
                         body: formData,
                     });
                     if (response.ok) {
-                        window.location.href = response.url;
+                        // The server answers with where to go next (Stripe or the confirmation page).
+                        // A redirect can't be followed here: Stripe is another origin.
+                        const payload = await response.json();
+                        redirecting = true;
+                        window.location.assign(payload.data.redirect_url);
                     } else if (response.status === 422) {
                         const payload = await response.json();
                         this.showFieldErrors(payload.errors || {});
@@ -504,7 +593,9 @@
                     this.submitError = 'There was an error submitting your order. Please try again.';
                     console.error('Error submitting order:', error);
                 } finally {
-                    this.isSubmitting = false;
+                    // Stay disabled while the browser leaves for the next page, so a second
+                    // tap can't place a duplicate order.
+                    this.isSubmitting = redirecting;
                 }
             },
         };

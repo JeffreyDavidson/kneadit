@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
     setUpTenantTest();
-    config([
-        'services.paypal.client_id' => 'test-id',
-        'services.paypal.client_secret' => 'test-secret',
-        'services.paypal.sandbox' => true,
+    settings([
+        'paypal_client_id' => 'test-id',
+        'paypal_client_secret' => 'test-secret',
+        'paypal_sandbox' => '1',
     ]);
 });
 

@@ -191,7 +191,7 @@ class SeedLocalCommand extends Command
         ];
         $plan = collect($plans)->random();
 
-        $isActive = $faker->boolean(85);
+        $isPaused = $faker->boolean(15);
         $freeForever = $faker->boolean(5);
 
         $trialDays = Config::integer('kneadit.trial_days', 30);
@@ -201,7 +201,7 @@ class SeedLocalCommand extends Command
 
         $tenant->update([
             'plan' => $plan,
-            'is_active' => $isActive,
+            'paused_at' => $isPaused ? now() : null,
             'free_forever' => $freeForever,
             'trial_ends_at' => $trialEndsAt,
             'created_at' => $createdAt,

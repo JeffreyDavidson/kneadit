@@ -99,6 +99,51 @@ test('quick order date picker starts at the bakery-local day', function () {
     expect(Date::parse($minDate)->toDateString())->toBe('2026-10-05');
 });
 
+test('quick order shows the subtotal with a single dollar sign', function () {
+    $product = Product::factory()->create(['price' => 10.00]);
+
+    livewire(QuickOrder::class)
+        ->fillForm([
+            'order_items' => [
+                ['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00],
+            ],
+        ])
+        ->assertSee('1 items · Subtotal: $20.00')
+        ->assertDontSee('$$');
+});
+
+test('quick order line total is a plain amount because the field already has a dollar prefix', function () {
+    $item = collect(livewire(QuickOrder::class)->get('data.order_items'))->first();
+
+    expect($item['line_total'])->toBe('0.00');
+});
+
+test('quick order line total follows the quantity and price as they change', function (int $quantity, float $price, string $expected) {
+    $page = livewire(QuickOrder::class);
+    $key = collect($page->get('data.order_items'))->keys()->first();
+
+    $page
+        ->set("data.order_items.{$key}.quantity", $quantity)
+        ->set("data.order_items.{$key}.unit_price", $price);
+
+    expect($page->get("data.order_items.{$key}.line_total"))->toBe($expected);
+})->with([
+    'two at ten' => [2, 10.00, '20.00'],
+    'three at four fifty' => [3, 4.50, '13.50'],
+]);
+
+test('quick order line total updates when a product is chosen', function () {
+    $product = Product::factory()->create(['price' => 7.25]);
+    $page = livewire(QuickOrder::class);
+    $key = collect($page->get('data.order_items'))->keys()->first();
+
+    $page
+        ->set("data.order_items.{$key}.quantity", 2)
+        ->set("data.order_items.{$key}.product_id", $product->id);
+
+    expect($page->get("data.order_items.{$key}.line_total"))->toBe('14.50');
+});
+
 test('quick order creates a pickup order paid in cash', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 

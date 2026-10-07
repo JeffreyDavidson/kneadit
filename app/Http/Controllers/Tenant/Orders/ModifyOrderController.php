@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tenant\Orders;
 
 use App\Actions\Orders\ModifyOrder;
+use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\OrderNotModifiableException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\ModifyOrderRequest;
@@ -28,6 +29,8 @@ class ModifyOrderController extends Controller
             );
         } catch (OrderNotModifiableException $e) {
             return back()->withErrors(['items' => $e->reason]);
+        } catch (InsufficientStockException $e) {
+            return back()->withErrors(['items' => $e->customerMessage()]);
         }
 
         return to_route('order.confirmation', $order)

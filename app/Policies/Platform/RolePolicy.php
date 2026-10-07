@@ -4,6 +4,7 @@ namespace App\Policies\Platform;
 
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
+use Illuminate\Auth\Access\Response;
 
 abstract class RolePolicy
 {
@@ -29,7 +30,11 @@ abstract class RolePolicy
         return $user->role->meetsRequirement($this->minimumRole);
     }
 
-    public function delete(User $user, mixed $model): bool
+    /**
+     * Subclasses may return a denying Response so the reason reaches the user
+     * (Filament shows it when a bulk delete skips a record).
+     */
+    public function delete(User $user, mixed $model): bool|Response
     {
         return $user->role->meetsRequirement($this->minimumRole);
     }

@@ -23,6 +23,6 @@ final readonly class OrderItemPresenter
 
     public function productName(): string
     {
-        return $this->orderItem->product->name ?? 'Product';
+        return $this->orderItem->product->name ?? $this->orderItem->name ?? 'Product';
     }
 }

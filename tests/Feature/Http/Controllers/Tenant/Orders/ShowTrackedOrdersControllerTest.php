@@ -111,6 +111,24 @@ test('the listing links reorder and messages by order number', function () {
         ->assertDontSeeHtml("loadMessages({$order->id})");
 });
 
+test('the listing sends order messages as JSON and reports failures instead of clearing the input', function () {
+    $user = User::factory()->owner()->create();
+    Order::factory()
+        ->for(test()->customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(trackingAccessUrl(test()->customer));
+
+    $response->assertOk()
+        ->assertSeeHtml("Accept: 'application/json'")
+        ->assertSeeHtml('response.ok')
+        ->assertSeeHtml('payload.message')
+        ->assertSeeHtml('data-test="order-message-error"');
+});
+
 test('the listing shows an order in every status', function (string $status) {
     $user = User::factory()->owner()->create();
     Order::factory()

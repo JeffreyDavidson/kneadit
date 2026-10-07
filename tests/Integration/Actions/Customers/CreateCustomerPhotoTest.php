@@ -15,7 +15,7 @@ test('it stores the photo and creates a customer photo record', function () {
 
     $photo = UploadedFile::fake()->image('cake.jpg');
 
-    $action = new CreateCustomerPhoto;
+    $action = resolve(CreateCustomerPhoto::class);
     $customerPhoto = $action(
         photo: $photo,
         customerName: 'Jane Baker',
@@ -30,4 +30,17 @@ test('it stores the photo and creates a customer photo record', function () {
         ->and($customerPhoto->caption)->toBe('My birthday cake');
 
     Storage::disk('public')->assertExists($customerPhoto->photo_path);
+});
+
+test('it stores the photo without its GPS metadata', function () {
+    Storage::fake('public');
+
+    $customerPhoto = resolve(CreateCustomerPhoto::class)(
+        photo: UploadedFile::fake()->createWithContent('cake.jpg', jpegWithGpsExif()),
+        customerName: 'Jane Baker',
+        customerEmail: 'jane@example.com',
+    );
+
+    $stored = Storage::disk('public')->path($customerPhoto->photo_path);
+    expect(exif_read_data($stored) ?: [])->not->toHaveKey('GPSLatitudeRef');
 });

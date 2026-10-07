@@ -8,6 +8,7 @@ use App\Http\Controllers\Tenant\Orders\AvailabilityController;
 use App\Http\Controllers\Tenant\Orders\CapacityController;
 use App\Http\Controllers\Tenant\Orders\MessageController;
 use App\Http\Controllers\Tenant\Orders\ModifyOrderController;
+use App\Http\Controllers\Tenant\Orders\PayOrderController;
 use App\Http\Controllers\Tenant\Orders\PickupSlotsController;
 use App\Http\Controllers\Tenant\Orders\ReorderController;
 use App\Http\Controllers\Tenant\Orders\ShowTrackedOrdersController;
@@ -53,6 +54,7 @@ Route::middleware('order.access')->group(function () {
     Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:form-write');
     Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
     Route::post('order/{order:order_number}/modify', ModifyOrderController::class)->name('order.modify')->middleware('throttle:sensitive-write');
+    Route::post('order/{order:order_number}/pay', PayOrderController::class)->name('order.pay')->middleware('throttle:sensitive-write');
 });
 
 // Capacity check (AJAX)

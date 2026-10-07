@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Financial\GiftCardStatus;
+use App\Enums\Financial\GiftCardTransactionType;
 use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
@@ -107,6 +108,24 @@ test('can create a gift card via header action', function () {
         ->purchaser_email->toBe('jane@example.com')
         ->code->not->toBeNull()
         ->and($giftCard->initial_balance->dollars())->toBe(50.0);
+});
+
+test('a gift card created from the admin gets its Purchase ledger row and a full balance', function () {
+    livewire(ListGiftCards::class)
+        ->callAction('create', data: [
+            'purchaser_name' => 'Jane Doe',
+            'purchaser_email' => 'jane@example.com',
+            'initial_balance' => 50.00,
+            'expires_at' => '2030-01-31',
+        ])
+        ->assertHasNoFormErrors();
+
+    $giftCard = GiftCard::query()->with('transactions')->firstOrFail();
+    expect($giftCard->current_balance->dollars())->toBe(50.0)
+        ->and($giftCard->expires_at->toDateString())->toBe('2030-01-31')
+        ->and($giftCard->transactions)->toHaveCount(1)
+        ->and($giftCard->transactions->first()->type)->toBe(GiftCardTransactionType::Purchase)
+        ->and($giftCard->transactions->first()->amount->dollars())->toBe(50.0);
 });
 
 test('can filter gift cards by depleted status', function () {

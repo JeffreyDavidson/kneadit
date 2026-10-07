@@ -16,11 +16,9 @@
                 <div class="text-brand-300 mb-1 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                     Your Referral Link
                 </div>
-                <h2 class="mb-1 text-[1.1rem] leading-tight font-bold text-(--kn-ink)">
-                    Earn 1 free month per referral
-                </h2>
+                <h2 class="mb-1 text-[1.1rem] leading-tight font-bold text-(--kn-ink)">Refer a fellow baker</h2>
                 <p class="text-brand-400 text-sm">
-                    Share this link with fellow bakers. When they sign up and subscribe, you'll earn 1 free month.
+                    Share this link with fellow bakers. Bakeries that sign up through it show up below.
                 </p>
             </div>
         </div>
@@ -52,7 +50,7 @@
     </div>
 
     {{-- ============== STATS ============== --}}
-    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div class="border-brand-700/60 rounded-xl border bg-(--kn-surface-sunken) p-5">
             <div class="text-brand-300 mb-2 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">
                 Total Referrals
@@ -65,12 +63,6 @@
             <div class="text-brand-300 mb-2 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Completed</div>
             <div class="text-[1.75rem] leading-none font-bold text-(--kn-success) tabular-nums">
                 {{ $this->getCompletedReferrals() }}
-            </div>
-        </div>
-        <div class="border-brand-700/60 rounded-xl border bg-(--kn-surface-sunken) p-5">
-            <div class="text-brand-300 mb-2 text-[0.65rem] font-semibold tracking-[0.1em] uppercase">Months Earned</div>
-            <div class="text-brand-300 text-[1.75rem] leading-none font-bold tabular-nums">
-                {{ $this->getMonthsEarned() }}
             </div>
         </div>
     </div>

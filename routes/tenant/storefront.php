@@ -19,6 +19,7 @@ use App\Http\Controllers\Tenant\Storefront\ReviewsIndexController;
 use App\Http\Controllers\Tenant\Storefront\ShowCateringController;
 use App\Http\Controllers\Tenant\Storefront\ShowGiftCardsController;
 use App\Http\Controllers\Tenant\Storefront\ShowReviewFormController;
+use App\Http\Controllers\Tenant\Storefront\ShowReviewSubmittedController;
 use App\Http\Controllers\Tenant\Storefront\StoreReviewController;
 use App\Http\Controllers\Tenant\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Tenant\Storefront\SurveyController;
@@ -44,8 +45,7 @@ Route::get('contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:form-write');
 
 // Loyalty rewards
-Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards');
-Route::post('rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:form-write');
+Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards')->middleware('customer.verified');
 
 // Gift Cards
 Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.giftCards');
@@ -83,6 +83,9 @@ Route::get('review/{order:order_number}', ShowReviewFormController::class)
 Route::post('review/{order:order_number}', StoreReviewController::class)
     ->middleware(['order.access', 'throttle:form-write'])
     ->name('storefront.storeReview');
+Route::get('review/{order:order_number}/thanks', ShowReviewSubmittedController::class)
+    ->middleware('order.access')
+    ->name('storefront.reviewSubmitted');
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');

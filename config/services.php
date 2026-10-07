@@ -35,10 +35,10 @@ return [
         ],
     ],
 
+    // Used in the local environment only; every bakery brings its own PayPal credentials and sandbox setting.
     'paypal' => [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET'),
-        'sandbox' => env('PAYPAL_SANDBOX', true),
     ],
 
     'fathom' => [

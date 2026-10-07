@@ -23,7 +23,6 @@ function createTestTenant(string $id = 'test-bakery', array $overrides = []): ob
         'email' => 'baker@test.com',
         'plan' => 'pro',
         'store_name' => 'Test Bakery',
-        'is_active' => true,
         'storefront_enabled' => true,
         'brand_color_primary' => '#d4920c',
         'brand_color_secondary' => '#1c1410',
@@ -45,12 +44,11 @@ test('tenant table supports listing columns searching and filters', function () 
         'store_name' => 'Sweet Bakes',
         'email' => 'sweet@test.com',
         'plan' => 'starter',
-        'is_active' => true,
     ]);
     livewire(ListTenants::class)
         ->assertOk();
 
-    foreach (['id', 'store_name', 'name', 'plan', 'is_active', 'trial_ends_at'] as $column) {
+    foreach (['id', 'store_name', 'name', 'plan', 'is_paused', 'trial_ends_at'] as $column) {
         livewire(ListTenants::class)
             ->assertCanRenderTableColumn($column);
     }
@@ -59,7 +57,7 @@ test('tenant table supports listing columns searching and filters', function () 
         'store_name' => 'Rustic Loaf',
         'email' => 'rustic@test.com',
         'plan' => 'pro',
-        'is_active' => false,
+        'paused_at' => now(),
     ]);
 
     livewire(ListTenants::class)
@@ -69,7 +67,7 @@ test('tenant table supports listing columns searching and filters', function () 
         ->filterTable('plan', 'starter')
         ->assertOk();
     livewire(ListTenants::class)
-        ->filterTable('is_active', true)
+        ->filterTable('paused', true)
         ->assertOk();
 });
 

@@ -45,25 +45,6 @@ class LoyaltyPageViewModel
     /**
      * @param  Collection<int, LoyaltyReward>  $rewards
      */
-    public static function notFound(TenantSettings $settings, Collection $rewards): self
-    {
-        [$content, $howSteps] = self::loadContent();
-
-        return new self(
-            settings: $settings,
-            customer: null,
-            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: (new LoyaltyPoint)->newCollection(),
-            rewards: $rewards,
-            content: $content,
-            howSteps: $howSteps,
-            customerNotFound: true,
-        );
-    }
-
-    /**
-     * @param  Collection<int, LoyaltyReward>  $rewards
-     */
     public static function empty(TenantSettings $settings, Collection $rewards): self
     {
         [$content, $howSteps] = self::loadContent();
@@ -139,7 +120,6 @@ class LoyaltyPageViewModel
         public readonly Collection $rewards,
         public readonly array $content = [],
         public readonly array $howSteps = [],
-        public readonly bool $customerNotFound = false,
         public readonly ?LoyaltyTier $tier = null,
         public readonly ?LoyaltyTier $nextTier = null,
         public readonly int $pointsToNextTier = 0,

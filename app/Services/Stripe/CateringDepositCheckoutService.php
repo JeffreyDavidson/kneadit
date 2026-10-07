@@ -118,6 +118,7 @@ class CateringDepositCheckoutService
             $session = $this->stripe->checkout->sessions->create(
                 [
                     'mode' => 'payment',
+                    'payment_method_types' => ['card'],
                     'success_url' => $successUrl,
                     'cancel_url' => $cancelUrl,
                     'customer_email' => $inquiry->customer_email,

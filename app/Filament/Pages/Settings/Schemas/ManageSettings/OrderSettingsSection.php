@@ -31,6 +31,7 @@ class OrderSettingsSection
                         TextInput::make('minimum_order_lead_hours')
                             ->label('Minimum Order Lead Hours')
                             ->numeric()
+                            ->minValue(0)
                             ->default(48)
                             ->helperText('Minimum hours before pickup/delivery'),
 

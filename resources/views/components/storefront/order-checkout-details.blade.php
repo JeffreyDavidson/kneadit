@@ -8,9 +8,10 @@
 
     <div class="space-y-3">
         <div>
-            <label class="text-warm-400 mb-1 block text-xs font-medium">Name *</label>
+            <label for="order-customer-name" class="text-warm-400 mb-1 block text-xs font-medium">Name *</label>
             <input
                 type="text"
+                id="order-customer-name"
                 data-test="order-form-customer-name"
                 x-model="form.customer_name"
                 required
@@ -19,9 +20,10 @@
             <x-storefront.order-field-error field="customer_name" />
         </div>
         <div>
-            <label class="text-warm-400 mb-1 block text-xs font-medium">Email *</label>
+            <label for="order-customer-email" class="text-warm-400 mb-1 block text-xs font-medium">Email *</label>
             <input
                 type="email"
+                id="order-customer-email"
                 data-test="order-form-customer-email"
                 x-model="form.customer_email"
                 @input="saveEmail()"
@@ -31,14 +33,22 @@
             <x-storefront.order-field-error field="customer_email" />
         </div>
         <div>
-            <label class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
-            <input type="tel" data-test="order-form-customer-phone" x-model="form.customer_phone" class="order-input" />
+            <label for="order-customer-phone" class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
+            <input
+                type="tel"
+                id="order-customer-phone"
+                data-test="order-form-customer-phone"
+                x-model="form.customer_phone"
+                class="order-input"
+            />
             <x-storefront.order-field-error field="customer_phone" />
         </div>
         <div>
-            <label class="text-warm-400 mb-1 block text-xs font-medium">Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
+            <label for="order-customer-birthday" class="text-warm-400 mb-1 block text-xs font-medium"
+                >Birthday <span class="text-warm-300">(for special treats 🎂)</span></label>
             <input
                 type="date"
+                id="order-customer-birthday"
                 data-test="order-form-customer-birthday"
                 x-model="form.customer_birthday"
                 class="order-input"
@@ -92,8 +102,10 @@
     @if ($settings->orders->deliveryEnabled)
         <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
             <div>
-                <label class="text-warm-400 mb-1 block text-xs font-medium">Delivery Address *</label>
+                <label for="order-delivery-address" class="text-warm-400 mb-1 block text-xs font-medium"
+                    >Delivery Address *</label>
                 <textarea
+                    id="order-delivery-address"
                     data-test="order-form-delivery-address"
                     x-model="form.delivery_address"
                     placeholder="Full address"
@@ -103,8 +115,9 @@
                 <x-storefront.order-field-error field="delivery_address" />
             </div>
             <div>
-                <label class="text-warm-400 mb-1 block text-xs font-medium">Distance</label>
+                <label for="order-delivery-tier" class="text-warm-400 mb-1 block text-xs font-medium">Distance</label>
                 <select
+                    id="order-delivery-tier"
                     data-test="order-form-delivery-tier"
                     x-model="form.delivery_tier"
                     @change="calculateTotals()"
@@ -139,11 +152,12 @@
     </div>
     <div class="space-y-3">
         <div>
-            <label class="text-warm-400 mb-1 block text-xs font-medium">
+            <label for="order-delivery-date" class="text-warm-400 mb-1 block text-xs font-medium">
                 <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span>
                 *
             </label>
             <input
+                id="order-delivery-date"
                 type="date"
                 data-test="order-form-delivery-date"
                 x-model="form.delivery_date"
@@ -257,8 +271,10 @@
 
 {{-- Notes --}}
 <div class="border-warm-700/20 mt-6 border-t pt-6">
-    <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Special Instructions</label>
+    <label for="order-notes" class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase"
+        >Special Instructions</label>
     <textarea
+        id="order-notes"
         data-test="order-form-notes"
         x-model="form.notes"
         placeholder="Allergies, decorations, anything..."

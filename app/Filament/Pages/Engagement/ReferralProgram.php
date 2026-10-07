@@ -58,6 +58,10 @@ class ReferralProgram extends Page
             ->count();
     }
 
+    /**
+     * Parked: the page no longer shows this, because nothing grants a free month
+     * yet (audit 2026-10-06, A14). Show it again once the reward is granted.
+     */
     public function getMonthsEarned(): int
     {
         return (int) Referral::query()->where('referrer_tenant_id', $this->tenant()->id)

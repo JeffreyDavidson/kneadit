@@ -75,10 +75,10 @@ class SendEmailCampaign
         $query = Tenant::query();
 
         return match ($segment) {
-            EmailCampaignSegment::All => $query->where('is_active', true),
-            EmailCampaignSegment::Starter, EmailCampaignSegment::Growth, EmailCampaignSegment::Pro => $query->where('is_active', true)->where('plan', SubscriptionTier::from($segment->value)),
+            EmailCampaignSegment::All => $query->whereNull('paused_at'),
+            EmailCampaignSegment::Starter, EmailCampaignSegment::Growth, EmailCampaignSegment::Pro => $query->whereNull('paused_at')->where('plan', SubscriptionTier::from($segment->value)),
             EmailCampaignSegment::Trial => $query->whereNotNull('trial_ends_at')->where('trial_ends_at', '>', now()),
-            EmailCampaignSegment::Inactive => $query->where('is_active', false),
+            EmailCampaignSegment::Inactive => $query->whereNotNull('paused_at'),
         };
     }
 }

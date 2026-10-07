@@ -39,6 +39,22 @@ class MaintenanceMode extends Page
     /** @var array<int, string> */
     public array $affected_services = [];
 
+    /**
+     * Hidden until the maintenance middleware is registered: today toggling this
+     * page changes a setting that nothing reads. Parked work: audit 2026-10-06, E8.
+     */
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function mount(): void
     {
         $this->maintenance_mode = platformSettings('maintenance_mode', '0') === '1';

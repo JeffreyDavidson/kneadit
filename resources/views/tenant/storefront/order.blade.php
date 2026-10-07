@@ -111,6 +111,20 @@
     {{-- Main Content --}}
     <section @class(['bg-warm-900 relative', 'biscotto-order-stage' => $storefrontTheme === 'biscotto'])>
         <div class="relative z-10 mx-auto max-w-7xl px-4 pb-24" x-data="orderForm()">
+            {{-- Filled by the server for a saved cart or reorder link, and by the script for a reorder it loads. --}}
+            <p
+                x-show="removedItems.length > 0"
+                x-cloak
+                class="bg-warm-500/10 border-warm-500/25 text-warm-300 mb-8 rounded-2xl border p-4 text-sm"
+                role="status"
+                data-test="order-form-removed-items"
+            >
+                We left
+                <span x-text="removedItems.join(', ')"></span>
+                out of your cart because we no longer offer
+                <span x-text="removedItems.length === 1 ? 'it' : 'them'"></span>. Prices shown are today's prices.
+            </p>
+
             <form data-test="order-form" @submit.prevent="submitOrder" class="grid gap-8 lg:grid-cols-3">
                 <x-storefront.order-products :categories="$categories" />
 
@@ -128,6 +142,9 @@
         :hydrated-cart-items="$hydratedCartItems ?? []"
         :hydrated-cart-name="$hydratedCartName ?? null"
         :hydrated-cart-email="$hydratedCartEmail ?? null"
+        :removed-item-names="$removedItemNames ?? []"
+        :max-quantity="$maxQuantity"
+        :quantity-limit-message="$quantityLimitMessage"
         :earliest-delivery-date="$earliestDeliveryDate"
     />
 </x-layouts.storefront>

@@ -16,6 +16,7 @@ use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -79,6 +80,23 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // A URL that no route matches never runs the web middleware, so on a bakery host the 404
+        // page would render without a bakery. Start tenancy first so the page carries the bakery's
+        // name. Any failure here (unknown host, missing database) just leaves the platform 404.
+        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
+            if (tenant()) {
+                return null;
+            }
+
+            try {
+                resolve(InitializeTenancyIfNeeded::class)->handle($request, fn (): Response => response(''));
+            } catch (Throwable) {
+                return null;
+            }
+
+            return null;
+        });
 
         // JSON:API validation errors: one error entry per field-message pair, source pointer points at the attribute.
         $exceptions->renderable(function (ValidationException $e, Request $request) {

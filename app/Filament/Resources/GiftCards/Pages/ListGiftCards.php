@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\GiftCards\Pages;
 
+use App\Actions\GiftCards\CreateGiftCard;
+use App\DataTransferObjects\GiftCards\CreateGiftCardData;
 use App\Filament\Resources\GiftCards\GiftCardResource;
+use App\Models\Financial\GiftCard;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Str;
 
 class ListGiftCards extends ListRecords
 {
@@ -20,12 +22,18 @@ class ListGiftCards extends ListRecords
         return [
             CreateAction::make()
                 ->slideOver()
-                ->mutateDataUsing(function (array $data): array {
-                    $data['code'] = Str::upper(Str::random(4).'-'.Str::random(4).'-'.Str::random(4).'-'.Str::random(4));
-                    $data['current_balance'] = $data['initial_balance'];
-
-                    return $data;
-                }),
+                ->using($this->createGiftCard(...)),
         ];
+    }
+
+    /**
+     * Create through the same action as an online purchase so the card gets
+     * its code and its Purchase ledger row.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function createGiftCard(array $data): GiftCard
+    {
+        return resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray($data));
     }
 }

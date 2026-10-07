@@ -58,21 +58,32 @@ class OrderPipelineData
         $this->giftCardAmount = Money::zero();
     }
 
+    /**
+     * Sum the discounts, capped at what there is to discount (items plus
+     * delivery) so stacked discounts can never push the order below zero.
+     */
     public function recalculateDiscountAmount(): void
     {
         $this->discountAmount = $this->sitewideSaleDiscount
             ->add($this->couponDiscount)
-            ->add($this->referralDiscount);
+            ->add($this->referralDiscount)
+            ->min($this->subtotal->add($this->deliveryFee));
+    }
+
+    /**
+     * What a gift card can pay: items plus delivery less discounts, never the tip.
+     */
+    public function payableBeforeGiftCard(): Money
+    {
+        return $this->subtotal
+            ->add($this->deliveryFee)
+            ->subtract($this->discountAmount)
+            ->max(Money::zero());
     }
 
     public function recalculateTotal(): void
     {
-        $beforeGiftCard = $this->subtotal
-            ->add($this->deliveryFee)
-            ->subtract($this->discountAmount)
-            ->max(Money::zero());
-
-        $this->total = $beforeGiftCard
+        $this->total = $this->payableBeforeGiftCard()
             ->subtract($this->giftCardAmount)
             ->max(Money::zero())
             ->add($this->tipAmount);

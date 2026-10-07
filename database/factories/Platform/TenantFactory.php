@@ -39,7 +39,6 @@ class TenantFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'plan' => SubscriptionTier::Starter->value,
-            'is_active' => true,
             'is_demo' => false,
             'storefront_enabled' => true,
             'brand_color_primary' => '#d4920c',
@@ -48,19 +47,11 @@ class TenantFactory extends Factory
     }
 
     /**
-     * Tenant is active.
+     * Tenant is paused: no new orders and no customer emails.
      */
-    public function active(): static
+    public function paused(): static
     {
-        return $this->state(fn (array $attributes) => ['is_active' => true]);
-    }
-
-    /**
-     * Tenant is inactive.
-     */
-    public function inactive(): static
-    {
-        return $this->state(fn (array $attributes) => ['is_active' => false]);
+        return $this->state(fn (array $attributes) => ['paused_at' => now()]);
     }
 
     /**

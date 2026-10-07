@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Storefront;
 
+use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,7 +26,7 @@ class StoreCateringInquiryRequest extends FormRequest
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:255'],
             'event_type' => ['required', 'string', Rule::in($catering->eventTypes)],
-            'event_date' => ['required', 'date', 'after_or_equal:'.now()->addDays((int) $catering->leadTimeDays)->format('Y-m-d')],
+            'event_date' => ['required', 'date', 'after_or_equal:'.resolve(BakeryClock::class)->today()->addDays((int) $catering->leadTimeDays)->toDateString()],
             'guest_count' => ['required', 'integer', 'min:'.(int) $catering->minimumGuests],
             'budget' => ['nullable', 'string', 'max:255'],
             'details' => ['required', 'string', 'max:5000'],
