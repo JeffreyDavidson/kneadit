@@ -23,7 +23,6 @@ test('trial:check reports reminders and pausings in output', function () {
         'email' => 'baker7@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
     ]);
 
     $this->artisan('trial:check')
@@ -43,7 +42,6 @@ test('trial:check pauses expired storefronts via the action', function () {
         'email' => 'expired@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDays(1),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 

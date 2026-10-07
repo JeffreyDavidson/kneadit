@@ -38,9 +38,9 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property bool $storefront_enabled
  * @property Carbon|null $paused_at
  * @property-read bool $is_paused
+ * @property-read SubscriptionTier $effective_plan
  * @property-read bool $storefront_set_up
  * @property string|null $external_website
- * @property bool $is_active
  * @property bool $is_demo
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -103,7 +103,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'storefront_enabled',
             'paused_at',
             'external_website',
-            'is_active',
             'is_demo',
             'custom_domain',
             'custom_domain_verified_at',
@@ -124,7 +123,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'trial_ends_at' => 'datetime',
             'storefront_enabled' => 'boolean',
             'paused_at' => 'datetime',
-            'is_active' => 'boolean',
             'is_demo' => 'boolean',
             'custom_domain_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
@@ -159,6 +157,20 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return Attribute::make(
             get: fn (): bool => $this->paused_at !== null,
+        );
+    }
+
+    /**
+     * The plan whose features the bakery gets. A bakery the platform comps
+     * (free forever) gets every Pro feature whatever plan is stored; every
+     * feature gate reads this, not the stored plan.
+     *
+     * @return Attribute<SubscriptionTier, never>
+     */
+    protected function effectivePlan(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): SubscriptionTier => $this->free_forever ? SubscriptionTier::Pro : $this->plan,
         );
     }
 

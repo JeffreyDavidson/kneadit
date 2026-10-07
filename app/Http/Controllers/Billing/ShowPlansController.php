@@ -26,6 +26,7 @@ class ShowPlansController extends Controller
             'bakeryName' => $hasTenant ? ($tenant->store_name ?: $tenant->name) : session('bakery_name'),
             'bakeryAdminUrl' => $hasTenant ? $tenantUrls->admin($tenant) : null,
             'trialEndsAt' => $hasTenant && $tenant->trial_ends_at?->isFuture() ? $tenant->trial_ends_at : null,
+            'hasBillingAccount' => $user instanceof User && $user->hasStripeId(),
             'isFreeForever' => $hasTenant && $tenant->free_forever,
         ]);
     }

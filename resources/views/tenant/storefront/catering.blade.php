@@ -225,7 +225,7 @@
                             name="event_date"
                             value="{{ old('event_date') }}"
                             required
-                            min="{{ now()->addDays((int) $settings->catering->leadTimeDays)->format('Y-m-d') }}"
+                            min="{{ resolve(\App\Services\Scheduling\BakeryClock::class)->today()->addDays((int) $settings->catering->leadTimeDays)->toDateString() }}"
                             class="input-field"
                             id="catering-event-date"
                             data-test="catering-form-event-date"

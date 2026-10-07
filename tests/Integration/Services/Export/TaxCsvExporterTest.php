@@ -243,3 +243,40 @@ test('a Los Angeles bakery order delivered on Dec 31 local time lands in that ye
         ->not->toContain($januaryOrder->order_number)
         ->and($summaryOutput)->toContain('"Total Revenue (Orders)",61.00');
 });
+
+test('expenses and income dated on the last day of the range are exported and summarized', function () {
+    Expense::factory()->create(['date' => '2025-12-31', 'description' => 'New Year prep flour', 'amount' => 40.00, 'business_percentage' => 100]);
+    Income::factory()->create(['date' => '2025-12-31', 'description' => 'Last day market', 'amount' => 25.00]);
+
+    $expenses = taxCsvMemoryStream();
+    $income = taxCsvMemoryStream();
+    $summary = taxCsvMemoryStream();
+    resolve(TaxCsvExporter::class)->writeExpensesCsv($expenses, '2025-01-01', '2025-12-31');
+    resolve(TaxCsvExporter::class)->writeIncomeCsv($income, '2025-01-01', '2025-12-31');
+    resolve(TaxCsvExporter::class)->writeSummaryCsv($summary, '2025-01-01', '2025-12-31');
+    rewind($expenses);
+    rewind($income);
+    rewind($summary);
+
+    expect(stream_get_contents($expenses))->toContain('New Year prep flour')
+        ->and(stream_get_contents($income))->toContain('Last day market')
+        ->and(stream_get_contents($summary))
+        ->toContain('"Total Revenue (Other Income)",25.00')
+        ->toContain('"Total Expenses",40.00')
+        ->toContain('"Total Deductible",40.00');
+});
+
+test('expenses and income dated the day after the range are left out', function () {
+    Expense::factory()->create(['date' => '2026-01-01', 'description' => 'Next year flour', 'amount' => 40.00]);
+    Income::factory()->create(['date' => '2026-01-01', 'description' => 'Next year market', 'amount' => 25.00]);
+
+    $expenses = taxCsvMemoryStream();
+    $income = taxCsvMemoryStream();
+    resolve(TaxCsvExporter::class)->writeExpensesCsv($expenses, '2025-01-01', '2025-12-31');
+    resolve(TaxCsvExporter::class)->writeIncomeCsv($income, '2025-01-01', '2025-12-31');
+    rewind($expenses);
+    rewind($income);
+
+    expect(stream_get_contents($expenses))->not->toContain('Next year flour')
+        ->and(stream_get_contents($income))->not->toContain('Next year market');
+});

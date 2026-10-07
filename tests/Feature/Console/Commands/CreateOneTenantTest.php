@@ -41,3 +41,9 @@ test('create-one tenant command source creates domains and seeds data', function
         ->toContain('tenants:migrate')
         ->toContain('db:seed');
 });
+
+test('create-one tenant command source gives the seeded user the Owner role', function () {
+    $source = file_get_contents(app_path('Console/Commands/Tenants/CreateOneTenantCommand.php'));
+
+    expect($source)->toContain('UserRole::Owner');
+});

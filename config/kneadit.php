@@ -133,6 +133,9 @@ return [
 
     'trial_days' => (int) env('TRIAL_DAYS', 30),
 
+    // Days a paying bakery keeps running after its first failed renewal, before it is paused.
+    'past_due_grace_days' => 7,
+
     'invitation_expiry_days' => (int) env('INVITATION_EXPIRY_DAYS', 7),
 
     'stripe_prices' => [

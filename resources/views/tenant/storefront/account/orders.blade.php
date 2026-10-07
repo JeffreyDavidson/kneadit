@@ -52,7 +52,7 @@
                                         Reorder
                                     </a>
                                     <a
-                                        href="{{ route('order.track') }}?number={{ $order->order_number }}"
+                                        href="{{ route('order.confirmation', $order) }}"
                                         class="text-warm-700 font-semibold hover:underline"
                                     >
                                         Track
@@ -104,7 +104,7 @@
                                                 Reorder
                                             </a>
                                             <a
-                                                href="{{ route('order.track') }}?number={{ $order->order_number }}"
+                                                href="{{ route('order.confirmation', $order) }}"
                                                 class="text-warm-700 text-xs font-semibold hover:underline"
                                             >
                                                 Track

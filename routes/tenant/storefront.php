@@ -45,8 +45,7 @@ Route::get('contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:form-write');
 
 // Loyalty rewards
-Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards');
-Route::post('rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:form-write');
+Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards')->middleware('customer.verified');
 
 // Gift Cards
 Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.giftCards');

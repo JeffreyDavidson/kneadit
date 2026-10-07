@@ -33,39 +33,23 @@
         {{-- Check Points / Customer Dashboard --}}
         <section class="bg-warm-50 px-4 py-20">
             <div class="mx-auto max-w-5xl">
-                {{-- Points Lookup --}}
-                <div class="mx-auto mb-16 max-w-xl">
-                    <div class="border-warm-200 rounded-2xl border bg-white p-8 shadow-2xl">
-                        <h2 class="font-display text-warm-900 mb-4 text-center text-2xl font-bold">
-                            {{ $vm->content['check_heading'] ?? 'Check Your Points' }}
-                        </h2>
-                        <form
-                            action="{{ route('rewards.check') }}"
-                            method="POST"
-                            class="flex flex-col gap-3 sm:flex-row"
-                            data-test="loyalty-lookup-form"
-                        >
-                            @csrf
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Enter your email address"
-                                value="{{ old('email', $vm->customer->email ?? '') }}"
-                                required
-                                class="input-field flex-1"
-                                data-test="loyalty-lookup-form-email"
-                            />
+                {{-- Signed-out visitors are asked to sign in; points are never looked up by email. --}}
+                @unless ($vm->hasCustomer)
+                    <div class="mx-auto mb-16 max-w-xl">
+                        <div class="border-warm-200 rounded-2xl border bg-white p-8 text-center shadow-2xl">
+                            <h2 class="font-display text-warm-900 mb-4 text-2xl font-bold">
+                                {{ $vm->content['check_heading'] ?? 'Check Your Points' }}
+                            </h2>
                             <x-storefront.button
-                                type="submit"
+                                :href="route('account.login.show')"
                                 size="md"
-                                class="whitespace-nowrap"
-                                data-test="loyalty-lookup-form-submit"
+                                data-test="loyalty-sign-in"
                             >
-                                Check Balance
+                                Sign in to see your points
                             </x-storefront.button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                @endunless
 
                 {{-- Customer Results --}}
                 @if ($vm->hasCustomer)
@@ -181,15 +165,6 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
-                @endif
-
-                @if ($vm->customerNotFound)
-                    <div class="border-warm-200 mx-auto mb-16 max-w-xl rounded-2xl border bg-white p-8 text-center">
-                        <p class="text-warm-700">
-                            We couldn't find an account with that email. Points are earned automatically when your
-                            orders are delivered!
-                        </p>
                     </div>
                 @endif
 

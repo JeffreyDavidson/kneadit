@@ -13,8 +13,10 @@ class TenantSubscriptionAnalyticsQuery
     /** @var array<int, array{plan: mixed, count: mixed}>|null */
     private ?array $planCounts = null;
 
-    /** @var array{on_trial: int, expired: int, converted: int}|null */
+    /** @var array{on_trial: int, expired: int, converted: int, paying: int}|null */
     private ?array $trialConversionMetrics = null;
+
+    public function __construct(private readonly PlatformRevenueMetricsQuery $revenue) {}
 
     /** @return array<string, mixed> */
     public function planDistribution(): array
@@ -34,28 +36,31 @@ class TenantSubscriptionAnalyticsQuery
         return SettingValue::map($plans);
     }
 
-    /** @return array{on_trial: int, expired: int, converted: int} */
+    /**
+     * Where bakeries stand after their trial. Whether an owner converted or
+     * pays comes from their Cashier subscription (the revenue metrics), never
+     * from the bakery's own columns. Comped and demo bakeries are not in the
+     * funnel.
+     *
+     * @return array{on_trial: int, expired: int, converted: int, paying: int}
+     */
     public function trialConversion(): array
     {
         if ($this->trialConversionMetrics !== null) {
             return $this->trialConversionMetrics;
         }
 
-        $metrics = Tenant::query()
-            ->toBase()
-            ->selectRaw('COUNT(*) as total')
-            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at > CURRENT_TIMESTAMP THEN 1 ELSE 0 END), 0) as on_trial')
-            ->selectRaw('COALESCE(SUM(CASE WHEN trial_ends_at IS NOT NULL AND trial_ends_at <= CURRENT_TIMESTAMP THEN 1 ELSE 0 END), 0) as expired')
-            ->first();
-
-        $total = Arr::integer(['value' => $metrics->total ?? 0], 'value', 0);
-        $onTrial = Arr::integer(['value' => $metrics->on_trial ?? 0], 'value', 0);
-        $expired = Arr::integer(['value' => $metrics->expired ?? 0], 'value', 0);
+        $revenue = $this->revenue->get();
 
         return $this->trialConversionMetrics = [
-            'on_trial' => $onTrial,
-            'expired' => $expired,
-            'converted' => $total - $onTrial - $expired,
+            'on_trial' => Tenant::query()
+                ->where('free_forever', false)
+                ->where('is_demo', false)
+                ->where('trial_ends_at', '>', now())
+                ->count(),
+            'expired' => $revenue->trialedCount - $revenue->convertedCount,
+            'converted' => $revenue->convertedCount,
+            'paying' => $revenue->payingCount,
         ];
     }
 

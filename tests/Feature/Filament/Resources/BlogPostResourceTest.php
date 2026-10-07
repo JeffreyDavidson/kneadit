@@ -7,6 +7,7 @@ use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Models\Content\TenantBlogPost;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 
 use function Pest\Livewire\livewire;
 
@@ -190,3 +191,24 @@ test('manager and owner users can manage blog posts', function (UserRole $role) 
     livewire(EditBlogPost::class, ['record' => $post->getRouteKey()])
         ->assertOk();
 })->with('blogPostManagerRoles');
+
+test('the blog publish date is entered and shown in the bakery timezone', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/New_York'])));
+
+    livewire(CreateBlogPost::class)
+        ->fillForm([
+            'title' => 'Scheduled Post',
+            'slug' => 'scheduled-post',
+            'body' => '<p>Soon.</p>',
+            'published_at' => '2030-10-15 09:00:00',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+    $post = TenantBlogPost::query()->where('slug', 'scheduled-post')->firstOrFail();
+
+    // 9:00 in New York (EDT) is 13:00 UTC, the zone the published scope compares against.
+    expect($post->published_at->format('Y-m-d H:i'))->toBe('2030-10-15 13:00');
+
+    livewire(EditBlogPost::class, ['record' => $post->getKey()])
+        ->assertSet('data.published_at', '2030-10-15 09:00:00');
+});

@@ -5,6 +5,7 @@ use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\PickupSlotResolver;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 
@@ -256,4 +257,58 @@ test('special hours do not open a day the schedule has closed', function () {
     BlockedDate::factory()->partialDay()->create(['date' => $date->toDateString()]);
 
     expect(resolve(PickupSlotResolver::class)->availableSlots($date->toDateString()))->toBeEmpty();
+});
+
+describe('same-day slots', function () {
+    beforeEach(function () {
+        // Monday 2026-05-04 11:10 in New York (15:10 UTC).
+        Date::setTestNow('2026-05-04 15:10:00');
+        app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings([
+            'timezone' => 'America/New_York',
+            'pickupSlotsEnabled' => true,
+            'pickupSlotIntervalMinutes' => 30,
+            'pickupSlotMaxPerWindow' => 3,
+        ])));
+        BusinessSchedule::factory()->create([
+            'day_of_week' => 1,
+            'is_open' => true,
+            'open_time' => '09:00',
+            'close_time' => '13:00',
+        ]);
+    });
+
+    test('drops slots that have already passed in bakery time when the date is today', function () {
+        $slots = resolve(PickupSlotResolver::class)->availableSlots('2026-05-04');
+
+        expect($slots)->toBe(['11:30', '12:00', '12:30']);
+    });
+
+    test('keeps a slot that starts exactly now', function () {
+        Date::setTestNow('2026-05-04 15:00:00');
+
+        $slots = resolve(PickupSlotResolver::class)->availableSlots('2026-05-04');
+
+        expect($slots)->toBe(['11:00', '11:30', '12:00', '12:30']);
+    });
+
+    test('offers every slot on a future date', function () {
+        $slots = resolve(PickupSlotResolver::class)->availableSlots('2026-05-11');
+
+        expect($slots)->toBe(['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30']);
+    });
+
+    test('uses the bakery day, not the UTC day, to decide what today is', function () {
+        // 2026-05-05 02:00 UTC is still Monday evening 22:00 in New York: Tuesday is not today.
+        Date::setTestNow('2026-05-05 02:00:00');
+        BusinessSchedule::factory()->create([
+            'day_of_week' => 2,
+            'is_open' => true,
+            'open_time' => '09:00',
+            'close_time' => '10:00',
+        ]);
+
+        $slots = resolve(PickupSlotResolver::class)->availableSlots('2026-05-05');
+
+        expect($slots)->toBe(['09:00', '09:30']);
+    });
 });

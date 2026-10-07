@@ -37,7 +37,6 @@ it('creates a tenant with domain and seeds the tenant database', function () {
         ->and($tenant->id)->toBe('testbakery')
         ->and($tenant->store_name)->toBe('Test Bakery')
         ->and($tenant->storefront_enabled)->toBeTrue()
-        ->and($tenant->is_active)->toBeTrue()
         ->and($tenant->domains)->toHaveCount(1)
         ->and($tenant->domains->first()->domain)->toBe('testbakery');
 });

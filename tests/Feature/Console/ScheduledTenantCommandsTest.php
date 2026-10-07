@@ -69,7 +69,6 @@ test('every scheduled command is covered by the central-database guard', functio
 });
 
 test('a scheduled tenant command never reads tenant tables before entering a tenant', function (string $signature) {
-    config(['services.paypal.client_id' => 'platform-client-id']);
     setUpCentralOnlyTest();
     $tenantTables = tenantOnlyTables();
     createTenant(['id' => 'bakery-a', 'email' => 'a@example.com']);

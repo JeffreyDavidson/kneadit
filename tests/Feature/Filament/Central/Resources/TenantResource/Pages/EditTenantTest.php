@@ -238,3 +238,11 @@ test('the change subdomain action is for platform admins only', function () {
     livewire(EditTenant::class, ['record' => $tenant->getKey()])
         ->assertActionHidden('changeSubdomain');
 });
+
+test('the form has no Account Active switch, because Pause is the only switch', function () {
+    $tenant = Tenant::factory()->create();
+
+    livewire(EditTenant::class, ['record' => $tenant->getKey()])
+        ->assertFormFieldDoesNotExist('is_active')
+        ->assertDontSee('Account Active');
+});

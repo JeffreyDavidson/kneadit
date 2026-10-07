@@ -92,6 +92,23 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
+    /**
+     * Unpaid orders with a PayPal invoice the hourly check should look at: every live order,
+     * plus orders cancelled since $cancelledSince, which are watched only for an invoice
+     * that gets paid anyway (so staff can refund it).
+     */
+    public function awaitingPayPalCheck(Carbon $cancelledSince): static
+    {
+        $this->unpaid()
+            ->whereNotNull('paypal_invoice_id')
+            ->where(function (Builder $query) use ($cancelledSince): void {
+                $query->where('status', '!=', OrderStatus::Cancelled)
+                    ->orWhere('updated_at', '>=', $cancelledSince);
+            });
+
+        return $this;
+    }
+
     public function byStatus(OrderStatus $status): static
     {
         $this->where('status', $status);

@@ -6,9 +6,9 @@ use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
+use App\ValueObjects\Money;
 use DateTimeInterface;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 
@@ -39,23 +39,23 @@ class AtRiskCustomersWidget extends Widget
         $threshold = Config::integer('analytics.at_risk_threshold_days', 30);
 
         return AtRiskCustomersQuery::query($threshold)
+            ->withOrderMetrics()
             ->orderBy('last_order_date')
             ->limit($this->rowLimit())
             ->get()
             ->map(function (Customer $customer): array {
                 $lastOrderDate = $customer->getAttribute('last_order_date');
-                $lastOrder = is_string($lastOrderDate) || $lastOrderDate instanceof DateTimeInterface
-                    ? Carbon::parse($lastOrderDate)->diffForHumans()
-                    : 'Never';
-
-                $attributes = $customer->getAttributes();
+                $lastOrderAt = is_string($lastOrderDate) || $lastOrderDate instanceof DateTimeInterface
+                    ? Carbon::parse($lastOrderDate)
+                    : null;
+                $lifetimeValue = $customer->getAttribute('orders_sum_total');
 
                 return [
                     'id' => $customer->id,
                     'name' => $customer->name,
-                    'last_order' => $lastOrder,
-                    'days_inactive' => Arr::integer($attributes, 'days_since_last_order', 0),
-                    'lifetime_value' => '$'.number_format(Arr::float($attributes, 'lifetime_value', 0.0), 0),
+                    'last_order' => $lastOrderAt?->diffForHumans() ?? 'Never',
+                    'days_inactive' => (int) ($lastOrderAt?->diffInDays(now()) ?? 0),
+                    'lifetime_value' => '$'.number_format(Money::fromCents(is_numeric($lifetimeValue) ? (int) $lifetimeValue : 0)->dollars(), 0),
                 ];
             })
             ->all();

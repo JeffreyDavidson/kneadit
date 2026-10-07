@@ -53,10 +53,6 @@ class TenantForm
                                 ->label('Trial Ends')
                                 ->placeholder('N/A')
                                 ->helperText('Leave blank if this account isn\'t on a trial.'),
-                            Toggle::make('is_active')
-                                ->label('Account Active')
-                                ->helperText('Turning this off blocks access to the admin panel and storefront.')
-                                ->default(true),
                         ]),
                     ]),
 

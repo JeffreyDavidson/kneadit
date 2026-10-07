@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Settings\SettingsManager;
@@ -55,7 +56,6 @@ class CreateDemoTenantCommand extends Command
             'store_name' => 'Sweet Dreams Bakery',
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
-            'is_active' => true,
             'is_demo' => true,
         ]);
 
@@ -89,6 +89,7 @@ class CreateDemoTenantCommand extends Command
                 'email' => 'demo@getkneadit.app',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner,
             ]);
 
             // Seed settings

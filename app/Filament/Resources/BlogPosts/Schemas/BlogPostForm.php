@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BlogPosts\Schemas;
 
 use App\Filament\Support\AllowedFileTypes;
+use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -72,7 +73,8 @@ class BlogPostForm
                     ->label('Published'),
 
                 DateTimePicker::make('published_at')
-                    ->label('Publish Date'),
+                    ->label('Publish Date')
+                    ->timezone(fn (): string => resolve(TenantSettings::class)->orders->timezone),
             ]);
     }
 

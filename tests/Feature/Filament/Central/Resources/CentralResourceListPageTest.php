@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Central\Resources\AnnouncementResource\Pages\ListAnnouncements;
 use App\Filament\Central\Resources\BlogPostResource\Pages\ListBlogPosts;
 use App\Filament\Central\Resources\EmailCampaignResource\Pages\ListEmailCampaigns;
 use App\Filament\Central\Resources\MessageResource\Pages\ListMessages;
@@ -20,7 +19,6 @@ beforeEach(function () {
 });
 
 dataset('centralResourceListPages', [
-    'Announcements' => [ListAnnouncements::class],
     'BlogPosts' => [ListBlogPosts::class],
     'EmailCampaigns' => [ListEmailCampaigns::class],
     'Messages' => [ListMessages::class],

@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
@@ -68,7 +69,6 @@ class ProvisionTestTenantCommand extends Command
             'store_name' => self::STORE_NAME,
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',
-            'is_active' => true,
             'storefront_enabled' => true,
         ]);
 
@@ -81,6 +81,7 @@ class ProvisionTestTenantCommand extends Command
                 'email' => $tenant->email,
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner->value,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

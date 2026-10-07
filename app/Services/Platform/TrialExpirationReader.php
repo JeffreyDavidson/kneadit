@@ -24,7 +24,6 @@ class TrialExpirationReader
 
         yield from Tenant::query()
             ->whereDate('trial_ends_at', $targetDate)
-            ->where('is_active', true)
             ->where('free_forever', false)
             ->lazyById();
     }
@@ -39,7 +38,6 @@ class TrialExpirationReader
     {
         yield from Tenant::query()
             ->where('trial_ends_at', '<', now())
-            ->where('is_active', true)
             ->whereNull('paused_at')
             ->where('free_forever', false)
             ->lazyById();

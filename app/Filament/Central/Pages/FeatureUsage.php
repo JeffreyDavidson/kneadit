@@ -31,6 +31,22 @@ class FeatureUsage extends Page
 
     public ?string $selectedFeature = null;
 
+    /**
+     * Hidden until something writes feature usage: the page reads a table that
+     * stays empty. Parked work: audit 2026-10-06, E14.
+     */
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function getHasData(): bool
     {
         return resolve(FeatureUsageQuery::class)->hasData();

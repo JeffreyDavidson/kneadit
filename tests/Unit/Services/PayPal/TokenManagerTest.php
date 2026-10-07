@@ -5,12 +5,17 @@ use Illuminate\Support\Facades\Http;
 
 beforeEach(fn () => setUpTenantTest());
 
-it('fetches and caches an access token', function () {
-    config([
-        'services.paypal.client_id' => 'test-id',
-        'services.paypal.client_secret' => 'test-secret',
-        'services.paypal.sandbox' => true,
+function bakeryPaypal(bool $sandbox = true): void
+{
+    settings([
+        'paypal_client_id' => 'bakery-id',
+        'paypal_client_secret' => 'bakery-secret',
+        'paypal_sandbox' => $sandbox ? '1' : '0',
     ]);
+}
+
+it('fetches and caches an access token', function () {
+    bakeryPaypal();
 
     Http::preventStrayRequests();
     Http::fake([
@@ -33,24 +38,59 @@ it('fetches and caches an access token', function () {
     Http::assertSentCount(1);
 });
 
-test('uses production URL when sandbox is false', function () {
-    config([
-        'services.paypal.sandbox' => false,
-        'services.paypal.client_id' => 'test-id',
-        'services.paypal.client_secret' => 'test-secret',
-    ]);
+test('uses production URL when the bakery turns sandbox off', function () {
+    bakeryPaypal(sandbox: false);
 
     $manager = resolve(TokenManager::class);
 
     expect($manager->getBaseUrl())->toBe('https://api-m.paypal.com');
 });
 
-test('returns null when API response fails', function () {
+test('uses the sandbox URL when the bakery turns sandbox on, whatever the platform config says', function () {
+    config(['services.paypal.sandbox' => false]);
+    bakeryPaypal(sandbox: true);
+
+    expect(resolve(TokenManager::class)->getBaseUrl())->toBe('https://api-m.sandbox.paypal.com');
+});
+
+test('defaults to the sandbox when the bakery has never saved the setting', function () {
+    settings(['paypal_client_id' => 'bakery-id', 'paypal_client_secret' => 'bakery-secret']);
+
+    expect(resolve(TokenManager::class)->getBaseUrl())->toBe('https://api-m.sandbox.paypal.com');
+});
+
+test('does not fall back to the platform credentials outside the local environment', function () {
     config([
-        'services.paypal.sandbox' => true,
-        'services.paypal.client_id' => 'test-id',
-        'services.paypal.client_secret' => 'test-secret',
+        'services.paypal.client_id' => 'platform-id',
+        'services.paypal.client_secret' => 'platform-secret',
     ]);
+    Http::preventStrayRequests();
+
+    $manager = resolve(TokenManager::class);
+
+    expect($manager->isConfigured())->toBeFalse()
+        ->and($manager->getAccessToken())->toBeNull();
+    Http::assertNothingSent();
+});
+
+test('reports a bakery with its own credentials as configured', function () {
+    bakeryPaypal();
+
+    expect(resolve(TokenManager::class)->isConfigured())->toBeTrue();
+});
+
+test('falls back to the platform credentials in the local environment only', function () {
+    app()->detectEnvironment(fn (): string => 'local');
+    config([
+        'services.paypal.client_id' => 'platform-id',
+        'services.paypal.client_secret' => 'platform-secret',
+    ]);
+
+    expect(resolve(TokenManager::class)->isConfigured())->toBeTrue();
+});
+
+test('returns null when API response fails', function () {
+    bakeryPaypal();
 
     Http::fake([
         'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(['error' => 'unauthorized'], 401),
@@ -62,11 +102,7 @@ test('returns null when API response fails', function () {
 });
 
 test('returns null when API throws exception', function () {
-    config([
-        'services.paypal.sandbox' => true,
-        'services.paypal.client_id' => 'test-id',
-        'services.paypal.client_secret' => 'test-secret',
-    ]);
+    bakeryPaypal();
 
     Http::fake([
         'api-m.sandbox.paypal.com/v1/oauth2/token' => fn () => throw new Exception('Connection refused'),

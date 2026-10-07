@@ -7,8 +7,10 @@ use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
 use App\Models\Marketing\EmailTemplate;
 use App\Models\Orders\Order;
+use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 pest()->use(RefreshDatabase::class);
 
@@ -60,4 +62,35 @@ test('the new order notification subject shows the total once with a single doll
     $subject = new NewOrderNotificationMail($order)->envelope()->subject;
 
     expect($subject)->toBe("New Order #{$order->order_number} — \$12.00");
+});
+
+test('the delivered email for a delivery order names the address and the bakery-local time', function () {
+    // 2026-10-07 03:30 UTC is 8:30 PM on Oct 6 in Los Angeles.
+    Date::setTestNow('2026-10-07 03:30:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/Los_Angeles'])));
+    $order = Order::factory()->delivery()->create(['delivery_address' => '12 Rye Lane, Portland']);
+
+    $html = new OrderStatusMail($order, OrderStatus::Delivered)->render();
+
+    expect($html)
+        ->toContain('Delivered to:')
+        ->toContain('12 Rye Lane, Portland')
+        ->toContain('Oct 6, 2026 at 8:30 PM')
+        ->not->toContain('Picked up');
+});
+
+test('the delivered email for a pickup order says picked up and shows no address', function () {
+    Date::setTestNow('2026-10-07 03:30:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'America/Los_Angeles'])));
+    $order = Order::factory()->pickup()->create(['delivery_address' => null]);
+
+    $html = new OrderStatusMail($order, OrderStatus::Delivered)->render();
+
+    expect($html)
+        ->toContain('Picked up')
+        ->toContain('Oct 6, 2026 at 8:30 PM')
+        ->not->toContain('Delivered to:')
+        ->not->toContain('Delivery Confirmed')
+        ->not->toContain('Delivery Complete')
+        ->not->toContain('safely delivered');
 });

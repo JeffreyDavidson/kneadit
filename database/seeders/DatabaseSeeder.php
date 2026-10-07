@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Staff\UserRole;
 use Database\Seeders\Content\BlogPostSeeder;
 use Database\Seeders\Customers\CustomerSeeder;
 use Database\Seeders\Customers\ReviewSeeder;
@@ -70,6 +71,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'KneadIt Baker',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner->value,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
