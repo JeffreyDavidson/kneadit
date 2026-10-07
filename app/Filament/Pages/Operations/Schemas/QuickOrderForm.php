@@ -111,13 +111,14 @@ class QuickOrderForm
                                             $product->id => $product->name.' - '.($product->price?->formatted() ?? ''),
                                         ]))
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, ?string $state): void {
+                                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                                         if ($state) {
                                             $product = Product::query()->find($state);
                                             if ($product) {
                                                 $set('unit_price', $product->price?->dollars());
                                             }
                                         }
+                                        $set('line_total', self::lineTotal($get));
                                     }),
 
                                 TextInput::make('quantity')
@@ -126,26 +127,21 @@ class QuickOrderForm
                                     ->numeric()
                                     ->minValue(1)
                                     ->default(1)
-                                    ->live(),
+                                    ->live()
+                                    ->afterStateUpdated(fn (Get $get, Set $set): mixed => $set('line_total', self::lineTotal($get))),
 
                                 MoneyInput::make('unit_price')
                                     ->label('Price')
                                     ->required()
-                                    ->live(),
+                                    ->live()
+                                    ->afterStateUpdated(fn (Get $get, Set $set): mixed => $set('line_total', self::lineTotal($get))),
 
                                 TextInput::make('line_total')
                                     ->label('Total')
                                     ->prefix('$')
                                     ->disabled()
                                     ->dehydrated(false)
-                                    ->formatStateUsing(function (Get $get) {
-                                        $quantity = filter_var($get('quantity'), FILTER_VALIDATE_FLOAT);
-                                        $price = filter_var($get('unit_price'), FILTER_VALIDATE_FLOAT);
-                                        $quantity = is_float($quantity) ? $quantity : 0.0;
-                                        $price = is_float($price) ? $price : 0.0;
-
-                                        return Number::format($quantity * $price, 2);
-                                    }),
+                                    ->formatStateUsing(fn (Get $get): string => self::lineTotal($get)),
                             ])->columnSpanFull(),
 
                             Textarea::make('special_instructions')
@@ -225,6 +221,20 @@ class QuickOrderForm
             ])
                 ->alignEnd(),
         ];
+    }
+
+    /**
+     * The line's quantity times its price, as a plain amount (the field already has a "$" prefix).
+     */
+    private static function lineTotal(Get $get): string
+    {
+        $quantity = filter_var($get('quantity'), FILTER_VALIDATE_FLOAT);
+        $price = filter_var($get('unit_price'), FILTER_VALIDATE_FLOAT);
+
+        return number_format(
+            (is_float($quantity) ? $quantity : 0.0) * (is_float($price) ? $price : 0.0),
+            2,
+        );
     }
 
     /**

@@ -246,6 +246,12 @@
                                                 />
                                                 <x-storefront.button type="submit" size="sm">Send</x-storefront.button>
                                             </form>
+                                            <p
+                                                id="msg-error-{{ $tracked->order->order_number }}"
+                                                class="mt-2 hidden text-sm text-red-400"
+                                                role="alert"
+                                                data-test="order-message-error"
+                                            ></p>
                                         </div>
 
                                         {{-- Reorder --}}
@@ -352,23 +358,59 @@
                             });
                     }
 
-                    function sendOrderMessage(e, orderId) {
+                    function showMessageError(orderId, text) {
+                        const error = document.getElementById('msg-error-' + orderId);
+                        error.textContent = text;
+                        error.classList.toggle('hidden', !text);
+                    }
+
+                    function messageFailureText(response, payload) {
+                        if (response.status === 419) {
+                            return 'Your session expired. Please refresh the page and try again.';
+                        }
+
+                        const fieldErrors = Object.values(payload.errors || {}).flat();
+                        if (fieldErrors.length) {
+                            return fieldErrors.join(' ');
+                        }
+
+                        return payload.message || 'Failed to send message. Please try again.';
+                    }
+
+                    async function sendOrderMessage(e, orderId) {
                         e.preventDefault();
                         const input = document.getElementById('msg-input-' + orderId);
+                        const button = e.target.querySelector('button[type="submit"]');
                         const msg = input.value.trim();
-                        if (!msg) return;
+                        if (!msg || button.disabled) return;
 
-                        fetch('/order/' + orderId + '/messages', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ message: msg, sender_name: customerName, sender_email: customerEmail }),
-                        })
-                            .then((r) => r.json())
-                            .then(() => {
-                                input.value = '';
-                                loadMessages(orderId);
-                            })
-                            .catch(() => alert('Failed to send message. Please try again.'));
+                        button.disabled = true;
+                        showMessageError(orderId, '');
+
+                        try {
+                            const response = await fetch('/order/' + orderId + '/messages', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Accept: 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                },
+                                body: JSON.stringify({ message: msg, sender_name: customerName, sender_email: customerEmail }),
+                            });
+                            const payload = await response.json().catch(() => ({}));
+
+                            if (!response.ok) {
+                                showMessageError(orderId, messageFailureText(response, payload));
+                                return;
+                            }
+
+                            input.value = '';
+                            loadMessages(orderId);
+                        } catch (error) {
+                            showMessageError(orderId, 'Failed to send message. Please try again.');
+                        } finally {
+                            button.disabled = false;
+                        }
                     }
 
                     @foreach ($orders as $order)

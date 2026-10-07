@@ -92,12 +92,21 @@
                                             type="button"
                                             data-test="order-form-product-increment"
                                             @click="incrementItem({{ $product->id }}, {{ $product->price?->dollars() ?? 0 }})"
+                                            :disabled="atMaxQuantity({{ $product->id }})"
                                             class="order-qty-btn"
                                         >
                                             +
                                         </button>
                                     </div>
                                 </div>
+                                <p
+                                    x-show="atMaxQuantity({{ $product->id }})"
+                                    x-cloak
+                                    x-text="quantityLimitMessage"
+                                    class="text-warm-400 mt-2 text-xs"
+                                    role="status"
+                                    data-test="order-form-quantity-limit"
+                                ></p>
                             </div>
                         </div>
                     @endif

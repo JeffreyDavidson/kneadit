@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory\Category;
 use App\Models\Orders\Cart;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Services\Carts\CartManager;
 use App\Services\Orders\OrderAccessGuard;
 use App\Services\Orders\OrderLineRefresher;
@@ -62,6 +63,8 @@ class ShowOrderFormController extends Controller
             'storefrontTheme' => $settings->branding->storefrontTheme,
             'hydratedCartItems' => $hydratedItems,
             'removedItemNames' => $removedItemNames,
+            'maxQuantity' => OrderItem::MAX_QUANTITY,
+            'quantityLimitMessage' => __('orders.max_quantity', ['max' => OrderItem::MAX_QUANTITY]),
             'hydratedCartEmail' => $cart?->customer_email,
             'hydratedCartName' => $cart?->customer_name,
             'earliestDeliveryDate' => $earliestDeliveryDate->get(),
