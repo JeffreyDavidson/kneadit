@@ -55,3 +55,11 @@ test('parent relationship', function () {
 
     expect($reply->parent->id)->toBe($parent->id);
 });
+
+test('read at is saved when a message is marked read', function () {
+    $msg = PlatformMessage::factory()->create(['tenant_id' => 't1', 'is_read' => false]);
+
+    $msg->update(['is_read' => true, 'read_at' => now()]);
+
+    expect($msg->fresh()->read_at)->not->toBeNull();
+});

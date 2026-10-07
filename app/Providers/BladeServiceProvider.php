@@ -11,7 +11,7 @@ class BladeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Blade::directive('money', fn (string $expression): string => "<?php \$__money = {$expression}; echo \$__money instanceof \\App\\ValueObjects\\Money ? \$__money->formatted() : '\$' . number_format((float) \$__money, 2); ?>");
+        Blade::directive('money', fn (string $expression): string => "<?php \$__money = {$expression}; echo \$__money instanceof \\App\\ValueObjects\\Money ? \$__money->formatted() : \\Illuminate\\Support\\Number::currency((float) \$__money); ?>");
 
         Blade::directive('number', fn (string $expression): string => "<?php \$__numberArgs = [{$expression}]; echo \\Illuminate\\Support\\Number::format((float) \$__numberArgs[0], (int) (\$__numberArgs[1] ?? 0)); ?>");
 

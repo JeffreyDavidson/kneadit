@@ -517,6 +517,7 @@ test('manage settings page rejects out-of-range numbers and saves nothing', func
     'negative abandoned cart coupon' => ['abandoned_cart_recovery_coupon_dollars', -1, 'min'],
     'negative referral discount' => ['customer_referral_discount_dollars', -1, 'min'],
     'negative modification window' => ['order_modification_window_minutes', -1, 'min'],
+    'negative minimum order lead hours' => ['minimum_order_lead_hours', -1, 'min'],
     'pickup slot interval below five' => ['pickup_slot_interval_minutes', 4, 'min'],
     'pickup slot interval above a day' => ['pickup_slot_interval_minutes', 1441, 'max'],
     'zero pickup slots per window' => ['pickup_slot_max_per_window', 0, 'min'],
@@ -721,4 +722,27 @@ describe('payment credentials are owner-only and write-only', function () {
             ->and(settings('paypal_client_id'))->toBe('new-client-id')
             ->and(settings('paypal_sandbox'))->toBe('0');
     });
+});
+
+test('manage settings page hides the gift card amount settings until they are used', function (string $label) {
+    livewire(ManageSettings::class)
+        ->assertSuccessful()
+        ->assertDontSee($label);
+})->with([
+    'section description' => 'Configure gift card purchase options on your storefront',
+    'preset amounts' => 'Preset Amounts',
+    'default amount' => 'Default Selected Amount',
+]);
+
+test('saving the settings page keeps the stored gift card amounts', function () {
+    settings([
+        'gift_card_preset_amounts' => '5,15,45',
+        'gift_card_default_amount' => 15,
+    ]);
+
+    livewire(ManageSettings::class)
+        ->call('save');
+
+    expect(settings('gift_card_preset_amounts'))->toBe('5,15,45')
+        ->and((int) settings('gift_card_default_amount'))->toBe(15);
 });

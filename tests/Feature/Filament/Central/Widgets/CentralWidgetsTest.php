@@ -11,6 +11,7 @@ use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\DB;
 
 use function Pest\Livewire\livewire;
 
@@ -75,4 +76,27 @@ test('revenue overview widget renders again when its figures come back from a se
     livewire(RevenueOverview::class)
         ->assertOk()
         ->assertSee('ARPU');
+});
+
+test('needs attention widget ignores the retired is_active column', function () {
+    Tenant::factory()->create();
+    DB::table('tenants')->update(['is_active' => false]);
+
+    livewire(NeedsAttention::class)
+        ->assertDontSee('deactivated');
+});
+
+test('platform stats widget counts a bakery as active unless it is paused', function () {
+    Tenant::factory()->create();
+    Tenant::factory()->create(['paused_at' => now()->subDay()]);
+    DB::table('tenants')->update(['is_active' => false]);
+
+    livewire(PlatformStats::class)
+        ->assertSee('1 active');
+});
+
+test('recent bakeries widget shows paused, not the retired active column', function () {
+    livewire(RecentTenants::class)
+        ->assertTableColumnDoesNotExist('is_active')
+        ->assertTableColumnExists('is_paused');
 });

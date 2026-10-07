@@ -40,6 +40,11 @@ final class CheckoutBuilderUser extends User
     }
 }
 
+function callCheckout(User $user, string $plan): Checkout|RedirectResponse
+{
+    return app()->call([app(CheckoutController::class), '__invoke'], ['user' => $user, 'plan' => $plan]);
+}
+
 beforeEach(function () {
     setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
@@ -85,6 +90,51 @@ test('checkout refuses to start a second subscription', function () {
     expect($user->subscriptions()->count())->toBe(1);
 });
 
+test('checkout sends an owner with an unsettled subscription to the billing portal instead of starting a second one', function (string $status) {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
+
+    $user = User::factory()->owner()->create();
+    Subscription::factory()
+        ->for($user, 'owner')
+        ->withPrice('price_starter_test')
+        ->state(['stripe_status' => $status])
+        ->create();
+
+    $builder = Double::for(SubscriptionBuilder::class);
+    $builder->expects('checkout')->never();
+
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
+
+    $response = callCheckout($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBeEmpty()
+        ->and($response)->toBeInstanceOf(RedirectResponse::class)
+        ->and($response->getTargetUrl())->toBe(route('billing.portal'));
+})->with(['past_due', 'incomplete', 'unpaid']);
+
+test('checkout allows a new subscription once the old ones are canceled or expired', function (string $status) {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
+
+    $user = User::factory()->owner()->create();
+    Subscription::factory()
+        ->for($user, 'owner')
+        ->withPrice('price_starter_test')
+        ->state(['stripe_status' => $status, 'ends_at' => now()->subDay()])
+        ->create();
+
+    $builder = Double::for(SubscriptionBuilder::class);
+    $builder->expects('allowPromotionCodes')->returns($builder);
+    $builder->expects('checkout')->returns(Double::for(Checkout::class));
+
+    $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
+    $subject->fakeBuilder = $builder;
+
+    callCheckout($subject, 'starter');
+
+    expect($subject->requestedPrices)->toBe(['price_starter_test']);
+})->with(['canceled', 'incomplete_expired']);
+
 test('checkout refuses a free-forever bakery owner without calling Stripe', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter_test']]);
 
@@ -98,7 +148,7 @@ test('checkout refuses a free-forever bakery owner without calling Stripe', func
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    $response = app(CheckoutController::class)($subject, 'starter');
+    $response = callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBeEmpty()
         ->and($response)->toBeInstanceOf(RedirectResponse::class)
@@ -125,7 +175,7 @@ test('checkout ends the Stripe trial when the bakery trial ends', function () {
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    app(CheckoutController::class)($subject, 'starter');
+    callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
@@ -148,7 +198,7 @@ test('checkout passes a bakery trial ending within 48 hours on unchanged because
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    app(CheckoutController::class)($subject, 'starter');
+    callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
@@ -169,7 +219,7 @@ test('checkout gives no Stripe trial once the bakery trial has ended', function 
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    app(CheckoutController::class)($subject, 'starter');
+    callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
@@ -188,7 +238,7 @@ test('checkout gives no Stripe trial to an owner without a bakery', function () 
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    app(CheckoutController::class)($subject, 'starter');
+    callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });
@@ -214,7 +264,7 @@ test('checkout gives no Stripe trial to a returning subscriber whose bakery tria
     $subject = CheckoutBuilderUser::query()->findOrFail($user->id);
     $subject->fakeBuilder = $builder;
 
-    app(CheckoutController::class)($subject, 'starter');
+    callCheckout($subject, 'starter');
 
     expect($subject->requestedPrices)->toBe(['price_starter_test']);
 });

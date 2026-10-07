@@ -34,6 +34,7 @@ class CustomerPhotoForm
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->maxSize(5120)
+                            ->required()
                             ->directory('customer-photos')
                             ->disk('public')
                             ->imagePreviewHeight('200')

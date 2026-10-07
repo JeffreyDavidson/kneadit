@@ -570,3 +570,35 @@ test('a cart whose only product was deactivated is told its items are unavailabl
     'JSON' => ['postJson'],
     'form post' => ['post'],
 ]);
+
+test('a fetch submission is answered with the Stripe checkout url as json instead of a cross-origin redirect', function () {
+    $createOrder = Double::for(CreateOrder::class);
+    $createOrder->expects('__invoke')->returns(Order::factory()->create());
+    app()->instance(CreateOrder::class, $createOrder);
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('redirectToCheckout')->returns('https://checkout.stripe.com/pay/cs_test_abc123');
+    app()->instance(StripeCheckoutService::class, $stripeService);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('order.store', [], false), domainFailureOrderPayload());
+
+    $response->assertOk()
+        ->assertExactJson(['data' => ['redirect_url' => 'https://checkout.stripe.com/pay/cs_test_abc123']]);
+});
+
+test('a fetch submission without a card payment is answered with the confirmation url and keeps the success message', function () {
+    $order = Order::factory()->create();
+    $createOrder = Double::for(CreateOrder::class);
+    $createOrder->expects('__invoke')->returns($order);
+    app()->instance(CreateOrder::class, $createOrder);
+    $stripeService = Double::for(StripeCheckoutService::class);
+    $stripeService->expects('redirectToCheckout')->returns(null);
+    app()->instance(StripeCheckoutService::class, $stripeService);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('order.store', [], false), domainFailureOrderPayload());
+
+    $response->assertOk()
+        ->assertExactJson(['data' => ['redirect_url' => route('order.confirmation', $order)]])
+        ->assertSessionHas('success', 'Order submitted successfully!');
+});

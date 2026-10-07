@@ -32,9 +32,7 @@ class IngredientsRelationManager extends RelationManager
 
                 MoneyInput::make('unit_price'),
 
-                TextInput::make('minimum_order')
-                    ->numeric()
-                    ->step(0.01),
+                MoneyInput::make('minimum_order'),
 
                 TextInput::make('lead_time_days')
                     ->label('Lead Time (days)')
@@ -65,6 +63,7 @@ class IngredientsRelationManager extends RelationManager
 
                 TextColumn::make('minimum_order')
                     ->label('Min Order')
+                    ->money('USD')
                     ->sortable(),
 
                 TextColumn::make('lead_time_days')
@@ -86,9 +85,7 @@ class IngredientsRelationManager extends RelationManager
                     ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         MoneyInput::make('unit_price'),
-                        TextInput::make('minimum_order')
-                            ->numeric()
-                            ->step(0.01),
+                        MoneyInput::make('minimum_order'),
                         TextInput::make('lead_time_days')
                             ->label('Lead Time (days)')
                             ->numeric()

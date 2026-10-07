@@ -1,25 +1,27 @@
 <x-filament-panels::page>
-    {{-- Tab Switcher --}}
-    <div class="mb-6 flex gap-2">
-        @foreach ([
-            'platform' => 'Platform Events',
-            'audit' => 'Admin Actions',
-        ] as $key => $label)
-            <button
-                wire:click="$set('activeTab', '{{ $key }}')"
-                @class([
-                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-(--kn-honey)/25 cursor-pointer',
-                    'bg-(--kn-honey) text-(--kn-on-honey)' => $activeTab === $key,
-                    'bg-transparent text-(--kn-honey-text)' => $activeTab !== $key,
-                ])
-            >
-                {{ $label }}
-            </button>
-        @endforeach
-    </div>
+    {{-- Tab Switcher: only shown while there is more than one tab. --}}
+    @if ($this->hasPlatformEventsTab())
+        <div class="mb-6 flex gap-2">
+            @foreach ([
+                'platform' => 'Platform Events',
+                'audit' => 'Admin Actions',
+            ] as $key => $label)
+                <button
+                    wire:click="$set('activeTab', '{{ $key }}')"
+                    @class([
+                        'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-(--kn-honey)/25 cursor-pointer',
+                        'bg-(--kn-honey) text-(--kn-on-honey)' => $activeTab === $key,
+                        'bg-transparent text-(--kn-honey-text)' => $activeTab !== $key,
+                    ])
+                >
+                    {{ $label }}
+                </button>
+            @endforeach
+        </div>
+    @endif
 
     {{-- Platform Events Tab --}}
-    @if ($activeTab === 'platform')
+    @if ($this->hasPlatformEventsTab() && $activeTab === 'platform')
         {{-- Summary Stats --}}
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
             <x-central.stat-card label="Today" value-class="text-[1.75rem] text-(--kn-ink)">

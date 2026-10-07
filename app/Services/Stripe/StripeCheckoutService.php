@@ -3,6 +3,7 @@
 namespace App\Services\Stripe;
 
 use App\Actions\Stripe\HandleCheckoutComplete;
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
@@ -27,13 +28,89 @@ class StripeCheckoutService
             return null;
         }
 
-        $session = $this->createCheckoutSession(
+        return $this->createOrderSession($order)?->url;
+    }
+
+    /**
+     * Whether the customer can still pay this order by card: a Stripe order nobody has
+     * paid or cancelled, with an amount to pay, while the baker still takes cards.
+     */
+    public function canPayOnline(Order $order): bool
+    {
+        return $order->payment_method === PaymentMethod::Stripe
+            && $order->payment_status === PaymentStatus::Unpaid
+            && $order->status !== OrderStatus::Cancelled
+            && $order->total->isPositive()
+            && $this->settings->isEnabled();
+    }
+
+    /**
+     * Where to send a customer who left Stripe without paying: the stored session's own
+     * page while Stripe says it is open, the success page when it turns out to have been
+     * paid, otherwise a new session. Null when the order can't be paid online or a new
+     * session can't be made.
+     */
+    public function resumeOrCreateCheckout(Order $order): ?string
+    {
+        if (! $this->canPayOnline($order)) {
+            return null;
+        }
+
+        $storedUrl = $this->resumeStoredSession($order);
+
+        if ($storedUrl !== null) {
+            return $storedUrl;
+        }
+
+        return $this->createOrderSession($order)?->url;
+    }
+
+    /**
+     * The stored session's url while it is open, or the success url once it was paid.
+     * A session that is finished any other way is forgotten, so the order can be edited
+     * again if no replacement can be made. Null when a new session is needed.
+     */
+    private function resumeStoredSession(Order $order): ?string
+    {
+        $sessionId = $order->stripe_checkout_session_id;
+        $connectId = $this->settings->connectId();
+
+        if ($sessionId === null || $connectId === null) {
+            return null;
+        }
+
+        try {
+            $session = $this->stripe->checkout->sessions->retrieve($sessionId, [], ['stripe_account' => $connectId]);
+        } catch (\Exception $e) {
+            Log::warning('Could not read the stored order checkout session', [
+                'order' => $order->order_number,
+                'session_id' => $sessionId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+
+        if ($session->status === 'open' && is_string($session->url)) {
+            return $session->url;
+        }
+
+        if ($session->status === 'complete' && $session->payment_status === 'paid') {
+            return route('order.stripe.success', $order)."?session_id={$sessionId}";
+        }
+
+        $order->update(['stripe_checkout_session_id' => null]);
+
+        return null;
+    }
+
+    private function createOrderSession(Order $order): ?Session
+    {
+        return $this->createCheckoutSession(
             $order,
             route('order.stripe.success', $order).'?session_id={CHECKOUT_SESSION_ID}',
             route('order.stripe.cancel', $order),
         );
-
-        return $session?->url;
     }
 
     public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?Session

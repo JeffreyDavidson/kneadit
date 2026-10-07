@@ -21,6 +21,12 @@ test('money directive formats zero', function () {
     expect($result)->toBe('$0.00');
 });
 
+test('money directive puts the minus sign before the dollar sign', function () {
+    $result = Blade::render('@money(-461.85)');
+
+    expect($result)->toBe('-$461.85');
+});
+
 test('money directive formats variable amount', function () {
     $result = Blade::render('@money($amount)', ['amount' => 9.99]);
 

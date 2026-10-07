@@ -93,7 +93,7 @@ class QuickOrderForm
                     $totalItems = count($items);
                     $subtotal = collect($items)->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
 
-                    return $totalItems.' items · Subtotal: $'.Number::currency($subtotal);
+                    return $totalItems.' items · Subtotal: '.Number::currency($subtotal);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -144,9 +144,9 @@ class QuickOrderForm
                                         $quantity = is_float($quantity) ? $quantity : 0.0;
                                         $price = is_float($price) ? $price : 0.0;
 
-                                        return Number::currency($quantity * $price);
+                                        return Number::format($quantity * $price, 2);
                                     }),
-                            ]),
+                            ])->columnSpanFull(),
 
                             Textarea::make('special_instructions')
                                 ->label('Special Instructions')

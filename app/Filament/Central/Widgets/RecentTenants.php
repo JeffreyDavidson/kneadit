@@ -42,9 +42,11 @@ class RecentTenants extends TableWidget
                 TextColumn::make('plan')
                     ->badge(),
 
-                IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean(),
+                IconColumn::make('is_paused')
+                    ->label('Paused')
+                    ->boolean()
+                    ->trueColor('danger')
+                    ->falseColor('gray'),
 
                 TextColumn::make('created_at')
                     ->label('Joined')

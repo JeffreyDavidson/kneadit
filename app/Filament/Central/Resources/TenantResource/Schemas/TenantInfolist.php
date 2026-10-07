@@ -58,11 +58,11 @@ class TenantInfolist
                         Grid::make(3)->schema([
                             TextEntry::make('plan')
                                 ->badge(),
-                            TextEntry::make('is_active')
-                                ->label('Active')
+                            TextEntry::make('is_paused')
+                                ->label('Paused')
                                 ->badge()
                                 ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
-                                ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
+                                ->color(fn (bool $state): string => $state ? 'danger' : 'success'),
                             TextEntry::make('storefront_enabled')
                                 ->label('Storefront')
                                 ->badge()

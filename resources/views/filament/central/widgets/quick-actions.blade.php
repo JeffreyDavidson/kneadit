@@ -12,7 +12,5 @@
         >
             Support Inbox</x-central.button>
         <x-central.button variant="secondary" size="sm" :href="url('/admin/analytics')">Analytics</x-central.button>
-        <x-central.button variant="secondary" size="sm" :href="url('/admin/maintenance-mode')">
-            Maintenance</x-central.button>
     </div>
 </x-central.card>

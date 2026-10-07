@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property-read Collection<int, Ingredient> $ingredients
@@ -22,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier query()
  *
- * @property-read Pivot|null $pivot
+ * @property-read IngredientSupplier|null $pivot
  *
  * @mixin \Eloquent
  */
@@ -44,11 +43,12 @@ class Supplier extends Model
     }
 
     /**
-     * @return BelongsToMany<Ingredient, $this, Pivot>
+     * @return BelongsToMany<Ingredient, $this, IngredientSupplier>
      */
     public function ingredients(): BelongsToMany
     {
         return $this->belongsToMany(Ingredient::class, 'ingredient_supplier')
+            ->using(IngredientSupplier::class)
             ->withPivot('unit_price', 'minimum_order', 'lead_time_days', 'sku')
             ->withTimestamps();
     }

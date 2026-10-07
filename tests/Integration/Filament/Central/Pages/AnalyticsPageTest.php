@@ -2,9 +2,11 @@
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Central\Pages\Analytics;
+use App\Models\Staff\User;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Laravel\Cashier\Subscription;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -72,27 +74,31 @@ test('reuses grouped plan analytics during one page render', function () {
 });
 
 test('get trial conversion', function () {
+    config(['kneadit.stripe_prices' => ['growth' => 'price_growth_test']]);
+    $owner = User::factory()->owner()->create();
+
     createTenant(['id' => 't1', 'name' => 'T1', 'email' => 't1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(7)]);
-    createTenant(['id' => 't2', 'name' => 'T2', 'email' => 't2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->subDays(7)]);
+    createTenant(['id' => 't2', 'name' => 'T2', 'email' => 't2@test.com', 'user_id' => User::factory()->owner()->create()->id, 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->subDays(7)]);
     createTenant(['id' => 't3', 'name' => 'T3', 'email' => 't3@test.com', 'plan' => SubscriptionTier::Growth]);
+    createTenant(['id' => 't4', 'name' => 'T4', 'email' => 't4@test.com', 'user_id' => $owner->id, 'trial_ends_at' => now()->subDays(7)]);
+    Subscription::factory()->for($owner, 'owner')->withPrice('price_growth_test')->create();
 
     $result = test()->page->getTrialConversion();
 
-    expect($result)->toHaveKeys(['on_trial', 'expired', 'converted'])->toMatchArray(['on_trial' => 1, 'expired' => 1, 'converted' => 1]);
+    expect($result)->toBe(['on_trial' => 1, 'expired' => 1, 'converted' => 1, 'paying' => 1]);
 });
 
 test('reuses trial conversion analytics during one page render', function () {
+    test()->page->getTrialConversion();
+
     $queryCount = 0;
     DB::listen(function (QueryExecuted $query) use (&$queryCount): void {
-        if (str_contains(strtolower($query->sql), 'trial_ends_at')) {
-            $queryCount++;
-        }
+        $queryCount++;
     });
 
     test()->page->getTrialConversion();
-    test()->page->getTrialConversion();
 
-    expect($queryCount)->toBe(1);
+    expect($queryCount)->toBe(0);
 });
 
 test('get total signups', function () {
@@ -130,7 +136,7 @@ test('get kpis aggregates signup periods while preserving month boundaries', fun
     }
 
     $tenantQueryCount = collect($connection->getQueryLog())
-        ->filter(fn (array $query): bool => str_contains(strtolower($query['query']), 'tenants'))
+        ->filter(fn (array $query): bool => str_contains(strtolower($query['query']), 'tenants') && str_contains(strtolower($query['query']), 'created_at'))
         ->count();
 
     expect($kpis[0])->toMatchArray([
@@ -145,7 +151,7 @@ test('get kpis aggregates signup periods while preserving month boundaries', fun
             'hint' => '↑ 0% vs. last month (2)',
             'trend' => 'flat',
         ])
-        ->and($tenantQueryCount)->toBe(2);
+        ->and($tenantQueryCount)->toBe(1);
 });
 
 test('get kpis reports first month with signups when previous month is empty', function () {

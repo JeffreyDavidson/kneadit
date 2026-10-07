@@ -20,7 +20,6 @@ dataset('central_admin_pages', [
     'support-tickets' => ['support-tickets', 'Support Tickets'],
     'email-campaigns' => ['email-campaigns', 'Email Campaigns'],
     'messages' => ['messages', 'Messages'],
-    'announcements' => ['announcements', 'Platform Announcements'],
     'scheduled-checkins' => ['scheduled-checkins', 'Scheduled Checkins'],
 
     // Platform pages
@@ -28,9 +27,7 @@ dataset('central_admin_pages', [
     'analytics' => ['analytics', 'Analytics'],
     'bakery-insights' => ['bakery-insights', 'Bakery Insights'],
     'tenant-comparison' => ['tenant-comparison', 'Bakery Comparison'],
-    'feature-usage' => ['feature-usage', 'Feature Usage'],
     'data-export' => ['data-export', 'Data Export'],
-    'maintenance-mode' => ['maintenance-mode', 'Maintenance Mode'],
     'onboarding-tracker' => ['onboarding-tracker', 'Onboarding Tracker'],
 ]);
 

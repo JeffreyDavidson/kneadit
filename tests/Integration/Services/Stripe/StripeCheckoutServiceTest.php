@@ -1,16 +1,22 @@
 <?php
 
+use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
+use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Orders\OrderModificationGuard;
 use App\Services\Stripe\StripeCheckoutService;
 use App\Services\Stripe\StripeSettingsReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
+use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stripe\Checkout\Session;
+use Stripe\Exception\InvalidRequestException;
 use Stripe\Service\Checkout\SessionService;
 use Stripe\StripeClient;
+use Tests\Support\Stripe\FakeCheckoutStripeClient;
 
 pest()->use(RefreshDatabase::class);
 
@@ -164,3 +170,104 @@ test('handleCheckoutComplete leaves the order unpaid and notifies the baker when
     'lower than the order total' => 4000,
     'higher than the order total' => 6000,
 ]);
+
+/**
+ * @param  array<string, mixed>  $attributes
+ */
+function fakeOrderCheckoutSession(array $attributes = []): Session
+{
+    return Session::constructFrom([
+        'id' => 'cs_test_stored',
+        'status' => 'open',
+        'payment_status' => 'unpaid',
+        'url' => 'https://checkout.stripe.test/c/pay/cs_test_stored',
+        ...$attributes,
+    ]);
+}
+
+function enableStripeForOrders(): void
+{
+    app()->instance(TenantContract::class, new Tenant(['id' => 'test-bakery']));
+    settings([
+        'payment_methods' => json_encode(['stripe']),
+        'stripe_connect_id' => 'acct_test',
+        'stripe_connect_charges_enabled' => '1',
+    ]);
+}
+
+test('resumeOrCreateCheckout reuses the stored session while Stripe reports it open', function () {
+    enableStripeForOrders();
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'stripe_checkout_session_id' => 'cs_test_stored', 'total' => 50.00]);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('retrieve')->returns(fakeOrderCheckoutSession());
+    $sessions->expects('create')->never();
+
+    $url = resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order);
+
+    expect($url)->toBe('https://checkout.stripe.test/c/pay/cs_test_stored')
+        ->and($order->refresh()->stripe_checkout_session_id)->toBe('cs_test_stored');
+});
+
+test('resumeOrCreateCheckout replaces an expired session with a new one', function () {
+    enableStripeForOrders();
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'stripe_checkout_session_id' => 'cs_test_stored', 'total' => 50.00]);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('retrieve')->returns(fakeOrderCheckoutSession(['status' => 'expired', 'url' => null]));
+    $sessions->expects('create')->returns(fakeOrderCheckoutSession([
+        'id' => 'cs_test_new',
+        'url' => 'https://checkout.stripe.test/c/pay/cs_test_new',
+    ]));
+
+    $url = resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order);
+
+    expect($url)->toBe('https://checkout.stripe.test/c/pay/cs_test_new')
+        ->and($order->refresh())
+        ->stripe_checkout_session_id->toBe('cs_test_new')
+        ->payment_status->toBe(PaymentStatus::Unpaid);
+});
+
+test('resumeOrCreateCheckout forgets an expired session it cannot replace so the order can be edited again', function () {
+    enableStripeForOrders();
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'stripe_checkout_session_id' => 'cs_test_stored', 'total' => 50.00]);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('retrieve')->returns(fakeOrderCheckoutSession(['status' => 'expired', 'url' => null]));
+    $sessions->expects('create')->throws(InvalidRequestException::factory('Stripe is unavailable.', 400, null, null));
+
+    $url = resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order);
+
+    expect($url)->toBeNull()
+        ->and($order->refresh()->stripe_checkout_session_id)->toBeNull()
+        ->and(resolve(OrderModificationGuard::class)->hasOpenCheckout($order))->toBeFalse();
+});
+
+test('resumeOrCreateCheckout sends a customer whose stored session was already paid to the success page to record it', function () {
+    enableStripeForOrders();
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'stripe_checkout_session_id' => 'cs_test_stored', 'total' => 50.00]);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('retrieve')->returns(fakeOrderCheckoutSession(['status' => 'complete', 'payment_status' => 'paid', 'url' => null]));
+    $sessions->expects('create')->never();
+
+    $url = resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order);
+
+    expect($url)->toBe(route('order.stripe.success', $order).'?session_id=cs_test_stored');
+});
+
+test('resumeOrCreateCheckout creates a session for an order that has none', function () {
+    enableStripeForOrders();
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'total' => 50.00]);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('retrieve')->never();
+    $sessions->expects('create')->returns(fakeOrderCheckoutSession(['id' => 'cs_test_first']));
+
+    $url = resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order);
+
+    expect($url)->toBe('https://checkout.stripe.test/c/pay/cs_test_stored')
+        ->and($order->refresh()->stripe_checkout_session_id)->toBe('cs_test_first');
+});
+
+test('resumeOrCreateCheckout returns null when Stripe is not enabled', function () {
+    settings(['payment_methods' => json_encode(['cash'])]);
+    $order = Order::factory()->unpaid()->create(['payment_method' => PaymentMethod::Stripe, 'total' => 50.00]);
+
+    expect(resolve(StripeCheckoutService::class)->resumeOrCreateCheckout($order))->toBeNull();
+});

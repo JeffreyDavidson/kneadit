@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Billing;
 use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use App\Models\Staff\User;
+use App\Queries\Platform\OwnerSubscriptionsQuery;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Config;
@@ -12,7 +13,7 @@ use Laravel\Cashier\Checkout;
 
 class CheckoutController extends Controller
 {
-    public function __invoke(#[CurrentUser] User $user, string $plan): Checkout|RedirectResponse
+    public function __invoke(#[CurrentUser] User $user, OwnerSubscriptionsQuery $subscriptions, string $plan): Checkout|RedirectResponse
     {
         $tier = SubscriptionTier::tryFrom($plan);
         abort_unless($tier !== null, 404, 'Plan not found.');
@@ -29,6 +30,12 @@ class CheckoutController extends Controller
         if ($user->subscribed('default')) {
             return to_route('billing.plans')
                 ->with('error', 'You already have a subscription. Use Switch to change plans.');
+        }
+
+        // A past-due, incomplete or unpaid subscription still bills in Stripe, so a second one would double charge.
+        // Stripe's portal is where the owner fixes the card or cancels it.
+        if ($subscriptions->open($user)->isNotEmpty()) {
+            return to_route('billing.portal');
         }
 
         $builder = $user->newSubscription('default', $priceId);

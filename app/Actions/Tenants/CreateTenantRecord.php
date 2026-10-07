@@ -38,7 +38,6 @@ class CreateTenantRecord
                     'store_name' => $storeName,
                     'storefront_enabled' => $useKneadItStorefront,
                     'external_website' => $useKneadItStorefront ? null : $externalWebsite,
-                    'is_active' => true,
                 ]);
 
                 Domain::query()->create([

@@ -132,3 +132,10 @@ test('a reorder link for an order the visitor cannot access shows no removed ite
         ->assertViewHas('removedItemNames', [])
         ->assertDontSee('Retired Rye');
 });
+
+test('the order form script follows the redirect url the server returns instead of the fetch response url', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()->assertSeeHtml('payload.data.redirect_url')->assertDontSeeHtml('window.location.href = response.url');
+});

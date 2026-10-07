@@ -5,6 +5,7 @@ use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -22,7 +23,6 @@ test('dispatches reminders at 7, 3, and 1 day intervals', function () {
             'email' => "baker{$days}@test.com",
             'user_id' => $owner->id,
             'trial_ends_at' => now()->addDays($days)->startOfDay(),
-            'is_active' => true,
         ]);
     }
 
@@ -44,29 +44,9 @@ test('skips reminder when cache marker exists', function () {
         'email' => 'cached@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
     ]);
 
     Cache::put('sent_trial_reminder_7d_cached-bakery', true, now()->addDays(30));
-
-    resolve(ProcessTrialExpirations::class)();
-
-    Event::assertNotDispatched(TrialReminding::class);
-});
-
-test('skips reminder for inactive tenant', function () {
-    Event::fake([TrialReminding::class]);
-
-    $owner = User::factory()->create(['email' => 'inactive@test.com']);
-
-    createTenant([
-        'id' => 'inactive-bakery',
-        'name' => 'Inactive',
-        'email' => 'inactive@test.com',
-        'user_id' => $owner->id,
-        'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => false,
-    ]);
 
     resolve(ProcessTrialExpirations::class)();
 
@@ -81,7 +61,6 @@ test('skips reminder when tenant has no matching user', function () {
         'name' => 'No User',
         'email' => 'nobody@test.com',
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
     ]);
 
     resolve(ProcessTrialExpirations::class)();
@@ -100,7 +79,6 @@ test('pauses an expired bakery without touching its storefront setting and dispa
         'email' => 'expired@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDays(1),
-        'is_active' => true,
         'storefront_enabled' => $storefrontEnabled,
         'external_website' => $externalWebsite,
     ]);
@@ -128,7 +106,6 @@ test('does not re-pause an already-paused bakery', function () {
         'email' => 'already@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDays(5),
-        'is_active' => true,
         'paused_at' => now()->subDays(2),
     ]);
 
@@ -145,7 +122,6 @@ test('pauses the bakery even when tenant has no user, but skips TrialExpired eve
         'name' => 'Baker',
         'email' => 'nouser-expired@test.com',
         'trial_ends_at' => now()->subDays(1),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 
@@ -169,7 +145,6 @@ test('returns summary counts', function () {
         'email' => 'reminder@test.com',
         'user_id' => $reminderOwner->id,
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
     ]);
 
     createTenant([
@@ -178,7 +153,6 @@ test('returns summary counts', function () {
         'email' => 'expired@test.com',
         'user_id' => $expiredOwner->id,
         'trial_ends_at' => now()->subDays(1),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 
@@ -202,7 +176,6 @@ test('does not pause a free-forever bakery after its trial ends', function () {
         'email' => 'comped@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDay(),
-        'is_active' => true,
         'storefront_enabled' => true,
         'free_forever' => true,
     ]);
@@ -226,7 +199,6 @@ test('does not send trial reminders to a free-forever tenant', function () {
         'email' => 'comped-reminder@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
         'free_forever' => true,
     ]);
 
@@ -252,7 +224,6 @@ test('does not pause a subscribed owner whose email no longer matches the bakery
         'email' => 'old-address@test.com',
         'user_id' => $owner->id,
         'trial_ends_at' => now()->subDay(),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 
@@ -263,3 +234,62 @@ test('does not pause a subscribed owner whose email no longer matches the bakery
     expect($tenant->paused_at)->toBeNull();
     Event::assertNotDispatched(TrialExpired::class);
 });
+
+function expiredBakeryWithSubscription(string $status, ?string $updatedAt = null, ?string $endsAt = null): void
+{
+    $owner = User::factory()->create(['email' => 'payer@test.com']);
+    $owner->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_payer',
+        'stripe_status' => $status,
+        'stripe_price' => 'price_starter_test',
+        'ends_at' => $endsAt,
+        'updated_at' => $updatedAt ?? now(),
+    ]);
+
+    createTenant([
+        'id' => 'payer-bakery',
+        'name' => 'Payer',
+        'email' => 'payer@test.com',
+        'user_id' => $owner->id,
+        'trial_ends_at' => now()->subMonths(2),
+        'storefront_enabled' => true,
+    ]);
+}
+
+test('does not pause a paying bakery during the 7-day grace after its first failed renewal', function () {
+    Event::fake([TrialExpired::class]);
+    Date::setTestNow('2026-10-20 06:00');
+
+    expiredBakeryWithSubscription('past_due', updatedAt: '2026-10-14 06:00');
+
+    $summary = resolve(ProcessTrialExpirations::class)();
+
+    expect(DB::table('tenants')->where('id', 'payer-bakery')->value('paused_at'))->toBeNull()
+        ->and($summary['pausings'])->toBe(0);
+    Event::assertNotDispatched(TrialExpired::class);
+});
+
+test('pauses a past-due bakery once the 7-day grace has run out, without a trial expired email', function () {
+    Event::fake([TrialExpired::class]);
+    Date::setTestNow('2026-10-20 06:00');
+
+    expiredBakeryWithSubscription('past_due', updatedAt: '2026-10-13 05:59');
+
+    $summary = resolve(ProcessTrialExpirations::class)();
+
+    expect(DB::table('tenants')->where('id', 'payer-bakery')->value('paused_at'))->not->toBeNull()
+        ->and($summary['pausings'])->toBe(1);
+    Event::assertNotDispatched(TrialExpired::class);
+});
+
+test('never tells an owner who once subscribed that their trial expired', function (string $status) {
+    Event::fake([TrialExpired::class]);
+
+    expiredBakeryWithSubscription($status, endsAt: now()->subDay()->toDateTimeString());
+
+    resolve(ProcessTrialExpirations::class)();
+
+    expect(DB::table('tenants')->where('id', 'payer-bakery')->value('paused_at'))->not->toBeNull();
+    Event::assertNotDispatched(TrialExpired::class);
+})->with(['canceled', 'incomplete_expired']);

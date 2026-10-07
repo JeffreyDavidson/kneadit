@@ -7,12 +7,18 @@ use App\Models\Orders\Order;
 use App\Services\Orders\OrderModificationGuard;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
 
 class ShowOrderConfirmationController extends Controller
 {
-    public function __invoke(Order $order, TenantSettings $settings, SettingsManager $manager, OrderModificationGuard $guard): View
-    {
+    public function __invoke(
+        Order $order,
+        TenantSettings $settings,
+        SettingsManager $manager,
+        OrderModificationGuard $guard,
+        StripeCheckoutService $stripeService,
+    ): View {
         $order->load('orderItems.product');
 
         $content = settingsPageContent('order_confirmation');
@@ -33,6 +39,7 @@ class ShowOrderConfirmationController extends Controller
             'content' => $content,
             'journeySteps' => $journeySteps,
             'canModify' => $guard->canModify($order),
+            'canPayNow' => $stripeService->canPayOnline($order),
             'modifyMinutesRemaining' => $guard->minutesRemaining($order),
             'referralCode' => $referralCode,
             'referralShareUrl' => $referralCode ? route('customer.referral', [

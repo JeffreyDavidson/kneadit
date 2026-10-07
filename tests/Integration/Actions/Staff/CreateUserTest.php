@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Staff\CreateUser;
+use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
@@ -50,4 +51,16 @@ test('stores the email lowercased and trimmed', function () {
 
     expect($user->email)->toBe('jane@example.com');
     test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+});
+
+test('creates the platform account as an Owner whatever the column default is', function () {
+    Event::fake([Registered::class]);
+
+    $user = resolve(CreateUser::class)([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => 'secret123',
+    ]);
+
+    expect($user->fresh()->role)->toBe(UserRole::Owner);
 });

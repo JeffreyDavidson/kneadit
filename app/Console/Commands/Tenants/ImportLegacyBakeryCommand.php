@@ -89,7 +89,6 @@ class ImportLegacyBakeryCommand extends Command
             'brand_color_secondary' => '#d4a574',
             'store_logo' => $assetImport['store_logo'],
             'storefront_enabled' => true,
-            'is_active' => true,
         ]);
 
         try {

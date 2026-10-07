@@ -19,18 +19,18 @@ test('it leaves out paused bakeries', function () {
     expect(ActiveBakeriesQuery::get()->pluck('name')->all())->toBe(['Running']);
 });
 
-test('it returns only active tenants with storefronts enabled', function () {
+test('it returns only unpaused tenants with storefronts enabled, whatever the retired is_active column holds', function () {
     createTenant([
         'id' => 'active-bakery',
         'name' => 'Active Bakery',
         'store_name' => 'Sweet Treats',
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 
     createTenant([
-        'id' => 'inactive-bakery',
-        'name' => 'Inactive Bakery',
+        'id' => 'old-deactivated-bakery',
+        'name' => 'Old Deactivated Bakery',
+        'store_name' => 'Old Deactivated',
         'is_active' => false,
         'storefront_enabled' => true,
     ]);
@@ -38,14 +38,12 @@ test('it returns only active tenants with storefronts enabled', function () {
     createTenant([
         'id' => 'no-storefront',
         'name' => 'No Storefront',
-        'is_active' => true,
         'storefront_enabled' => false,
     ]);
 
     $bakeries = ActiveBakeriesQuery::get();
 
-    expect($bakeries)->toHaveCount(1)
-        ->and($bakeries->first()['name'])->toBe('Sweet Treats');
+    expect($bakeries->pluck('name')->all())->toBe(['Sweet Treats', 'Old Deactivated']);
 });
 
 test('it links each bakery by its subdomain, or its verified custom domain', function () {

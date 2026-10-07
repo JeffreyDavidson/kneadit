@@ -10,12 +10,10 @@ test('tenantsRemindable yields tenants whose trial ends on the target date', fun
     createTenant([
         'id' => 'reminder-target',
         'trial_ends_at' => now()->addDays(7)->startOfDay(),
-        'is_active' => true,
     ]);
     createTenant([
         'id' => 'wrong-date',
         'trial_ends_at' => now()->addDays(5)->startOfDay(),
-        'is_active' => true,
     ]);
 
     $tenants = iterator_to_array(resolve(TrialExpirationReader::class)->tenantsRemindable(7));
@@ -24,39 +22,43 @@ test('tenantsRemindable yields tenants whose trial ends on the target date', fun
         ->and($tenants[0]->id)->toBe('reminder-target');
 });
 
-test('tenantsRemindable skips inactive tenants', function () {
+test('the reader ignores the retired is_active column, because Pause is the only switch', function () {
     createTenant([
-        'id' => 'inactive',
+        'id' => 'old-deactivated-reminder',
         'trial_ends_at' => now()->addDays(3)->startOfDay(),
         'is_active' => false,
     ]);
+    createTenant([
+        'id' => 'old-deactivated-expired',
+        'trial_ends_at' => now()->subDay(),
+        'is_active' => false,
+    ]);
 
-    expect(iterator_to_array(resolve(TrialExpirationReader::class)->tenantsRemindable(3)))->toBeEmpty();
+    $reader = resolve(TrialExpirationReader::class);
+
+    expect(collect(iterator_to_array($reader->tenantsRemindable(3), false))->pluck('id')->all())->toBe(['old-deactivated-reminder'])
+        ->and(collect(iterator_to_array($reader->tenantsExpired(), false))->pluck('id')->all())->toBe(['old-deactivated-expired']);
 });
 
 test('tenantsExpired yields tenants whose trial passed and that are not paused yet, whatever their storefront setting', function () {
     createTenant([
         'id' => 'expired-active',
         'trial_ends_at' => now()->subDay(),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
     createTenant([
         'id' => 'expired-external-site',
         'trial_ends_at' => now()->subDay(),
-        'is_active' => true,
         'storefront_enabled' => false,
     ]);
     createTenant([
         'id' => 'expired-paused',
         'trial_ends_at' => now()->subDay(),
-        'is_active' => true,
         'paused_at' => now()->subHour(),
     ]);
     createTenant([
         'id' => 'still-trialing',
         'trial_ends_at' => now()->addDay(),
-        'is_active' => true,
         'storefront_enabled' => true,
     ]);
 

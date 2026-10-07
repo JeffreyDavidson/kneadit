@@ -5,6 +5,7 @@ use App\Enums\Customers\CateringEventType;
 use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -68,4 +69,31 @@ test('inquiry validation fails when required fields are missing', function () {
         'guest_count',
         'details',
     ]);
+});
+
+test('the earliest event date follows the bakery calendar day, not UTC', function () {
+    // 2026-10-07 03:00 UTC is still the evening of Oct 6 in Los Angeles.
+    Date::setTestNow('2026-10-07 03:00:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings(['timezone' => 'America/Los_Angeles']),
+        catering: makeCateringSettings(['enabled' => true, 'leadTimeDays' => '0', 'eventTypes' => CateringEventType::defaultLabels()]),
+    ));
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('catering.submit', [], false), [...validInquiryPayload(), 'event_date' => '2026-10-06']);
+
+    $response->assertSessionHasNoErrors();
+});
+
+test('an event date before the bakery calendar day is still rejected', function () {
+    Date::setTestNow('2026-10-07 03:00:00');
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        orders: makeOrderSettings(['timezone' => 'America/Los_Angeles']),
+        catering: makeCateringSettings(['enabled' => true, 'leadTimeDays' => '0', 'eventTypes' => CateringEventType::defaultLabels()]),
+    ));
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('catering.submit', [], false), [...validInquiryPayload(), 'event_date' => '2026-10-05']);
+
+    $response->assertSessionHasErrors('event_date');
 });

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\CustomerCampaigns\Schemas;
 
 use App\Enums\Customers\RfmSegment;
+use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -49,6 +50,7 @@ class CustomerCampaignForm
                         DateTimePicker::make('scheduled_at')
                             ->label('Send at (optional)')
                             ->seconds(false)
+                            ->timezone(fn (): string => resolve(TenantSettings::class)->orders->timezone)
                             ->minDate(now())
                             ->helperText('Leave blank to send manually with the "Send Now" action. Otherwise the scheduled command will queue the campaign within 15 minutes of this time.'),
                     ]),

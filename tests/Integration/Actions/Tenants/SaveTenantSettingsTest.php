@@ -2,6 +2,7 @@
 
 use App\Actions\Tenants\SaveTenantSettings;
 use App\DataTransferObjects\Settings\LoyaltySettings;
+use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 
@@ -593,4 +594,36 @@ test('does not touch the loyalty master switch, which the loyalty dashboard owns
     resolve(SaveTenantSettings::class)($data);
 
     expect(TenantSettings::resolve()->loyalty->enabled)->toBeFalse();
+});
+
+test('renaming the bakery updates the central tenant store name', function () {
+    setUpCentralTest();
+
+    $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['store_name' => 'Old Bakery']));
+    tenancy()->getBootstrappersUsing = fn (): array => [];
+    tenancy()->initialize($tenant);
+
+    resolve(SaveTenantSettings::class)([
+        'store_name' => 'New Bakery',
+        'store_email' => 'info@test.com',
+        'store_phone' => '555-1234',
+        'store_address' => '123 Main St',
+        'default_daily_capacity' => 10,
+        'minimum_order_lead_hours' => 24,
+        'delivery_fee_tiers' => [],
+        'repeat_reminders_enabled' => true,
+        'birthday_program_enabled' => false,
+        'payment_methods' => ['cash'],
+        'allergy_disclaimer' => 'Allergies noted.',
+        'revenue_cap' => '250000',
+        'cancellation_policy' => 'Cancel anytime.',
+        'deposit_policy' => 'No deposit.',
+        'refund_policy' => 'Full refund.',
+        'pickup_policy' => 'Same day pickup.',
+        'additional_terms' => '',
+        'show_policies_on_storefront' => false,
+    ]);
+
+    expect(settings('store_name'))->toBe('New Bakery')
+        ->and($tenant->fresh()->store_name)->toBe('New Bakery');
 });

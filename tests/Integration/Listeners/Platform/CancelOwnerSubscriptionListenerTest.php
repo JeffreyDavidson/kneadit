@@ -23,6 +23,16 @@ class CancelRecordingSubscription extends Subscription
     }
 
     #[Override]
+    public function cancelNow()
+    {
+        throw_if(self::$failCancel, RuntimeException::class, 'Stripe is unavailable.');
+
+        $this->forceFill(['stripe_status' => 'canceled', 'ends_at' => now()])->save();
+
+        return $this;
+    }
+
+    #[Override]
     public function cancel()
     {
         throw_if(self::$failCancel, RuntimeException::class, 'Stripe is unavailable.');
@@ -42,13 +52,13 @@ beforeEach(function (): void {
 
 afterEach(fn () => Cashier::useSubscriptionModel(Subscription::class));
 
-function ownerWithSubscription(string $email = 'owner@example.com', string $status = 'active'): User
+function ownerWithSubscription(string $email = 'owner@example.com', string $status = 'active', string $stripeId = 'sub_test_123'): User
 {
-    $owner = User::factory()->owner()->create(['email' => $email]);
+    $owner = User::query()->firstWhere('email', $email) ?? User::factory()->owner()->create(['email' => $email]);
 
     $owner->subscriptions()->create([
         'type' => 'default',
-        'stripe_id' => 'sub_test_123',
+        'stripe_id' => $stripeId,
         'stripe_status' => $status,
         'stripe_price' => 'price_starter_test',
     ]);
@@ -114,4 +124,29 @@ test('the bakery is not deleted when Stripe refuses the cancel', function (): vo
     expect(fn () => Tenant::query()->findOrFail('sweet-treats')->delete())
         ->toThrow(RuntimeException::class, 'Stripe is unavailable.')
         ->and(Tenant::query()->find('sweet-treats'))->not->toBeNull();
+});
+
+test('deleting a bakery stops billing on a past-due subscription right away', function (string $status): void {
+    $owner = ownerWithSubscription(status: $status);
+    createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email, 'user_id' => $owner->id]);
+
+    Tenant::query()->findOrFail('sweet-treats')->delete();
+
+    $subscription = $owner->subscription('default');
+    expect(Tenant::query()->find('sweet-treats'))->toBeNull()
+        ->and($subscription->stripe_status)->toBe('canceled')
+        ->and($subscription->ended())->toBeTrue();
+})->with(['past_due', 'incomplete', 'unpaid']);
+
+test('deleting a bakery cancels every subscription that has not ended, not only the newest', function (): void {
+    $owner = ownerWithSubscription(status: 'past_due', stripeId: 'sub_older');
+    ownerWithSubscription(status: 'active', stripeId: 'sub_newer');
+    createTenantWithDomain('sweet-treats', attributes: ['email' => $owner->email, 'user_id' => $owner->id]);
+
+    Tenant::query()->findOrFail('sweet-treats')->delete();
+
+    $subscriptions = $owner->subscriptions()->orderBy('id')->get();
+    expect($subscriptions)->toHaveCount(2)
+        ->and($subscriptions[0]->ended())->toBeTrue()
+        ->and($subscriptions[1]->onGracePeriod())->toBeTrue();
 });

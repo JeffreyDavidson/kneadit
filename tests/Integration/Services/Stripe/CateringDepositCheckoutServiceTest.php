@@ -8,6 +8,7 @@ use App\Services\Stripe\CateringDepositCheckoutService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 use Stripe\Checkout\Session;
 use Stripe\Service\Checkout\SessionService;
@@ -197,4 +198,23 @@ test('redirectToCheckout records a stored session that was already paid and send
     expect($inquiry->refresh()->deposit_paid_at)->not->toBeNull()
         ->and($url)->toContain("/catering/stripe/success/{$inquiry->id}")
         ->and($url)->toContain('signature=');
+});
+
+test('a new deposit session accepts cards only', function () {
+    app()->instance(TenantContract::class, new Tenant(['id' => 'test-bakery']));
+    $inquiry = CateringInquiry::factory()->quoted()->create();
+    $sessions = Double::for(SessionService::class);
+    $sessions->expects('create')
+        ->with(Argument::satisfies(fn (array $params): bool => $params['payment_method_types'] === ['card']), Argument::remaining())
+        ->returns(fakeCateringStripeSession($inquiry, [
+            'id' => 'cs_test_new',
+            'status' => 'open',
+            'payment_status' => 'unpaid',
+            'url' => 'https://checkout.stripe.test/c/pay/cs_test_new',
+        ]));
+    bindCateringStripeSessions($sessions);
+
+    $url = resolve(CateringDepositCheckoutService::class)->redirectToCheckout($inquiry, 250.00);
+
+    expect($url)->toBe('https://checkout.stripe.test/c/pay/cs_test_new');
 });
