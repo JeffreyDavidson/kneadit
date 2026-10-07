@@ -27,10 +27,12 @@
 
 {{-- Coupon Section --}}
 <div class="border-warm-700/20 mb-4 border-t pt-4">
-    <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Coupon Code</label>
+    <label for="order-coupon-code" class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase"
+        >Coupon Code</label>
     <div class="flex gap-2">
         <input
             type="text"
+            id="order-coupon-code"
             data-test="order-form-coupon-code"
             x-model="couponCode"
             placeholder="Enter coupon"
@@ -56,10 +58,12 @@
 
 {{-- Gift Card Section --}}
 <div class="border-warm-700/20 mb-4 border-t pt-4">
-    <label class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase">Gift Card</label>
+    <label for="order-gift-card-code" class="text-warm-500 mb-2 block text-xs font-medium tracking-wider uppercase"
+        >Gift Card</label>
     <div class="flex gap-2">
         <input
             type="text"
+            id="order-gift-card-code"
             data-test="order-form-gift-card-code"
             x-model="giftCardCode"
             placeholder="XXXX-XXXX-XXXX-XXXX"

@@ -19,6 +19,7 @@ use App\Http\Controllers\Tenant\Storefront\ReviewsIndexController;
 use App\Http\Controllers\Tenant\Storefront\ShowCateringController;
 use App\Http\Controllers\Tenant\Storefront\ShowGiftCardsController;
 use App\Http\Controllers\Tenant\Storefront\ShowReviewFormController;
+use App\Http\Controllers\Tenant\Storefront\ShowReviewSubmittedController;
 use App\Http\Controllers\Tenant\Storefront\StoreReviewController;
 use App\Http\Controllers\Tenant\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Tenant\Storefront\SurveyController;
@@ -82,6 +83,9 @@ Route::get('review/{order:order_number}', ShowReviewFormController::class)
 Route::post('review/{order:order_number}', StoreReviewController::class)
     ->middleware(['order.access', 'throttle:form-write'])
     ->name('storefront.storeReview');
+Route::get('review/{order:order_number}/thanks', ShowReviewSubmittedController::class)
+    ->middleware('order.access')
+    ->name('storefront.reviewSubmitted');
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');

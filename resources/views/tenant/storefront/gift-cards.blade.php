@@ -49,7 +49,9 @@
                                 class="flex flex-col gap-3 sm:flex-row"
                                 data-test="gift-card-balance-form"
                             >
+                                <label for="gift-card-balance-code" class="sr-only">Gift card code</label>
                                 <input
+                                    id="gift-card-balance-code"
                                     type="text"
                                     x-model="balanceCode"
                                     required

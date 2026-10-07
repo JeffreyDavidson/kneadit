@@ -6,12 +6,11 @@ use App\Actions\Customers\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreReviewRequest;
 use App\Models\Orders\Order;
-use App\Services\Settings\TenantSettings;
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class StoreReviewController extends Controller
 {
-    public function __invoke(Order $order, StoreReviewRequest $request, CreateReview $createReview, TenantSettings $settings): View
+    public function __invoke(Order $order, StoreReviewRequest $request, CreateReview $createReview): RedirectResponse
     {
         $createReview(
             order: $order,
@@ -20,15 +19,6 @@ class StoreReviewController extends Controller
             photo: $request->file('photo'),
         );
 
-        $content = settingsPageContent('submit_review');
-
-        return view('tenant.storefront.submit-review', [
-            'settings' => $settings,
-            'order' => $order,
-            'content' => $content,
-            'ratingDescriptions' => $content['rating_descriptions'] ?? config('kneadit.default_rating_descriptions'),
-            'prefilledRating' => null,
-            'success' => true,
-        ]);
+        return to_route('storefront.reviewSubmitted', $order);
     }
 }

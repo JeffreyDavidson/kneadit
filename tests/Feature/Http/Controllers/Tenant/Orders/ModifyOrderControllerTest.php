@@ -2,7 +2,9 @@
 
 use App\Mail\Orders\OrderModifiedMail;
 use App\Models\Customers\Customer;
+use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
@@ -81,6 +83,48 @@ test('modify endpoint returns session error when window has expired', function (
 
     $response->assertSessionHasErrors(['items']);
     expect(test()->order->fresh()->orderItems()->first()->quantity)->toBe(2);
+});
+
+test('modify endpoint answers a stock shortage with a friendly error instead of a 500', function () {
+    $recipe = Recipe::factory()->for(test()->item->product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'kg']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
+        ->from(route('order.confirmation', test()->order))
+        ->post(route('order.modify', test()->order), [
+            'items' => [
+                ['order_item_id' => test()->item->id, 'quantity' => 6],
+            ],
+        ]);
+
+    $response->assertRedirect(route('order.confirmation', test()->order))
+        ->assertSessionHasErrors(['items' => 'Sorry, we don\'t have enough Flour in stock right now. Please reduce the quantity or remove an item.']);
+    expect(test()->order->fresh()->orderItems()->first()->quantity)->toBe(2);
+});
+
+test('order confirmation shows the modify form open with the error after a failed edit', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
+        ->from(route('order.confirmation', test()->order))
+        ->followingRedirects()
+        ->post(route('order.modify', test()->order), [
+            'items' => [
+                ['order_item_id' => test()->item->id, 'quantity' => 99],
+            ],
+        ]);
+
+    $response->assertOk()->assertSeeHtml('open: true')->assertSeeHtml('data-test="modify-order-errors"')
+        ->assertSee('must not be greater than 20');
+});
+
+test('order confirmation keeps the modify form closed when nothing failed', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
+        ->get(route('order.confirmation', test()->order));
+
+    $response->assertOk()->assertSeeHtml('open: false')->assertDontSeeHtml('data-test="modify-order-errors"');
 });
 
 test('modify endpoint returns session error when the edit drops the order below the minimum', function () {

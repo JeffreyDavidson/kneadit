@@ -26,4 +26,18 @@ class ModifyOrderRequest extends FormRequest
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
         ];
     }
+
+    /**
+     * Plain names for the error list shown above the Modify Order form.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'items.*.quantity' => 'quantity',
+            'items.*.order_item_id' => 'item',
+            'tip_amount' => 'tip',
+        ];
+    }
 }
