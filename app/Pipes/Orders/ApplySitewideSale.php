@@ -8,8 +8,8 @@ use Closure;
 
 /**
  * Applies a sitewide percentage discount to every order when the sale is
- * active. Stacks additively with coupons (which run in a later pipe via
- * `discountAmount += couponDiscount`).
+ * active. It does not stack with a coupon: ApplyCoupon, which runs next,
+ * replaces the sale when the coupon is worth more.
  *
  * Placed AFTER CalculateOrderTotals (so subtotal is known) and BEFORE
  * ApplyCoupon. The discount is recorded against `discountAmount`; the

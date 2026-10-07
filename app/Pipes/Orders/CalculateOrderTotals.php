@@ -8,6 +8,7 @@ use App\Models\Inventory\Product;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\Money;
 use Closure;
+use Illuminate\Validation\ValidationException;
 
 class CalculateOrderTotals
 {
@@ -19,16 +20,29 @@ class CalculateOrderTotals
     {
         $productIds = array_column($payload->data->items, 'product_id');
         $products = Product::query()
-            ->select(['id', 'is_active', 'price'])
+            ->select(['id', 'name', 'is_active', 'price'])
             ->findOrFail($productIds)
             ->keyBy('id');
+
+        $unavailable = $products->reject(fn (Product $product): bool => $product->is_active);
+
+        if ($unavailable->count() === $products->count()) {
+            throw new NoOrderableItemsException;
+        }
+
+        // Some of the cart can still be ordered: name what can't rather than dropping it silently.
+        if ($unavailable->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'items' => sprintf(
+                    'These items are no longer available: %s. Please remove them from your cart.',
+                    $unavailable->implode('name', ', '),
+                ),
+            ]);
+        }
 
         foreach ($payload->data->items as $item) {
             $product = $products->get($item['product_id']);
             if (! $product) {
-                continue;
-            }
-            if (! $product->is_active) {
                 continue;
             }
 
@@ -37,6 +51,7 @@ class CalculateOrderTotals
 
             $payload->orderItems[] = [
                 'product_id' => $product->id,
+                'name' => $product->name,
                 'quantity' => $item['quantity'],
                 'unit_price' => $unitPrice,
             ];

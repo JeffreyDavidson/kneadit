@@ -4,6 +4,7 @@ namespace App\Http\Requests\Storefront;
 
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
+use App\Models\Orders\OrderItem;
 use App\Rules\PickupSlotAvailable;
 use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
@@ -43,7 +44,7 @@ class StoreOrderRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:500'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id', new ProductAvailableOnDeliveryDate],
-            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:'.OrderItem::MAX_QUANTITY],
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'gift_card_id' => [
                 'nullable',
@@ -55,6 +56,19 @@ class StoreOrderRequest extends FormRequest
             'pickup_contact_name' => ['nullable', 'string', 'max:255'],
             'pickup_contact_phone' => ['nullable', 'string', 'max:20'],
             'pickup_contact_email' => ['nullable', 'email', 'max:255'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'items.*.quantity.max' => sprintf(
+                'You can order up to %d of one item. Contact us for larger orders.',
+                OrderItem::MAX_QUANTITY,
+            ),
         ];
     }
 

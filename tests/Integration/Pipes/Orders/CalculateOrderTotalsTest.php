@@ -10,6 +10,7 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 pest()->use(RefreshDatabase::class);
 
@@ -63,12 +64,12 @@ test('loads only product fields needed for order totals', function () {
 
     $selectClause = explode(' from products', $productQueries[0], 2)[0];
 
-    expect($selectClause)->toBe('select id, is_active, price');
+    expect($selectClause)->toBe('select id, name, is_active, price');
 });
 
-test('skips inactive products', function () {
+test('rejects the order naming the inactive products instead of silently dropping them', function () {
     $active = Product::factory()->create(['price' => 10.00, 'is_active' => true]);
-    $inactive = Product::factory()->create(['price' => 5.00, 'is_active' => false]);
+    $inactive = Product::factory()->create(['name' => 'Retired Rye', 'price' => 5.00, 'is_active' => false]);
 
     $data = new CreateOrderData(
         customerName: 'Jane',
@@ -81,17 +82,14 @@ test('skips inactive products', function () {
         ],
     );
 
-    $payload = new OrderPipelineData($data);
     $pipe = resolve(CalculateOrderTotals::class);
 
-    $result = $pipe->handle($payload, fn ($p) => $p);
-
-    expect($result->subtotal->dollars())->toBe(10.0)
-        ->and($result->orderItems)->toHaveCount(1);
+    expect(fn () => $pipe->handle(new OrderPipelineData($data), fn ($p) => $p))
+        ->toThrow(ValidationException::class, 'Retired Rye');
 });
 
-test('rejects the order when no valid items exist', function () {
-    $product = Product::factory()->create(['price' => 5.00, 'is_active' => false]);
+test('rejects the order when every product is inactive', function () {
+    $product = Product::factory()->create(['name' => 'Retired Rye', 'price' => 5.00, 'is_active' => false]);
 
     $data = new CreateOrderData(
         customerName: 'Jane',
@@ -106,6 +104,22 @@ test('rejects the order when no valid items exist', function () {
 
     expect(fn () => $pipe->handle($payload, fn ($p) => $p))->toThrow(NoOrderableItemsException::class)
         ->and($payload->orderItems)->toBeEmpty();
+});
+
+test('snapshots the product name on each order item line', function () {
+    $product = Product::factory()->create(['name' => 'Sourdough', 'price' => 10.00, 'is_active' => true]);
+
+    $data = new CreateOrderData(
+        customerName: 'Jane',
+        customerEmail: 'jane@example.com',
+        deliveryDate: now()->addDay()->format('Y-m-d'),
+        deliveryType: DeliveryType::Pickup->value,
+        items: [['product_id' => $product->id, 'quantity' => 1]],
+    );
+
+    $result = resolve(CalculateOrderTotals::class)->handle(new OrderPipelineData($data), fn ($p) => $p);
+
+    expect($result->orderItems[0]['name'])->toBe('Sourdough');
 });
 
 test('charges the bakery delivery tier fee unless the order reaches the free-delivery minimum', function (float $price, string $tier, string $freeDeliveryMinimum, float $fee) {
