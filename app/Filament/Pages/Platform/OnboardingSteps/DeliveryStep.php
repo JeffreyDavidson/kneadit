@@ -23,6 +23,11 @@ final class DeliveryStep extends OnboardingStep
         return 'delivery';
     }
 
+    public static function label(): string
+    {
+        return 'Delivery';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $manager = resolve(SettingsManager::class);
@@ -41,11 +46,12 @@ final class DeliveryStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Delivery')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedTruck)
             ->description('Delivery & pickup options')
             ->schema([
-                Section::make('Delivery Settings')
+                Section::make('Delivery settings')
+                    ->contained(false)
                     ->description('Configure how customers receive their orders.')
                     ->schema([
                         Toggle::make('delivery.delivery_enabled')
@@ -54,12 +60,12 @@ final class DeliveryStep extends OnboardingStep
                             ->columnSpanFull(),
                         Grid::make(2)->schema([
                             TextInput::make('delivery.delivery_radius')
-                                ->label('Delivery Radius (miles)')
+                                ->label('Delivery radius (miles)')
                                 ->numeric()
                                 ->placeholder('15')
                                 ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                             MoneyInput::make('delivery.delivery_fee')
-                                ->label('Flat Delivery Fee')
+                                ->label('Flat delivery fee')
                                 ->placeholder('5.00')
                                 ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                         ]),
@@ -69,12 +75,12 @@ final class DeliveryStep extends OnboardingStep
                                 ->live()
                                 ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
                             MoneyInput::make('delivery.free_delivery_threshold')
-                                ->label('Free Delivery Threshold')
+                                ->label('Free delivery threshold')
                                 ->placeholder('50.00')
                                 ->visible(fn (Get $get): bool => $get('delivery.delivery_enabled') && $get('delivery.free_delivery_over')),
                         ]),
                         MoneyInput::make('delivery.delivery_minimum_order')
-                            ->label('Minimum Order for Delivery')
+                            ->label('Minimum order for delivery')
                             ->placeholder('20.00')
                             ->visible(fn (Get $get): mixed => $get('delivery.delivery_enabled')),
 
@@ -83,7 +89,7 @@ final class DeliveryStep extends OnboardingStep
                             ->live()
                             ->columnSpanFull(),
                         Textarea::make('delivery.pickup_instructions')
-                            ->label('Pickup Instructions')
+                            ->label('Pickup instructions')
                             ->placeholder('e.g. Pick up at the side door, ring the bell...')
                             ->rows(3)
                             ->required(fn (Get $get): mixed => $get('delivery.pickup_enabled'))

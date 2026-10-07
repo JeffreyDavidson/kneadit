@@ -1,1 +1,5 @@
-<x-filament::button wire:click="completeOnboarding" color="success" size="lg"> Complete Setup </x-filament::button>
+<x-filament::button
+    wire:click="completeOnboarding"
+    :icon="\Filament\Support\Icons\Heroicon::Check"
+    icon-position="after"
+>Complete setup</x-filament::button>

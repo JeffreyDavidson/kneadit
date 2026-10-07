@@ -21,6 +21,11 @@ final class BrandingStep extends OnboardingStep
         return 'branding';
     }
 
+    public static function label(): string
+    {
+        return 'Branding';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = self::tenant();
@@ -35,25 +40,26 @@ final class BrandingStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Branding')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedPaintBrush)
             ->description('Make it yours')
             ->schema([
-                Section::make('Brand Your Bakery')
+                Section::make('Brand your bakery')
+                    ->contained(false)
                     ->description('Choose colors and upload your logo to personalize your storefront.')
                     ->schema([
                         Grid::make(2)->schema([
                             ColorPicker::make('branding.color_primary')
-                                ->label('Primary Color')
+                                ->label('Primary color')
                                 ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->required(),
                             ColorPicker::make('branding.color_secondary')
-                                ->label('Secondary Color')
+                                ->label('Secondary color')
                                 ->regex(BrandingSettings::HEX_COLOR_PATTERN)
                                 ->required(),
                         ]),
                         FileUpload::make('branding.store_logo')
-                            ->label('Bakery Logo')
+                            ->label('Bakery logo')
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->directory('logos')
