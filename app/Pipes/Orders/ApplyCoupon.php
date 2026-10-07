@@ -22,13 +22,23 @@ class ApplyCoupon
             return $next($payload);
         }
 
-        if ($this->couponService->isValid($coupon)) {
-            $couponDiscount = Money::fromDollars($this->couponService->calculateDiscount($coupon, $payload->subtotal->dollars()));
-            $payload->couponDiscount = $couponDiscount;
-            $payload->recalculateDiscountAmount();
-            $payload->couponId = $coupon->id;
-            $payload->recalculateTotal();
+        if (! $this->couponService->isValid($coupon)) {
+            return $next($payload);
         }
+
+        $couponDiscount = Money::fromDollars($this->couponService->calculateDiscount($coupon, $payload->subtotal->dollars()));
+
+        // A coupon and the sitewide sale don't stack: the customer gets the larger
+        // one, and a coupon that loses is neither applied nor counted as used.
+        if (! $couponDiscount->greaterThan($payload->sitewideSaleDiscount)) {
+            return $next($payload);
+        }
+
+        $payload->sitewideSaleDiscount = Money::zero();
+        $payload->couponDiscount = $couponDiscount;
+        $payload->couponId = $coupon->id;
+        $payload->recalculateDiscountAmount();
+        $payload->recalculateTotal();
 
         return $next($payload);
     }

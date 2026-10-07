@@ -119,6 +119,24 @@ test('store order request checks seasonal availability against the delivery date
     'delivery date after the season' => ['2026-12-30', false],
 ]);
 
+test('store order request allows up to 100 of one item and explains the limit beyond that', function (int $quantity, bool $valid) {
+    $data = array_merge(validOrderData(), [
+        'items' => [['product_id' => test()->product->id, 'quantity' => $quantity]],
+    ]);
+
+    $errors = validator($data, (new StoreOrderRequest)->rules(), (new StoreOrderRequest)->messages())->errors();
+
+    expect($errors->has('items.0.quantity'))->toBe(! $valid);
+
+    if (! $valid) {
+        expect($errors->first('items.0.quantity'))->toBe('You can order up to 100 of one item. Contact us for larger orders.');
+    }
+})->with([
+    'at the limit' => [100, true],
+    'over the old limit of 20' => [21, true],
+    'one over the limit' => [101, false],
+]);
+
 function validOrderData(): array
 {
     return [

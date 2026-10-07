@@ -45,6 +45,24 @@ test('creates order with customer and items', function () {
         ->and($order->total->dollars())->toEqual(20.0)->and($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
 });
 
+test('order items keep the product name they were ordered under', function () {
+    $product = Product::factory()->create(['name' => 'Sourdough', 'price' => 10.00]);
+
+    $order = resolve(CreateQuickOrder::class)(CreateQuickOrderData::fromArray([
+        'customer_name' => 'Jane Doe',
+        'customer_email' => 'jane@example.com',
+        'delivery_date' => now()->addDays(3)->toDateString(),
+        'delivery_time' => '14:00',
+        'delivery_type' => DeliveryType::Pickup->value,
+        'payment_method' => PaymentMethod::Cash->value,
+        'order_items' => [['product_id' => $product->id, 'quantity' => 1, 'unit_price' => 10.00]],
+    ]));
+
+    $product->update(['name' => 'Renamed Loaf']);
+
+    expect($order->orderItems()->sole()->name)->toBe('Sourdough');
+});
+
 dataset('quick order delivery pricing', [
     'first tier' => ['0', 10.00, 5.00],
     'second tier' => ['1', 10.00, 12.50],

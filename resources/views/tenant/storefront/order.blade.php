@@ -111,6 +111,17 @@
     {{-- Main Content --}}
     <section @class(['bg-warm-900 relative', 'biscotto-order-stage' => $storefrontTheme === 'biscotto'])>
         <div class="relative z-10 mx-auto max-w-7xl px-4 pb-24" x-data="orderForm()">
+            @if (($removedItemNames ?? []) !== [])
+                <p
+                    class="bg-warm-500/10 border-warm-500/25 text-warm-300 mb-8 rounded-2xl border p-4 text-sm"
+                    role="status"
+                    data-test="order-form-removed-items"
+                >
+                    We left {{ implode(', ', $removedItemNames) }} out of your cart because we no longer offer {{ count($removedItemNames) === 1 ? 'it' : 'them' }}.
+                    Prices shown are today's prices.
+                </p>
+            @endif
+
             <form data-test="order-form" @submit.prevent="submitOrder" class="grid gap-8 lg:grid-cols-3">
                 <x-storefront.order-products :categories="$categories" />
 

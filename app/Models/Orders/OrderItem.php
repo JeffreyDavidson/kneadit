@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property-read int|null $units_sold
  * @property-read float|null $revenue
+ * @property string|null $name
  * @property int $quantity
  * @property Money $unit_price
  *
@@ -33,6 +34,9 @@ class OrderItem extends Model
 {
     /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
+
+    /** The most of one product a customer can put on an order. */
+    public const int MAX_QUANTITY = 100;
 
     #[\Override]
     protected function casts(): array

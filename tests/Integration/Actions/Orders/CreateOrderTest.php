@@ -49,6 +49,24 @@ test('creates order with correct totals and items', function () {
     expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
 });
 
+test('order items keep the product name they were ordered under', function () {
+    $product = Product::factory()->create(['name' => 'Sourdough', 'price' => 12.50]);
+
+    $order = resolve(CreateOrder::class)(
+        CreateOrderData::fromArray([
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_date' => now()->addDays(5)->toDateString(),
+            'delivery_type' => DeliveryType::Pickup->value,
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+        ])
+    );
+
+    $product->update(['name' => 'Renamed Loaf']);
+
+    expect($order->orderItems()->sole()->name)->toBe('Sourdough');
+});
+
 test('checkout with an email that differs only by case reuses the existing customer', function () {
     $existing = Customer::factory()->create(['email' => 'bob@example.com']);
     $product = Product::factory()->create(['price' => 12.50]);

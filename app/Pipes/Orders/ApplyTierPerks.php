@@ -26,6 +26,7 @@ class ApplyTierPerks
 
         if ($payload->deliveryFee->isPositive() && $this->customerLoyalty->qualifiesForFreeDelivery($payload->customer)) {
             $payload->deliveryFee = Money::zero();
+            $payload->recalculateDiscountAmount();
             $payload->recalculateTotal();
         }
 

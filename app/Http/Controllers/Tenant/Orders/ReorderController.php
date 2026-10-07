@@ -7,24 +7,23 @@ namespace App\Http\Controllers\Tenant\Orders;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use App\Models\Orders\Order;
-use App\Models\Orders\OrderItem;
+use App\Services\Orders\OrderLineRefresher;
 use Illuminate\Http\JsonResponse;
 
 class ReorderController extends Controller
 {
-    public function __invoke(Order $order): JsonResponse
+    public function __invoke(Order $order, OrderLineRefresher $refresher): JsonResponse
     {
-        $order->load('orderItems.product');
-
-        $items = $order->orderItems->map(fn (OrderItem $item): array => [
-            'product_id' => $item->product_id,
-            'product_name' => $item->product->name ?? 'Unknown',
-            'price' => $item->unit_price->dollars(),
-            'quantity' => $item->quantity,
-        ]);
+        $refreshed = $refresher->refresh($order->orderItems()->with('product')->get());
 
         return ApiResponse::success([
-            'items' => $items,
+            'items' => array_map(fn (array $line): array => [
+                'product_id' => $line['product_id'],
+                'product_name' => $line['name'],
+                'price' => $line['price'],
+                'quantity' => $line['quantity'],
+            ], $refreshed->items),
+            'removed_items' => $refreshed->removedNames,
         ], 'Reorder data retrieved successfully.');
     }
 }
