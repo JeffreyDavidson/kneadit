@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->maxContentWidth('full')
             ->brandLogo(view('filament.brand-logo'))
-            ->brandLogoHeight('36px')
+            ->brandLogoHeight('auto')
             ->navigationGroups([
                 NavigationGroup::make('Shop'),
                 NavigationGroup::make('Settings'),

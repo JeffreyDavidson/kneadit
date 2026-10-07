@@ -27,6 +27,30 @@ test('onboarding page renders for a bakery that has not finished onboarding', fu
         ->assertSee('Welcome to KneadIt');
 });
 
+test('onboarding page shows a step indicator and greets the bakery by name', function () {
+    settings(['store_name' => 'Bakery on Biscotto']);
+
+    livewire(Onboarding::class)
+        ->assertSee('Step 1 of 10')
+        ->assertSee('Welcome')
+        ->assertSee("Let's get Bakery on Biscotto ready")
+        ->assertSee('about 5 minutes')
+        ->assertDontSee("Let's set up your bakery");
+});
+
+test('onboarding page has one main heading', function () {
+    $html = livewire(Onboarding::class)->html();
+
+    expect(substr_count($html, 'fi-header-heading'))->toBe(1)
+        ->and($html)->not->toContain('onboarding-intro-heading');
+});
+
+test('completing onboarding still records the completion time', function () {
+    livewire(Onboarding::class)->call('completeOnboarding');
+
+    expect(settings('onboarding_completed_at'))->not->toBeNull();
+});
+
 test('onboarding page renders the stripe status when stripe is a payment method', function (array $stripeSettings, string $expected) {
     settings([
         'payment_methods' => json_encode(['stripe']),
