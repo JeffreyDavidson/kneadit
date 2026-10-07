@@ -13,7 +13,9 @@ use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Http;
 use Stripe\Exception\InvalidRequestException;
 use Tests\Support\Stripe\FakeCheckoutStripeClient;
 use Tests\Support\Stripe\FakeRefundStripeClient;
@@ -164,4 +166,77 @@ test('cancelling credits a gift card with what was redeemed even if the order am
 
     expect($giftCard->refresh()->current_balance->dollars())->toBe(10.00)
         ->and(GiftCardTransaction::query()->where('order_id', $order->id)->where('type', GiftCardTransactionType::Refund)->count())->toBe(1);
+});
+
+function bakeryPaypalCredentials(): void
+{
+    settings([
+        'paypal_client_id' => 'bakery-id',
+        'paypal_client_secret' => 'bakery-secret',
+    ]);
+}
+
+test('cancelling an unpaid order cancels its open PayPal invoice so it cannot be paid later', function () {
+    bakeryPaypalCredentials();
+    Http::preventStrayRequests();
+    Http::fake([
+        '*/v1/oauth2/token' => Http::response(['access_token' => 'token']),
+        '*/v2/invoicing/invoices/INV-CANCEL-1/cancel' => Http::response([], 204),
+    ]);
+    $order = Order::factory()->confirmed()->unpaid()->create(['paypal_invoice_id' => 'INV-CANCEL-1']);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh())
+        ->status->toBe(OrderStatus::Cancelled)
+        ->paypal_invoice_id->toBe('INV-CANCEL-1');
+    Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/v2/invoicing/invoices/INV-CANCEL-1/cancel'));
+});
+
+test('a PayPal failure does not stop an unpaid order being cancelled', function () {
+    bakeryPaypalCredentials();
+    Http::preventStrayRequests();
+    Http::fake([
+        '*/v1/oauth2/token' => Http::response(['access_token' => 'token']),
+        '*/v2/invoicing/invoices/INV-CANCEL-2/cancel' => Http::response(['name' => 'INVALID_INVOICE_STATE'], 422),
+    ]);
+    $order = Order::factory()->confirmed()->unpaid()->create(['paypal_invoice_id' => 'INV-CANCEL-2']);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
+});
+
+test('cancelling an order without PayPal credentials still cancels it', function () {
+    Http::preventStrayRequests();
+    $order = Order::factory()->confirmed()->unpaid()->create(['paypal_invoice_id' => 'INV-CANCEL-3']);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
+    Http::assertNothingSent();
+});
+
+test('cancelling an order with no PayPal invoice, or one that is already paid, does not call PayPal', function (?string $invoiceId, string $state) {
+    FakeRefundStripeClient::untouched();
+    bakeryPaypalCredentials();
+    Http::preventStrayRequests();
+    $order = Order::factory()->confirmed()->{$state}()->create(['paypal_invoice_id' => $invoiceId, 'stripe_payment_intent_id' => null]);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
+    Http::assertNothingSent();
+})->with([
+    'unpaid, no invoice' => [null, 'unpaid'],
+    'paid by PayPal invoice' => ['INV-CANCEL-4', 'paid'],
+]);
+
+test('an order that cannot be cancelled keeps its PayPal invoice open', function () {
+    bakeryPaypalCredentials();
+    Http::preventStrayRequests();
+    $order = Order::factory()->ready()->unpaid()->create(['paypal_invoice_id' => 'INV-CANCEL-5']);
+
+    expect(fn () => resolve(CancelOrder::class)($order))->toThrow(InvalidOrderTransitionException::class);
+    Http::assertNothingSent();
 });

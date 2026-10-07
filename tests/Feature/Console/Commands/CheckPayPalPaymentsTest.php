@@ -12,16 +12,7 @@ test('paypal check-payments command runs successfully with no tenants', function
         ->assertSuccessful();
 });
 
-test('command exits early when paypal is not configured', function () {
-    config(['services.paypal.client_id' => null]);
-
-    $this->artisan('paypal:check-payments')
-        ->assertSuccessful();
-});
-
 test('command skips tenants without paypal configured', function () {
-    config(['services.paypal.client_id' => 'test-client-id']);
-
     $tenancyManager = Double::for(TenancyManager::class);
     $tenancyManager->expects('forEachTenant')->resolves(fn () => 0);
 
@@ -38,8 +29,6 @@ test('command skips tenants without paypal configured', function () {
 });
 
 test('command handles tenant processing exceptions gracefully', function () {
-    config(['services.paypal.client_id' => 'test-client-id']);
-
     createTenant([
         'id' => 'error-bakery',
         'name' => 'Error Baker',
@@ -85,8 +74,6 @@ test('command source handles PAID, CANCELLED, and REFUNDED statuses', function (
 });
 
 test('command processes tenant with unpaid paypal orders', function () {
-    config(['services.paypal.client_id' => 'test-client-id']);
-
     createTenant([
         'id' => 'paypal-bakery',
         'name' => 'PayPal Baker',
@@ -119,5 +106,5 @@ test('command source skips orders without paypal invoice id', function () {
 
     expect($source)
         ->toContain('paypal_invoice_id')
-        ->toContain('whereNotNull');
+        ->toContain('awaitingPayPalCheck');
 });
