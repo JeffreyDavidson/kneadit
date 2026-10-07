@@ -14,6 +14,9 @@ abstract class OnboardingStep
     /** Key used for Livewire array property binding ("{key}.field_name"). */
     abstract public static function key(): string;
 
+    /** The step's name, shown in the step list and as the wizard step label. */
+    abstract public static function label(): string;
+
     /**
      * Default values for this step's fields, hydrated from settings.
      *

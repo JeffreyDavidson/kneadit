@@ -1,6 +1,6 @@
 /*
  * Admin forms: field wrappers, inputs, selects, checkboxes, toggles, section
- * cards, repeaters, tabs and wizard steps, on the KneadIt design system
+ * cards, repeaters and tabs, on the KneadIt design system
  * tokens (kneadit/tokens.css) so they read in light and dark.
  *
  * Filament's component styles are in @layer components, so unlayered rules
@@ -312,72 +312,4 @@ input[type='date'][value=''],
 .fi-tabs-item.fi-active .fi-tabs-item-label,
 .fi-tabs-item.fi-active > .fi-icon {
     color: var(--kn-honey-text);
-}
-
-/*
- * Setup wizard: one `surface` card with the step indicator on top and the
- * Back/Next buttons in the footer. Filament's own step header is hidden (it
- * overflows with ten steps); each step renders "Step N of M" instead.
- */
-.fi-sc-wizard.fi-contained {
-    background: var(--kn-surface);
-    border: 1px solid var(--kn-border);
-    border-radius: var(--kn-radius-lg);
-    box-shadow: var(--kn-shadow-card);
-}
-
-.fi-sc-wizard.fi-contained .fi-sc-wizard-footer {
-    border-top: 1px solid var(--kn-border);
-    padding: var(--kn-space-4) var(--kn-space-6);
-}
-
-.kn-wizard-progress {
-    display: flex;
-    flex-direction: column;
-    gap: var(--kn-space-2);
-    margin-bottom: var(--kn-space-2);
-}
-
-.kn-wizard-progress-label {
-    align-items: baseline;
-    color: var(--kn-ink-2);
-    column-gap: var(--kn-space-2);
-    display: flex;
-    flex-wrap: wrap;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-}
-
-.kn-wizard-progress-count {
-    color: var(--kn-honey-text);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.kn-wizard-progress-name {
-    color: var(--kn-ink);
-    font-weight: 600;
-}
-
-.kn-wizard-progress-dots {
-    display: flex;
-    gap: var(--kn-space-1);
-}
-
-.kn-wizard-progress-dot {
-    background: var(--kn-border);
-    border-radius: var(--kn-radius-pill);
-    flex: 1 1 0;
-    height: 4px;
-}
-
-.kn-wizard-progress-dot-done,
-.kn-wizard-progress-dot-current {
-    background: var(--kn-honey);
-}
-
-.kn-wizard-progress-dot-current {
-    background: var(--kn-honey-text);
 }

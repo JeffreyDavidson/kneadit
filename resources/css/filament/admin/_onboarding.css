@@ -1,0 +1,307 @@
+/*
+ * Bakery setup page (views/filament/pages/platform/onboarding.blade.php): a
+ * focused page on the bare panel layout. A slim header bar with the bakery's
+ * logo and name, the step list on the left and one `surface` card holding the
+ * wizard step and its Back/Continue footer. Below 768px the step list folds
+ * into one "Step N of M · name" line above the card.
+ */
+.kn-onboarding {
+    background: var(--kn-bg);
+    color: var(--kn-ink);
+    min-height: 100vh;
+}
+
+/* Header bar */
+.kn-onboarding-bar {
+    align-items: center;
+    background: var(--kn-surface);
+    border-bottom: 1px solid var(--kn-border);
+    display: flex;
+    gap: var(--kn-space-4);
+    justify-content: space-between;
+    padding: var(--kn-space-3) var(--kn-space-6);
+}
+
+.kn-onboarding-bakery {
+    align-items: center;
+    display: flex;
+    gap: var(--kn-space-3);
+    min-width: 0;
+}
+
+.kn-onboarding-bakery-logo {
+    border-radius: var(--kn-radius-sm);
+    height: 34px;
+    max-width: 8rem;
+    object-fit: contain;
+    width: auto;
+}
+
+.kn-onboarding-bakery-initial {
+    align-items: center;
+    background: color-mix(in srgb, var(--kn-honey) 20%, var(--kn-surface));
+    border-radius: var(--kn-radius-sm);
+    color: var(--kn-honey-text);
+    display: inline-flex;
+    flex-shrink: 0;
+    font-family: var(--kn-font-display);
+    font-size: 1.125rem;
+    height: 34px;
+    justify-content: center;
+    width: 34px;
+}
+
+.kn-onboarding-bakery-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.kn-onboarding-later {
+    border-radius: var(--kn-radius-sm);
+    color: var(--kn-muted);
+    cursor: pointer;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+}
+
+.kn-onboarding-later:hover {
+    color: var(--kn-ink);
+    text-decoration: underline;
+}
+
+.kn-onboarding-later:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
+}
+
+/* Two columns: the step list and the card. */
+.kn-onboarding-main {
+    align-items: start;
+    display: grid;
+    gap: var(--kn-space-8);
+    grid-template-columns: 200px minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 960px;
+    padding: var(--kn-space-8) var(--kn-space-6) var(--kn-space-12);
+}
+
+/* Step list */
+.kn-onboarding-eyebrow {
+    color: var(--kn-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1rem;
+    margin-bottom: var(--kn-space-2);
+    text-transform: uppercase;
+}
+
+.kn-onboarding-steps-compact {
+    display: none;
+}
+
+.kn-onboarding-steps-list {
+    display: grid;
+    gap: 2px;
+}
+
+.kn-onboarding-step {
+    align-items: center;
+    border-radius: var(--kn-radius-md);
+    color: var(--kn-muted);
+    display: flex;
+    font-size: 0.8125rem;
+    gap: var(--kn-space-2);
+    line-height: 1.25rem;
+    padding: 6px var(--kn-space-2);
+}
+
+.kn-onboarding-step-marker {
+    align-items: center;
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-pill);
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    height: 20px;
+    justify-content: center;
+    width: 20px;
+}
+
+.kn-onboarding-step-marker .fi-icon {
+    height: 12px;
+    width: 12px;
+}
+
+.kn-onboarding-step-done {
+    color: var(--kn-ink-2);
+}
+
+.kn-onboarding-step-current {
+    background: color-mix(in srgb, var(--kn-honey) 18%, transparent);
+    color: var(--kn-honey-text);
+    font-weight: 600;
+}
+
+.kn-onboarding-step-current .kn-onboarding-step-marker,
+.kn-onboarding-step-done .kn-onboarding-step-marker {
+    background: var(--kn-honey);
+    border-color: var(--kn-honey);
+    color: var(--kn-on-honey);
+}
+
+/* The card: the wizard itself, with no card inside it. */
+.kn-onboarding .fi-sc-wizard.fi-contained {
+    background: var(--kn-surface);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-lg);
+    box-shadow: var(--kn-shadow-card);
+}
+
+.kn-onboarding .fi-sc-wizard.fi-contained .fi-sc-wizard-step.fi-active {
+    padding: var(--kn-space-8) var(--kn-space-8) 0;
+}
+
+.kn-onboarding .fi-sc-wizard-step > .fi-sc {
+    row-gap: var(--kn-space-1);
+}
+
+.kn-onboarding-step-count {
+    color: var(--kn-honey-text);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+}
+
+.kn-onboarding .fi-section-not-contained:not(.fi-aside) {
+    row-gap: var(--kn-space-6);
+}
+
+.kn-onboarding .fi-section-not-contained > .fi-section-header .fi-section-header-text-ctn {
+    row-gap: var(--kn-space-1);
+}
+
+.kn-onboarding .fi-section-not-contained > .fi-section-header .fi-section-header-heading {
+    color: var(--kn-ink);
+    font-family: var(--kn-font-display);
+    font-size: 1.625rem;
+    font-weight: 400;
+    line-height: 2rem;
+}
+
+.kn-onboarding .fi-section-not-contained > .fi-section-header .fi-section-header-description {
+    color: var(--kn-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.kn-onboarding .fi-section-not-contained > .fi-section-content-ctn > .fi-sc {
+    row-gap: var(--kn-space-4);
+}
+
+/* A group inside a step (e.g. "PayPal connection"): a sans subheading over a hairline, not another card. */
+.kn-onboarding .fi-section .fi-section-not-contained:not(.fi-aside) {
+    border-top: 1px solid var(--kn-border);
+    padding-top: var(--kn-space-4);
+    row-gap: var(--kn-space-4);
+}
+
+.kn-onboarding .fi-section .fi-section-not-contained > .fi-section-header .fi-section-header-heading {
+    font-family: var(--kn-font-sans);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+}
+
+.kn-onboarding .fi-fo-field-label-content {
+    font-size: 0.8125rem;
+}
+
+/* Footer: a hairline inside the card's padding, Back on the left, Continue on the right. */
+.kn-onboarding .fi-sc-wizard.fi-contained .fi-sc-wizard-footer {
+    border-top: 1px solid var(--kn-border);
+    margin: var(--kn-space-8) var(--kn-space-8) 0;
+    padding: var(--kn-space-4) 0 var(--kn-space-6);
+}
+
+.kn-onboarding .fi-sc-wizard-footer .fi-link {
+    color: var(--kn-ink-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+/* Last step: where to go next. */
+.kn-onboarding-next {
+    display: grid;
+    gap: var(--kn-space-3);
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+}
+
+.kn-onboarding-next-link {
+    align-items: center;
+    background: var(--kn-surface-sunken);
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-md);
+    color: var(--kn-ink);
+    display: flex;
+    flex-direction: column;
+    font-size: 0.875rem;
+    font-weight: 600;
+    gap: var(--kn-space-2);
+    padding: var(--kn-space-4);
+}
+
+.kn-onboarding-next-link:hover {
+    background: var(--kn-surface-hover);
+}
+
+.kn-onboarding-next-link:focus-visible {
+    box-shadow: var(--kn-shadow-focus);
+    outline: none;
+}
+
+.kn-onboarding-next-icon {
+    color: var(--kn-ink-2);
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+@media (max-width: 767px) {
+    .kn-onboarding-bar {
+        padding: var(--kn-space-3) var(--kn-space-4);
+    }
+
+    .kn-onboarding-main {
+        gap: var(--kn-space-3);
+        grid-template-columns: minmax(0, 1fr);
+        padding: var(--kn-space-6) var(--kn-space-4) var(--kn-space-8);
+    }
+
+    .kn-onboarding-eyebrow {
+        margin-bottom: var(--kn-space-1);
+    }
+
+    .kn-onboarding-steps-compact {
+        color: var(--kn-ink-2);
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .kn-onboarding-steps-list {
+        display: none;
+    }
+
+    .kn-onboarding .fi-sc-wizard.fi-contained .fi-sc-wizard-step.fi-active {
+        padding: var(--kn-space-6) var(--kn-space-4) 0;
+    }
+
+    .kn-onboarding .fi-sc-wizard.fi-contained .fi-sc-wizard-footer {
+        margin: var(--kn-space-6) var(--kn-space-4) 0;
+        padding-bottom: var(--kn-space-4);
+    }
+}

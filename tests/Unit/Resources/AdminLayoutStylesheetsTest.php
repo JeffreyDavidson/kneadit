@@ -6,6 +6,7 @@ dataset('rebuiltAdminPartials', [
     'layout' => 'css/filament/admin/_layout.css',
     'chrome' => 'css/filament/admin/_chrome.css',
     'forms' => 'css/filament/admin/_forms.css',
+    'onboarding' => 'css/filament/admin/_onboarding.css',
     'tables' => 'css/filament/admin/_tables.css',
     'modals' => 'css/filament/admin/_modals.css',
     'notifications' => 'css/filament/admin/_notifications.css',

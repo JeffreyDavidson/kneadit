@@ -25,6 +25,11 @@ final class PaymentsStep extends OnboardingStep
         return 'payments';
     }
 
+    public static function label(): string
+    {
+        return 'Payments';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $manager = resolve(SettingsManager::class);
@@ -49,19 +54,20 @@ final class PaymentsStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Payments')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedCreditCard)
             ->description('How you get paid')
             ->schema([
                 Text::make('Only the bakery owner can set up payments. You can finish onboarding now and the owner can choose payment methods later in Settings.')
                     ->visible(fn (): bool => ! Gate::allows('manage-payments')),
 
-                Section::make('Payment Collection')
+                Section::make('Payment collection')
+                    ->contained(false)
                     ->visible(fn (): bool => Gate::allows('manage-payments'))
                     ->description('Choose how you want to collect payments from customers.')
                     ->schema([
                         CheckboxList::make('payments.payment_methods')
-                            ->label('Payment Methods')
+                            ->label('Payment methods')
                             ->helperText('Select all that apply — offer your customers multiple ways to pay.')
                             ->options([
                                 PaymentMethod::Stripe->value => 'Stripe — Credit cards, Apple Pay, Google Pay',
@@ -77,30 +83,32 @@ final class PaymentsStep extends OnboardingStep
                             ->live()
                             ->columnSpanFull(),
 
-                        Section::make('Stripe Connection')
+                        Section::make('Stripe connection')
+                            ->contained(false)
                             ->description('Connect your own Stripe account — payments go directly to you, not us.')
                             ->schema([
                                 View::make('filament.pages.shared.stripe-connect-status'),
                             ])
                             ->visible(fn (Get $get): bool => in_array(PaymentMethod::Stripe->value, self::selectedMethods($get), true)),
 
-                        Section::make('PayPal Connection')
+                        Section::make('PayPal connection')
+                            ->contained(false)
                             ->description('Connect your PayPal Business account.')
                             ->schema([
                                 TextInput::make('payments.paypal_client_id')
-                                    ->label('PayPal Client ID')
+                                    ->label('PayPal client ID')
                                     ->placeholder('Your PayPal Client ID')
                                     ->maxLength(255)
                                     ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.')
                                     ->required(fn (Get $get): bool => in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                                 TextInput::make('payments.paypal_client_secret')
-                                    ->label('PayPal Client Secret')
+                                    ->label('PayPal client secret')
                                     ->password()
                                     ->placeholder(fn (): string => self::hasStoredSecret() ? 'Set — enter a new value to replace it' : 'Your PayPal Client Secret')
                                     ->maxLength(255)
                                     ->required(fn (Get $get): bool => ! self::hasStoredSecret() && in_array(PaymentMethod::PayPal->value, self::selectedMethods($get), true)),
                                 Toggle::make('payments.paypal_sandbox')
-                                    ->label('Sandbox Mode (Testing)')
+                                    ->label('Sandbox mode (testing)')
                                     ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
                                     ->default(true),
                             ])

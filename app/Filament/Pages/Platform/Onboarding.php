@@ -7,10 +7,13 @@ use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 
 class Onboarding extends Page
 {
@@ -31,11 +34,15 @@ class Onboarding extends Page
     #[\Override]
     protected static string|BackedEnum|null $navigationIcon = null;
 
+    /** A focused page: the base HTML shell only, without the admin sidebar and topbar. */
+    #[\Override]
+    protected static string $layout = 'filament-panels::components.layout.base';
+
     #[\Override]
     protected string $view = 'filament.pages.platform.onboarding';
 
     #[\Override]
-    protected static ?string $title = 'Welcome to KneadIt';
+    protected static ?string $title = 'Set up your bakery';
 
     #[\Override]
     protected static ?string $slug = 'onboarding';
@@ -87,8 +94,30 @@ class Onboarding extends Page
         return $schema->components([
             Wizard::make(OnboardingStepRegistry::steps($this))
                 ->submitAction(view('filament.pages.platform.onboarding-submit'))
+                ->previousAction(fn (Action $action): Action => $action->link())
+                ->nextAction(fn (Action $action): Action => $action
+                    ->label('Continue')
+                    ->icon(Heroicon::ArrowRight)
+                    ->iconPosition(IconPosition::After))
+                // The step list beside the card follows the wizard's current step.
+                ->extraAlpineAttributes(['x-effect' => "\$dispatch('onboarding-step-changed', { index: getStepIndex(step) })"])
                 ->hiddenHeader(),
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    protected function getViewData(): array
+    {
+        $store = resolve(TenantSettings::class)->store;
+
+        return [
+            'bakeryName' => $store->name,
+            'bakeryLogoUrl' => $store->logoUrl(),
+            'stepLabels' => OnboardingStepRegistry::labels(),
+        ];
     }
 
     public function completeOnboarding(): void

@@ -7,7 +7,7 @@ use App\Models\Staff\User;
 test('onboarding page exposes its Filament metadata', function () {
     $reflection = new ReflectionClass(Onboarding::class);
 
-    expect($reflection->getStaticPropertyValue('title'))->toBe('Welcome to KneadIt')
+    expect($reflection->getStaticPropertyValue('title'))->toBe('Set up your bakery')
         ->and(Onboarding::shouldRegisterNavigation())->toBeFalse();
 });
 

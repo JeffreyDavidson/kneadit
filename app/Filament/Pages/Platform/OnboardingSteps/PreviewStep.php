@@ -6,6 +6,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\TenantSettings;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Icons\Heroicon;
@@ -17,6 +18,11 @@ final class PreviewStep extends OnboardingStep
         return 'preview';
     }
 
+    public static function label(): string
+    {
+        return 'Preview';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         return [];
@@ -24,13 +30,18 @@ final class PreviewStep extends OnboardingStep
 
     public static function make(Onboarding $page): Step
     {
-        return Step::make('Preview')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedEye)
             ->description('Review your storefront')
             ->schema([
-                View::make('filament.pages.platform.onboarding-preview')
-                    ->viewData([
-                        'page' => $page,
+                Section::make('Preview your storefront')
+                    ->contained(false)
+                    ->description('This is how your details will look to customers. Go back to change anything.')
+                    ->schema([
+                        View::make('filament.pages.platform.onboarding-preview')
+                            ->viewData([
+                                'page' => $page,
+                            ]),
                     ]),
             ]);
     }

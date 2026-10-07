@@ -22,6 +22,11 @@ final class BusinessHoursStep extends OnboardingStep
         return 'hours';
     }
 
+    public static function label(): string
+    {
+        return 'Business hours';
+    }
+
     public static function defaults(TenantSettings $settings): array
     {
         $defaults = [];
@@ -75,11 +80,12 @@ final class BusinessHoursStep extends OnboardingStep
             ]);
         }
 
-        return Step::make('Business Hours')
+        return Step::make(self::label())
             ->icon(Heroicon::OutlinedClock)
             ->description('When are you open?')
             ->schema([
-                Section::make('Set Your Business Hours')
+                Section::make('Set your business hours')
+                    ->contained(false)
                     ->description('Toggle each day on or off and set your opening and closing times.')
                     ->schema($dayFields),
             ])
