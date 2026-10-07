@@ -84,3 +84,20 @@ test('referralShareUrl is null when the referral program is disabled', function 
         ->assertViewHas('referralCode', null)
         ->assertViewHas('referralShareUrl', null);
 });
+
+test('the Track link opens the order page, not the tracking form that ignores ?number', function () {
+    $customer = Customer::factory()->verified()->withPassword()->create();
+    $order = Order::factory()->for($customer)->create();
+
+    actingAs($customer, 'customer');
+
+    $html = withoutMiddleware(tenantMiddleware())
+        ->get(route('account.dashboard', [], false))
+        ->assertOk()
+        ->getContent();
+    preg_match_all('/href="([^"]+)"\s+class="[^"]*"\s*>\s*Track\s*<\/a>/', $html, $matches);
+
+    expect($matches[1])->not->toBeEmpty()
+        ->and($matches[1])->each->toBe(route('order.confirmation', $order))
+        ->and($html)->not->toContain('track?number=');
+});
