@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\TenantSettings;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard\Step;
 
 final class OnboardingStepRegistry
@@ -46,8 +47,25 @@ final class OnboardingStepRegistry
     public static function steps(Onboarding $page): array
     {
         return array_map(
-            fn (string $step): Step => $step::make($page),
+            fn (string $step, int $index): Step => self::withProgress($step::make($page), $index),
             self::STEPS,
+            array_keys(self::STEPS),
         );
+    }
+
+    /** Put the "Step N of M" indicator at the top of the step, in place of Filament's overflowing header. */
+    private static function withProgress(Step $step, int $index): Step
+    {
+        $children = $step->getDefaultChildComponents();
+
+        return $step->schema([
+            View::make('filament.pages.platform.onboarding-progress')
+                ->viewData([
+                    'number' => $index + 1,
+                    'total' => count(self::STEPS),
+                    'name' => $step->getLabel(),
+                ]),
+            ...(is_array($children) ? $children : [$children]),
+        ]);
     }
 }

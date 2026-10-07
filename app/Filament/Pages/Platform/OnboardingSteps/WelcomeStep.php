@@ -34,8 +34,8 @@ final class WelcomeStep extends OnboardingStep
             ->icon(Heroicon::OutlinedHandRaised)
             ->description('Tell us about your bakery')
             ->schema([
-                Section::make('Welcome to KneadIt!')
-                    ->description('Let\'s get your bakery set up. This will only take a few minutes.')
+                Section::make(self::greeting($page->welcome['bakery_name'] ?? null))
+                    ->description('Setup takes about 5 minutes. You can change everything later.')
                     ->schema([
                         TextInput::make('welcome.bakery_name')
                             ->label('Bakery Name')
@@ -50,6 +50,15 @@ final class WelcomeStep extends OnboardingStep
                     ]),
             ])
             ->afterValidation(fn () => self::save($page->welcome));
+    }
+
+    private static function greeting(mixed $bakeryName): string
+    {
+        if (! is_string($bakeryName) || trim($bakeryName) === '') {
+            return 'Let\'s get your bakery ready';
+        }
+
+        return "Let's get {$bakeryName} ready";
     }
 
     public static function save(array $data): void
