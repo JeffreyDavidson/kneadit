@@ -120,3 +120,15 @@ test('build includes discounts key when discounts array is provided', function (
 
     expect($params['discounts'])->toBe([['coupon' => 'coupon_123']]);
 });
+
+test('build accepts cards only so delayed-settlement methods never leave an order unpaid', function () {
+    $order = Order::factory()->create();
+    OrderItem::factory()->for($order)->create([
+        'quantity' => 1,
+        'unit_price' => Money::fromDollars(10.00),
+    ]);
+
+    $params = test()->builder->build($order->fresh(), 'tenant-abc', 'https://success', 'https://cancel');
+
+    expect($params['payment_method_types'])->toBe(['card']);
+});

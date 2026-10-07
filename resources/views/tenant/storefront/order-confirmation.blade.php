@@ -116,6 +116,33 @@
                             </div>
                         </div>
 
+                        @if ($canPayNow)
+                            <div class="border-warm-700/20 mt-6 border-t pt-6">
+                                <form
+                                    method="POST"
+                                    action="{{ route('order.pay', $order) }}"
+                                    class="flex items-center justify-between gap-4"
+                                    x-data="{ paying: false }"
+                                    x-on:submit="paying = true"
+                                    x-on:pageshow.window="paying = false"
+                                >
+                                    @csrf
+                                    <div>
+                                        <p class="text-warm-300 text-sm font-semibold">Payment not finished</p>
+                                        <p class="text-warm-500 text-xs">Pay by card to complete your order.</p>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        x-bind:disabled="paying"
+                                        data-test="order-pay-now"
+                                        class="bg-warm-400 text-warm-900 hover:bg-warm-300 rounded-lg px-4 py-2 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        Pay now
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+
                         @if ($canModify)
                             <div class="border-warm-700/20 mt-6 border-t pt-6" x-data="{ open: false }">
                                 <div class="flex items-center justify-between">

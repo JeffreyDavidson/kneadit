@@ -14,6 +14,8 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use Stripe\Exception\InvalidRequestException;
+use Tests\Support\Stripe\FakeCheckoutStripeClient;
 use Tests\Support\Stripe\FakeRefundStripeClient;
 
 pest()->use(RefreshDatabase::class);
@@ -110,6 +112,39 @@ test('cancelling an order whose refund another request is making is refused with
         ->status->toBe(OrderStatus::Confirmed)
         ->payment_status->toBe(PaymentStatus::Paid);
     $stripe->unused();
+});
+
+test('cancelling an unpaid order expires its open Stripe checkout session so it cannot be paid later', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->with('cs_cancel_open', [], ['stripe_account' => 'acct_test']);
+    $order = Order::factory()->confirmed()->unpaid()->create(['stripe_checkout_session_id' => 'cs_cancel_open']);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh())
+        ->status->toBe(OrderStatus::Cancelled)
+        ->payment_status->toBe(PaymentStatus::Unpaid);
+});
+
+test('a refused session expiry does not stop an unpaid order being cancelled', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->throws(InvalidRequestException::factory('Session already complete.', 400, null, null));
+    $order = Order::factory()->confirmed()->unpaid()->create(['stripe_checkout_session_id' => 'cs_cancel_done']);
+
+    resolve(CancelOrder::class)($order);
+
+    expect($order->refresh()->status)->toBe(OrderStatus::Cancelled);
+});
+
+test('an order that cannot be cancelled keeps its checkout session open', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->never();
+    $order = Order::factory()->ready()->unpaid()->create(['stripe_checkout_session_id' => 'cs_cancel_ready']);
+
+    expect(fn () => resolve(CancelOrder::class)($order))->toThrow(InvalidOrderTransitionException::class);
 });
 
 test('cancelling credits a gift card with what was redeemed even if the order amount was tampered with', function () {

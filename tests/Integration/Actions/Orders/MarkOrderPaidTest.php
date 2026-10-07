@@ -9,6 +9,8 @@ use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Stripe\Exception\InvalidRequestException;
+use Tests\Support\Stripe\FakeCheckoutStripeClient;
 
 pest()->use(RefreshDatabase::class);
 
@@ -123,4 +125,70 @@ test('skips status transition when order is already beyond confirmed', function 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
         ->status->toBe(OrderStatus::Baking);
+});
+
+test('a stale copy of an order another request already paid and confirmed is left as it is', function () {
+    $order = Order::factory()
+        ->for(test()->customer)
+        ->recycle(test()->user)
+        ->create(['payment_method' => PaymentMethod::Stripe]);
+    $stale = Order::query()->findOrFail($order->id);
+
+    resolve(MarkOrderPaid::class)($order);
+    $result = resolve(MarkOrderPaid::class)($stale);
+
+    expect($result)
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->status->toBe(OrderStatus::Confirmed)
+        ->and($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->status->toBe(OrderStatus::Confirmed);
+});
+
+test('marking a cash order paid expires its open Stripe checkout session', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->with('cs_test_open', [], ['stripe_account' => 'acct_test']);
+    $order = Order::factory()
+        ->for(test()->customer)
+        ->recycle(test()->user)
+        ->create(['payment_method' => PaymentMethod::Cash, 'stripe_checkout_session_id' => 'cs_test_open']);
+
+    resolve(MarkOrderPaid::class)($order);
+
+    expect($order->refresh())
+        ->payment_status->toBe(PaymentStatus::Paid)
+        ->stripe_checkout_session_id->toBe('cs_test_open');
+});
+
+test('a refused session expiry does not stop the order being marked paid', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->throws(InvalidRequestException::factory('Session already complete.', 400, null, null));
+    $order = Order::factory()
+        ->for(test()->customer)
+        ->recycle(test()->user)
+        ->create(['payment_method' => PaymentMethod::Cash, 'stripe_checkout_session_id' => 'cs_test_open']);
+
+    resolve(MarkOrderPaid::class)($order);
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
+});
+
+test('marking an order paid after Stripe collected the payment leaves its session alone', function () {
+    settings(['stripe_connect_id' => 'acct_test']);
+    $sessions = FakeCheckoutStripeClient::bind();
+    $sessions->expects('expire')->never();
+    $order = Order::factory()
+        ->for(test()->customer)
+        ->recycle(test()->user)
+        ->create([
+            'payment_method' => PaymentMethod::Stripe,
+            'stripe_checkout_session_id' => 'cs_test_paid',
+            'stripe_payment_intent_id' => 'pi_test_paid',
+        ]);
+
+    resolve(MarkOrderPaid::class)($order);
+
+    expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
 });
