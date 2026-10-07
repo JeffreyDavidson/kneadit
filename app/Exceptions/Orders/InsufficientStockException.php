@@ -31,6 +31,16 @@ class InsufficientStockException extends RuntimeException implements ShouldntRep
     }
 
     /**
+     * What to tell the customer when their order can't be filled.
+     */
+    public function customerMessage(): string
+    {
+        $list = implode(', ', $this->shortages);
+
+        return "Sorry, we don't have enough {$list} in stock right now. Please reduce the quantity or remove an item.";
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function context(): array

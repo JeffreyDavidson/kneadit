@@ -33,10 +33,9 @@ class SubmitOrderController extends Controller
                 $e->minimum,
             )]);
         } catch (InsufficientStockException $e) {
-            throw ValidationException::withMessages(['items' => sprintf(
-                'Sorry, we don\'t have enough %s in stock right now. Please reduce the quantity or remove an item.',
-                implode(', ', $e->shortages),
-            )]);
+            throw ValidationException::withMessages([
+                'items' => $e->customerMessage(),
+            ]);
         } catch (NoOrderableItemsException) {
             throw ValidationException::withMessages([
                 'items' => NoOrderableItemsException::CUSTOMER_MESSAGE,

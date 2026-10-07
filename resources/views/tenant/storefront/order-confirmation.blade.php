@@ -144,7 +144,7 @@
                         @endif
 
                         @if ($canModify)
-                            <div class="border-warm-700/20 mt-6 border-t pt-6" x-data="{ open: false }">
+                            <div class="border-warm-700/20 mt-6 border-t pt-6" x-data="{ open: @js($errors->any()) }">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-warm-300 text-sm font-semibold">Need to make changes?</p>
@@ -170,11 +170,17 @@
                                     class="mt-4 space-y-4"
                                 >
                                     @csrf
-                                    @error('items')
-                                        <div class="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
-                                            {{ $message }}
+                                    @if ($errors->any())
+                                        <div
+                                            data-test="modify-order-errors"
+                                            role="alert"
+                                            class="space-y-1 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300"
+                                        >
+                                            @foreach ($errors->all() as $message)
+                                                <p>{{ $message }}</p>
+                                            @endforeach
                                         </div>
-                                    @enderror
+                                    @endif
                                     <div class="space-y-2">
                                         @foreach ($order->orderItems as $index => $item)
                                             <div class="border-warm-700/15 flex items-center justify-between gap-3 border-b py-2">

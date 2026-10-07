@@ -188,24 +188,28 @@
                         @csrf
                         <div class="grid gap-6 md:grid-cols-2">
                             <div>
-                                <label class="text-warm-300 mb-2 block text-sm font-medium">Your Name *</label>
+                                <label for="gallery-customer-name" class="text-warm-300 mb-2 block text-sm font-medium"
+                                    >Your Name *</label>
                                 <input
                                     type="text"
                                     name="customer_name"
                                     value="{{ old('customer_name') }}"
                                     required
                                     class="storefront-input-dark"
+                                    id="gallery-customer-name"
                                     data-test="gallery-upload-form-customer-name"
                                 />
                             </div>
                             <div>
-                                <label class="text-warm-300 mb-2 block text-sm font-medium">Your Email *</label>
+                                <label for="gallery-customer-email" class="text-warm-300 mb-2 block text-sm font-medium"
+                                    >Your Email *</label>
                                 <input
                                     type="email"
                                     name="customer_email"
                                     value="{{ old('customer_email') }}"
                                     required
                                     class="storefront-input-dark"
+                                    id="gallery-customer-email"
                                     data-test="gallery-upload-form-customer-email"
                                 />
                             </div>
@@ -238,20 +242,24 @@
                         </div>
 
                         <div>
-                            <label class="text-warm-300 mb-2 block text-sm font-medium">Caption</label>
+                            <label for="gallery-caption" class="text-warm-300 mb-2 block text-sm font-medium"
+                                >Caption</label>
                             <textarea
                                 name="caption"
                                 rows="3"
                                 class="storefront-input-dark"
+                                id="gallery-caption"
                                 data-test="gallery-upload-form-caption"
                             >{{ old('caption') }}</textarea>
                         </div>
 
                         <div>
-                            <label class="text-warm-300 mb-2 block text-sm font-medium">Which product? (optional)</label>
+                            <label for="gallery-product-id" class="text-warm-300 mb-2 block text-sm font-medium"
+                                >Which product? (optional)</label>
                             <select
                                 name="product_id"
                                 class="storefront-input-dark"
+                                id="gallery-product-id"
                                 data-test="gallery-upload-form-product-id"
                             >
                                 <option value="">— Select a product —</option>

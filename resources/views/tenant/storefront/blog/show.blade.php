@@ -15,7 +15,7 @@
     $tagList = is_array($post->tags) ? $post->tags : [];
 @endphp
 
-<x-layouts.storefront>
+<x-layouts.storefront :page-title="$post->title" :meta-description="$post->excerpt ?: null">
     <x-slot:styles>
         <style @cspnonce>
             /* Drop cap on the first paragraph of the article body. The Pophams

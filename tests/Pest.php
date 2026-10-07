@@ -155,6 +155,36 @@ function verifiedOrdersSession(array $orders): array
     ];
 }
 
+/**
+ * Bytes of a small JPEG that carries a GPS EXIF block (as phone photos do),
+ * for proving uploads are stored without location metadata. An orientation
+ * other than 1 is recorded too, as a phone held sideways would.
+ */
+function jpegWithGpsExif(int $orientation = 1): string
+{
+    $image = imagecreatetruecolor(32, 24);
+    ob_start();
+    imagejpeg($image);
+    $jpeg = (string) ob_get_clean();
+
+    $gpsIfdOffset = 8 + 2 + (2 * 12) + 4;
+    $rationalsOffset = $gpsIfdOffset + 2 + (3 * 12) + 4;
+    $tiff = 'MM'.pack('nN', 42, 8)
+        .pack('n', 2)
+        .pack('nnNn', 0x0112, 3, 1, $orientation)."\0\0"
+        .pack('nnNN', 0x8825, 4, 1, $gpsIfdOffset)
+        .pack('N', 0)
+        .pack('n', 3)
+        .pack('nnN', 1, 2, 2)."N\0\0\0"
+        .pack('nnNN', 2, 5, 3, $rationalsOffset)
+        .pack('nnN', 3, 2, 2)."W\0\0\0"
+        .pack('N', 0)
+        .pack('NNNNNN', 45, 1, 30, 1, 0, 1);
+    $exif = "Exif\0\0".$tiff;
+
+    return substr($jpeg, 0, 2)."\xFF\xE1".pack('n', strlen($exif) + 2).$exif.substr($jpeg, 2);
+}
+
 /*
 |--------------------------------------------------------------------------
 | Browser Test Helpers

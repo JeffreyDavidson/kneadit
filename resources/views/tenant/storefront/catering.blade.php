@@ -162,40 +162,53 @@
 
                 <div class="grid gap-6 md:grid-cols-2">
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Your Name *</label>
+                        <label for="catering-customer-name" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Your Name *</label>
                         <input
                             type="text"
                             name="customer_name"
                             value="{{ old('customer_name') }}"
                             required
                             class="input-field"
+                            id="catering-customer-name"
                             data-test="catering-form-customer-name"
                         />
                     </div>
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Email *</label>
+                        <label for="catering-customer-email" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Email *</label>
                         <input
                             type="email"
                             name="customer_email"
                             value="{{ old('customer_email') }}"
                             required
                             class="input-field"
+                            id="catering-customer-email"
                             data-test="catering-form-customer-email"
                         />
                     </div>
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Phone</label>
+                        <label for="catering-customer-phone" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Phone</label>
                         <input
                             type="tel"
                             name="customer_phone"
                             value="{{ old('customer_phone') }}"
                             class="input-field"
+                            id="catering-customer-phone"
                             data-test="catering-form-customer-phone"
                         />
                     </div>
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Event Type *</label>
-                        <select name="event_type" required class="input-field" data-test="catering-form-event-type">
+                        <label for="catering-event-type" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Event Type *</label>
+                        <select
+                            name="event_type"
+                            required
+                            class="input-field"
+                            id="catering-event-type"
+                            data-test="catering-form-event-type"
+                        >
                             <option value="">Select event type...</option>
                             @foreach ($settings->catering->eventTypes as $eventType)
                                 <option value="{{ $eventType }}" @selected(old('event_type') === $eventType)>
@@ -205,7 +218,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Event Date *</label>
+                        <label for="catering-event-date" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Event Date *</label>
                         <input
                             type="date"
                             name="event_date"
@@ -213,11 +227,13 @@
                             required
                             min="{{ now()->addDays((int) $settings->catering->leadTimeDays)->format('Y-m-d') }}"
                             class="input-field"
+                            id="catering-event-date"
                             data-test="catering-form-event-date"
                         />
                     </div>
                     <div>
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Number of Guests *</label>
+                        <label for="catering-guest-count" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Number of Guests *</label>
                         <input
                             type="number"
                             name="guest_count"
@@ -226,48 +242,59 @@
                             min="{{ $settings->catering->minimumGuests }}"
                             class="input-field"
                             placeholder="Minimum {{ $settings->catering->minimumGuests }}"
+                            id="catering-guest-count"
                             data-test="catering-form-guest-count"
                         />
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Budget Range</label>
+                        <label for="catering-budget" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Budget Range</label>
                         <input
                             type="text"
                             name="budget"
                             value="{{ old('budget') }}"
                             class="input-field"
                             placeholder="e.g. $500 - $1000 (optional)"
+                            id="catering-budget"
                             data-test="catering-form-budget"
                         />
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Tell Us What You'd Like *</label>
+                        <label for="catering-details" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Tell Us What You'd Like *</label>
                         <textarea
                             name="details"
                             required
                             rows="4"
                             class="input-field"
                             placeholder="Describe what baked goods you'd like, any themes, special requests..."
+                            id="catering-details"
                             data-test="catering-form-details"
                         >{{ old('details') }}</textarea>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Dietary Requirements</label>
+                        <label
+                            for="catering-dietary-requirements"
+                            class="text-warm-700 mb-2 block text-sm font-semibold"
+                        >Dietary Requirements</label>
                         <textarea
                             name="dietary_requirements"
                             rows="2"
                             class="input-field"
                             placeholder="Allergies, gluten-free, vegan, etc."
+                            id="catering-dietary-requirements"
                             data-test="catering-form-dietary-requirements"
                         >{{ old('dietary_requirements') }}</textarea>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-warm-700 mb-2 block text-sm font-semibold">Venue Address</label>
+                        <label for="catering-venue-address" class="text-warm-700 mb-2 block text-sm font-semibold"
+                            >Venue Address</label>
                         <textarea
                             name="venue_address"
                             rows="2"
                             class="input-field"
                             placeholder="Where should we deliver?"
+                            id="catering-venue-address"
                             data-test="catering-form-venue-address"
                         >{{ old('venue_address') }}</textarea>
                     </div>
