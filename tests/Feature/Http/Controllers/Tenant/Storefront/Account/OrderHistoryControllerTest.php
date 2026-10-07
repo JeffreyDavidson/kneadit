@@ -53,3 +53,19 @@ test('paginates at 20 orders per page', function () {
     $response->assertOk();
     $response->assertViewHas('orders', fn ($orders) => $orders->perPage() === 20 && $orders->total() === 25);
 });
+
+test('the Track link opens the order page, not the tracking form that ignores ?number', function () {
+    $customer = Customer::factory()->verified()->create();
+    $order = Order::factory()->for($customer)->create();
+
+    $html = withoutMiddleware(tenantMiddleware())
+        ->actingAs($customer, 'customer')
+        ->get('/account/orders')
+        ->assertOk()
+        ->getContent();
+    preg_match_all('/href="([^"]+)"\s+class="[^"]*"\s*>\s*Track\s*<\/a>/', $html, $matches);
+
+    expect($matches[1])->not->toBeEmpty()
+        ->and($matches[1])->each->toBe(route('order.confirmation', $order))
+        ->and($html)->not->toContain('track?number=');
+});

@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Supplier;
 use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
 
@@ -74,17 +75,13 @@ class ShoppingListService
 
             $bestSupplier = $ingredient->suppliers
                 ->where('is_active', true)
-                ->sortBy('pivot.unit_price')
+                ->sortBy(fn (Supplier $supplier): int => $supplier->pivot?->unit_price?->cents() ?? 0)
                 ->first();
 
-            /** @var object{unit_price: ?int, minimum_order: ?int, lead_time_days: int, sku: string}|null $pivot */
+            // The pivot casts unit_price and minimum_order to Money (stored as cents).
             $pivot = $bestSupplier?->pivot;
 
-            // ingredient_supplier.unit_price + .minimum_order are bigint cents
-            // (migration 2026_04_22_240000); the pivot has no cast so divide
-            // back to dollars at the boundary.
-            $pivotUnitPrice = $pivot?->unit_price !== null ? (int) $pivot->unit_price / 100 : null;
-            $effectiveUnitPrice = $pivotUnitPrice ?? $ingredient->cost_per_unit?->dollars() ?? 0;
+            $effectiveUnitPrice = $pivot?->unit_price?->dollars() ?? $ingredient->cost_per_unit?->dollars() ?? 0;
 
             $item = [
                 'ingredient_id' => $ingredient->id,
@@ -95,7 +92,7 @@ class ShoppingListService
                 'unit_price' => $effectiveUnitPrice,
                 'subtotal' => round($neededQty * (float) $effectiveUnitPrice, 2),
                 'sku' => $pivot?->sku,
-                'minimum_order' => $pivot?->minimum_order !== null ? (int) $pivot->minimum_order / 100 : null,
+                'minimum_order' => $pivot?->minimum_order?->dollars(),
                 'lead_time_days' => $pivot?->lead_time_days,
             ];
 

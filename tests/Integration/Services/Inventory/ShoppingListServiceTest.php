@@ -136,10 +136,35 @@ test('groups ingredients by supplier with best price', function () {
         ->and($result[$supplier->id]['items'])->not->toBeEmpty();
 });
 
+test('reads supplier prices written in dollars through the pivot as dollars', function () {
+    $supplier = Supplier::factory()->create();
+    $ingredient = Ingredient::factory()->lowStock()->create(['cost_per_unit' => 9.00]);
+    $ingredient->suppliers()->attach($supplier->id, ['unit_price' => 1.50, 'minimum_order' => 25.00]);
+
+    $item = resolve(ShoppingListService::class)->generate()[$supplier->id]['items'][0];
+
+    expect($item['unit_price'])->toBe(1.5)
+        ->and($item['minimum_order'])->toBe(25.0)
+        ->and($item['subtotal'])->toBe(round($item['needed'] * 1.5, 2));
+});
+
+test('picks the supplier with the lowest pivot price', function () {
+    $ingredient = Ingredient::factory()->lowStock()->create();
+    $dear = Supplier::factory()->create();
+    $cheap = Supplier::factory()->create();
+    $ingredient->suppliers()->attach($dear->id, ['unit_price' => 12.00]);
+    $ingredient->suppliers()->attach($cheap->id, ['unit_price' => 0.95]);
+
+    $result = resolve(ShoppingListService::class)->generate();
+
+    expect($result)->toHaveKey($cheap->id)->not->toHaveKey($dear->id)
+        ->and($result[$cheap->id]['items'][0]['unit_price'])->toBe(0.95);
+});
+
 test('accumulates supplier totals from rounded item subtotals', function () {
     $supplier = Supplier::factory()->create();
 
-    foreach ([10, 20, 33] as $unitPrice) {
+    foreach ([0.10, 0.20, 0.33] as $unitPrice) {
         $ingredient = Ingredient::factory()->lowStock()->create();
         $ingredient->suppliers()->attach($supplier->id, [
             'unit_price' => $unitPrice,

@@ -62,7 +62,7 @@ class TaxCsvExporter
             'other' => 'Other Expenses (Line 27a)',
         ];
 
-        Expense::query()->whereBetween('date', [$from, $to])
+        Expense::query()->inDateRange(DateRange::fromStrings($from, $to))
             ->orderBy('date')
             ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap): void {
                 foreach ($expenses as $expense) {
@@ -86,7 +86,7 @@ class TaxCsvExporter
         fputcsv($handle, ['=== INCOME ==='], escape: '\\');
         fputcsv($handle, ['Date', 'Source', 'Description', 'Amount', 'Category'], escape: '\\');
 
-        Income::query()->whereBetween('date', [$from, $to])
+        Income::query()->inDateRange(DateRange::fromStrings($from, $to))
             ->orderBy('date')
             ->chunk(100, function (Collection $incomes) use ($handle): void {
                 foreach ($incomes as $income) {
@@ -107,14 +107,16 @@ class TaxCsvExporter
     {
         // orders.total, incomes.amount, expenses.amount, expenses.deductible_amount
         // all bigint cents (migrations 2026_04_22_201500 + 2026_04_22_230000).
-        $totalOrderRevenue = (int) Order::query()->revenueInDateRange(DateRange::fromStrings($from, $to))
+        $range = DateRange::fromStrings($from, $to);
+
+        $totalOrderRevenue = (int) Order::query()->revenueInDateRange($range)
             ->sum('total') / 100;
 
-        $totalIncomeRevenue = (int) Income::query()->whereBetween('date', [$from, $to])->sum('amount') / 100;
+        $totalIncomeRevenue = (int) Income::query()->inDateRange($range)->sum('amount') / 100;
         $totalRevenue = $totalOrderRevenue + $totalIncomeRevenue;
 
-        $totalExpenses = (int) Expense::query()->whereBetween('date', [$from, $to])->sum('amount') / 100;
-        $totalDeductible = (int) Expense::query()->whereBetween('date', [$from, $to])->sum('deductible_amount') / 100;
+        $totalExpenses = (int) Expense::query()->inDateRange($range)->sum('amount') / 100;
+        $totalDeductible = (int) Expense::query()->inDateRange($range)->sum('deductible_amount') / 100;
         $netProfit = $totalRevenue - $totalDeductible;
 
         fputcsv($handle, ['=== TAX SUMMARY ==='], escape: '\\');
