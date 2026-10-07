@@ -3,6 +3,8 @@
 namespace App\Console\Commands\PayPal;
 
 use App\Actions\Orders\MarkOrderPaid;
+use App\Actions\PayPal\ReportLatePayPalPayment;
+use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
@@ -20,13 +22,11 @@ use Throwable;
 #[Description('Check PayPal invoice payment statuses and update orders across all tenants')]
 class CheckPayPalPaymentsCommand extends Command
 {
+    /** How long a cancelled order's invoice is still watched for a payment that arrives anyway. */
+    private const int CANCELLED_ORDER_WATCH_DAYS = 30;
+
     public function handle(TenancyManager $tenancyManager): int
     {
-        // Skip entirely if PayPal isn't configured at the platform level
-        if (! config('services.paypal.client_id')) {
-            return Command::SUCCESS;
-        }
-
         $failures = $tenancyManager->forEachTenant(
             function (Tenant $tenant): void {
                 // Skip tenants without PayPal configured
@@ -36,7 +36,12 @@ class CheckPayPalPaymentsCommand extends Command
 
                 // Built per tenant: the verifier reads that tenant's PayPal credentials when it is created,
                 // and marking an order paid reads the tenant's settings.
-                $this->processTenant($tenant, resolve(PaymentVerifier::class), resolve(MarkOrderPaid::class));
+                $this->processTenant(
+                    $tenant,
+                    resolve(PaymentVerifier::class),
+                    resolve(MarkOrderPaid::class),
+                    resolve(ReportLatePayPalPayment::class),
+                );
             },
             function (Tenant $tenant, Throwable $e): void {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
@@ -47,10 +52,14 @@ class CheckPayPalPaymentsCommand extends Command
         return $failures > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
-    protected function processTenant(Tenant $tenant, PaymentVerifier $paymentVerifier, MarkOrderPaid $markOrderPaid): void
-    {
-        $orders = Order::query()->where('payment_status', PaymentStatus::Unpaid)
-            ->whereNotNull('paypal_invoice_id')
+    protected function processTenant(
+        Tenant $tenant,
+        PaymentVerifier $paymentVerifier,
+        MarkOrderPaid $markOrderPaid,
+        ReportLatePayPalPayment $reportLatePayment,
+    ): void {
+        $orders = Order::query()
+            ->awaitingPayPalCheck(now()->subDays(self::CANCELLED_ORDER_WATCH_DAYS))
             ->get();
 
         if ($orders->isEmpty()) {
@@ -72,6 +81,12 @@ class CheckPayPalPaymentsCommand extends Command
                 continue;
             }
 
+            if ($order->status === OrderStatus::Cancelled) {
+                $this->checkCancelledOrder($order, $order->paypal_invoice_id, $status, $reportLatePayment);
+
+                continue;
+            }
+
             match ($status) {
                 'PAID' => tap($order, function (Order $o) use ($markOrderPaid): void {
                     $markOrderPaid($o);
@@ -89,5 +104,19 @@ class CheckPayPalPaymentsCommand extends Command
                 default => null,
             };
         }
+    }
+
+    /**
+     * A cancelled order is never marked paid or refunded. Its invoice was cancelled with it,
+     * so the only thing worth acting on is a customer who paid it anyway.
+     */
+    private function checkCancelledOrder(Order $order, string $invoiceId, string $status, ReportLatePayPalPayment $reportLatePayment): void
+    {
+        if ($status !== 'PAID') {
+            return;
+        }
+
+        $reportLatePayment($order, $invoiceId);
+        $this->warn("  ⚠ #{$order->order_number} was cancelled but its invoice was paid: refund it in PayPal");
     }
 }
