@@ -6,6 +6,7 @@ use App\Services\Platform\ScheduledTaskMonitor;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -22,6 +23,11 @@ beforeEach(function () {
     // A scheduler that has run recently, so the heartbeat check passes.
     resolve(ScheduledTaskMonitor::class)->started('health:check');
 
+    // A backup that has just run, so the backup check passes.
+    test()->backupPath = sys_get_temp_dir().'/kneadit_test_backups_'.getmypid();
+    File::ensureDirectoryExists(test()->backupPath.'/'.now()->format('Y-m-d_H-i-s'));
+    config(['backups.path' => test()->backupPath]);
+
     // Point storage to a real writable temp directory so the health check passes
     $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
     @mkdir($tempStorage.'/logs', 0755, true);
@@ -33,6 +39,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    File::deleteDirectory(test()->backupPath);
+
     $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
     @rmdir($tempStorage.'/logs');
     @rmdir($tempStorage);
@@ -238,6 +246,43 @@ test('health check detects non-writable storage logs', function () {
     $this->artisan('health:check')
         ->expectsOutputToContain('Storage/logs')
         ->assertFailed();
+});
+
+test('health check verifies a recent database backup', function () {
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Database backup OK')
+        ->assertSuccessful();
+});
+
+test('health check fails and alerts when the newest database backup is stale', function () {
+    Mail::fake();
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+    File::deleteDirectory(test()->backupPath);
+    File::ensureDirectoryExists(test()->backupPath.'/'.now()->subHours(14)->format('Y-m-d_H-i-s'));
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Database backup stale')
+        ->assertFailed();
+
+    Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => str_contains($mail->alertMessage, 'Database backup stale'));
+});
+
+test('health check fails and alerts when the last database backup run failed', function () {
+    Mail::fake();
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+    resolve(ScheduledTaskMonitor::class)->started('backup:databases');
+    resolve(ScheduledTaskMonitor::class)->succeeded('backup:databases', 3.0, 1);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Database backup failed')
+        ->assertFailed();
+
+    Mail::assertSent(HealthAlertMail::class, fn (HealthAlertMail $mail): bool => str_contains($mail->alertMessage, 'Database backup failed'));
 });
 
 test('health check verifies tenant db directory', function () {

@@ -2,6 +2,9 @@
 
 use App\Console\Commands\Operations\BackupDatabasesCommand;
 use App\Models\Platform\Tenant;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +15,7 @@ beforeEach(function () {
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     File::ensureDirectoryExists(dirname($centralDatabase));
-    File::put($centralDatabase, 'central database');
+    createBackupSourceDatabase($centralDatabase, ['central note']);
     config(['database.connections.sqlite.database' => $centralDatabase]);
 });
 
@@ -24,6 +27,46 @@ afterEach(function () {
 
     File::deleteDirectory(config('backups.path'));
 });
+
+/**
+ * Creates a real SQLite database in WAL mode, as production runs.
+ *
+ * @param  array<int, string>  $notes
+ */
+function createBackupSourceDatabase(string $path, array $notes): void
+{
+    File::delete([$path, "{$path}-wal", "{$path}-shm"]);
+    File::put($path, '');
+
+    $connection = openBackupTestConnection($path);
+    $connection->statement('CREATE TABLE notes (id INTEGER PRIMARY KEY, body TEXT)');
+
+    foreach ($notes as $note) {
+        $connection->table('notes')->insert(['body' => $note]);
+    }
+
+    $connection->disconnect();
+}
+
+/** A connection to a real SQLite file with the app's SQLite settings (WAL mode). */
+function openBackupTestConnection(string $path): Connection
+{
+    return resolve('db.factory')->make([
+        ...config('database.connections.sqlite'),
+        'url' => null,
+        'database' => $path,
+    ], 'backup-test');
+}
+
+/** @return array<int, string> */
+function readBackupNotes(string $path): array
+{
+    $connection = openBackupTestConnection($path);
+    $notes = $connection->table('notes')->orderBy('id')->pluck('body')->all();
+    $connection->disconnect();
+
+    return $notes;
+}
 
 test('backup command exists', function () {
     $this->artisan('backup:databases')
@@ -82,15 +125,11 @@ test('backup creates timestamped subdirectory', function () {
         ->and(basename($subdirs[0]))->toMatch('/^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/');
 });
 
-test('backup secures the central database copy', function () {
+test('backup writes a secured, standalone snapshot of the central database', function () {
     Carbon::setTestNow('2026-08-25 15:00:00');
 
     $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
-    File::put($centralDatabase, 'central database');
-    File::put($centralDatabase.'-wal', 'central wal');
-    File::put($centralDatabase.'-shm', 'central shm');
-    config(['database.connections.sqlite.database' => $centralDatabase]);
 
     try {
         $this->artisan('backup:databases')->assertSuccessful();
@@ -98,13 +137,116 @@ test('backup secures the central database copy', function () {
         expect("{$backupDirectory}/central.sqlite")
             ->toBeFile()
             ->and(fileperms("{$backupDirectory}/central.sqlite") & 0777)->toBe(0600)
-            ->and("{$backupDirectory}/central.sqlite-wal")->toBeFile()
-            ->and("{$backupDirectory}/central.sqlite-shm")->toBeFile();
+            ->and(glob("{$backupDirectory}/*"))->toBe(["{$backupDirectory}/central.sqlite"])
+            ->and(readBackupNotes("{$backupDirectory}/central.sqlite"))->toBe(['central note']);
     } finally {
         Carbon::setTestNow();
-        File::delete($centralDatabase);
-        File::delete($centralDatabase.'-wal');
-        File::delete($centralDatabase.'-shm');
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
+test('backup includes rows that are only in the write-ahead log and leaves out uncommitted ones', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
+
+    // A live app: the writer keeps the database open, so committed rows stay in
+    // the -wal file (never checkpointed into the main file), and a second
+    // transaction is still in flight when the backup runs.
+    $writer = openBackupTestConnection($centralDatabase);
+    $writer->statement('PRAGMA wal_autocheckpoint = 0');
+    $writer->table('notes')->insert(['body' => 'committed in wal']);
+
+    $inFlight = openBackupTestConnection($centralDatabase);
+    $inFlight->beginTransaction();
+    $inFlight->table('notes')->insert(['body' => 'not committed']);
+
+    try {
+        $this->artisan('backup:databases')->assertSuccessful();
+
+        expect(glob("{$backupDirectory}/*"))->toBe(["{$backupDirectory}/central.sqlite"])
+            ->and(readBackupNotes("{$backupDirectory}/central.sqlite"))->toBe(['central note', 'committed in wal']);
+    } finally {
+        $inFlight->rollBack();
+        $writer->disconnect();
+        $inFlight->disconnect();
+        Carbon::setTestNow();
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
+test('backup checks the integrity of every snapshot', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
+
+    $command = new #[Signature('backup:databases {--keep=7}')] class extends BackupDatabasesCommand
+    {
+        /** @var array<int, string> */
+        public array $checked = [];
+
+        protected function integrityCheck(string $path): string
+        {
+            $this->checked[] = basename($path);
+
+            return parent::integrityCheck($path);
+        }
+    };
+    app(Kernel::class)->registerCommand($command);
+
+    try {
+        $this->artisan('backup:databases')->assertSuccessful();
+
+        expect($command->checked)->toBe(['central.sqlite']);
+    } finally {
+        Carbon::setTestNow();
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
+test('backup fails loudly and publishes nothing when a snapshot fails its integrity check', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
+
+    app(Kernel::class)->registerCommand(new #[Signature('backup:databases {--keep=7}')] class extends BackupDatabasesCommand
+    {
+        protected function integrityCheck(string $path): string
+        {
+            return 'row 1 missing from index notes_body';
+        }
+    });
+
+    try {
+        $this->artisan('backup:databases')
+            ->expectsOutputToContain('failed its integrity check: row 1 missing from index notes_body')
+            ->assertFailed();
+
+        expect($backupDirectory)->not->toBeDirectory()
+            ->and(glob(dirname($backupDirectory).'/*.in-progress-*') ?: [])->toBeEmpty();
+    } finally {
+        Carbon::setTestNow();
+        File::deleteDirectory($backupDirectory);
+    }
+});
+
+test('backup fails when the central database is not a readable SQLite database', function () {
+    Carbon::setTestNow('2026-08-25 15:00:00');
+
+    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
+    File::delete([$centralDatabase, "{$centralDatabase}-wal", "{$centralDatabase}-shm"]);
+    File::put($centralDatabase, str_repeat('not a database', 200));
+    $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
+
+    try {
+        $this->artisan('backup:databases')
+            ->expectsOutputToContain('Backup failed')
+            ->assertFailed();
+
+        expect($backupDirectory)->not->toBeDirectory();
+    } finally {
+        Carbon::setTestNow();
         File::deleteDirectory($backupDirectory);
     }
 });
@@ -121,15 +263,10 @@ test('backup fails when the central database is missing', function () {
 test('backup fails when a tenant database is missing', function () {
     Carbon::setTestNow('2026-08-25 15:00:00');
 
-    $centralDatabase = storage_path('framework/testing/backup-central.sqlite');
     $tenantDbDirectory = storage_path('framework/testing/backup-tenant-databases');
     $backupDirectory = config('backups.path').'/2026-08-25_15-00-00';
-    File::put($centralDatabase, 'central database');
     File::ensureDirectoryExists($tenantDbDirectory);
-    config([
-        'database.connections.sqlite.database' => $centralDatabase,
-        'tenancy.tenant_db_path' => $tenantDbDirectory,
-    ]);
+    config(['tenancy.tenant_db_path' => $tenantDbDirectory]);
 
     try {
         Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'missing-backup-tenant']));
@@ -143,7 +280,6 @@ test('backup fails when a tenant database is missing', function () {
             ->and(glob(dirname($backupDirectory).'/*.in-progress-*') ?: [])->toBeEmpty();
     } finally {
         Carbon::setTestNow();
-        File::delete($centralDatabase);
         File::deleteDirectory($tenantDbDirectory);
         File::deleteDirectory($backupDirectory);
     }
@@ -165,9 +301,7 @@ test('backup includes extensionless tenant databases from the configured directo
     try {
         $tenant = Tenant::withoutEvents(fn (): Tenant => Tenant::factory()->create(['id' => 'backup-tenant']));
         $databaseName = (string) $tenant->database()->getName();
-        File::put("{$tenantDbDirectory}/{$databaseName}", 'tenant database');
-        File::put("{$tenantDbDirectory}/{$databaseName}-wal", 'tenant wal');
-        File::put("{$tenantDbDirectory}/{$databaseName}-shm", 'tenant shm');
+        createBackupSourceDatabase("{$tenantDbDirectory}/{$databaseName}", ['tenant note']);
 
         $this->artisan('backup:databases')
             ->expectsOutputToContain('1 tenant database(s)')
@@ -176,8 +310,8 @@ test('backup includes extensionless tenant databases from the configured directo
         expect("{$backupDirectory}/{$databaseName}")
             ->toBeFile()
             ->and(fileperms("{$backupDirectory}/{$databaseName}") & 0777)->toBe(0600)
-            ->and("{$backupDirectory}/{$databaseName}-wal")->toBeFile()
-            ->and("{$backupDirectory}/{$databaseName}-shm")->toBeFile();
+            ->and(glob("{$backupDirectory}/{$databaseName}-*") ?: [])->toBeEmpty()
+            ->and(readBackupNotes("{$backupDirectory}/{$databaseName}"))->toBe(['tenant note']);
     } finally {
         Carbon::setTestNow();
         File::deleteDirectory($tenantDbDirectory);

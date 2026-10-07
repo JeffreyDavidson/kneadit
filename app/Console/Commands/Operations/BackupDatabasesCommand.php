@@ -7,7 +7,7 @@ use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -36,7 +36,7 @@ class BackupDatabasesCommand extends Command
             $centralDb = Config::string('database.connections.sqlite.database');
             if ($centralDb !== '' && file_exists($centralDb)) {
                 $dest = "{$stagingPath}/central.sqlite";
-                $this->copyDatabase($centralDb, $dest);
+                $this->snapshotDatabase($centralDb, $dest);
                 $this->info('  ✓ Central DB ('.$this->formatSize((int) filesize($centralDb)).')');
             } else {
                 $this->warn("  ⚠ Central DB not found at: {$centralDb}");
@@ -62,7 +62,7 @@ class BackupDatabasesCommand extends Command
 
                     $filename = basename($tenantDb);
                     $destination = "{$stagingPath}/{$filename}";
-                    $this->copyDatabase($tenantDb, $destination);
+                    $this->snapshotDatabase($tenantDb, $destination);
                     $count++;
                 }
 
@@ -157,13 +157,25 @@ class BackupDatabasesCommand extends Command
         );
     }
 
-    protected function copyDatabase(string $source, string $destination): void
+    /**
+     * Writes a consistent, standalone snapshot of a live SQLite database. VACUUM INTO
+     * reads one transaction's view of the database (including rows that are still
+     * only in the -wal file) and writes a single file, so a checkpoint or write
+     * while the backup runs cannot produce a torn copy. The copy is then checked
+     * with PRAGMA integrity_check; anything but "ok" fails the backup.
+     */
+    protected function snapshotDatabase(string $source, string $destination): void
     {
-        throw_unless(
-            File::copy($source, $destination),
-            RuntimeException::class,
-            "Failed to copy database backup to {$destination}.",
-        );
+        $previousUmask = umask(0077);
+
+        $connection = $this->openSqliteConnection($source, busyTimeoutMilliseconds: 30000);
+
+        try {
+            $connection->statement('VACUUM INTO ?', [$destination]);
+        } finally {
+            $connection->disconnect();
+            umask($previousUmask);
+        }
 
         throw_unless(
             File::chmod($destination, 0600),
@@ -171,27 +183,45 @@ class BackupDatabasesCommand extends Command
             "Failed to secure database backup at {$destination}.",
         );
 
-        $sidecars = Arr::reject(
-            ['-wal', '-shm'],
-            fn (string $suffix): bool => is_link($source.$suffix) || ! File::isFile($source.$suffix),
+        $result = $this->integrityCheck($destination);
+
+        throw_unless(
+            $result === 'ok',
+            RuntimeException::class,
+            "Database backup {$destination} failed its integrity check: {$result}",
         );
+    }
 
-        foreach ($sidecars as $suffix) {
-            $sidecarSource = $source.$suffix;
+    /** Returns "ok", or the first problem SQLite reports for the database file. */
+    protected function integrityCheck(string $path): string
+    {
+        $connection = $this->openSqliteConnection($path, busyTimeoutMilliseconds: 5000);
 
-            $sidecarDestination = $destination.$suffix;
-            throw_unless(
-                File::copy($sidecarSource, $sidecarDestination),
-                RuntimeException::class,
-                "Failed to copy database sidecar backup to {$sidecarDestination}.",
-            );
-
-            throw_unless(
-                File::chmod($sidecarDestination, 0600),
-                RuntimeException::class,
-                "Failed to secure database sidecar backup at {$sidecarDestination}.",
-            );
+        try {
+            $result = $connection->scalar('PRAGMA integrity_check');
+        } finally {
+            $connection->disconnect();
         }
+
+        return is_string($result) ? $result : 'no result';
+    }
+
+    /**
+     * A throwaway connection to one SQLite file, built from the app's SQLite
+     * settings but leaving the file's journal mode alone (a backup copy must stay
+     * a single file). It is not registered with the database manager, so it
+     * never becomes a configured connection.
+     */
+    private function openSqliteConnection(string $path, int $busyTimeoutMilliseconds): Connection
+    {
+        return resolve('db.factory')->make([
+            ...Config::array('database.connections.sqlite'),
+            'url' => null,
+            'database' => $path,
+            'busy_timeout' => $busyTimeoutMilliseconds,
+            'journal_mode' => null,
+            'synchronous' => null,
+        ], 'backup-snapshot');
     }
 
     protected function dirSize(string $dir): int
