@@ -35,6 +35,22 @@ class AnnouncementResource extends Resource
     #[\Override]
     protected static ?int $navigationSort = 6;
 
+    /**
+     * Hidden until the bakery-side banner renders platform announcements: today
+     * nothing shows them to bakeries. Parked work: audit 2026-10-06, E7.
+     */
+    #[\Override]
+    public static function canViewAny(): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     #[\Override]
     public static function form(Schema $form): Schema
     {

@@ -5,6 +5,10 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
 use App\Presenters\LoyaltyRewardPresenter;
 use App\Services\Customers\CustomerIntelligence;
+use Illuminate\Support\Facades\Route;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -86,12 +90,13 @@ test('loyalty points belong to customer', function () {
 });
 
 test('rewards history shows the signed points for each entry type', function (callable $seed, string $expected, string $unexpected) {
-    $customer = Customer::factory()->create();
+    $customer = Customer::factory()->verified()->withPassword()->create();
     $seed($customer);
 
-    $response = test()
-        ->withoutMiddleware(tenantMiddleware())
-        ->post(route('rewards.check', [], false), ['email' => $customer->email]);
+    actingAs($customer, 'customer');
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false));
 
     $text = preg_replace('/\s+/', '', strip_tags($response->getContent()));
     $response->assertOk();
@@ -104,3 +109,83 @@ test('rewards history shows the signed points for each entry type', function (ca
     'negative adjustment' => [fn (Customer $customer) => LoyaltyPoint::factory()->adjusted(-25)->for($customer)->create(), '-25', '+-25'],
     'positive adjustment' => [fn (Customer $customer) => LoyaltyPoint::factory()->adjusted(40)->for($customer)->create(), '+40', '+-40'],
 ]);
+
+test('a signed-out visitor sees the program but no points and no email lookup', function () {
+    $other = Customer::factory()->verified()->withPassword()->create(['name' => 'Priya Patel']);
+    LoyaltyPoint::factory()->earned(4321)->for($other)->create(['description' => 'Secret order']);
+    LoyaltyReward::factory()->freeProduct()->create(['name' => 'Free Cookie', 'points_required' => 100]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false));
+
+    $response->assertOk()
+        ->assertSee('Free Cookie')
+        ->assertSee('Sign in to see your points')
+        ->assertSeeHtml(route('account.login.show'))
+        ->assertDontSee('Priya Patel')
+        ->assertDontSee('4,321')
+        ->assertDontSee('Secret order')
+        ->assertDontSee('loyalty-lookup-form')
+        ->assertDontSee('Check Balance');
+});
+
+test('the points lookup by email no longer exists', function () {
+    $customer = Customer::factory()->verified()->withPassword()->create();
+    LoyaltyPoint::factory()->earned(150)->for($customer)->create();
+
+    expect(Route::has('rewards.check'))->toBeFalse();
+
+    withoutMiddleware(tenantMiddleware())
+        ->post('/rewards/check', ['email' => $customer->email])
+        ->assertNotFound();
+});
+
+test('a signed-in verified customer sees only their own points', function () {
+    $customer = Customer::factory()->verified()->withPassword()->create(['name' => 'Alice Baker']);
+    LoyaltyPoint::factory()->earned(150)->for($customer)->create(['description' => 'Alice order']);
+    $other = Customer::factory()->verified()->withPassword()->create(['name' => 'Priya Patel']);
+    LoyaltyPoint::factory()->earned(4321)->for($other)->create(['description' => 'Priya order']);
+
+    actingAs($customer, 'customer');
+
+    withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false))
+        ->assertOk()
+        ->assertSee('Alice Baker')
+        ->assertSee('Alice order')
+        ->assertSee('150')
+        ->assertDontSee('Priya Patel')
+        ->assertDontSee('Priya order')
+        ->assertDontSee('4,321')
+        ->assertDontSee('Sign in to see your points')
+        ->assertDontSee('loyalty-lookup-form');
+});
+
+test('a signed-in customer with an unverified email is sent to verify', function () {
+    $customer = Customer::factory()->unverified()->withPassword()->create();
+    LoyaltyPoint::factory()->earned(150)->for($customer)->create();
+
+    actingAs($customer, 'customer');
+
+    withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false))
+        ->assertRedirect(route('account.email.verify.notice'));
+});
+
+test('signing in from the rewards page returns the customer to the rewards page', function () {
+    $customer = Customer::factory()->verified()->create([
+        'email' => 'alice@example.com',
+        'password' => 'password123',
+    ]);
+
+    withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false))
+        ->assertOk();
+
+    withoutMiddleware(tenantMiddleware())
+        ->post(route('account.login', [], false), [
+            'email' => $customer->email,
+            'password' => 'password123',
+        ])
+        ->assertRedirect(route('storefront.rewards'));
+});

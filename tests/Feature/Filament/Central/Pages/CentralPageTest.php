@@ -5,8 +5,6 @@ use App\Filament\Central\Pages\Analytics;
 use App\Filament\Central\Pages\BakeryInsights;
 use App\Filament\Central\Pages\Dashboard;
 use App\Filament\Central\Pages\DataExport;
-use App\Filament\Central\Pages\FeatureUsage;
-use App\Filament\Central\Pages\MaintenanceMode;
 use App\Filament\Central\Pages\OnboardingTracker;
 use App\Filament\Central\Pages\TenantComparison;
 use App\Models\Staff\User;
@@ -29,10 +27,8 @@ dataset('centralPageGroups', [
     'Operations pages' => [
         Activity::class,
         DataExport::class,
-        MaintenanceMode::class,
     ],
     'Platform pages' => [
-        FeatureUsage::class,
         OnboardingTracker::class,
         TenantComparison::class,
     ],

@@ -34,3 +34,21 @@ test('referral program page can render', function () {
     livewire(ReferralProgram::class)
         ->assertOk();
 });
+
+test('referral program page no longer promises a free month', function (string $text) {
+    livewire(ReferralProgram::class)
+        ->assertOk()
+        ->assertDontSee($text);
+})->with([
+    'headline' => 'Earn 1 free month per referral',
+    'promise' => 'free month',
+    'months earned stat' => 'Months Earned',
+]);
+
+test('referral program page still shares the link and counts referrals', function () {
+    livewire(ReferralProgram::class)
+        ->assertOk()
+        ->assertSee('Your Referral Link')
+        ->assertSee('Total Referrals')
+        ->assertSee('Completed');
+});

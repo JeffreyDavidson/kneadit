@@ -33,7 +33,11 @@ class Activity extends Page
     #[\Override]
     protected string $view = 'filament.central.pages.activity';
 
-    public string $activeTab = 'platform';
+    /**
+     * The platform events tab ('platform') is parked, so the page opens on the
+     * admin actions tab. Make 'platform' the default again when it returns.
+     */
+    public string $activeTab = 'audit';
 
     // ── Platform Events filters ──
 
@@ -67,6 +71,22 @@ class Activity extends Page
     public int $page = 1;
 
     public int $perPage = 20;
+
+    /**
+     * Hidden until something writes platform events: the tab reads a table that
+     * stays empty. Parked work: audit 2026-10-06, E14.
+     */
+    public function hasPlatformEventsTab(): bool
+    {
+        return false;
+    }
+
+    public function updatedActiveTab(): void
+    {
+        if ($this->activeTab === 'platform' && ! $this->hasPlatformEventsTab()) {
+            $this->activeTab = 'audit';
+        }
+    }
 
     // ── Platform Events (Activity Log) Methods ──
 
