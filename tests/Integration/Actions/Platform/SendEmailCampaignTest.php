@@ -88,7 +88,7 @@ test('targets the bakery owners of each campaign segment', function (EmailCampai
     Tenant::factory()->growth()->create(['email' => 'growth@example.com']);
     Tenant::factory()->pro()->create(['email' => 'pro@example.com']);
     Tenant::factory()->pro()->onTrial()->create(['email' => 'trial@example.com']);
-    Tenant::factory()->inactive()->create(['email' => 'inactive@example.com']);
+    Tenant::factory()->paused()->create(['email' => 'inactive@example.com']);
 
     $campaign = EmailCampaign::factory()->create(['target_segment' => $segment]);
 
@@ -96,12 +96,12 @@ test('targets the bakery owners of each campaign segment', function (EmailCampai
 
     expectCampaignSentTo($campaign, $expected);
 })->with([
-    'all active bakeries' => [EmailCampaignSegment::All, ['starter@example.com', 'growth@example.com', 'pro@example.com', 'trial@example.com']],
+    'all bakeries that are not paused' => [EmailCampaignSegment::All, ['starter@example.com', 'growth@example.com', 'pro@example.com', 'trial@example.com']],
     'starter' => [EmailCampaignSegment::Starter, ['starter@example.com']],
     'growth' => [EmailCampaignSegment::Growth, ['growth@example.com']],
     'pro' => [EmailCampaignSegment::Pro, ['pro@example.com', 'trial@example.com']],
     'trial' => [EmailCampaignSegment::Trial, ['trial@example.com']],
-    'inactive' => [EmailCampaignSegment::Inactive, ['inactive@example.com']],
+    'inactive means paused' => [EmailCampaignSegment::Inactive, ['inactive@example.com']],
 ]);
 
 test('records a log row for each owner it emails', function () {

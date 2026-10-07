@@ -11,12 +11,13 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-function setTenantPlanForAccess(string $plan): void
+function setTenantPlanForAccess(string $plan, bool $freeForever = false): void
 {
     tenancy()->getBootstrappersUsing = fn (): array => [];
     tenancy()->initialize(new Tenant([
         'id' => 'access-control-test',
         'plan' => SubscriptionTier::from($plan),
+        'free_forever' => $freeForever,
     ]));
 
     Feature::purge(['growth-features', 'pro-features']);
@@ -59,7 +60,22 @@ test('starter plan has no access to growth or pro features', function () {
     expect(Feature::active('growth-features'))->toBeFalse()->and(Feature::active('pro-features'))->toBeFalse();
 });
 
+test('a free-forever bakery gets every Pro feature whatever its stored plan', function (string $plan) {
+    setTenantPlanForAccess($plan, freeForever: true);
+
+    expect(Feature::active('growth-features'))->toBeTrue()
+        ->and(Feature::active('pro-features'))->toBeTrue();
+})->with(['starter', 'growth', 'pro']);
+
 // --- ShowsUpgradeBadge tests ---
+
+test('a free-forever bakery sees no upgrade badges', function () {
+    setTenantPlanForAccess('starter', freeForever: true);
+
+    expect(GrowthBadgeStub::getNavigationBadge())->toBeNull()
+        ->and(ProBadgeStub::getNavigationBadge())->toBeNull()
+        ->and(ProBadgeStub::getNavigationBadgeColor())->toBeNull();
+});
 
 test('navigation badge shows tier name for locked features', function () {
     setTenantPlanForAccess('starter');

@@ -87,18 +87,6 @@ class NeedsAttention extends Widget
             ];
         }
 
-        $deactivated = Tenant::query()->where('is_active', false)->count();
-        if ($deactivated > 0) {
-            $items[] = [
-                'severity' => 'info',
-                'icon' => Heroicon::OutlinedNoSymbol,
-                'title' => $deactivated.' deactivated '.str('bakery')->plural($deactivated),
-                'subtitle' => 'Currently blocked from accessing the platform',
-                'cta' => 'Review',
-                'url' => TenantResource::getUrl('index'),
-            ];
-        }
-
         return $items;
     }
 }

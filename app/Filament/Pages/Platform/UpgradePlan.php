@@ -40,7 +40,7 @@ class UpgradePlan extends Page
 
     public function mount(): void
     {
-        $this->currentPlan = $this->tenant()->plan->value;
+        $this->currentPlan = $this->tenant()->effective_plan->value;
 
         $this->plans = [
             SubscriptionTier::Starter->value => [

@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Console\Attributes\Description;
@@ -34,7 +35,6 @@ class CreateOneTenantCommand extends Command
             'store_name' => $this->argument('store_name'),
             'brand_color_primary' => $this->argument('brand_primary'),
             'brand_color_secondary' => $this->argument('brand_secondary'),
-            'is_active' => true,
         ]);
 
         Domain::query()->create(['domain' => $domain, 'tenant_id' => $tenant->id]);
@@ -55,6 +55,7 @@ class CreateOneTenantCommand extends Command
                 'email' => $tenant->email,
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => UserRole::Owner->value,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

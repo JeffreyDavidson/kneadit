@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class ActiveBakeriesQuery
 {
     /**
-     * Get all active, unpaused tenants with storefronts enabled.
+     * Get all unpaused tenants with storefronts enabled.
      *
      * @return Collection<int, array{name: string, url: string, color: string}>
      */
@@ -19,7 +19,6 @@ class ActiveBakeriesQuery
         $tenantUrls = resolve(TenantUrlGenerator::class);
 
         return Tenant::query()
-            ->where('is_active', true)
             ->where('storefront_enabled', true)
             ->whereNull('paused_at')
             ->get()

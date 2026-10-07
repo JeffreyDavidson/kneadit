@@ -27,7 +27,7 @@ test('the MRR stat sums valid paid subscriptions, not every active bakery', func
     }
 
     // Active, but on the free trial: no MRR.
-    createTenant(['id' => 'bakery3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Pro, 'is_active' => true, 'trial_ends_at' => now()->addDays(7)]);
+    createTenant(['id' => 'bakery3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Pro, 'trial_ends_at' => now()->addDays(7)]);
 
     livewire(PlatformStats::class)
         ->assertSee('$28.00')
@@ -60,7 +60,7 @@ test('open tickets count', function () {
 
 test('total tenants count', function () {
     createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter]);
-    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Growth, 'is_active' => false]);
+    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Growth, 'paused_at' => now()]);
 
     expect(Tenant::query()->count())->toBe(2);
 });

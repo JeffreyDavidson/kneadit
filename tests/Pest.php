@@ -625,7 +625,6 @@ function createTenant(array $attributes = []): stdClass
         'name' => 'Test Owner',
         'email' => 'test@example.com',
         'plan' => SubscriptionTier::Starter,
-        'is_active' => true,
         'storefront_enabled' => true,
         'brand_color_primary' => '#d4920c',
         'brand_color_secondary' => '#1c1410',

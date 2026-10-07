@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Listeners\Platform;
 
+use App\Actions\Platform\CancelOwnerSubscriptions;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
-use Laravel\Cashier\Subscription;
 use Stancl\Tenancy\Events\DeletingTenant;
 
 /**
@@ -22,6 +22,8 @@ use Stancl\Tenancy\Events\DeletingTenant;
  */
 class CancelOwnerSubscriptionListener
 {
+    public function __construct(private readonly CancelOwnerSubscriptions $cancelSubscriptions) {}
+
     public function handle(DeletingTenant $event): void
     {
         /** @var Tenant $tenant */
@@ -35,12 +37,6 @@ class CancelOwnerSubscriptionListener
             return;
         }
 
-        $subscription = $owner->subscription('default');
-
-        if (! $subscription instanceof Subscription || ! $subscription->valid() || $subscription->canceled()) {
-            return;
-        }
-
-        $subscription->cancel();
+        ($this->cancelSubscriptions)($owner);
     }
 }

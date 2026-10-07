@@ -30,6 +30,28 @@ test('saving a domain that belongs to another bakery shows a validation error an
     expect(test()->tenant->refresh()->custom_domain)->toBeNull();
 });
 
+test('a free-forever bakery on the Starter plan can save a custom domain', function () {
+    test()->tenant->update(['plan' => 'starter', 'free_forever' => true]);
+
+    livewire(CustomDomain::class)
+        ->set('custom_domain', 'comped.example.com')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(test()->tenant->refresh()->custom_domain)->toBe('comped.example.com');
+});
+
+test('a Starter bakery that is not free forever cannot save a custom domain', function () {
+    test()->tenant->update(['plan' => 'starter', 'free_forever' => false]);
+
+    livewire(CustomDomain::class)
+        ->set('custom_domain', 'paid-less.example.com')
+        ->call('save')
+        ->assertNotified('Custom domains are available on Growth and Pro plans');
+
+    expect(test()->tenant->refresh()->custom_domain)->toBeNull();
+});
+
 test('saving a pasted URL stores the normalized hostname', function () {
     livewire(CustomDomain::class)
         ->set('custom_domain', 'HTTPS://Shop.Example.com/')

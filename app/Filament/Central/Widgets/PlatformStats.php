@@ -60,8 +60,8 @@ class PlatformStats extends StatsOverviewWidget
      */
     private function loadData(): array
     {
-        $allTenants = Tenant::query()->select('is_active', 'created_at', 'trial_ends_at')->get();
-        $activeTenants = $allTenants->where('is_active', true);
+        $allTenants = Tenant::query()->select('paused_at', 'created_at', 'trial_ends_at')->get();
+        $activeTenants = $allTenants->whereNull('paused_at');
         $revenue = resolve(PlatformRevenueMetricsQuery::class);
         $metrics = $revenue->get();
         $totalTenants = $allTenants->count();

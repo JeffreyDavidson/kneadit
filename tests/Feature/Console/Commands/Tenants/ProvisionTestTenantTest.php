@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,8 @@ test('browser test tenant can use a DNS-free domain', function () {
             ->assertSuccessful();
 
         expect(Tenant::query()->whereKey('browser-test')->exists())->toBeTrue()
-            ->and(Domain::query()->where('domain', '[::1]')->exists())->toBeTrue();
+            ->and(Domain::query()->where('domain', '[::1]')->exists())->toBeTrue()
+            ->and(Tenant::query()->findOrFail('browser-test')->run(fn () => DB::table('users')->value('role')))->toBe(UserRole::Owner->value);
     } finally {
         if (tenancy()->initialized) {
             tenancy()->end();
