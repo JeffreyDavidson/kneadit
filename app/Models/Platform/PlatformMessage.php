@@ -39,7 +39,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Connection('central')]
-#[Fillable('tenant_id', 'parent_id', 'sender_type', 'subject', 'body', 'is_read')]
+#[Fillable('tenant_id', 'parent_id', 'sender_type', 'subject', 'body', 'is_read', 'read_at')]
 #[UseEloquentBuilder(PlatformMessageQueryBuilder::class)]
 #[UseFactory(PlatformMessageFactory::class)]
 class PlatformMessage extends Model

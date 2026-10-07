@@ -99,6 +99,25 @@ test('quick order date picker starts at the bakery-local day', function () {
     expect(Date::parse($minDate)->toDateString())->toBe('2026-10-05');
 });
 
+test('quick order shows the subtotal with a single dollar sign', function () {
+    $product = Product::factory()->create(['price' => 10.00]);
+
+    livewire(QuickOrder::class)
+        ->fillForm([
+            'order_items' => [
+                ['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00],
+            ],
+        ])
+        ->assertSee('1 items · Subtotal: $20.00')
+        ->assertDontSee('$$');
+});
+
+test('quick order line total is a plain amount because the field already has a dollar prefix', function () {
+    $item = collect(livewire(QuickOrder::class)->get('data.order_items'))->first();
+
+    expect($item['line_total'])->toBe('0.00');
+});
+
 test('quick order creates a pickup order paid in cash', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 

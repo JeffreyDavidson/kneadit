@@ -300,6 +300,7 @@ Blade views are organized by the application surface they serve:
 - `resources/views/components/` contains reusable Blade components. Storefront home components live under `storefront/home`, and tenant administration components live under `tenant-admin`; their Blade tags and PHP component namespaces mirror those paths.
 - `resources/views/shared/` contains cross-page includes that are not tied to a single surface, such as analytics and storefront order-form scripts.
 - `resources/views/filament/`, `emails/`, `errors/`, `vendor/`, and `reference/` remain specialized top-level trees for their respective rendering contexts.
+- The 401, 402, 403, 419 and 429 pages in `errors/` are one-line views around `components/error-page.blade.php`, which links `public/css/errors.css` (Laravel's default error views use an inline `<style>` that the CSP nonce policy blocks). Their copy lives in `lang/en/errors.php`; the 404, 500 and 503 pages keep their own views.
 
 When adding a view, choose its location from the request surface first, then its feature. A view used by tenant models belongs under `tenant/` even if the controller is currently grouped in a central namespace. Component PHP classes and component integration tests should mirror the component's `resources/views/components/` path.
 

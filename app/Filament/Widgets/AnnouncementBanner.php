@@ -36,7 +36,11 @@ class AnnouncementBanner extends Widget
             ->filter(function (PlatformAnnouncement $announcement) use ($plan): bool {
                 $targets = $announcement->target_plans;
 
-                return empty($targets) || in_array($plan, $targets);
+                if (empty($targets) || in_array('all', $targets, true)) {
+                    return true;
+                }
+
+                return $plan !== null && in_array($plan->value, $targets, true);
             })
             // Plain arrays: models can't be read back from the cache (cache.serializable_classes is false).
             ->map(fn (PlatformAnnouncement $announcement): array => [

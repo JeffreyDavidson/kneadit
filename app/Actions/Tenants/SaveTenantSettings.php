@@ -6,6 +6,7 @@ namespace App\Actions\Tenants;
 
 use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\PaymentMethod;
+use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Str;
 
@@ -131,6 +132,24 @@ class SaveTenantSettings
         $settings['webhook_secret'] = $webhookSecret;
 
         $this->settings->setMany($settings);
+
+        $this->syncCentralStoreName($data['store_name']);
+    }
+
+    /**
+     * The directory and platform lists read the name from the central tenant row,
+     * so a rename in Settings has to update it too (as the onboarding welcome step does).
+     */
+    private function syncCentralStoreName(mixed $storeName): void
+    {
+        $tenant = tenant();
+
+        if (! $tenant instanceof Tenant || ! is_string($storeName)) {
+            return;
+        }
+
+        $tenant->store_name = $storeName;
+        $tenant->save();
     }
 
     /** @return array<array-key, mixed> */
