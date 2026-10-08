@@ -226,9 +226,8 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
         $logoResponse = Http::withoutVerifying()->get((string) $logoUrl);
 
         expect($logoResponse->status())->toBe(200)
-            ->and($logoResponse->header('Content-Type'))->toStartWith('image/');
-
-        expect(servedWizardSetting('onboarding_completed_at'))->not->toBeNull()
+            ->and($logoResponse->header('Content-Type'))->toStartWith('image/')
+            ->and(servedWizardSetting('onboarding_completed_at'))->not->toBeNull()
             ->and(servedWizardSetting('store_name'))->toBe('Wizard Journey Bakery')
             ->and(servedWizardSetting('store_phone'))->toBe('555-0142')
             ->and(servedWizardSetting('store_email'))->toBe('wizard-journey@kneadit.test')
