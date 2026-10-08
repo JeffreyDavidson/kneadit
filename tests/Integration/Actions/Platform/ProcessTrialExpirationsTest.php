@@ -293,3 +293,25 @@ test('never tells an owner who once subscribed that their trial expired', functi
     expect(DB::table('tenants')->where('id', 'payer-bakery')->value('paused_at'))->not->toBeNull();
     Event::assertNotDispatched(TrialExpired::class);
 })->with(['canceled', 'incomplete_expired']);
+
+test('sends no trial reminder to an owner with an open subscription', function (string $status) {
+    Event::fake([TrialReminding::class]);
+
+    $owner = User::factory()->create();
+    $owner->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_reminder',
+        'stripe_status' => $status,
+        'stripe_price' => 'price_starter_test',
+    ]);
+
+    createTenant([
+        'id' => 'subscribed-reminder',
+        'user_id' => $owner->id,
+        'trial_ends_at' => now()->addDays(3)->startOfDay(),
+    ]);
+
+    resolve(ProcessTrialExpirations::class)();
+
+    Event::assertNotDispatched(TrialReminding::class);
+})->with(['active', 'trialing', 'past_due', 'unpaid', 'incomplete']);

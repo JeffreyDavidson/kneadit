@@ -7,6 +7,7 @@ use App\Mail\Platform\PaymentFailedAlertMail;
 use App\Mail\Platform\PaymentFailedMail;
 use App\Mail\Platform\PlatformCampaignMail;
 use App\Mail\Platform\ScheduledCheckinMail;
+use App\Mail\Platform\SubscriberWithoutBakeryAlertMail;
 use App\Mail\Platform\TrialExpiredMail;
 use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\UnapprovedFreeForeverAlertMail;
@@ -42,6 +43,7 @@ dataset('platform mailables', [
     'trial expired' => [fn (): Mailable => new TrialExpiredMail(User::factory()->owner()->create(), 'http://a.kneadit.test/admin')],
     'trial reminder' => [fn (): Mailable => new TrialReminderMail(User::factory()->owner()->create(), "Jane's Bakery", 3)],
     'unapproved free forever' => [fn (): Mailable => new UnapprovedFreeForeverAlertMail([['id' => 'a', 'name' => 'A', 'email' => 'a@example.com']])],
+    'subscriber without bakery' => [fn (): Mailable => new SubscriberWithoutBakeryAlertMail([12, 34])],
     'welcome baker' => [fn (): Mailable => new WelcomeBakerMail('Jane', "Jane's Bakery", 'http://a.kneadit.test/admin', 'starter', '2026-10-19')],
 ]);
 
@@ -132,6 +134,11 @@ dataset('platform mail content', [
         new UnapprovedFreeForeverAlertMail([['id' => 'tenant-1', 'name' => 'Acme Bread', 'email' => 'a@example.com']]),
         ['tenant-1', 'Acme Bread', 'a@example.com'],
         [],
+    ]],
+    'subscriber without bakery' => [fn (): array => [
+        new SubscriberWithoutBakeryAlertMail([12, 34]),
+        ['12, 34'],
+        ['12, 34'],
     ]],
     'welcome baker' => [fn (): array => [
         new WelcomeBakerMail('Jane', 'Jane Bakery', 'http://a.kneadit.test/admin', 'starter', '2026-10-19'),

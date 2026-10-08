@@ -28,6 +28,7 @@ Schedule::withoutOverlapping()
         Schedule::command('inventory:send-low-stock-alert')->hourly()->name('inventory:send-low-stock-alert');
         Schedule::command('carts:send-abandonment-emails')->hourly()->name('carts:send-abandonment-emails');
         Schedule::command('platform:audit-free-forever')->dailyAt('06:00')->name('platform:audit-free-forever');
+        Schedule::command('platform:check-subscribers-without-bakery')->dailyAt('08:00')->name('platform:check-subscribers-without-bakery');
         Schedule::command('webhooks:prune')->dailyAt('04:00')->name('webhooks:prune');
         Schedule::command('analytics:prune-page-views')->dailyAt('04:15')->name('analytics:prune-page-views');
         Schedule::command('activity-log:prune')->dailyAt('04:45')->name('activity-log:prune');

@@ -53,6 +53,7 @@ Retry only after correcting the cause and confirming the operation is safe to re
 | Daily 05:30 | `tenants:verify-custom-domains` | Re-check DNS and HTTPS (`https://{domain}/up` must answer 2xx with a valid certificate) for every bakery custom domain; links use a custom domain only while it is verified |
 | Daily 06:00 | `platform:audit-free-forever` | Audit free-forever grants |
 | Daily 07:00 | `churn:check` | Detect at-risk tenants |
+| Daily 08:00 | `platform:check-subscribers-without-bakery` | Email the platform admins when a user has a `default` subscription that is active, trialing or past due but no bakery (`tenants.user_id`), so someone is billed with nothing to use. The mail (`SubscriberWithoutBakeryAlertMail`, shared KneadIt layout) lists user ids only, no emails or card data, and is not sent when there is nothing to report |
 | Daily 09:00 | `checkins:send` | Send scheduled check-ins; a missed run is made up on later runs for up to 7 days, once per check-in and bakery (`checkin_logs`) |
 | Daily 10:00 | `trial:check` | Enforce/notify trial state |
 

@@ -58,7 +58,8 @@ class ProcessTrialExpirations
             if (! $user instanceof User) {
                 continue;
             }
-            if ($user->subscribed('default')) {
+            // subscribed() is false for past_due, so a paying owner whose card failed would still be told to subscribe.
+            if ($this->subscriptions->open($user)->isNotEmpty()) {
                 continue;
             }
 
