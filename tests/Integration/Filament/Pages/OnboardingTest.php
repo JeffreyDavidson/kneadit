@@ -52,7 +52,7 @@ test('contact step saves all contact info', function () {
     ]);
 
     expect(settings('store_email'))->toBe('hello@sweetbakery.com')
-        ->and(settings('store_phone'))->toBe('555-123-4567')
+        ->and(settings('store_phone'))->toBe('+15551234567')
         ->and(settings('store_address'))->toBe('123 Baker St, Tampa, FL 33601');
 });
 

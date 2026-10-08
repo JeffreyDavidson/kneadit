@@ -18,7 +18,7 @@
             <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->customer_name }}</span><br>
             <a href="mailto:{{ $inquiry->customer_email }}" style="color: {{ $primaryColor }};">{{ $inquiry->customer_email }}</a>
             @if ($inquiry->customer_phone)
-                <span style="color: #888;"> · {{ $inquiry->customer_phone }}</span>
+                <span style="color: #888;"> · @phone($inquiry->customer_phone)</span>
             @endif
         </div>
 

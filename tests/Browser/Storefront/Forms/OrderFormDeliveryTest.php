@@ -36,7 +36,7 @@ function fillDeliveryOrderDetails(mixed $page, string $tierValue): mixed
         ->fill('[data-test="order-form-delivery-date"]', now()->addDays(7)->toDateString())
         ->fill('[data-test="order-form-customer-name"]', 'Delivery Tester')
         ->fill('[data-test="order-form-customer-email"]', 'delivery-tester@example.com')
-        ->fill('[data-test="order-form-customer-phone"]', '555-0123');
+        ->fill('[data-test="order-form-customer-phone"]', '(913) 555-0123');
 }
 
 test('a delivery order on the second distance tier shows that tier fee and is placed', function () use ($storefrontUrl) {

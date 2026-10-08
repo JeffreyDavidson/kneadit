@@ -7,6 +7,7 @@ use App\Filament\Resources\Customers\Pages\ViewCustomer;
 use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Filament\Resources\Customers\Tables\CustomersTable;
 use App\Models\Customers\Customer;
+use App\Support\PhoneNumber;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -70,7 +71,7 @@ class CustomerResource extends Resource
     {
         return [
             'Email' => $record->email ?? 'N/A',
-            'Phone' => $record->phone ?? 'N/A',
+            'Phone' => $record->phone ? PhoneNumber::display($record->phone) : 'N/A',
         ];
     }
 

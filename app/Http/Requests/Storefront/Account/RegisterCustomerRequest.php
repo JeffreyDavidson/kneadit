@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Storefront\Account;
 
 use App\Models\Customers\Customer;
+use App\Rules\PossiblePhoneNumber;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
@@ -40,7 +41,7 @@ class RegisterCustomerRequest extends FormRequest
                     }
                 },
             ],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ];
     }

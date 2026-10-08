@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api;
 
+use App\Rules\PossiblePhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreApiWaitlistRequest extends FormRequest
@@ -21,7 +22,7 @@ class StoreApiWaitlistRequest extends FormRequest
         return [
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
-            'customer_phone' => ['required', 'string', 'max:50'],
+            'customer_phone' => ['required', 'string', 'max:50', new PossiblePhoneNumber],
             'requested_date' => ['required', 'date'],
             'product_id' => ['nullable', 'exists:products,id'],
             'notes' => ['nullable', 'string', 'max:1000'],

@@ -69,7 +69,7 @@ test('can create a waitlist entry via slide-over', function () {
         ->callAction(CreateAction::class, data: [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-0100',
+            'customer_phone' => '+19133877359',
             'requested_date' => now()->addDays(5)->format('Y-m-d'),
             'status' => WaitlistStatus::Waiting->value,
         ])

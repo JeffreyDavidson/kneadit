@@ -33,7 +33,7 @@ test('catering inquiry can be submitted with valid data', function () {
         ->post(route('catering.submit', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-1234',
+            'customer_phone' => '+19133877359',
             'event_type' => 'Wedding',
             'event_date' => now()->addDays(30)->format('Y-m-d'),
             'guest_count' => 50,

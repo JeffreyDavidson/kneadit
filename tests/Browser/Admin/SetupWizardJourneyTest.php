@@ -134,7 +134,7 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
         // 2. Contact info
         $page
             ->fill('[id="content.contact.email"]', 'wizard-journey@kneadit.test')
-            ->fill('[id="content.contact.phone"]', '555-0142')
+            ->fill('[id="content.contact.phone"]', '(503) 555-0142')
             ->fill('[id="content.contact.address"]', '1 Journey Lane, Portland, OR 97201')
             ->click($continue)
             ->assertSeeIn($currentStep, 'Branding')
@@ -145,7 +145,7 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
             ->click('button:has-text("Back"):visible')
             ->assertSeeIn($currentStep, 'Contact info')
             ->assertSee('Step 2 of 10')
-            ->assertValue('[id="content.contact.phone"]', '555-0142')
+            ->assertValue('[id="content.contact.phone"]', '(503) 555-0142')
             ->click($continue)
             ->assertSeeIn($currentStep, 'Branding');
 
@@ -221,7 +221,7 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
         // The browser decoded the logo above (naturalWidth > 0), which proves its URL served an image.
         expect(servedWizardSetting('onboarding_completed_at'))->not->toBeNull()
             ->and(servedWizardSetting('store_name'))->toBe('Wizard Journey Bakery')
-            ->and(servedWizardSetting('store_phone'))->toBe('555-0142')
+            ->and(servedWizardSetting('store_phone'))->toBe('+15035550142')
             ->and(servedWizardSetting('store_email'))->toBe('wizard-journey@kneadit.test')
             ->and(servedWizardSetting('cottage_food_state'))->toBe('OR')
             ->and(servedWizardSetting('compliance_acknowledged'))->toBe('1')

@@ -12,6 +12,7 @@ use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
+use App\Support\PhoneNumber;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
@@ -51,6 +52,7 @@ class CustomersTable
                     ->copyable(),
 
                 TextColumn::make('phone')
+                    ->formatStateUsing(fn (?string $state): string => PhoneNumber::display($state))
                     ->searchable()
                     ->copyable()
                     ->toggleable(),

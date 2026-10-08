@@ -8,6 +8,7 @@ use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\WaitlistEntry;
+use App\Support\PhoneNumber;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
@@ -33,6 +34,7 @@ class WaitlistEntriesTable
                     ->limit(30),
 
                 TextColumn::make('customer_phone')
+                    ->formatStateUsing(fn (?string $state): string => PhoneNumber::display($state))
                     ->searchable(),
 
                 TextColumn::make('product.name')

@@ -17,7 +17,7 @@ beforeEach(function () {
     test()->guest = Customer::factory()->create([
         'name' => 'Original Name',
         'email' => 'owner@example.com',
-        'phone' => '5550100',
+        'phone' => '+19133877359',
     ]);
     test()->order = Order::factory()
         ->for(test()->guest)
@@ -36,7 +36,7 @@ function registerForGuestEmail(): TestResponse
         ->post(route('account.register', [], false), [
             'name' => 'New Registrant',
             'email' => 'owner@example.com',
-            'phone' => '5559999',
+            'phone' => '+19135550199',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
@@ -49,7 +49,7 @@ test('registering with a guest customer email logs in but keeps the existing nam
 
     expect(auth('customer')->id())->toBe($customer->id)
         ->and($customer->name)->toBe('Original Name')
-        ->and($customer->phone)->toBe('5550100')
+        ->and($customer->phone)->toBe('+19133877359')
         ->and($customer->email_verified_at)->toBeNull();
 });
 

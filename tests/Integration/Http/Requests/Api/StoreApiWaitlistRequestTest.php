@@ -20,7 +20,7 @@ test('product_id must reference an existing product when provided', function () 
     $validator = validator([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
-        'customer_phone' => '555-0100',
+        'customer_phone' => '913-387-7359',
         'requested_date' => now()->addDays(3)->toDateString(),
         'product_id' => 999999,
     ], (new StoreApiWaitlistRequest)->rules());
@@ -32,7 +32,7 @@ test('requested_date must be a valid date', function () {
     $validator = validator([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
-        'customer_phone' => '555-0100',
+        'customer_phone' => '913-387-7359',
         'requested_date' => 'not-a-date',
     ], (new StoreApiWaitlistRequest)->rules());
 
@@ -45,7 +45,7 @@ test('valid waitlist request passes', function () {
     $validator = validator([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
-        'customer_phone' => '555-0100',
+        'customer_phone' => '913-387-7359',
         'requested_date' => now()->addDays(3)->toDateString(),
         'product_id' => $product->id,
     ], (new StoreApiWaitlistRequest)->rules());

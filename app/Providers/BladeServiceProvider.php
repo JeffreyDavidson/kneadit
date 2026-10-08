@@ -15,6 +15,9 @@ class BladeServiceProvider extends ServiceProvider
 
         Blade::directive('number', fn (string $expression): string => "<?php \$__numberArgs = [{$expression}]; echo \\Illuminate\\Support\\Number::format((float) \$__numberArgs[0], (int) (\$__numberArgs[1] ?? 0)); ?>");
 
+        // A stored phone number the way a person reads it (App\Support\PhoneNumber::display), escaped.
+        Blade::directive('phone', fn (string $expression): string => "<?php echo e(\\App\\Support\\PhoneNumber::display({$expression})); ?>");
+
         Blade::directive('time', fn (string $expression): string => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
 
         // Emits `nonce="..."` for inline <script>/<style> tags using the

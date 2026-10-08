@@ -34,12 +34,11 @@
         </div>
         <div>
             <label for="order-customer-phone" class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
-            <input
-                type="tel"
+            <x-phone-input
                 id="order-customer-phone"
                 data-test="order-form-customer-phone"
                 x-model="form.customer_phone"
-                class="order-input"
+                input-class="order-input"
             />
             <x-storefront.order-field-error field="customer_phone" />
         </div>
@@ -246,12 +245,10 @@
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
                 <label for="pickup-contact-phone" class="text-warm-400 mb-1 block text-xs font-medium">Phone</label>
-                <input
+                <x-phone-input
                     id="pickup-contact-phone"
-                    type="tel"
                     x-model="form.pickup_contact_phone"
-                    placeholder="555-0123"
-                    class="order-input"
+                    input-class="order-input"
                 />
                 <x-storefront.order-field-error field="pickup_contact_phone" />
             </div>

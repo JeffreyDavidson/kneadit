@@ -177,7 +177,7 @@
                     @if ($customer->phone)
                         <div>
                             <dt class="text-warm-500 mb-1 text-xs tracking-wider uppercase">Phone</dt>
-                            <dd class="text-warm-900">{{ $customer->phone }}</dd>
+                            <dd class="text-warm-900">@phone($customer->phone)</dd>
                         </div>
                     @endif
                 </dl>

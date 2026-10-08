@@ -31,7 +31,7 @@
                     <span>{{ $footerAddress }}</span>
                 @endif
                 @if ($footerPhone)
-                    <span>{{ $footerPhone }}</span>
+                    <span>@phone($footerPhone)</span>
                 @endif
                 @if ($footerEmail)
                     <span>{{ $footerEmail }}</span>

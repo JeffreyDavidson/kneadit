@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Suppliers\Tables;
 
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
+use App\Support\PhoneNumber;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -32,6 +33,7 @@ class SuppliersTable
                     ->toggleable(),
 
                 TextColumn::make('phone')
+                    ->formatStateUsing(fn (?string $state): string => PhoneNumber::display($state))
                     ->toggleable(),
 
                 TextColumn::make('ingredients_count')

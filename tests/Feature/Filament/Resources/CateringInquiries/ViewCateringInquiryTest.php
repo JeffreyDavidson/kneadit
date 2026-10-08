@@ -336,7 +336,7 @@ test('edit customer action updates contact fields', function () {
         ->callAction('editCustomer', data: [
             'customer_name' => 'New Name',
             'customer_email' => 'new@example.com',
-            'customer_phone' => '555-0123',
+            'customer_phone' => '+19133877359',
         ]);
 
     expect($inquiry->fresh()->customer_name)->toBe('New Name');

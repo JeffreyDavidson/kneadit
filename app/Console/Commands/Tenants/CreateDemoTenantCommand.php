@@ -96,7 +96,7 @@ class CreateDemoTenantCommand extends Command
             resolve(SettingsManager::class)->setMany([
                 'store_name' => 'Sweet Dreams Bakery',
                 'store_email' => 'demo@getkneadit.app',
-                'store_phone' => '(863) 555-0123',
+                'store_phone' => '+18635550123',
                 'store_address' => '123 Main Street, Davenport, FL 33837',
                 'default_daily_capacity' => '15',
             ]);

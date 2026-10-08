@@ -86,7 +86,7 @@ function validRegisterCustomerData(): array
     return [
         'name' => 'Alice Customer',
         'email' => 'alice@example.com',
-        'phone' => '555-1234',
+        'phone' => '+19133877359',
         'password' => 'Strong1Pass',
         'password_confirmation' => 'Strong1Pass',
     ];

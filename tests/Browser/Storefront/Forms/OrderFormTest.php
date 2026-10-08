@@ -32,7 +32,7 @@ test('order form submit stays disabled when customer info is filled but cart is 
     visit("{$storefrontUrl}/order")
         ->fill('[data-test="order-form-customer-name"]', 'Test Customer')
         ->fill('[data-test="order-form-customer-email"]', 'test@example.com')
-        ->fill('[data-test="order-form-customer-phone"]', '555-1234')
+        ->fill('[data-test="order-form-customer-phone"]', '(913) 387-7359')
         ->assertDisabled('[data-test="order-form-submit"]')
         ->assertNoJavaScriptErrors();
 });
