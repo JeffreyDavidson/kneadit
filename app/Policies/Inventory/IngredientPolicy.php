@@ -7,10 +7,12 @@ namespace App\Policies\Inventory;
 use App\Models\Inventory\Ingredient;
 use App\Models\Staff\User;
 use App\Policies\Platform\RolePolicy;
+use Illuminate\Auth\Access\Response;
 
 class IngredientPolicy extends RolePolicy
 {
-    public function delete(User $user, mixed $model): bool
+    #[\Override]
+    public function delete(User $user, mixed $model): bool|Response
     {
         if (! parent::delete($user, $model)) {
             return false;
@@ -24,7 +26,14 @@ class IngredientPolicy extends RolePolicy
             return true;
         }
 
-        return ! $model->stockAdjustments()->exists()
-            && ! $model->recipes()->exists();
+        if ($model->recipes()->exists()) {
+            return Response::deny("{$model->name} is used in recipes, so it can't be deleted. Deactivate it instead, or remove it from those recipes first.");
+        }
+
+        if ($model->stockAdjustments()->exists()) {
+            return Response::deny("{$model->name} has stock history, so it can't be deleted. Deactivate it instead to keep its records.");
+        }
+
+        return true;
     }
 }
