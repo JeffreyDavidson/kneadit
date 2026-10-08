@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Settings\StoreInfo;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Models\Platform\Tenant;
@@ -122,9 +123,9 @@ test('the onboarding redirect lands on a page that renders', function () {
         ->assertSuccessful();
 });
 
-test('onboarding stores an uploaded logo when the branding step is completed', function () {
-    $disk = config('filament.default_filesystem_disk');
-    Storage::fake($disk);
+test('onboarding stores an uploaded logo on the public disk so the bakery logo URL resolves', function () {
+    Storage::fake('local');
+    Storage::fake('public');
 
     livewire(Onboarding::class)
         ->set('branding.store_logo', [UploadedFile::fake()->image('logo.png')])
@@ -134,7 +135,9 @@ test('onboarding stores an uploaded logo when the branding step is completed', f
     $storedLogo = settings('store_logo');
 
     expect($storedLogo)->toStartWith('logos/')
-        ->and(Storage::disk($disk)->exists($storedLogo))->toBeTrue();
+        ->and(Storage::disk('public')->exists($storedLogo))->toBeTrue()
+        ->and(Storage::disk('local')->exists($storedLogo))->toBeFalse()
+        ->and(StoreInfo::resolve()->logoUrl())->toBe(asset("storage/{$storedLogo}"));
 });
 
 test('onboarding keeps the existing logo when the branding step is completed again', function () {
