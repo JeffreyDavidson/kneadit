@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-#[Fillable('customer_name', 'customer_email', 'product_id', 'order_id', 'rating', 'comment', 'photo_path', 'is_approved', 'is_featured')]
+#[Fillable('customer_name', 'customer_email', 'product_id', 'order_id', 'rating', 'comment', 'photo_path', 'is_approved', 'is_featured', 'low_rating_alerted_at')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(ReviewQueryBuilder::class)]
 #[UseFactory(ReviewFactory::class)]
@@ -50,6 +50,7 @@ class Review extends Model
             'rating' => 'integer',
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',
+            'low_rating_alerted_at' => 'datetime',
             'comment' => StripTagsCast::class,
         ];
     }
