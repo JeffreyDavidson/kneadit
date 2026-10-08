@@ -12,7 +12,7 @@ beforeEach(function () {
     Mail::fake();
 });
 
-function ownerWithSubscription(string $status = 'active'): User
+function payingOwnerWithoutBakeryCheck(string $status = 'active'): User
 {
     $owner = User::factory()->owner()->create();
     $owner->subscriptions()->create([
@@ -27,7 +27,7 @@ function ownerWithSubscription(string $status = 'active'): User
 
 test('alerts platform admins with the ids of paying accounts that have no bakery', function (string $status) {
     $admin = User::factory()->platformAdmin()->create(['email' => 'platform@example.com']);
-    $owner = ownerWithSubscription($status);
+    $owner = payingOwnerWithoutBakeryCheck($status);
 
     artisan('platform:check-subscribers-without-bakery')->assertSuccessful();
 
@@ -37,7 +37,7 @@ test('alerts platform admins with the ids of paying accounts that have no bakery
 
 test('the alert lists account ids only, no email addresses', function () {
     User::factory()->platformAdmin()->create();
-    $owner = ownerWithSubscription();
+    $owner = payingOwnerWithoutBakeryCheck();
 
     artisan('platform:check-subscribers-without-bakery')->assertSuccessful();
 
@@ -51,7 +51,7 @@ test('the alert lists account ids only, no email addresses', function () {
 
 test('does not alert when the paying account has a bakery', function () {
     User::factory()->platformAdmin()->create();
-    $owner = ownerWithSubscription();
+    $owner = payingOwnerWithoutBakeryCheck();
     Tenant::factory()->create(['user_id' => $owner->id]);
 
     artisan('platform:check-subscribers-without-bakery')
@@ -63,7 +63,7 @@ test('does not alert when the paying account has a bakery', function () {
 
 test('does not alert for an account whose subscription has ended or that never subscribed', function (?string $status) {
     User::factory()->platformAdmin()->create();
-    $status === null ? User::factory()->owner()->create() : ownerWithSubscription($status);
+    $status === null ? User::factory()->owner()->create() : payingOwnerWithoutBakeryCheck($status);
 
     artisan('platform:check-subscribers-without-bakery')->assertSuccessful();
 
@@ -71,7 +71,7 @@ test('does not alert for an account whose subscription has ended or that never s
 })->with([null, 'canceled', 'incomplete_expired']);
 
 test('sends nothing when there is no platform admin to alert', function () {
-    ownerWithSubscription();
+    payingOwnerWithoutBakeryCheck();
 
     artisan('platform:check-subscribers-without-bakery')
         ->expectsOutputToContain('No platform admins found')
