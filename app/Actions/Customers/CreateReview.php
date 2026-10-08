@@ -29,13 +29,13 @@ class CreateReview
             ? $this->images->store($photo, 'review-photos')
             : null;
 
-        [$review, $previousRating, $previousPhotoPath] = DB::transaction(function () use ($order, $rating, $comment, $photoPath): array {
+        [$review, $previousPhotoPath, $alertLow] = DB::transaction(function () use ($order, $rating, $comment, $photoPath): array {
             // Lock the order so two simultaneous submissions queue up and the second one sees the first.
             Order::query()->whereKey($order->id)->lockForUpdate()->first();
 
             $review = Review::query()->where('order_id', $order->id)->first();
-            $previousRating = $review?->rating;
             $previousPhotoPath = $review?->photo_path;
+            $alertLow = $this->shouldAlertLow($rating, $review);
 
             $review ??= new Review(['order_id' => $order->id]);
             $review->fill([
@@ -45,16 +45,17 @@ class CreateReview
                 'comment' => $comment,
                 'photo_path' => $photoPath ?? $previousPhotoPath,
                 'is_approved' => false,
+                'low_rating_alerted_at' => $alertLow ? now() : $review->low_rating_alerted_at,
             ])->save();
 
-            return [$review, $previousRating, $previousPhotoPath];
+            return [$review, $previousPhotoPath, $alertLow];
         });
 
         if ($photoPath !== null && $previousPhotoPath !== null) {
             Storage::disk('public')->delete($previousPhotoPath);
         }
 
-        if ($this->isNewlyLow($rating, $previousRating)) {
+        if ($alertLow) {
             event(new LowReviewReceived($review));
         }
 
@@ -63,8 +64,11 @@ class CreateReview
 
     /**
      * The owner is alerted once per review: when it arrives low, or when an edit drops it to low.
+     * low_rating_alerted_at remembers the alert, so raising the rating and lowering it again
+     * doesn't alert twice. Reviews from before that column have no record, so an edit from
+     * low to low is still never an alert.
      */
-    private function isNewlyLow(int $rating, ?int $previousRating): bool
+    private function shouldAlertLow(int $rating, ?Review $existing): bool
     {
         $threshold = $this->settings->engagement->lowReviewAlertThreshold;
 
@@ -72,6 +76,10 @@ class CreateReview
             return false;
         }
 
-        return $previousRating === null || $previousRating > $threshold;
+        if (! $existing instanceof Review) {
+            return true;
+        }
+
+        return $existing->low_rating_alerted_at === null && $existing->rating > $threshold;
     }
 }
