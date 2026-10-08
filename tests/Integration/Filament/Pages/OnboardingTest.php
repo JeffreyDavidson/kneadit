@@ -149,6 +149,31 @@ test('business hours step saves open days only', function () {
         ->and($hours['friday'])->toMatchArray(['open' => '09:00', 'close' => '15:00']);
 });
 
+test('business hours step saves the chosen time zone to the bakery timezone setting', function () {
+    BusinessHoursStep::save([
+        'timezone' => 'America/New_York',
+        'monday' => true,
+        'monday_open' => '07:00',
+        'monday_close' => '18:00',
+    ]);
+
+    expect(settings('timezone'))->toBe('America/New_York')
+        ->and(resolve(TenantSettings::class)->orders->timezone)->toBe('America/New_York')
+        ->and(json_decode(settings('operating_hours'), true))->toBe(['monday' => ['open' => '07:00', 'close' => '18:00']]);
+});
+
+test('business hours step does not save a time zone that is not a real zone', function (mixed $zone) {
+    settings(['timezone' => 'America/Chicago']);
+
+    BusinessHoursStep::save(['timezone' => $zone, 'monday' => true]);
+
+    expect(settings('timezone'))->toBe('America/Chicago');
+})->with([
+    'made up' => 'Mars/Olympus_Mons',
+    'empty' => '',
+    'missing' => null,
+]);
+
 test('business hours with no days saves empty schedule', function () {
     BusinessHoursStep::save([
         'monday' => false,

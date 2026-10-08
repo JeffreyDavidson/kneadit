@@ -2,13 +2,17 @@
 
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\Filament\Pages\Platform\Onboarding;
+use App\Filament\Pages\Platform\OnboardingSteps\BusinessHoursStep;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -166,4 +170,34 @@ test('onboarding page sends a finished bakery back to the dashboard', function (
 
     livewire(Onboarding::class)
         ->assertRedirect(url('/admin'));
+});
+
+test('the business hours step asks for the bakery time zone above the days', function () {
+    livewire(Onboarding::class)
+        ->assertSeeInOrder(['Time zone', 'Monday'])
+        ->assertSee('Used for today, order cut-offs and pickup times')
+        ->assertSet('hours.timezone', '');
+});
+
+test('the business hours step pre-fills a saved time zone that is not UTC', function () {
+    settings(['timezone' => 'America/Chicago']);
+
+    livewire(Onboarding::class)
+        ->assertSet('hours.timezone', 'America/Chicago');
+});
+
+test('the business hours step requires a real time zone from a searchable list', function () {
+    $page = new Onboarding;
+    $schema = Schema::make($page)->components([BusinessHoursStep::make($page)]);
+    $select = collect($schema->getFlatComponents())
+        ->first(fn ($component): bool => $component instanceof Select && $component->getStatePath(false) === 'hours.timezone');
+
+    $passes = fn (string $value): bool => Validator::make(['timezone' => $value], ['timezone' => $select->getValidationRules()])->passes();
+
+    expect($select->isRequired())->toBeTrue()
+        ->and($select->isSearchable())->toBeTrue()
+        ->and($select->getLabel())->toBe('Time zone')
+        ->and($passes('America/New_York'))->toBeTrue()
+        ->and($passes('Mars/Olympus_Mons'))->toBeFalse()
+        ->and($passes(''))->toBeFalse();
 });
