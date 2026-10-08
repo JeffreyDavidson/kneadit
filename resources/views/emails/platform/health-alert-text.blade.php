@@ -11,4 +11,4 @@
 /** @var string $alertMessage */
 @endphp
 
-{{ $alertMessage }}
+{!! $alertMessage !!}
