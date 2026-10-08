@@ -8,6 +8,7 @@ use App\Actions\Customers\AnonymiseCustomer;
 use App\Models\Customers\Customer;
 use App\Models\Staff\User;
 use App\Policies\Platform\RolePolicy;
+use Illuminate\Auth\Access\Response;
 
 class CustomerPolicy extends RolePolicy
 {
@@ -16,13 +17,21 @@ class CustomerPolicy extends RolePolicy
      * order history can't be deleted.
      */
     #[\Override]
-    public function delete(User $user, mixed $model): bool
+    public function delete(User $user, mixed $model): bool|Response
     {
         if (! parent::delete($user, $model)) {
             return false;
         }
 
-        return $model instanceof Customer && ! $model->orders()->exists();
+        if (! $model instanceof Customer) {
+            return false;
+        }
+
+        if ($model->orders()->exists()) {
+            return Response::deny("{$model->name} has orders, so they can't be deleted. Anonymise them instead to remove their personal details and keep the order history.");
+        }
+
+        return true;
     }
 
     /**

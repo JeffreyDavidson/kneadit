@@ -9,6 +9,7 @@ use App\Models\Inventory\StockAdjustment;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Pennant\Feature;
@@ -158,6 +159,50 @@ test('cannot delete an ingredient used by a recipe', function () {
     $user = User::factory()->owner()->create();
 
     expect(Gate::forUser($user)->allows('delete', $ingredient))->toBeFalse();
+});
+
+test('bulk delete names the ingredient used in recipes and says to deactivate it instead', function () {
+    $ingredient = Ingredient::factory()->create(['name' => 'Bread Flour']);
+    Recipe::factory()->create()->inventoryIngredients()->attach($ingredient, ['quantity' => 1, 'unit' => $ingredient->unit]);
+
+    livewire(ListIngredients::class)
+        ->selectTableRecords([$ingredient])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->persistent()
+            ->title('Failed to delete')
+            ->body("<p>Bread Flour is used in recipes, so it can't be deleted. Deactivate it instead, or remove it from those recipes first.</p>"));
+
+    expect(Ingredient::query()->find($ingredient->id))->not->toBeNull();
+});
+
+test('bulk delete names the ingredient with stock history and says to deactivate it instead', function () {
+    $ingredient = Ingredient::factory()->create(['name' => 'Bread Flour']);
+    StockAdjustment::factory()->for($ingredient)->create();
+
+    livewire(ListIngredients::class)
+        ->selectTableRecords([$ingredient])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->persistent()
+            ->title('Failed to delete')
+            ->body("<p>Bread Flour has stock history, so it can't be deleted. Deactivate it instead to keep its records.</p>"));
+});
+
+test('bulk delete keeps a used ingredient and deletes the unused one', function () {
+    $used = Ingredient::factory()->create();
+    StockAdjustment::factory()->for($used)->create();
+    $unused = Ingredient::factory()->create();
+
+    livewire(ListIngredients::class)
+        ->selectTableRecords([$used, $unused])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified('Deleted 1 of 2');
+
+    expect(Ingredient::query()->find($used->id))->not->toBeNull()
+        ->and(Ingredient::query()->find($unused->id))->toBeNull();
 });
 
 test('can filter ingredients by low stock', function () {
