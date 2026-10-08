@@ -4,6 +4,7 @@ use App\Http\Middleware\SecurityHeaders;
 use App\Support\Csp\CspNonce;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Vite;
 
 test('security headers middleware adds required headers', function () {
     $middleware = new SecurityHeaders(new CspNonce);
@@ -91,4 +92,13 @@ test('security headers middleware can skip the CSP for the admin panels', functi
         ->and($response->headers->get('Referrer-Policy'))->toBe('strict-origin-when-cross-origin')
         ->and($response->headers->has('Content-Security-Policy'))->toBeFalse()
         ->and($response->headers->has('Content-Security-Policy-Report-Only'))->toBeFalse();
+});
+
+test('the nonce is handed to Vite before the response is built so Livewire tags carry it', function () {
+    $nonce = new CspNonce;
+    $middleware = new SecurityHeaders($nonce);
+
+    $middleware->handle(Request::create('/test'), fn () => new Response('OK'));
+
+    expect(Vite::cspNonce())->toBe($nonce->value());
 });
