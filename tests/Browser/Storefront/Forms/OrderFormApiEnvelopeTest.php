@@ -54,7 +54,8 @@ test('order again loads the previous order into the cart', function () use ($sto
     // Placing the order grants this browser session access to it.
     $orderNumber = basename(parse_url($page->url(), PHP_URL_PATH));
 
-    $page->navigate("{$storefrontUrl}/order?reorder={$orderNumber}")
+    // Explicit timeout: the default 1 second navigation retries and shifts replies (see SettingsPersistenceTest).
+    $page->navigate("{$storefrontUrl}/order?reorder={$orderNumber}", ['timeout' => 15_000])
         ->assertSee('2 in cart')
         ->assertSeeIn('[data-test="order-form-subtotal"]', '$60.00')
         ->assertNoJavaScriptErrors();

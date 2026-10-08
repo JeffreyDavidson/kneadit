@@ -75,6 +75,9 @@
                     }
                 });
 
+                // A saved cart from before the limit existed can hold more than the server accepts.
+                this.cartItems = this.clampQuantities(this.cartItems);
+
                 this.loadAvailability();
                 if (this.form.customer_email) {
                     this.loadFavorites();
@@ -90,12 +93,14 @@
                                 return;
                             }
 
-                            this.cartItems = payload.data.items.map((item) => ({
-                                id: item.product_id,
-                                name: item.product_name,
-                                price: parseFloat(item.price),
-                                quantity: item.quantity,
-                            }));
+                            this.cartItems = this.clampQuantities(
+                                payload.data.items.map((item) => ({
+                                    id: item.product_id,
+                                    name: item.product_name,
+                                    price: parseFloat(item.price),
+                                    quantity: item.quantity,
+                                })),
+                            );
                             this.removedItems = payload.data.removed_items ?? [];
                             this.calculateTotals();
                             this.scheduleCouponRevalidation();
@@ -161,6 +166,11 @@
                     !this.capacityError &&
                     !this.isSubmitting
                 );
+            },
+
+            // Caps each line at the server's limit; the product card then shows the limit message.
+            clampQuantities(items) {
+                return items.map((item) => ({ ...item, quantity: Math.min(item.quantity, this.maxQuantity) }));
             },
 
             atMaxQuantity(productId) {

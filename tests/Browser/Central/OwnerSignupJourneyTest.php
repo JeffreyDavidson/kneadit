@@ -54,6 +54,8 @@ function ownerVerificationUrl(string $centralUrl, string $email): string
 
 test('a new owner registers, is blocked until the email is verified, then reaches bakery setup', function () use ($centralUrl) {
     $email = 'signup-journey-'.uniqid().'@example.com';
+    // Explicit navigation timeout: the default 1 second retries and shifts replies (see SettingsPersistenceTest).
+    $navigation = ['timeout' => 15_000];
 
     try {
         visit("{$centralUrl}/register")
@@ -69,11 +71,11 @@ test('a new owner registers, is blocked until the email is verified, then reache
             ->assertSee($email)
             ->assertSee('Resend Verification Email')
             ->assertNoJavaScriptErrors()
-            ->navigate("{$centralUrl}/onboarding")
+            ->navigate("{$centralUrl}/onboarding", $navigation)
             ->assertPathIs('/email/verify')
             ->assertSee('Check your email')
             ->assertNoJavaScriptErrors()
-            ->navigate(ownerVerificationUrl($centralUrl, $email))
+            ->navigate(ownerVerificationUrl($centralUrl, $email), $navigation)
             ->assertPathIs('/onboarding')
             ->assertVisible('input[name="store_name"]')
             ->assertVisible('input[name="subdomain"]')
