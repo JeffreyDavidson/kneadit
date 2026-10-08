@@ -180,3 +180,33 @@ test('the order form script shows the items the reorder endpoint says were remov
 
     $response->assertOk()->assertSeeHtml('payload.data.removed_items');
 });
+
+test('the order form script clamps saved cart and reorder quantities to the limit', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertSeeHtml('clampQuantities(items)')
+        ->assertSeeHtml('this.cartItems = this.clampQuantities(this.cartItems)');
+});
+
+test('the delivery type radios use a sibling label instead of a wrapping label', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
+
+    $response->assertOk()
+        ->assertSeeHtml('id="order-delivery-type-pickup"')
+        ->assertSeeHtml('for="order-delivery-type-pickup"');
+});
+
+test('every inline script and style on the order page carries the CSP nonce', function () {
+    $html = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false))
+        ->assertOk()
+        ->getContent();
+
+    preg_match_all('/<(?:script|style)\b(?![^>]*\bsrc=)[^>]*>/i', $html, $tags);
+
+    expect($tags[0])->not->toBeEmpty()
+        ->each->toContain('nonce="');
+});

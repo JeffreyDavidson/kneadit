@@ -11,14 +11,14 @@
 /** @var string|null $billingUrl */
 @endphp
 
-Hi {{ $user->name }},
+Hi {!! $user->name !!},
 
 Your KneadIt free trial has expired. Your storefront has been paused.
 
 Don't worry — your data is safe. Subscribe to reactivate:
-{{ $billingUrl ?? $adminUrl }}
+{!! $billingUrl ?? $adminUrl !!}
 
 Your admin panel is still accessible at:
-{{ $adminUrl }}
+{!! $adminUrl !!}
 
 — The KneadIt Team

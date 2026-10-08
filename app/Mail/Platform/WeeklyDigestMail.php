@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\BaseMailable;
-use App\Mail\Concerns\BakerBranded;
+use App\Mail\PlatformMail;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\Money;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Collection;
 
-class WeeklyDigestMail extends BaseMailable
+class WeeklyDigestMail extends PlatformMail
 {
-    use BakerBranded;
-
     /**
      * @param  array{total_orders: int, total_revenue: Money, new_customers: int, avg_order_value: Money}  $stats
      * @param  Collection<int, OrderItem>  $topProducts
@@ -33,8 +30,6 @@ class WeeklyDigestMail extends BaseMailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: $this->bakerFrom(),
-            replyTo: array_filter([$this->bakerReplyTo()]),
             subject: "📊 Weekly Digest — {$this->storeName}",
         );
     }
@@ -42,7 +37,15 @@ class WeeklyDigestMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.platform.weekly-digest',
+            view: 'emails.platform.weekly-digest',
+            with: [
+                'stats' => $this->stats,
+                'topProducts' => $this->topProducts,
+                'atRiskCustomers' => $this->atRiskCustomers,
+                'upcomingCount' => $this->upcomingCount,
+                'storeName' => $this->storeName,
+                'adminUrl' => $this->adminUrl,
+            ],
         );
     }
 }

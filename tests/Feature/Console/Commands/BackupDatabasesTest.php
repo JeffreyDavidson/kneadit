@@ -108,6 +108,37 @@ test('backup logs completion', function () {
         ->assertSuccessful();
 });
 
+test('backup removes staging folders left by a killed run once they are a few hours old', function () {
+    $backupDirectory = config('backups.path');
+    $stale = "{$backupDirectory}/2026-01-01_03-00-00.in-progress-aaaaaaaaaaaa";
+    $recent = "{$backupDirectory}/2026-01-01_15-00-00.in-progress-bbbbbbbbbbbb";
+    File::ensureDirectoryExists($stale);
+    File::ensureDirectoryExists($recent);
+    touch($stale, now()->subHours(4)->timestamp);
+    touch($recent, now()->subMinutes(20)->timestamp);
+
+    $this->artisan('backup:databases')->assertSuccessful();
+
+    expect($stale)->not->toBeDirectory()
+        ->and($recent)->toBeDirectory();
+});
+
+test('backup retention prunes old completed backups and ignores staging folders when listing', function () {
+    $backupDirectory = config('backups.path');
+    $oldBackup = "{$backupDirectory}/2026-01-01_03-00-00";
+    $oldStaging = "{$backupDirectory}/2026-01-02_03-00-00.in-progress-cccccccccccc";
+    File::ensureDirectoryExists($oldBackup);
+    File::ensureDirectoryExists($oldStaging);
+    touch($oldBackup, now()->subDays(10)->timestamp);
+    touch($oldStaging, now()->subDays(10)->timestamp);
+
+    $this->artisan('backup:databases', ['--keep' => 7])->assertSuccessful();
+
+    expect($oldBackup)->not->toBeDirectory()
+        ->and($oldStaging)->not->toBeDirectory()
+        ->and(glob("{$backupDirectory}/20*", GLOB_ONLYDIR))->toHaveCount(1);
+});
+
 test('backup default keep is 7 days', function () {
     $command = new BackupDatabasesCommand;
     $definition = $command->getDefinition();

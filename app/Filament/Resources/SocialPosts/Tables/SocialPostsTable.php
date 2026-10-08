@@ -8,6 +8,7 @@ use App\Enums\Marketing\SocialPostStatus;
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Content\SocialPost;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
@@ -38,7 +39,7 @@ class SocialPostsTable
                     ->sortable(),
 
                 TextColumn::make('scheduled_for')
-                    ->dateTime('M j, Y g:i A')
+                    ->dateTime('M j, Y g:i A', timezone: fn (): string => resolve(TenantSettings::class)->orders->timezone)
                     ->sortable()
                     ->placeholder('Not scheduled'),
 

@@ -63,6 +63,17 @@ test('fires LowReviewReceived when an edit drops a review to low', function () {
     Event::assertDispatchedTimes(LowReviewReceived::class, 1);
 });
 
+test('fires LowReviewReceived once when an edit raises a low review and a later edit lowers it again', function () {
+    Event::fake();
+    $order = Order::factory()->for(Customer::factory()->create())->create();
+
+    resolve(CreateReview::class)($order, rating: 1, comment: 'Cold and dry');
+    resolve(CreateReview::class)($order, rating: 5, comment: 'They replaced it, lovely');
+    resolve(CreateReview::class)($order, rating: 1, comment: 'Changed my mind');
+
+    Event::assertDispatchedTimes(LowReviewReceived::class, 1);
+});
+
 test('does not fire when threshold is 0 (disabled)', function () {
     settings(['low_review_alert_threshold' => 0]);
     Event::fake();

@@ -7,6 +7,7 @@ use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
 use App\Filament\Support\AllowedFileTypes;
 use App\Models\Inventory\Product;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -75,7 +76,9 @@ class SocialPostForm
             ->columnSpanFull()
             ->components([
                 Grid::make(2)->components([
-                    DateTimePicker::make('scheduled_for')->nullable(),
+                    DateTimePicker::make('scheduled_for')
+                        ->timezone(fn (): string => resolve(TenantSettings::class)->orders->timezone)
+                        ->nullable(),
 
                     Select::make('status')
                         ->options(SocialPostStatus::class)

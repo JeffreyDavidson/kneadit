@@ -67,6 +67,8 @@ jobs:
           sed -i 's/^STRIPE_SECRET=.*/STRIPE_SECRET=sk_test_browser_smoke/' .env
           composer install --no-interaction --prefer-dist
           php artisan key:generate
+          # Uploaded bakery logos are served from public/storage, as in production.
+          php artisan storage:link
           php artisan migrate:fresh --force
           php artisan tenants:provision-test-tenant --fresh --domain='[::1]'
           php artisan db:seed --class="Database\\Seeders\\BrowserTestCentralFixtureSeeder" --force

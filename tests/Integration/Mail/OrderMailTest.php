@@ -34,7 +34,7 @@ test('order mailables have correct envelope subjects', function (string $mailCla
     'OrderStatusMail (Confirmed)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Confirmed], 'Confirmed — Test Bakery'],
     'OrderStatusMail (Ready)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Ready], 'is Ready!'],
     'OrderStatusMail (Baking)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Baking], 'is Being Prepared'],
-    'OrderStatusMail (Delivered)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Delivered], 'Delivered'],
+    'OrderStatusMail (Delivered)' => [OrderStatusMail::class, fn () => [Order::factory()->delivery()->create(), OrderStatus::Delivered], 'Delivered'],
     'OrderStatusMail (Cancelled)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Cancelled], 'Cancelled'],
     'NewOrderNotificationMail' => [NewOrderNotificationMail::class, fn () => [test()->order], 'New Order #'],
 ]);
@@ -63,6 +63,19 @@ test('the new order notification subject shows the total once with a single doll
 
     expect($subject)->toBe("New Order #{$order->order_number} — \$12.00");
 });
+
+test('the default delivered subject says picked up for pickup orders and delivered for delivery orders', function (string $state, string $expected, string $unexpected) {
+    $order = Order::factory()->{$state}()->create();
+
+    $subject = new OrderStatusMail($order, OrderStatus::Delivered)->envelope()->subject;
+
+    expect($subject)
+        ->toContain($expected)
+        ->not->toContain($unexpected);
+})->with([
+    'pickup' => ['pickup', 'Picked Up', 'Delivered'],
+    'delivery' => ['delivery', 'Delivered', 'Picked Up'],
+]);
 
 test('the delivered email for a delivery order names the address and the bakery-local time', function () {
     // 2026-10-07 03:30 UTC is 8:30 PM on Oct 6 in Los Angeles.

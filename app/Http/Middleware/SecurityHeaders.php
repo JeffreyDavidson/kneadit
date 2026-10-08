@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Support\Csp\CspNonce;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityHeaders
@@ -31,6 +32,12 @@ class SecurityHeaders
      */
     public function handle(Request $request, Closure $next, string ...$options): Response
     {
+        if (! in_array(self::WITHOUT_CSP, $options, true)) {
+            // Livewire prints its own <style> and <script> tags when it injects its assets, and
+            // reads the nonce from Vite. Set it before the response is built so those carry it.
+            Vite::useCspNonce($this->nonce->value());
+        }
+
         $response = $next($request);
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');

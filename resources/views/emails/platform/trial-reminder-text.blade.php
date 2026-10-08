@@ -11,13 +11,13 @@
 /** @var string|null $billingUrl */
 @endphp
 
-Hi {{ $user->name }},
+Hi {!! $user->name !!},
 
-Your KneadIt free trial for {{ $storeName }} ends {{ $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days" }}.
+Your KneadIt free trial for {!! $storeName !!} ends {!! $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days" !!}.
 
 @if ($billingUrl)
 Subscribe now to keep your bakery running without interruption:
-{{ $billingUrl }}
+{!! $billingUrl !!}
 @endif
 @if ($daysLeft <= 3)
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Mail\Platform;
 
-use App\Mail\BaseMailable;
+use App\Mail\PlatformMail;
 use App\Models\Staff\StaffInvitation;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class StaffInvitationMail extends BaseMailable
+class StaffInvitationMail extends PlatformMail
 {
     public function __construct(
         public StaffInvitation $invitation,

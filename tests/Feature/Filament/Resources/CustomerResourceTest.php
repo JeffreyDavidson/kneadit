@@ -187,6 +187,33 @@ test('bulk delete keeps customers who have orders, and their orders', function (
         ->and(Customer::query()->find($withoutOrder->id))->toBeNull();
 });
 
+test('bulk delete names the customer it skipped and says to anonymise them instead', function () {
+    $withOrder = Customer::factory()->create(['name' => 'Alice Baker']);
+    Order::factory()->for($withOrder)->create();
+
+    livewire(ListCustomers::class)
+        ->selectTableRecords([$withOrder])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->persistent()
+            ->title('Failed to delete')
+            ->body("<p>Alice Baker has orders, so they can't be deleted. Anonymise them instead to remove their personal details and keep the order history.</p>"));
+});
+
+test('bulk delete explains why a customer was skipped when others are deleted', function () {
+    $withOrder = Customer::factory()->create(['name' => 'Alice Baker']);
+    Order::factory()->for($withOrder)->create();
+    $withoutOrder = Customer::factory()->create();
+
+    livewire(ListCustomers::class)
+        ->selectTableRecords([$withOrder, $withoutOrder])
+        ->callAction(TestAction::make('delete')->table()->bulk())
+        ->assertNotified('Deleted 1 of 2');
+
+    expect(Customer::query()->find($withoutOrder->id))->toBeNull();
+});
+
 test('email marketing column shows subscribed and unsubscribed customers', function () {
     Date::setTestNow('2026-10-06 12:00');
     $subscribed = Customer::factory()->create();

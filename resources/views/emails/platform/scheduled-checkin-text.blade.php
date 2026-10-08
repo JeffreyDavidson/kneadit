@@ -11,4 +11,4 @@
 /** @var string $body */
 @endphp
 
-{!! clean($body) !!}
+{!! strip_tags($body) !!}

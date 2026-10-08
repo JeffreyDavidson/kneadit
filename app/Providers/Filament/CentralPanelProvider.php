@@ -40,6 +40,7 @@ class CentralPanelProvider extends PanelProvider
             ->brandName('KneadIt')
             ->brandLogo(view('filament.central.brand-logo'))
             ->brandLogoHeight('36px')
+            ->favicon(asset('images/logo-icon.png'))
             ->viteTheme('resources/css/filament/central/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Platform'),

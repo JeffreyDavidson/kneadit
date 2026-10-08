@@ -1,13 +1,9 @@
-@extends('emails.layout')
+@extends('emails.platform.layout')
 
 @php
 /** @var string $storeName */
 /** @var string $primaryColor */
 /** @var string $secondaryColor */
-/** @var string $storeEmail */
-/** @var string $storePhone */
-/** @var string $storeAddress */
-/** @var string|null $logoUrl */
 /** @var array{total_orders: int, total_revenue: \App\ValueObjects\Money, new_customers: int, avg_order_value: \App\ValueObjects\Money} $stats */
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\OrderItem> $topProducts */
 /** @var \Illuminate\Support\Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers */

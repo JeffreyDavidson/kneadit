@@ -4,8 +4,8 @@
 /** @var float $amount */
 @endphp
 
-Payment failed for {{ $user->name }} ({{ $user->email }})
+Payment failed for {!! $user->name !!} ({!! $user->email !!})
 @if ($tenant)
-Tenant: {{ $tenant->store_name }} ({{ $tenant->id }})
+Tenant: {!! $tenant->store_name !!} ({!! $tenant->id !!})
 @endif
-Amount: {{ \Illuminate\Support\Number::currency($amount) }}
+Amount: {!! \Illuminate\Support\Number::currency($amount) !!}
