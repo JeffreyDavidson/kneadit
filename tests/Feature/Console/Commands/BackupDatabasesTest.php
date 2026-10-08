@@ -119,8 +119,8 @@ test('backup removes staging folders left by a killed run once they are a few ho
 
     $this->artisan('backup:databases')->assertSuccessful();
 
-    expect(is_dir($stale))->toBeFalse()
-        ->and(is_dir($recent))->toBeTrue();
+    expect($stale)->not->toBeDirectory()
+        ->and($recent)->toBeDirectory();
 });
 
 test('backup retention prunes old completed backups and ignores staging folders when listing', function () {
@@ -134,8 +134,8 @@ test('backup retention prunes old completed backups and ignores staging folders 
 
     $this->artisan('backup:databases', ['--keep' => 7])->assertSuccessful();
 
-    expect(is_dir($oldBackup))->toBeFalse()
-        ->and(is_dir($oldStaging))->toBeFalse()
+    expect($oldBackup)->not->toBeDirectory()
+        ->and($oldStaging)->not->toBeDirectory()
         ->and(glob("{$backupDirectory}/20*", GLOB_ONLYDIR))->toHaveCount(1);
 });
 
