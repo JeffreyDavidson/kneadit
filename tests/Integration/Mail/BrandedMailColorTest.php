@@ -1,8 +1,9 @@
 <?php
 
-use App\Mail\Platform\StaffInvitationMail;
+use App\Enums\Orders\OrderStatus;
+use App\Mail\Orders\OrderStatusMail;
+use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
-use App\Models\Staff\StaffInvitation;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -16,9 +17,7 @@ beforeEach(function () {
 
 function renderBrandedMail(): string
 {
-    $invitation = StaffInvitation::factory()->create();
-
-    return new StaffInvitationMail($invitation, 'Test Bakery', 'https://example.test/accept')->render();
+    return new OrderStatusMail(Order::factory()->create(), OrderStatus::Confirmed)->render();
 }
 
 test('branded mail prints the default colors when the stored brand colors are not hex colors', function () {
