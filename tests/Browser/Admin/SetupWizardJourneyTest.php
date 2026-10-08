@@ -166,8 +166,12 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
             ->assertSeeIn($currentStep, 'Business hours')
             ->assertSee('Step 5 of 10');
 
-        // 5. Business hours: open on Saturday too (default 08:00 to 17:00).
+        // 5. Business hours: the time zone starts as the browser's own, so pick
+        // Chicago on purpose, then open on Saturday too (default 08:00 to 17:00).
         $page
+            ->assertVisible('[id="content.hours.timezone"]')
+            ->click('[id="content.hours.timezone"]')
+            ->click('li[role="option"]:has-text("Chicago (Central Time"):visible')
             ->click('[id="content.hours.saturday"]')
             ->assertVisible('[id="content.hours.saturday_open"]')
             ->click($continue)
@@ -226,6 +230,7 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
             ->and(servedWizardSetting('cottage_food_state'))->toBe('OR')
             ->and(servedWizardSetting('compliance_acknowledged'))->toBe('1')
             ->and(servedWizardSetting('pickup_instructions'))->toBe('Ring the bell at the side door.')
+            ->and(servedWizardSetting('timezone'))->toBe('America/Chicago')
             ->and(json_decode((string) servedWizardSetting('operating_hours'), true))->toMatchArray([
                 'monday' => ['open' => '07:00', 'close' => '18:00'],
                 'saturday' => ['open' => '08:00', 'close' => '17:00'],

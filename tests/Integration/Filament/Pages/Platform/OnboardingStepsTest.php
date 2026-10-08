@@ -167,6 +167,16 @@ test('business hours step defaults loads existing settings', function () {
         ->and($defaults['saturday_close'])->toBe('14:00');
 });
 
+test('business hours step leaves the time zone empty while the bakery is still on UTC', function () {
+    expect(BusinessHoursStep::defaults(resolve(TenantSettings::class))['timezone'])->toBe('');
+});
+
+test('business hours step pre-fills a time zone the bakery already saved', function () {
+    settings(['timezone' => 'America/Denver']);
+
+    expect(BusinessHoursStep::defaults(resolve(TenantSettings::class))['timezone'])->toBe('America/Denver');
+});
+
 // --- ComplianceStep ---
 
 test('compliance step defaults returns expected keys', function () {

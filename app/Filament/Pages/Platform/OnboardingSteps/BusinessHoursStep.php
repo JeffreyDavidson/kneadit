@@ -7,6 +7,9 @@ use App\Enums\Staff\DayOfWeek;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\Support\TimezoneOptions;
+use DateTimeZone;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -14,6 +17,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Js;
 
 final class BusinessHoursStep extends OnboardingStep
 {
@@ -27,9 +31,14 @@ final class BusinessHoursStep extends OnboardingStep
         return 'Business hours';
     }
 
+    /**
+     * The bakery's own zone is shown once it has one. While it is still the UTC
+     * default the field starts empty and the browser fills in its own zone.
+     */
     public static function defaults(TenantSettings $settings): array
     {
-        $defaults = [];
+        $timezone = $settings->orders->timezone;
+        $defaults = ['timezone' => $timezone === 'UTC' ? '' : $timezone];
 
         foreach (DayOfWeek::cases() as $day) {
             $isWeekday = ! in_array($day, [DayOfWeek::Saturday, DayOfWeek::Sunday]);
@@ -87,13 +96,46 @@ final class BusinessHoursStep extends OnboardingStep
                 Section::make('Set your business hours')
                     ->contained(false)
                     ->description('Toggle each day on or off and set your opening and closing times.')
-                    ->schema($dayFields),
+                    ->schema([
+                        Select::make('hours.timezone')
+                            ->label('Time zone')
+                            ->options(TimezoneOptions::grouped())
+                            ->searchable()
+                            ->required()
+                            ->in(DateTimeZone::listIdentifiers())
+                            ->helperText('Used for today, order cut-offs and pickup times. Your hours below are in this time zone.')
+                            ->extraAlpineAttributes(['x-init' => self::browserTimezoneScript()]),
+                        ...$dayFields,
+                    ]),
             ])
             ->afterValidation(fn () => self::save($page->hours));
     }
 
+    /**
+     * Fills an empty field with the browser's zone, or New York when the
+     * browser reports none or one that is not in the list.
+     */
+    private static function browserTimezoneScript(): string
+    {
+        $zones = Js::from(array_keys(TimezoneOptions::options()));
+
+        return <<<JS
+            if (! \$wire.\$get('hours.timezone')) {
+                let zone = null
+                try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone } catch (error) {}
+                \$wire.\$set('hours.timezone', {$zones}.includes(zone) ? zone : 'America/New_York', false)
+            }
+            JS;
+    }
+
     public static function save(array $data): void
     {
+        $timezone = $data['timezone'] ?? null;
+
+        if (is_string($timezone) && TimezoneOptions::isValid($timezone)) {
+            resolve(SettingsManager::class)->set('timezone', $timezone);
+        }
+
         $hours = [];
 
         foreach (DayOfWeek::cases() as $day) {
