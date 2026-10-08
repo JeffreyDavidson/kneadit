@@ -3,6 +3,7 @@
 namespace App\Mail\Orders;
 
 use App\Enums\Marketing\EmailTemplateType;
+use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
@@ -117,7 +118,9 @@ class OrderStatusMail extends BaseMailable
             OrderStatus::Confirmed => "Order #{$number} Confirmed — {$storeName}",
             OrderStatus::Baking => "Your Order #{$number} is Being Prepared — {$storeName}",
             OrderStatus::Ready => "Order #{$number} is Ready! — {$storeName}",
-            OrderStatus::Delivered => "Order #{$number} Delivered — {$storeName}",
+            OrderStatus::Delivered => $this->order->delivery_type === DeliveryType::Pickup
+                ? "Order #{$number} Picked Up — {$storeName}"
+                : "Order #{$number} Delivered — {$storeName}",
             OrderStatus::Cancelled => "Order #{$number} Cancelled — {$storeName}",
             default => "Order #{$number} Update — {$storeName}",
         };

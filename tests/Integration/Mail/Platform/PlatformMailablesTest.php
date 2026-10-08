@@ -7,14 +7,20 @@ use App\Mail\Platform\PaymentFailedAlertMail;
 use App\Mail\Platform\PaymentFailedMail;
 use App\Mail\Platform\PlatformCampaignMail;
 use App\Mail\Platform\ScheduledCheckinMail;
+use App\Mail\Platform\StaffInvitationMail;
+use App\Mail\Platform\SubscriberWithoutBakeryAlertMail;
 use App\Mail\Platform\TrialExpiredMail;
 use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\UnapprovedFreeForeverAlertMail;
+use App\Mail\Platform\WeeklyDigestMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Platform\Tenant;
+use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
 use App\Services\Tenants\TenantUrlGenerator;
+use App\ValueObjects\Money;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Collection;
 
 beforeEach(function () {
     setUpCentralOnlyTest();
@@ -42,6 +48,7 @@ dataset('platform mailables', [
     'trial expired' => [fn (): Mailable => new TrialExpiredMail(User::factory()->owner()->create(), 'http://a.kneadit.test/admin')],
     'trial reminder' => [fn (): Mailable => new TrialReminderMail(User::factory()->owner()->create(), "Jane's Bakery", 3)],
     'unapproved free forever' => [fn (): Mailable => new UnapprovedFreeForeverAlertMail([['id' => 'a', 'name' => 'A', 'email' => 'a@example.com']])],
+    'subscriber without bakery' => [fn (): Mailable => new SubscriberWithoutBakeryAlertMail([12, 34])],
     'welcome baker' => [fn (): Mailable => new WelcomeBakerMail('Jane', "Jane's Bakery", 'http://a.kneadit.test/admin', 'starter', '2026-10-19')],
 ]);
 
@@ -133,6 +140,11 @@ dataset('platform mail content', [
         ['tenant-1', 'Acme Bread', 'a@example.com'],
         [],
     ]],
+    'subscriber without bakery' => [fn (): array => [
+        new SubscriberWithoutBakeryAlertMail([12, 34]),
+        ['12, 34'],
+        ['12, 34'],
+    ]],
     'welcome baker' => [fn (): array => [
         new WelcomeBakerMail('Jane', 'Jane Bakery', 'http://a.kneadit.test/admin', 'starter', '2026-10-19'),
         ['Jane', 'Jane Bakery', 'Starter', '2026-10-19', 'http://a.kneadit.test/admin'],
@@ -176,4 +188,38 @@ test('the text-only platform mails now also have an HTML version', function (Clo
     'payment failed' => [fn (): Mailable => new PaymentFailedMail(User::factory()->owner()->create())],
     'trial expired' => [fn (): Mailable => new TrialExpiredMail(User::factory()->owner()->create(), 'http://a.kneadit.test/admin')],
     'trial reminder' => [fn (): Mailable => new TrialReminderMail(User::factory()->owner()->create(), 'Jane Bakery', 3)],
+]);
+
+test('plain text versions show apostrophes and ampersands as typed, never as HTML entities', function (Closure $make) {
+    $mail = $make();
+
+    $mail->assertSeeInText("O'Brien & Sons");
+    $mail->assertDontSeeInText('&#039;');
+    $mail->assertDontSeeInText('&amp;');
+})->with([
+    'health alert' => [fn (): Mailable => new HealthAlertMail("O'Brien & Sons is down")],
+    'payment failed alert' => [fn (): Mailable => new PaymentFailedAlertMail(User::factory()->owner()->create(['name' => "O'Brien & Sons"]), null, 29.0)],
+    'payment failed' => [fn (): Mailable => new PaymentFailedMail(User::factory()->owner()->create(['name' => "O'Brien & Sons"]))],
+    'scheduled check-in' => [fn (): Mailable => new ScheduledCheckinMail("O'Brien & Sons, how is it going?", 'Subject')],
+    'trial expired' => [fn (): Mailable => new TrialExpiredMail(User::factory()->owner()->create(['name' => "O'Brien & Sons"]), 'http://a.kneadit.test/admin')],
+    'trial reminder' => [fn (): Mailable => new TrialReminderMail(User::factory()->owner()->create(['name' => "O'Brien & Sons"]), "O'Brien & Sons", 3)],
+]);
+
+test('the staff invitation and weekly digest render inside the shared KneadIt layout', function (Closure $make) {
+    $make()->assertSeeInHtml('http://kneadit.test/images/logo-transparent.png', false);
+})->with([
+    'staff invitation' => [fn (): Mailable => new StaffInvitationMail(StaffInvitation::factory()->make(), "Jane's Bakery", 'http://a.kneadit.test/accept')],
+    'weekly digest' => [fn (): Mailable => new WeeklyDigestMail(
+        stats: [
+            'total_orders' => 1,
+            'total_revenue' => Money::fromDollars(10),
+            'new_customers' => 1,
+            'avg_order_value' => Money::fromDollars(10),
+        ],
+        topProducts: new Collection,
+        atRiskCustomers: new Collection,
+        upcomingCount: 0,
+        storeName: "Jane's Bakery",
+        adminUrl: 'http://a.kneadit.test/admin',
+    )],
 ]);

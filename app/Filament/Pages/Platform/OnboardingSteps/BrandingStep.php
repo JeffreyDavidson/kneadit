@@ -62,6 +62,8 @@ final class BrandingStep extends OnboardingStep
                             ->label('Bakery logo')
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
+                            // The logo is shown on the storefront and in the admin, which read it from the public disk.
+                            ->disk('public')
                             ->directory('logos')
                             ->maxSize(2048)
                             ->preventFilePathTampering(allowFilePathUsing: fn (string $file): bool => $file === self::existingLogo())

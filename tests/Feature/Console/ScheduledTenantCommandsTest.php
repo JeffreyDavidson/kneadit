@@ -59,6 +59,7 @@ test('every scheduled command is covered by the central-database guard', functio
         'health:check',
         'trial:check',
         'platform:audit-free-forever',
+        'platform:check-subscribers-without-bakery',
         'platform:prune-expired-tokens',
         'tenants:verify-custom-domains',
         'tenants:sync-onboarding-metrics',

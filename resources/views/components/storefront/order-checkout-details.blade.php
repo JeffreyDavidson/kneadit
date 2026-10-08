@@ -66,36 +66,40 @@
     </div>
 
     <div class="space-y-3">
-        <label
-            class="border-warm-600/15 flex cursor-pointer items-center rounded-xl border bg-white/[0.03] px-4 py-3 transition-all"
+        <div
+            class="border-warm-600/15 flex items-center rounded-xl border bg-white/[0.03] px-4 transition-all"
             :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''"
         >
             <input
                 type="radio"
+                id="order-delivery-type-pickup"
                 data-test="order-form-delivery-type-pickup"
                 x-model="form.delivery_type"
                 value="pickup"
                 @change="calculateTotals()"
                 class="order-radio mr-3"
             />
-            <span class="text-warm-200">Pickup <span class="text-warm-500 text-sm">(Free)</span></span>
-        </label>
+            <label for="order-delivery-type-pickup" class="text-warm-200 flex-1 cursor-pointer py-3"
+                >Pickup <span class="text-warm-500 text-sm">(Free)</span></label>
+        </div>
 
         @if ($settings->orders->deliveryEnabled)
-            <label
-                class="border-warm-600/15 flex cursor-pointer items-center rounded-xl border bg-white/[0.03] px-4 py-3 transition-all"
+            <div
+                class="border-warm-600/15 flex items-center rounded-xl border bg-white/[0.03] px-4 transition-all"
                 :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''"
             >
                 <input
                     type="radio"
+                    id="order-delivery-type-delivery"
                     data-test="order-form-delivery-type-delivery"
                     x-model="form.delivery_type"
                     value="delivery"
                     @change="calculateTotals()"
                     class="order-radio mr-3"
                 />
-                <span class="text-warm-200">Delivery</span>
-            </label>
+                <label for="order-delivery-type-delivery" class="text-warm-200 flex-1 cursor-pointer py-3"
+                    >Delivery</label>
+            </div>
         @endif
     </div>
 

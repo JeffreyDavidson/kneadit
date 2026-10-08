@@ -3,6 +3,7 @@
 use App\Filament\Central\Pages\Backups;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\File;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -34,4 +35,22 @@ test('formatBytes scales correctly', function () {
 test('parseTimestamp returns null for unsafe names', function () {
     expect(Backups::parseTimestamp('../etc'))->toBeNull()
         ->and(Backups::parseTimestamp('2026-04-25_12-34-56'))->not->toBeNull();
+});
+
+test('getBackups lists completed backups and skips in-progress staging folders', function () {
+    config(['backups.path' => storage_path('framework/testing/backups-page')]);
+    File::deleteDirectory(config('backups.path'));
+    File::ensureDirectoryExists(config('backups.path').'/2026-10-05_03-00-00');
+    File::put(config('backups.path').'/2026-10-05_03-00-00/central.sqlite', 'x');
+    File::ensureDirectoryExists(config('backups.path').'/2026-10-06_15-30-00.in-progress-abc123def456');
+
+    $names = collect(livewire(Backups::class)->instance()->getBackups())->pluck('name')->all();
+
+    File::deleteDirectory(config('backups.path'));
+
+    expect($names)->toBe(['2026-10-05_03-00-00']);
+});
+
+test('an in-progress staging folder is not a safe backup name for delete or download', function () {
+    expect(Backups::isSafeBackupName('2026-10-06_15-30-00.in-progress-abc123def456'))->toBeFalse();
 });

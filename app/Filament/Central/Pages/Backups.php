@@ -60,6 +60,11 @@ class Backups extends Page
             }
 
             $name = basename($folder);
+
+            if (! self::isSafeBackupName($name)) {
+                continue;
+            }
+
             $files = File::files($folder);
             $tenantFiles = collect($files)->filter(fn (SplFileInfo $file): bool => $file->getFilename() !== 'central.sqlite');
 

@@ -31,7 +31,7 @@
         <div style="background: linear-gradient(135deg, {{ $primary }}22 0%, {{ $secondary }}22 100%); padding: 40px 32px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06);">
             @if ($logoPath)
                 <img
-                    src="{{ Storage::url($logoPath) }}"
+                    src="{{ asset("storage/{$logoPath}") }}"
                     alt="Logo"
                     style="max-height: 64px; margin-bottom: 16px; border-radius: 8px"
                 />

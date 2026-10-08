@@ -11,7 +11,6 @@ use App\Mail\Marketing\CateringQuoteMail;
 use App\Mail\Orders\NewOrderMessageMail;
 use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
-use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 
@@ -83,7 +82,6 @@ test('all customer mailables use baker branded trait', function () {
         ReviewRequestMail::class,
         HappyBirthdayMail::class,
         ProductAvailableMail::class,
-        WeeklyDigestMail::class,
         CateringQuoteMail::class,
         NewOrderMessageMail::class,
         RepeatOrderReminderMail::class,

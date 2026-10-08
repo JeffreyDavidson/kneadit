@@ -12,12 +12,12 @@
 /** @var string|null $billingUrl */
 @endphp
 
-Hi {{ $user->name }},
+Hi {!! $user->name !!},
 
 We couldn't process your KneadIt subscription payment. Please update your payment method to keep your bakery running.
 
 @if ($billingUrl)
-Update payment: {{ $billingUrl }}
+Update payment: {!! $billingUrl !!}
 @endif
 
 — KneadIt

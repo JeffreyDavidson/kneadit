@@ -31,7 +31,11 @@ test('nobody can delete a customer who has orders', function (string $role) {
     $customer = Customer::factory()->create();
     Order::factory()->for($customer)->create();
 
-    expect((new CustomerPolicy)->delete($user, $customer))->toBeFalse();
+    $response = (new CustomerPolicy)->delete($user, $customer);
+
+    expect($response->allowed())->toBeFalse()
+        ->and($response->message())->toContain('has orders')
+        ->and($response->message())->toContain('Anonymise');
 })->with('managerRoles');
 
 test('managers and owners can anonymise a customer who has orders', function (string $role) {
