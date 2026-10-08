@@ -235,3 +235,25 @@ test('upcoming order needs are expressed in the ingredient stock unit', function
 
     expect($needWith)->toBe($needWithout + 2.0);
 });
+
+test('prefers a priced supplier over an unpriced one, even a pricier priced one', function () {
+    $ingredient = Ingredient::factory()->lowStock()->create();
+    $unpriced = Supplier::factory()->create();
+    $priced = Supplier::factory()->create();
+    $ingredient->suppliers()->attach($unpriced->id, ['unit_price' => null]);
+    $ingredient->suppliers()->attach($priced->id, ['unit_price' => 12.00]);
+
+    $result = resolve(ShoppingListService::class)->generate();
+
+    expect($result)->toHaveKey($priced->id)->not->toHaveKey($unpriced->id);
+});
+
+test('falls back to an unpriced supplier when none is priced', function () {
+    $ingredient = Ingredient::factory()->lowStock()->create();
+    $unpriced = Supplier::factory()->create();
+    $ingredient->suppliers()->attach($unpriced->id, ['unit_price' => null]);
+
+    $result = resolve(ShoppingListService::class)->generate();
+
+    expect($result)->toHaveKey($unpriced->id);
+});

@@ -5,6 +5,7 @@ use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\SocialPostResource;
 use App\Models\Content\SocialPost;
 use App\Models\Staff\User;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -133,4 +134,25 @@ test('resource returns global search result details', function () {
 
     expect($details)
         ->toHaveKeys(['Platform', 'Status']);
+});
+
+test('the scheduled time is entered and shown in the bakery timezone', function () {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'Pacific/Auckland'])));
+
+    livewire(ListSocialPosts::class)
+        ->callAction(CreateAction::class, data: [
+            'platform' => SocialPlatform::Instagram->value,
+            'caption' => 'Fresh loaves at midnight',
+            'status' => 'draft',
+            'scheduled_for' => '2030-10-15 00:30:00',
+        ])
+        ->assertHasNoFormErrors();
+    $post = SocialPost::query()->where('caption', 'Fresh loaves at midnight')->firstOrFail();
+
+    // 00:30 on the 15th in Auckland (NZDT, UTC+13) is 11:30 on the 14th in UTC.
+    expect($post->scheduled_for->format('Y-m-d H:i'))->toBe('2030-10-14 11:30');
+
+    livewire(ListSocialPosts::class)
+        ->mountAction(TestAction::make('edit')->table($post))
+        ->assertSet('mountedActions.0.data.scheduled_for', '2030-10-15 00:30:00');
 });

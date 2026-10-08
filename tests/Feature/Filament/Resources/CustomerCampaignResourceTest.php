@@ -7,6 +7,7 @@ use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
@@ -60,3 +61,23 @@ test('the campaign send time is entered and shown in the bakery timezone', funct
         ->mountAction(TestAction::make('edit')->table($campaign))
         ->assertSet('mountedActions.0.data.scheduled_at', '2030-10-15 09:00');
 });
+
+test('the earliest send time follows the bakery clock, not the app clock', function (string $sendAt, bool $accepted) {
+    app()->instance(TenantSettings::class, makeTenantSettings(orders: makeOrderSettings(['timezone' => 'Pacific/Auckland'])));
+    // 20:00 UTC on the 14th is already 09:00 on the 15th in Auckland.
+    Date::setTestNow('2030-10-14 20:00:00');
+
+    $test = livewire(ListCustomerCampaigns::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Late push',
+            'target_segment' => 'all',
+            'subject' => 'Order early',
+            'body' => 'Ovens are filling up.',
+            'scheduled_at' => $sendAt,
+        ]);
+
+    $accepted ? $test->assertHasNoFormErrors() : $test->assertHasFormErrors(['scheduled_at']);
+})->with([
+    'bakery wall time already passed' => ['2030-10-15 08:00:00', false],
+    'bakery wall time still ahead' => ['2030-10-15 10:00:00', true],
+]);

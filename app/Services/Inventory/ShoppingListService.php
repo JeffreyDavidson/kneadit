@@ -75,7 +75,7 @@ class ShoppingListService
 
             $bestSupplier = $ingredient->suppliers
                 ->where('is_active', true)
-                ->sortBy(fn (Supplier $supplier): int => $supplier->pivot?->unit_price?->cents() ?? 0)
+                ->sortBy(fn (Supplier $supplier): int => $supplier->pivot?->unit_price?->cents() ?? PHP_INT_MAX)
                 ->first();
 
             // The pivot casts unit_price and minimum_order to Money (stored as cents).
