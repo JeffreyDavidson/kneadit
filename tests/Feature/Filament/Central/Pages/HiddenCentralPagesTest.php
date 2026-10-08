@@ -10,7 +10,9 @@ use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\PlatformActivity;
 use App\Models\Staff\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Route;
 
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -49,6 +51,13 @@ test('half-built features are missing from the central navigation', function (st
     'Feature Usage',
     'Announcements',
 ]);
+
+test('the maintenance mode preview url is gone', function () {
+    get('https://app.getkneadit.test/admin/maintenance-mode/preview')
+        ->assertNotFound();
+
+    expect(Route::has('central.maintenance-mode.preview'))->toBeFalse();
+});
 
 test('the dashboard quick actions do not link to maintenance mode', function () {
     livewire(QuickActions::class)

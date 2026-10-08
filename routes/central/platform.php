@@ -3,7 +3,6 @@
 use App\Http\Controllers\Central\BackupDownloadController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\Central\ImpersonateController;
-use App\Http\Controllers\Central\MaintenancePreviewController;
 use App\Http\Controllers\Central\Onboarding\CompleteOnboardingController;
 use App\Http\Controllers\Central\Onboarding\ShowOnboardingController;
 use App\Http\Middleware\PreventAccessFromTenantDomains;
@@ -12,9 +11,6 @@ use Illuminate\Support\Facades\Route;
 // Platform admin tools read the central database, so a bakery host must not answer them.
 Route::middleware(PreventAccessFromTenantDomains::class)->group(function () {
     Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
-    Route::get('admin/maintenance-mode/preview', MaintenancePreviewController::class)
-        ->name('central.maintenance-mode.preview')
-        ->middleware(['web', 'auth']);
     Route::get('admin/backups/{name}/download', BackupDownloadController::class)
         ->name('central.backups.download')
         ->middleware(['web', 'auth']);
