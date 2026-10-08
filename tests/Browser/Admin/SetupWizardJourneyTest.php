@@ -4,7 +4,6 @@ use App\Console\Commands\Tenants\ProvisionTestTenantCommand;
 use Database\Seeders\BrowserTestFixtureSeeder;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Pest\Browser\Playwright\Playwright;
 
@@ -219,15 +218,8 @@ test('a bakery owner completes the setup wizard and lands on the dashboard with 
             ->assertScript('document.querySelector(".fi-topbar img.kn-brand-logo").complete && document.querySelector(".fi-topbar img.kn-brand-logo").naturalWidth > 0')
             ->assertNoJavaScriptErrors();
 
-        $logoUrl = $page->attribute('.fi-topbar img.kn-brand-logo', 'src');
-
-        expect($logoUrl)->toBeString()->not->toBeEmpty();
-
-        $logoResponse = Http::withoutVerifying()->get((string) $logoUrl);
-
-        expect($logoResponse->status())->toBe(200)
-            ->and($logoResponse->header('Content-Type'))->toStartWith('image/')
-            ->and(servedWizardSetting('onboarding_completed_at'))->not->toBeNull()
+        // The browser decoded the logo above (naturalWidth > 0), which proves its URL served an image.
+        expect(servedWizardSetting('onboarding_completed_at'))->not->toBeNull()
             ->and(servedWizardSetting('store_name'))->toBe('Wizard Journey Bakery')
             ->and(servedWizardSetting('store_phone'))->toBe('555-0142')
             ->and(servedWizardSetting('store_email'))->toBe('wizard-journey@kneadit.test')
