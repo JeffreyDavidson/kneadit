@@ -119,3 +119,15 @@ test('the bakery admin favicon links point at files that exist', function () {
         ->and($paths->filter(fn (string $path): bool => str_contains($path, 'favicons/')))->toHaveCount(3)
         ->and($paths->reject(fn (string $path): bool => file_exists($path)))->toBeEmpty();
 });
+
+test('the platform admin favicon links point at files that exist', function () {
+    setUpCentralTest();
+
+    $html = get('https://app.getkneadit.test/admin/login')->assertOk()->getContent();
+    preg_match_all('/<link rel="(?:icon|apple-touch-icon)"[^>]*href="([^"]+)"/', (string) $html, $matches);
+
+    $paths = collect($matches[1])->map(fn (string $href): string => public_path(ltrim((string) parse_url($href, PHP_URL_PATH), '/')));
+
+    expect($paths)->not->toBeEmpty()
+        ->and($paths->reject(fn (string $path): bool => file_exists($path)))->toBeEmpty();
+});
