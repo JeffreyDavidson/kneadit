@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Operations;
 
+use App\Filament\Central\Pages\Backups;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenantDatabasePath;
 use Illuminate\Console\Attributes\Description;
@@ -19,6 +20,8 @@ use Throwable;
 #[Description('Backup central and all tenant SQLite databases')]
 class BackupDatabasesCommand extends Command
 {
+    private const int STALE_STAGING_HOURS = 3;
+
     public function handle(TenantDatabasePath $tenantDatabasePath): int
     {
         $backupDir = $this->getBackupDir();
@@ -27,6 +30,8 @@ class BackupDatabasesCommand extends Command
         $stagingPath = "{$backupPath}.in-progress-".Str::random(12);
 
         File::ensureDirectoryExists($stagingPath, 0755);
+
+        $this->removeStaleStagingFolders($backupDir);
 
         $this->info("Backing up to: {$backupPath}");
         $backupComplete = true;
@@ -133,7 +138,10 @@ class BackupDatabasesCommand extends Command
     protected function cleanOldBackups(string $backupDir, int $keepDays): void
     {
         $cutoff = now()->subDays($keepDays)->timestamp;
-        $dirs = glob("{$backupDir}/20*", GLOB_ONLYDIR) ?: [];
+        $dirs = array_filter(
+            glob("{$backupDir}/20*", GLOB_ONLYDIR) ?: [],
+            fn (string $dir): bool => Backups::isSafeBackupName(basename($dir)),
+        );
         $removed = 0;
 
         foreach ($dirs as $dir) {
@@ -145,6 +153,18 @@ class BackupDatabasesCommand extends Command
 
         if ($removed > 0) {
             $this->info("  🗑 Cleaned {$removed} old backup(s) (>{$keepDays} days)");
+        }
+    }
+
+    /** A killed run leaves its `.in-progress-` staging folder behind; a live run's is minutes old, so only old ones go. */
+    protected function removeStaleStagingFolders(string $backupDir): void
+    {
+        $cutoff = now()->subHours(self::STALE_STAGING_HOURS)->timestamp;
+
+        foreach (glob("{$backupDir}/20*.in-progress-*", GLOB_ONLYDIR) ?: [] as $dir) {
+            if (filemtime($dir) < $cutoff) {
+                $this->removeDir($dir);
+            }
         }
     }
 
