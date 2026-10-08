@@ -19,12 +19,12 @@ test('updates catering customer contact details', function () {
         $inquiry,
         'New Name',
         'new@example.com',
-        '555-0123',
+        '(913) 387-7359',
     );
 
     $inquiry->refresh();
 
     expect($inquiry->customer_name)->toBe('New Name')
         ->and($inquiry->customer_email)->toBe('new@example.com')
-        ->and($inquiry->customer_phone)->toBe('5550123');
+        ->and($inquiry->customer_phone)->toBe('+19133877359');
 });

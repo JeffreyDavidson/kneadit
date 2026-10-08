@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Builders\Orders\OrderQueryBuilder;
 use App\Casts\MoneyCentsCast;
+use App\Casts\PhoneNumberCast;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
@@ -124,6 +125,7 @@ class Order extends Model
             'payment_status' => PaymentStatus::class,
             'payment_method' => PaymentMethod::class,
             'delivery_type' => DeliveryType::class,
+            'pickup_contact_phone' => PhoneNumberCast::class,
         ];
     }
 

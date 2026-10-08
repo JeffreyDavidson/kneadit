@@ -38,13 +38,13 @@
                     name="phone"
                     label='Phone <span class="text-warm-500 font-normal">(optional)</span>'
                 >
-                    <x-storefront.form.input
-                        type="tel"
+                    <x-phone-input
                         id="phone"
                         name="phone"
-                        value="{{ old('phone') }}"
-                        autocomplete="tel"
+                        :value="old('phone')"
                         data-test="register-form-phone"
+                        class="mt-1"
+                        input-class="border-warm-300 text-warm-900 focus:border-warm-500 focus:ring-warm-500/20 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2"
                     />
                 </x-storefront.form.field>
 

@@ -34,7 +34,7 @@ test('birthday must be a valid date', function () {
 test('valid update passes', function () {
     $validator = validator([
         'name' => 'Alice Customer',
-        'phone' => '555-0100',
+        'phone' => '+19133877359',
         'birthday' => '1990-06-15',
         'address' => '123 Main St',
         'city' => 'Bakerstown',

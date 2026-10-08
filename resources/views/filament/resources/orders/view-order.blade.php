@@ -166,7 +166,7 @@
                                 <div class="flex items-start justify-between gap-4 py-2.5 last:pb-0">
                                     <dt class="text-brand-400 shrink-0 pt-0.5 text-[0.8rem]">Phone</dt>
                                     <dd class="text-brand-50 text-right text-[0.85rem] font-semibold">
-                                        {{ $order->customer->phone }}
+                                        @phone($order->customer->phone)
                                     </dd>
                                 </div>
                             @endif
@@ -209,7 +209,7 @@
                                     {{ $order->pickup_contact_name }}
                                     @if ($order->pickup_contact_phone)
                                         <div class="text-brand-400 text-[0.8rem] font-normal">
-                                            {{ $order->pickup_contact_phone }}
+                                            @phone($order->pickup_contact_phone)
                                         </div>
                                     @endif
                                 </dd>

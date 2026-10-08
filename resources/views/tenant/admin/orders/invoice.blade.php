@@ -52,7 +52,7 @@
                 @endif
                 <p class="invoice__line">{{ $settings->store->address ?? '' }}</p>
                 @if ($settings->store->phone)
-                    <p class="invoice__line">{{ $settings->store->phone }}</p>
+                    <p class="invoice__line">@phone($settings->store->phone)</p>
                 @endif
                 @if ($settings->store->email)
                     <p class="invoice__line">{{ $settings->store->email }}</p>
@@ -77,7 +77,7 @@
                     <div class="party__line">{{ $order->customer->email }}</div>
                 @endif
                 @if ($order->customer?->phone)
-                    <div class="party__line">{{ $order->customer->phone }}</div>
+                    <div class="party__line">@phone($order->customer->phone)</div>
                 @endif
                 @if ($order->delivery_address)
                     <div class="party__address">{{ $order->delivery_address }}</div>
@@ -201,7 +201,7 @@
                 <p class="footer__line">
                     Questions? {{ $settings->store->email }}
                     @if ($settings->store->email && $settings->store->phone) · @endif
-                    {{ $settings->store->phone }}
+                    @phone($settings->store->phone)
                 </p>
             @endif
         </footer>

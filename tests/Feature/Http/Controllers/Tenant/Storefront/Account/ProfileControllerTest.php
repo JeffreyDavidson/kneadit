@@ -36,7 +36,7 @@ test('updates name + phone + birthday + address', function () {
         ->actingAs($customer, 'customer')
         ->post('/account/profile', [
             'name' => 'New Name',
-            'phone' => '555-1234',
+            'phone' => '+19133877359',
             'birthday' => '1990-04-15',
             'address' => '123 Main St',
             'city' => 'Springfield',

@@ -38,3 +38,42 @@
 .hero-fade-3 { opacity: 0; animation: heroFadeUp 0.8s ease-out 0.7s forwards; }
 .hero-fade-4 { opacity: 0; animation: heroFadeUp 0.8s ease-out 0.9s forwards; }
 .hero-fade-5 { opacity: 0; animation: heroFadeUp 0.8s ease-out 1.1s forwards; }
+
+/* -----------------------------------------------
+   Phone input (<x-phone-input>): intl-tel-input's
+   country selector and list on the bakery's warm
+   tokens. The --iti-* variables are set on the
+   container, which the list and the full-screen
+   popup also carry.
+   ----------------------------------------------- */
+.kn-phone-field .kn-phone-input {
+    display: block;
+    width: 100%;
+}
+
+.kn-phone-input {
+    --iti-border-color: var(--warm-200);
+    --iti-country-selector-bg: var(--warm-50);
+    --iti-hover-color: var(--warm-100);
+    --iti-icon-color: var(--warm-600);
+}
+
+.kn-phone-input .iti__country-selector {
+    border: 1px solid var(--warm-200);
+    border-radius: var(--radius-btn);
+    color: var(--warm-900);
+}
+
+.kn-phone-input .iti__search-input {
+    background: transparent;
+    color: var(--warm-900);
+}
+
+.kn-phone-input .iti__search-input:focus-visible {
+    outline: 2px solid var(--warm-500);
+    outline-offset: -2px;
+}
+
+.kn-phone-input .iti__dial-code {
+    color: var(--warm-600);
+}

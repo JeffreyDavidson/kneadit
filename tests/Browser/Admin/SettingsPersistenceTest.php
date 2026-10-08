@@ -19,7 +19,8 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit
 // page to finish loading keeps each reply with the call that asked for it.
 
 test('a saved Store Phone survives a reload and signing out and back in', function () use ($storefrontUrl) {
-    $newPhone = '555-01'.random_int(10, 99);
+    // Typed and shown in the US national format; stored in E.164.
+    $newPhone = '(913) 555-01'.random_int(10, 99);
     $settingsUrl = "{$storefrontUrl}/admin/manage-settings";
     $navigation = ['timeout' => 15_000];
 

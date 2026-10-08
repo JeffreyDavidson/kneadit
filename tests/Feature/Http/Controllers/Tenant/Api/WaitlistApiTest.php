@@ -9,7 +9,7 @@ test('API creates a waitlist entry and returns JSON:API envelope', function () {
         ->postJson('/api/waitlist', [
             'customer_name' => 'Jane',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-0100',
+            'customer_phone' => '913-387-7359',
             'requested_date' => now()->addDays(5)->toDateString(),
         ]);
 

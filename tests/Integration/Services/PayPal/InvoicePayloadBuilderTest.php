@@ -143,6 +143,16 @@ test('strips non-digit characters from customer phone number', function () {
         ->and(data_get($payload, 'primary_recipients.0.billing_info.phones.0.national_number'))->toBe('5551234567');
 });
 
+test('sends the calling code of a customer phone from outside the US', function () {
+    $customer = Customer::factory()->create(['phone' => '+44 20 7946 0958']);
+    $order = Order::factory()->recycle($customer)->create();
+
+    $payload = resolve(InvoicePayloadBuilder::class)->build($order);
+
+    expect(data_get($payload, 'primary_recipients.0.billing_info.phones.0.country_code'))->toBe('44')
+        ->and(data_get($payload, 'primary_recipients.0.billing_info.phones.0.national_number'))->toBe('2079460958');
+});
+
 test('returns empty phone array when customer has no phone', function () {
     $customer = Customer::factory()->create(['phone' => null]);
     $order = Order::factory()->recycle($customer)->create();

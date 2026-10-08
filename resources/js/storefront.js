@@ -1,7 +1,9 @@
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
+import { registerPhoneInput } from './phone-input';
 
 Alpine.plugin(intersect);
+registerPhoneInput(Alpine);
 window.Alpine = Alpine;
 
 const prefersReducedMotion = () =>

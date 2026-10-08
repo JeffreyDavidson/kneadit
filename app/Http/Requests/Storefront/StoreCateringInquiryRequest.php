@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Storefront;
 
+use App\Rules\PossiblePhoneNumber;
 use App\Services\Scheduling\BakeryClock;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +25,7 @@ class StoreCateringInquiryRequest extends FormRequest
         return [
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
-            'customer_phone' => ['nullable', 'string', 'max:255'],
+            'customer_phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'event_type' => ['required', 'string', Rule::in($catering->eventTypes)],
             'event_date' => ['required', 'date', 'after_or_equal:'.resolve(BakeryClock::class)->today()->addDays((int) $catering->leadTimeDays)->toDateString()],
             'guest_count' => ['required', 'integer', 'min:'.(int) $catering->minimumGuests],

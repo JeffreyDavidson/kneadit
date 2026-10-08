@@ -7,6 +7,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
 use App\Services\Customers\CustomerIntelligence;
+use App\Support\PhoneNumber;
 use App\ValueObjects\Address;
 use Illuminate\Support\Carbon;
 
@@ -90,7 +91,7 @@ final class CustomerPresenter
             'id' => $this->customer->id,
             'name' => $this->customer->name,
             'email' => $this->customer->email,
-            'phone' => $this->customer->phone,
+            'phone' => PhoneNumber::display($this->customer->phone),
             'address' => $this->address()->formatted(),
             'orders' => $this->formattedOrders(),
             'notes' => $this->formattedNotes(),

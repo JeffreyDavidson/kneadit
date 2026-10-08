@@ -9,6 +9,7 @@ use App\DataTransferObjects\Settings\SettingValue;
 use App\Mail\Concerns\MarketingMail;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
+use App\Support\PhoneNumber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -41,7 +42,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
             'primaryColor' => $settings->branding->brandColorPrimary,
             'secondaryColor' => BrandingSettings::safeColor($secondaryColor, '#1c1410'),
             'storeEmail' => $store->email ?? '',
-            'storePhone' => $store->phone ?? '',
+            'storePhone' => PhoneNumber::display($store->phone),
             'storeAddress' => $store->address ?? '',
             'logoUrl' => $store->logoUrl(),
             'platformHomeUrl' => Config::string('app.url'),

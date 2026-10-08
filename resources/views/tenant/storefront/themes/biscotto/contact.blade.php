@@ -1,3 +1,4 @@
+@use(App\Support\PhoneNumber)
 <section class="biscotto-contact-hero">
     <h1>Let's Talk</h1>
     <p>Questions, custom orders, or just want to chat about bread? We're all ears.</p>
@@ -116,7 +117,11 @@
                 @if ($settings->store->phone)
                     <div>
                         <dt>Phone</dt>
-                        <dd><a href="tel:{{ $settings->store->phone }}">{{ $settings->store->phone }}</a></dd>
+                        <dd>
+                            <a href="{{ PhoneNumber::telUri($settings->store->phone) }}">
+                                @phone($settings->store->phone)
+                            </a>
+                        </dd>
                     </div>
                 @endif
             </dl>

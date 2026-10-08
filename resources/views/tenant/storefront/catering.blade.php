@@ -190,13 +190,12 @@
                     <div>
                         <label for="catering-customer-phone" class="text-warm-700 mb-2 block text-sm font-semibold"
                             >Phone</label>
-                        <input
-                            type="tel"
-                            name="customer_phone"
-                            value="{{ old('customer_phone') }}"
-                            class="input-field"
+                        <x-phone-input
                             id="catering-customer-phone"
+                            name="customer_phone"
+                            :value="old('customer_phone')"
                             data-test="catering-form-customer-phone"
+                            input-class="input-field"
                         />
                     </div>
                     <div>

@@ -78,7 +78,7 @@
                         <div>{{ $page->contact['email'] }}</div>
                     @endif
                     @if ($page->contact['phone'])
-                        <div>{{ $page->contact['phone'] }}</div>
+                        <div>@phone($page->contact['phone'])</div>
                     @endif
                     @if ($page->contact['address'])
                         <div style="margin-top: 4px">{{ $page->contact['address'] }}</div>

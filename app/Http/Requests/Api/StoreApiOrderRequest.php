@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api;
 use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
 use App\Rules\PickupSlotAvailable;
+use App\Rules\PossiblePhoneNumber;
 use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
@@ -26,7 +27,7 @@ class StoreApiOrderRequest extends FormRequest
         return [
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
-            'customer_phone' => ['nullable', 'string', 'max:20'],
+            'customer_phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id', new ProductAvailableOnDeliveryDate],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
@@ -40,7 +41,7 @@ class StoreApiOrderRequest extends FormRequest
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'pickup_contact_name' => ['nullable', 'string', 'max:255'],
-            'pickup_contact_phone' => ['nullable', 'string', 'max:20'],
+            'pickup_contact_phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'pickup_contact_email' => ['nullable', 'email', 'max:255'],
         ];
     }

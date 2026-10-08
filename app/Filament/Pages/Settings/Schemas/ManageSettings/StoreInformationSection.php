@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
+use App\Filament\Forms\Components\PhoneInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -27,10 +28,8 @@ class StoreInformationSection
                             ->email()
                             ->placeholder('contact@yourbakery.com'),
 
-                        TextInput::make('store_phone')
-                            ->label('Store Phone')
-                            ->tel()
-                            ->placeholder('+1 (555) 123-4567'),
+                        PhoneInput::make('store_phone')
+                            ->label('Store Phone'),
 
                         TextInput::make('store_address')
                             ->label('Store Address')

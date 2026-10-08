@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\DataTransferObjects\Settings\SettingValue;
+use App\Filament\Forms\Components\PhoneInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\Support\PhoneNumber;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -53,10 +56,8 @@ final class ContactStep extends OnboardingStep
                                 ->email()
                                 ->required()
                                 ->placeholder('hello@yourbakery.com'),
-                            TextInput::make('contact.phone')
-                                ->label('Phone number')
-                                ->tel()
-                                ->placeholder('+1 (555) 123-4567'),
+                            PhoneInput::make('contact.phone')
+                                ->label('Phone number'),
                         ]),
                         TextInput::make('contact.address')
                             ->label('Address')
@@ -71,7 +72,7 @@ final class ContactStep extends OnboardingStep
     {
         resolve(SettingsManager::class)->setMany([
             'store_email' => $data['email'],
-            'store_phone' => $data['phone'] ?? '',
+            'store_phone' => PhoneNumber::normalize(SettingValue::nullableString($data['phone'] ?? null)) ?? '',
             'store_address' => $data['address'] ?? '',
         ]);
     }

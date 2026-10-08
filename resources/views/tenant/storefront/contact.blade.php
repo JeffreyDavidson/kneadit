@@ -1,3 +1,4 @@
+@use(App\Support\PhoneNumber)
 <x-layouts.storefront>
     @if ($storefrontTheme === 'biscotto')
         @include('tenant.storefront.themes.biscotto.contact')
@@ -44,10 +45,9 @@
                                 </div>
                                 <p class="text-warm-500 mb-2 text-xs tracking-[0.2em] uppercase">Phone</p>
                                 <p class="text-sm">
-                                    <a
-                                        href="tel:{{ $settings->store->phone }}"
-                                        class="text-warm-300"
-                                    >{{ $settings->store->phone }}</a>
+                                    <a href="{{ PhoneNumber::telUri($settings->store->phone) }}" class="text-warm-300">
+                                        @phone($settings->store->phone)
+                                    </a>
                                 </p>
                             </div>
                         @endif

@@ -64,7 +64,7 @@
                                 @endif
                                 @if ($group['supplier']['email'] && $group['supplier']['phone']) &bull; @endif
                                 @if ($group['supplier']['phone'])
-                                    {{ $group['supplier']['phone'] }}
+                                    @phone($group['supplier']['phone'])
                                 @endif
                             </p>
                         @endif
