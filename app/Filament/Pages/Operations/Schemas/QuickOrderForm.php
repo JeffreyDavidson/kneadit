@@ -99,9 +99,10 @@ class QuickOrderForm
                     Repeater::make('order_items')
                         ->hiddenLabel()
                         ->schema([
-                            Grid::make(4)->schema([
+                            Grid::make(['default' => 2, 'lg' => 12])->schema([
                                 Select::make('product_id')
                                     ->label('Product')
+                                    ->columnSpan(['default' => 2, 'lg' => 4])
                                     ->required()
                                     ->options(Product::query()
                                         ->active()
@@ -123,6 +124,7 @@ class QuickOrderForm
 
                                 TextInput::make('quantity')
                                     ->label('Qty')
+                                    ->columnSpan(['default' => 1, 'lg' => 2])
                                     ->required()
                                     ->numeric()
                                     ->minValue(1)
@@ -132,12 +134,14 @@ class QuickOrderForm
 
                                 MoneyInput::make('unit_price')
                                     ->label('Price')
+                                    ->columnSpan(['default' => 1, 'lg' => 3])
                                     ->required()
                                     ->live()
                                     ->afterStateUpdated(fn (Get $get, Set $set): mixed => $set('line_total', self::lineTotal($get))),
 
                                 TextInput::make('line_total')
                                     ->label('Total')
+                                    ->columnSpan(['default' => 2, 'lg' => 3])
                                     ->prefix('$')
                                     ->disabled()
                                     ->dehydrated(false)

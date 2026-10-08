@@ -130,6 +130,7 @@ test('quick order line total follows the quantity and price as they change', fun
 })->with([
     'two at ten' => [2, 10.00, '20.00'],
     'three at four fifty' => [3, 4.50, '13.50'],
+    'over a thousand' => [2, 617.28, '1,234.56'],
 ]);
 
 test('quick order line total updates when a product is chosen', function () {
