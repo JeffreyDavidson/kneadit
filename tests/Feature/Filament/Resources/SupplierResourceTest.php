@@ -31,7 +31,7 @@ test('can create a supplier via slide-over', function () {
             'name' => 'Flour Mill Co.',
             'contact_name' => 'John Miller',
             'email' => 'john@flourmill.com',
-            'phone' => '555-0100',
+            'phone' => '+19133877359',
         ])
         ->assertHasNoFormErrors();
 

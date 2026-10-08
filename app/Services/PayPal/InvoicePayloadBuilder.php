@@ -5,6 +5,7 @@ namespace App\Services\PayPal;
 use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\Support\PhoneNumber;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 
@@ -57,7 +58,7 @@ class InvoicePayloadBuilder
                 'country_code' => 'US',
             ],
             'email_address' => config('mail.from.address', 'noreply@kneadit.com'),
-            'phones' => [['country_code' => '1', 'national_number' => $this->settings->store->phone ?? '', 'phone_type' => 'MOBILE']],
+            'phones' => $this->formatPhone($this->settings->store->phone),
         ];
     }
 
@@ -77,7 +78,7 @@ class InvoicePayloadBuilder
                     'country_code' => 'US',
                 ],
                 'email_address' => $order->customer?->email,
-                'phones' => $this->formatCustomerPhone($order->customer?->phone),
+                'phones' => $this->formatPhone($order->customer?->phone),
             ],
         ];
     }
@@ -174,13 +175,20 @@ class InvoicePayloadBuilder
         return [$parts[0], implode(' ', array_slice($parts, 1))];
     }
 
-    /** @return array<int, array<string, string>> */
-    private function formatCustomerPhone(?string $phone): array
+    /**
+     * PayPal wants the calling code and the national number apart. A number
+     * that can't be read is left off rather than sent with the wrong code.
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function formatPhone(?string $phone): array
     {
-        if (! $phone) {
+        $parts = PhoneNumber::callingCodeAndNationalNumber($phone);
+
+        if ($parts === null) {
             return [];
         }
 
-        return [['country_code' => '1', 'national_number' => (string) preg_replace('/\D/', '', $phone), 'phone_type' => 'MOBILE']];
+        return [['country_code' => $parts[0], 'national_number' => $parts[1], 'phone_type' => 'MOBILE']];
     }
 }

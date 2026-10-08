@@ -33,7 +33,7 @@ test('can create a catering inquiry via slide-over', function () {
         ->callAction(CreateAction::class, data: [
             'customer_name' => 'Jane Smith',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-0100',
+            'customer_phone' => '+19133877359',
             'event_type' => 'Wedding',
             'event_date' => now()->addMonth()->format('Y-m-d'),
             'guest_count' => 50,

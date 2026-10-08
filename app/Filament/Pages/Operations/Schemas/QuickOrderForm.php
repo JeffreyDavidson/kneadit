@@ -6,6 +6,7 @@ use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Forms\Components\MoneyInput;
+use App\Filament\Forms\Components\PhoneInput;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
 use App\Services\Scheduling\BakeryClock;
@@ -79,9 +80,8 @@ class QuickOrderForm
                             ->live(),
                     ]),
 
-                    TextInput::make('customer_phone')
+                    PhoneInput::make('customer_phone')
                         ->label('Phone')
-                        ->tel()
                         ->live(),
                 ])
                 ->collapsible(),

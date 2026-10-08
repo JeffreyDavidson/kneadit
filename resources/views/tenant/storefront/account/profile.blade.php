@@ -43,13 +43,11 @@
 
                 <div>
                     <label for="profile-phone" class="text-warm-700 mb-1 block text-sm font-semibold">Phone</label>
-                    <input
+                    <x-phone-input
                         id="profile-phone"
-                        type="tel"
                         name="phone"
-                        value="{{ old('phone', $customer->phone) }}"
-                        maxlength="20"
-                        class="input-field w-full"
+                        :value="old('phone', $customer->phone)"
+                        input-class="input-field w-full"
                     />
                     @error('phone')
                         <p class="mt-1 text-sm text-red-700">{{ $message }}</p>

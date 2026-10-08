@@ -130,3 +130,17 @@ test('contact form validation rejects missing message', function () {
 
     $response->assertSessionHasErrors('message');
 });
+
+test('the store phone shows in the national format and dials E.164', function (string $theme) {
+    settings(['store_phone' => '+19133877359', 'storefront_theme' => $theme]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('contact.show', [], false));
+
+    $response->assertOk()
+        ->assertSeeHtml('href="tel:+19133877359"')
+        ->assertSee('(913) 387-7359');
+})->with([
+    'classic theme' => ['classic'],
+    'biscotto theme' => ['biscotto'],
+]);

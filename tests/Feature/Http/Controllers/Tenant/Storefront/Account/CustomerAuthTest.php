@@ -15,7 +15,7 @@ test('register creates a customer, hashes the password, and sends them to verify
         ->post(route('account.register', [], false), [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
-            'phone' => '555-0100',
+            'phone' => '+19133877359',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);

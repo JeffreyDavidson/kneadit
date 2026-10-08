@@ -8,6 +8,7 @@ use App\DataTransferObjects\Settings\SettingValue;
 use App\Enums\Orders\PaymentMethod;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
+use App\Support\PhoneNumber;
 use Illuminate\Support\Str;
 
 class SaveTenantSettings
@@ -27,7 +28,7 @@ class SaveTenantSettings
         $settings = [
             'store_name' => $data['store_name'],
             'store_email' => $data['store_email'],
-            'store_phone' => $data['store_phone'],
+            'store_phone' => PhoneNumber::normalize(SettingValue::nullableString($data['store_phone'] ?? null)) ?? '',
             'store_address' => $data['store_address'],
             'store_website' => $data['store_website'] ?? '',
             'store_city' => $data['store_city'] ?? '',

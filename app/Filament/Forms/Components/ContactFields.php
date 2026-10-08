@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Forms\Components;
 
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 
 /**
@@ -13,7 +14,7 @@ use Filament\Forms\Components\TextInput;
  */
 class ContactFields
 {
-    /** @return array<int, TextInput> */
+    /** @return array<int, Field> */
     public static function nameEmailPhone(): array
     {
         return [
@@ -47,10 +48,8 @@ class ContactFields
             ->maxLength(255);
     }
 
-    public static function phone(): TextInput
+    public static function phone(): PhoneInput
     {
-        return TextInput::make('customer_phone')
-            ->tel()
-            ->maxLength(255);
+        return PhoneInput::make('customer_phone');
     }
 }

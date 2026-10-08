@@ -9,6 +9,7 @@ use App\Models\Inventory\Category;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenantUrlGenerator;
+use App\Support\PhoneNumber;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -74,7 +75,7 @@ class PrintableMenu extends Page
         return [
             'name' => $settings->store->name,
             'tagline' => $branding->businessTagline ?? '',
-            'phone' => $settings->store->phone ?? '',
+            'phone' => PhoneNumber::display($settings->store->phone),
             'email' => $settings->store->email ?? '',
             'address' => $settings->store->address ?? '',
             'disclaimer' => $branding->allergyDisclaimer ?? '',

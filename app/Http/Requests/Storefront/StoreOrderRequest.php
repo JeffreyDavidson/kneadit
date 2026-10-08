@@ -6,6 +6,7 @@ use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Enums\Orders\DeliveryType;
 use App\Models\Orders\OrderItem;
 use App\Rules\PickupSlotAvailable;
+use App\Rules\PossiblePhoneNumber;
 use App\Rules\ProductAvailableOnDeliveryDate;
 use App\Services\Scheduling\EarliestDeliveryDate;
 use App\Services\Settings\TenantSettings;
@@ -34,7 +35,7 @@ class StoreOrderRequest extends FormRequest
         return [
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
-            'customer_phone' => ['nullable', 'string', 'max:20'],
+            'customer_phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'customer_birthday' => ['nullable', 'date'],
             'delivery_type' => ['required', Rule::in($this->allowedDeliveryTypes())],
             'delivery_address' => ['required_if:delivery_type,delivery', 'nullable', 'string', 'max:500'],
@@ -54,7 +55,7 @@ class StoreOrderRequest extends FormRequest
             'gift_card_code' => ['required_with:gift_card_id', 'nullable', 'string', 'max:50'],
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'pickup_contact_name' => ['nullable', 'string', 'max:255'],
-            'pickup_contact_phone' => ['nullable', 'string', 'max:20'],
+            'pickup_contact_phone' => ['nullable', 'string', 'max:30', new PossiblePhoneNumber],
             'pickup_contact_email' => ['nullable', 'email', 'max:255'],
         ];
     }

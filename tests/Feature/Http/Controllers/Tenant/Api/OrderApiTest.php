@@ -21,7 +21,7 @@ test('can create order via API and receive JSON:API envelope', function () {
         ->postJson('/api/orders', [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-0100',
+            'customer_phone' => '913-387-7359',
             'delivery_date' => now()->addDays(3)->toDateString(),
             'delivery_type' => 'pickup',
             'items' => [
@@ -60,7 +60,7 @@ test('API rejects an order with a non-existent product_id', function () {
         ->postJson('/api/orders', [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'customer_phone' => '555-0100',
+            'customer_phone' => '913-387-7359',
             'delivery_date' => now()->addDays(3)->toDateString(),
             'delivery_type' => 'pickup',
             'items' => [

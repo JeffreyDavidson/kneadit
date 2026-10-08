@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Suppliers\Schemas;
 
+use App\Filament\Forms\Components\PhoneInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -37,9 +38,7 @@ class SupplierForm
                                     ->email()
                                     ->maxLength(255),
 
-                                TextInput::make('phone')
-                                    ->tel()
-                                    ->maxLength(255),
+                                PhoneInput::make('phone'),
                             ]),
 
                         TextInput::make('website')

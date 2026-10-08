@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Customers\Schemas;
 
+use App\Filament\Forms\Components\PhoneInput;
 use App\Services\Scheduling\BakeryClock;
 use App\Support\EmailAddress;
 use Filament\Forms\Components\DatePicker;
@@ -37,9 +38,7 @@ class CustomerForm
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('phone')
-                                    ->tel()
-                                    ->maxLength(255),
+                                PhoneInput::make('phone'),
 
                                 DatePicker::make('birthday')
                                     ->label('Birthday')

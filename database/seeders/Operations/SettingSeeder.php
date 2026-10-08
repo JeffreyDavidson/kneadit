@@ -21,7 +21,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'store_phone',
-                'value' => '(863) 555-0123',
+                'value' => '+18635550123',
             ],
             [
                 'key' => 'store_address',

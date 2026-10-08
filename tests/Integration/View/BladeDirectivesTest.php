@@ -50,3 +50,20 @@ test('money directive handles Money zero instance', function () {
 
     expect($result)->toBe('$0.00');
 });
+
+test('phone directive shows a stored number the way a person reads it', function (?string $stored, string $shown) {
+    $result = Blade::render('@phone($phone)', ['phone' => $stored]);
+
+    expect($result)->toBe($shown);
+})->with([
+    'US number at a US bakery' => ['+19133877359', '(913) 387-7359'],
+    'UK number at a US bakery' => ['+442079460958', '+44 20 7946 0958'],
+    'unreadable value as stored' => ['555-0100', '555-0100'],
+    'nothing' => [null, ''],
+]);
+
+test('phone directive escapes what it prints', function () {
+    $result = Blade::render('@phone($phone)', ['phone' => '<b>call</b>']);
+
+    expect($result)->toBe('&lt;b&gt;call&lt;/b&gt;');
+});

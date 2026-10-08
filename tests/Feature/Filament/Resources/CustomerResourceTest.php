@@ -44,7 +44,7 @@ test('can create a customer via slide-over', function () {
         ->callAction(CreateAction::class, data: [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
-            'phone' => '555-1234',
+            'phone' => '+19133877359',
         ])
         ->assertHasNoFormErrors();
 

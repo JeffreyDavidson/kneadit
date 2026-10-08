@@ -62,7 +62,7 @@
                 @endif
                 @if ($viewModel->inquiry->customer_phone)
                     <x-filament.catering-inquiries.detail-row label="Phone">
-                        {{ $viewModel->inquiry->customer_phone }}
+                        @phone($viewModel->inquiry->customer_phone)
                     </x-filament.catering-inquiries.detail-row>
                 @endif
             </dl>

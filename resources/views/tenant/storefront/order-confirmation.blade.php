@@ -284,7 +284,7 @@
                                 <p class="text-warm-200">{{ $order->customer->name }}</p>
                                 <p class="text-warm-400 text-sm">{{ $order->customer->email }}</p>
                                 @if ($order->customer->phone)
-                                    <p class="text-warm-400 text-sm">{{ $order->customer->phone }}</p>
+                                    <p class="text-warm-400 text-sm">@phone($order->customer->phone)</p>
                                 @endif
                             </div>
 
@@ -310,7 +310,7 @@
                                     <span class="text-warm-500 mb-1 block text-xs font-medium tracking-wider uppercase">Picking up for you</span>
                                     <p class="text-warm-200">{{ $order->pickup_contact_name }}</p>
                                     @if ($order->pickup_contact_phone)
-                                        <p class="text-warm-400 text-sm">{{ $order->pickup_contact_phone }}</p>
+                                        <p class="text-warm-400 text-sm">@phone($order->pickup_contact_phone)</p>
                                     @endif
                                     @if ($order->pickup_contact_email)
                                         <p class="text-warm-400 text-sm">{{ $order->pickup_contact_email }}</p>

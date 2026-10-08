@@ -8,12 +8,16 @@ use Filament\Enums\ThemeMode;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Foundation\Vite;
+use Illuminate\Support\HtmlString;
 use InvalidArgumentException;
 
 /**
  * The KneadIt design system settings both admin panels share: fonts and colour
  * palettes, plus the light/dark mode each panel starts with. The colours and
- * fonts mirror resources/css/kneadit/tokens.css.
+ * fonts mirror resources/css/kneadit/tokens.css. Both panels also load the
+ * script for the shared phone field (App\Filament\Forms\Components\PhoneInput).
  */
 final class DesignSystem
 {
@@ -32,6 +36,8 @@ final class DesignSystem
     public const string INFO = '#2f5f7a';
 
     public const string GRAY = '#7a5a3a';
+
+    public const string PHONE_INPUT_SCRIPT = 'resources/js/filament/phone-input.js';
 
     /**
      * Young Serif has a single weight, and Google Fonts rejects a request for
@@ -52,7 +58,8 @@ final class DesignSystem
                 'info' => Color::hex(self::INFO),
                 'gray' => self::warmGray(),
             ])
-            ->darkMode(true);
+            ->darkMode(true)
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): HtmlString => resolve(Vite::class)([self::PHONE_INPUT_SCRIPT]));
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\CustomerDirectoryStatsQuery;
+use App\Support\PhoneNumber;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -120,7 +121,7 @@ class CustomerDirectory extends Page
             'id' => $customer->id,
             'name' => $customer->name,
             'email' => $customer->email,
-            'phone' => $customer->phone ?? 'N/A',
+            'phone' => $customer->phone ? PhoneNumber::display($customer->phone) : 'N/A',
             'total_orders' => $customer->orders_count,
             // orders.total is bigint cents (migration 2026_04_22_201500); withSum bypasses
             // MoneyCentsCast and returns the raw cents, so divide back to dollars here.
