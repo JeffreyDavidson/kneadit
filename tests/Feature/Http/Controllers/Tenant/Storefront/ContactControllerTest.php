@@ -66,6 +66,43 @@ test('contact form submission works with valid data', function () {
     ]);
 });
 
+test('contact form stores the phone number as E.164', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('contact.store', [], false), [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'subject' => 'Question about orders',
+            'message' => 'Do you offer gluten-free options?',
+            'phone' => '(913) 387-7359',
+        ]);
+
+    $response->assertRedirect();
+    test()->assertDatabaseHas('contact_messages', [
+        'email' => 'jane@example.com',
+        'phone' => '+19133877359',
+    ]);
+});
+
+test('contact form rejects an impossible phone number', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('contact.store', [], false), [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'subject' => 'Question about orders',
+            'message' => 'Do you offer gluten-free options?',
+            'phone' => '123',
+        ]);
+
+    $response->assertSessionHasErrors('phone');
+});
+
+test('contact page shows the shared phone input', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('contact.show', [], false));
+
+    $response->assertOk()->assertSeeHtml('data-test="contact-form-phone"');
+});
+
 test('contact form success message can be customized via page content', function () {
     Setting::factory()->create([
         'key' => 'page_content',
