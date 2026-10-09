@@ -69,7 +69,7 @@
                         <div class="relative overflow-hidden" style="min-height: 400px">
                             @if ($star->image)
                                 <img
-                                    src="{{ Storage::url($star->image) }}"
+                                    src="{{ Storage::disk('public')->url($star->image) }}"
                                     alt="{{ $star->name }}"
                                     class="h-full w-full object-cover"
                                 />

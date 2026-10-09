@@ -77,6 +77,7 @@ class ProductForm
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->maxSize(5120)
+                            ->disk('public')
                             ->directory('products')
                             ->visibility('public')
                             ->required()
