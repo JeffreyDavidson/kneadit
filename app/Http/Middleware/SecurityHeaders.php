@@ -73,17 +73,21 @@ class SecurityHeaders
         // the umbrella rule even when the umbrella rule allows the
         // source. Spelling out -elem / -attr explicitly silences that
         // noise so real violations are visible in the report log.
+        //
+        // maps.googleapis.com / maps.gstatic.com (script) and maps.googleapis.com /
+        // places.googleapis.com (connect) are for the Google Places address
+        // suggestions (resources/js/address-input.js); img-src already allows https:.
         return implode('; ', [
             "default-src 'self'",
-            "script-src 'self' {$nonce} 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
-            "script-src-elem 'self' {$nonce} https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
+            "script-src 'self' {$nonce} 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com",
+            "script-src-elem 'self' {$nonce} https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com",
             "script-src-attr 'unsafe-inline'",
             "style-src 'self' {$nonce} 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "style-src-elem 'self' {$nonce} 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "style-src-attr 'unsafe-inline'",
             "img-src 'self' data: blob: https:",
             "font-src 'self' data: https://fonts.gstatic.com",
-            "connect-src 'self' https://cdn.usefathom.com https://api.stripe.com",
+            "connect-src 'self' https://cdn.usefathom.com https://api.stripe.com https://maps.googleapis.com https://places.googleapis.com",
             "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.google.com",
             "object-src 'none'",
             "base-uri 'self'",

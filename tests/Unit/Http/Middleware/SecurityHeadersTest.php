@@ -102,3 +102,49 @@ test('the nonce is handed to Vite before the response is built so Livewire tags 
 
     expect(Vite::cspNonce())->toBe($nonce->value());
 });
+
+test('CSP lets the address suggestions load Google Maps and call Places', function () {
+    $middleware = new SecurityHeaders(new CspNonce);
+
+    $response = $middleware->handle(Request::create('/test'), fn () => new Response('OK'));
+
+    $directives = collect(explode('; ', (string) $response->headers->get('Content-Security-Policy')))
+        ->mapWithKeys(function (string $directive): array {
+            $parts = explode(' ', $directive);
+
+            return [array_shift($parts) => $parts];
+        });
+
+    expect($directives['script-src'])->toContain('https://maps.googleapis.com', 'https://maps.gstatic.com')
+        ->and($directives['script-src-elem'])->toContain('https://maps.googleapis.com', 'https://maps.gstatic.com')
+        ->and($directives['connect-src'])->toContain('https://maps.googleapis.com', 'https://places.googleapis.com');
+});
+
+test('CSP allows no outside origins beyond the ones the storefront uses', function () {
+    $middleware = new SecurityHeaders(new CspNonce);
+
+    $response = $middleware->handle(Request::create('/test'), fn () => new Response('OK'));
+
+    preg_match_all('#https://[a-z0-9.-]+#', (string) $response->headers->get('Content-Security-Policy'), $matches);
+    $origins = collect($matches[0])
+        ->reject(fn (string $origin): bool => str_starts_with(route('csp.report'), $origin))
+        ->unique()
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($origins)->toBe([
+        'https://api.stripe.com',
+        'https://cdn.jsdelivr.net',
+        'https://cdn.usefathom.com',
+        'https://checkout.stripe.com',
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
+        'https://hooks.stripe.com',
+        'https://js.stripe.com',
+        'https://maps.googleapis.com',
+        'https://maps.gstatic.com',
+        'https://places.googleapis.com',
+        'https://www.google.com',
+    ]);
+});

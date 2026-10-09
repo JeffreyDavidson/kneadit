@@ -107,14 +107,14 @@
             <div>
                 <label for="order-delivery-address" class="text-warm-400 mb-1 block text-xs font-medium"
                     >Delivery Address *</label>
-                <textarea
+                <x-address-input
                     id="order-delivery-address"
                     data-test="order-form-delivery-address"
                     x-model="form.delivery_address"
                     placeholder="Full address"
-                    class="order-input"
+                    input-class="order-input"
                     rows="3"
-                ></textarea>
+                />
                 <x-storefront.order-field-error field="delivery_address" />
             </div>
             <div>

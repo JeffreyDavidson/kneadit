@@ -1,11 +1,13 @@
 import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse';
 import intersect from '@alpinejs/intersect';
+import { registerAddressInput } from './address-input';
 import { registerPhoneInput } from './phone-input';
 
 Alpine.plugin(collapse);
 Alpine.plugin(intersect);
 registerPhoneInput(Alpine);
+registerAddressInput(Alpine);
 window.Alpine = Alpine;
 
 const prefersReducedMotion = () =>

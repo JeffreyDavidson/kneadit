@@ -361,3 +361,69 @@ input[type='date'][value=''],
     box-shadow: var(--kn-shadow-focus);
     outline: none;
 }
+
+/*
+ * Address field (App\Filament\Forms\Components\AddressInput): the Google
+ * suggestions list under the box, on the tokens in light and dark. The
+ * "Google Maps" credit follows Google's text-attribution rules.
+ */
+.kn-address-field {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.kn-address-suggestions {
+    position: absolute;
+    top: calc(100% + 0.375rem);
+    right: 0;
+    left: 0;
+    z-index: 30;
+    overflow: hidden;
+    border: 1px solid var(--kn-border);
+    border-radius: var(--kn-radius-md);
+    background: var(--kn-surface);
+    box-shadow: var(--kn-shadow-pop);
+}
+
+.kn-address-suggestions[x-cloak] {
+    display: none;
+}
+
+.kn-address-suggestion {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--kn-ink);
+}
+
+.kn-address-suggestion-active {
+    background: var(--kn-surface-hover);
+}
+
+.kn-address-suggestion-main {
+    font-weight: 500;
+}
+
+.kn-address-suggestion-secondary {
+    font-size: 0.8125rem;
+    color: var(--kn-muted);
+}
+
+.fi-fo-textarea.kn-address-textarea-wrp {
+    overflow: visible;
+}
+
+.kn-address-textarea {
+    resize: vertical;
+}
+
+.kn-address-attribution {
+    padding: 0.25rem 0.75rem 0.375rem;
+    border-top: 1px solid var(--kn-border);
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 12px;
+    text-align: right;
+    color: var(--kn-ink);
+}

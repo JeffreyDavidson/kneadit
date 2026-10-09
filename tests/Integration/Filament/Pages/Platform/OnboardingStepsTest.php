@@ -56,19 +56,23 @@ test('welcome step defaults returns expected keys', function () {
 test('contact step defaults returns expected keys', function () {
     $defaults = ContactStep::defaults(resolve(TenantSettings::class));
 
-    expect($defaults)->toHaveKeys(['email', 'phone', 'address']);
+    expect($defaults)->toHaveKeys(['email', 'phone', 'address', 'city', 'state', 'zip']);
 });
 
 test('contact step defaults returns stored values', function () {
     settings(['store_email' => 'stored@example.com']);
     settings(['store_phone' => '555-999-8888']);
     settings(['store_address' => '456 Oak Ave']);
+    settings(['store_city' => 'Tampa', 'store_state' => 'FL', 'store_zip' => '33601']);
 
     $defaults = ContactStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['email'])->toBe('stored@example.com')
         ->and($defaults['phone'])->toBe('555-999-8888')
-        ->and($defaults['address'])->toBe('456 Oak Ave');
+        ->and($defaults['address'])->toBe('456 Oak Ave')
+        ->and($defaults['city'])->toBe('Tampa')
+        ->and($defaults['state'])->toBe('FL')
+        ->and($defaults['zip'])->toBe('33601');
 });
 
 // --- BrandingStep ---

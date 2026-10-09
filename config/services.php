@@ -53,6 +53,12 @@ return [
         'server_ip' => env('FORGE_SERVER_IP', '137.184.194.56'),
     ],
 
+    // Browser key for address suggestions (Places API). Restricted by website in Google Cloud;
+    // without it, address fields are plain text boxes.
+    'google_maps' => [
+        'browser_key' => env('GOOGLE_MAPS_BROWSER_KEY'),
+    ],
+
     'github' => [
         'token' => env('GITHUB_TOKEN'),
     ],
