@@ -65,6 +65,11 @@ jobs:
           # secret. A placeholder lets the fixture tenant (no Connect account)
           # place orders without any Stripe call.
           sed -i 's/^STRIPE_SECRET=.*/STRIPE_SECRET=sk_test_browser_smoke/' .env
+          # newdebugbar (a dev dependency, on because APP_DEBUG=true) renders its
+          # toolbar as a Livewire component, so Livewire injects livewire.js and a
+          # second Alpine into every page. Production has neither; keep the
+          # smoke run faithful to it.
+          echo 'NEWDEBUGBAR_ENABLED=false' >> .env
           composer install --no-interaction --prefer-dist
           php artisan key:generate
           # Uploaded bakery logos are served from public/storage, as in production.
