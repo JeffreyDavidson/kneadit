@@ -41,13 +41,18 @@ test('the tracking page loads the messages for each order', function () use ($vi
 test('a message sent from the tracking page appears in the thread', function () use ($visitTrackedOrders) {
     $message = 'Browser test message '.bin2hex(random_bytes(4));
 
-    // Wait for the order's initial message fetch to land first; otherwise a
-    // slow response could arrive after the send and overwrite the thread.
-    $page = $visitTrackedOrders();
+    // The page fetches each order's messages one after another from a
+    // single-threaded server, and the order this test uses is requested last,
+    // so allow longer than the default 5 seconds for the whole flow.
+    withBrowserTimeout(15_000, function () use ($visitTrackedOrders, $message): void {
+        // Wait for the order's initial message fetch to land first; otherwise a
+        // slow response could arrive after the send and overwrite the thread.
+        $page = $visitTrackedOrders();
 
-    waitForOrderMessagesLoaded($page, 'BROWSER-TEST-RFM-1')
-        ->fill('#msg-input-BROWSER-TEST-RFM-1', $message)
-        ->click('#msg-input-BROWSER-TEST-RFM-1 ~ button')
-        ->assertSeeIn('#messages-BROWSER-TEST-RFM-1', $message)
-        ->assertNoJavaScriptErrors();
+        waitForOrderMessagesLoaded($page, 'BROWSER-TEST-RFM-1')
+            ->fill('#msg-input-BROWSER-TEST-RFM-1', $message)
+            ->click('#msg-input-BROWSER-TEST-RFM-1 ~ button')
+            ->assertSeeIn('#messages-BROWSER-TEST-RFM-1', $message)
+            ->assertNoJavaScriptErrors();
+    });
 })->group('launch-smoke');
