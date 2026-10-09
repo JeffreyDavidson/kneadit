@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\ContactMessageQueryBuilder;
+use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use Database\Factories\Customers\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'email', 'subject', 'message', 'is_read')]
+#[Fillable('name', 'email', 'phone', 'subject', 'message', 'is_read')]
 #[UseEloquentBuilder(ContactMessageQueryBuilder::class)]
 #[UseFactory(ContactMessageFactory::class)]
 class ContactMessage extends Model
@@ -36,6 +37,7 @@ class ContactMessage extends Model
         return [
             'is_read' => 'boolean',
             'name' => StripTagsCast::class,
+            'phone' => PhoneNumberCast::class,
             'subject' => StripTagsCast::class,
             'message' => StripTagsCast::class,
         ];

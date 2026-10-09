@@ -50,6 +50,21 @@ test('view page renders for a contact message', function () {
         ->assertOk();
 });
 
+test('view page shows the phone number as a tel link', function () {
+    $message = ContactMessage::factory()->create(['phone' => '+19133877359']);
+
+    livewire(ViewContactMessage::class, ['record' => $message->getRouteKey()])
+        ->assertSeeHtml('href="tel:+19133877359"')
+        ->assertSee('(913) 387-7359');
+});
+
+test('table shows the formatted phone number', function () {
+    $message = ContactMessage::factory()->create(['phone' => '+19133877359']);
+
+    livewire(ListContactMessages::class)
+        ->assertTableColumnFormattedStateSet('phone', '(913) 387-7359', $message);
+});
+
 test('mark-read action on the view page toggles is_read', function () {
     $message = ContactMessage::factory()->unread()->create();
 

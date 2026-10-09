@@ -90,11 +90,13 @@ test('customer and marketing mail classes render without errors', function () {
         'email' => 'jane@example.com',
         'subject' => 'Custom cake',
         'message' => 'Can you make a birthday cake?',
+        'phone' => '+19133877359',
     ]);
 
     expect(new NewContactMessageNotificationMail($message)->render())
         ->toContain('Jane Baker')
         ->toContain('Can you make a birthday cake?')
+        ->toContain('tel:+19133877359')
         ->and(new HappyBirthdayMail($customer)->render())->toBeString()->not->toBeEmpty();
 
     $product = Product::factory()->create();
