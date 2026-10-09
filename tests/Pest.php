@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 use JMac\Testing\Double;
 use Pest\Browser\Api\PendingAwaitablePage;
+use Pest\Browser\Playwright\Playwright;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -1028,9 +1029,38 @@ function waitForOrderFormAvailability(mixed $page): void
 }
 
 /**
+ * Run a browser test body with a longer wait for every expectation, then put
+ * the default back. The served bakery runs on a single-threaded
+ * `php artisan serve` at about half a second a request, so a page that loads
+ * several things in a row (the tracking page fetches each order's messages one
+ * after another) can take longer than the default 5 seconds to settle. Each
+ * expectation retries until this timeout, so a slow server is waited for, not
+ * failed.
+ *
+ * @template TReturn
+ *
+ * @param  Closure(): TReturn  $callback
+ * @return TReturn
+ */
+function withBrowserTimeout(int $milliseconds, Closure $callback): mixed
+{
+    $defaultTimeout = Playwright::timeout();
+
+    pest()->browser()->timeout($milliseconds);
+
+    try {
+        return $callback();
+    } finally {
+        pest()->browser()->timeout($defaultTimeout);
+    }
+}
+
+/**
  * Wait until the tracking page has finished loading one order's messages, so a
  * test does not type into the thread (or send a message) while the initial
- * fetch is still in flight and could overwrite what the test just did.
+ * fetch is still in flight and could overwrite what the test just did. The
+ * fetches run one at a time on the single-threaded server and this order's is
+ * the last one requested, so call it inside withBrowserTimeout().
  */
 function waitForOrderMessagesLoaded(mixed $page, string $orderNumber): mixed
 {
