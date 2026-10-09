@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\PhoneInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -31,8 +32,9 @@ class StoreInformationSection
                         PhoneInput::make('store_phone')
                             ->label('Store Phone'),
 
-                        TextInput::make('store_address')
+                        AddressInput::make('store_address')
                             ->label('Store Address')
+                            ->fills(city: 'store_city', state: 'store_state', zip: 'store_zip')
                             ->placeholder('123 Baker Street, City, State 12345')
                             ->columnSpanFull(),
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\CateringInquiries\Support\CateringEventTypeOptions;
 use App\Services\Scheduling\BakeryClock;
@@ -44,7 +45,7 @@ class CateringEventDetailsFields
             Textarea::make('dietary_requirements')
                 ->columnSpanFull()
                 ->rows(2),
-            Textarea::make('venue_address')
+            AddressInput::make('venue_address')
                 ->columnSpanFull()
                 ->rows(2),
         ];

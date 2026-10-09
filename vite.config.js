@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/storefront.css',
                 'resources/js/storefront.js',
                 'resources/js/filament/phone-input.js',
+                'resources/js/filament/address-input.js',
                 'resources/css/filament/admin/theme.css',
                 'resources/css/filament/central/theme.css',
             ],

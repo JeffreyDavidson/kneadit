@@ -288,14 +288,15 @@
                     <div class="md:col-span-2">
                         <label for="catering-venue-address" class="text-warm-700 mb-2 block text-sm font-semibold"
                             >Venue Address</label>
-                        <textarea
-                            name="venue_address"
-                            rows="2"
-                            class="input-field"
-                            placeholder="Where should we deliver?"
+                        <x-address-input
                             id="catering-venue-address"
+                            name="venue_address"
+                            :value="old('venue_address')"
+                            rows="2"
+                            input-class="input-field"
+                            placeholder="Where should we deliver?"
                             data-test="catering-form-venue-address"
-                        >{{ old('venue_address') }}</textarea>
+                        />
                     </div>
                 </div>
 

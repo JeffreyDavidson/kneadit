@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\DataTransferObjects\Settings\SettingValue;
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\PhoneInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
@@ -37,6 +38,9 @@ final class ContactStep extends OnboardingStep
             'email' => $manager->get('store_email') ?: ($tenant->email ?? ''),
             'phone' => $manager->get('store_phone', ''),
             'address' => $manager->get('store_address', ''),
+            'city' => $manager->get('store_city', ''),
+            'state' => $manager->get('store_state', ''),
+            'zip' => $manager->get('store_zip', ''),
         ];
     }
 
@@ -59,10 +63,19 @@ final class ContactStep extends OnboardingStep
                             PhoneInput::make('contact.phone')
                                 ->label('Phone number'),
                         ]),
-                        TextInput::make('contact.address')
-                            ->label('Address')
-                            ->placeholder('123 Baker Street, City, State 12345')
+                        AddressInput::make('contact.address')
+                            ->label('Street address')
+                            ->placeholder('123 Baker Street')
+                            ->fills(city: 'contact.city', state: 'contact.state', zip: 'contact.zip')
                             ->columnSpanFull(),
+                        Grid::make(3)->schema([
+                            TextInput::make('contact.city')
+                                ->label('City'),
+                            TextInput::make('contact.state')
+                                ->label('State'),
+                            TextInput::make('contact.zip')
+                                ->label('ZIP code'),
+                        ]),
                     ]),
             ])
             ->afterValidation(fn () => self::save($page->contact));
@@ -74,6 +87,9 @@ final class ContactStep extends OnboardingStep
             'store_email' => $data['email'],
             'store_phone' => PhoneNumber::normalize(SettingValue::nullableString($data['phone'] ?? null)) ?? '',
             'store_address' => $data['address'] ?? '',
+            'store_city' => $data['city'] ?? '',
+            'store_state' => $data['state'] ?? '',
+            'store_zip' => $data['zip'] ?? '',
         ]);
     }
 }

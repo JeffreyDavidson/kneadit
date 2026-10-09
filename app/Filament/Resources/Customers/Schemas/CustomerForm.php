@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Customers\Schemas;
 
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\PhoneInput;
 use App\Services\Scheduling\BakeryClock;
 use App\Support\EmailAddress;
@@ -58,7 +59,8 @@ class CustomerForm
                 Section::make('Address')
                     ->columnSpanFull()
                     ->components([
-                        TextInput::make('address')
+                        AddressInput::make('address')
+                            ->fills(city: 'city', state: 'state', zip: 'zip')
                             ->maxLength(255),
 
                         Grid::make(3)
