@@ -1,6 +1,7 @@
 <?php
 
 use App\DataTransferObjects\Settings\StoreInfo;
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Filament\Pages\Platform\OnboardingSteps\BusinessHoursStep;
 use App\Http\Middleware\EnsureOnboardingComplete;
@@ -78,6 +79,21 @@ test('onboarding page shows the step count and greets the bakery by name', funct
         ->assertSee('about 5 minutes')
         ->assertDontSee('Welcome to KneadIt')
         ->assertDontSeeHtml('kn-wizard-progress');
+});
+
+test('the contact step asks for the city, state and ZIP that an address suggestion fills', function () {
+    config(['services.google_maps.browser_key' => 'test-browser-key']);
+
+    livewire(Onboarding::class)
+        ->assertFormFieldExists('contact.address', fn (AddressInput $field): bool => $field->getPartStatePaths() === [
+            'city' => 'contact.city',
+            'state' => 'contact.state',
+            'zip' => 'contact.zip',
+        ])
+        ->assertFormFieldExists('contact.city')
+        ->assertFormFieldExists('contact.state')
+        ->assertFormFieldExists('contact.zip')
+        ->assertSeeHtml('x-data="addressInput({');
 });
 
 test('onboarding page has one main heading', function () {

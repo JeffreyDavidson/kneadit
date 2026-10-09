@@ -17,7 +17,8 @@ use InvalidArgumentException;
  * The KneadIt design system settings both admin panels share: fonts and colour
  * palettes, plus the light/dark mode each panel starts with. The colours and
  * fonts mirror resources/css/kneadit/tokens.css. Both panels also load the
- * script for the shared phone field (App\Filament\Forms\Components\PhoneInput).
+ * scripts for the shared phone and address fields
+ * (App\Filament\Forms\Components\PhoneInput and AddressInput).
  */
 final class DesignSystem
 {
@@ -39,6 +40,8 @@ final class DesignSystem
 
     public const string PHONE_INPUT_SCRIPT = 'resources/js/filament/phone-input.js';
 
+    public const string ADDRESS_INPUT_SCRIPT = 'resources/js/filament/address-input.js';
+
     /**
      * Young Serif has a single weight, and Google Fonts rejects a request for
      * weights a family doesn't have, so the default weight list can't be used.
@@ -59,7 +62,7 @@ final class DesignSystem
                 'gray' => self::warmGray(),
             ])
             ->darkMode(true)
-            ->renderHook(PanelsRenderHook::HEAD_END, fn (): HtmlString => resolve(Vite::class)([self::PHONE_INPUT_SCRIPT]));
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): HtmlString => resolve(Vite::class)([self::PHONE_INPUT_SCRIPT, self::ADDRESS_INPUT_SCRIPT]));
     }
 
     /**

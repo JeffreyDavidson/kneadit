@@ -56,6 +56,22 @@ test('contact step saves all contact info', function () {
         ->and(settings('store_address'))->toBe('123 Baker St, Tampa, FL 33601');
 });
 
+test('contact step saves the city, state and ZIP with the street address', function () {
+    ContactStep::save([
+        'email' => 'hello@sweetbakery.com',
+        'phone' => '555-123-4567',
+        'address' => '123 Baker St',
+        'city' => 'Tampa',
+        'state' => 'FL',
+        'zip' => '33601',
+    ]);
+
+    expect(settings('store_address'))->toBe('123 Baker St')
+        ->and(settings('store_city'))->toBe('Tampa')
+        ->and(settings('store_state'))->toBe('FL')
+        ->and(settings('store_zip'))->toBe('33601');
+});
+
 test('branding step saves colors', function () {
     BrandingStep::save([
         'color_primary' => '#ff5500',
