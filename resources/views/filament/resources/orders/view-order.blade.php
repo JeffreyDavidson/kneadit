@@ -304,7 +304,7 @@
                                             <div class="flex items-center gap-3">
                                                 @if ($item->product?->image)
                                                     <img
-                                                        src="{{ Storage::url($item->product->image) }}"
+                                                        src="{{ Storage::disk('public')->url($item->product->image) }}"
                                                         alt="{{ $item->product->name }}"
                                                         class="h-10 w-10 shrink-0 rounded-lg object-cover"
                                                     />

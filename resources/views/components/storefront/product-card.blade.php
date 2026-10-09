@@ -8,7 +8,7 @@
     <div class="relative aspect-[4/3] overflow-hidden">
         @if ($product->image)
             <img
-                src="{{ Storage::url($product->image) }}"
+                src="{{ Storage::disk('public')->url($product->image) }}"
                 alt="{{ $product->name }}"
                 class="h-full w-full object-cover"
             />

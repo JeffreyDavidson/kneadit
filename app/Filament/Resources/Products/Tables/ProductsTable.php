@@ -31,6 +31,7 @@ class ProductsTable
                 ]))
             ->columns([
                 ImageColumn::make('image')
+                    ->disk('public')
                     ->circular()
                     ->defaultImageUrl(asset('images/product-placeholder.svg')),
 
