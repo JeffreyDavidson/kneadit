@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages\Settings\Schemas\ManageSettings;
 
 use App\Filament\Forms\Components\MoneyInput;
-use DateTimeZone;
+use App\Support\TimezoneOptions;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -37,7 +37,7 @@ class OrderSettingsSection
 
                         Select::make('timezone')
                             ->label('Bakery Timezone')
-                            ->options(array_combine(DateTimeZone::listIdentifiers(), DateTimeZone::listIdentifiers()))
+                            ->options(TimezoneOptions::grouped())
                             ->searchable()
                             ->required()
                             ->default('UTC')
