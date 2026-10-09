@@ -425,9 +425,5 @@ input[type='date'][value=''],
     font-family: Roboto, Arial, sans-serif;
     font-size: 12px;
     text-align: right;
-    color: #1f1f1f;
-}
-
-.dark .kn-address-attribution {
-    color: #ffffff;
+    color: var(--kn-ink);
 }
