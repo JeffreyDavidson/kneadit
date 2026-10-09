@@ -1068,6 +1068,6 @@ function fillPickupOrderDetails(mixed $page, string $date): mixed
     return $page
         ->fill('[data-test="order-form-customer-name"]', 'Availability Tester')
         ->fill('[data-test="order-form-customer-email"]', 'availability-tester@example.com')
-        ->fill('[data-test="order-form-customer-phone"]', '555-0123')
+        ->fill('[data-test="order-form-customer-phone"]', '(913) 555-0123')
         ->fill('[data-test="order-form-delivery-date"]', $date);
 }
