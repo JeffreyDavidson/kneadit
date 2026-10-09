@@ -8,7 +8,7 @@
                         <div class="relative">
                             <div class="overflow-hidden rounded-2xl shadow-xl">
                                 <img
-                                    src="{{ Storage::url($storePhoto) }}"
+                                    src="{{ Storage::disk('public')->url($storePhoto) }}"
                                     alt="{{ $storeName }}"
                                     class="h-auto w-full object-cover"
                                     style="aspect-ratio: 3/4"

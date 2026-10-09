@@ -26,7 +26,7 @@ test('loads configured content and tenant settings', function () {
         ->and($component->buttonText)->toBe('Browse the Menu')
         ->and($component->href)->toBe(route('storefront.menu'))
         ->and($component->leadTimeHours)->toBe(48)
-        ->and($component->imageUrl)->toBe(Storage::url('storefront/hero.jpg'));
+        ->and($component->imageUrl)->toBe(Storage::disk('public')->url('storefront/hero.jpg'));
 });
 
 test('uses CTA defaults for unsupported configuration', function () {

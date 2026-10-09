@@ -71,7 +71,7 @@ test('the builder shows the hero upload fields, style select and current image p
         ->assertSeeHtml('id="hero-upload-loyalty_hero_image"')
         ->assertSeeHtml('id="hero-upload-gift_cards_hero_image"')
         ->assertSeeHtml('id="hero-style"')
-        ->assertSeeHtml(Storage::url('storefront-heroes/current.jpg'));
+        ->assertSeeHtml(Storage::disk('public')->url('storefront-heroes/current.jpg'));
 });
 
 test('saving without a new upload keeps the existing hero image', function () {
@@ -97,7 +97,7 @@ test('the storefront home page renders the uploaded hero image', function () {
     app()->forgetScopedInstances();
 
     withoutMiddleware(tenantMiddleware())
-        ->get('/storefront-home-test')->assertOk()->assertSeeHtml(Storage::url($path));
+        ->get('/storefront-home-test')->assertOk()->assertSeeHtml(Storage::disk('public')->url($path));
 });
 
 test('the storefront home page renders the chosen hero style', function () {
