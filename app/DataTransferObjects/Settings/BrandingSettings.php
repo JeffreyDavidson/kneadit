@@ -66,28 +66,28 @@ final readonly class BrandingSettings
     public function heroImageUrl(): string
     {
         return $this->heroImage
-            ? Storage::url($this->heroImage)
+            ? Storage::disk('public')->url($this->heroImage)
             : self::DEFAULT_HERO_IMAGE;
     }
 
     public function cateringHeroImageUrl(): string
     {
         return $this->cateringHeroImage
-            ? Storage::url($this->cateringHeroImage)
+            ? Storage::disk('public')->url($this->cateringHeroImage)
             : self::CATERING_HERO_IMAGE;
     }
 
     public function loyaltyHeroImageUrl(): string
     {
         return $this->loyaltyHeroImage
-            ? Storage::url($this->loyaltyHeroImage)
+            ? Storage::disk('public')->url($this->loyaltyHeroImage)
             : self::DEFAULT_HERO_IMAGE;
     }
 
     public function giftCardsHeroImageUrl(): string
     {
         return $this->giftCardsHeroImage
-            ? Storage::url($this->giftCardsHeroImage)
+            ? Storage::disk('public')->url($this->giftCardsHeroImage)
             : self::DEFAULT_HERO_IMAGE;
     }
 }

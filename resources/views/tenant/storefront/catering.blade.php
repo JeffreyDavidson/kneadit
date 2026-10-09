@@ -89,7 +89,7 @@
                     @foreach ($cateringPhotos as $photo)
                         <div class="aspect-square overflow-hidden rounded-2xl">
                             <img
-                                src="{{ Storage::url($photo->photo_path) }}"
+                                src="{{ Storage::disk('public')->url($photo->photo_path) }}"
                                 alt="{{ $photo->caption ?? 'Catering event' }}"
                                 class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
                             />

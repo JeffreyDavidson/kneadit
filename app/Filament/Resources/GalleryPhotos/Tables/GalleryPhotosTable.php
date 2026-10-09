@@ -23,6 +23,7 @@ class GalleryPhotosTable
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('Photo')
+                    ->disk('public')
                     ->width(80)
                     ->height(60)
                     ->square(),

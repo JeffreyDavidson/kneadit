@@ -9,7 +9,7 @@
         <figure class="biscotto-about-photo">
             <div>
                 <img
-                    src="{{ $settings->store->photo ? Storage::url($settings->store->photo) : $settings->heroImageUrl() }}"
+                    src="{{ $settings->store->photo ? Storage::disk('public')->url($settings->store->photo) : $settings->heroImageUrl() }}"
                     alt="Cassie, baker and owner of {{ $settings->store->name }}"
                 />
             </div>
