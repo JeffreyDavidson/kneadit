@@ -9,6 +9,7 @@ use App\Models\Content\SocialPost;
 use App\Services\Scheduling\BakeryClock;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
@@ -67,21 +68,24 @@ class SocialCalendar extends Page
 
     public function loadPosts(): void
     {
-        $start = Date::create($this->year, $this->month, 1)->startOfMonth();
+        // scheduled_for is stored in the app timezone; the month and its days are the bakery's.
+        $timezone = resolve(BakeryClock::class)->now()->getTimezone();
+        $appTimezone = Config::string('app.timezone');
+        $start = Date::create($this->year, $this->month, 1, 0, 0, 0, $timezone)->startOfMonth();
         $end = $start->copy()->endOfMonth();
 
         $posts = SocialPost::query()
-            ->whereBetween('scheduled_for', [$start, $end])
+            ->whereBetween('scheduled_for', [$start->setTimezone($appTimezone), $end->setTimezone($appTimezone)])
             ->with('product')
             ->orderBy('scheduled_for')
             ->get();
 
         $this->posts = [];
         foreach ($posts as $post) {
-            $scheduledFor = $post->scheduled_for;
-            if ($scheduledFor === null) {
+            if ($post->scheduled_for === null) {
                 continue;
             }
+            $scheduledFor = $post->scheduled_for->copy()->setTimezone($timezone);
             $day = $scheduledFor->format('Y-m-d');
             $this->posts[$day][] = [
                 'id' => $post->id,
