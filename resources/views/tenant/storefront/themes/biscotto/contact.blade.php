@@ -58,6 +58,13 @@
                     </div>
                 </div>
                 <div>
+                    <label for="phone">Phone (optional)</label>
+                    <x-phone-input id="phone" name="phone" :value="old('phone')" data-test="contact-form-phone" />
+                    @error('phone')
+                        <p id="phone-error" class="biscotto-contact-error">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
                     <label for="subject">Subject</label>
                     <select
                         id="subject"

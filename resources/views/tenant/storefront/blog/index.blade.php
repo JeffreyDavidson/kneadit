@@ -17,7 +17,7 @@
                         >
                             @if ($post->featured_image)
                                 <img
-                                    src="{{ Storage::url($post->featured_image) }}"
+                                    src="{{ Storage::disk('public')->url($post->featured_image) }}"
                                     alt="{{ $post->title }}"
                                     class="h-48 w-full object-cover"
                                 />

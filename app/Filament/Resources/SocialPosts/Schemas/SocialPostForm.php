@@ -64,6 +64,7 @@ class SocialPostForm
                     ->image()
                     ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                     ->maxSize(5120)
+                    ->disk('public')
                     ->directory('social-posts')
                     ->nullable()
                     ->preventFilePathTampering(),

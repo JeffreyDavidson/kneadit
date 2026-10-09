@@ -6,6 +6,7 @@ namespace App\Filament\Resources\ContactMessages\Tables;
 
 use App\Filament\Actions\AuthorizedDeleteBulkAction;
 use App\Models\Customers\ContactMessage;
+use App\Support\PhoneNumber;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
@@ -30,6 +31,11 @@ class ContactMessagesTable
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('phone')
+                    ->formatStateUsing(fn (?string $state): string => PhoneNumber::display($state))
+                    ->url(fn (ContactMessage $record): ?string => $record->phone ? PhoneNumber::telUri($record->phone) : null)
+                    ->toggleable(),
 
                 TextColumn::make('subject')
                     ->searchable()

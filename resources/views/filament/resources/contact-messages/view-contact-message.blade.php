@@ -18,6 +18,16 @@
                         href="mailto:{{ $message->email }}"
                         class="text-brand-300 hover:text-brand-200"
                     >{{ $message->email }}</a>
+                    @if ($message->phone)
+                        ·
+                        <a
+                            href="{{ \App\Support\PhoneNumber::telUri($message->phone) }}"
+                            class="text-brand-300 hover:text-brand-200"
+                            data-test="contact-message-phone"
+                        >
+                            @phone($message->phone)
+                        </a>
+                    @endif
                 </div>
             </div>
 

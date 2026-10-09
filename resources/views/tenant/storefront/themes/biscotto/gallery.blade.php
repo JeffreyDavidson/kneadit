@@ -13,7 +13,7 @@
                 'author' => $photo->customer_name,
             ])
             : $products->filter(fn ($product) => filled($product->image))->map(fn ($product) => [
-                'src' => Storage::url($product->image),
+                'src' => Storage::disk('public')->url($product->image),
                 'alt' => $product->name,
                 'caption' => $product->name,
                 'author' => $settings->store->name,

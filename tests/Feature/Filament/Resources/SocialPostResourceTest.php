@@ -9,6 +9,8 @@ use App\Services\Settings\TenantSettings;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Pennant\Feature;
 
 use function Pest\Livewire\livewire;
@@ -57,6 +59,25 @@ test('can edit a social post via table action', function () {
         ->assertHasNoFormErrors();
 
     expect($post->fresh()->caption)->toBe('Updated caption for our bakery');
+});
+
+test('a social post image is stored on the public disk even when the default disk is private', function () {
+    config(['filesystems.default' => 'local']);
+    Storage::fake('local');
+    Storage::fake('public');
+
+    livewire(ListSocialPosts::class)
+        ->callAction(CreateAction::class, data: [
+            'platform' => SocialPlatform::Instagram->value,
+            'caption' => 'Fresh bread straight from the oven!',
+            'image_path' => UploadedFile::fake()->image('loaf.jpg'),
+        ])
+        ->assertHasNoFormErrors();
+
+    $path = SocialPost::query()->firstOrFail()->image_path;
+
+    Storage::disk('public')->assertExists($path);
+    expect(Storage::disk('local')->allFiles())->toBeEmpty();
 });
 
 test('can create a social post via slide-over', function () {

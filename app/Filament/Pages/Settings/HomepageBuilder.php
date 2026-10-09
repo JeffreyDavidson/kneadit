@@ -273,7 +273,7 @@ class HomepageBuilder extends Page
 
         $path = SettingValue::nullableString(settings($image->value));
 
-        return $path === null ? null : Storage::url($path);
+        return $path === null ? null : Storage::disk('public')->url($path);
     }
 
     public function hasStoredHeroImage(StorefrontHeroImage $image): bool

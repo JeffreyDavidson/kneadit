@@ -18,7 +18,7 @@
             <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $contactMessage->name }}</span><br>
             <a href="mailto:{{ $contactMessage->email }}" style="color: {{ $primaryColor }};">{{ $contactMessage->email }}</a>
             @if (! empty($contactMessage->phone))
-                <span style="color: #888;"> · {{ $contactMessage->phone }}</span>
+                <span style="color: #888;"> · </span><a href="{{ \App\Support\PhoneNumber::telUri($contactMessage->phone) }}" style="color: {{ $primaryColor }};">@phone($contactMessage->phone)</a>
             @endif
         </div>
 

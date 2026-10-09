@@ -39,7 +39,7 @@ class Cta extends Component
         };
         $this->leadTimeHours = $settings->orders->leadTimeHours;
         $this->imageUrl = $settings->branding->heroImage
-            ? Storage::url($settings->branding->heroImage)
+            ? Storage::disk('public')->url($settings->branding->heroImage)
             : self::DEFAULT_IMAGE_URL;
     }
 

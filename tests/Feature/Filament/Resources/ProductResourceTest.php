@@ -10,9 +10,13 @@ use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
 
@@ -73,6 +77,28 @@ test('can create a product via slide-over', function () {
         'name' => 'Ciabatta Roll',
         'slug' => 'ciabatta-roll',
     ]);
+});
+
+test('the product image upload targets the public disk even when the default disk is private', function () {
+    config(['filesystems.default' => 'local']);
+
+    livewire(ListProducts::class)
+        ->mountAction(CreateAction::class)
+        ->set('mountedActions.0.data.productImages.new.path', [UploadedFile::fake()->image('rye.jpg')])
+        ->assertSchemaComponentExists(
+            'productImages.new.path',
+            checkComponentUsing: fn (FileUpload $upload): bool => $upload->getDiskName() === 'public',
+        );
+});
+
+test('storefront and admin views render product images from the public disk when the default disk is private', function () {
+    config(['filesystems.default' => 'local']);
+    $product = Product::factory()->create(['image' => 'tenants/bakery/product-boule.jpg']);
+    $publicUrl = Storage::disk('public')->url('tenants/bakery/product-boule.jpg');
+
+    $card = Blade::render('<x-storefront.product-card :product="$product" />', ['product' => $product]);
+
+    expect($card)->toContain($publicUrl);
 });
 
 test('a bakery with no categories can create one from the product form and save the product', function () {

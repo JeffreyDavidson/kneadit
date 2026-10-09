@@ -139,6 +139,21 @@
                                 </div>
 
                                 <div>
+                                    <label for="phone" class="text-warm-800 mb-2 block text-sm font-medium"
+                                        >Phone (optional)</label>
+                                    <x-phone-input
+                                        id="phone"
+                                        name="phone"
+                                        :value="old('phone')"
+                                        data-test="contact-form-phone"
+                                        :input-class="$errors->has('phone') ? 'storefront-input border-red-500' : 'storefront-input'"
+                                    />
+                                    @error('phone')
+                                        <p class="mt-1 text-sm text-red-500" role="alert">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
                                     <label for="subject" class="text-warm-800 mb-2 block text-sm font-medium"
                                         >Subject</label>
                                     <input

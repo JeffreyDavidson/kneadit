@@ -227,7 +227,7 @@
                 style="margin-top: clamp(2.5rem, 5vw, 4rem); margin-bottom: clamp(2.5rem, 5vw, 4rem)"
             >
                 <img
-                    src="{{ Storage::url($post->featured_image) }}"
+                    src="{{ Storage::disk('public')->url($post->featured_image) }}"
                     alt="{{ $post->title }}"
                     class="w-full"
                     style="aspect-ratio: 16 / 9; object-fit: cover; background: var(--warm-200)"
@@ -395,7 +395,7 @@
                             @if ($related->featured_image)
                                 <div style="overflow: hidden; margin-bottom: 1.125rem">
                                     <img
-                                        src="{{ Storage::url($related->featured_image) }}"
+                                        src="{{ Storage::disk('public')->url($related->featured_image) }}"
                                         alt="{{ $related->title }}"
                                         style="
                                             width: 100%;
